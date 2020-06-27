@@ -1,2 +1,2 @@
-# Vue2CoreAndDocker
-Vue2CoreAndDocker
+# MAMBrowser
+MAMBrowser
