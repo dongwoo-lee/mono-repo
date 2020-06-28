@@ -8,7 +8,14 @@ const routes = [
   {
     path: "/",
     component: () => import(/* webpackChunkName: "home" */ "./views/home"),
-    redirect: "/app/private",
+    // redirect: "/app/private",
+    beforeEnter: function(to, from, next) {
+      if (localStorage.getItem('access_token') !== null) {
+        next({ path: '/app/private' });
+      } else {
+        next({ path: '/user' });
+      }
+    }
   },
   {
     path: "/app",
@@ -44,25 +51,30 @@ const routes = [
     children: [
       {
         path: "login",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/Login")
+        component: () => import(/* webpackChunkName: "user" */ "./views/user/Login"),
+        beforeEnter: (to, from, next) => {
+          if (localStorage.getItem('access_token') != null) {
+            next({ path: "/" });
+          } else {
+            next();
+          }
+        }
       },
-      {
-        path: "register",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/Register")
-      },
-      {
-        path: "forgot-password",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/ForgotPassword")
-      },
-      {
-        path: "reset-password",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/ResetPassword")
-      },
-
+      // {
+      //   path: "register",
+      //   component: () =>
+      //     import(/* webpackChunkName: "user" */ "./views/user/Register")
+      // },
+      // {
+      //   path: "forgot-password",
+      //   component: () =>
+      //     import(/* webpackChunkName: "user" */ "./views/user/ForgotPassword")
+      // },
+      // {
+      //   path: "reset-password",
+      //   component: () =>
+      //     import(/* webpackChunkName: "user" */ "./views/user/ResetPassword")
+      // },
     ]
   },
   {

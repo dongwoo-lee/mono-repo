@@ -75,8 +75,8 @@ export default {
     data() {
         return {
             form: {
-                email: "test@coloredstrategies.com",
-                password: "xxxxxx"
+                email: "test@adsoft.com",
+                password: "12341234"
             },
         };
     },
@@ -101,35 +101,46 @@ export default {
     methods: {
         ...mapActions(["login"]),
         formSubmit() {
-            this.$v.$touch();
-            this.form.email = "piaf-vue@coloredstrategies.com";
-            this.form.password = "piaf123";
-            this.$v.form.$touch();
-           // if (!this.$v.form.$anyError) {
+            // this.$v.$touch();
+            // this.form.email = "piaf-vue@coloredstrategies.com";
+            // this.form.password = "piaf123";
+            // this.$v.form.$touch();
+
+           if (!this.$v.form.$anyError) {
                 this.login({
                     email: this.form.email,
                     password: this.form.password
+                }).then(res => {
+                    if (res.status === 200) {
+                        this.$router.push("/");
+                    } else {
+                        var errMsg = res.response.data.message;
+                        this.$notify("error", "Login Error", errMsg, {
+                            duration: 3000,
+                            permanent: false
+                        });
+                    }
                 });
-            //}
+            }
         }
     },
-    watch: {
-        currentUser(val) {
-            if (val && val.uid && val.uid.length > 0) {
-                setTimeout(() => {
-                    this.$router.push("/");
-                }, 200);
-            }
-        },
-        loginError(val) {
-            if (val != null) {
-                this.$notify("error", "Login Error", val, {
-                    duration: 3000,
-                    permanent: false
-                });
+    // watch: {
+    //     currentUser(val) {
+    //         if (val && val.uid && val.uid.length > 0) {
+    //             setTimeout(() => {
+    //                 this.$router.push("/");
+    //             }, 200);
+    //         }
+    //     },
+    //     loginError(val) {
+    //         if (val != null) {
+    //             this.$notify("error", "Login Error", val, {
+    //                 duration: 3000,
+    //                 permanent: false
+    //             });
 
-            }
-        }
-    }
+    //         }
+    //     }
+    // }
 };
 </script>

@@ -18,6 +18,7 @@
     "username": "Username"
   },
   "menu": {
+    "private-space": "Private space",
     "app": "Home",
     "dashboards": "Dashboards",
     "default": "Default",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Dev\\MBC플젝\\Vue2CoreAndDocker\\MAMBrowser\\MAMBrowser.csproj": {}
+    "C:\\Dev\\MBC플젝NEW\\mam-browser\\MAMBrowser\\MAMBrowser.csproj": {}
   },
   "projects": {
-    "C:\\Dev\\MBC플젝\\Vue2CoreAndDocker\\MAMBrowser\\MAMBrowser.csproj": {
+    "C:\\Dev\\MBC플젝NEW\\mam-browser\\MAMBrowser\\MAMBrowser.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\MBC플젝\\Vue2CoreAndDocker\\MAMBrowser\\MAMBrowser.csproj",
+        "projectUniqueName": "C:\\Dev\\MBC플젝NEW\\mam-browser\\MAMBrowser\\MAMBrowser.csproj",
         "projectName": "MAMBrowser",
-        "projectPath": "C:\\Dev\\MBC플젝\\Vue2CoreAndDocker\\MAMBrowser\\MAMBrowser.csproj",
+        "projectPath": "C:\\Dev\\MBC플젝NEW\\mam-browser\\MAMBrowser\\MAMBrowser.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\MBC플젝\\Vue2CoreAndDocker\\MAMBrowser\\obj\\",
+        "outputPath": "C:\\Dev\\MBC플젝NEW\\mam-browser\\MAMBrowser\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -38,6 +38,14 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[3.1.5, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.7.0, )"
+            },
             "VueCliMiddleware": {
               "target": "Package",
               "version": "[3.0.0, )"
