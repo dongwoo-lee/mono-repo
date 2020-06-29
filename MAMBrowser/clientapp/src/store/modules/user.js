@@ -72,14 +72,22 @@ export default {
         {
           headers: { 'Content-Type': 'application/json' }
         });
-        commit('setUser', { uid: response.data.user_name, ...currentUser })
-        localStorage.setItem('access_token', payload.access_token)
-        localStorage.setItem('user_name', payload.user_name)
+        commit('setUser', { uid: response.data.username, ...currentUser })
+        localStorage.setItem('access_token', response.data.jwtToken)
+        localStorage.setItem('user_name', response.data.username)
         return response;
       } catch (error) {
         // sever error
         return error;
       }
+    },
+    refreshToken({ commit }, payload) {
+      $http.post('/api/Account/refresh-token').then(response => {
+        console.info('/api/Account/refresh-token', response);
+      })
+      .error(error => {
+        console.info('/api/Account/refresh-token-error', error);
+      })
     },
     forgotPassword({ commit }, payload) {
       commit('clearError')

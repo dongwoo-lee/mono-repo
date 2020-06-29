@@ -1,20 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using MAMBrowser.Entiies;
+using Microsoft.EntityFrameworkCore;
 
 namespace MAMBrowser.Helpers
 {
-    public class DataContext
+    public class DataContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
+        public DbSet<User> Users { get; set; }
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        public DataContext(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-        
+        //protected readonly IConfiguration Configuration;
+
+        //public DataContext(IConfiguration configuration)
+        //{
+        //    Configuration = configuration;
+        //}
+
         /**
          * EntityFramworkCore 패키지 설치가 필요함.
          */

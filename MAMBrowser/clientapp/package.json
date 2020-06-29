@@ -19,6 +19,7 @@
     "video.js": "^7.7.5",
     "vue": "^2.6.11",
     "vue-autosuggest": "^2.0.4",
+    "vue-cookies": "^1.7.0",
     "vue-headroom": "0.10.1",
     "vue-i18n": "^8.15.7",
     "vue-light-gallery": "^1.0.1",
