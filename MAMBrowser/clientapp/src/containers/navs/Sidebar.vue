@@ -91,7 +91,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations([
+        ...mapMutations('menu', [
             "changeSideMenuStatus",
             "addMenuClassname",
             "changeSelectedMenuHasSubItems"
@@ -263,10 +263,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            menuType: "getMenuType",
-            menuClickCount: "getMenuClickCount",
-            selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
+        ...mapGetters('menu', {
+            menuType: 'getMenuType',
+            menuClickCount: 'getMenuClickCount',
+            selectedMenuHasSubItems: 'getSelectedMenuHasSubItems'
         })
     },
     watch: {

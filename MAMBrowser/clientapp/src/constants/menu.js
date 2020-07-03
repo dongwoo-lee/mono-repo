@@ -5,11 +5,17 @@ const data = [
     icon: "iconsminds-shop",
     label: "menu.private-space", // 개인공간
     to: "/app/private",
-    subs: [{
-      icon: "simple-icon-paper-plane",
-      label: "menu.private-space",
-      to: "/app/private"
-    },
+    subs: [
+      {
+        icon: "simple-icon-paper-plane",
+        label: "menu.private-space",
+        to: "/app/private"
+      },
+      {
+        icon: "simple-icon-paper-plane",
+        label: "menu.private-dev",
+        to: "/app/dev"
+      },
     ]
   },
   {

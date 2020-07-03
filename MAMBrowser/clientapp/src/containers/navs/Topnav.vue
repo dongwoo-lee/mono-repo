@@ -223,8 +223,8 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["changeSideMenuStatus", "changeSideMenuForMobile"]),
-    ...mapActions(["setLang", "signOut"]),
+    ...mapMutations('menu', ['changeSideMenuStatus', 'changeSideMenuForMobile']),
+    ...mapActions('user', ['setLang', 'signOut']),
     search() {
       this.$router.push(`${this.searchPath}?search=${this.searchKeyword}`);
       this.searchKeyword = "";
@@ -306,12 +306,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      currentUser: "currentUser",
-      menuType: "getMenuType",
-      menuClickCount: "getMenuClickCount",
-      selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
-    })
+    ...mapGetters('menu', {
+      menuType: 'getMenuType',
+      menuClickCount: 'getMenuClickCount',
+      selectedMenuHasSubItems: 'getSelectedMenuHasSubItems'
+    }),
+    ...mapGetters('user', ['currentUser']),
   },
   beforeDestroy() {
     document.removeEventListener("click", this.handleDocumentforMobileSearch);

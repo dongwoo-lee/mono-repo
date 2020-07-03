@@ -1,9 +1,8 @@
-// import firebase from 'firebase/app'
-// import 'firebase/auth'
 import { currentUser, isAuthActive } from '../../constants/config'
-import $http from 'axios'
+import $http from '@/http.js'
 
 export default {
+  namespaced: true,
   state: {
     currentUser: isAuthActive ? currentUser : (localStorage.getItem('user') != null ? JSON.parse(localStorage.getItem('user')) : null),
     loginError: null,
@@ -21,7 +20,6 @@ export default {
   mutations: {
     setUser(state, payload) {
       state.isAuth = true;
-      // state.user_name = payload.user_name
       state.currentUser = payload;
       state.processing = false;
       state.loginError = null;
@@ -60,7 +58,7 @@ export default {
   actions: {
     async login({ commit }, payload) {
       commit('clearError');
-      // commit('setProcessing', true);
+      commit('setProcessing', true);
 
       const requestBody = {
         username: payload.email,
@@ -72,81 +70,34 @@ export default {
         {
           headers: { 'Content-Type': 'application/json' }
         });
-        commit('setUser', { uid: response.data.username, ...currentUser })
-        localStorage.setItem('access_token', response.data.jwtToken)
-        localStorage.setItem('user_name', response.data.username)
+        commit('setUser', { uid: response.data.username, ...currentUser });
+        commit('setProcessing', false);
+        localStorage.setItem('access_token', response.data.jwtToken);
+        localStorage.setItem('user_name', response.data.username);
         return response;
       } catch (error) {
         // sever error
         return error;
       }
     },
-    refreshToken({ commit }, payload) {
-      $http.post('/api/Account/refresh-token').then(response => {
-        console.info('/api/Account/refresh-token', response);
-      })
-      .error(error => {
-        console.info('/api/Account/refresh-token-error', error);
-      })
+    refreshToken({ commit }) {
+      console.log('refreshToken');
+      $http.post('/api/Account/refresh-token');
     },
     forgotPassword({ commit }, payload) {
       commit('clearError')
       commit('setProcessing', true)
-      // firebase
-      //   .auth()
-      //   .sendPasswordResetEmail(payload.email)
-      //   .then(
-      //     user => {
-      //       commit('clearError')
-      //       commit('setForgotMailSuccess')
-      //     },
-      //     err => {
-      //       commit('setError', err.message)
-      //       setTimeout(() => {
-      //         commit('clearError')
-      //       }, 3000)
-      //     }
-      //   )
     },
     resetPassword({ commit }, payload) {
       commit('clearError')
       commit('setProcessing', true)
-      // firebase
-      //   .auth()
-      //   .confirmPasswordReset(payload.resetPasswordCode,payload.newPassword)
-      //   .then(
-      //     user => {
-      //       commit('clearError')
-      //       commit('setResetPasswordSuccess')
-      //     },
-      //     err => {
-      //       commit('setError', err.message)
-      //       setTimeout(() => {
-      //         commit('clearError')
-      //       }, 3000)
-      //     }
-      //   )
     },
 
-
-
-    /*
-       return await auth.(resetPasswordCode, newPassword)
-        .then(user => user)
-        .catch(error => error);
-    */
     signOut({ commit }) {
       commit('setLogout');
       localStorage.removeItem('access_token')
       localStorage.removeItem('user_name')
       return true;
-      // firebase
-      //   .auth()
-      //   .signOut()
-      //   .then(() => {
-      //     localStorage.removeItem('user')
-      //     commit('setLogout')
-      //   }, _error => { })
     }
   }
 }

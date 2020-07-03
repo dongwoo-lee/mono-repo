@@ -29,7 +29,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getMenuType"])
+    ...mapGetters('menu', ["getMenuType"])
   },
   mounted() {
     setTimeout(() => {

@@ -22,16 +22,5 @@ export default {
       testData: '',
     }
   },
-  mounted() {
-    this.requestApi();
-  },
-  methods: {
-    requestApi() {
-      this.$http.get('/api/WeatherForecast/TestApi')
-      .then((res) => {
-        console.info(res);
-      })
-    }
-  }
 }
 </script>

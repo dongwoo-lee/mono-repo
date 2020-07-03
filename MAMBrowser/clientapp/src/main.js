@@ -27,7 +27,7 @@ import VueScrollTo from 'vue-scrollto'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
-import axios from 'axios'
+import http from './http.js'
 
 Vue.use(BootstrapVue);
 Vue.use(VueI18n);
@@ -46,7 +46,7 @@ Vue.use(VueLineClamp, {
   importCss: true
 });
 
-Vue.use({ install(Vue) { Vue.prototype.$http = axios } })
+Vue.use({ install(Vue) { Vue.prototype.$http = http } })
 
 Vue.component('piaf-breadcrumb', Breadcrumb);
 Vue.component('b-refresh-button', RefreshButton);

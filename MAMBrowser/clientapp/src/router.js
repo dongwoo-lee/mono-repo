@@ -1,8 +1,6 @@
 import Vue from "vue";
-import VueCookies from 'vue-cookies';
 import VueRouter from "vue-router";
 import AuthRequired from "./utils/AuthRequired";
-import store from './store'
 
 Vue.use(VueRouter);
 
@@ -28,6 +26,10 @@ const routes = [
       {
         path: "private",
         component: () => import(/* webpackChunkName: "private" */ "./views/app/Private"),
+      },
+      {
+        path: "dev",
+        component: () => import(/* webpackChunkName: "private" */ "./views/app/Dev"),
       },
       {
         path: "waste-basket",
@@ -93,19 +95,16 @@ const router = new VueRouter({
 });
 
 // 라우터 내비게이션 가드
-router.beforeEach(async(to, from, next) => {
-  // localStorage에 access_token값이 없을 경우 + refreshToken 값이 있을 경우 -> 토큰 재발급 함수 실행
-  if (localStorage.getItem('access_token') && VueCookies.get('refreshToken') !== null) {
-     await store.dispatch('user/refreshToken');
+router.beforeEach((to, from, next) => {
+  // 토큰 유무 체크
+  const tokenString = localStorage.getItem('access_token');
+  if (!tokenString) {
+    if (to.path !== '/user/login') {
+      next({ path: '/user/login', replace: true });
+    }
   }
 
-  // localStorage에 access_token값이 있거나 ~ requiresAuth 가 참일 경우 -> 다음 페이지로 이동
-  if (to.matched.some(record => record.meta.requiresAuth) || localStorage.getItem('access_token')){
-    return next();
-  }
-
-  // 아무것도 아닐 경우 (access_token값도 없고 refreshToken도 없고) -> 로그인 페이지로 이동
-  next('/user/login');
+  next();
 });
 
 

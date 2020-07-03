@@ -109,7 +109,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
+        ...mapGetters('menu', {
             menuType: 'getMenuType',
         })
     },

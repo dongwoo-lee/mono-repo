@@ -7,7 +7,7 @@ import user from './modules/user'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
   },
   mutations: {
@@ -26,3 +26,5 @@ export default new Vuex.Store({
     user,
   }
 })
+
+export default store

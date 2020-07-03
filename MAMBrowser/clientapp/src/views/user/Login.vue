@@ -96,10 +96,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["currentUser", "processing", "loginError"])
+        ...mapGetters('user', ['currentUser', 'processing', 'loginError'])
     },
     methods: {
-        ...mapActions(["login"]),
+        ...mapActions('user', ['login']),
         formSubmit() {
             // this.$v.$touch();
             // this.form.email = "piaf-vue@coloredstrategies.com";
