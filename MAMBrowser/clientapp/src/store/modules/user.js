@@ -4,7 +4,7 @@ import $http from '@/http.js'
 export default {
   namespaced: true,
   state: {
-    currentUser: isAuthActive ? currentUser : (localStorage.getItem('user') != null ? JSON.parse(localStorage.getItem('user')) : null),
+    currentUser: currentUser,
     loginError: null,
     processing: false,
     forgotMailSuccess:null,
@@ -66,15 +66,21 @@ export default {
       };
 
       try {
-        const response = await $http.post('/api/Account/authenticate', JSON.stringify(requestBody),
-        {
-          headers: { 'Content-Type': 'application/json' }
-        });
-        commit('setUser', { uid: response.data.username, ...currentUser });
-        commit('setProcessing', false);
-        localStorage.setItem('access_token', response.data.jwtToken);
-        localStorage.setItem('user_name', response.data.username);
-        return response;
+        // 서버 연결해서 작업할 경우
+        // const response = await $http.post('/api/Account/authenticate', JSON.stringify(requestBody),
+        // {
+        //   headers: { 'Content-Type': 'application/json' }
+        // });
+        // commit('setUser', { uid: response.data.username, ...currentUser });
+        // commit('setProcessing', false);
+        // sessionStorage.setItem('access_token', response.data.jwtToken);
+        // sessionStorage.setItem('user_name', response.data.username);
+        // return response;
+
+        commit('setUser', { uid: 1, ...currentUser });
+        sessionStorage.setItem('access_token', 'testtoken');
+        sessionStorage.setItem('user_name', 'test');
+        return { status: 200 };
       } catch (error) {
         // sever error
         return error;
@@ -95,8 +101,8 @@ export default {
 
     signOut({ commit }) {
       commit('setLogout');
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('user_name')
+      sessionStorage.removeItem('access_token')
+      sessionStorage.removeItem('user_name')
       return true;
     }
   }

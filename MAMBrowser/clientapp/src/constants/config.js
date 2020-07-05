@@ -1,4 +1,4 @@
-export const defaultMenuType = 'menu-default' // 'menu-default', 'menu-sub-hidden', 'menu-hidden';
+export const defaultMenuType = 'menu-sub-hidden' // 'menu-default', 'menu-sub-hidden', 'menu-hidden';
 export const defaultStartPath = '/app/piaf/start'
 export const searchPath = '#'
 export const buyUrl = 'https://1.envato.market/nEyZa'
@@ -29,7 +29,7 @@ export const apiUrl = 'https://api.coloredstrategies.com'
 
 export const currentUser = {
   id: 1,
-  title: 'Sarah Kortney',
+  title: 'testUser',
   img: '/assets/img/profile-pic-l.jpg',
   date: 'Last seen today 15:24'
 }

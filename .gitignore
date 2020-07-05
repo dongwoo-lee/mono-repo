@@ -266,3 +266,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+MAMBrowser/clientapp/package-lock.json
+MAMBrowser/obj/Debug/netcoreapp3.1/MAMBrowser.csprojAssemblyReference.cache
+MAMBrowser/obj/Debug/netcoreapp3.1/MAMBrowser.dll
+MAMBrowser/obj/Debug/netcoreapp3.1/MAMBrowser.pdb
+MAMBrowser/bin/Debug/netcoreapp3.1/clientapp/package-lock.json

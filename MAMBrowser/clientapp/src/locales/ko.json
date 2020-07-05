@@ -20,8 +20,8 @@
   "menu": {
     "app": "Home",
     "dashboards": "Dashboards",
-    "private-space": "개인공간",
-    "private-dev": "DEV",
+    "private": "My 공간",
+    "dev": "DEV",
     "waste-basket": "휴지통",
     "making": "제작",
     "program": "프로그램",

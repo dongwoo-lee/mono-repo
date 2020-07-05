@@ -1,52 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import AuthRequired from "./utils/AuthRequired";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    component: () => import(/* webpackChunkName: "home" */ "./views/home"),
+    component: () => import("./views/home"),
     redirect: "/app/private",
-    // beforeEnter: function(to, from, next) {
-    //   if (localStorage.getItem('access_token') !== null) {
-    //     next({ path: '/app/private' });
-    //   } else {
-    //     next({ path: '/user' });
-    //   }
-    // }
-  },
-  {
-    path: "/app",
-    component: () => import(/* webpackChunkName: "app" */ "./views/app"),
-    redirect: "/app/private",
-    // beforeEnter: AuthRequired,
-    children: [
-      {
-        path: "private",
-        component: () => import(/* webpackChunkName: "private" */ "./views/app/Private"),
-      },
-      {
-        path: "dev",
-        component: () => import(/* webpackChunkName: "private" */ "./views/app/Dev"),
-      },
-      {
-        path: "waste-basket",
-        component: () => import(/* webpackChunkName: "second-menu" */ "./views/app/Waste-basket"),
-      },
-
-
-      {
-        path: "single",
-        component: () =>
-          import(/* webpackChunkName: "single" */ "./views/app/single")
-      }
-    ]
-  },
-  {
-    path: "/error",
-    component: () => import(/* webpackChunkName: "error" */ "./views/Error")
   },
   {
     path: "/user",
@@ -57,30 +18,132 @@ const routes = [
         path: "login",
         component: () => import(/* webpackChunkName: "user" */ "./views/user/Login"),
         meta: { requiresAuth: true }
-        // beforeEnter: (to, from, next) => {
-        //   if (localStorage.getItem('access_token') != null) {
-        //     next({ path: "/" });
-        //   } else {
-        //     next();
-        //   }
-        // }
       },
-      // {
-      //   path: "register",
-      //   component: () =>
-      //     import(/* webpackChunkName: "user" */ "./views/user/Register")
-      // },
-      // {
-      //   path: "forgot-password",
-      //   component: () =>
-      //     import(/* webpackChunkName: "user" */ "./views/user/ForgotPassword")
-      // },
-      // {
-      //   path: "reset-password",
-      //   component: () =>
-      //     import(/* webpackChunkName: "user" */ "./views/user/ResetPassword")
-      // },
     ]
+  },
+  {
+    path: "/app",
+    component: () => import("./views/app"),
+    redirect: "/app/private",
+    children: [
+      /**
+       * My 공간
+       */
+      {
+        // 개발 컴포넌트
+        path: "dev",
+        component: () => import("./views/app/dev/Index"),
+      },
+      {
+        // My 공간
+        path: "private",
+        component: () => import("./views/app/private/Index"),
+      },
+      {
+        // 휴지통
+        path: "waste-basket",
+        component: () => import("./views/app/wasteBasket/Index"),
+      },
+      /**
+       * 제작
+       */
+      {
+        // 제작 - 프로그램
+        path: "program",
+        component: () => import("./views/app/making/Program"),
+      },
+      {
+        // 제작 - 부조  SPOT
+        path: "relief-spot",
+        component: () => import("./views/app/making/ReliefSpot"),
+      },
+      {
+        // 제작 - 공유소재
+        path: "shared-material",
+        component: () => import("./views/app/making/SharedMaterial"),
+      },
+      {
+        // 제작 - 취재물
+        path: "coverage",
+        component: () => import("./views/app/making/Coverage"),
+      },
+      {
+        // 제작 - (구)프로소재
+        path: "pro-materials",
+        component: () => import("./views/app/making/ProMaterials"),
+      },
+      /**
+       * 음원
+       */
+      {
+        // 음원 - 음반기록실
+        path: "music-record-room",
+        component: () => import("./views/app/soundtrack/MusicRecordRoom"),
+      },
+      {
+        // 음원 - 효과음
+        path: "sound-effect",
+        component: () => import("./views/app/soundtrack/SoundEffect"),
+      },
+      /**
+       * 광고
+       */
+      {
+        // 광고 - 주조SB
+        path: "casting-sb",
+        component: () => import("./views/app/advertising/CastingSb"),
+      },
+      {
+        // 광고 - 부조SB
+        path: "relief-sb",
+        component: () => import("./views/app/advertising/ReliefSb"),
+      },
+      {
+        // 광고 - CM
+        path: "cm",
+        component: () => import("./views/app/advertising/Cm"),
+      },
+      /**
+       * 편성 MD
+       */
+      {
+        // 편성 MD - 주조 SPOT
+        path: "casting-spot",
+        component: () => import("./views/app/combinationMd/CastingSpot"),
+      },
+      {
+        // 편성 MD - Filler(PR)
+        path: "filler-pr",
+        component: () => import("./views/app/combinationMd/FillerPr"),
+      },
+      {
+        // 편성 MD - Filler(소재)
+        path: "filler-material",
+        component: () => import("./views/app/combinationMd/FillerMaterial"),
+      },
+      {
+        // 편성 MD - Filler(시간)
+        path: "filler-time",
+        component: () => import("./views/app/combinationMd/FillerTime"),
+      },
+      {
+        // 편성 MD - Filler(기타)
+        path: "filler-other",
+        component: () => import("./views/app/combinationMd/FillerOther"),
+      },
+      /**
+       * DL3.0
+       */
+      {
+        // DL3.0
+        path: "dl3",
+        component: () => import("./views/app/dl3/Index"),
+      },
+    ]
+  },
+  {
+    path: "/error",
+    component: () => import(/* webpackChunkName: "error" */ "./views/Error")
   },
   {
     path: "*",
@@ -97,7 +160,7 @@ const router = new VueRouter({
 // 라우터 내비게이션 가드
 router.beforeEach((to, from, next) => {
   // 토큰 유무 체크
-  const tokenString = localStorage.getItem('access_token');
+  const tokenString = sessionStorage.getItem('access_token');
   if (!tokenString) {
     if (to.path !== '/user/login') {
       next({ path: '/user/login', replace: true });
