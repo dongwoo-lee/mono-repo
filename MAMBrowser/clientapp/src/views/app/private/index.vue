@@ -14,7 +14,7 @@
             <b-row>
               <b-colxx sm="2">
                 <b-form-group label="채널">
-                  <b-form-input type="email" v-model="gridForm.email" />
+                  <c-input-text type="text" v-model="gridForm.email"></c-input-text>
                 </b-form-group>
               </b-colxx>
               <b-colxx sm="2">
@@ -22,14 +22,52 @@
                   <b-form-select v-model="gridForm.state" :options="stateOptions" plain />
                 </b-form-group>
               </b-colxx>
-              <b-colxx sm="2">
-                <b-form-group label="시작날짜" inline>
-                  <b-form-input type="date" />
-                </b-form-group>
-              </b-colxx>
-              <b-colxx sm="2">
-                <b-form-group label="종료날짜" inline>
-                  <b-form-input type="date" />
+              <b-colxx sm="4">
+                <b-form-group label="날짜" class="inline-block">
+                  <div class="d-flex">
+                    <b-input-group class="w-50 mr-2">
+                      <b-form-input
+                        v-model="startDate"
+                        type="text"
+                        placeholder="YYYY-MM-DD"
+                        pattern="\d\d\d\d-(0[1-9]|1[1-2])-(0[1-9]|[1-2][0-9]|3[0-1])"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-form-datepicker
+                          v-model="startDate"
+                          button-only
+                          left
+                          aria-controls="example-input"
+                          button-variant="secondary default"
+                          label-next-month="다음달"
+                          today-variant
+                          :hide-header="true"
+                          size="sm"
+                        ></b-form-datepicker>
+                      </b-input-group-append>
+                    </b-input-group>
+                    <b-input-group class="w-50 mr-2">
+                      <b-form-input
+                        v-model="endDate"
+                        type="text"
+                        placeholder="YYYY-MM-DD"
+                        autocomplete="off"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-form-datepicker
+                          v-model="endDate"
+                          button-only
+                          left
+                          aria-controls="example-input"
+                          button-variant="secondary default"
+                          label-next-month="다음달"
+                          today-variant
+                          :hide-header="true"
+                          size="sm"
+                        ></b-form-datepicker>
+                      </b-input-group-append>
+                    </b-input-group>
+                  </div>
                 </b-form-group>
               </b-colxx>
               <b-colxx sm="2">
@@ -40,6 +78,17 @@
               <b-colxx sm="2">
                 <b-form-group label="제작자">
                   <b-form-input type="text" v-model="gridForm.email" />
+                </b-form-group>
+              </b-colxx>
+              <b-colxx sm="3">
+                <b-form-group label="추가 검색">
+                  <b-form-checkbox-group v-model="selected">
+                    <b-form-checkbox value="orange">히트곡</b-form-checkbox>
+                    <b-form-checkbox value="apple">금지곡</b-form-checkbox>
+                    <b-form-checkbox value="pineapple">주의</b-form-checkbox>
+                    <b-form-checkbox value="grape">청소년유해</b-form-checkbox>
+                    <b-form-checkbox value="banana">뮤직비디오</b-form-checkbox>
+                  </b-form-checkbox-group>
                 </b-form-group>
               </b-colxx>
             </b-row>
@@ -105,15 +154,24 @@
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import { apiUrl } from "../../../constants/config";
+import CInputText from '../../../components/Input/CInputText';
 
 export default {
-  components: { Vuetable },
+  components: { Vuetable, CInputText },
   data() {
     return {
       apiBase: apiUrl + "/cakes/fordatatable",
       page: 1,
       perPage: 12,
-      stateOptions: ["", "Option1", "Option2", "Option3", "Option4", "Option5"],
+      startDate: '',
+      endDate: '',
+      selected: [],
+      stateOptions: [
+        { value: null, text: '선택해주세요.' },
+        { value: 'option1', text: 'option1' },
+        { value: 'option2', text: 'option2' },
+        { value: 'option3', text: 'option3' },
+      ],
       gridForm: {
         email: "",
         password: "",
