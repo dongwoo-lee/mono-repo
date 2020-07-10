@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SmartSqlMap Scope="PrivateWorkspaceMap" xmlns="http://SmartSql.net/schemas/SmartSqlMap.xsd">
+	<Statements>
+		<!--<Statement>
+		<selectKey keyProperty="id" resultClass="int">
+			SELECT MAM_LOG_SEQ.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		</Statement>-->
+	</Statements>
+</SmartSqlMap>

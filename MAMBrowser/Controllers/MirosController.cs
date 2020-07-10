@@ -11,7 +11,7 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class MirosController : ControllerBase
     {
-        [HttpGet("miros/programlist?start_dt={start_dt}&end_dt={end_dt}")]
+        //[HttpGet("miros/programlist?start_dt={start_dt}&end_dt={end_dt}")]
         public DTO_RESULT GetProgramList()
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -35,7 +35,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             return result;
         }
-        [HttpGet("categories/filler?general")]
+        [HttpGet("categories/filler/general")]
         public DTO_RESULT GetGeneralCatetory()
         {
             DTO_RESULT result = new DTO_RESULT();

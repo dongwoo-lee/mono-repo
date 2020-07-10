@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SmartSqlMap Scope="Products" xmlns="http://SmartSql.net/schemas/SmartSqlMap.xsd">
+	<ResultMaps>
+		<ResultMap Id="PGM">
+			<Result Column="MEDIANAME" Property="MediaName" />
+			<Result Column="EVENTNAME" Property="Name" />
+			<Result Column="ONAIRDATE" Property="BrdDT" />
+			<Result Column="ONAIRTIME" Property="BrdTime" />
+			<Result Column="STATENAME" Property="Status" />
+			<Result Column="MILLISEC" Property="Duration" />
+			<Result Column="EDITORNAME" Property="UserName" />
+			<Result Column="EDITTIME" Property="EditDtm" />
+			<Result Column="REQTIME" Property="CompleteDtm" />
+			<Result Column="MASTERFILE" Property="FilePath" />
+		</ResultMap>
+	</ResultMaps>
+	
+	<Statements>
+		<Statement Id="SELECT_PGM_01" ResultMap="PGM" >
+	
+				SELECT rownum NO,MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
+				FROM
+				MEM_PROGRAM_VIEW
+				WHERE
+				MEDIA = 'A'
+				AND ONAIRDATE = '20200101'
+				AND rownum = @MAX_ROW
+		</Statement>
+		
+	</Statements>
+</SmartSqlMap>

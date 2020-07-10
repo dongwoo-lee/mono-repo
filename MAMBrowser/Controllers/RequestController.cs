@@ -17,8 +17,9 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             return result;
         }
-        [HttpGet("job_status?jobid={jobid}")]
-        public DTO_RESULT GetJobStatus(string jobid)
+        //[HttpGet("job_status?jobid={jobid}")]
+        [HttpGet("job_status")]
+        public DTO_RESULT GetJobStatus([FromQuery] string jobid)
         {
             DTO_RESULT result = new DTO_RESULT();
             return result;

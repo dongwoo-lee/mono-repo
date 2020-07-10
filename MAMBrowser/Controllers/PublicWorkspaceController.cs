@@ -24,8 +24,9 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             return result;
         }
-        [HttpGet("?media={media}&adcd={adcd}&pd={pd}&name={name}")]
-        public DTO_RESULT GetPrivateDataList(string filename, string title, string memo)
+        //[HttpGet("?media={media}&adcd={adcd}&pd={pd}&name={name}")]
+        [HttpGet("files")]
+        public DTO_RESULT GetPrivateDataList([FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo)
         {
             DTO_RESULT result = new DTO_RESULT();
             return result;

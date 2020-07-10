@@ -1,6 +1,4 @@
-﻿using log4net;
-using log4net.Repository.Hierarchy;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,30 +10,21 @@ namespace MAMBrowser
 {
     public class MyLogger
     {
-        private static readonly string LOG_CONFIG_FILE = @"log4net.config";
-
-        private static readonly log4net.ILog _log = GetLogger(typeof(Logger));
-
-        public static ILog GetLogger(Type type)
+        public static void Debug(string title, string msg)
         {
-            return LogManager.GetLogger(type);
+
         }
-
-        public static void Debug(object message)
+        public static void Info(string title, string msg)
         {
-            SetLog4NetConfiguration();
-            _log.Debug(message);
+
         }
-
-        private static void SetLog4NetConfiguration()
+        public static void Warn(string title, string msg)
         {
-            XmlDocument log4netConfig = new XmlDocument();
-            log4netConfig.Load(File.OpenRead(LOG_CONFIG_FILE));
 
-            var repo = LogManager.CreateRepository(
-                Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
+        }
+        public static void Error(string title, string msg)
+        {
 
-            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
         }
     }
 }

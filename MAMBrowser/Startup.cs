@@ -2,11 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MAMBrowser.Helpers;
-using MAMBrowser.Service;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using MAMBrowser.Entiies;
 using System;
 using VueCliMiddleware;
@@ -28,7 +26,6 @@ namespace MAMBrowser
         public void ConfigureServices(IServiceCollection services)
         {
             // use sql server db in production and sqlite db in development
-            services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"));
             services.AddCors();
             services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = true);
 
@@ -68,15 +65,11 @@ namespace MAMBrowser
             });
 
             // configure DI for application services
-            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, DataContext context)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
-            context.Users.Add(new User { Username = "test@adsoft.com", Password = "12341234" });
-            context.SaveChanges();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
