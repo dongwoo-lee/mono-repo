@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SmartSqlMapConfig xmlns="http://SmartSql.net/schemas/SmartSqlMapConfig.xsd">
-	<Settings IgnoreParameterCase="false" ParameterPrefix="$" IsCacheEnabled="true"/>
+	<Settings IgnoreParameterCase="false" ParameterPrefix="#" IsCacheEnabled="true"/>
 	<Properties>
 		<Property Name="ConnectionString" Value="Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=dev.adsoft.kr)(PORT=1523)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=orcl)));User Id=MIROS;Password=MIROS;"/>
 	</Properties>

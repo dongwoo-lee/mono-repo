@@ -19,5 +19,8 @@ namespace MAMBrowser.DTO
         public string EditDtm { get; set; } //편집일시
         public string CompleteDtm { get; set; } //방송의뢰일시
         public string FilePath { get; set; }    //파일 경로   
+
+        public long RowNum { get; set; }   
+        public long Count { get; set; }    
     }
 }

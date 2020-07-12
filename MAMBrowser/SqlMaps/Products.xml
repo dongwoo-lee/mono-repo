@@ -12,19 +12,31 @@
 			<Result Column="EDITTIME" Property="EditDtm" />
 			<Result Column="REQTIME" Property="CompleteDtm" />
 			<Result Column="MASTERFILE" Property="FilePath" />
+
+			<Result Column="RNUM" Property="RowNum" />
+			<Result Column="RESULT_COUNT" Property="Count" />
 		</ResultMap>
 	</ResultMaps>
 	
 	<Statements>
 		<Statement Id="SELECT_PGM_01" ResultMap="PGM" >
-	
-				SELECT rownum NO,MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
-				FROM
-				MEM_PROGRAM_VIEW
-				WHERE
-				MEDIA = 'A'
-				AND ONAIRDATE = '20200101'
-				AND rownum = @MAX_ROW
+			SELECT *
+			FROM (SELECT r.*, ROWNUM RNUM, COUNT(*) OVER () RESULT_COUNT
+				FROM (SELECT rownum NO,MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
+					FROM
+					MEM_PROGRAM_VIEW
+					WHERE
+					MEDIA = #MEDIA
+					AND ONAIRDATE = #BRD_DT) R)
+			WHERE RNUM BETWEEN #START_NO AND #LAST_NO
+		</Statement>
+		<Statement Id="SELECT_PGM_02" ResultMap="PGM" >
+			SELECT rownum NO,MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
+			FROM
+			MEM_PROGRAM_VIEW
+			WHERE
+			MEDIA = #MEDIA#
+			AND ONAIRDATE = '20200101'
 		</Statement>
 		
 	</Statements>
