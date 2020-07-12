@@ -6,10 +6,8 @@
             :fields="fields"
             :data="data"
             :per-page="perPage"
-            :row-class="onRowClass"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
-            @vuetable:cell-leftclicked="leftClicked"
         >
             <template v-if="isActionsSlot" slot="actions" scope="props">
                 <div class="table-button-container">
@@ -72,7 +70,8 @@ export default {
             tBody: null,         // vuetable 테이블 body
             scrollTimeout: null, // 스크롤 동작 타임아웃
             rowElemHeight: 0,    // 로우 높이
-            selectedItems: [],
+            selectedItems: [],   // 선택 로우 데이터
+            isRightClick: false,
         }
     },
     mounted() {
@@ -105,6 +104,11 @@ export default {
         },
         onRowClass(dataItem, index) {
             if (this.selectedItems.includes(dataItem.id)) {
+                if (this.isRightClick) {
+                    this.isRightClick = false;
+                    return;
+                }
+
                 this.$refs.vuetable.selectedTo[index] = dataItem.id;
                 return "selected";
             }
@@ -118,22 +122,20 @@ export default {
             const itemId = dataItem.id;
             if (this.selectedItems.includes(itemId)) {
                 this.selectedItems = this.selectedItems.filter(x => x !== itemId);
+                this.$refs.vuetable.selectedTo.splice(index, 1);
             } else {
                 this.selectedItems.push(itemId);
+                this.$refs.vuetable.selectedTo[itemId] = dataItem.id;
             }
         },
         rightClicked(dataItem, field, event) {
             event.preventDefault();
+            this.isRightClick = true;
             if (!this.selectedItems.includes(dataItem.id)) {
                 this.selectedItems = [dataItem.id];
             }
             this.$refs.contextmenu.show({ top: event.pageY, left: event.pageX });
         },
-        leftClicked(dataItem, event) {
-            event.preventDefault();
-            this.onRowClass(dataItem);
-            console.info('this.$refs', this.$refs)
-        }
     }
 }
 </script>

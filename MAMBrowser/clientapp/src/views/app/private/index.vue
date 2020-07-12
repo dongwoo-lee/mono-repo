@@ -131,7 +131,6 @@
         </b-card>
       </b-colxx>
     </b-row>
-
     <!-- 컨텍스트 메뉴 -->
     <v-contextmenu ref="contextmenu">
       <v-contextmenu-item @click="onContextMenuAction('copy')">
@@ -147,7 +146,7 @@
         <span>Delete</span>
       </v-contextmenu-item>
     </v-contextmenu>
-
+    <!--//-->
   </div>
 </template>
 
