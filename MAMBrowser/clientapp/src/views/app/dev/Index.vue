@@ -2,15 +2,23 @@
 <div>
     <b-row>
         <b-colxx xxs="12">
-            <piaf-breadcrumb :heading="$t('menu.blank-page')" />
+            <piaf-breadcrumb heading="개발 컴포넌트 모음" />
             <div class="separator mb-5"></div>
         </b-colxx>
     </b-row>
     <b-row>
         <b-colxx xxs="12">
-            <b-card class="mb-4" :title="$t('menu.blank-page')">
-            </b-card>
+            <!-- 스크롤 페이징 테이블 -->
+            <dev-scroll-paging-table></dev-scroll-paging-table>
         </b-colxx>
     </b-row>
 </div>
 </template>
+
+<script>
+import DevScrollPagingTable from './DevScrollPagingTable';
+
+export default {
+    components: { DevScrollPagingTable }
+}
+</script>

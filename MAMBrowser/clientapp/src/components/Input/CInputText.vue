@@ -2,7 +2,6 @@
     <div>
         <b-form-input
             ref="input"
-            type="text"
             :value="value"
             :placeholder="placeholder"
             @input="onInput"
