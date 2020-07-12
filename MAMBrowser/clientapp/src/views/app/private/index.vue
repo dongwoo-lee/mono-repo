@@ -155,9 +155,10 @@
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import { apiUrl } from "../../../constants/config";
 import CInputText from '../../../components/Input/CInputText';
+import DataTableScrollPaging from '../../../components/DataTable/DataTableScrollPaging';
 
 export default {
-  components: { Vuetable, CInputText },
+  components: { Vuetable, CInputText, DataTableScrollPaging },
   data() {
     return {
       apiBase: apiUrl + "/cakes/fordatatable",

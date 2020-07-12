@@ -1,0 +1,139 @@
+<template>
+    <div>
+        <vuetable ref="vuetable"
+            :api-mode="false"
+            :table-height="tableHeight"
+            :fields="fields"
+            :data="data"
+            :per-page="perPage"
+            :row-class="onRowClass"
+            @vuetable:row-clicked="rowClicked"
+            @vuetable:cell-rightclicked="rightClicked"
+            @vuetable:cell-leftclicked="leftClicked"
+        >
+            <template v-if="isActionsSlot" slot="actions" scope="props">
+                <div class="table-button-container">
+                    <slot name="actions"></slot>
+                </div>
+            </template>
+        </vuetable>
+        <!-- 우클릭 컨텍스트 메뉴 -->
+        <v-contextmenu ref="contextmenu">
+            <v-contextmenu-item @click="onContextMenuAction('copy')">
+                <i class="simple-icon-docs" />
+                <span>Copy</span>
+            </v-contextmenu-item>
+            <v-contextmenu-item @click="onContextMenuAction('move-to-archive')">
+                <i class="simple-icon-drawer" />
+                <span>Move to archive</span>
+            </v-contextmenu-item>
+            <v-contextmenu-item @click="onContextMenuAction('delete')">
+                <i class="simple-icon-trash" />
+                <span>Delete</span>
+            </v-contextmenu-item>
+        </v-contextmenu>
+    </div>
+</template>
+
+<script>
+import Vuetable from "vuetable-2/src/components/Vuetable";
+
+export default {
+    components: { Vuetable },
+    props: {
+        tableHeight: {          // 테이블 높이
+            type: String,
+            default: '500px',
+        },
+        fields: {               // header 데이터
+            type: Array,
+            default: () => [],
+        },
+        data: {                  // rows 데이터
+            type: Array,
+            default: () => [],
+            required: true,
+        },
+        numRowsToBottom: {       // 맨 아래 행수
+            type: Number,
+            default: 1,
+        },
+        perPage: {               // 페이지당 보여줄 개수
+            type: Number,
+            default: 10,
+        },
+        isActionsSlot: {             // actions: button 등 slot 사용 유무
+            type: Boolean,  
+            default: false,
+        }
+    },
+    data() {
+        return {
+            tBody: null,         // vuetable 테이블 body
+            scrollTimeout: null, // 스크롤 동작 타임아웃
+            rowElemHeight: 0,    // 로우 높이
+            selectedItems: [],
+        }
+    },
+    mounted() {
+        this.$nextTick(() => {
+            const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
+            [this.tBody] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
+            if (!this.tBody || !rowElem) return;
+            this.rowElemHeight = rowElem.clientHeight;
+            this.tBody.addEventListener('scroll', e => {
+                clearTimeout(this.scrollTimeout);
+                this.scrollTimeout = setTimeout(() => {
+                    this.handlerScroll(e);
+                }, 150)
+            });
+        });
+    },
+    destroyed() {
+      if (this.tBody != null) {
+        this.tBody.removeEventListener('scroll', this.handlerScroll);
+      }
+    },
+    methods: {
+        handlerScroll({ target }) {
+            const { clientHeight, scrollTop, scrollHeight } = target;
+            if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
+                this.lastClientHeight = scrollTop;
+                this.$emit('scrollPerPage', this.currentPage * 10)
+            }
+            
+        },
+        onRowClass(dataItem, index) {
+            if (this.selectedItems.includes(dataItem.id)) {
+                this.$refs.vuetable.selectedTo[index] = dataItem.id;
+                return "selected";
+            }
+            if (this.$refs.vuetable.selectedTo[index]) {
+                this.$refs.vuetable.selectedTo.splice(index, 1);
+            }
+            
+            return "";
+        },
+        rowClicked(dataItem, event) {
+            const itemId = dataItem.id;
+            if (this.selectedItems.includes(itemId)) {
+                this.selectedItems = this.selectedItems.filter(x => x !== itemId);
+            } else {
+                this.selectedItems.push(itemId);
+            }
+        },
+        rightClicked(dataItem, field, event) {
+            event.preventDefault();
+            if (!this.selectedItems.includes(dataItem.id)) {
+                this.selectedItems = [dataItem.id];
+            }
+            this.$refs.contextmenu.show({ top: event.pageY, left: event.pageX });
+        },
+        leftClicked(dataItem, event) {
+            event.preventDefault();
+            this.onRowClass(dataItem);
+            console.info('this.$refs', this.$refs)
+        }
+    }
+}
+</script>

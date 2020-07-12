@@ -148,7 +148,7 @@ const routes = [
   {
     path: "*",
     component: () => import(/* webpackChunkName: "error" */ "./views/Error")
-  }
+  },
 ];
 
 const router = new VueRouter({
