@@ -16,14 +16,14 @@ namespace MAMBrowser
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //MyLogger.Debug($"starting.");
-            
+            //MyLogger.Info($"starting.", null);
+
             //while (!stoppingToken.IsCancellationRequested)
             //{
-            //    MyLogger.Debug($"process - {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}");
+            //    MyLogger.Info($"process ", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             //    await Task.Delay(5000, stoppingToken);
             //}
-            //MyLogger.Debug($"stoped.");
+            //MyLogger.Info($"stoped.", null);
         }
     }
 }

@@ -16,7 +16,8 @@ namespace MAMBrowser
         }
         public static void Info(string title, string msg)
         {
-
+            var logger =log4net.LogManager.GetLogger(typeof(MyLogger));
+            logger.Info(title);
         }
         public static void Warn(string title, string msg)
         {

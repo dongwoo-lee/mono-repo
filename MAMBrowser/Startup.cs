@@ -9,6 +9,9 @@ using MAMBrowser.Entiies;
 using System;
 using VueCliMiddleware;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Reflection;
+using System.IO;
 
 namespace MAMBrowser
 {
@@ -25,6 +28,15 @@ namespace MAMBrowser
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(c=>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+            // Set the comments path for the Swagger JSON and UI.
+           
+
             // use sql server db in production and sqlite db in development
             services.AddCors();
             services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = true);
@@ -68,8 +80,16 @@ namespace MAMBrowser
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, ILoggerFactory  logFactory)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
+            logFactory.AddLog4Net();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

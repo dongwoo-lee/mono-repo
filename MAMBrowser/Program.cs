@@ -22,5 +22,10 @@ namespace MAMBrowser
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+                //.ConfigureLogging((hostingContext, logging) =>
+                //{
+                //    logging.AddLog4Net();
+                //    logging.SetMinimumLevel(LogLevel.Debug);
+                //});
     }
 }
