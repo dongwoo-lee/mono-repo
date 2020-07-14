@@ -146,7 +146,7 @@
         </member>
         <member name="M:MAMBrowser.Controllers.ProductsController.FindPGM(System.String,System.String)">
             <summary>
-            프로그램 소재 조회(시간순정렬되며, 임의로 정렬불가)
+            프로그램 소재 조회 (페이징 x)
             </summary>
             <param name="media">매체코드(A,F,C,D)</param>
             <param name="brd_dt">방송일(20200101)</param>
@@ -166,7 +166,7 @@
             <param name="sortValue"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindReport(System.String,System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindReport(System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
             취재물 소재 조회
             </summary>
@@ -178,7 +178,7 @@
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindOldPro(System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindOldPro(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
             (구)프로소재 조회
             </summary>
@@ -211,7 +211,7 @@
         </member>
         <member name="M:MAMBrowser.Controllers.ProductsController.FindMcrSB(System.String,System.String,System.String)">
             <summary>
-            주조SB 조회
+            주조SB 소재 조회 (페이징x)
             </summary>
             <param name="media"></param>
             <param name="brd_dt"></param>
@@ -220,7 +220,7 @@
         </member>
         <member name="M:MAMBrowser.Controllers.ProductsController.FindScrSB(System.String,System.String,System.String)">
             <summary>
-            부조SB 조회
+            부조SB 소재 조회 (페이징x)
             </summary>
             <param name="media"></param>
             <param name="brd_dt"></param>
@@ -229,7 +229,7 @@
         </member>
         <member name="M:MAMBrowser.Controllers.ProductsController.FindCM(System.String,System.String,System.String,System.String)">
             <summary>
-            광고 조회
+            광고 소재 조회 (페이징x)
             </summary>
             <param name="media"></param>
             <param name="brd_dt"></param>
@@ -237,20 +237,21 @@
             <param name="pgm"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindMcrSpot(System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindMcrSpot(System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
-            주조SPOT 조회
+            주조SPOT 소재 조회
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
+            <param name="start_dt"></param>
             <param name="end_dt"></param>
             <param name="status"></param>
             <param name="pd"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindProFiller(System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindProFiller(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
-            필러(pr) 조회
+            필러(pr) 소재 조회
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
@@ -258,9 +259,9 @@
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindFeneralFiller(System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindFeneralFiller(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
-            필러(일반) 조회
+            필러(일반) 소재 조회
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
@@ -268,9 +269,9 @@
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindTimetoneFiller(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindTimetoneFiller(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
-            필러(시간) 조회
+            필러(시간) 소재 조회
             </summary>
             <param name="media"></param>
             <param name="start_dt"></param>
@@ -281,9 +282,9 @@
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="M:MAMBrowser.Controllers.ProductsController.FindETCFiller(System.String,System.String,System.String,System.String)">
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindETCFiller(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
             <summary>
-            필러(기타) 조회
+            필러(기타) 소재 조회
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
@@ -293,11 +294,11 @@
         </member>
         <member name="M:MAMBrowser.Controllers.ProductsController.FindNewDL(System.String,System.String,System.String)">
             <summary>
-            DL3.0 소재 조회
+            DL3.0 소재 조회 (페이징x)
             </summary>
-            <param name="media"></param>
+            <param name="media">매체(A,C,D,F)</param>
             <param name="cate"></param>
-            <param name="reg_dt"></param>
+            <param name="brd_dt">방송일</param>
             <returns></returns>
         </member>
         <member name="M:MAMBrowser.Controllers.PublicFileController.UploadFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">

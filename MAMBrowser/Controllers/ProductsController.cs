@@ -19,7 +19,7 @@ namespace MAMBrowser.Controllers
      
 
         /// <summary>
-        /// 프로그램 소재 조회(시간순정렬되며, 임의로 정렬불가)
+        /// 프로그램 소재 조회 (페이징 x)
         /// </summary>
         /// <param name="media">매체코드(A,F,C,D)</param>
         /// <param name="brd_dt">방송일(20200101)</param>
@@ -112,7 +112,7 @@ namespace MAMBrowser.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string pd, [FromQuery] string reporter, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string pd, [FromQuery] string reporter, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>>();
             try
@@ -135,7 +135,7 @@ namespace MAMBrowser.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("old_pro")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> FindOldPro([FromQuery] string media, [FromQuery] string type, [FromQuery] string pd, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> FindOldPro([FromQuery] string media, [FromQuery] string type, [FromQuery] string pd, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>>();
             try
@@ -211,7 +211,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 주조SB 소재 조회
+        /// 주조SB 소재 조회 (페이징x)
         /// </summary>
         /// <param name="media"></param>
         /// <param name="brd_dt"></param>
@@ -233,7 +233,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 부조SB 소재 조회
+        /// 부조SB 소재 조회 (페이징x)
         /// </summary>
         /// <param name="media"></param>
         /// <param name="brd_dt"></param>
@@ -255,7 +255,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 광고 소재 조회
+        /// 광고 소재 조회 (페이징x)
         /// </summary>
         /// <param name="media"></param>
         /// <param name="brd_dt"></param>
@@ -283,12 +283,13 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
+        /// <param name="start_dt"></param>
         /// <param name="end_dt"></param>
         /// <param name="status"></param>
         /// <param name="pd"></param>
         /// <returns></returns>
         [HttpGet("spot/mcr")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>> FindMcrSpot([FromQuery] string media, [FromQuery] string cate, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string pd)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>> FindMcrSpot([FromQuery] string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string pd, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>>();
             try
@@ -311,7 +312,7 @@ namespace MAMBrowser.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/pr")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindProFiller([FromQuery] string media, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindProFiller([FromQuery] string media, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>>();
             try
@@ -334,7 +335,7 @@ namespace MAMBrowser.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/general")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindFeneralFiller([FromQuery] string media, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindFeneralFiller([FromQuery] string media, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>>();
             try
@@ -360,7 +361,7 @@ namespace MAMBrowser.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/time")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindTimetoneFiller([FromQuery] string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindTimetoneFiller([FromQuery] string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>>();
             try
@@ -383,7 +384,7 @@ namespace MAMBrowser.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/etc")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindETCFiller([FromQuery] string media, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindETCFiller([FromQuery] string media, [FromQuery] string cate, [FromQuery] string pd, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>>();
             try
@@ -398,14 +399,14 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// DL3.0 소재 조회
+        /// DL3.0 소재 조회 (페이징x)
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="media">매체(A,C,D,F)</param>
         /// <param name="cate"></param>
-        /// <param name="reg_dt"></param>
+        /// <param name="brd_dt">방송일</param>
         /// <returns></returns>
         [HttpGet("dl30")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> FindNewDL([FromQuery] string media, [FromQuery] string cate, [FromQuery] string reg_dt )
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> FindNewDL([FromQuery] string media, [FromQuery] string cate, [FromQuery] string brd_dt)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>>();
             try
