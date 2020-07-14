@@ -10,7 +10,7 @@ import store from './store'
 import en from './locales/en.json'
 import ko from './locales/ko.json'
 import VueI18n from 'vue-i18n'
-import { defaultLocale, localeOptions, firebaseConfig } from './constants/config'
+import { defaultLocale, localeOptions } from './constants/config'
 // Notification Component Add
 import Notifications from './components/Common/Notification'
 // Breadcrumb Component Add
@@ -24,8 +24,9 @@ import vuePerfectScrollbar from 'vue-perfect-scrollbar'
 import contentmenu from 'v-contextmenu'
 import VueLineClamp from 'vue-line-clamp'
 import VueScrollTo from 'vue-scrollto'
-import firebase from 'firebase/app'
-import 'firebase/auth'
+// vue-upload-component
+import VueUploadComponent from 'vue-upload-component';
+
 
 import http from './http.js'
 
@@ -52,8 +53,8 @@ Vue.component('piaf-breadcrumb', Breadcrumb);
 Vue.component('b-refresh-button', RefreshButton);
 Vue.component('b-colxx', Colxx);
 Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
+Vue.component('file-upload', VueUploadComponent)
 
-firebase.initializeApp(firebaseConfig);
 Vue.config.productionTip = false
 
 export default new Vue({

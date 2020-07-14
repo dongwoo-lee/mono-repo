@@ -7,9 +7,13 @@
         </b-colxx>
     </b-row>
     <b-row>
+        <!-- 스크롤 페이징 테이블 -->
         <b-colxx xxs="12">
-            <!-- 스크롤 페이징 테이블 -->
             <dev-scroll-paging-table></dev-scroll-paging-table>
+        </b-colxx>
+        <!-- 다운로드 & 업로드 -->
+        <b-colxx xxs="12">
+            <dev-file-upload></dev-file-upload>
         </b-colxx>
     </b-row>
 </div>
@@ -17,8 +21,9 @@
 
 <script>
 import DevScrollPagingTable from './DevScrollPagingTable';
+import DevFileUpload from './DevFileUpload';
 
 export default {
-    components: { DevScrollPagingTable }
+    components: { DevScrollPagingTable, DevFileUpload }
 }
 </script>

@@ -6,6 +6,7 @@
             :fields="fields"
             :data="data"
             :per-page="perPage"
+            :row-class="onRowClass"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
         >
@@ -63,7 +64,7 @@ export default {
         isActionsSlot: {             // actions: button 등 slot 사용 유무
             type: Boolean,  
             default: false,
-        }
+        },
     },
     data() {
         return {
@@ -104,28 +105,19 @@ export default {
         },
         onRowClass(dataItem, index) {
             if (this.selectedItems.includes(dataItem.id)) {
-                if (this.isRightClick) {
-                    this.isRightClick = false;
-                    return;
-                }
-
-                this.$refs.vuetable.selectedTo[index] = dataItem.id;
                 return "selected";
             }
-            if (this.$refs.vuetable.selectedTo[index]) {
-                this.$refs.vuetable.selectedTo.splice(index, 1);
-            }
-            
             return "";
         },
         rowClicked(dataItem, event) {
             const itemId = dataItem.id;
             if (this.selectedItems.includes(itemId)) {
                 this.selectedItems = this.selectedItems.filter(x => x !== itemId);
-                this.$refs.vuetable.selectedTo.splice(index, 1);
+                const findIndex = this.$refs.vuetable.selectedTo.findIndex(x => x === itemId);
+                this.$refs.vuetable.selectedTo.splice(findIndex, 1);
             } else {
                 this.selectedItems.push(itemId);
-                this.$refs.vuetable.selectedTo[itemId] = dataItem.id;
+                this.$refs.vuetable.selectedTo[itemId] = itemId;
             }
         },
         rightClicked(dataItem, field, event) {

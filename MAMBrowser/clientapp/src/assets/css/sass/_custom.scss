@@ -1,0 +1,50 @@
+.my-modal-file {
+    .modal-header {
+        padding: 1.2em;
+    }
+    .modal-body {
+        padding: 0;
+    }
+    .modal-footer {
+        padding: 1.2em;
+    }
+    .my-container {
+        display: block;
+        width: 100%;
+        padding-right: 0;
+        padding-left: 0;
+        margin-right: 0;
+        margin-left: 0;
+        
+        .drop-active {
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 200px;
+            position: relative;
+            z-index: 9999;
+            opacity: .6;
+            text-align: center;
+            background: #000;
+
+            h3 {
+                margin: -.5em 0 0;
+                position: absolute;
+                top: 45%;
+                left: 0;
+                right: 0;
+                -webkit-transform: translateY(-50%);
+                -ms-transform: translateY(-50%);
+                transform: translateY(-50%);
+                font-size: 20px;
+                color: #fff;
+                padding: 0;
+            }
+            label {
+                position: relative;
+                top: 55%;
+            }
+        }
+    }
+}

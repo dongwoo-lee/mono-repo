@@ -11,7 +11,7 @@
                 @scrollPerPage="scrollPerPage"
             >
                 <template slot="actions">
-                    <b-button class="mb-1" variant="primary default">미리듣기</b-button>
+                    <b-button class="mb-1" variant="primary default" @click.stop="onPreview">미리듣기</b-button>
                 </template>
             </data-table-scroll-paging>
         </b-card>
@@ -101,6 +101,9 @@ export default {
         },
         getRows() {
             return MOCK_DATA().data.splice(this.startRowNum, this.perPage);
+        },
+        onPreview() {
+            console.info("tesetpreview");
         }
     }
 }
