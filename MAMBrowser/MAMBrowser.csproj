@@ -5,6 +5,10 @@
     <RootNamespace>MAMBrowser</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Work\LocalRepository\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Remove="log4net.config" />
   </ItemGroup>

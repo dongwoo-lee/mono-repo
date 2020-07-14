@@ -12,6 +12,12 @@ namespace MAMBrowser.Controllers
     [Route("api/products/workspace/[controller]")]
     public class PrivateFileController : ControllerBase
     {
+        /// <summary>
+        /// My 공간- 파일+메타데이터 등록
+        /// </summary>
+        /// <param name="file">파일</param>
+        /// <param name="jsonMetaData">메타데이터</param>
+        /// <returns></returns>
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("upload")]
         public DTO_RESULT UploadFile(IFormFile file, [FromForm] string jsonMetaData)
@@ -28,6 +34,11 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        /// <summary>
+        /// My 공간 - 메타데이터 편집
+        /// </summary>
+        /// <param name="id">ID 값</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public DTO_RESULT UpdateData(string id)
         {
@@ -43,6 +54,18 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        /// <summary>
+        /// My 공간 - 검색
+        /// </summary>
+        /// <param name="filename">파일명</param>
+        /// <param name="title">제목</param>
+        /// <param name="memo">메모</param>
+        /// <param name="pd">제작(등록)자</param>
+        /// <param name="rowPerPage">페이지당 행 개수</param>
+        /// <param name="selectPage">선택된 페이지</param>
+        /// <param name="sortKey">정렬 키(필드명)</param>
+        /// <param name="sortValue">정렬 값(ASC/DESC)</param>
+        /// <returns></returns>
         [HttpGet]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData([FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] string pd, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {

@@ -1,0 +1,349 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MAMBrowser</name>
+    </assembly>
+    <members>
+        <member name="M:MAMBrowser.Controllers.APIController.Login(System.String)">
+            <summary>
+            로그인
+            </summary>
+            <param name="body"></param>
+            <returns>토큰 반환</returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.GetUserList">
+            <summary>
+            사용자 목록 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.UpdateUser(System.Collections.Generic.List{MAMBrowser.DTO.DTO_USER_EXT})">
+            <summary>
+            사용자 정보 업데이트
+            </summary>
+            <param name="id"></param>
+            <param name="body"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.GetUser(System.String)">
+            <summary>
+            특정 사용자 조회
+            </summary>
+            <param name="id"></param>
+            <returns></returns>      
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.GetRoleList">
+            <summary>
+            역할 목록 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.UpdateRole(System.String,MAMBrowser.DTO.DTO_ROLE_EXT)">
+            <summary>
+            역할 정보 업데이트
+            </summary>
+            <param name="id"></param>
+            <param name="dtoList"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.Getconfig">
+            <summary>
+            ?
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.APIController.UpdateConfig(System.String)">
+            <summary>
+            ?
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetProgramList(System.String,System.String)">
+            <summary>
+            프로그램 목록 조회
+            </summary>
+            <param name="start_dt"></param>
+            <param name="end_dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetMediaList">
+            <summary>
+            매체 목록 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetProCatetory">
+            <summary>
+            프로그램 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetFillerProCatetory">
+            <summary>
+            필러(pr) 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetGeneralCatetory">
+            <summary>
+            필러(일반) 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetTimetoneCatetory">
+            <summary>
+            필러(시간) 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetEtcCatetory">
+            <summary>
+            필러(기타) 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetCMCatetory">
+            <summary>
+            광고 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.MirosController.GetReportCatetory">
+            <summary>
+            취재물 분류 조회
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.PrivateFileController.UploadFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            My 공간- 파일+메타데이터 등록
+            </summary>
+            <param name="file">파일</param>
+            <param name="jsonMetaData">메타데이터</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.PrivateFileController.UpdateData(System.String)">
+            <summary>
+            My 공간 - 메타데이터 편집
+            </summary>
+            <param name="id">ID 값</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.PrivateFileController.FineData(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            My 공간 - 검색
+            </summary>
+            <param name="filename">파일명</param>
+            <param name="title">제목</param>
+            <param name="memo">메모</param>
+            <param name="pd">제작(등록)자</param>
+            <param name="rowPerPage">페이지당 행 개수</param>
+            <param name="selectPage">선택된 페이지</param>
+            <param name="sortKey">정렬 키(필드명)</param>
+            <param name="sortValue">정렬 값(ASC/DESC)</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindPGM(System.String,System.String)">
+            <summary>
+            프로그램 소재 조회(시간순정렬되며, 임의로 정렬불가)
+            </summary>
+            <param name="media">매체코드(A,F,C,D)</param>
+            <param name="brd_dt">방송일(20200101)</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindSCRSpot(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            부조 SPOT 소재 조회
+            </summary>
+            <param name="start_dt"></param>
+            <param name="end_dt"></param>
+            <param name="pd"></param>
+            <param name="name"></param>
+            <param name="rowPerPage"></param>
+            <param name="selectPage"></param>
+            <param name="sortKey"></param>
+            <param name="sortValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindReport(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            취재물 소재 조회
+            </summary>
+            <param name="cate"></param>
+            <param name="brd_dt"></param>
+            <param name="pgm"></param>
+            <param name="pd"></param>
+            <param name="reporter"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindOldPro(System.String,System.String,System.String,System.String)">
+            <summary>
+            (구)프로소재 조회
+            </summary>
+            <param name="media"></param>
+            <param name="type"></param>
+            <param name="pd"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindMusic(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            음반 기록실 조회
+            </summary>
+            <param name="rowPerPage"></param>
+            <param name="selectPage"></param>
+            <param name="sortKey"></param>
+            <param name="sortValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindEffect(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            효과음 조회
+            </summary>
+            <param name="searchWord"></param>
+            <param name="rowPerPage"></param>
+            <param name="selectPage"></param>
+            <param name="sortKey"></param>
+            <param name="sortValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindMcrSB(System.String,System.String,System.String)">
+            <summary>
+            주조SB 조회
+            </summary>
+            <param name="media"></param>
+            <param name="brd_dt"></param>
+            <param name="pgm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindScrSB(System.String,System.String,System.String)">
+            <summary>
+            부조SB 조회
+            </summary>
+            <param name="media"></param>
+            <param name="brd_dt"></param>
+            <param name="pgm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindCM(System.String,System.String,System.String,System.String)">
+            <summary>
+            광고 조회
+            </summary>
+            <param name="media"></param>
+            <param name="brd_dt"></param>
+            <param name="adcd"></param>
+            <param name="pgm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindMcrSpot(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            주조SPOT 조회
+            </summary>
+            <param name="media"></param>
+            <param name="cate"></param>
+            <param name="end_dt"></param>
+            <param name="status"></param>
+            <param name="pd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindProFiller(System.String,System.String,System.String,System.String)">
+            <summary>
+            필러(pr) 조회
+            </summary>
+            <param name="media"></param>
+            <param name="cate"></param>
+            <param name="pd"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindFeneralFiller(System.String,System.String,System.String,System.String)">
+            <summary>
+            필러(일반) 조회
+            </summary>
+            <param name="media"></param>
+            <param name="cate"></param>
+            <param name="pd"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindTimetoneFiller(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            필러(시간) 조회
+            </summary>
+            <param name="media"></param>
+            <param name="start_dt"></param>
+            <param name="end_dt"></param>
+            <param name="status"></param>
+            <param name="cate"></param>
+            <param name="pd"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindETCFiller(System.String,System.String,System.String,System.String)">
+            <summary>
+            필러(기타) 조회
+            </summary>
+            <param name="media"></param>
+            <param name="cate"></param>
+            <param name="pd"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.ProductsController.FindNewDL(System.String,System.String,System.String)">
+            <summary>
+            DL3.0 소재 조회
+            </summary>
+            <param name="media"></param>
+            <param name="cate"></param>
+            <param name="reg_dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.PublicFileController.UploadFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            공유소재 - 파일+메타데이터 등록
+            </summary>
+            <param name="file">파일</param>
+            <param name="jsonMetaData">메타데이터</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.PublicFileController.UpdateData(System.String)">
+            <summary>
+            공유소재 - 메타데이터 편집
+            </summary>
+            <param name="id">ID 값</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.PublicFileController.FineData(System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            공유소재 - 검색
+            </summary>
+            <param name="media">매체코드(A,D,C,F)</param>
+            <param name="cate">분류코드</param>
+            <param name="filename">파일명</param>
+            <param name="title">제목</param>
+            <param name="memo">메모</param>
+            <param name="pd">제작(등록)자</param>
+            <param name="rowPerPage">페이지당 행 개수</param>
+            <param name="selectPage">선택된 페이지</param>
+            <param name="sortKey">정렬 키(필드명)</param>
+            <param name="sortValue">정렬 값(ASC/DESC)</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.RequestController.RequestCacheFile(System.String)">
+            <summary>
+            파일 캐시 요청
+            </summary>
+            <param name="sourcePath">소스 파일 경로</param>
+            <returns></returns>
+        </member>
+        <member name="M:MAMBrowser.Controllers.RequestController.GetCacheFilePath(System.String)">
+            <summary>
+            캐시된 파일 경로 요청
+            </summary>
+            <param name="sourcePath">소스 파일 경로</param>
+            <returns>타겟 파일 경로</returns>
+        </member>
+    </members>
+</doc>
