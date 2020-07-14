@@ -1,6 +1,4 @@
-﻿using SmartSql;
-using SmartSql.DbSession;
-
+﻿
 namespace MAMBrowser
 {
     public enum RESUlT_CODES
@@ -19,20 +17,5 @@ namespace MAMBrowser
         MANUAL_EXECUTE,
         KNOWN_EXCEPTION,
         UNKNOWN_EXCEPTION,
-    }
-
-    public static class SqlMap
-    {
-        public static SmartSqlBuilder SqlBuilder;
-        public static IDbSession GetSession()
-        {
-            if (SqlBuilder == null)
-            {
-                SqlBuilder = new SmartSqlBuilder()
-               .UseXmlConfig()
-               .Build();
-            }
-            return SqlBuilder.GetDbSessionFactory().Open();
-        }
     }
 }

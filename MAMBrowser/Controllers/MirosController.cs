@@ -11,8 +11,8 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class MirosController : ControllerBase
     {
-        //[HttpGet("miros/programlist?start_dt={start_dt}&end_dt={end_dt}")]
-        public DTO_RESULT GetProgramList()
+        [HttpGet("programlist")]
+        public DTO_RESULT GetProgramList([FromQuery] string start_dt, [FromQuery] string end_dt)
         {
             DTO_RESULT result = new DTO_RESULT();
             return result;

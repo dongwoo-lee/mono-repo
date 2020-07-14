@@ -16,8 +16,8 @@ namespace MAMBrowser.DTO
         public string Duration { get; set; }  //길이
         public string Track { get; set; }   //트랙명
         public string UserName { get; set; } //제작자
-        public string EditDtm { get; set; } //편집일시
-        public string CompleteDtm { get; set; } //방송의뢰일시
+        public DateTime EditDtm { get; set; } //편집일시
+        public DateTime CompleteDtm { get; set; } //방송의뢰일시
         public string FilePath { get; set; }    //파일 경로   
 
         public long RowNum { get; set; }   
