@@ -211,7 +211,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 주조SB 조회
+        /// 주조SB 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="brd_dt"></param>
@@ -233,7 +233,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 부조SB 조회
+        /// 부조SB 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="brd_dt"></param>
@@ -255,7 +255,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 광고 조회
+        /// 광고 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="brd_dt"></param>
@@ -279,7 +279,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 주조SPOT 조회
+        /// 주조SPOT 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
@@ -303,7 +303,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 필러(pr) 조회
+        /// 필러(pr) 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
@@ -326,7 +326,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 필러(일반) 조회
+        /// 필러(일반) 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
@@ -349,7 +349,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 필러(시간) 조회
+        /// 필러(시간) 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="start_dt"></param>
@@ -375,7 +375,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 필러(기타) 조회
+        /// 필러(기타) 소재 조회
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
