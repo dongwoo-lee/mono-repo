@@ -9,7 +9,7 @@
         public DTO_RESULT()
         {
             this.ResultObject = new T();
-        }
+        }   
     }
 
     public class DTO_RESULT

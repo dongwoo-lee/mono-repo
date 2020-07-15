@@ -8,16 +8,8 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
-    [ApiController]
-    [Route("api/products/[controller]")]
-    public class RequestController : ControllerBase
+    public class RequestBLL
     {
-        /// <summary>
-        /// 파일 캐시 요청
-        /// </summary>
-        /// <param name="sourcePath">소스 파일 경로</param>
-        /// <returns></returns>
-        [HttpPost("file")]
         public DTO_RESULT RequestCacheFile([FromBody] string sourcePath)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -33,12 +25,6 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        /// <summary>
-        /// 캐시된 파일 경로 요청
-        /// </summary>
-        /// <param name="sourcePath">소스 파일 경로</param>
-        /// <returns>타겟 파일 경로</returns>
-        [HttpGet("file")]
         public DTO_RESULT<CacheFIleStatus> GetCacheFilePath(string sourcePath)
         {
             DTO_RESULT<CacheFIleStatus> result = new DTO_RESULT<CacheFIleStatus>();

@@ -1,14 +1,14 @@
 ﻿using Dapper;
+using MAMBrowser.BLL;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
@@ -30,41 +30,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_PGM_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PGM_INFO>>();
             try
             {
-                string connectionString = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=dev.adsoft.kr)(PORT=1523)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=orcl)));User Id=MIROS;Password=MIROS;";
-                using (OracleConnection con = new OracleConnection(connectionString))
-                {
-                    con.Open();
-                    string query = "SELECT MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITORNAME, EDITTIME, REQTIME, MASTERFILE" +
-                        " FROM" +
-                        " MEM_PROGRAM_VIEW" +
-                        " WHERE" +
-                        " MEDIA = :MEDIA" +
-                        " AND ONAIRDATE = :ONAIRDATE";
-
-                    var queryData = con.Query(query, new { MEDIA = media, ONAIRDATE = brd_dt }).
-                        Select((row,b)=> new DTO_PGM_INFO {
-                            MediaName = row.MEDIANAME,
-                            Name = row.EVENTNAME,
-                            BrdDT = row.ONAIRDATE,
-                            BrdTime = row.ONAIRTIME,
-                            Status = row.STATENAME,
-                            Duration = row.MILLISEC,
-                            UserName = row.EDITORNAME,
-                            EditDtm = row.EDITTIME,
-                            CompleteDtm = row.REQTIME,
-                            FilePath = row.MASTERFILE
-                        });
-
-                    var datalist = queryData.ToList();
-                    var firstObj = datalist.FirstOrDefault();
-                    if (firstObj != null)
-                    {
-                        result.ResultObject.TotalRowCount = firstObj.Count;
-                        result.ResultObject.RowPerPage = 200;
-                        result.ResultObject.SelectPage = 1;
-                    }
-                    result.ResultObject.DataList = datalist;
-                }
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindPGM(media, brd_dt);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -77,21 +44,24 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 부조 SPOT 소재 조회
         /// </summary>
-        /// <param name="start_dt"></param>
-        /// <param name="end_dt"></param>
-        /// <param name="pd"></param>
-        /// <param name="name"></param>
-        /// <param name="rowPerPage"></param>
-        /// <param name="selectPage"></param>
+        /// <param name="start_dt">20200101</param>
+        /// <param name="end_dt">20200701</param>
+        /// <param name="user">사용자 최지민</param>
+        /// <param name="name">SOS</param>
+        /// <param name="rowPerPage">3</param>
+        /// <param name="selectPage">1</param>
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("spot/scr")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>> FindSCRSpot([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pd, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>> FindSCRSpot([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string user, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
+            //사용자 ID ex) 180988
             DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>>();
             try
             {
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindSCRSpot(start_dt, end_dt, user, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -104,19 +74,22 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 취재물 소재 조회
         /// </summary>
-        /// <param name="cate"></param>
-        /// <param name="brd_dt"></param>
+        /// <param name="cate">분류 : ex)NPS-M</param>
+        /// <param name="start_dt"></param>
+        ///  <param name="end_dt"></param>
         /// <param name="pgm"></param>
         /// <param name="pd"></param>
-        /// <param name="reporter"></param>
+        /// <param name="reporter"> 취재인 ID : ex)syshine</param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string pd, [FromQuery] string reporter, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string user_id, [FromQuery] string reporter, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>>();
             try
             {
+                ProductsBLL bll = new ProductsBLL();
+                //result.ResultObject = bll.FindReport(cate, start_dt, end_dt, pgm,pd, reporter,name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

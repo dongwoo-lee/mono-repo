@@ -9,7 +9,7 @@ namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MirosController : ControllerBase
+    public class MirosBLL : ControllerBase
     {
         /// <summary>
         /// 프로그램 목록 조회

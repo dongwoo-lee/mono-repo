@@ -53,7 +53,7 @@ namespace MAMBrowser.Controllers
         /// <param name="id"></param>
         /// <returns></returns>      
         [HttpGet("user")]
-        public DTO_RESULT GetUser([FromQuery] string id)
+        public DTO_RESULT GetUser(string id)
         {
             DTO_RESULT result = new DTO_RESULT();
             return result;
@@ -75,7 +75,7 @@ namespace MAMBrowser.Controllers
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("roles")]
-        public DTO_RESULT UpdateRole([FromQuery] string id, [FromBody] DTO_ROLE_EXT dtoList)
+        public DTO_RESULT UpdateRole(string id, [FromBody] DTO_ROLE_EXT dtoList)
         {
             DTO_RESULT result = new DTO_RESULT();
             return result;

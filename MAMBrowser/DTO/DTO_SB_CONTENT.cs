@@ -11,8 +11,8 @@ namespace MAMBrowser.DTO
         public string Order { get; set; }   //순서
         public string CategoryCode { get; set; }    //구분
         public string CategoryName { get; set; }    //    광고주/분류  
-        public string MaterialID { get; set; }  //소재 ID
-        public string MaterlalName { get; set; }    //소재명
+        public string ID { get; set; }  //소재 ID
+        public string Name { get; set; }    //소재명
         public string Length { get; set; }  //길이
         public string Format { get; set; }  //포맷 
     }
