@@ -85,7 +85,7 @@ namespace MAMBrowser
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MAM Browser API V1");
             });
 
             logFactory.AddLog4Net();

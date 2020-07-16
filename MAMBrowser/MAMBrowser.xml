@@ -137,7 +137,7 @@
             <param name="filename">파일명</param>
             <param name="title">제목</param>
             <param name="memo">메모</param>
-            <param name="pd">제작(등록)자</param>
+            <param name="user">제작(등록)자</param>
             <param name="rowPerPage">페이지당 행 개수</param>
             <param name="selectPage">선택된 페이지</param>
             <param name="sortKey">정렬 키(필드명)</param>
@@ -158,7 +158,7 @@
             </summary>
             <param name="start_dt"></param>
             <param name="end_dt"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="name"></param>
             <param name="rowPerPage"></param>
             <param name="selectPage"></param>
@@ -173,7 +173,7 @@
             <param name="cate"></param>
             <param name="brd_dt"></param>
             <param name="pgm"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="reporter"></param>
             <param name="name"></param>
             <returns></returns>
@@ -184,7 +184,7 @@
             </summary>
             <param name="media"></param>
             <param name="type"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="name"></param>
             <returns></returns>
         </member>
@@ -246,7 +246,7 @@
             <param name="start_dt"></param>
             <param name="end_dt"></param>
             <param name="status"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <returns></returns>
         </member>
         <member name="M:MAMBrowser.Controllers.ProductsController.FindProFiller(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.String)">
@@ -255,7 +255,7 @@
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="name"></param>
             <returns></returns>
         </member>
@@ -265,7 +265,7 @@
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="name"></param>
             <returns></returns>
         </member>
@@ -278,7 +278,7 @@
             <param name="end_dt"></param>
             <param name="status"></param>
             <param name="cate"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="name"></param>
             <returns></returns>
         </member>
@@ -288,7 +288,7 @@
             </summary>
             <param name="media"></param>
             <param name="cate"></param>
-            <param name="pd"></param>
+            <param name="user"></param>
             <param name="name"></param>
             <returns></returns>
         </member>
@@ -325,7 +325,7 @@
             <param name="filename">파일명</param>
             <param name="title">제목</param>
             <param name="memo">메모</param>
-            <param name="pd">제작(등록)자</param>
+            <param name="user">제작(등록)자</param>
             <param name="rowPerPage">페이지당 행 개수</param>
             <param name="selectPage">선택된 페이지</param>
             <param name="sortKey">정렬 키(필드명)</param>

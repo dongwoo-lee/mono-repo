@@ -38,7 +38,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string pd, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>>();
             try

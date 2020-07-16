@@ -15,6 +15,7 @@ namespace MAMBrowser.DTO
         public string Status { get; set; }  //상태
         public string Duration { get; set; }  //길이
         public string Track { get; set; }   //트랙명
+        public string UserID { get; set; } //제작자
         public string UserName { get; set; } //제작자
         public DateTime EditDtm { get; set; } //편집일시
         public DateTime CompleteDtm { get; set; } //방송의뢰일시
