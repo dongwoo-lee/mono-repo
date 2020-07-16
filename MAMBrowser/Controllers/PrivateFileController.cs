@@ -60,7 +60,7 @@ namespace MAMBrowser.Controllers
         /// <param name="filename">파일명</param>
         /// <param name="title">제목</param>
         /// <param name="memo">메모</param>
-        /// <param name="user">제작(등록)자</param>
+        /// <param name="editor">제작(등록)자</param>
         /// <param name="rowPerPage">페이지당 행 개수</param>
         /// <param name="selectPage">선택된 페이지</param>
         /// <param name="sortKey">정렬 키(필드명)</param>

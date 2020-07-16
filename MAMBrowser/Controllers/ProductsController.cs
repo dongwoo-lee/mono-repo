@@ -46,7 +46,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="start_dt">20200101</param>
         /// <param name="end_dt">20200701</param>
-        /// <param name="user">사용자 
+        /// <param name="editor">사용자 
         /// ex) 최지민</param>
         /// <param name="name">SOS</param>
         /// <param name="rowPerPage">3</param>
@@ -79,7 +79,7 @@ namespace MAMBrowser.Controllers
         /// <param name="start_dt"></param>
         ///  <param name="end_dt"></param>
         /// <param name="pgm">사용처 : ex) PM1200NA</param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <param name="reporter"> 취재인 이름 : ex) 한수연</param>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -105,7 +105,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media"></param>
         /// <param name="type"></param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("old_pro")]
@@ -260,7 +260,7 @@ namespace MAMBrowser.Controllers
         /// <param name="start_dt"></param>
         /// <param name="end_dt"></param>
         /// <param name="status"></param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <returns></returns>
         [HttpGet("spot/mcr")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>> FindMcrSpot([FromQuery] string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string editor, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
@@ -282,7 +282,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/pr")]
@@ -305,7 +305,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/general")]
@@ -331,7 +331,7 @@ namespace MAMBrowser.Controllers
         /// <param name="end_dt"></param>
         /// <param name="status"></param>
         /// <param name="cate"></param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/time")]
@@ -354,7 +354,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media"></param>
         /// <param name="cate"></param>
-        /// <param name="user"></param>
+        /// <param name="editor"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("filler/etc")]

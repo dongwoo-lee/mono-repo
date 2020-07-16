@@ -63,28 +63,33 @@ namespace MAMBrowser.BLL
 
             DTO_RESULT_LIST<DTO_SCR_SPOT> returnData = new DTO_RESULT_LIST<DTO_SCR_SPOT>();
             var builder = new SqlBuilder();
-            
-            var param = new 
+
+            DynamicParameters param = new DynamicParameters();
+            param.AddDynamicParams(new
             {
-                START_DT = start_dt, END_DT = end_dt, USER = editor,
-                START_NO = startNo, LAST_NO = lastNo, 
-                SORTKEY = sortKey, SORTVALUE = sortValue }
-            ;
+                START_DT = start_dt,
+                END_DT = end_dt,
+                EDITOR = editor,
+                START_NO = startNo,
+                LAST_NO = lastNo,
+                SORTKEY = sortKey,
+                SORTVALUE = sortValue
+            });
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_SUB_VIEW /**where**/");
             builder.Select("SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
-            //if (!string.IsNullOrEmpty(name))
-            //{
-            //    string[] nameArray = name.Split(' ');
-            //    foreach (var word in nameArray)
-            //    {
-            //        builder.Where($"LOWER(SPOTNAME) LIKE LOWER('%{word}%')");
-            //    }
-            //}
-
-            if (!string.IsNullOrEmpty(param.USER))
+            if (!string.IsNullOrEmpty(name))
             {
-                builder.Where("EDITORNAME = :USER", param);
+                string[] nameArray = name.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(SPOTNAME) LIKE LOWER('%{word}%')");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(editor))
+            {
+                builder.Where("EDITORNAME = :EDITOR", param);
             }
             builder.OrderBy("EDITTIME DESC");
 
