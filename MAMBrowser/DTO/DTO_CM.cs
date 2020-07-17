@@ -14,8 +14,8 @@ namespace MAMBrowser.DTO
         public string Length { get; set; }      //길이 (xx:xx)
         public string Capacity { get; set; }    //용량 (int)
         public string Status { get; set; }      //상태 (코드)
-        public string UserID { get; set; }      //담당자ID
-        public string UserName { get; set; }   //담당자명
+        public string EditorID { get; set; }      //담당자ID
+        public string EditorName { get; set; }   //담당자명
         public string EditDtm { get; set; }   //편집일시
     }
 }

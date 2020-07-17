@@ -8,7 +8,7 @@ namespace MAMBrowser.DTO
 {
     public class DTO_SB_CONTENT
     {
-        public string Order { get; set; }   //순서
+        public int Order { get; set; }   //순서
         public string CategoryCode { get; set; }    //구분
         public string CategoryName { get; set; }    //    광고주/분류  
         public string ID { get; set; }  //소재 ID

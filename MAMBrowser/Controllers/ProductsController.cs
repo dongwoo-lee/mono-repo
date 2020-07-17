@@ -46,10 +46,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="start_dt">20200101</param>
         /// <param name="end_dt">20200701</param>
-        /// <param name="editor">사용자 
-        /// ex) 최지민</param>
-        /// <param name="name">SOS</param>
-        /// <param name="rowPerPage">3</param>
+        /// <param name="editor">사용자 ID: ex) 180988 (최지민)</param>
+        /// <param name="name">근로</param>
+        /// <param name="rowPerPage">16</param>
         /// <param name="selectPage">1</param>
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
@@ -73,24 +72,29 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 취재물 소재 조회
+        /// 취재물 소재 조회. (사용처ID와 사용처이름이 동시에 기입될 경우 ID만 검색함)
         /// </summary>
         /// <param name="cate">분류 : ex)NPS-M</param>
-        /// <param name="start_dt"></param>
-        ///  <param name="end_dt"></param>
-        /// <param name="pgm">사용처 : ex) PM1200NA</param>
-        /// <param name="editor"></param>
-        /// <param name="reporter"> 취재인 이름 : ex) 한수연</param>
-        /// <param name="name"></param>
+        /// <param name="start_dt">시작일 : 20200101</param>
+        ///  <param name="end_dt">종료일 : 20200620</param>
+        /// <param name="pgm">사용처 : ex) PM1200NA, PM1900NA, PM1900SA</param>
+        /// <param name="pgmName">사용처 : ex) 1,2부</param>
+        /// <param name="editor">제작자 : ex)010502</param>
+        /// <param name="reporterName"> 취재인 이름 : ex) 한수연</param>
+        /// <param name="name"> 여성, 뉴스</param>
+        /// <param name="rowPerPage">16</param>
+        /// <param name="selectPage">1</param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string editor, [FromQuery] string reporter, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindReport(cate, start_dt, end_dt, pgm, editor, reporter,name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindReport(cate, start_dt, end_dt, pgm, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -103,17 +107,24 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// (구)프로소재 조회
         /// </summary>
-        /// <param name="media"></param>
-        /// <param name="type"></param>
+        /// <param name="media">A</param>
+        /// <param name="cate">분류 : ex) AC00279990, AC00279444,AC00192685 </param>
+        /// <param name="type">구분 : ex) Y = 방송중, N=폐지 </param>
         /// <param name="editor"></param>
         /// <param name="name"></param>
+        /// <param name="rowPerPage">16</param>
+        /// <param name="selectPage">1</param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("old_pro")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> FindOldPro([FromQuery] string media, [FromQuery] string type, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> FindOldPro([FromQuery] string media, [FromQuery] string cate, [FromQuery] string type, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>>();
             try
             {
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindOldPro(media, cate, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -185,18 +196,45 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 주조SB 소재 조회 (페이징x)
+        /// 주조SB 조회 (페이징x)
         /// </summary>
-        /// <param name="media"></param>
-        /// <param name="brd_dt"></param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="pgm"></param>
+        /// <param name="pgmName"></param>
         /// <returns></returns>
         [HttpGet("sb/mcr")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> FindMcrSB([FromQuery] string media, [FromQuery] string brd_dt, [FromQuery] string pgm)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> FindMcrSB([FromQuery] string media, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SB>>();
             try
             {
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindMcrSB("MAIN", media, brd_dt, pgm, pgmName);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 주조/부조 소재목록 조회 (페이징x)
+        /// </summary>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
+        /// <param name="sbID">SB ID : ex) ASG201029</param>
+        /// <returns></returns>
+        [HttpGet("sb/mcr/detail")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB_CONTENT>> FindSBDetail([FromQuery] string brd_dt, [FromQuery] string sbID)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_SB_CONTENT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SB_CONTENT>>();
+            try
+            {
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindSBDetail(brd_dt, sbID);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -207,18 +245,21 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 부조SB 소재 조회 (페이징x)
+        /// 부조SB 조회 (페이징x)
         /// </summary>
-        /// <param name="media"></param>
-        /// <param name="brd_dt"></param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="pgm"></param>
+        /// <param name="pgmName"></param>
         /// <returns></returns>
         [HttpGet("sb/scr")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> FindScrSB([FromQuery] string media, [FromQuery] string brd_dt, [FromQuery] string pgm)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> FindScrSB([FromQuery] string media, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SB>>();
             try
             {
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindMcrSB("SUB", media, brd_dt, pgm, pgmName);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -13,11 +13,11 @@ namespace MAMBrowser.DTO
         public string Duration { get; set; }  //길이
         public string Track { get; set; }   //트랙
         public string BrdDT { get; set; }   //방송일
-        public string UserID { get; set; }  //제작자ID
+        public string EditorID { get; set; }  //제작자ID
         public string PGMName { get; set; } //사용처명
-        public DateTime MasteringDtm { get; set; }    //마스터링 일시
+        public DateTime? MasteringDtm { get; set; }    //마스터링 일시
         public string FilePath { get; set; }    //파일경로
-        public string UserName { get; set; }    //제작자
+        public string EditorName { get; set; }    //제작자
         public DateTime EditDtm { get; set; } //편집일시
         public long Count { get; set; }
     }

@@ -10,8 +10,8 @@ namespace MAMBrowser.DTO
     {
         public string FILE_ID { get; set; }
         public string CATETORY { get; set; }
-        public string UserID { get; set; }
-        public string UserName { get; set; }
+        public string EditorID { get; set; }
+        public string EditorName { get; set; }
         public string Name { get; set; }
         public string MEMO { get; set; }
         public string FILE_TYPE { get; set; }

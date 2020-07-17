@@ -12,10 +12,10 @@ namespace MAMBrowser.DTO
         public string ID { get; set; }  //SB ID
         public string Name { get; set; }    //SB 명
         public string Length { get; set; }      //길이
-        public string Capacity { get; set; }    //용량
+        public int Capacity { get; set; }    //용량
         public string Status { get; set; }  //상태
         public string PGMName { get; set; }  //사용처
-        public string UserID { get; set; }  //담당자ID
-        public string UserName { get; set; }   //담당자
+        public string EditorID { get; set; }  //담당자ID
+        public string EditorName { get; set; }   //담당자
     }
 }
