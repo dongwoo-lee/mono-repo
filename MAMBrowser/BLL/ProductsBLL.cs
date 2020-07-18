@@ -429,8 +429,14 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        //public DTO_RESULT_LIST<DTO_CM> FindCM(string media, string brd_dt, string adcd, string pgm) { }
-        //public DTO_RESULT_LIST<DTO_CM> FindCMDetail(string media, string brd_dt, string adcd, string pgm) { }
+        //public DTO_RESULT_LIST<DTO_CM> FindCM(string media, string brd_dt, string adcd, string pgm)
+        //{
+            
+        //}
+
+        //public DTO_RESULT_LIST<DTO_CM> FindCMDetail(string media, string brd_dt, string adcd, string pgm) 
+        //{
+        //}
         //public DTO_RESULT_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string cate, string start_dt, string end_dt, string status, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
         //public DTO_RESULT_LIST<DTO_PUBLIC_FILE> FindProFiller(string media, string cate, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
         //public DTO_RESULT_LIST<DTO_PUBLIC_FILE> FindFeneralFiller(string media, string cate, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
