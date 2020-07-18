@@ -4,7 +4,7 @@
             :api-mode="false"
             :table-height="tableHeight"
             :fields="fields"
-            :data="data"
+            :data="rows"
             :per-page="perPage"
             :row-class="onRowClass"
             @vuetable:row-clicked="rowClicked"
@@ -48,10 +48,9 @@ export default {
             type: Array,
             default: () => [],
         },
-        data: {                  // rows 데이터
+        rows: {                  // rows 데이터
             type: Array,
             default: () => [],
-            required: true,
         },
         numRowsToBottom: {       // 맨 아래 행수
             type: Number,

@@ -11,12 +11,12 @@ const routes = [
   },
   {
     path: "/user",
-    component: () => import(/* webpackChunkName: "user" */ "./views/user"),
+    component: () => import("./views/user"),
     redirect: "/user/login",
     children: [
       {
         path: "login",
-        component: () => import(/* webpackChunkName: "user" */ "./views/user/Login"),
+        component: () => import("./views/user/Login"),
         meta: { requiresAuth: true }
       },
     ]
@@ -30,11 +30,6 @@ const routes = [
        * My 공간
        */
       {
-        // 개발 컴포넌트
-        path: "dev",
-        component: () => import("./views/app/dev/Index"),
-      },
-      {
         // My 공간
         path: "private",
         component: () => import("./views/app/private/Index"),
@@ -43,6 +38,16 @@ const routes = [
         // 휴지통
         path: "waste-basket",
         component: () => import("./views/app/wasteBasket/Index"),
+      },
+      {
+        // 개발 컴포넌트
+        path: "dev",
+        component: () => import("./views/app/dev/Index"),
+      },
+      {
+        // 개발 API 연결 컴포넌트
+        path: "apidev",
+        component: () => import("./views/app/dev-api/Index"),
       },
       /**
        * 제작
@@ -143,11 +148,11 @@ const routes = [
   },
   {
     path: "/error",
-    component: () => import(/* webpackChunkName: "error" */ "./views/Error")
+    component: () => import("./views/Error")
   },
   {
     path: "*",
-    component: () => import(/* webpackChunkName: "error" */ "./views/Error")
+    component: () => import("./views/Error")
   },
 ];
 
