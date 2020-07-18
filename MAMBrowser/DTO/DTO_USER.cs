@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_USER_EXT
+    public class DTO_USER
     {
-        //메뉴
-        //디스크 공간
+        public string ID { get; set; }
+        public string Name { get; set; }
     }
 }

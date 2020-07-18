@@ -1,6 +1,6 @@
 ﻿namespace MAMBrowser.DTO
 {
-    public class DTO_RESULT<T> where T : class, new()
+    public class DTO_RESULT<T> 
     {
         public RESUlT_CODES ResultCode { get; set; }
         public T ResultObject { get; set; } 
@@ -8,7 +8,6 @@
 
         public DTO_RESULT()
         {
-            this.ResultObject = new T();
         }   
     }
 

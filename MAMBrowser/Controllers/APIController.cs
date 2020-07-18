@@ -28,9 +28,41 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("userlist")]
-        public DTO_RESULT GetUserList()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> GetUserList()
         {
-            DTO_RESULT result = new DTO_RESULT();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.GetUserList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 사용자 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("userlist/detaill")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER_DETAIL>> GetUserDetailList()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_USER_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER_DETAIL>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.GetUserDetailList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
             return result;
         }
 
@@ -40,10 +72,21 @@ namespace MAMBrowser.Controllers
         /// <param name="id"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        [HttpPut("user")]
-        public DTO_RESULT UpdateUser([FromBody] List<DTO_USER_EXT> dtoList)
+        [HttpPut("userlist/detail")]
+        public DTO_RESULT<int> UpdateUserDetail([FromBody] List<DTO_USER_DETAIL> dtoList)
         {
-            DTO_RESULT result = new DTO_RESULT();
+            DTO_RESULT<int> result = new DTO_RESULT<int>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.UpdateUserDetail(dtoList);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
             return result;
         }
 
@@ -52,20 +95,43 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>      
-        [HttpGet("user")]
-        public DTO_RESULT GetUser(string id)
+        [HttpGet("userlist/detail/{id}")]
+        public DTO_RESULT<DTO_USER_DETAIL> GetUserDetail(string id)
         {
-            DTO_RESULT result = new DTO_RESULT();
+            DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.GetUserDetail(id);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
             return result;
         }
         /// <summary>
         /// 역할 목록 조회
         /// </summary>
         /// <returns></returns>
-        [HttpGet("roles")]
-        public DTO_RESULT GetRoleList()
+        [HttpGet("roles/detail")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> GetRoleList()
         {
-            DTO_RESULT result = new DTO_RESULT();
+            
+             DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.GetRoleDetailList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
             return result;
         }
         /// <summary>
@@ -74,8 +140,8 @@ namespace MAMBrowser.Controllers
         /// <param name="id"></param>
         /// <param name="dtoList"></param>
         /// <returns></returns>
-        [HttpPut("roles")]
-        public DTO_RESULT UpdateRole(string id, [FromBody] DTO_ROLE_EXT dtoList)
+        [HttpPut("roles/detail")]
+        public DTO_RESULT UpdateRole([FromBody] List<DTO_ROLE_DETAIL> dtoList)
         {
             DTO_RESULT result = new DTO_RESULT();
             return result;

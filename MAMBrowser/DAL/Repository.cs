@@ -14,25 +14,45 @@ namespace MAMBrowser.DAL
         {
 
         }
-        public long Insert(T entity)
+        public long Insert(string insertQuery, object entities)
         {
             return 0;
         }
-        public long Insert(IList<T> entity)
+        public int Update(string updateQuery, object entities)
         {
-            return 0;
+            using (OracleConnection con = new OracleConnection(strCon))
+            {
+                con.Open();
+                using (var transaction = con.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = con.Execute(updateQuery, entities);
+                        transaction.Commit();
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+            return -1;
         }
-        public int Update(T entity)
-        {
-            return 0;
-        }
-        public long Update(IList<T> entity)
-        {
-            return 0;
-        }
+     
         public int Delete(T entity)
         {
             return 0;
+        }
+        public T Get(string query, object param, Func<dynamic, T> resultMapping)
+        {
+            using (OracleConnection con = new OracleConnection(strCon))
+            {
+                con.Open();
+                var queryData = con.Query(query, param).Select<dynamic, T>(resultMapping).FirstOrDefault();
+                return queryData;
+            }
         }
         public IList<T> Select(string query, object param,Func<dynamic, T> resultMapping)
         {
