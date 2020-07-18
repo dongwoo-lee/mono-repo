@@ -8,20 +8,27 @@ module.exports = {
       template: 'public/index.html',
       filename: 'index.html'
     }
-  },
+  }, 
   devServer: {
-    clientLogLevel: 'warning',
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        ws: true,
+        changeOrigin: true,
+      }
+    },
+    // clientLogLevel: 'warning',
     hot: true,
-    contentBase: 'dist',
-    compress: true,
-    open: true,
-    overlay: { warnings: false, errors: true },
-    publicPath: '/',
-    quiet: true,
-    watchOptions: {
-      poll: false,
-      ignored: /node_modules/
-    }
+    // contentBase: 'dist',
+    // compress: true,
+    // open: true,
+    // overlay: { warnings: false, errors: true },
+    // publicPath: '/',
+    // quiet: true,
+    // watchOptions: {
+    //   poll: false,
+    //   ignored: /node_modules/
+    // }
   },
 
   chainWebpack: config => {

@@ -1,21 +1,19 @@
 <template>
-    <div>
-        <b-card class="mb-4" title="스크롤페이징">
-            <data-table-scroll-paging
-                ref="scrollPaging"
-                :table-height="'500px'"
-                :fields="fields"
-                :data="localData"
-                :per-page="perPage"
-                :is-actions-slot="true"
-                @scrollPerPage="scrollPerPage"
-            >
-                <template slot="actions">
-                    <b-button class="mb-1" variant="primary default" @click.stop="onPreview">미리듣기</b-button>
-                </template>
-            </data-table-scroll-paging>
-        </b-card>
-    </div>
+    <b-card class="mb-4" title="스크롤페이징">
+        <data-table-scroll-paging
+            ref="scrollPaging"
+            :table-height="'500px'"
+            :fields="fields"
+            :rows="localData"
+            :per-page="perPage"
+            :is-actions-slot="true"
+            @scrollPerPage="scrollPerPage"
+        >
+            <template slot="actions">
+                <b-button class="mb-1" variant="primary default" @click.stop="onPreview">미리듣기</b-button>
+            </template>
+        </data-table-scroll-paging>
+    </b-card>
 </template>
 <script>
 import DataTableScrollPaging from '../../../components/DataTable/DataTableScrollPaging';
@@ -30,7 +28,7 @@ export default {
     data() {
         return {
             localData: [],
-            currentPage: 1,
+            currentPage: 3,
             perPage: 50,
             startRowNum : 0,
             fields: [

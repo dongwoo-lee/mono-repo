@@ -7,8 +7,7 @@ import BootstrapVue from 'bootstrap-vue'
 import router from './router'
 import store from './store'
 // Multi Language Add
-import en from './locales/en.json'
-import ko from './locales/ko.json'
+import messages from './locales/index'
 import VueI18n from 'vue-i18n'
 import { defaultLocale, localeOptions } from './constants/config'
 // Notification Component Add
@@ -27,12 +26,12 @@ import VueScrollTo from 'vue-scrollto'
 // vue-upload-component
 import VueUploadComponent from 'vue-upload-component';
 
-
 import http from './http.js'
+import commonFunctions from './utils/CommonFunctions';
 
 Vue.use(BootstrapVue);
 Vue.use(VueI18n);
-const messages = { ko: ko, en: en };
+// const messages = { ko: ko, en: en };
 const locale = (localStorage.getItem('currentLanguage') && localeOptions.filter(x => x.id === localStorage.getItem('currentLanguage')).length > 0) ? localStorage.getItem('currentLanguage') : defaultLocale;
 const i18n = new VueI18n({
   locale: locale,
@@ -54,6 +53,8 @@ Vue.component('b-refresh-button', RefreshButton);
 Vue.component('b-colxx', Colxx);
 Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.component('file-upload', VueUploadComponent)
+
+Vue.prototype.$fn = commonFunctions;
 
 Vue.config.productionTip = false
 
