@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.IO;
+using System.Threading.Tasks;
+using MAMBrowser.Controllers;
 
 namespace MAMBrowser
 {
@@ -34,49 +36,55 @@ namespace MAMBrowser
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-            // Set the comments path for the Swagger JSON and UI.
-           
-
-            // use sql server db in production and sqlite db in development
-            services.AddCors();
-            services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = true);
-
+            services.AddControllers();
             services.AddHostedService<MyLoopWorker>();
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp";
             });
 
-            // configure strongly typed settings objects
+            // configure strongly typed settings objects.  DI등록 안함.
             var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
-            // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(appSettings.Signature);
+            SystemConfig.AppSettings = appSettings;
 
-            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+             .AddJwtBearer(x =>
+             {
+                 x.Events = new JwtBearerEvents
+                 {
+                     OnTokenValidated = context =>
+                     {
+                         ////var userService = context.HttpContext.RequestServices.GetRequiredService<TestController>();
+                         //var userId = int.Parse(context.Principal.Identity.Name);
+                         //var user = userService.GetById(userId);
+                         var user = "";
+                         if (user == null)
+                         {
+                             // return unauthorized if user no longer exists
+                             context.Fail("Unauthorized");
+                         }
+                         return Task.CompletedTask;
+                     }
+                 };
+                 x.RequireHttpsMetadata = false;
+                 x.SaveToken = true;
+                 x.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = new SymmetricSecurityKey(key),
+                     ValidateIssuer = false,
+                     ValidateAudience = false
+                 };
+             });
 
             // configure DI for application services
+            //services.AddScoped<>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

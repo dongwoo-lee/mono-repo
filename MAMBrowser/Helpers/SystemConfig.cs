@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Helpers
 {
-    public class AppSettings
+    public static class SystemConfig
     {
-        public string Signature { get; set; }
-        public string ConnectionString { get; set; }
+        public static AppSettings AppSettings { get; set; }
+
     }
 }

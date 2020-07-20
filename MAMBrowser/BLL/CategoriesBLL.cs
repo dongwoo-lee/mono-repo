@@ -142,7 +142,7 @@ namespace MAMBrowser.BLL
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("");
+            var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FT' ORDER BY NUM");
             Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
@@ -160,7 +160,7 @@ namespace MAMBrowser.BLL
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("");
+            var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FE'; ");
             Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {

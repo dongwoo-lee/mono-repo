@@ -5,6 +5,7 @@
         public RESUlT_CODES ResultCode { get; set; }
         public T ResultObject { get; set; } 
         public string ErrorMsg { get; set; }
+        public string Token { get; set; }
 
         public DTO_RESULT()
         {
@@ -16,5 +17,6 @@
         public RESUlT_CODES ResultCode { get; set; }
         public string ResultObject { get; set; }
         public string ErrorMsg { get; set; }
+        public string Token { get; set; }
     }
 }

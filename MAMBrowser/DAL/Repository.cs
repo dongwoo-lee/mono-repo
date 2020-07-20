@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MAMBrowser.Helpers;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,10 @@ namespace MAMBrowser.DAL
 {
     public class Repository<T> where T : class, new()
     {
-        private string strCon =  "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=dev.adsoft.kr)(PORT=1523)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=orcl)));User Id=MIROS;Password=MIROS;";
+        private string _strCon =  "";
         public Repository()
         {
-
+            _strCon = SystemConfig.AppSettings.ConnectionString;
         }
         public long Insert(string insertQuery, object entities)
         {
@@ -20,7 +21,7 @@ namespace MAMBrowser.DAL
         }
         public int Update(string updateQuery, object entities)
         {
-            using (OracleConnection con = new OracleConnection(strCon))
+            using (OracleConnection con = new OracleConnection(_strCon))
             {
                 con.Open();
                 using (var transaction = con.BeginTransaction())
@@ -47,7 +48,7 @@ namespace MAMBrowser.DAL
         }
         public T Get(string query, object param, Func<dynamic, T> resultMapping)
         {
-            using (OracleConnection con = new OracleConnection(strCon))
+            using (OracleConnection con = new OracleConnection(_strCon))
             {
                 con.Open();
                 var queryData = con.Query(query, param).Select<dynamic, T>(resultMapping).FirstOrDefault();
@@ -56,7 +57,7 @@ namespace MAMBrowser.DAL
         }
         public IList<T> Select(string query, object param,Func<dynamic, T> resultMapping)
         {
-            using (OracleConnection con = new OracleConnection(strCon))
+            using (OracleConnection con = new OracleConnection(_strCon))
             {
                 con.Open();
                 var queryData = con.Query(query, param).Select<dynamic,T>(resultMapping);
