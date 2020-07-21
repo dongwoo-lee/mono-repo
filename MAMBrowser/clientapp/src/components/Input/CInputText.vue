@@ -5,6 +5,7 @@
             :value="value"
             :placeholder="placeholder"
             @input="onInput"
+            :pattern="pattern"
         >
         </b-form-input>
     </div>

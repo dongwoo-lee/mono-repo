@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import axios from 'axios'
 import store from './store'
 import router from './router'
@@ -16,6 +17,17 @@ const $http = axios.create({
 let isRefreshing = false;
 
 axios.interceptors.response.use(res =>{
+    const { status, data } = res;
+    if (status === 200 && data.resultObject === null) {
+        window.$notify(
+            "error",
+            "응답값:" + data.resultObject,
+            "값이 넘어오지 않았습니다.", {
+                duration: 4000,
+                permanent: false
+            }
+        )
+    }
     return res;
 }, async err => {
     const{

@@ -7,8 +7,10 @@ export default {
     Notify.options = Object.assign(Notify.options, options)
     let vm = Notify.$mount()
     document.querySelector('body').appendChild(vm.$el)
-    Vue.$notify = Vue.prototype.$notify = (type = 'success', title, message, options = {}) => {
+    const notify = (type = 'success', title, message, options = {}) => {
       Notify.addItem(type, title, message, options)
-    }
+    };
+    window.$notify = notify;
+    Vue.$notify = Vue.prototype.$notify = notify;
   }
 }
