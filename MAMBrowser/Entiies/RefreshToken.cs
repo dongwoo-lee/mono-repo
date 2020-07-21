@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace MAMBrowser.Entiies
@@ -9,7 +10,7 @@ namespace MAMBrowser.Entiies
         [Key]
         [JsonIgnore]
         public int Id { get; set; }
-
+        //[Column(]
         public string Token { get; set; }
         public DateTime Expires { get; set; }
         public bool IsExpired => DateTime.UtcNow >= Expires;

@@ -30,7 +30,7 @@ namespace MAMBrowser.Controllers
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_USER_DETAIL> GetUserDetailList()
@@ -53,14 +53,15 @@ namespace MAMBrowser.Controllers
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
 
         public int UpdateUserDetail(List<DTO_USER_DETAIL> updateDtoList)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_AVLB=:DISK_AVLB, DISK_USED=:DISK_USED, USED=:USED WHERE USER_ID=:USER_ID");
+            var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_MAX=:DISK_MAX, DISK_USED=:DISK_USED, USED=:USED WHERE USER_ID=:USER_ID");
             builder.AddParameters(updateDtoList);
             Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
             var paramMap = updateDtoList.Select((entity) =>
@@ -68,7 +69,7 @@ namespace MAMBrowser.Controllers
                 return new
                 {
                     USER_ID = entity.ID,
-                    DISK_AVLB = entity.DiskAvailable,
+                    DISK_MAX = entity.DiskMax,
                     DISK_USED = entity.DiskUsed,
                     USED = entity.Used
                 };
@@ -115,7 +116,7 @@ namespace MAMBrowser.Controllers
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         //public DTO_RESULT UpdateRole()

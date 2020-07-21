@@ -18,12 +18,12 @@ namespace MAMBrowser.Controllers
         /// <param name="sourcePath">소스 파일 경로</param>
         /// <returns></returns>
         [HttpPost("file")]
-        public DTO_RESULT RequestCacheFile([FromBody] string sourcePath)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> RequestCacheFile([FromBody] string sourcePath)
         {
-            DTO_RESULT result = new DTO_RESULT();
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
-                result.ResultObject = Guid.NewGuid().ToString();
+                result.ResultObject.Data = Guid.NewGuid().ToString();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -39,12 +39,12 @@ namespace MAMBrowser.Controllers
         /// <param name="sourcePath">소스 파일 경로</param>
         /// <returns>타겟 파일 경로</returns>
         [HttpGet("file")]
-        public DTO_RESULT<CacheFIleStatus> GetCacheFilePath(string sourcePath)
+        public DTO_RESULT<DTO_RESULT_OBJECT<CacheFIleStatus>> GetCacheFilePath(string sourcePath)
         {
-            DTO_RESULT<CacheFIleStatus> result = new DTO_RESULT<CacheFIleStatus>();
+            DTO_RESULT<DTO_RESULT_OBJECT<CacheFIleStatus>> result = new DTO_RESULT<DTO_RESULT_OBJECT<CacheFIleStatus>>();
             try
             {
-                result.ResultObject = new CacheFIleStatus();
+                result.ResultObject.Data = new CacheFIleStatus();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

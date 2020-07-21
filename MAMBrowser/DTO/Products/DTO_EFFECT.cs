@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_EFFECT
+    public class DTO_EFFECT : DTO_BASE
     {
         public string Name { get; set; }    //효과음명
         public string Description { get; set; } //설명

@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_DL30
+    public class DTO_BASE
     {
+        public int RowNO { get; set; }
     }
 }

@@ -93,13 +93,13 @@ namespace MAMBrowser.Controllers
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("users")]
-        public DTO_RESULT<int> UpdateUserDetail([FromBody] List<DTO_USER_DETAIL> dtoList)
+        public DTO_RESULT<DTO_RESULT_OBJECT<int>> UpdateUserDetail([FromBody] List<DTO_USER_DETAIL> dtoList)
         {
-            DTO_RESULT<int> result = new DTO_RESULT<int>();
+            DTO_RESULT<DTO_RESULT_OBJECT<int>> result = new DTO_RESULT<DTO_RESULT_OBJECT<int>>();
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject = bll.UpdateUserDetail(dtoList);
+                result.ResultObject.Data = bll.UpdateUserDetail(dtoList);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

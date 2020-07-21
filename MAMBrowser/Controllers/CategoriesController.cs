@@ -20,7 +20,7 @@ namespace MAMBrowser.Controllers
         /// 매체 목록
         /// </summary>
         /// <returns>매체 목록 반환</returns>
-        [HttpPost("media")]
+        [HttpGet("media")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetMedia()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -62,7 +62,7 @@ namespace MAMBrowser.Controllers
         /// 취재물 분류 조회
         /// </summary>
         /// <returns></returns>
-        [HttpPost("report")]
+        [HttpGet("report")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetReport()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -83,7 +83,7 @@ namespace MAMBrowser.Controllers
         /// (구)프로목록 조회
         /// </summary>
         /// <returns></returns>
-        [HttpPost("pro")]
+        [HttpGet("pro")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPro()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -104,7 +104,7 @@ namespace MAMBrowser.Controllers
         /// 광고 분류 조회
         /// </summary>
         /// <returns></returns>
-        [HttpPost("cm")]
+        [HttpGet("cm")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetCM()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -126,7 +126,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media"></param>
         /// <returns></returns>
-        [HttpPost("mcr/spot")]
+        [HttpGet("mcr/spot")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetMcrSpot(string media)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -147,7 +147,7 @@ namespace MAMBrowser.Controllers
         /// 필러(pr) 분류 조회
         /// </summary>
         /// <returns></returns>
-        [HttpPost("filler/pro")]
+        [HttpGet("filler/pro")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerPr(string media)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -168,7 +168,7 @@ namespace MAMBrowser.Controllers
         /// 필러(일반) 분류 조회
         /// </summary>
         /// <returns></returns>
-        [HttpPost("filler/general")]
+        [HttpGet("filler/general")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerGeneral()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -189,7 +189,7 @@ namespace MAMBrowser.Controllers
         /// 필러(시간) 분류 조회
         /// </summary>
         /// <returns></returns>
-        [HttpPost("filler/timetone")]
+        [HttpGet("filler/timetone")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerTimetone()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
@@ -212,7 +212,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("filler/etc")]
+        [HttpGet("filler/etc")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerETC()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();

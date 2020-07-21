@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_REPORT
+    public class DTO_REPORT : DTO_BASE
     {
         public string Name { get; set; }    //소재명
-        public string Category { get; set; }    //분류명
+        public string CategoryName { get; set; }    //분류명
         public string Reporter { get; set; }    //취재인
         public string PGMID { get; set; } //사용처
         public string PGMName { get; set; } //사용처
@@ -19,9 +19,9 @@ namespace MAMBrowser.DTO
 
         public string EditorID { get; set; }  //제작자ID
         public string EditorName { get; set; }    //제작자
-        public DateTime EditDtm { get; set; } //편집일시
-        public DateTime? MasteringDtm { get; set; }    //마스터링 일시
+        public string EditDtm { get; set; } //편집일시
+        public string MasteringDtm { get; set; }    //마스터링 일시
         public string FilePath { get; set; }    //파일경로
-        public long Count { get; set; }
+        
     }
 }

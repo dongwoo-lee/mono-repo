@@ -27,7 +27,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetReport()
@@ -45,7 +45,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetPro()
@@ -63,7 +63,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetCM()
@@ -81,7 +81,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpot(string media)
@@ -99,7 +99,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, new { MEDIA=media }, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, new { MEDIA=media }, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetFillerPr(string media)
@@ -117,7 +117,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, new { MEDIA=media}, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, new { MEDIA=media}, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetFillerGeneral()
@@ -135,7 +135,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetFillerTimetone()
@@ -153,7 +153,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetFillerETC()
@@ -171,7 +171,7 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.DataList = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
 

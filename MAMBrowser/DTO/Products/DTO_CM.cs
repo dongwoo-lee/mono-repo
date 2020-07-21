@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_CM
+    public class DTO_CM : DTO_BASE
     {
         public string BrdDT { get; set; }  //방송일
         public string ID { get; set; }          //그룹ID

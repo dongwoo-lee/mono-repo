@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_SONG
+    public class DTO_SONG : DTO_BASE
     {
         public string Name { get; set; }    //곡명
         public string ArtistName { get; set; } //아티스트명
