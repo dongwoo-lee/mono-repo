@@ -14,6 +14,7 @@ namespace MAMBrowser.DTO
         public int DiskUsed { get; set; }
         public string Used { get; set; }
         public string MenuGrpID { get; set; }
+        public string MenuGrpName { get; set; }
         //메뉴
         //디스크 공간
     }

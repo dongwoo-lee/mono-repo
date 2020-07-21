@@ -320,7 +320,7 @@ namespace MAMBrowser.BLL
             });
 
             var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_SB_{viewName}_VIEW /**where**/");
-            builder.Select("ROWNUM AS RNO, ONEAIRDATE,SBID,SBNAME,DURSEC,CAPACITY,STATENAME,EVENTNAME ,EDITOR,EDITORNAME");
+            builder.Select("ROWNUM AS RNO, ONAIRDATE,SBID,SBNAME,DURSEC,CAPACITY,STATENAME,EVENTNAME ,EDITOR,EDITORNAME");
             if (!string.IsNullOrEmpty(media))
             {
                 builder.Where("MEDIA=:MEDIA");
@@ -352,7 +352,7 @@ namespace MAMBrowser.BLL
                 return new DTO_SB
                 {
                     RowNO = Convert.ToInt32(row.RNO),
-                    BrdDT = row.ONEAIRDATE,
+                    BrdDT = row.ONAIRDATE,
                     ID = row.SBID,
                     Name = row.SBNAME,
                     Length = row.DURSEC,

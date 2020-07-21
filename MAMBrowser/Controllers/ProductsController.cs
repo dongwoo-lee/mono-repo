@@ -21,7 +21,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 프로그램 소재 조회 (페이징 x)
         /// </summary>
-        /// <param name="media">매체코드(A,F,C,D)</param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="brd_dt">방송일(20200101)</param>
         /// <returns></returns>
         [HttpGet("pgm/{media}/{brd_dt}")]
@@ -107,7 +107,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// (구)프로소재 조회
         /// </summary>
-        /// <param name="media">A</param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="cate">분류 : ex) AC00279990, AC00279444,AC00192685 </param>
         /// <param name="type">구분 : ex) Y = 방송중, N=폐지 </param>
         /// <param name="editor"></param>
@@ -268,12 +268,12 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-       
+
         /// <summary>
         /// 광고그룹 목록조회 (페이징x)
         /// </summary>
-        /// <param name="media"></param>
-        /// <param name="brd_dt"></param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="pgm"></param>
         /// <returns></returns>
@@ -297,8 +297,8 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 광고그룹 내 소재 조회 (페이징x)
         /// </summary>
-        /// <param name="brd_dt"></param>
-        /// <param name="cmgrpid"></param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
+        /// <param name="cmgrpid">광고그룹 ID : </param>
         /// <returns></returns>
         [HttpGet("cm/contents/{brd_dt}/{cmgrpid}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CM_CONTENT>> FindCMContents(string brd_dt, string cmgrpid)
@@ -321,7 +321,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 주조SPOT 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="cate"></param>
         /// <param name="start_dt"></param>
         /// <param name="end_dt"></param>
@@ -348,7 +348,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(pr) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="name"></param>
@@ -373,7 +373,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(일반) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="name"></param>
@@ -398,7 +398,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(시간) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="start_dt"></param>
         /// <param name="end_dt"></param>
         /// <param name="status"></param>
@@ -424,7 +424,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(기타) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="name"></param>
@@ -435,8 +435,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                //ProductsBLL bll = new ProductsBLL();
+                //result.ResultObject = bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
