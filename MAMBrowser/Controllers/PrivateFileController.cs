@@ -67,7 +67,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string category, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>>();
             try

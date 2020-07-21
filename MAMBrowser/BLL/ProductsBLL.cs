@@ -112,10 +112,10 @@ namespace MAMBrowser.BLL
                     BrdDT= row.ONAIRDATE,
                     EditorID= row.EDITOR,
                     PGMName= row.EVENTNAME,
-                    MasteringDtm= row.MASTERTIME,
+                    MasteringDtm= ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath= row.MASTERFILE,
                     EditorName = row.EDITORNAME,
-                    EditDtm= row.EDITTIME,
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
                 };
             });
 
@@ -206,13 +206,13 @@ namespace MAMBrowser.BLL
                     Reporter = row.REPORTER,
                     PGMID= row.PRODUCTID,
                     PGMName = row.EVENTNAME,
-                    BrdDtm = row.ONAIRDATE,
+                    BrdDT = row.ONAIRDATE,
                     Duration = row.MILLISEC,
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME,
+                    MasteringDtm = ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -294,7 +294,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME,
+                    MasteringDtm = ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     ProType = row.TYPENAME,
                     FilePath = row.MASTERFILE,
                 };
@@ -370,7 +370,7 @@ namespace MAMBrowser.BLL
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_SB_CONTENT> FindSBDetail(string brd_dt, string sbID)
+        public DTO_RESULT_LIST<DTO_SB_CONTENT> FindSBContents(string brd_dt, string sbID)
         {
             DTO_RESULT_LIST<DTO_SB_CONTENT> returnData = new DTO_RESULT_LIST<DTO_SB_CONTENT>();
             var builder = new SqlBuilder();
@@ -468,7 +468,7 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_LIST<DTO_CM_CONTENT> FindCMDetail(string brd_dt, string cmGrpID)
+        public DTO_RESULT_LIST<DTO_CM_CONTENT> FindCMContents(string brd_dt, string cmGrpID)
         {
             DTO_RESULT_LIST<DTO_CM_CONTENT> returnData = new DTO_RESULT_LIST<DTO_CM_CONTENT>();
             var builder = new SqlBuilder();

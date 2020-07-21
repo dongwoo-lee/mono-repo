@@ -258,7 +258,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSBDetail(brd_dt, sbID);
+                result.ResultObject = bll.FindSBContents(brd_dt, sbID);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -307,7 +307,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindCMDetail(brd_dt, cmgrpid);
+                result.ResultObject = bll.FindCMContents(brd_dt, cmgrpid);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
