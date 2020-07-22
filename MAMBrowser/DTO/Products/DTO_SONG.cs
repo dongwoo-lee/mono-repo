@@ -25,5 +25,14 @@ namespace MAMBrowser.DTO
         public string AlbumCoverFilePath { get; set; } // 앨범커버 경로        
         //public string RegDate { get; set; } //등록일??? 2004.02.14
         public string Lyrics { get; set; }      //가사
+
+        public DTO_SONG()
+        {
+
+        }
+        public DTO_SONG(EDTO_SONG edto)
+        {
+
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace MAMBrowser.DTO
         public string Reporter { get; set; }    //취재인
         public string PGMID { get; set; } //사용처
         public string PGMName { get; set; } //사용처
-        public string BrdDtm { get; set; }  //방송일
+        public string BrdDT { get; set; }  //방송일
         public string Duration { get; set; }  //길이
         public string Track { get; set; }   //트랙
 
