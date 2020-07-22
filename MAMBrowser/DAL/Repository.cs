@@ -15,9 +15,9 @@ namespace MAMBrowser.DAL
         {
             _strCon = SystemConfig.AppSettings.ConnectionString;
         }
-        public long Insert(string insertQuery, object entities)
+        public string Insert(string insertQuery, object entities)
         {
-            return 0;
+            return "";//고유키가 db에서 채번되고, 문자형식이 포함될 수 있음.
         }
         public int Update(string updateQuery, object entities)
         {

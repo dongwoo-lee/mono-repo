@@ -1,6 +1,8 @@
-﻿
-namespace MAMBrowser
+﻿namespace MAMBrowser
 {
+    /// <summary>
+    /// 결과 코드
+    /// </summary>
     public enum RESUlT_CODES
     {
         SUCCESS = 0,
@@ -18,4 +20,5 @@ namespace MAMBrowser
         KNOWN_EXCEPTION,
         UNKNOWN_EXCEPTION,
     }
+   
 }

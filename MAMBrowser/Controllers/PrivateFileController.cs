@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MAMBrowser.Controllers
 {
     [ApiController]
-    [Route("api/products/workspace/[controller]")]
+    [Route("api/products/workspace/private")]
     public class PrivateFileController : ControllerBase
     {
         /// <summary>
@@ -19,7 +19,7 @@ namespace MAMBrowser.Controllers
         /// <param name="jsonMetaData">메타데이터</param>
         /// <returns></returns>
         [RequestSizeLimit(int.MaxValue)]
-        [HttpPost("upload")]
+        [HttpPost("files")]
         public DTO_RESULT UploadFile(IFormFile file, [FromForm] string jsonMetaData)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -39,8 +39,8 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="id">ID 값</param>
         /// <returns></returns>
-        [HttpPut("{id}")]
-        public DTO_RESULT UpdateData(string id)
+        [HttpPut("files")]
+        public DTO_RESULT UpdateData([FromBody] DTO_PRIVATE_FILE dto)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -57,6 +57,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// My 공간 - 검색
         /// </summary>
+        /// <param name="cate">분류</param>
         /// <param name="filename">파일명</param>
         /// <param name="title">제목</param>
         /// <param name="memo">메모</param>
@@ -66,8 +67,8 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-        [HttpGet]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        [HttpGet("files/{editor}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>>();
             try

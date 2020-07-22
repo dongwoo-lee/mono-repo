@@ -14,6 +14,7 @@ using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
 using MAMBrowser.Controllers;
+using System.Text.Json.Serialization;
 
 namespace MAMBrowser
 {
@@ -35,7 +36,9 @@ namespace MAMBrowser
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+                c.SchemaFilter<EnumSchemaFilter>();
             });
+
             services.AddControllers();
             services.AddHostedService<MyLoopWorker>();
             services.AddSpaStaticFiles(configuration =>

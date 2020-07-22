@@ -100,7 +100,7 @@ namespace MAMBrowser.BLL
             {
                 if (returnData.TotalRowCount == 0)
                 {
-                    returnData.TotalRowCount = Convert.ToInt64(row.RESULT_COUNT);
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
                 }
                 return new DTO_SCR_SPOT
                 {
@@ -196,7 +196,7 @@ namespace MAMBrowser.BLL
             {
                 if (returnData.TotalRowCount == 0)
                 {
-                    returnData.TotalRowCount = Convert.ToInt64(row.RESULT_COUNT);
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
                 }
                 return new DTO_REPORT
                 {
@@ -281,7 +281,7 @@ namespace MAMBrowser.BLL
             {
                 if (returnData.TotalRowCount == 0)
                 {
-                    returnData.TotalRowCount = Convert.ToInt64(row.RESULT_COUNT);
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
                 }
                 return new DTO_PRO
                 {
@@ -578,7 +578,7 @@ namespace MAMBrowser.BLL
             {
                 if (returnData.TotalRowCount == 0)
                 {
-                    returnData.TotalRowCount = Convert.ToInt64(row.RESULT_COUNT);
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
                 }
                 return new DTO_MCR_SPOT
                 {
@@ -663,7 +663,7 @@ namespace MAMBrowser.BLL
             {
                 if (returnData.TotalRowCount == 0)
                 {
-                    returnData.TotalRowCount = Convert.ToInt64(row.RESULT_COUNT);
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
                 }
                 return new DTO_FILLER
                 {
@@ -688,7 +688,102 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        //public DTO_RESULT_LIST<DTO_PUBLIC_FILE> FindTimetoneFiller(string media, string start_dt, string end_dt, string status, string cate, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
-        //public DTO_RESULT_LIST<DTO_DL30> FindNewDL(string media, string cate, string brd_dt) { }
+        public DTO_RESULT_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        {
+            int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
+            int lastNo = startNo + rowPerPage;
+
+            DTO_RESULT_LIST<DTO_FILLER_TIME> returnData = new DTO_RESULT_LIST<DTO_FILLER_TIME>();
+            var builder = new SqlBuilder();
+            DynamicParameters param = new DynamicParameters();
+            param.AddDynamicParams(new
+            {
+                MEDIA= media,
+                CATE = cate,
+                START_DT = start_dt,
+                END_DT = end_dt,
+                STATUS = status,
+                EDITOR = editor,
+                START_NO = startNo,
+                LAST_NO = lastNo,
+                SORTKEY = sortKey,
+                SORTVALUE = sortValue
+            });
+
+            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_FILLER_TIME_VIEW /**where**/ /**orderby**/");
+            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE");
+            builder.Where("MEDIA=:MEDIA");
+            builder.Where("(STARTDATE >= :START_DT AND ENDDATE <= :END_DT)");
+            if (!string.IsNullOrEmpty(cate))
+            {
+                builder.Where("SPOTTYPE=:CATE");
+            }
+            if (!string.IsNullOrEmpty(status))
+            {
+                builder.Where("STATEID=:STATUS");
+            }
+            if (!string.IsNullOrEmpty(editor))
+            {
+                builder.Where("EDITOR = :EDITOR");
+            }
+            else if (!string.IsNullOrEmpty(editorName))
+            {
+                string[] nameArray = editorName.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(EDITORNAME) LIKE LOWER('%{word}%')");
+                }
+            }
+            if (!string.IsNullOrEmpty(name))
+            {
+                string[] nameArray = name.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(SPOTNAME) LIKE LOWER('%{word}%')");
+                }
+            }
+
+            builder.OrderBy("EDITTIME DESC");
+
+
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
+            var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
+
+            Repository<DTO_FILLER_TIME> repository = new Repository<DTO_FILLER_TIME>();
+            var resultMapping = new Func<dynamic, DTO_FILLER_TIME>((row) =>
+            {
+                if (returnData.TotalRowCount == 0)
+                {
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
+                }
+                return new DTO_FILLER_TIME
+                {
+                    RowNO = Convert.ToInt32(row.RNO),
+                    MediaName = row.MEDIANAME,
+                    ID = row.SPOTID,
+                    Name = row.SPOTNAME,
+                    CategoryID = row.SPOTTYPE,
+                    StartDT = row.STARTDATE,
+                    EndDT = row.ENDDATE,
+                    Status = row.STATENAME,
+                    Duration = row.MILLISEC,
+                    Track = row.EDITFORMAT,
+                    EditorID = row.EDITOR,
+                    EditorName = row.EDITORNAME,
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
+                    ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(Utility.DTM19),
+                    FilePath = row.MASTERFILE,
+                };
+            });
+
+            returnData.Data = repository.Select(queryMaxMinPaging.RawSql, param, resultMapping);
+            returnData.RowPerPage = rowPerPage;
+            returnData.SelectPage = selectPage;
+            return returnData;
+        }
+        //public DTO_RESULT_LIST<DTO_DL30> FindNewDL(string media, string cate, string brd_dt) 
+        //{
+        //}
     }
 }

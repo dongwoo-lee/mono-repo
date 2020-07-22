@@ -348,10 +348,15 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(pr) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="brd_dt"></param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
+        /// <param name="editorName"></param>
         /// <param name="name"></param>
+        /// <param name="rowPerPage"></param>
+        /// <param name="selectPage"></param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/pr/{brd_dt}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> FindProFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
@@ -373,10 +378,15 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(일반) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="brd_dt"></param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
+        /// <param name="editorName"></param>
         /// <param name="name"></param>
+        /// <param name="rowPerPage"></param>
+        /// <param name="selectPage"></param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/general/{brd_dt}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
@@ -404,14 +414,21 @@ namespace MAMBrowser.Controllers
         /// <param name="status"></param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
+        /// <param name="editorName"></param>
         /// <param name="name"></param>
+        /// <param name="rowPerPage"></param>
+        /// <param name="selectPage"></param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/time/{media}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status,[FromQuery]string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PUBLIC_FILE>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER_TIME>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER_TIME>>();
             try
             {
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindFillerTime(media,start_dt, end_dt, cate, status, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -424,10 +441,15 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(기타) 소재 조회
         /// </summary>
-        /// <param name="media"></param>
+        /// <param name="brd_dt"></param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
+        /// <param name="editorName"></param>
         /// <param name="name"></param>
+        /// <param name="rowPerPage"></param>
+        /// <param name="selectPage"></param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/etc/{brd_dt}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> FindETCFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
@@ -450,11 +472,14 @@ namespace MAMBrowser.Controllers
         /// DL3.0 소재 조회 (페이징x)
         /// </summary>
         /// <param name="media">매체(A,C,D,F)</param>
-        /// <param name="cate"></param>
-        /// <param name="brd_dt">방송일</param>
+        /// <param name="pgmID">프로그램 ID</param>
+        /// <param name="pgmName">프로그램 명</param>
+        /// <param name="start_dt">검색 시간(시작)</param>
+        /// <param name="end_dt">검색 시간(종료)</param>
+        /// <param name="end_dt">DAMS 처리 여부</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> FindNewDL(string media, string brd_dt, [FromQuery] string cate)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> FindNewDL(string media, string start_dt, string end_dt, [FromQuery] string pgmID, [FromQuery] string pgmName)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>>();
             try
