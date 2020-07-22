@@ -67,13 +67,8 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-<<<<<<< HEAD
         [HttpGet("files/{editor}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
-=======
-        [HttpGet]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string category, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
->>>>>>> 990de318a78ca3e66900d62260b3b5f3d2fe0edc
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>>();
             try

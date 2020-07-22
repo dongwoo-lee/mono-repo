@@ -348,11 +348,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(pr) 소재 조회
         /// </summary>
-<<<<<<< HEAD
-        /// <param name="brd_dt"></param>
-=======
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
->>>>>>> 990de318a78ca3e66900d62260b3b5f3d2fe0edc
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="editorName"></param>
@@ -382,11 +378,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(일반) 소재 조회
         /// </summary>
-<<<<<<< HEAD
-        /// <param name="brd_dt"></param>
-=======
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
->>>>>>> 990de318a78ca3e66900d62260b3b5f3d2fe0edc
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="editorName"></param>
@@ -449,11 +441,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 필러(기타) 소재 조회
         /// </summary>
-<<<<<<< HEAD
-        /// <param name="brd_dt"></param>
-=======
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
->>>>>>> 990de318a78ca3e66900d62260b3b5f3d2fe0edc
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="editorName"></param>
