@@ -1,11 +1,13 @@
 <template>
-     <b-card class="mb-4" title="스크롤페이징">
+     <b-card class="mb-4" title="드롭다운메뉴+입력박스+순간검색">
          <c-dropdown-menu-input
             :suggestions="suggestions"
             @selected="onSelected"
             @enter="onEnter"
         >
         </c-dropdown-menu-input>
+        <div>Selected: {{ localDropdownSelectedVal }}</div>
+        <div>Enteed: {{ localDropdownEnteredVal }}</div>
      </b-card>
 </template>
 
@@ -15,6 +17,8 @@ export default {
     components: { CDropdownMenuInput },
     data() {
         return {
+            localDropdownSelectedVal: '',
+            localDropdownEnteredVal: '',
             suggestions: [
                 {
                     id: 1,
@@ -101,10 +105,10 @@ export default {
     },
     methods: {
         onSelected(data) {
-            console.info('onSelected', data);
+            this.localDropdownSelectedVal = data;
         },
         onEnter(data) {
-            console.info('onEnter', data);
+            this.localDropdownEnteredVal = data;
         }
     }
 }

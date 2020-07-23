@@ -28,7 +28,7 @@
                     <b-colxx sm="3">
                         <!-- 데이터 피커 -->
                         <b-form-group label="날짜(시작-종료)" class="inline-block">
-                            <c-input-date-picker
+                            <c-input-date-picker-group
                                 @startDate="onDatePickerStartDate"
                                 @endDate="onDatePickerEndDate"
                             />
@@ -51,9 +51,7 @@
             </b-form>
             </b-card>
             <b-card class="mb-4" title="스크롤 페이징 - /api/Products/spot/scr?start_dt=20200101&end_dt=20200701&rowPerPage=16&selectPage=1(부조 SPOT 소재 조회)">
-                <div>Selected: {{ logProductSpotSrc }}
-                    <span style="color:red">※ Todo: 날짜 입력 안할 경우 처리는 어떻게 할것인가?</span>
-                </div>
+                <div>Selected: {{ logProductSpotSrc }}</div>
                 <data-table-scroll-paging
                     ref="scrollPaging"
                     :table-height="'500px'"
@@ -62,10 +60,13 @@
                     :per-page="localDataTableRowPerPage"
                     :is-actions-slot="true"
                     :num-rows-to-bottom="3"
+                    :contextmenu="localContextMenu"
                     @scrollPerPage="onScrollPerPage"
+                    @contextMenuAction="onContextMenuAction"
+                    @sortableclick="onSortableClick"
                 >
-                    <template slot="actions">
-                        <b-button class="mb-1" variant="primary default">미리듣기</b-button>
+                    <template slot="actions" scope="props">
+                        <b-button class="mb-1" variant="primary default" @click="handlerPreview(props, props.rowIndex)">미리듣기</b-button>
                     </template>
                 </data-table-scroll-paging>
             </b-card>
@@ -77,14 +78,14 @@
 <script>
 import CDropdownMenuInput from '../../../components/Input/CDropdownMenuInput';
 import DataTableScrollPaging from '../../../components/DataTable/DataTableScrollPaging';
-import CInputDatePicker from '../../../components/Input/CInputDatePicker';
+import CInputDatePickerGroup from '../../../components/Input/CInputDatePickerGroup';
 import CInput from '../../../components/Input/CInputText';
 
 export default {
     components: { 
         CDropdownMenuInput,
         DataTableScrollPaging,
-        CInputDatePicker,
+        CInputDatePickerGroup,
         CInput,
     },
     data() {
@@ -95,6 +96,8 @@ export default {
                 end_dt: '',
                 editor: '',
                 name: '',
+                sortKey: '',
+                sortValue: '',
             },
             suggestions: [],                 // 드롭다운 제안 리스트
             localDropdownSelectedVal : '',   // 드롭다운 선택 값
@@ -102,6 +105,7 @@ export default {
             localDataTableData: [],          // 테이블 데이터
             localDataTableRowPerPage: 16,    // 테이블 로우 개수
             localDataTableSelectPage: 1,     // 테이블 현재 페이지
+            localDataTableTotalRowCount: 0,
             localDataTableFields: [          // 테이블 헤더
                 {
                     name: "__checkbox",
@@ -110,13 +114,20 @@ export default {
                     width: "5%"
                 },
                 {
+                    name: "rowNO",
+                    title: "",
+                    titleClass: "center aligned",
+                    dataClass: "list-item-heading",
+                    width: "4%"
+                },
+                {
                     name: "name",
                     title: "소재명",
                     titleClass: "",
                     dataClass: "list-item-heading",
                 },
                 {
-                    name: "category",
+                    name: "categoryName",
                     title: "분류명",
                     titleClass: "",
                     dataClass: "list-item-heading",
@@ -126,18 +137,26 @@ export default {
                     title: "길이",
                     titleClass: "",
                     dataClass: "list-item-heading",
+                    callback: (v) => {
+                        return this.$fn.splitFirst(v);
+                    }
                 },
                 {
                     name: "track",
                     title: "트랙",
                     titleClass: "",
                     dataClass: "list-item-heading",
+                    width: "4%"
                 },
                 {
                     name: "brdDT",
+                    sortField: 'brdDT',
                     title: "방송일",
                     titleClass: "",
                     dataClass: "list-item-heading",
+                    callback: (v) => {
+                        return this.$fn.formatDate(v, 'yyyy-MM-dd');
+                    }
                 },
                 {
                     name: "editorID",
@@ -156,6 +175,7 @@ export default {
                     title: "마스터링 일시",
                     titleClass: "",
                     dataClass: "list-item-heading",
+                    width: "10%"
                 },
                 {
                     name: "filePath",
@@ -176,24 +196,31 @@ export default {
                     dataClass: "list-item-heading",
                 },
                 {
-                    name: "count",
-                    title: "개수",
-                    titleClass: "",
+                    name: '__slot:actions',
+                    title: '미리듣기',
                     dataClass: "list-item-heading",
-                },
+                    width: "10%"
+                }   
+            ],
+            localContextMenu: [
+                { name: 'edit', text: '편집' },
+                { name: 'throw', text: '휴지통으로 보내기' },
+                { name: 'download', text: '다운로드' },
             ]
         }
     },
     created() {
-        this.getMediaData();
-        this.getProductSpotSrcData();
+        this.$nextTick(() => {
+            this.getMediaData();
+            this.getProductSpotSrcData();
+        });
     },
     methods: {
         getMediaData() {
-            this.$http.post('/api/Categories/media').then(
+            this.$http.get('/api/Categories/media').then(
                 res => {
                     if (res.status === 200) {
-                        this.suggestions = res.data.resultObject.dataList;
+                        this.suggestions = res.data.resultObject.data;
                     }
                 }
             )
@@ -206,22 +233,27 @@ export default {
                 name: this.localSearchItems.name,
                 rowPerPage: this.localDataTableRowPerPage,
                 selectPage: this.localDataTableSelectPage,
+                sortKey: this.localSearchItems.sortKey,
+                sortValu: this.localSearchItems.sortValue,
             }
 
             this.logProductSpotSrc = params;
             this.$http.get('/api/Products/spot/scr', {params : params}).then(
                 res => {
                     if (res.status === 200) {
-                        const { dataList, rowPerPage, selectPage } = res.data.resultObject;
+                        const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
                         if (selectPage > 1) {
-                            dataList.forEach(row => {
+                            data.forEach(row => {
                                 this.localDataTableData.push(row);
                             })
                         } else {
-                            this.localDataTableData = dataList;
+                            this.localDataTableData = data;
                             this.localDataTableRowPerPage = rowPerPage;
                             this.localDataTableSelectPage = selectPage;
+                            this.localDataTableTotalRowCount = totalRowCount;
                         }
+                    } else {
+                        this.$fn.notify('server-error', { message: '스크롤 페이징 테이블 조회 에러' });
                     }
                 }
             )
@@ -242,6 +274,23 @@ export default {
         onDatePickerEndDate(v) {
             this.localSearchItems.end_dt = v;
         },
+        onContextMenuAction(v) {
+            switch(v) {
+                case 'edit': console.log(v); break;
+                case 'throw': console.log(v); break;
+                case 'download':  console.log(v); break;
+                default: break;
+            }
+        },
+        handlerPreview(props) {
+            console.info('handlerPreview', props);
+        },
+        onSortableClick(d) {
+            // this.localSearchItems.sortKey = d;
+            // this.localSearchItems.sortValue = '';
+            // this.getProductSpotSrcData();
+            console.info('onSortableClick', d);
+        }
     }
 }
 </script>

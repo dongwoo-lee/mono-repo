@@ -6,7 +6,6 @@
                 v-model="startDate"
                 type="text"
                 :placeholder="placeHolder"
-                pattern="\d\d\d\d-(0[1-9]|1[1-2])-(0[1-9]|[1-2][0-9]|3[0-1])"
             />
             <!-- 데이터 피커: 시작날짜 -->
             <b-input-group-append>

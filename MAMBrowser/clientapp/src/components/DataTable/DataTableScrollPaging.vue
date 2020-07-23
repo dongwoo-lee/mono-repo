@@ -1,6 +1,7 @@
 <template>
     <div>
         <vuetable ref="vuetable"
+            class="order-with-arrow"
             :api-mode="false"
             :table-height="tableHeight"
             :fields="fields"
@@ -12,23 +13,15 @@
         >
             <template v-if="isActionsSlot" slot="actions" scope="props">
                 <div class="table-button-container">
-                    <slot name="actions"></slot>
+                    <slot name="actions" :props="props"></slot>
                 </div>
             </template>
         </vuetable>
         <!-- 우클릭 컨텍스트 메뉴 -->
         <v-contextmenu ref="contextmenu">
-            <v-contextmenu-item @click="onContextMenuAction('copy')">
+            <v-contextmenu-item v-for="(item, i) in contextmenu" :key="i" @click="onContextMenuAction(item.name)">
                 <i class="simple-icon-docs" />
-                <span>Copy</span>
-            </v-contextmenu-item>
-            <v-contextmenu-item @click="onContextMenuAction('move-to-archive')">
-                <i class="simple-icon-drawer" />
-                <span>Move to archive</span>
-            </v-contextmenu-item>
-            <v-contextmenu-item @click="onContextMenuAction('delete')">
-                <i class="simple-icon-trash" />
-                <span>Delete</span>
+                <span>{{ item.text }}</span>
             </v-contextmenu-item>
         </v-contextmenu>
     </div>
@@ -60,9 +53,18 @@ export default {
             type: Number,
             default: 10,
         },
-        isActionsSlot: {             // actions: button 등 slot 사용 유무
+        isActionsSlot: {         // actions: button 등 slot 사용 유무
             type: Boolean,  
             default: false,
+        },
+        contextmenu: {            // 우측 클릭 메뉴
+            type: Array,
+            default: () => [
+                // {
+                //     name: 'edit',
+                //     text: '편집',
+                // }
+            ]
         },
     },
     data() {
@@ -80,11 +82,18 @@ export default {
             [this.tBody] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
             if (!this.tBody || !rowElem) return;
             this.rowElemHeight = rowElem.clientHeight;
+            // scroll event linstener
             this.tBody.addEventListener('scroll', e => {
                 clearTimeout(this.scrollTimeout);
                 this.scrollTimeout = setTimeout(() => {
                     this.handlerScroll(e);
                 }, 150)
+            });
+
+            // sortable click event linstener
+            [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
+            this.sortable.addEventListener('click', e => {
+                this.onSortableClick(e);
             });
         });
     },
@@ -109,6 +118,7 @@ export default {
             return "";
         },
         rowClicked(dataItem, event) {
+            console.info('header')
             const itemId = dataItem.id;
             if (this.selectedItems.includes(itemId)) {
                 this.selectedItems = this.selectedItems.filter(x => x !== itemId);
@@ -127,6 +137,13 @@ export default {
             }
             this.$refs.contextmenu.show({ top: event.pageY, left: event.pageX });
         },
+        onContextMenuAction(data) {
+            this.$emit('contextMenuAction', data);
+        },
+        onSortableClick(e) {
+            const targetId = e.target.id.replace('_', '');
+            this.$emit('sortableclick', targetId);
+        }
     }
 }
 </script>
