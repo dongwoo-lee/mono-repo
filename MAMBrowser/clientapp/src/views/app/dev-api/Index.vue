@@ -3,12 +3,12 @@
     <b-row>
         <b-colxx xxs="12">
             <piaf-breadcrumb heading="개발 API 연결 컴포넌트 모음" />
-            <div class="separator mb-5"></div>
+            <div class="separator mb-3"></div>
         </b-colxx>
     </b-row>
     <b-row>
         <!-- dropdown menu + input + 순간 검색 -->
-        <b-colxx xxs="4">
+        <b-colxx xxs="6">
             <b-card class="mb-4" title="dropdownmenu-input - /api/Categories/media(매체목록)">
                 <c-dropdown-menu-input
                     :suggestions="suggestions"
@@ -50,8 +50,19 @@
                 </b-row>
             </b-form>
             </b-card>
+            <div>Selected: {{ logProductSpotSrc }}</div>
             <b-card class="mb-4" title="스크롤 페이징 - /api/Products/spot/scr?start_dt=20200101&end_dt=20200701&rowPerPage=16&selectPage=1(부조 SPOT 소재 조회)">
-                <div>Selected: {{ logProductSpotSrc }}</div>
+                <b-form class="mb-3" inline>
+                    <b-input-group class="mr-2">
+                        <b-button class="mb-1" variant="primary default" size="sm">파일 업로드</b-button>
+                    </b-input-group>
+                    <b-input-group class="mr-2">
+                        <b-button class="mb-1" variant="danger default" size="sm">휴지통비우기</b-button>
+                    </b-input-group>
+                    <b-input-group class="mr-2">
+                        <b-button class="mb-1" variant="secondary default" size="sm">복원</b-button>
+                    </b-input-group>
+                </b-form>
                 <data-table-scroll-paging
                     ref="scrollPaging"
                     :table-height="'500px'"
@@ -80,6 +91,7 @@ import CDropdownMenuInput from '../../../components/Input/CDropdownMenuInput';
 import DataTableScrollPaging from '../../../components/DataTable/DataTableScrollPaging';
 import CInputDatePickerGroup from '../../../components/Input/CInputDatePickerGroup';
 import CInput from '../../../components/Input/CInputText';
+import ResponseBody from '../../../model/ResponseBody';
 
 export default {
     components: { 
@@ -97,7 +109,13 @@ export default {
                 editor: '',
                 name: '',
                 sortKey: '',
-                sortValue: '',
+                sortValue: 'DESC',
+            },
+            responseData: {
+                data: null,
+                rowPerPage: 16,
+                selectPage: 1,
+                totalRowCount: 0,
             },
             suggestions: [],                 // 드롭다운 제안 리스트
             localDropdownSelectedVal : '',   // 드롭다운 선택 값
@@ -231,10 +249,10 @@ export default {
                 end_dt: this.localSearchItems.end_dt,
                 editor: this.localSearchItems.editor,
                 name: this.localSearchItems.name,
+                sortKey: this.localSearchItems.sortKey,
+                sortValue: this.localSearchItems.sortValue,
                 rowPerPage: this.localDataTableRowPerPage,
                 selectPage: this.localDataTableSelectPage,
-                sortKey: this.localSearchItems.sortKey,
-                sortValu: this.localSearchItems.sortValue,
             }
 
             this.logProductSpotSrc = params;
@@ -286,10 +304,9 @@ export default {
             console.info('handlerPreview', props);
         },
         onSortableClick(d) {
-            // this.localSearchItems.sortKey = d;
-            // this.localSearchItems.sortValue = '';
-            // this.getProductSpotSrcData();
-            console.info('onSortableClick', d);
+            this.localSearchItems.sortKey = d;
+            this.localSearchItems.sortValue = this.$fn.changeSortValue(this.localSearchItems.sortValue);
+            this.getProductSpotSrcData();
         }
     }
 }

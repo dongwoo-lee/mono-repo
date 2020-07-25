@@ -3,7 +3,7 @@
     <b-row>
       <b-colxx xxs="12">
         <piaf-breadcrumb :heading="$t('menu.private')"/>
-        <div class="separator mb-5"></div>
+        <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
     <b-row>
@@ -80,7 +80,7 @@
                   <b-form-input type="text" v-model="gridForm.email" />
                 </b-form-group>
               </b-colxx>
-              <b-colxx sm="3">
+              <b-colxx sm="8">
                 <b-form-group label="추가 검색">
                   <b-form-checkbox-group v-model="selected">
                     <b-form-checkbox value="orange">히트곡</b-form-checkbox>

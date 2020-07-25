@@ -67,6 +67,15 @@ const notify = (type, options = { title, message, options: { duration: 4000, per
     window.$notify(type, options.title, options.message, options.options);
 }
 
+const changeSortValue = (v) => {
+    if (!v) { return 'ASC'; }
+    if (v === 'ASC') {
+        return 'DESC';
+    }
+
+    return 'ASC';
+}
+
 /**
  * 파일 다운로드
  */
@@ -106,6 +115,7 @@ const commonFunctions = {
     splitFirst,
     notify,
     fileDownload,
+    changeSortValue,
 }
 
 export default commonFunctions;

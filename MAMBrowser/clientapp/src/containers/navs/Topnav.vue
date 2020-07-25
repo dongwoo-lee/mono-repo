@@ -25,27 +25,39 @@
 
     <div class="navbar-right">
       <div class="user d-inline-block">
-        <b-dropdown
-          class="dropdown-menu-right"
-          right
-          variant="empty"
-          toggle-class="p-0"
-          menu-class="mt-3"
-          no-caret
-        >
-          <template slot="button-content">
-            <span class="name mr-1">{{currentUser.title}}</span>
-            <span>
-              <img :alt="currentUser.title" :src="currentUser.img" />
-            </span>
-          </template>
-          <b-dropdown-item>Account</b-dropdown-item>
-          <b-dropdown-item>Features</b-dropdown-item>
-          <b-dropdown-item>History</b-dropdown-item>
-          <b-dropdown-item>Support</b-dropdown-item>
-          <b-dropdown-divider />
-          <b-dropdown-item @click="logout">Sign out</b-dropdown-item>
-        </b-dropdown>
+        <b-row>
+          <b-colxx sm="8" class="user-storage-info">
+            <span class="current col-sm-6 col-md-offset-2">2.7GB / 30GB</span>
+            <span class="free-space col-sm-6">여유 27.3GB</span>
+          </b-colxx>
+          <b-colxx sm="4">
+            <b-dropdown
+              class="dropdown-menu-right"
+              right
+              variant="empty"
+              toggle-class="p-0"
+              menu-class="mt-3"
+              no-caret
+            >
+              <template slot="button-content">
+                <span class="name mr-1">
+                  {{currentUser.title}}(일반 사용자)
+                  <i class="iconsminds-administrator"></i>
+                  </span>
+
+              </template>
+              <b-dropdown-item>Account</b-dropdown-item>
+              <b-dropdown-item>Features</b-dropdown-item>
+              <b-dropdown-item>History</b-dropdown-item>
+              <b-dropdown-item>Support</b-dropdown-item>
+              <b-dropdown-divider />
+              <b-dropdown-item @click="logout">Sign out</b-dropdown-item>
+            </b-dropdown>
+          </b-colxx>
+        </b-row>
+        <div class="storage-progress">
+          <b-progress :value="30" variant="info" striped class="w-50"></b-progress>
+        </div>
       </div>
     </div>
   </nav>
@@ -65,7 +77,7 @@ import { getDirection, setDirection } from "../../utils";
 export default {
   components: {
     "menu-icon": MenuIcon,
-    "mobile-menu-icon": MobileMenuIcon,
+    "mobile-menu-icon": MobileMenuIcon
   },
   data() {
     return {
@@ -77,17 +89,20 @@ export default {
     };
   },
   methods: {
-    ...mapMutations('menu', ["changeSideMenuStatus", "changeSideMenuForMobile"]),
-    ...mapActions('user', ["setLang", "signOut"]),
+    ...mapMutations("menu", [
+      "changeSideMenuStatus",
+      "changeSideMenuForMobile"
+    ]),
+    ...mapActions("user", ["setLang", "signOut"]),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
       });
-    },
+    }
   },
   computed: {
-    ...mapGetters('user', ['currentUser']),
-    ...mapGetters('menu', {
+    ...mapGetters("user", ["currentUser"]),
+    ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",
       selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
@@ -98,7 +113,7 @@ export default {
       if (from !== to) {
         this.$router.go(this.$route.path);
       }
-    },
+    }
   }
 };
 </script>

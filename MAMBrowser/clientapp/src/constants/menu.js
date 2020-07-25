@@ -29,30 +29,30 @@ const data = [
   },
   {
     id: "making",
-    icon: "iconsminds-digital-drawing",
+    icon: "iconsminds-blackboard",
     label: "menu.making", // 제작
     subs: [
       {
-        icon: "simple-icon-app-following",
+        icon: "iconsminds-blackboard",
         label: "menu.program", // 프로그램
         to: "/app/program",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-blackboard",
         label: "menu.relief-spot", // 부조 SPOT
         to: "/app/relief-spot",
       }, {
-        icon: "simple-icon-app-unfollow",
+        icon: "iconsminds-blackboard",
         label: "menu.shared-material", // 공유소재
         to: "/app/shared-material",
       },
       {
-        icon: "simple-icon-app-following",
+        icon: "iconsminds-blackboard",
         label: "menu.coverage", // 취재물
         to: "/app/coverage",
       },
       {
-        icon: "simple-icon-app-following",
+        icon: "iconsminds-blackboard",
         label: "menu.pro-materials", // (구)프로소재
         to: "/app/pro-materials",
         // newWindow: true
@@ -61,16 +61,16 @@ const data = [
   },
   {
     id: "soundtrack", // 음원
-    icon: "iconsminds-digital-drawing",
+    icon: "iconsminds-clef",
     label: "menu.soundtrack",
     subs: [
       {
-      icon: "simple-icon-app-following",
-      label: "menu.music-record-room", // 음반기록실
-      to: "/app/music-record-room",
+        icon: "iconsminds-clef",
+        label: "menu.music-record-room", // 음반기록실
+        to: "/app/music-record-room",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-clef",
         label: "menu.sound-effect", // 효과음
         to: "/app/sound-effect",
       },
@@ -78,21 +78,21 @@ const data = [
   },
   {
     id: "advertising", // 광고
-    icon: "iconsminds-digital-drawing",
+    icon: "iconsminds-optimization",
     label: "menu.advertising",
     subs: [
       {
-      icon: "simple-icon-app-following",
-      label: "menu.casting-sb", // 주조SB
-      to: "/app/casting-sb",
+        icon: "iconsminds-optimization",
+        label: "menu.casting-sb", // 주조SB
+        to: "/app/casting-sb",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-optimization",
         label: "menu.relief-sb",  // 부조SB
         to: "/app/relief-sb",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-optimization",
         label: "menu.cm", // CM
         to: "/app/cm"
       },
@@ -100,31 +100,31 @@ const data = [
   },
   {
     id: "combination-md", // 편성 MD
-    icon: "iconsminds-digital-drawing",
+    icon: "iconsminds-notepad",
     label: "menu.combination-md",
     subs: [
       {
-      icon: "simple-icon-app-following",
-      label: "menu.casting-spot", // 주조SPOT
-      to: "/app/casting-spot",
+        icon: "iconsminds-notepad",
+        label: "menu.casting-spot", // 주조SPOT
+        to: "/app/casting-spot",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-notepad",
         label: "menu.filler-pr", // Filler(PR)
         to: "/app/filler-pr",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-notepad",
         label: "menu.filler-material", // Filler(소재)
         to: "/app/filler-material",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-notepad",
         label: "menu.filler-time", // Filler(시간)
         to: "/app/filler-time",
       },
       {
-        icon: "simple-icon-app-follow",
+        icon: "iconsminds-notepad",
         label: "menu.filler-other", // Filler(기타)
         to: "/app/filler-other",
       }

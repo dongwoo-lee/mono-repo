@@ -47,7 +47,7 @@ export default {
         },
         numRowsToBottom: {       // 맨 아래 행수
             type: Number,
-            default: 1,
+            default: 4,
         },
         perPage: {               // 페이지당 보여줄 개수
             type: Number,
