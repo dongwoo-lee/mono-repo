@@ -117,7 +117,7 @@ export default {
         },
         emitEndDate(v) {
             this.$emit('endDate', this.$fn.formatDate(v));
-        }
+        },
     }
 }
 </script>

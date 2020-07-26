@@ -1,6 +1,6 @@
 <template>
     <b-card class="mb-4" title="스크롤페이징">
-        <data-table-scroll-paging
+        <c-data-table-scroll-paging
             ref="scrollPaging"
             :table-height="'500px'"
             :fields="fields"
@@ -12,11 +12,11 @@
             <template slot="actions">
                 <b-button class="mb-1" variant="primary default" @click.stop="onPreview">미리듣기</b-button>
             </template>
-        </data-table-scroll-paging>
+        </c-data-table-scroll-paging>
     </b-card>
 </template>
 <script>
-import DataTableScrollPaging from '../../../components/DataTable/DataTableScrollPaging';
+import CDataTableScrollPaging from '../../../components/DataTable/CDataTableScrollPaging';
 import mockData from '../../../data/tableData.js'
 
 const MOCK_DATA = () => {
@@ -24,7 +24,7 @@ const MOCK_DATA = () => {
 }
 
 export default {
-    components: { DataTableScrollPaging },
+    components: { CDataTableScrollPaging },
     data() {
         return {
             localData: [],

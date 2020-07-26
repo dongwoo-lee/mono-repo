@@ -80,7 +80,7 @@ export default {
         this.$nextTick(() => {
             const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
             [this.tBody] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
-            if (!this.tBody || !rowElem) return;
+            if (!rowElem || !this.tBody) return;
             this.rowElemHeight = rowElem.clientHeight;
             // scroll event linstener
             this.tBody.addEventListener('scroll', e => {
@@ -92,6 +92,7 @@ export default {
 
             // sortable click event linstener
             [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
+            if (!this.sortable) return;
             this.sortable.addEventListener('click', e => {
                 this.onSortableClick(e);
             });
@@ -100,6 +101,10 @@ export default {
     destroyed() {
       if (this.tBody != null) {
         this.tBody.removeEventListener('scroll', this.handlerScroll);
+      }
+
+      if (this.sortable != null) {
+          this.sortable.removeEventListener('click', this.onSortableClick);
       }
     },
     methods: {
@@ -118,7 +123,6 @@ export default {
             return "";
         },
         rowClicked(dataItem, event) {
-            console.info('header')
             const itemId = dataItem.id;
             if (this.selectedItems.includes(itemId)) {
                 this.selectedItems = this.selectedItems.filter(x => x !== itemId);
