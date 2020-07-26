@@ -28,6 +28,7 @@ import VueUploadComponent from 'vue-upload-component';
 
 import http from './http.js'
 import commonFunctions from './utils/CommonFunctions';
+import commonFilters from './utils/CommonFilters';
 
 Vue.use(BootstrapVue);
 Vue.use(VueI18n);
@@ -55,6 +56,10 @@ Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.component('file-upload', VueUploadComponent)
 
 Vue.prototype.$fn = commonFunctions;
+
+Object.keys(commonFilters).forEach((key) => {
+  Vue.filter(key, commonFilters[key]);
+});
 
 Vue.config.productionTip = false
 

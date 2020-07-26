@@ -20,3 +20,16 @@ CM	CM
 '- FILLER(시간)	'- FILLER (time)
 '- FILLER(기타)	'- FILLER (other)
 DL 3.0 	DL 3.0
+
+
+
+--------------
+2020-07-06:
+1. dropdown + input + 자동완성 
+ - 대소문자 상관X
+ - 값이 정상적으로 넘어가면 되는 것.
+ 
+ 2. CX
+  - Tab으로 넘길때, button focus 적용.
+
+  3. 멀티 정렬 표시 > 백단은 하나로

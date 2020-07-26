@@ -13,7 +13,6 @@
                 <c-dropdown-menu-input
                     :suggestions="suggestions"
                     @selected="onDropdownInputSelected"
-                    @enter="onDropdownInputEnter"
                 />
                 <div>Selected: {{ localDropdownSelectedVal }}</div>
                 <div>Enteed: {{ localDropdownEnteredVal }}</div>
@@ -23,32 +22,32 @@
         <b-colxx xxs="12">
              <!-- 검색 -->
             <b-card class="mb-4">
-            <b-form @submit.stop>
-                <b-row>
-                    <b-colxx sm="3">
-                        <!-- 데이터 피커 -->
-                        <b-form-group label="날짜(시작-종료)" class="inline-block">
-                            <c-input-date-picker-group
-                                @startDate="onDatePickerStartDate"
-                                @endDate="onDatePickerEndDate"
-                            />
-                        </b-form-group>
-                    </b-colxx>
-                    <b-colxx sm="1">
-                        <!-- 인풋 텍스트: 사용자 -->
-                        <b-form-group label="사용자" class="inline-block">
-                            <c-input v-model="localSearchItems.editor"></c-input>
-                        </b-form-group>
-                    </b-colxx>
-                    <b-colxx sm="1">
-                        <!-- 인풋 텍스트: 사용자 -->
-                        <b-form-group label="이름" class="inline-block">
-                            <c-input v-model="localSearchItems.name"></c-input>
-                        </b-form-group>
-                    </b-colxx>
-                    <b-button class="mb-1" variant="primary default" size="sm" @click="getProductSpotSrcData">검색</b-button>
-                </b-row>
-            </b-form>
+                <b-form @submit.stop>
+                    <b-row>
+                        <b-colxx sm="3">
+                            <!-- 데이터 피커 -->
+                            <b-form-group label="날짜(시작-종료)" class="inline-block">
+                                <c-input-date-picker-group
+                                    @startDate="onDatePickerStartDate"
+                                    @endDate="onDatePickerEndDate"
+                                />
+                            </b-form-group>
+                        </b-colxx>
+                        <b-colxx sm="1">
+                            <!-- 인풋 텍스트: 사용자 -->
+                            <b-form-group label="사용자" class="inline-block">
+                                <c-input v-model="localSearchItems.editor"></c-input>
+                            </b-form-group>
+                        </b-colxx>
+                        <b-colxx sm="1">
+                            <!-- 인풋 텍스트: 사용자 -->
+                            <b-form-group label="이름" class="inline-block">
+                                <c-input v-model="localSearchItems.name"></c-input>
+                            </b-form-group>
+                        </b-colxx>
+                        <b-button class="mb-1" variant="primary default" size="sm" @click="getProductSpotSrcData">검색</b-button>
+                    </b-row>
+                </b-form>
             </b-card>
             <div>Selected: {{ logProductSpotSrc }}</div>
             <b-card class="mb-4" title="스크롤 페이징 - /api/Products/spot/scr?start_dt=20200101&end_dt=20200701&rowPerPage=16&selectPage=1(부조 SPOT 소재 조회)">
@@ -63,7 +62,7 @@
                         <b-button class="mb-1" variant="secondary default" size="sm">복원</b-button>
                     </b-input-group>
                 </b-form>
-                <data-table-scroll-paging
+                <c-data-table-scroll-paging
                     ref="scrollPaging"
                     :table-height="'500px'"
                     :fields="localDataTableFields"
@@ -79,7 +78,7 @@
                     <template slot="actions" scope="props">
                         <b-button class="mb-1" variant="primary default" @click="handlerPreview(props, props.rowIndex)">미리듣기</b-button>
                     </template>
-                </data-table-scroll-paging>
+                </c-data-table-scroll-paging>
             </b-card>
         </b-colxx>
     </b-row>
@@ -88,7 +87,7 @@
 
 <script>
 import CDropdownMenuInput from '../../../components/Input/CDropdownMenuInput';
-import DataTableScrollPaging from '../../../components/DataTable/DataTableScrollPaging';
+import CDataTableScrollPaging from '../../../components/DataTable/CDataTableScrollPaging';
 import CInputDatePickerGroup from '../../../components/Input/CInputDatePickerGroup';
 import CInput from '../../../components/Input/CInputText';
 import ResponseBody from '../../../model/ResponseBody';
@@ -96,7 +95,7 @@ import ResponseBody from '../../../model/ResponseBody';
 export default {
     components: { 
         CDropdownMenuInput,
-        DataTableScrollPaging,
+        CDataTableScrollPaging,
         CInputDatePickerGroup,
         CInput,
     },
