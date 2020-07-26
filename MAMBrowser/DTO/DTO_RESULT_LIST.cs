@@ -12,8 +12,4 @@ namespace MAMBrowser.DTO
         public int SelectPage { get; set; }     //현재 페이지
         public int TotalRowCount { get; set; } = 0;    //전체 행 수
     }
-    public class DTO_RESULT_OBJECT<T>
-    {
-        public T Data { get; set; }
-    }
 }

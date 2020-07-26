@@ -9,12 +9,6 @@ namespace MAMBrowser.Controllers
 {
     public class APIBLL 
     {
-        public DTO_RESULT Login()
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            return result;
-        }
-
         public DTO_RESULT_LIST<DTO_USER> GetUserList()
         {
             DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
@@ -37,7 +31,13 @@ namespace MAMBrowser.Controllers
         {
             DTO_RESULT_LIST<DTO_USER_DETAIL> returnData = new DTO_RESULT_LIST<DTO_USER_DETAIL>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_ID, USED FROM MIROS_USER INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID");
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, A.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_ID, B.NAME AS MENU_GRP_NAME, USED 
+FROM MIROS_USER
+INNER JOIN MIROS_ROLE ON MIROS_ROLE.ROLE=MIROS_USER.ROLE
+INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID 
+INNER JOIN M30_ROLE_EXT ON MIROS_USER.ROLE = M30_ROLE_EXT.ROLE_ID
+INNER JOIN M30_CODE A ON A.CODE = M30_ROLE_EXT.AUTHOR_CD
+LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_ID");
             Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
             var resultMapping = new Func<dynamic, DTO_USER_DETAIL>((row) =>
             {
@@ -45,10 +45,15 @@ namespace MAMBrowser.Controllers
                 {
                     ID = row.PERSONID,
                     Name = row.PERSONNAME,
+                    RoleID = row.ROLE,
+                    RoleName = row.ROLE_NAME,
+                    AuthorCD = row.AUTHOR_CD,
+                    AuthorName = row.AUTHOR_NAME,
                     DiskMax = Convert.ToInt32(row.DISK_MAX),
                     DiskUsed = Convert.ToInt32(row.DISK_USED),
                     DiskAvailable = Convert.ToInt32(row.DISK_AVLB),
                     MenuGrpID = row.MENU_GRP_ID,
+                    MenuGrpName = row.MENU_GRP_NAME,
                     Used = row.USED,
                 };
             });
@@ -57,7 +62,6 @@ namespace MAMBrowser.Controllers
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-
         public int UpdateUserDetail(List<DTO_USER_DETAIL> updateDtoList)
         {
             var builder = new SqlBuilder();
@@ -77,12 +81,17 @@ namespace MAMBrowser.Controllers
 
             return repository.Update(queryTemplate.RawSql, paramMap);
         }
-
-      
         public DTO_USER_DETAIL GetUserDetail(string id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_ID, USED FROM MIROS_USER INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID WHERE PERSONID=:PERSONID");
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, M30_CODE.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_ID, B.NAME AS MENU_GRP_NAME, USED 
+FROM MIROS_USER 
+INNER JOIN MIROS_ROLE ON MIROS_ROLE.ROLE=MIROS_USER.ROLE
+INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID 
+INNER JOIN M30_ROLE_EXT ON MIROS_USER.ROLE = M30_ROLE_EXT.ROLE_ID
+INNER JOIN M30_CODE ON M30_CODE.CODE = M30_ROLE_EXT.AUTHOR_CD
+LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_ID
+WHERE PERSONID='"+id +"'");
             Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
             var resultMapping = new Func<dynamic, DTO_USER_DETAIL>((row) =>
             {
@@ -90,16 +99,147 @@ namespace MAMBrowser.Controllers
                 {
                     ID = row.PERSONID,
                     Name = row.PERSONNAME,
+                    RoleID = row.ROLE,
+                    RoleName = row.ROLE_NAME,
+                    AuthorCD = row.AUTHOR_CD,
+                    AuthorName = row.AUTHOR_NAME,
                     DiskMax = Convert.ToInt32(row.DISK_MAX),
                     DiskUsed = Convert.ToInt32(row.DISK_USED),
                     DiskAvailable = Convert.ToInt32(row.DISK_AVLB),
                     MenuGrpID = row.MENU_GRP_ID,
+                    MenuGrpName = row.MENU_GRP_NAME,
                     Used = row.USED,
                 };
             });
 
             return repository.Get(queryTemplate.RawSql, new {PERSONID=id}, resultMapping);
         }
+
+        public IList<DTO_MENU> GetMenu(string id)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT MENU_CD, M30_CODE.NAME, VISIBLE, ENABLE FROM M30_USER_EXT
+INNER JOIN M30_MENU_MAP ON M30_MENU_MAP.MENU_GRP_CD=M30_USER_EXT.MENU_GRP_ID
+INNER JOIN M30_CODE ON M30_CODE.CODE = MENU_CD
+WHERE USER_ID='"+id+"'");
+
+            Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
+            var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
+            {
+                return new DTO_MENU
+                {
+                    ID = row.MENU_CD,
+                    Name = row.NAME,
+                    Visible = row.VISIBLE,
+                    Enable = row.ENABLE,
+                };
+            });
+
+           return repository.Select(queryTemplate.RawSql, null, resultMapping);
+        }
+        public IList<DTO_MENU> GetBehavior(string authorCd)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE_AUTHOR_MAP
+WHERE CODE_GRP='S01G02' AND AUTHOR_CD='"+ authorCd + "'");
+
+            Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
+            var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
+            {
+                return new DTO_MENU
+                {
+                    ID = row.MENU_CD,
+                    Name = row.NAME,
+                    Visible = row.VISIBLE,
+                    Enable = row.ENABLE,
+                };
+            });
+
+            return repository.Select(queryTemplate.RawSql, null, resultMapping);
+        }
+        public IList<DTO_COMMON_CODE> GetAuthorList()
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G04'");
+
+            Repository<DTO_COMMON_CODE> repository = new Repository<DTO_COMMON_CODE>();
+            var resultMapping = new Func<dynamic, DTO_COMMON_CODE>((row) =>
+            {
+                return new DTO_COMMON_CODE
+                {
+                    Code = row.CODE,
+                    ParentCode = row.PARENT_CODE,
+                    Name = row.NAME,
+                };
+            });
+
+            return repository.Select(queryTemplate.RawSql, null, resultMapping);
+        }  
+        public IList<DTO_COMMON_CODE> GetMenuGrpList()
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05'");
+
+            Repository<DTO_COMMON_CODE> repository = new Repository<DTO_COMMON_CODE>();
+            var resultMapping = new Func<dynamic, DTO_COMMON_CODE>((row) =>
+            {
+                return new DTO_COMMON_CODE
+                {
+                    Code = row.CODE,
+                    ParentCode = row.PARENT_CODE,
+                    Name = row.NAME,
+                };
+            });
+
+            return repository.Select(queryTemplate.RawSql, null, resultMapping);
+        }
+        public bool ExistUser(string id)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER /**where**/");
+            builder.Where("PERSONID=:PERSONID");
+            Repository<DTO_USER> repository = new Repository<DTO_USER>();
+            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
+            {
+                return new DTO_USER
+                {
+                    ID = row.PERSONID,
+                    Name = row.PERSONNAME,
+                };
+            });
+
+            var result = repository.Select(queryTemplate.RawSql, new { PERSONID = id }, resultMapping);
+            if (result.Count() > 0)
+                return true;
+            else
+                return false;
+
+        }
+        public bool Authenticate(string id, string pass)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("SELECT PERSONID, PASSWD FROM MIROS_USER /**where**/");
+            builder.Where("PERSONID=:PERSONID AND PASSWD=:PASSWD");
+            Repository<DTO_USER> repository = new Repository<DTO_USER>();
+            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
+            {
+                return new DTO_USER
+                {
+                    ID = row.PERSONID,
+                    Name = row.PERSONNAME,
+                };
+            });
+
+            var result = repository.Select(queryTemplate.RawSql, new { PERSONID = id, PASSWD = pass }, resultMapping);
+            if (result.Count() > 0)
+                return true;
+            else
+                return false;
+        }
+
+
+
+
         public DTO_RESULT_LIST<DTO_ROLE_DETAIL> GetRoleDetailList()
         {
             DTO_RESULT_LIST<DTO_ROLE_DETAIL> returnData = new DTO_RESULT_LIST<DTO_ROLE_DETAIL>();
@@ -119,6 +259,10 @@ namespace MAMBrowser.Controllers
             returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
+
+
+
+
         //public DTO_RESULT UpdateRole()
         //{
         //    DTO_RESULT result = new DTO_RESULT();

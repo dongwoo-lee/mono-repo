@@ -9,13 +9,16 @@ namespace MAMBrowser.DTO
     {
         public string ID { get; set; }
         public string Name { get; set; }
+        public string RoleID { get; set; }
+        public string RoleName { get; set; }
+        public string AuthorCD { get; set; }
+        public string AuthorName { get; set; }
         public int DiskMax { get; set; }
         public int DiskAvailable { get; set; }
         public int DiskUsed { get; set; }
-        public string Used { get; set; }
         public string MenuGrpID { get; set; }
         public string MenuGrpName { get; set; }
-        //메뉴
-        //디스크 공간
+        public string Used { get; set; }
+        
     }
 }

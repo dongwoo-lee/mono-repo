@@ -9,9 +9,9 @@ namespace MAMBrowser.Models
     public class AuthenticateModel
     {
         [Required]
-        public string Username { get; set; }
+        public string UserID { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public string Pass { get; set; }
     }
 }

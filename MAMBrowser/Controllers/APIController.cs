@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Writers;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -26,35 +28,41 @@ namespace MAMBrowser.Controllers
         [HttpPost("Authenticate")]
         public DTO_RESULT Authenticate([FromBody] AuthenticateModel account)
         {
-            //var user = _userService.Authenticate(model.Username, model.Password);
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var user = "";
-
-                if (user == null)
+                APIBLL bll = new APIBLL();
+                if (!bll.ExistUser(account.UserID))
                 {
-                    //return BadRequest(new { message = "Username or password is incorrect" });
-                    result.ErrorMsg = "Username or password is incorrect";
+                    result.ErrorMsg = "User id not found";
                     result.ResultCode = RESUlT_CODES.INVALID_DATA;
                 }
                 else
                 {
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var key = Encoding.ASCII.GetBytes(SystemConfig.AppSettings.Signature);
-                    var tokenDescriptor = new SecurityTokenDescriptor
+                    if (!bll.Authenticate(account.UserID, account.Pass))
                     {
-                        Subject = new ClaimsIdentity(new Claim[]
+                        result.ErrorMsg = "Password is incorrect";
+                        result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                    }
+                    else
+                    {
+                        var userDetail = bll.GetUserDetail(account.UserID);
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var key = Encoding.ASCII.GetBytes(SystemConfig.AppSettings.Signature);
+                        var now = DateTime.Now;
+                        var tokenDescriptor = new SecurityTokenDescriptor
                         {
-                    //new Claim(ClaimTypes.Name, user.Id.ToString())
-                    new Claim(ClaimTypes.Name, "id입니다")
-                        }),
-                        Expires = DateTime.UtcNow.AddDays(7),
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                    };
-                    var token = tokenHandler.CreateToken(tokenDescriptor);
-                    var tokenString = tokenHandler.WriteToken(token);
-                    result.Token = tokenString;
+                            Issuer = "MAM",
+                            Expires = now.AddHours(2),
+                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                            IssuedAt = now,
+                        };
+                        tokenDescriptor.Claims = new Dictionary<string, object>();
+                        tokenDescriptor.Claims.Add("UserInfo", userDetail);
+                        var token = tokenHandler.CreateToken(tokenDescriptor);
+                        var tokenString = tokenHandler.WriteToken(token);
+                        result.Token = tokenString;
+                    }
                 }
             }
             catch (Exception ex)
@@ -122,8 +130,15 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetUserDetail(id);
-                result.ResultCode = RESUlT_CODES.SUCCESS;
+                string authorization = Request.Headers["Authorization"];
+                if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    string token = authorization.Substring("Bearer ".Length).Trim();
+
+                    result.ResultObject = bll.GetUserDetail(id);
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+                
             }
             catch (Exception ex)
             {
@@ -132,6 +147,105 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>      
+        [HttpGet("users/{id}/menu")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetMenu(string id)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject.Data = bll.GetMenu(id);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>      
+        [HttpGet("menugrp")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetMenuGrpList(string id)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject.Data = bll.GetMenuGrpList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>      
+        [HttpGet("users/{id}/menu")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior(string authorCd)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject.Data = bll.GetBehavior(authorCd);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>      
+        [HttpGet("authorlist")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetAuthorList()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject.Data = bll.GetAuthorList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+
         /// <summary>
         /// 역할 목록 조회
         /// </summary>
