@@ -112,7 +112,7 @@ namespace MAMBrowser.BLL
                     BrdDT= row.ONAIRDATE,
                     EditorID= row.EDITOR,
                     PGMName= row.EVENTNAME,
-                    MasteringDtm= ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm= row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath= row.MASTERFILE,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
@@ -212,7 +212,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -294,7 +294,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     ProType = row.TYPENAME,
                     FilePath = row.MASTERFILE,
                 };
@@ -678,7 +678,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
