@@ -1,8 +1,10 @@
 ﻿using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,7 +41,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="id">ID 값</param>
         /// <returns></returns>
-        [HttpPut("files")]
+        [HttpPut("meta")]
         public DTO_RESULT UpdateData([FromBody] DTO_PRIVATE_FILE dto)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -67,7 +69,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-        [HttpGet("files/{editor}")]
+        [HttpGet("meta/{editor}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> FineData(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRIVATE_FILE>>();
@@ -81,6 +83,21 @@ namespace MAMBrowser.Controllers
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
+        }
+
+        /// <summary>
+        /// My공간 - 파일 다운로드
+        /// </summary>
+        [HttpGet("files/{fileid}")]
+        public FileResult GetFile(string fileID)
+        {
+            string filePath = @"E:\Download\완료";
+            IFileProvider provider = new PhysicalFileProvider(filePath);
+            IFileInfo fileInfo = provider.GetFileInfo(fileID);
+            var readStream = fileInfo.CreateReadStream();
+            var mimeType = "audio/wav";
+            //Response. = false;
+            return File(readStream, mimeType, fileID);
         }
     }
 }
