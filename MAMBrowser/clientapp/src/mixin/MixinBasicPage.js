@@ -1,4 +1,17 @@
+import CInputText from '../components/Input/CInputText';
+import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
+import CInputDatePicker from '../components/Input/CInputDatePicker';
+import CDataTable from '../components/DataTable/CDataTable';
+import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
+
 let mixinBasicPage = {
+    components: {
+        CInputText,
+        CDropdownMenuInput,
+        CInputDatePicker,
+        CDataTable,
+        CDataTableScrollPaging
+    },
     data() {
         return {
             responseData: {
@@ -7,13 +20,14 @@ let mixinBasicPage = {
                 selectPage: 1,
                 totalRowCount: 0,
             },
-            mediaOptions: [
+            mediaOptions: [                           // 매체 목록
                 { value: '', text: '선택하세요.' },
                 { value: 'A', text: 'AM' },
                 { value: 'F', text: 'FM' },
                 { value: 'D', text: 'DMB' },
                 { value: 'C', text: '공통' },
-              ],
+            ],
+            editorOptions: [],                       // 사용자(제작자) 목록
             numRowsToBottom: 5,
             contextMenu: [
                 { name: 'edit', text: '편집' },
@@ -76,6 +90,22 @@ let mixinBasicPage = {
             this.searchItems.sortKey = sortKey;
             this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
             this.getData();
+        },
+        // 제작자 옵션 가져오기
+        getEditorOptions() {
+            this.$http.get('/api/users')
+              .then(res => {
+                  if (res.status === 200) {
+                      this.editorOptions = res.data.resultObject.data;
+                  } else {
+                      this.$fn.notify('server-error', { message: '조회 에러' });
+                  }
+            });
+        },
+        // 제작자 선택
+        onEditorSelected(data) {
+            const { editor, editorName } = data;
+            this.searchItems.editor = editor ? editor : editorName;
         },
     }
 }

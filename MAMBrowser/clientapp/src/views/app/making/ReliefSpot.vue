@@ -34,7 +34,7 @@
               <b-form-group label="제작자" class="has-float-label">
                 <c-dropdown-menu-input
                   :suggestions="editorOptions"
-                  @selected="onDropdownInputSelected"
+                  @selected="onEditorSelected"
                 />
               </b-form-group>
             </b-colxx>
@@ -71,19 +71,9 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import CInputText from '../../../components/Input/CInputText';
-import CDropdownMenuInput from '../../../components/Input/CDropdownMenuInput';
-import CInputDatePicker from '../../../components/Input/CInputDatePicker';
-import CDataTableScrollPaging from '../../../components/DataTable/CDataTableScrollPaging';
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { 
-    CInputText,
-    CDropdownMenuInput,
-    CInputDatePicker,
-    CDataTableScrollPaging
-  },
   data() {
     return {
       editorOptions: [],    // 사용자(제작자) 목록
@@ -165,7 +155,7 @@ export default {
     }
   },
   created() {
-    this.getEditor();
+    this.getEditorOptions();
   },
   methods: {
     getData() {
@@ -173,20 +163,6 @@ export default {
         .then(res => {
             this.setResponseData(res);
       });
-    },
-    getEditor() {
-      this.$http.get('/api/users')
-        .then(res => {
-            if (res.status === 200) {
-                this.editorOptions = res.data.resultObject.data;
-            } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
-            }
-      });
-    },
-    onDropdownInputSelected(data) {
-      const { editor, editorName } = data;
-      this.searchItems.editor = editor ? editor : editorName;
     },
   }
 }

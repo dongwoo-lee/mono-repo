@@ -81,12 +81,9 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import CInputText from '../../../components/Input/CInputText';
-import CDataTableScrollPaging from '../../../components/DataTable/CDataTableScrollPaging';
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { CInputText, CDataTableScrollPaging },
   data() {
     return {
       searchItems: {

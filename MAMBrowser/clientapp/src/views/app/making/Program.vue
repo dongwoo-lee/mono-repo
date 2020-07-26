@@ -44,12 +44,9 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import CInputDatePicker from '../../../components/Input/CInputDatePicker';
-import CDataTable from '../../../components/DataTable/CDataTable';
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { CInputDatePicker, CDataTable },
   data() {
     return {
       searchItems: {
