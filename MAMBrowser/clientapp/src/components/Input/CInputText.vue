@@ -1,14 +1,12 @@
 <template>
-    <div>
-        <b-form-input
-            ref="input"
-            :value="value"
-            :placeholder="placeholder"
-            @input="onInput"
-            :pattern="pattern"
-        >
-        </b-form-input>
-    </div>
+    <b-form-input
+        ref="input"
+        :value="value"
+        :placeholder="placeholder"
+        @input="onInput"
+        :pattern="pattern"
+    >
+    </b-form-input>
 </template>
 
 <script>

@@ -94,7 +94,7 @@ export default {
             [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
             if (!this.sortable) return;
             this.sortable.addEventListener('click', e => {
-                this.onSortableClick(e);
+                this.onSortable(e);
             });
         });
     },
@@ -104,7 +104,7 @@ export default {
       }
 
       if (this.sortable != null) {
-          this.sortable.removeEventListener('click', this.onSortableClick);
+          this.sortable.removeEventListener('click', this.onSortable);
       }
     },
     methods: {
@@ -144,7 +144,7 @@ export default {
         onContextMenuAction(data) {
             this.$emit('contextMenuAction', data);
         },
-        onSortableClick(e) {
+        onSortable(e) {
             const targetId = e.target.id.replace('_', '');
             this.$emit('sortableclick', targetId);
         }

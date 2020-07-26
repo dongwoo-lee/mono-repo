@@ -67,7 +67,7 @@
                 :contextmenu="contextMenu"
                 @scrollPerPage="onScrollPerPage"
                 @contextMenuAction="onContextMenuAction"
-                @sortableclick="onSortableClick"
+                @sortableclick="onSortable"
             >
                 <template slot="actions" scope="props">
                     <b-button class="mb-1" variant="primary default" @click="handlerPreview(props, props.rowIndex)">미리듣기</b-button>
@@ -80,28 +80,21 @@
 </template>
 
 <script>
-import CInputText from '../../../components/Input/CInputText';
-import CDataTableScrollPaging from '../../../components/DataTable/CDataTableScrollPaging';
+import MixinBasicPage from '../../../mixin/MixinBasicPage';
 
 export default {
-  components: { CInputText, CDataTableScrollPaging },
+  mixins: [ MixinBasicPage ],
   data() {
     return {
       searchItems: {
-        cate: '',
-        filename: '',
-        title: '',
-        memo: '',
+        cate: '',          // 분류(cate)
+        filename: '',      // 파일명(filename)
+        title: '',         // 제목(title)
+        memo: '',          // 메모(memo)
         rowPerPage: 16,
         selectPage: 1,
         sortKey: '',
         sortValue: '',
-      },
-      responseData: {
-          data: null,
-          rowPerPage: 16,
-          selectPage: 1,
-          totalRowCount: 0,
       },
       fields: [
         {
@@ -152,69 +145,14 @@ export default {
       ]
     }
   },
-  created() {
-    this.$nextTick(() => {
-      this.getData();
-    });
-  },
   methods: {
     getData() {
-      const params = {
-          // 분류(cate)
-          // 파일명(filename)
-          // 제목(title)
-          // 메모(memo)
-          // 페이지당 행 개수(rowPerPage)
-          // 선택된 페이지(selectPage)
-          // sortKey(정렬 키, 필드명)
-          // sortValue(정렬값, ASC/DESC)
-          cate: this.searchItems.cate,
-          filename: this.searchItems.filename,
-          title: this.searchItems.title,
-          memo: this.searchItems.memo,
-          sortKey: this.searchItems.sortKey,
-          sortValue: this.searchItems.sortValue,
-          rowPerPage: this.responseData.rowPerPage,
-          selectPage: this.responseData.selectPage,
-      }
-
       const editor = sessionStorage.getItem('user_name');
 
-      this.$http.get(`/api/products/workspace/private/files/${editor}`, { params: params })
+      this.$http.get(`/api/products/workspace/private/files/${editor}`, { params: this.searchItems })
         .then(res => {
-            if (res.status === 200) {
-                const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
-                if (selectPage > 1) {
-                    data.forEach(row => {
-                        this.responseData.data.push(row);
-                    })
-                } else {
-                    this.responseData.data = data;
-                    this.responseData.rowPerPage = rowPerPage;
-                    this.responseData.selectPage = selectPage;
-                    this.responseData.totalRowCount = totalRowCount;
-                }
-            } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
-            }
+            this.setResponseData(res);
       });
-    },
-    onScrollPerPage() {
-      this.responseData.selectPage++;
-      this.getDate();
-    },
-    onContextMenuAction(v) {
-        switch(v) {
-            case 'edit': console.log(v); break;
-            case 'throw': console.log(v); break;
-            case 'download':  console.log(v); break;
-            default: break;
-        }
-    },
-    onSortableClick(sortKey) {
-      this.searchItems.sortKey = sortKey;
-      this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
-      this.getDate();
     },
   }
 }

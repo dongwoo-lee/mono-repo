@@ -65,13 +65,13 @@ export default {
 
             // sortable click event linstener
             this.sortable.addEventListener('click', e => {
-                this.onSortableClick(e);
+                this.onSortable(e);
             });
         });
     },
     destroyed() {
       if (this.sortable != null) {
-        this.sortable.removeEventListener('click', this.onSortableClick);
+        this.sortable.removeEventListener('click', this.onSortable);
       }
     },
     methods: {
@@ -103,7 +103,7 @@ export default {
         onContextMenuAction(data) {
             this.$emit('contextMenuAction', data);
         },
-        onSortableClick(e) {
+        onSortable(e) {
             const targetId = e.target.id.replace('_', '');
             this.$emit('sortableclick', targetId);
         }

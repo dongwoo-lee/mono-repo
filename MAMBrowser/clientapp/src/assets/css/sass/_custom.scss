@@ -48,3 +48,14 @@
         }
     }
 }
+
+// VueAutoSuggest 스크롤
+.autosuggest__results {
+    max-height: 250px;
+    overflow-y: scroll;
+}
+
+// has-float-label일 때, datePicker input label z-index 우선 처리
+.c-zindex > legend{
+    z-index: 5;
+}

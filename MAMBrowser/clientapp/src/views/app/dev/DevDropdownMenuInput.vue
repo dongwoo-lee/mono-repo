@@ -7,7 +7,6 @@
         >
         </c-dropdown-menu-input>
         <div>Selected: {{ localDropdownSelectedVal }}</div>
-        <div>Enteed: {{ localDropdownEnteredVal }}</div>
      </b-card>
 </template>
 
