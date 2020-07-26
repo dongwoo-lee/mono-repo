@@ -15,7 +15,6 @@
                     @selected="onDropdownInputSelected"
                 />
                 <div>Selected: {{ localDropdownSelectedVal }}</div>
-                <div>Enteed: {{ localDropdownEnteredVal }}</div>
             </b-card>
         </b-colxx>
         <!-- scroll paging table -->
@@ -73,7 +72,7 @@
                     :contextmenu="localContextMenu"
                     @scrollPerPage="onScrollPerPage"
                     @contextMenuAction="onContextMenuAction"
-                    @sortableclick="onSortableClick"
+                    @sortableclick="onSortable"
                 >
                     <template slot="actions" scope="props">
                         <b-button class="mb-1" variant="primary default" @click="handlerPreview(props, props.rowIndex)">미리듣기</b-button>
@@ -90,7 +89,6 @@ import CDropdownMenuInput from '../../../components/Input/CDropdownMenuInput';
 import CDataTableScrollPaging from '../../../components/DataTable/CDataTableScrollPaging';
 import CInputDatePickerGroup from '../../../components/Input/CInputDatePickerGroup';
 import CInput from '../../../components/Input/CInputText';
-import ResponseBody from '../../../model/ResponseBody';
 
 export default {
     components: { 
@@ -302,7 +300,7 @@ export default {
         handlerPreview(props) {
             console.info('handlerPreview', props);
         },
-        onSortableClick(d) {
+        onSortable(d) {
             this.localSearchItems.sortKey = d;
             this.localSearchItems.sortValue = this.$fn.changeSortValue(this.localSearchItems.sortValue);
             this.getProductSpotSrcData();

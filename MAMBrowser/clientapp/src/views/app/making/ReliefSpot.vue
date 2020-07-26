@@ -14,36 +14,37 @@
           <b-row>
             <!-- 매체 -->
             <b-colxx sm="2">
-              <b-form-group label="매체">
+              <b-form-group label="매체" class="has-float-label">
                 <b-form-select size="sm" v-model="searchItems.media" :options="mediaOptions"/>
               </b-form-group>
             </b-colxx>
             <!-- 시작일-종료일 -->
-            <b-colxx sm="3">
-              <b-form-group label="시작일-종료일">
-                <div class="d-flex">
-                  <c-input-date-picker class="w-50 mr-2" v-model="searchItems.start_dt"/>
-                  <c-input-date-picker class="w-50 mr-2" v-model="searchItems.end_dt"/>
-                </div>
+            <b-colxx sm="2">
+              <b-form-group label="시작일" class="has-float-label c-zindex">
+                  <c-input-date-picker v-model="searchItems.start_dt"/>
+              </b-form-group>
+            </b-colxx>
+            <b-colxx sm="2">
+              <b-form-group label="종료일" class="has-float-label c-zindex">
+                  <c-input-date-picker v-model="searchItems.end_dt"/>
               </b-form-group>
             </b-colxx>
             <!-- 제작자 -->
             <b-colxx sm="2">
-              <b-form-group label="제작자">
+              <b-form-group label="제작자" class="has-float-label">
                 <c-dropdown-menu-input
                   :suggestions="editorOptions"
                   @selected="onDropdownInputSelected"
                 />
-                제작자값: {{ searchItems.editor }}
               </b-form-group>
             </b-colxx>
             <!-- 소재명 -->
             <b-colxx sm="2">
-              <b-form-group label="소재명">
+              <b-form-group label="소재명" class="has-float-label">
                 <c-input-text v-model="searchItems.name"/>
               </b-form-group>
             </b-colxx>
-            <b-button class="mb-1" variant="primary default" size="sm" @click="getData">검색</b-button>
+            <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
           </b-row>
         </b-form>
       </b-card>
@@ -55,12 +56,12 @@
           :table-height="'500px'"
           :fields="fields"
           :rows="responseData.data"
-          :per-page="searchItems.rowPerPage"
+          :per-page="responseData.rowPerPage"
           :num-rows-to-bottom="numRowsToBottom"
           :contextmenu="contextMenu"
           @scrollPerPage="onScrollPerPage"
           @contextMenuAction="onContextMenuAction"
-          @sortableclick="onSortableClick"
+          @sortableclick="onSortable"
         />
       </b-card>
     </b-colxx>
@@ -69,7 +70,7 @@
 </template>
 
 <script>
-import MixinBasicPage from '../../mixin/MixinBasicPage';
+import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import CInputText from '../../../components/Input/CInputText';
 import CDropdownMenuInput from '../../../components/Input/CDropdownMenuInput';
 import CInputDatePicker from '../../../components/Input/CInputDatePicker';
@@ -85,7 +86,7 @@ export default {
   },
   data() {
     return {
-      users: [],            // 사용자 목록
+      editorOptions: [],    // 사용자(제작자) 목록
       searchItems: {
         start_dt: '',       // 시작일
         end_dt: '',         // 종료일
@@ -97,14 +98,6 @@ export default {
         sortKey: '',
         sortValue: 'DESC',
       },
-      mediaOptions: [
-        { value: '', text: '선택하세요.' },
-        { value: 'A', text: 'AM' },
-        { value: 'F', text: 'FM' },
-        { value: 'D', text: 'DMB' },
-        { value: 'C', text: '공통' },
-      ],
-      editorOptions: [],
       fields: [
         {
           name: 'rowNO',
@@ -130,6 +123,9 @@ export default {
           title: "길이",
           titleClass: "",
           dataClass: "list-item-heading",
+          callback: (v) => {
+            return this.$fn.splitFirst(v);
+          }
         },
         {
           name: "track",
@@ -143,6 +139,9 @@ export default {
           title: "방송일",
           titleClass: "",
           dataClass: "list-item-heading",
+          callback: (v) => {
+            return this.$fn.formatDate(v, 'yyyy-MM-dd');
+          }
         },
         {
           name: "pgmName",
@@ -170,24 +169,9 @@ export default {
   },
   methods: {
     getData() {
-      this.searchItems.selectPage = 1;
       this.$http.get(`/api/Products/spot/scr`, { params: this.searchItems })
         .then(res => {
-            if (res.status === 200) {
-                const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
-                if (selectPage > 1) {
-                    data.forEach(row => {
-                        this.responseData.data.push(row);
-                    })
-                } else {
-                    this.responseData.data = data;
-                    this.responseData.rowPerPage = rowPerPage;
-                    this.responseData.selectPage = selectPage;
-                    this.responseData.totalRowCount = totalRowCount;
-                }
-            } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
-            }
+            this.setResponseData(res);
       });
     },
     getEditor() {

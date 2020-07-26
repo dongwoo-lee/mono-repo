@@ -2,6 +2,7 @@
     <div>
         <b-input-group :class="groupClass">
             <!-- 입력-->
+            <!-- <c-input-text v-model="date" @input="onInput" :placeholder="placeHolder"/> -->
             <b-form-input
                 :value="date | yyyyMMdd"
                 @input="onInput"
@@ -25,8 +26,12 @@
         </b-input-group>
     </div>
 </template>
+
 <script>
+import CInputText from './CInputText';
+
 export default {
+    components: { CInputText },
     props: {
         value: {
             type: String,

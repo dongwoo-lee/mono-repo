@@ -24,7 +24,7 @@
                 <c-input-date-picker v-model="searchItems.brd_dt" />
               </b-form-group>
             </b-colxx>
-            <b-button class="mb-1" variant="primary default" size="sm" @click="getData">검색</b-button>
+            <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
           </b-row>
         </b-form>
       </b-card>
@@ -43,9 +43,9 @@
 </template>
 
 <script>
+import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import CInputDatePicker from '../../../components/Input/CInputDatePicker';
 import CDataTable from '../../../components/DataTable/CDataTable';
-import MixinBasicPage from '../../mixin/MixinBasicPage';
 
 export default {
   mixins: [ MixinBasicPage ],
@@ -55,13 +55,7 @@ export default {
       searchItems: {
         media: 'A',
         brd_dt: '20200101',
-      },
-      mediaOptions: [
-        { value: 'A', text: 'AM' },
-        { value: 'F', text: 'FM' },
-        { value: 'D', text: 'DMB' },
-        { value: 'C', text: '공통' },
-      ],
+      },      
       fields: [
         {
             name: '__sequence',
@@ -155,21 +149,7 @@ export default {
 
       this.$http.get(`/api/Products/pgm/${media}/${brd_dt}`)
         .then(res => {
-            if (res.status === 200) {
-                const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
-                if (selectPage > 1) {
-                    data.forEach(row => {
-                        this.responseData.data.push(row);
-                    })
-                } else {
-                    this.responseData.data = data;
-                    this.responseData.rowPerPage = rowPerPage;
-                    this.responseData.selectPage = selectPage;
-                    this.responseData.totalRowCount = totalRowCount;
-                }
-            } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
-            }
+           this.setResponseData(res, 'normal');
       });
     }
   }
