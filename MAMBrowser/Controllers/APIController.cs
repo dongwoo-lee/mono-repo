@@ -25,6 +25,11 @@ namespace MAMBrowser.Controllers
         {
         }
 
+        /// <summary>
+        /// 인증 서비스
+        /// </summary>
+        /// <param name="account">인증 정보</param>
+        /// <returns></returns>
         [HttpPost("Authenticate")]
         public DTO_RESULT Authenticate([FromBody] AuthenticateModel account)
         {
@@ -150,7 +155,7 @@ namespace MAMBrowser.Controllers
 
 
         /// <summary>
-        /// 
+        /// 사용자별 메뉴목록 조회
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>      
@@ -174,12 +179,11 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 
+        /// 메뉴그룹 목록조회
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>      
         [HttpGet("menugrp")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetMenuGrpList(string id)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetMenuGrpList()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
             try
@@ -198,11 +202,11 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 
+        /// 권한별 행위목록 조회
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="authorCd">권한코드 : </param>
         /// <returns></returns>      
-        [HttpGet("users/{id}/menu")]
+        [HttpGet("users/{authorCd}/menu")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior(string authorCd)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
@@ -222,9 +226,8 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 
+        /// 권한목록 조회
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>      
         [HttpGet("authorlist")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetAuthorList()
@@ -271,7 +274,6 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 역할 정보 업데이트
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("roles")]
