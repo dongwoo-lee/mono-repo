@@ -25,9 +25,9 @@ namespace MAMBrowser.Controllers
         /// <param name="brd_dt">방송일(20200101)</param>
         /// <returns></returns>
         [HttpGet("pgm/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PGM_INFO>> FindPGM(string media, string brd_dt)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> FindPGM(string media, string brd_dt)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_PGM_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PGM_INFO>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -54,10 +54,10 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("spot/scr")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>> FindSCRSpot([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>> FindSCRSpot([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             //사용자 ID ex) 180988
-            DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SCR_SPOT>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -88,9 +88,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_REPORT>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -118,9 +118,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("old_pro")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> FindOldPro([FromQuery] string media, [FromQuery] string cate, [FromQuery] string type, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRO>> FindOldPro([FromQuery] string media, [FromQuery] string cate, [FromQuery] string type, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_PRO>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRO>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRO>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -143,9 +143,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("music")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SONG>> FindMusic([FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SONG>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
             try
             {
                 var startNO = 1;
@@ -181,9 +181,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("effect")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_EFFECT>> FindEffect([FromQuery] string searchWord, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> FindEffect([FromQuery] string searchWord, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_EFFECT>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
             try
             {
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -204,9 +204,9 @@ namespace MAMBrowser.Controllers
         /// <param name="pgmName"></param>
         /// <returns></returns>
         [HttpGet("sb/mcr/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> FindMcrSB(string media, string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> FindMcrSB(string media, string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SB>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -229,9 +229,9 @@ namespace MAMBrowser.Controllers
         /// <param name="pgmName"></param>
         /// <returns></returns>
         [HttpGet("sb/scr/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> FindScrSB(string media, string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> FindScrSB(string media, string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SB>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -252,9 +252,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sbID">SB ID : ex) ASG201029</param>
         /// <returns></returns>
         [HttpGet("sb/contents/{brd_dt}/{sbID}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_SB_CONTENT>> FindSBContents(string brd_dt, [FromQuery] string sbID)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>> FindSBContents(string brd_dt, [FromQuery] string sbID)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_SB_CONTENT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_SB_CONTENT>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -278,9 +278,9 @@ namespace MAMBrowser.Controllers
         /// <param name="pgm"></param>
         /// <returns></returns>
         [HttpGet("cm/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_CM>> FindCM(string media, string brd_dt, [FromQuery] string cate, [FromQuery] string pgm)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>> FindCM(string media, string brd_dt, [FromQuery] string cate, [FromQuery] string pgm)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_CM>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CM>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -301,9 +301,9 @@ namespace MAMBrowser.Controllers
         /// <param name="cmgrpid">광고그룹 ID : </param>
         /// <returns></returns>
         [HttpGet("cm/contents/{brd_dt}/{cmgrpid}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_CM_CONTENT>> FindCMContents(string brd_dt, string cmgrpid)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT>> FindCMContents(string brd_dt, string cmgrpid)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_CM_CONTENT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CM_CONTENT>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -329,9 +329,9 @@ namespace MAMBrowser.Controllers
         /// <param name="editor"></param>
         /// <returns></returns>
         [HttpGet("spot/mcr/{media}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>> FindMcrSpot(string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> FindMcrSpot(string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MCR_SPOT>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -359,9 +359,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/pr/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> FindProFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindProFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -389,9 +389,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/general/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -422,9 +422,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/time/{media}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status,[FromQuery]string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status,[FromQuery]string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER_TIME>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER_TIME>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
@@ -452,9 +452,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/etc/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> FindETCFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindETCFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_FILLER>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
                 //ProductsBLL bll = new ProductsBLL();
@@ -479,9 +479,9 @@ namespace MAMBrowser.Controllers
         /// <param name="end_dt">DAMS 처리 여부</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> FindNewDL(string media, string start_dt, string end_dt, [FromQuery] string pgmID, [FromQuery] string pgmName)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string start_dt, string end_dt, [FromQuery] string pgmID, [FromQuery] string pgmName)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_DL30>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
             {
                 result.ResultCode = RESUlT_CODES.SUCCESS;

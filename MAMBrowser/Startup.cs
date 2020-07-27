@@ -15,6 +15,9 @@ using System.IO;
 using System.Threading.Tasks;
 using MAMBrowser.Controllers;
 using System.Text.Json.Serialization;
+using MAMBrowser.DTO;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace MAMBrowser
 {
@@ -49,7 +52,8 @@ namespace MAMBrowser
             // configure strongly typed settings objects.  DI등록 안함.
             var appSettingsSection = Configuration.GetSection("AppSettings");
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Signature);
+            var signatureKey = Encoding.ASCII.GetBytes(appSettings.TokenSignature);
+            //var issuerKey = Encoding.ASCII.GetBytes(appSettings.TokenIssuer);
             SystemConfig.AppSettings = appSettings;
 
             services.AddAuthentication(x =>
@@ -63,15 +67,7 @@ namespace MAMBrowser
                  {
                      OnTokenValidated = context =>
                      {
-                         ////var userService = context.HttpContext.RequestServices.GetRequiredService<TestController>();
-                         //var userId = int.Parse(context.Principal.Identity.Name);
-                         //var user = userService.GetById(userId);
-                         var user = "";
-                         if (user == null)
-                         {
-                             // return unauthorized if user no longer exists
-                             context.Fail("Unauthorized");
-                         }
+                         //global check author
                          return Task.CompletedTask;
                      }
                  };
@@ -80,14 +76,13 @@ namespace MAMBrowser
                  x.TokenValidationParameters = new TokenValidationParameters
                  {
                      ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                     ValidateIssuer = false,
-                     ValidateAudience = false
+                     IssuerSigningKey = new SymmetricSecurityKey(signatureKey),
+                     ValidIssuer = SystemConfig.AppSettings.TokenIssuer,
+                     ValidateIssuer = true,
+                     ValidateAudience = false,
+                     ClockSkew = TimeSpan.Zero,
                  };
              });
-
-            // configure DI for application services
-            //services.AddScoped<>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

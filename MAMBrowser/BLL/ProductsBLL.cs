@@ -15,9 +15,9 @@ namespace MAMBrowser.BLL
 {
     public class ProductsBLL
     {
-        public DTO_RESULT_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt)
+        public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt)
         {
-            DTO_RESULT_LIST<DTO_PGM_INFO> returnData = new DTO_RESULT_LIST<DTO_PGM_INFO>();
+            DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT ROWNUM AS RNO, MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
                      FROM
@@ -53,12 +53,12 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_LIST<DTO_SCR_SPOT> FindSCRSpot(string start_dt, string end_dt, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT> FindSCRSpot(string start_dt, string end_dt, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_LIST<DTO_SCR_SPOT> returnData = new DTO_RESULT_LIST<DTO_SCR_SPOT>();
+            DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT> returnData = new DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>();
             var builder = new SqlBuilder();
 
             DynamicParameters param = new DynamicParameters();
@@ -124,12 +124,12 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgm, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgm, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_LIST<DTO_REPORT> returnData = new DTO_RESULT_LIST<DTO_REPORT>();
+            DTO_RESULT_PAGE_LIST<DTO_REPORT> returnData = new DTO_RESULT_PAGE_LIST<DTO_REPORT>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -222,12 +222,12 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_PRO> FindOldPro(string media, string cate, string type, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PRO> FindOldPro(string media, string cate, string type, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_LIST<DTO_PRO> returnData = new DTO_RESULT_LIST<DTO_PRO>();
+            DTO_RESULT_PAGE_LIST<DTO_PRO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PRO>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new 
@@ -307,9 +307,9 @@ namespace MAMBrowser.BLL
         }
         //public DTO_RESULT_LIST<DTO_SONG> FindMusic(int rowPerPage, int selectPage, string sortKey, string sortValue) { }
         //public DTO_RESULT_LIST<DTO_EFFECT> FindEffect(string searchWord, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
-        public DTO_RESULT_LIST<DTO_SB> FindSB(string viewName,string media, string brd_dt, string pgm, string pgmName) 
+        public DTO_RESULT_PAGE_LIST<DTO_SB> FindSB(string viewName,string media, string brd_dt, string pgm, string pgmName) 
         {
-            DTO_RESULT_LIST<DTO_SB> returnData = new DTO_RESULT_LIST<DTO_SB>();
+            DTO_RESULT_PAGE_LIST<DTO_SB> returnData = new DTO_RESULT_PAGE_LIST<DTO_SB>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -370,9 +370,9 @@ namespace MAMBrowser.BLL
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_SB_CONTENT> FindSBContents(string brd_dt, string sbID)
+        public DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT> FindSBContents(string brd_dt, string sbID)
         {
-            DTO_RESULT_LIST<DTO_SB_CONTENT> returnData = new DTO_RESULT_LIST<DTO_SB_CONTENT>();
+            DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT> returnData = new DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -414,9 +414,9 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_LIST<DTO_CM> FindCM(string media, string brd_dt, string cate, string pgm)
+        public DTO_RESULT_PAGE_LIST<DTO_CM> FindCM(string media, string brd_dt, string cate, string pgm)
         {
-            DTO_RESULT_LIST<DTO_CM> returnData = new DTO_RESULT_LIST<DTO_CM>();
+            DTO_RESULT_PAGE_LIST<DTO_CM> returnData = new DTO_RESULT_PAGE_LIST<DTO_CM>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -468,9 +468,9 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_LIST<DTO_CM_CONTENT> FindCMContents(string brd_dt, string cmGrpID)
+        public DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT> FindCMContents(string brd_dt, string cmGrpID)
         {
-            DTO_RESULT_LIST<DTO_CM_CONTENT> returnData = new DTO_RESULT_LIST<DTO_CM_CONTENT>();
+            DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT> returnData = new DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -516,12 +516,12 @@ namespace MAMBrowser.BLL
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string cate, string start_dt, string end_dt, string status, string editor, string editorName, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string cate, string start_dt, string end_dt, string status, string editor, string editorName, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_LIST<DTO_MCR_SPOT> returnData = new DTO_RESULT_LIST<DTO_MCR_SPOT>();
+            DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> returnData = new DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -604,12 +604,12 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_LIST<DTO_FILLER> FindFiller(string viewName, string brd_dt, string cate, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_FILLER> FindFiller(string viewName, string brd_dt, string cate, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_LIST<DTO_FILLER> returnData = new DTO_RESULT_LIST<DTO_FILLER>();
+            DTO_RESULT_PAGE_LIST<DTO_FILLER> returnData = new DTO_RESULT_PAGE_LIST<DTO_FILLER>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
@@ -688,12 +688,12 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_LIST<DTO_FILLER_TIME> returnData = new DTO_RESULT_LIST<DTO_FILLER_TIME>();
+            DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME> returnData = new DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new

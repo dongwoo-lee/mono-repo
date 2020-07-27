@@ -7,7 +7,8 @@ namespace MAMBrowser.Helpers
 {
     public class AppSettings
     {
-        public string Signature { get; set; }
+        public string TokenIssuer { get; set; }
+        public string TokenSignature { get; set; }
         public string ConnectionString { get; set; }
     }
 }

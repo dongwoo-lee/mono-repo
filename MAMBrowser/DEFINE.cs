@@ -7,9 +7,11 @@
     {
         SUCCESS = 0,
         INVALID_DATA = 1,
-        DB_ERROR = 2,
-        EXPIRATION_TOKEN = 3,
-        SERVICE_ERROR = 4,
+        DENY_ACCESS = 2,
+        DB_ERROR = 3,
+        TOKEN_ERROR = 4,
+        TOKEN_EXPIRATION = 5,
+        SERVICE_ERROR = 6,
     }
 
     public enum LOG_CATEGORIES

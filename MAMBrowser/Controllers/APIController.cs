@@ -39,31 +39,32 @@ namespace MAMBrowser.Controllers
                 APIBLL bll = new APIBLL();
                 if (!bll.ExistUser(account.UserID))
                 {
-                    result.ErrorMsg = "User id not found";
-                    result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                    result.ErrorMsg = "ID not found";
+                    result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                 }
                 else
                 {
-                    if (!bll.Authenticate(account.UserID, account.Pass))
+                    DTO_USER_TOKEN userToken = bll.Authenticate(account.UserID, account.Pass);
+                    if (userToken == null)
                     {
                         result.ErrorMsg = "Password is incorrect";
-                        result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                        result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                     }
                     else
                     {
-                        var userDetail = bll.GetUserDetail(account.UserID);
                         var tokenHandler = new JwtSecurityTokenHandler();
-                        var key = Encoding.ASCII.GetBytes(SystemConfig.AppSettings.Signature);
-                        var now = DateTime.Now;
+                        var Signature = Encoding.ASCII.GetBytes(SystemConfig.AppSettings.TokenSignature);
+                        var now = DateTime.UtcNow;
                         var tokenDescriptor = new SecurityTokenDescriptor
                         {
-                            Issuer = "MAM",
-                            Expires = now.AddHours(2),
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                            Issuer = SystemConfig.AppSettings.TokenIssuer,
+                            Expires = now.AddSeconds(30),
+                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Signature), SecurityAlgorithms.HmacSha256Signature),
                             IssuedAt = now,
+                            NotBefore = now,
                         };
                         tokenDescriptor.Claims = new Dictionary<string, object>();
-                        tokenDescriptor.Claims.Add("UserInfo", userDetail);
+                        tokenDescriptor.Claims.Add("accessInfo", userToken);
                         var token = tokenHandler.CreateToken(tokenDescriptor);
                         var tokenString = tokenHandler.WriteToken(token);
                         result.Token = tokenString;
@@ -83,9 +84,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("users")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER_DETAIL>> GetUserDetailList()
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>> GetUserDetailList()
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_USER_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER_DETAIL>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>>();
             try
             {
                 APIBLL bll = new APIBLL();
@@ -135,15 +136,8 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                string authorization = Request.Headers["Authorization"];
-                if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                {
-                    string token = authorization.Substring("Bearer ".Length).Trim();
-
-                    result.ResultObject = bll.GetUserDetail(id);
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                }
-                
+                result.ResultObject = bll.GetUserDetail(id);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
@@ -166,7 +160,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject.Data = bll.GetMenu(id);
+                result.ResultObject = bll.GetMenu(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -189,7 +183,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject.Data = bll.GetMenuGrpList();
+                result.ResultObject = bll.GetMenuGrpList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -206,14 +200,14 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="authorCd">권한코드 : </param>
         /// <returns></returns>      
-        [HttpGet("users/{authorCd}/menu")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior(string authorCd)
+        [HttpGet("behaviors")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior([FromQuery] string authorCd)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject.Data = bll.GetBehavior(authorCd);
+                result.ResultObject = bll.GetBehavior(authorCd);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -229,14 +223,14 @@ namespace MAMBrowser.Controllers
         /// 권한목록 조회
         /// </summary>
         /// <returns></returns>      
-        [HttpGet("authorlist")]
+        [HttpGet("authority_list")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetAuthorList()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject.Data = bll.GetAuthorList();
+                result.ResultObject = bll.GetAuthorList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -254,10 +248,10 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("roles")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> GetRoleList()
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>> GetRoleList()
         {
             
-             DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>>();
+             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>>();
             try
             {
                 APIBLL bll = new APIBLL();
@@ -302,6 +296,20 @@ namespace MAMBrowser.Controllers
         public DTO_RESULT UpdateConfig([FromBody] string dto)
         {
             DTO_RESULT result = new DTO_RESULT();
+            return result;
+        }
+
+
+        /// <summary>
+        /// Authorization 헤더 토큰 테스트용 API : ex) Bearer token(jwt)
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("accesssecurity")]
+        public DTO_RESULT AccessSecurity()
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
 
