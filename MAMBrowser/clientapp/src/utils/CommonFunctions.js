@@ -4,6 +4,8 @@
  * @param {*} p 
  */
 const formatDate = (d, p = 'yyyyMMdd') => {
+    if (!d) { return d; }
+
     let parseDate = d;
     if (d.length === 8) {
         const sY = d.substring(0,4);
@@ -13,6 +15,7 @@ const formatDate = (d, p = 'yyyyMMdd') => {
     }
 
     const dateTime = new Date(parseDate);
+    // if (dateTime.toString() === 'Invalid Date') { return d; }
     const sepDate = {
         y: dateTime.getFullYear(),
         M: ('0' + (dateTime.getMonth() + 1)).slice(-2),

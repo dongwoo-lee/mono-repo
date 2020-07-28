@@ -25,10 +25,12 @@ import VueLineClamp from 'vue-line-clamp'
 import VueScrollTo from 'vue-scrollto'
 // vue-upload-component
 import VueUploadComponent from 'vue-upload-component';
+import Vuelidate from 'vuelidate';
 
 import http from './http.js'
 import commonFunctions from './utils/CommonFunctions';
 import commonFilters from './utils/CommonFilters';
+import commonValidate from './utils/CommonValidate';
 
 Vue.use(BootstrapVue);
 Vue.use(VueI18n);
@@ -46,8 +48,9 @@ Vue.use(VueScrollTo);
 Vue.use(VueLineClamp, {
   importCss: true
 });
-
+Vue.use(Vuelidate);
 Vue.use({ install(Vue) { Vue.prototype.$http = http } })
+
 
 Vue.component('piaf-breadcrumb', Breadcrumb);
 Vue.component('b-refresh-button', RefreshButton);
@@ -56,6 +59,7 @@ Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.component('file-upload', VueUploadComponent)
 
 Vue.prototype.$fn = commonFunctions;
+Vue.prototype.$valid = commonValidate;
 
 Object.keys(commonFilters).forEach((key) => {
   Vue.filter(key, commonFilters[key]);

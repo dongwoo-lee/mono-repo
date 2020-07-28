@@ -2,13 +2,13 @@
     <div>
         <b-input-group :class="groupClass">
             <!-- 입력-->
-            <!-- <c-input-text v-model="date" @input="onInput" :placeholder="placeHolder"/> -->
-            <b-form-input
-                :value="date | yyyyMMdd"
+           <input
+                type="text" 
+                class="form-control" 
+                :placeholder="placeHolder" 
+                :value="inputValue | yyyyMMdd"
                 @input="onInput"
-                type="text"
-                :placeholder="placeHolder"
-            />
+            >
             <!-- 데이터 피커 -->
             <b-input-group-append>
                 <b-form-datepicker
@@ -61,6 +61,7 @@ export default {
     data() {
         return {
             date: '',
+            inputValue: '',
         }
     },
     created() {
@@ -74,20 +75,49 @@ export default {
     watch: {
         date(v, o) {
             if (v !== o) {
-                this.$emit('input', this.$fn.formatDate(v));
+                if (this.validFullDate(v)) {
+                    const formatValue = this.$fn.formatDate(v);
+                    this.$emit('input', formatValue);
+                    this.inputValue = formatValue;
+                }
+            }
+
+            if (!v) {
+                this.inputValue = v;
+                this.$emit('input', v);
             }
         }
     },
     methods: {
-        onInput(value) {
-            const datatimeRegex = /^([0-9]{4})+(-?)([0-9]{2})+(-?)([0-9]{2})/;
-
-            if (!datatimeRegex.test(value)) {
-                return false;
+        onInput(event) {
+            let targetValue = event.target.value;
+            if (!targetValue) {
+                this.date = targetValue;
+                return;
             }
 
-            this.date = value;
+            if (this.inValidDate(targetValue)) {
+                event.target.value = targetValue.slice(0, -1);
+                return;
+            }
+
+            if(this.validFullDate(targetValue)) {
+                event.target.value = targetValue;
+                this.date = targetValue;
+            }
+        },
+        inValidDate(value) {
+            // 유효한 입력값인지 체크
+            // ex) 20201230 || 2020-12-30 둘다 가능한 정규표현식
+            const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
+            return !dateRegex.test(value);
+        },
+        validFullDate(value) {
+            // 날짜 데이터인지 체크
+            // ex) 20201230 || 2020-12-30 둘다 가능한 정규표현식
+            const fullDateRegex = /^(19|20|21|22)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
+            return fullDateRegex.test(value);
         }
-    }
+    },
 }
 </script>

@@ -32,7 +32,7 @@ const routes = [
       {
         // My 공간
         path: "private",
-        component: () => import("./views/app/private/Index"),
+        component: () => import("./views/app/private/index"),
       },
       {
         // 휴지통
