@@ -2,14 +2,14 @@
 <div>
   <b-row>
     <b-colxx xxs="12">
-      <piaf-breadcrumb heading="프로그램"/>
+      <piaf-breadcrumb heading="공유소재"/>
       <div class="separator mb-5"></div>
     </b-colxx>
   </b-row>
   <b-row>
     <b-colxx xxs="12">
-        <b-card class="mb-4">
-          <b-form @submit.stop>
+      <b-card class="mb-4">
+        <b-form @submit.stop>
             <b-row>
               <!-- 매체 -->
               <b-colxx sm="2">
@@ -95,17 +95,17 @@ export default {
       },
       fields: [
         {
-          name: 'rowNO',
-          title: 'No',
-          titleClass: 'center aligned',
-          dataClass: 'right aligned',
-          width: '4%',
-        },
-        {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "5%"
+        },
+        {
+          name: 'rowNO',
+          title: 'No',
+          titleClass: 'center aligned',
+          dataClass: 'right aligned',
+          width: '5%',
         },
         {
           name: "name",
@@ -126,21 +126,24 @@ export default {
           title: "길이",
           titleClass: "",
           dataClass: "list-item-heading",
-          width: "15%"
+          width: "10%",
+          callback: (v) => {
+            return this.$fn.splitFirst(v);
+          }
         },
         {
           name: "track",
           title: "트랙",
           titleClass: "",
           dataClass: "list-item-heading",
-          width: "15%"
+          width: "10%"
         },
         {
           name: "editorName",
           title: "제작자",
           titleClass: "",
           dataClass: "list-item-heading",
-          width: "15%"
+          width: "10%"
         },
         {
           name: "editDtm",
@@ -161,7 +164,7 @@ export default {
           title: "타입",
           titleClass: "",
           dataClass: "list-item-heading",
-          width: "15%"
+          width: "10%"
         },
         {
           name: "filePath",
@@ -175,18 +178,9 @@ export default {
   },
   created() {
     this.getProOptions();
+    this.getEditorOptions();
   },
   methods: {
-    getProOptions() {
-      this.$http.get('/api/Categories/pro')
-        .then(res => {
-            if (res.status === 200) {
-                this.proOptions = res.data.resultObject.data;
-            } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
-            }
-      });
-    },
     getData() {
       this.$http.get(`/api/Products/old_pro`, { params: this.searchItems })
         .then(res => {
@@ -194,7 +188,7 @@ export default {
       });
     },
     onProSelected(data) {
-      console.info('onProSelected', data)
+      console.info('onProSelected', data);
     }
   }
 }

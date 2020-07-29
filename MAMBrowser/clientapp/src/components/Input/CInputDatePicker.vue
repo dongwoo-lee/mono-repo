@@ -75,11 +75,9 @@ export default {
     watch: {
         date(v, o) {
             if (v !== o) {
-                if (this.validFullDate(v)) {
-                    const formatValue = this.$fn.formatDate(v);
-                    this.$emit('input', formatValue);
-                    this.inputValue = formatValue;
-                }
+                const formatValue = this.$fn.formatDate(v);
+                this.$emit('input', formatValue);
+                this.inputValue = formatValue;
             }
 
             if (!v) {
@@ -101,9 +99,14 @@ export default {
                 return;
             }
 
-            if(this.validFullDate(targetValue)) {
-                event.target.value = targetValue;
-                this.date = targetValue;
+            const replaceTargetValue = targetValue.replace(/-/g, '');
+            if (replaceTargetValue.length === 8) {
+                const yyyy = replaceTargetValue.substring(0, 4);
+                const mm = replaceTargetValue.substring(4, 6);
+                const dd = replaceTargetValue.substring(6, 8);
+                const mergeDate = `${yyyy}-${mm}-${dd}`;
+                event.target.value = mergeDate;
+                this.date = mergeDate;
             }
         },
         inValidDate(value) {
@@ -112,12 +115,6 @@ export default {
             const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
             return !dateRegex.test(value);
         },
-        validFullDate(value) {
-            // 날짜 데이터인지 체크
-            // ex) 20201230 || 2020-12-30 둘다 가능한 정규표현식
-            const fullDateRegex = /^(19|20|21|22)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
-            return fullDateRegex.test(value);
-        }
     },
 }
 </script>

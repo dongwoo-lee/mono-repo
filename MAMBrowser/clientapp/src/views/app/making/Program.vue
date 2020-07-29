@@ -21,8 +21,8 @@
             <!-- 방송일 -->
             <b-colxx sm="2">
               <b-form-group label="방송일" class="inline-block">
-                 <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
-                <b-form-invalid-feedback :state="!$v.searchItems.brd_dt.date">Please enter your email address</b-form-invalid-feedback>
+                <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
+                <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
               </b-form-group>
             </b-colxx>
             <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
@@ -45,7 +45,6 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import commonValidate from '../../../utils/CommonValidate';
 
 export default {
   mixins: [ MixinBasicPage ],
@@ -143,6 +142,11 @@ export default {
   },
   methods: {
     getData() {
+      if (this.$v.$invalid) {
+        this.$fn.notify('inputError', {});
+        return;
+      }
+
       const media = this.searchItems.media;
       const brd_dt = this.searchItems.brd_dt;
 
@@ -152,12 +156,5 @@ export default {
       });
     }
   },
-  validations: {
-    searchItems: {
-      brd_dt: {
-        date: commonValidate.date,
-      }
-    }
-  }
 }
 </script>

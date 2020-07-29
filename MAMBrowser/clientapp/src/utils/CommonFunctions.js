@@ -15,7 +15,7 @@ const formatDate = (d, p = 'yyyyMMdd') => {
     }
 
     const dateTime = new Date(parseDate);
-    // if (dateTime.toString() === 'Invalid Date') { return d; }
+    if (dateTime.toString() === 'Invalid Date') { return d; }
     const sepDate = {
         y: dateTime.getFullYear(),
         M: ('0' + (dateTime.getMonth() + 1)).slice(-2),
@@ -66,6 +66,9 @@ const notify = (type, options = { title, message, options: { duration: 4000, per
     if (type === 'undefined') {
         return window.$notify('error', 'Data undefined', '데이터가 없습니다.', options.options);
     }
+    if (type === 'inputError') {
+        return window.$notify('error', '입력 폼 에러', '입력 폼 양식을 확인해주세요.', options.options);
+    }
 
     window.$notify(type, options.title, options.message, options.options);
 }
@@ -113,12 +116,27 @@ const fileDownload = (res, fileNm = '') => {
     }
 }
 
+const getDirection = () => {
+    let direction = defaultDirection
+    if (localStorage.getItem('direction')) {
+      const localValue = localStorage.getItem('direction')
+      if (localValue === 'rtl' || localValue === 'ltr') {
+        direction = localValue
+      }
+    }
+    return {
+      direction,
+      isRtl: direction === 'rtl'
+    }
+  }
+
 const commonFunctions = {
     formatDate,
     splitFirst,
     notify,
     fileDownload,
     changeSortValue,
+    getDirection
 }
 
 export default commonFunctions;

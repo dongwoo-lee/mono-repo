@@ -3,8 +3,10 @@ import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
 import CInputDatePicker from '../components/Input/CInputDatePicker';
 import CDataTable from '../components/DataTable/CDataTable';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
+import mixinValidate from './MixinValidate';
 
 let mixinBasicPage = {
+    mixins: [ mixinValidate ],
     components: {
         CInputText,
         CDropdownMenuInput,
@@ -91,9 +93,20 @@ let mixinBasicPage = {
             this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
             this.getData();
         },
-        // 제작자 옵션 가져오기
+        // (구)프로 목록 조회
+        getProOptions() {
+            this.$http.get('/api/Categories/pro')
+              .then(res => {
+                  if (res.status === 200) {
+                      this.proOptions = res.data.resultObject.data;
+                  } else {
+                      this.$fn.notify('server-error', { message: '조회 에러' });
+                  }
+            });
+        },
+        // 제작자(사용자) 목록 조회
         getEditorOptions() {
-            this.$http.get('/api/users')
+            this.$http.get('/api/Categories/users')
               .then(res => {
                   if (res.status === 200) {
                       this.editorOptions = res.data.resultObject.data;
@@ -104,8 +117,20 @@ let mixinBasicPage = {
         },
         // 제작자 선택
         onEditorSelected(data) {
-            const { editor, editorName } = data;
-            this.searchItems.editor = editor ? editor : editorName;
+            const { id, name } = data;
+            this.searchItems.editor = id;
+            this.searchItems.editorName = name;
+        },
+        // 취재물 분류 목록 조회
+        getReportOptions() {
+            this.$http.get('/api/Categories/report')
+              .then(res => {
+                  if (res.status === 200) {
+                      this.rePortOptions = res.data.resultObject.data;
+                  } else {
+                      this.$fn.notify('server-error', { message: '조회 에러' });
+                  }
+            });
         },
     }
 }

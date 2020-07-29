@@ -21,12 +21,14 @@
             <!-- 시작일-종료일 -->
             <b-colxx sm="2">
               <b-form-group label="시작일" class="has-float-label c-zindex">
-                  <c-input-date-picker v-model="searchItems.start_dt"/>
+                  <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
+                  <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
               </b-form-group>
             </b-colxx>
             <b-colxx sm="2">
               <b-form-group label="종료일" class="has-float-label c-zindex">
-                  <c-input-date-picker v-model="searchItems.end_dt"/>
+                  <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
+                  <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
               </b-form-group>
             </b-colxx>
             <!-- 제작자 -->
@@ -78,8 +80,8 @@ export default {
     return {
       editorOptions: [],    // 사용자(제작자) 목록
       searchItems: {
-        start_dt: '',       // 시작일
-        end_dt: '',         // 종료일
+        start_dt: '20200101',       // 시작일
+        end_dt: '20200730',         // 종료일
         editor: '',         // 제작자
         name: '',           // 소재명
         media: '',
@@ -159,6 +161,11 @@ export default {
   },
   methods: {
     getData() {
+       if (this.$v.$invalid) {
+        this.$fn.notify('inputError', {});
+        return;
+      }
+
       this.$http.get(`/api/Products/spot/scr`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);

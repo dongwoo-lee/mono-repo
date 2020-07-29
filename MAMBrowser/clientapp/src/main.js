@@ -30,7 +30,6 @@ import Vuelidate from 'vuelidate';
 import http from './http.js'
 import commonFunctions from './utils/CommonFunctions';
 import commonFilters from './utils/CommonFilters';
-import commonValidate from './utils/CommonValidate';
 
 Vue.use(BootstrapVue);
 Vue.use(VueI18n);
@@ -59,7 +58,6 @@ Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.component('file-upload', VueUploadComponent)
 
 Vue.prototype.$fn = commonFunctions;
-Vue.prototype.$valid = commonValidate;
 
 Object.keys(commonFilters).forEach((key) => {
   Vue.filter(key, commonFilters[key]);

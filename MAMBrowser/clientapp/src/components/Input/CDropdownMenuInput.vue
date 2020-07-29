@@ -60,7 +60,7 @@ export default {
             const { type } = event;
             if (type === 'mouseup') {
                 // 마우스 클릭
-                emitData = { editor: data.item.id, editorName: '' };
+                emitData = { id: data.item.id, name: '' };
             } else {
                 // 마우스 오버, 엔터
                 const targetValue = event.target.value;
@@ -69,9 +69,9 @@ export default {
                 });
 
                 if (filteredData.length > 0) {
-                    emitData = { editor: filteredData[0].id, editorName: '' };    
+                    emitData = { id: filteredData[0].id, name: '' };    
                 } else {
-                    emitData = { editor: '', editorName: targetValue };
+                    emitData = { id: '', name: targetValue };
                 }
             }
 
