@@ -19,6 +19,10 @@
         <b-colxx xxs="12">
             <dev-file-upload></dev-file-upload>
         </b-colxx>
+        <!-- 파일 업로드 - vue-upload-component -->
+        <b-colxx xxs="12">
+            <dev-file-upload-component></dev-file-upload-component>
+        </b-colxx>
         <!-- dropdown menu + input + 순간 검색 -->
         <b-colxx xxs="4">
             <dev-dropdown-menu-input></dev-dropdown-menu-input>
@@ -48,6 +52,7 @@
 import DevTable from './DevTable';
 import DevScrollPagingTable from './DevScrollPagingTable';
 import DevFileUpload from './DevFileUpload';
+import DevFileUploadComponent from './DevFileUploadComponent';
 import DevDropdownMenuInput from './DevDropdownMenuInput'
 
 export default {
@@ -55,6 +60,7 @@ export default {
         DevTable,
         DevScrollPagingTable,
         DevFileUpload,
+        DevFileUploadComponent,
         DevDropdownMenuInput,
     },
     data() {

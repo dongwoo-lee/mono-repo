@@ -14,7 +14,12 @@
               <!-- 매체 -->
               <b-colxx sm="2">
                 <b-form-group label="매체" class="has-float-label">
-                  <b-form-select size="sm" v-model="searchItems.media" :options="mediaOptions"/>
+                  <b-form-select 
+                  v-model="searchItems.media"
+                  :options="mediaOptions"
+                  value-field="id"
+                  text-field="name" 
+                />
                 </b-form-group>
               </b-colxx>
               <!-- 분류 -->
@@ -104,29 +109,29 @@ export default {
           name: 'rowNO',
           title: 'No',
           titleClass: 'center aligned',
-          dataClass: 'right aligned',
+          dataClass: "center aligned text-center",
           width: '5%',
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned",
           width: "15%"
         },
         {
           name: "categoryName",
           title: "분류",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned",
           width: "15%"
         },
         {
           name: "duration",
           title: "길이",
-          titleClass: "",
-          dataClass: "list-item-heading",
-          width: "10%",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
+          width: '6%',
           callback: (v) => {
             return this.$fn.splitFirst(v);
           }
@@ -134,51 +139,55 @@ export default {
         {
           name: "track",
           title: "트랙",
-          titleClass: "",
-          dataClass: "list-item-heading",
-          width: "10%"
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
+          width: '5%',
         },
         {
           name: "editorName",
           title: "제작자",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "editDtm",
           title: "편집일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "masteringDtm",
           title: "마스터일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "proType",
           title: "타입",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: "",
-          dataClass: "list-item-heading",
-          width: "15%"
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center word-break",
+          width: "10%"
         },
       ]
     }
   },
   created() {
-    this.getProOptions();
+    // 매체 목록 조회
+    this.getMediaOptions();
+    // 사용자 목록 조회
     this.getEditorOptions();
+    // (구)프로 목록 조회    
+    this.getProOptions();
   },
   methods: {
     getData() {

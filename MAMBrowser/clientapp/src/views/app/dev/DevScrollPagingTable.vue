@@ -41,42 +41,42 @@ export default {
                 {
                     name: "id",
                     title: "id",
-                    titleClass: "",
-                    dataClass: "list-item-heading",
+                    titleClass: 'center aligned',
+                    dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: "name",
                     title: "name",
-                    titleClass: "",
-                    dataClass: "list-item-heading",
+                    titleClass: 'center aligned',
+                    dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: "email",
                     title: "email",
-                    titleClass: "",
-                    dataClass: "list-item-heading",
+                    titleClass: 'center aligned',
+                    dataClass: "center aligned text-center",
                     width: "20%"
                 },
                 {
                     name: "birthdate",
                     title: "birthdate",
-                    titleClass: "",
-                    dataClass: "list-item-heading",
+                    titleClass: 'center aligned',
+                    dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: "nickname",
                     title: "nickname",
-                    titleClass: "",
-                    dataClass: "list-item-heading",
+                    titleClass: 'center aligned',
+                    dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: '__slot:actions',
                     title: '미리듣기',
-                    dataClass: "list-item-heading",
+                    dataClass: "center aligned text-center",
                     width: "10%"
                 }   
             ]

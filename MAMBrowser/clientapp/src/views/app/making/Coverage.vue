@@ -106,38 +106,39 @@ export default {
           name: 'rowNO',
           title: 'No',
           titleClass: 'center aligned',
-          dataClass: 'right aligned',
+          dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned",
         },
         {
           name: "categoryName",
           title: "분류",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned",
         },
         {
           name: "reporter",
           title: "취재인",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned text-center',
+          dataClass: "center aligned text-center",
         },
         {
           name: "pgmName",
           title: "사용처명",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
         },
         {
           name: "brdDT",
           title: "방송일",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
+          width: '8%',
           callback: (v) => {
             return this.$fn.formatDate(v, 'yyyy-MM-dd');
           }
@@ -145,8 +146,9 @@ export default {
         {
           name: "duration",
           title: "길이",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
+          width: '6%',
           callback: (v) => {
             return this.$fn.splitFirst(v);
           }
@@ -154,32 +156,34 @@ export default {
         {
           name: "track",
           title: "트랙",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
+          width: '4%',
         },
         {
           name: "editorName",
           title: "제작자",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
         },
         {
           name: "editDtm",
           title: "편집일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
         },
         {
           name: "masteringDtm",
           title: "마스터링일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center word-break",
+          width: "10%"
         },
       ]
     }

@@ -55,6 +55,7 @@
           :per-page="responseData.rowPerPage"
           :num-rows-to-bottom="numRowsToBottom"
           :contextmenu="contextMenu"
+          :css="{'table-scroll-body': true}"
           @scrollPerPage="onScrollPerPage"
           @contextMenuAction="onContextMenuAction"
           @sortableclick="onSortable"
@@ -95,85 +96,85 @@ export default {
           name: 'rowNO',
           title: 'No',
           titleClass: 'center aligned',
-          dataClass: 'right aligned',
+          dataClass: "center aligned text-center",
           width: '5%',
         },
         {
           name: "name",
           title: "곡명",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "artistName",
           title: "아티스트",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "duration",
           title: "재생시간",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "albumName",
           title: "음반",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "trackNO",
           title: "트랙번호",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "releaseDate",
           title: "발매년도",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "composer",
           title: "작곡가",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "writer",
           title: "작사가",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "sequenceNO",
           title: "배열번호",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "lyrics",
           title: "마스터링",
-          titleClass: "",
-          dataClass: "list-item-heading",
-          width: "10%"
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
+          width: '8%',
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: "",
-          dataClass: "list-item-heading",
-          width: "15%"
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center word-break",
+          width: "10%"
         },
       ]
     }

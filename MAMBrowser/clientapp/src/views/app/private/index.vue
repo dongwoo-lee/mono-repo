@@ -106,35 +106,35 @@ export default {
         {
           name: "title",
           title: "파일명",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "sales",
           title: "메모",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
         },
         {
           name: "stock",
           title: "파일형식",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "20%"
         },
         {
           name: "category",
           title: "상세정보",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "25%"
         },
         {
           name: "writeDate",
           title: "등록일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: 'center aligned',
+          dataClass: "center aligned text-center",
           width: "10%"
         },
       ],

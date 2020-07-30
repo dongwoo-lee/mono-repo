@@ -59,3 +59,11 @@
 .c-zindex > legend{
     z-index: 5;
 }
+
+.word-break {
+    word-break: break-all !important;
+}
+
+.vuetable-fixed-layout tbody {
+    width: 102%;
+}

@@ -12,15 +12,20 @@
       <b-card class="mb-4">
         <b-form @submit.stop>
           <b-row>
-            <!-- 채널 -->
+            <!-- 매체 -->
             <b-colxx sm="2">
-              <b-form-group label="채널">
-                <b-form-select v-model="searchItems.media" :options="mediaOptions"></b-form-select>
+              <b-form-group label="매체" class="has-float-label">
+                <b-form-select 
+                  v-model="searchItems.media"
+                  :options="mediaOptions"
+                  value-field="id"
+                  text-field="name" 
+                />
               </b-form-group>
             </b-colxx>
             <!-- 방송일 -->
             <b-colxx sm="2">
-              <b-form-group label="방송일" class="inline-block">
+              <b-form-group label="방송일" class="has-float-label">
                 <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
                 <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
               </b-form-group>
@@ -59,79 +64,97 @@ export default {
             name: '__sequence',
             title: 'No',
             titleClass: 'center aligned',
-            dataClass: 'right aligned'
+            dataClass: "center aligned text-center",
         },
         {
           name: "mediaName",
           title: "매체",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '5%',
         },
         {
           name: "name",
           title: "프로그램",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "brdDT",
           title: "방송일",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '8%',
+          callback: (v) => {
+            return this.$fn.formatDate(v, 'yyyy-mm-dd')
+          }
         },
         {
           name: "brdTime",
           title: "방송시간",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '7%',
         },
         {
           name: "status",
           title: "상태",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '6%',
         },
         {
           name: "duration",
           title: "길이",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '7%',
         },
         {
           name: "track",
           title: "트랙",
-          titleClass: "",
-          dataClass: "list-item-heading",
-        },
-        {
-          name: "editorID",
-          title: "제작자",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '4%',
         },
         {
           name: "editorName",
-          title: "편집일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          title: "제작자",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '8%'
         },
         {
           name: "editDtm",
-          title: "방송의뢰일시",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          title: "편집일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '8%'
         },
         {
           name: "reqCompleteDtm",
+          title: "방송의뢰일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '9%',
+        },
+        {
+          name: "empty",
           title: "마스터링",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '8%',
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: "",
-          dataClass: "list-item-heading",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center word-break",
+          width: '10%',
+          callback: (v) => {
+            return v.substring(1, v.length).replace(/\\/g, '/');
+            // return v.replace(/\\\\/g, '/');
+          }
         },
       ],
       contextMenu: [
@@ -139,6 +162,10 @@ export default {
         { name: 'storage', text: '내 저장공간으로 복사' },
       ]
     }
+  },
+  created() {
+    // 매체목록 조회
+    this.getMediaOptions();
   },
   methods: {
     getData() {

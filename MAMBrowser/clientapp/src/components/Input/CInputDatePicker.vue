@@ -79,35 +79,35 @@ export default {
                 this.$emit('input', formatValue);
                 this.inputValue = formatValue;
             }
-
-            if (!v) {
-                this.inputValue = v;
-                this.$emit('input', v);
-            }
         }
     },
     methods: {
         onInput(event) {
             let targetValue = event.target.value;
+            // 값이 string.empty일경우
             if (!targetValue) {
                 this.date = targetValue;
                 return;
             }
 
+            // 값 입력 체크
             if (this.inValidDate(targetValue)) {
                 event.target.value = targetValue.slice(0, -1);
                 return;
             }
 
-            const replaceTargetValue = targetValue.replace(/-/g, '');
-            if (replaceTargetValue.length === 8) {
-                const yyyy = replaceTargetValue.substring(0, 4);
-                const mm = replaceTargetValue.substring(4, 6);
-                const dd = replaceTargetValue.substring(6, 8);
+            // 날짜 체크
+            const replaceAllTargetValue = targetValue.replace(/-/g, '')
+            if (replaceAllTargetValue.length === 8) {
+                const yyyy = replaceAllTargetValue.substring(0, 4);
+                const mm = replaceAllTargetValue.substring(4, 6);
+                const dd = replaceAllTargetValue.substring(6, 8);
                 const mergeDate = `${yyyy}-${mm}-${dd}`;
                 event.target.value = mergeDate;
                 this.date = mergeDate;
             }
+
+            return;
         },
         inValidDate(value) {
             // 유효한 입력값인지 체크

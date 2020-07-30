@@ -22,13 +22,7 @@ let mixinBasicPage = {
                 selectPage: 1,
                 totalRowCount: 0,
             },
-            mediaOptions: [                           // 매체 목록
-                { value: '', text: '선택하세요.' },
-                { value: 'A', text: 'AM' },
-                { value: 'F', text: 'FM' },
-                { value: 'D', text: 'DMB' },
-                { value: 'C', text: '공통' },
-            ],
+            mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             numRowsToBottom: 5,
             contextMenu: [
@@ -92,6 +86,17 @@ let mixinBasicPage = {
             this.searchItems.sortKey = sortKey;
             this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
             this.getData();
+        },
+        // 매체목록 조회
+        getMediaOptions() {
+            this.$http.get('/api/Categories/media')
+              .then(res => {
+                  if (res.status === 200) {
+                      this.mediaOptions = res.data.resultObject.data;
+                  } else {
+                      this.$fn.notify('server-error', { message: '조회 에러' });
+                  }
+            });
         },
         // (구)프로 목록 조회
         getProOptions() {

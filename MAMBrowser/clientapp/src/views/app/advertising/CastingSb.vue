@@ -1,26 +1,13 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb :heading="$t('menu.casting-sb')"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4" :title="$t('menu.casting-sb')">
-        </b-card>
-    </b-colxx>
-  </b-row>
+  <div>
+    <templateSBForm heading="주조SB" type="mcr"></templateSBForm>
   </div>
 </template>
 
 <script>
+import templateSBForm from './template/templateSBForm';
+
 export default {
-  data() {
-    return {
-      testData: '',
-    }
-  },
+  components: { templateSBForm },
 }
 </script>
