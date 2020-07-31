@@ -14,7 +14,12 @@
               <!-- 분류 -->
               <b-colxx sm="2">
                 <b-form-group label="분류" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="rePortOptions" @selected="onReportSelected" />
+                  <b-form-select 
+                    v-model="searchItems.cate"
+                    :options="rePortOptions"
+                    value-field="id"
+                    text-field="name" 
+                  />
                 </b-form-group>
               </b-colxx>
               <!-- 방송일(시작일-종료일) -->
@@ -33,13 +38,13 @@
               <!-- 사용처 -->
               <b-colxx sm="2">
                 <b-form-group label="사용처" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+                  <c-dropdown-menu-input :suggestions="pgmOptions" @selected="onPgmSelected" />
                 </b-form-group>
               </b-colxx>
               <!-- 취재인 -->
               <b-colxx sm="2">
                 <b-form-group label="취재인" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="rePortOptions" @selected="onReportSelected" />
+                  <c-input-text v-model="searchItems.reporterName"/>
                 </b-form-group>
               </b-colxx>
               <!-- 제작자 -->
@@ -85,8 +90,6 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
-      rePortOptions: [],       // 취재물 분류 목록
-      editorOptions: [],       // 사용자 목록 조회
       searchItems: {
         cate: '',              // 분류
         start_dt: '20200101',  // 방송일(시작일)
@@ -189,8 +192,12 @@ export default {
     }
   },
   created() {
+    // 취재물 분류 목록 조회
     this.getReportOptions();
+    // 사용자 목록 조회
     this.getEditorOptions();
+    // 사용처 목록 조회
+    this.getPgmOptions();
   },
   methods: {
     getData() {
@@ -199,12 +206,6 @@ export default {
             this.setResponseData(res);
       });
     },
-    // 취재물 분류 선택
-    onReportSelected(data) {
-      const { id, name } = data;
-      this.searchItems.pgm = id;
-      this.searchItems.pgmName = name;
-    }
   }
 }
 </script>

@@ -139,13 +139,6 @@ export default {
           width: '9%',
         },
         {
-          name: "empty",
-          title: "마스터링",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '8%',
-        },
-        {
           name: "filePath",
           title: "파일경로",
           titleClass: "center aligned text-center",

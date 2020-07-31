@@ -17,13 +17,13 @@ const $http = axios.create({
 let isRefreshing = false;
 
 axios.interceptors.response.use(res =>{
-    const { status, data } = res;
+    const { config, status, data } = res;
     if (status === 200 && data.resultObject === null) {
         window.$notify(
             "error",
-            "응답값:" + data.resultObject,
-            "값이 넘어오지 않았습니다.", {
-                duration: 4000,
+            "응답값이 넘어오지 않았습니다. => " + config.url + ': ' + data.resultObject,
+            data.errorMsg, {
+                duration: 10000,
                 permanent: false
             }
         )
@@ -31,7 +31,7 @@ axios.interceptors.response.use(res =>{
     return res;
 }, async err => {
     const{
-        response: { status, data }
+        response: { config, status, data, statusText }
     } = err;
 
     if (status === 401 && data.message === 'Invalid token') {
@@ -43,9 +43,9 @@ axios.interceptors.response.use(res =>{
     if (status !== 200) {
         window.$notify(
             "error",
-            "응답값:" + status,
-            "Error", {
-                duration: 4000,
+            "응답값:" + status + '(' + statusText + ')',
+            "url: " + config.url, {
+                duration: 10000,
                 permanent: false
             }
         )

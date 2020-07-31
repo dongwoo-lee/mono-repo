@@ -76,9 +76,9 @@ export default {
   data() {
     return {
       searchItems: {
-        media: '',             // 매체
+        media: 'A',             // 매체
         cate: '',              // 분류
-        type: 'Y',              // 타입
+        type: ['Y'],              // 타입
         editor: '',            // 제작자
         name: '',              // 소재명
         rowPerPage: 16,

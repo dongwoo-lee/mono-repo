@@ -2,23 +2,18 @@ import mixinValidate from './MixinValidate';
 import CInputText from '../components/Input/CInputText';
 import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
 import CInputDatePicker from '../components/Input/CInputDatePicker';
-import CDataTable from '../components/DataTable/CDataTable';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
-import MultiFileUploadPopup from '../components/popup/MultiFileUploadPopup';
 
-let mixinBasicPage = {
+let mixinFilterPage = {
     mixins: [ mixinValidate ],
     components: {
         CInputText,
         CDropdownMenuInput,
         CInputDatePicker,
-        CDataTable,
         CDataTableScrollPaging,
-        MultiFileUploadPopup,
     },
     data() {
         return {
-            showModalFileUpload: false,              // 파일 업로드 모달
             responseData: {                          // 응답 결과
                 data: null,
                 rowPerPage: 16,
@@ -27,21 +22,13 @@ let mixinBasicPage = {
             },
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
-            pgmOptions: [],                          // 사용처 목록 조회
-            publicOptions: [],                       // 공유소재 분류 목록
-            rePortOptions: [],                       // 취재물 분류 목록
+            spotOptions: [],                         // 주조 spot 분류 목록
+            proOptions: [],                          // 필러(pr) 분류 목록
+            generalOptions: [],                      // 필러(일반) 분류 목록
+            timetoneOptions: [],                     // 필러(시간) 분류 목록
+            etcOptions: [],                          // 필러(기타) 분류 목록
             numRowsToBottom: 5,
-            contextMenu: [
-                { name: 'edit', text: '편집' },
-                { name: 'throw', text: '휴지통으로 보내기' },
-                { name: 'download', text: '다운로드' },
-            ]
         }
-    },
-    created() {
-        this.$nextTick(() => {
-            this.getData();
-        });
     },
     methods: {
         // 검색
@@ -49,8 +36,8 @@ let mixinBasicPage = {
             this.searchItems.selectPage = 1;
             this.getData();
         },
-        // 스크롤 페이징
-        onScrollPerPage() {
+         // 스크롤 페이징
+         onScrollPerPage() {
             this.searchItems.selectPage++;
             this.getData();
         },
@@ -77,18 +64,6 @@ let mixinBasicPage = {
                 this.$fn.notify('server-error', { message: '조회 에러' });
             }
         },
-        // 우측메뉴 액션
-        onContextMenuAction(v) {
-            switch(v) {
-                case 'edit': console.log(v); break;
-                case 'throw': console.log(v); break;
-                case 'download':  console.log(v); break;
-                case 'storage':  console.log(v); break;
-                case 'restore':  console.log(v); break;
-                case 'delete':  console.log(v); break;
-                default: break;
-            }
-        },
         // 정렬
         onSortable(sortKey) {
             this.searchItems.sortKey = sortKey;
@@ -104,44 +79,35 @@ let mixinBasicPage = {
                     } else {
                         this.$fn.notify('server-error', { message: '조회 에러' });
                     }
-            });
+          });
         },
         // 매체목록 조회
         getMediaOptions() {
             this.requestCall('/api/Categories/media', 'mediaOptions');
         },
-        // (구)프로 목록 조회
-        getProOptions() {
-            this.requestCall('/api/Categories/pro', 'proOptions');
-        },
         // 제작자(사용자) 목록 조회
         getEditorOptions() {
-            this.requestCall('/api/Categories/users', 'rePortOptions');
+            this.requestCall('/api/Categories/users', 'editorOptions');
         },
-        // 취재물 분류 목록 조회
-        getReportOptions() {
-            this.requestCall('/api/Categories/report', 'rePortOptions');
+        // 주조 spot 분류 목록 조회
+        getSpotOptions(value) {
+          this.requestCall('/api/Categories/mcr/spot' + '?media=' + value, 'spotOptions');
         },
-        // 사용처 목록 조회
-        getPgmOptions() {
-            this.requestCall('/api/Categories/pgmcodes', 'pgmOptions');
+        // 필러(pr) 분류 목록 조회
+        getProOptions(value) {
+            this.requestCall('/api/Categories/filler/pro' + '?media=' + value, 'proOptions');
         },
-        // 공유 소재 분류 목록 조회
-        getpublicOptions() {
-            this.$http.get('/api/Categories/public')
-              .then(res => {
-                  if (res.status === 200) {
-                      this.publicOptions = res.data.resultObject.data;
-                  } else {
-                      this.$fn.notify('server-error', { message: '조회 에러' });
-                  }
-            });
+        // 필러(일반) 분류 목록 조회
+        getGeneralOptions() {
+            this.requestCall('/api/Categories/filler/general', 'generalOptions');
         },
-        // 사용처 분류 선택
-        onPgmSelected(data) {
-            const { id, name } = data;
-            this.searchItems.pgm = id;
-            this.searchItems.pgmName = name;
+        // 필러(시간) 분류 목록 조회
+        getTimetoneOptions() {
+            this.requestCall('/api/Categories/filler/timetone', 'timetoneOptions');
+        },
+        // 필러(기타) 분류 목록 조회
+        getEtcOptions() {
+            this.requestCall('/api/Categories/filler/etc', 'etcOptions');
         },
         // 제작자 선택
         onEditorSelected(data) {
@@ -149,13 +115,7 @@ let mixinBasicPage = {
             this.searchItems.editor = id;
             this.searchItems.editorName = name;
         },
-        // 공유 소재 분류 선택
-        onPublicSelected(data) {
-            const { id, name } = data;
-            this.searchItems.cate = id;
-            this.searchItems.cateName = name;
-          }
     }
 }
 
-export default mixinBasicPage;
+export default mixinFilterPage;

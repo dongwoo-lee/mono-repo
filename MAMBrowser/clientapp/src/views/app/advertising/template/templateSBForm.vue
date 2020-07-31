@@ -29,20 +29,30 @@
                     <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                   </b-form-group>
                 </b-colxx>
+                <!-- 분류 -->
+                <b-colxx sm="2" v-if="!type">
+                  <b-form-group label="분류" class="has-float-label">
+                    <b-form-select 
+                      v-model="localType"
+                      :options="localTypeOptions"
+                    />
+                  </b-form-group>
+                </b-colxx>
                 <!-- 사용처 -->
                 <b-colxx sm="2">
-                  <b-form-group label="주조 사용처" class="has-float-label">
-                    <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+                  <b-form-group label="사용처" class="has-float-label">
+                    <c-dropdown-menu-input :suggestions="pgmOptions" @selected="onPgmSelected" />
                   </b-form-group>
                 </b-colxx>
                 <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
               </b-row>
             </b-form>
         </b-card>
-        <!-- 테이블 -->
-        <b-card class="mb-4">
-          <b-row>
-            <b-colxx sm="6">
+        <!-- 테이블, main -->
+        
+        <b-row>
+          <b-colxx xs="12" md="6">
+            <b-card>
               <b-table
                 ref="custom-table"
                 class="vuetable"
@@ -53,10 +63,12 @@
                 :fields="fields"
                 :items="responseData.data"
                 @row-selected="rowSelected"
-              >
-              </b-table>
-            </b-colxx>
-            <b-colxx sm="6">
+              />
+            </b-card>
+          </b-colxx>
+          <!-- sub -->
+          <b-colxx xs="12" md="6">
+            <b-card>
               <b-table
                 ref="custom-table"
                 class="vuetable"
@@ -67,11 +79,10 @@
                 :fields="fieldsContents"
                 :items="reponseContentsData.data"
                 @row-selected="rowSelected"
-              >
-              </b-table> 
-            </b-colxx>
-          </b-row>
-        </b-card>
+              />
+            </b-card>
+          </b-colxx>
+        </b-row>
     </b-colxx>
   </b-row>
   </div>
@@ -92,6 +103,12 @@ export default {
         pgm: '',
         pgmName: '',
       },
+      localType: null,
+      localTypeOptions: [ 
+        { value: null, text: '선택해주세요.' },
+        { value: 'mcr', text: '주조SB' },
+        { value: 'scr', text: '부조SB' },
+      ],
       fields: [
         { key: 'rowNO', label: 'No', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
         { key: 'brdDT', label: '방송일', sortable: false, tdClass: 'text-muted' },
@@ -101,7 +118,7 @@ export default {
         { key: 'capacity', label: '분량', sortable: false, tdClass: 'text-muted', thStyle: { width: '10%' } },
         { key: 'status', label: '상태', sortable: false, tdClass: 'text-muted', thStyle: { width: '14%' } },
         { key: 'pgmName', label: '사용처명', sortable: false, tdClass: 'text-muted', thStyle: { width: '14%' } },
-        { key: 'editorName', label: '담당자', sortable: false, tdClass: 'text-muted', thStyle: { width: '12%' } },
+        { key: 'editorName', label: '담당자', sortable: false, tdClass: 'text-muted', thStyle: { width: '14%' } },
       ],
       fieldsContents: [
         { key: 'rowNO', label: 'No', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
@@ -114,33 +131,5 @@ export default {
       ]
     }
   },
-  created() {
-    // 매체목록 조회
-    this.getMediaOptions();
-  },
-   methods: {
-    getData() {
-      if (this.$v.$invalid) {
-        this.$fn.notify('inputError', {});
-        return;
-      }
-
-      const media = this.searchItems.media;
-      const brd_dt = this.searchItems.brd_dt;
-
-      this.$http.get(`/api/Products/sb/${this.type}/${media}/${brd_dt}`, { params: this.searchItems })
-        .then(res => {
-           this.setResponseData(res);
-      });
-    },
-    getDataContents(sbID) {
-      if (sbID === undefined) return;
-      const brd_dt = this.searchItems.brd_dt;
-      this.$http.get(`/api/Products/sb/contents/${brd_dt}/${sbID}`)
-        .then(res => {
-           this.setReponseContentsData(res, 'normal');
-      });
-    }
-  }
 }
 </script>

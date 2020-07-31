@@ -19,7 +19,7 @@
                   v-model="searchItems.media"
                   :options="mediaOptions"
                   value-field="id"
-                  text-field="name" 
+                  text-field="name"
                 />
               </b-form-group>
             </b-colxx>
@@ -83,13 +83,12 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
-      editorOptions: [],    // 사용자(제작자) 목록
       searchItems: {
         start_dt: '20200101',       // 시작일
         end_dt: '20200730',         // 종료일
         editor: '',         // 제작자
         name: '',           // 소재명
-        media: '',
+        media: 'A',
         rowPerPage: 16,
         selectPage: 1,
         sortKey: '',
@@ -173,7 +172,7 @@ export default {
   },
   methods: {
     getData() {
-       if (this.$v.$invalid) {
+      if (this.$v.$invalid) {
         this.$fn.notify('inputError', {});
         return;
       }

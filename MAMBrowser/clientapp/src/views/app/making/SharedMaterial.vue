@@ -25,7 +25,7 @@
               <!-- 분류 -->
               <b-colxx sm="2">
                 <b-form-group label="분류" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="proOptions" @selected="onProSelected" />
+                  <c-dropdown-menu-input :suggestions="publicOptions" @selected="onPublicSelected" />
                 </b-form-group>
               </b-colxx>
               <!-- 제작자 -->
@@ -49,7 +49,7 @@
       <b-card class="mb-4">
         <b-form class="mb-3" inline>
           <b-input-group class="mr-2">
-              <b-button class="mb-1" variant="primary default" size="sm">파일 업로드</b-button>
+              <b-button class="mb-1" variant="primary default" size="sm" @click="showModalFileUpload = true">파일 업로드</b-button>
           </b-input-group>
           <b-input-group class="mr-2">
               <b-button class="mb-1" variant="secondary default" size="sm">다운로드</b-button>
@@ -76,7 +76,9 @@
       </b-card>
     </b-colxx>
   </b-row>
-  </div>
+  <!-- 파일업로드 팝업 -->
+  <multi-file-upload-popup :show="showModalFileUpload" @close="showModalFileUpload=false"></multi-file-upload-popup>
+</div>
 </template>
 
 <script>
@@ -86,10 +88,10 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
-      proOptions: [],       // 분류 목록
       searchItems: {
-        media: '',          // 매체
+        media: 'A',          // 매체
         cate: '',           // 분류
+        cateName: '',       // 분류명
         type: '',           // 구분
         editor: '',         // 제작자
         name: '',           // 소재명
@@ -186,8 +188,8 @@ export default {
     this.getMediaOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
-    // (구)프로 목록 조회    
-    this.getProOptions();
+    // 공유 소재 분류 목록 조회
+    this.getpublicOptions();
   },
   methods: {
     getData() {
@@ -196,9 +198,8 @@ export default {
             this.setResponseData(res);
       });
     },
-    onProSelected(data) {
-      console.info('onProSelected', data);
-    }
+    
+    
   }
 }
 </script>

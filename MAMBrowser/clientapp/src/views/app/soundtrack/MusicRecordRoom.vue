@@ -12,9 +12,14 @@
           <b-form @submit.stop>
             <b-row>
               <!-- 대분류 -->
-              <b-colxx sm="4">
-                <b-form-group label="대분류" class="has-float-label">
-                  <v-select v-model="searchItems.topCategory" :options="topCategoryOptions" multiple />
+              <b-colxx sm="3">
+                <b-form-group label="대분류">
+                  <b-form-checkbox-group v-model="searchItems.topCategory">
+                    <b-form-checkbox value="own">ALL</b-form-checkbox>
+                    <b-form-checkbox value="two">국내</b-form-checkbox>
+                    <b-form-checkbox value="three">국외</b-form-checkbox>
+                    <b-form-checkbox value="four">클래식</b-form-checkbox>
+                  </b-form-checkbox-group>
                 </b-form-group>
               </b-colxx>
               <!-- 소분류 -->
@@ -26,11 +31,11 @@
               <!-- 검색옵션 -->
               <b-colxx sm="3">
                 <b-form-group label="검색옵션">
-                  <b-form-checkbox-group>
-                    <b-form-checkbox value="first">히트곡</b-form-checkbox>
-                    <b-form-checkbox value="second">금지곡</b-form-checkbox>
-                    <b-form-checkbox value="second">주의</b-form-checkbox>
-                    <b-form-checkbox value="second">청소년유해</b-form-checkbox>
+                  <b-form-checkbox-group v-model="searchItems.searchKeyword">
+                    <b-form-checkbox value="own">히트곡</b-form-checkbox>
+                    <b-form-checkbox value="two">금지곡</b-form-checkbox>
+                    <b-form-checkbox value="three">주의</b-form-checkbox>
+                    <b-form-checkbox value="four">청소년유해</b-form-checkbox>
                   </b-form-checkbox-group>
                 </b-form-group>
               </b-colxx>
