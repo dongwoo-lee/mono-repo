@@ -174,6 +174,46 @@ namespace MAMBrowser.BLL
             returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
+        public DTO_RESULT_PAGE_LIST<DTO_CATEGORY> GetPgmCodes(string brd_dt)
+        {
+            DTO_RESULT_PAGE_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_PAGE_LIST<DTO_CATEGORY>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT CODEID,CODENAME FROM MEM_CATEGORY_VIEW
+WHERE CODETYPE = 'UP'
+AND SUBCODEID = (SELECT MAX(SUBCODEID) FROM MEM_CATEGORY_VIEW /**where**/)
+ORDER BY NUM");
+            builder.Where("SUBCODEID <= 'BRD_DT'");
+            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
+            {
+                return new DTO_CATEGORY
+                {
+                    ID = row.CODEID,
+                    Name = row.CODENAME
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, new {BRD_DT= brd_dt }, resultMapping);
+            return returnData;
+        }
+        public DTO_RESULT_PAGE_LIST<DTO_CATEGORY> GetPublicCodes()
+        {
+            DTO_RESULT_PAGE_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_PAGE_LIST<DTO_CATEGORY>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FE'; ");
+            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
+            {
+                return new DTO_CATEGORY
+                {
+                    ID = row.CODEID,
+                    Name = row.CODENAME
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            return returnData;
+        }
 
     }
 }

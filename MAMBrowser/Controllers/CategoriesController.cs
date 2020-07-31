@@ -211,7 +211,6 @@ namespace MAMBrowser.Controllers
         /// 필러(기타) 분류 조회
         /// </summary>
         /// <returns></returns>
-        [Authorize]
         [HttpGet("filler/etc")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetFillerETC()
         {
@@ -220,6 +219,50 @@ namespace MAMBrowser.Controllers
             {
                 CategoriesBLL bll = new CategoriesBLL();
                 result.ResultObject = bll.GetFillerETC();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 사용처 목록 조회
+        /// </summary>
+        /// <param name="brd_dt">방송 종료일</param>
+        /// <returns></returns>
+        [HttpGet("pgmcodes")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetPgmCodes(string brd_dt)
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            try
+            {
+                CategoriesBLL bll = new CategoriesBLL();
+                result.ResultObject =bll.GetPgmCodes(brd_dt);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 공유소재 분류 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("public")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetPublicCodes()
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            try
+            {
+                CategoriesBLL bll = new CategoriesBLL();
+                result.ResultObject = bll.GetPublicCodes();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -70,7 +70,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta/{editor}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FineData(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
@@ -84,13 +84,41 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
+        /// <summary>
+        /// 휴지통 데이터 목록
+        /// </summary>
+        /// <param name="editor">제작자</param>
+        /// <param name="cate">분류</param>
+        /// <param name="filename">파일명</param>
+        /// <param name="title">제목</param>
+        /// <param name="memo">메모</param>
+        /// <param name="rowPerPage">페이지당 행 개수</param>
+        /// <param name="selectPage">선택된 페이지</param>
+        /// <param name="sortKey">정렬 키(필드명)</param>
+        /// <param name="sortValue">정렬 값(ASC/DESC)</param>
+        /// <returns></returns>
+        [HttpGet("recyclebin/{editor}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindRecycleBin(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
+            try
+            {
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
         /// <summary>
         /// My공간 - 파일 다운로드
         /// </summary>
         [HttpGet("files/{fileid}")]
         public FileResult GetFile(string fileID)
         {
+            return null;
             string filePath = @"E:\Download\완료";
             IFileProvider provider = new PhysicalFileProvider(filePath);
             IFileInfo fileInfo = provider.GetFileInfo(fileID);
