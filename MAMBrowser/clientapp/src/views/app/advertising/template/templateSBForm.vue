@@ -18,7 +18,7 @@
                       v-model="searchItems.media"
                       :options="mediaOptions"
                       value-field="id"
-                      text-field="name" 
+                      text-field="name"
                     />
                   </b-form-group>
                 </b-colxx>
@@ -33,8 +33,10 @@
                 <b-colxx sm="2" v-if="!type">
                   <b-form-group label="분류" class="has-float-label">
                     <b-form-select 
-                      v-model="localType"
-                      :options="localTypeOptions"
+                      v-model="searchItems.cate"
+                      :options="cmOptions"
+                      value-field="id"
+                      text-field="name"
                     />
                   </b-form-group>
                 </b-colxx>
@@ -49,7 +51,6 @@
             </b-form>
         </b-card>
         <!-- 테이블, main -->
-        
         <b-row>
           <b-colxx xs="12" md="6">
             <b-card>
@@ -100,6 +101,7 @@ export default {
       searchItems: {
         media: 'A',
         brd_dt: '20200101',
+        cate: 'P',
         pgm: '',
         pgmName: '',
       },

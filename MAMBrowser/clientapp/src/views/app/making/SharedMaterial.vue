@@ -28,16 +28,36 @@
                   <c-dropdown-menu-input :suggestions="publicOptions" @selected="onPublicSelected" />
                 </b-form-group>
               </b-colxx>
+               <!-- 시작일 -->
+              <b-colxx sm="2">
+                <b-form-group label="시작일" class="has-float-label c-zindex">
+                    <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
+                    <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+                </b-form-group>
+              </b-colxx>
+              <!-- 종료일 -->
+              <b-colxx sm="2">
+                <b-form-group label="종료일" class="has-float-label c-zindex">
+                    <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
+                    <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+                </b-form-group>
+              </b-colxx>
               <!-- 제작자 -->
               <b-colxx sm="2">
                 <b-form-group label="제작자" class="has-float-label">
                   <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
                 </b-form-group>
               </b-colxx>
-              <!-- 소재명 -->
+              <!-- 제목 -->
               <b-colxx sm="2">
-                <b-form-group label="소재명" class="has-float-label">
-                  <c-input-text v-model="searchItems.name"/>
+                <b-form-group label="제목" class="has-float-label">
+                  <c-input-text v-model="searchItems.title"/>
+                </b-form-group>
+              </b-colxx>
+              <!-- 메모 -->
+              <b-colxx sm="2">
+                <b-form-group label="제목" class="has-float-label">
+                  <c-input-text v-model="searchItems.memo"/>
                 </b-form-group>
               </b-colxx>
               <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
@@ -89,12 +109,15 @@ export default {
   data() {
     return {
       searchItems: {
-        media: 'A',          // 매체
-        cate: '',           // 분류
-        cateName: '',       // 분류명
-        type: '',           // 구분
-        editor: '',         // 제작자
-        name: '',           // 소재명
+        media: 'A',                // 매체
+        cate: '',                  // 분류
+        cateName: '',              // 분류명
+        start_dt: '20200101',      // 시작일
+        end_dt: '20200706',        // 종료일
+        type: '',                  // 구분
+        editor: '',                // 제작자
+        title: '',                 // 제목
+        memo: '',                  // 메모
         rowPerPage: 16,
         selectPage: 1,
         sortKey: '',
@@ -110,28 +133,28 @@ export default {
         {
           name: 'rowNO',
           title: 'No',
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '5%',
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "categoryName",
           title: "분류",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "duration",
           title: "길이",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '6%',
           callback: (v) => {
@@ -141,42 +164,42 @@ export default {
         {
           name: "track",
           title: "트랙",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '5%',
         },
         {
           name: "editorName",
           title: "제작자",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "editDtm",
           title: "편집일시",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "masteringDtm",
           title: "마스터일시",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "proType",
           title: "타입",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%"
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center word-break",
           width: "10%"
         },

@@ -61,10 +61,10 @@ export default {
       },      
       fields: [
         {
-            name: '__sequence',
-            title: 'No',
-            titleClass: 'center aligned',
-            dataClass: "center aligned text-center",
+          name: '__sequence',
+          title: 'No',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "mediaName",

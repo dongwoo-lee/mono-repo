@@ -41,35 +41,35 @@ export default {
                 {
                     name: "id",
                     title: "id",
-                    titleClass: 'center aligned',
+                    titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: "name",
                     title: "name",
-                    titleClass: 'center aligned',
+                    titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: "email",
                     title: "email",
-                    titleClass: 'center aligned',
+                    titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                     width: "20%"
                 },
                 {
                     name: "birthdate",
                     title: "birthdate",
-                    titleClass: 'center aligned',
+                    titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                     width: "10%"
                 },
                 {
                     name: "nickname",
                     title: "nickname",
-                    titleClass: 'center aligned',
+                    titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                     width: "10%"
                 },

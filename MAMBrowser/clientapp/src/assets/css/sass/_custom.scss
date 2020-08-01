@@ -21,7 +21,7 @@
             bottom: 0;
             right: 0;
             left: 0;
-            height: 200px;
+            height: 400px;
             position: relative;
             z-index: 9999;
             opacity: .6;
@@ -95,4 +95,25 @@
 }
 .file-progress .bg-danger {
     background-color: #dc3545!important;
+}
+
+.vuetable-body-wrapper {
+    width: calc(100% + 18px);
+}
+
+.vuetable-body-wrapper tr td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: initial;
+}
+
+.vuetable-head-wrapper thead {
+    color: #fff;
+    background-color: #2a4878;
+}
+
+.vuetable-body-wrapper tr {
+    &:hover {
+        background-color: #ffeeba;
+    }
 }

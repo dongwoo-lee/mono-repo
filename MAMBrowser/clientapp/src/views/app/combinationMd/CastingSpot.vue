@@ -56,11 +56,17 @@
             </b-colxx>
             <!-- 상태 -->
             <b-colxx sm="2">
-              <b-form-group label="매체" class="has-float-label">
+              <b-form-group label="상태" class="has-float-label">
                 <b-form-select 
                   v-model="searchItems.status"
-                  :options="filterStatusOptions"
-                />
+                  :options="reqStatusOptions"
+                  value-field="id"
+                  text-field="name"
+                >
+                  <template v-slot:first>
+                    <b-form-select-option value="">선택해주세요.</b-form-select-option>
+                  </template>
+                </b-form-select>
               </b-form-group>
             </b-colxx>
             <!-- 제작자 -->
@@ -92,17 +98,12 @@
 </template>
 
 <script>
-import MixinFilterPage from '../../../mixin/MixinFilterPage';
+import MixinFillerPage from '../../../mixin/MixinFillerPage';
 
 export default {
-  mixins: [ MixinFilterPage ],
+  mixins: [ MixinFillerPage ],
   data() {
     return {
-      filterStatusOptions: [       // 상태
-        { value: '', text: '선택하세요.' },
-        { value: 'pr', text: 'PR' },
-        { value: 'program', text: '프로그램' }
-      ],
       searchItems: {
         media: 'A',                // 매체
         cate: '',                  // 분류
@@ -120,7 +121,7 @@ export default {
         {
           name: 'rowNO',
           title: 'No',
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
         },
@@ -134,8 +135,8 @@ export default {
         {
           name: "name",
           title: "소재명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "brdDT",
@@ -147,7 +148,7 @@ export default {
             return this.$fn.formatDate(v, 'yyyy-mm-dd')
           }
         },
-         {
+        {
           name: "status",
           title: "상태",
           titleClass: "center aligned text-center",
@@ -209,6 +210,8 @@ export default {
     this.getEditorOptions();
     // 주조 spot 분류 목록 조회
     this.getSpotOptions(this.searchItems.media);
+    // 방송의뢰 상태 목록 조회
+    this.getReqStatusOptions();
     this.getData();
   },
   methods: {

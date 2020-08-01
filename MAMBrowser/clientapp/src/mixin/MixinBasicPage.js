@@ -116,15 +116,17 @@ let mixinBasicPage = {
         },
         // 제작자(사용자) 목록 조회
         getEditorOptions() {
-            this.requestCall('/api/Categories/users', 'rePortOptions');
+            this.requestCall('/api/Categories/users', 'editorOptions');
         },
         // 취재물 분류 목록 조회
         getReportOptions() {
             this.requestCall('/api/Categories/report', 'rePortOptions');
         },
         // 사용처 목록 조회
-        getPgmOptions() {
-            this.requestCall('/api/Categories/pgmcodes', 'pgmOptions');
+        getPgmOptions(brd_dt) {
+            console.info("brd_dt", brd_dt);
+            if (!brd_dt) return;
+            this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
         },
         // 공유 소재 분류 목록 조회
         getpublicOptions() {

@@ -39,10 +39,7 @@
             <!-- 제작자 -->
             <b-colxx sm="2">
               <b-form-group label="제작자" class="has-float-label">
-                <c-dropdown-menu-input
-                  :suggestions="editorOptions"
-                  @selected="onEditorSelected"
-                />
+                <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
               </b-form-group>
             </b-colxx>
             <!-- 소재명 -->
@@ -86,8 +83,9 @@ export default {
       searchItems: {
         start_dt: '20200101',       // 시작일
         end_dt: '20200730',         // 종료일
-        editor: '',         // 제작자
-        name: '',           // 소재명
+        editor: '',                 // 제작자ID
+        editorName: '',             // 제작자이름
+        name: '',                   // 소재명
         media: 'A',
         rowPerPage: 16,
         selectPage: 1,
@@ -98,26 +96,26 @@ export default {
         {
           name: 'rowNO',
           title: 'No',
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "categoryName",
           title: "분류",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "duration",
           title: "길이",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '6%',
           callback: (v) => {
@@ -127,14 +125,14 @@ export default {
         {
           name: "track",
           title: "트랙",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "brdDT",
           title: "방송일",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
@@ -144,20 +142,20 @@ export default {
         {
           name: "pgmName",
           title: "사용처명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "masteringDtm",
           title: "마스터링 일시",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '9%',
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned word-break",
           width: "10%"
         },

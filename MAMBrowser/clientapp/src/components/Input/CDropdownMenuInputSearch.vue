@@ -7,6 +7,8 @@
         :get-suggestion-value="getSuggestionValue"
         @selected="onSelected"
         @input="onAutoSuggestInputChange"
+        @blur="handlerEvent"
+        @keyup.enter="handlerEvent"
     ></vue-autosuggest>
 </template>
 <script>
@@ -44,9 +46,40 @@ export default {
         getSuggestionValue(suggestion) {
             return suggestion.item.name;
         },
-        onSelected(data) {
-            this.$emit('selected', { id: data.item.id, name: data.item.name });
+        onSelected(item) {
+            // 클릭 이벤트 외에 filtered값이 존재하는 경우 enter keydown 이벤트도 들어옵니다.
+            if (event.type === 'keydown') { return };
+            this.emit(event, item);
+        },
+        handlerEvent(event) {
+            // 마우스 오버, 엔터
+            this.emit(event, event.target.value)
+        },
+        emit(event, data) {
+            let emitData = data;
+            const { type } = event;
+            if (type === 'mouseup') {
+                // 마우스 클릭
+                emitData = { id: data.item.id, name: '' };
+            } else {
+                // 마우스 오버, 엔터
+                const targetValue = event.target.value;
+                const filteredData = this.suggestions.filter(option => {
+                    return option.name.toLowerCase() === targetValue.toLowerCase();
+                });
+
+                if (filteredData.length > 0) {
+                    emitData = { id: filteredData[0].id, name: '' };    
+                } else {
+                    emitData = { id: '', name: targetValue };
+                }
+            }
+
+            this.$emit('selected', emitData);
         },
     }
 }
 </script>
+<style scoped>
+
+</style>

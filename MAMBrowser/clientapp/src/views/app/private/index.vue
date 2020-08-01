@@ -12,34 +12,37 @@
         <b-card class="mb-4">
           <b-form @submit.stop>
             <b-row>
-              <!-- 분류 -->
-              <!-- <b-colxx sm="1">
-                  <b-form-group label="분류" class="inline-block">
-                      <c-input v-model="searchItems.cete"></c-input>
-                  </b-form-group>
-              </b-colxx> -->
-              <!-- 파일명 -->
-              <b-colxx sm="2">
-                <b-form-group label="파일명" class="inline-block">
-                  <c-input-text v-model="searchItems.filename" />
-                </b-form-group>
-              </b-colxx>
               <!-- 제목 -->
               <b-colxx sm="2">
-                <b-form-group label="제목" class="inline-block">
+                <b-form-group label="제목" class="has-float-label c-zindex">
                   <c-input-text v-model="searchItems.title" />
                 </b-form-group>
               </b-colxx>
               <!-- 메모 -->
-              <b-colxx sm="3">
-                <b-form-group label="메모" class="inline-block">
+              <b-colxx sm="2">
+                <b-form-group label="메모" class="has-float-label c-zindex">
                   <c-input-text v-model="searchItems.memo" />
+                </b-form-group>
+              </b-colxx>
+              <!-- 등록일: 시작일 -->
+              <b-colxx sm="2">
+                <b-form-group label="시작일" class="has-float-label c-zindex">
+                    <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
+                    <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+                </b-form-group>
+              </b-colxx>
+              <!-- 등록일: 종료일 -->
+              <b-colxx sm="2">
+                <b-form-group label="종료일" class="has-float-label c-zindex">
+                    <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
+                    <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                 </b-form-group>
               </b-colxx>
               <b-button class="mb-1" variant="primary default" size="sm" @click="getData">검색</b-button>
             </b-row>
           </b-form>
         </b-card>
+
         <!-- 테이블 -->
         <b-card class="mb-4">
             <b-form class="mb-3" inline>
@@ -89,10 +92,11 @@ export default {
   data() {
     return {
       searchItems: {
-        cate: '',          // 분류(cate)
-        filename: '',      // 파일명(filename)
-        title: '',         // 제목(title)
-        memo: '',          // 메모(memo)
+        cate: '',              // 분류(cate)
+        title: '',             // 제목
+        memo: '',              // 메모(memo)
+        start_dt: '20200101',  // 등록일 시작일
+        end_dt: '20200730',    // 등록일 종료일
         rowPerPage: 16,
         selectPage: 1,
         sortKey: '',
@@ -108,34 +112,34 @@ export default {
         {
           name: "title",
           title: "파일명",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "15%"
         },
         {
           name: "sales",
           title: "메모",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },
         {
           name: "stock",
           title: "파일형식",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "20%"
         },
         {
           name: "category",
           title: "상세정보",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "25%"
         },
         {
           name: "writeDate",
           title: "등록일시",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%"
         },

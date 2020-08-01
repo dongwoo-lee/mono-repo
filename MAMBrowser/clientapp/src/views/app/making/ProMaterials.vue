@@ -24,11 +24,11 @@
               </b-colxx>
               <!-- 구분 -->
               <b-colxx sm="2">
-                <b-form-group label="구분">
-                  <b-form-checkbox-group v-model.trim="searchItems.type" >
-                    <b-form-checkbox value="Y">방송중</b-form-checkbox>
-                    <b-form-checkbox value="N">폐지</b-form-checkbox>
-                  </b-form-checkbox-group>
+                <b-form-group label="구분" class="has-float-label">
+                  <b-form-select 
+                    v-model="searchItems.type"
+                    :options="[{ value: '', text: '선택해주세요.' }, { value: 'Y', text: '방송중' }, { value: 'N', text: '폐지' }]"
+                  />
                 </b-form-group>
               </b-colxx>
               <!-- 제작자 -->
@@ -78,7 +78,7 @@ export default {
       searchItems: {
         media: 'A',             // 매체
         cate: '',              // 분류
-        type: ['Y'],              // 타입
+        type: '',              // 타입
         editor: '',            // 제작자
         name: '',              // 소재명
         rowPerPage: 16,
@@ -90,26 +90,26 @@ export default {
         {
           name: 'rowNO',
           title: 'No',
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "categoryName",
           title: "분류",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "duration",
           title: "길이",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '5%',
           callback: (v) => {
@@ -119,39 +119,39 @@ export default {
         {
           name: "track",
           title: "트랙",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "editorName",
           title: "제작자",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },
         {
           name: "editDtm",
           title: "편집일시",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },
         {
           name: "masteringDtm",
           title: "마스터링 일시",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '9%',
         },
         {
           name: "proType",
           title: "타입",
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },
         {
           name: "filePath",
           title: "파일경로",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center word-break",
           width: "10%"
         },

@@ -8,29 +8,30 @@
   </b-row>
   <b-row>
     <b-colxx xxs="12">
+        <!-- 검색 -->
         <b-card class="mb-4">
-          <b-form>
+          <b-form @submit.stop>
             <b-row>
-              <!-- 파일명 -->
-              <b-colxx sm="2">
-                <b-form-group label="파일명" class="has-float-label">
-                  <c-input-text v-model="searchItems.filename"/>
-                </b-form-group>
-              </b-colxx>
               <!-- 제목 -->
               <b-colxx sm="2">
-                <b-form-group label="제목" class="has-float-label">
-                  <c-input-text v-model="searchItems.title"/>
+                <b-form-group label="제목" class="has-float-label c-zindex">
+                  <c-input-text v-model="searchItems.title" />
                 </b-form-group>
               </b-colxx>
-              <!-- 기간: 시작일 -->
+              <!-- 메모 -->
+              <b-colxx sm="2">
+                <b-form-group label="메모" class="has-float-label c-zindex">
+                  <c-input-text v-model="searchItems.memo" />
+                </b-form-group>
+              </b-colxx>
+              <!-- 등록일: 시작일 -->
               <b-colxx sm="2">
                 <b-form-group label="시작일" class="has-float-label c-zindex">
                     <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
                     <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                 </b-form-group>
               </b-colxx>
-              <!-- 기간: 종료일 -->
+              <!-- 등록일: 종료일 -->
               <b-colxx sm="2">
                 <b-form-group label="종료일" class="has-float-label c-zindex">
                     <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
@@ -41,6 +42,7 @@
             </b-row>
           </b-form>
         </b-card>
+
         <!-- 테이블 -->
         <b-card class="mb-4">
           <b-form class="mb-3" inline>
@@ -82,8 +84,7 @@ export default {
     return {
       searchItems: {
         cate: '',              // 분류
-        filename: '',          // 파일명
-        title: '',             // 제목
+        filename: '',          // 제목/파일명
         memo: '',              // 메모
         start_dt: '',          // 시작일
         end_dt: '',            // 종료일
@@ -96,45 +97,45 @@ export default {
         {
           name: 'rowNO',
           title: 'No',
-          titleClass: 'center aligned',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "fileName",
           title: "파일명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "title",
           title: "제목",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "memo",
           title: "메모",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "audioFormat",
           title: "파일형식",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "",
           title: "상세정보",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
         {
           name: "editDtm",
           title: "삭제일시",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
         },
       ],
       contextMenu: [

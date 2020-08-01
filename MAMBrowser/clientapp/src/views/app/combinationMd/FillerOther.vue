@@ -1,26 +1,13 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="프로그램"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4" title="프로그램" >
-        </b-card>
-    </b-colxx>
-  </b-row>
+  <div>
+    <template-filler-form heading="필터(기타)" type="etc"></template-filler-form>
   </div>
 </template>
 
 <script>
+import TemplateFillerForm from './template/templateFillterForm';
+
 export default {
-  data() {
-    return {
-      testData: '',
-    }
-  },
+  components: { TemplateFillerForm },
 }
 </script>

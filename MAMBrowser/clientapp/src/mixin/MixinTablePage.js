@@ -21,21 +21,30 @@ let mixinTablePage = {
             },
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
-            pgmOptions: [],                          // 사용처 목록 조회
+            pgmOptions: [],                          // 사용처 목록 목록
+            cmOptions: [],                           // 광고 분류 목록
+        }
+    },
+    watch: {
+        ['searchItems.brd_dt'](v) {
+            if (v) {
+                this.getPgmOptions(v);
+            }
         }
     },
     created() {
         // 매체목록 조회
         this.getMediaOptions();
         // 사용처 조회
-        this.getPgmOptions();
+        this.getPgmOptions(this.searchItems.brd_dt);
     },
     mounted() {
         this.$nextTick(() => {
-          if (this.type) {
-            this.localType = this.type;
-            this.getData();
+          if (!this.type) {
+              // 광고 목록 조회
+            this.getCmOptions();
           }
+          this.getData();
         });
       },
     methods: {
@@ -52,8 +61,13 @@ let mixinTablePage = {
       
             const media = this.searchItems.media;
             const brd_dt = this.searchItems.brd_dt;
-      
-            this.$http.get(`/api/Products/sb/${this.localType}/${media}/${brd_dt}`, { params: this.searchItems })
+
+            let subUrl = `sb/${this.type}/${media}/${brd_dt}`;
+            if (!this.type) {
+                subUrl = `cm/${media}/${brd_dt}`;
+            }
+            ///api/Products/cm/{media}/{brd_dt}
+            this.$http.get(`/api/Products/${subUrl}`, { params: this.searchItems })
               .then(res => {
                  this.setResponseData(res);
             });
@@ -109,8 +123,13 @@ let mixinTablePage = {
             this.requestCall('/api/Categories/users', 'editorOptions');
         },
         // 사용처 목록 조회
-        getPgmOptions() {
-            this.requestCall('/api/Categories/pgmcodes', 'pgmOptions');
+        getPgmOptions(brd_dt) {
+            if (!brd_dt) return;
+            this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
+        },
+        // 광고 분류 조회
+        getCmOptions() {
+            this.requestCall('/api/Categories/cm', 'cmOptions');
         },
         // 제작자 선택
         onEditorSelected(data) {

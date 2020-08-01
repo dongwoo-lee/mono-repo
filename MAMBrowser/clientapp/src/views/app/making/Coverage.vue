@@ -22,15 +22,16 @@
                   />
                 </b-form-group>
               </b-colxx>
-              <!-- 방송일(시작일-종료일) -->
+              <!-- 방송 시작일 -->
               <b-colxx sm="2">
-                <b-form-group label="시작일" class="has-float-label c-zindex">
+                <b-form-group label="방송 시작일" class="has-float-label c-zindex">
                     <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
                     <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                 </b-form-group>
               </b-colxx>
+              <!-- 방송 종료일 -->
               <b-colxx sm="2">
-                <b-form-group label="종료일" class="has-float-label c-zindex">
+                <b-form-group label="방송 종료일" class="has-float-label c-zindex">
                     <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
                     <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                 </b-form-group>
@@ -91,9 +92,10 @@ export default {
   data() {
     return {
       searchItems: {
-        cate: '',              // 분류
-        start_dt: '20200101',  // 방송일(시작일)
-        end_dt: '20200730',    // 방송일(종료일)
+        cate: 'RC07',          // 분류
+        start_dt: '',          // 방송 시작일
+        end_dt: '',            // 방송 종료일
+        // brd_dt: '20200801',    // 방송일
         pgm: '',               // 사용처1
         pgmName: '',           // 사용처2
         reporterName: '',      // 취재인 이름
@@ -108,38 +110,41 @@ export default {
         {
           name: 'rowNO',
           title: 'No',
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: 'center aligned text-center',
+          dataClass: "center aligned text-center",
+          
         },
         {
           name: "categoryName",
           title: "분류",
-          titleClass: 'center aligned',
-          dataClass: "center aligned",
+          titleClass: 'center aligned text-center',
+          dataClass: "center aligned text-center",
+          width: '5%'
         },
         {
           name: "reporter",
           title: "취재인",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
+          width: '6%'
         },
         {
           name: "pgmName",
           title: "사용처명",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
         },
         {
           name: "brdDT",
           title: "방송일",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
@@ -149,7 +154,7 @@ export default {
         {
           name: "duration",
           title: "길이",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
           width: '6%',
           callback: (v) => {
@@ -159,36 +164,40 @@ export default {
         {
           name: "track",
           title: "트랙",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
           width: '4%',
         },
         {
           name: "editorName",
           title: "제작자",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
+          width: '5%',
         },
         {
           name: "editDtm",
           title: "편집일시",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
+          width: '9%',
         },
         {
           name: "masteringDtm",
           title: "마스터링일시",
-          titleClass: 'center aligned',
+          titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
+          width: '9%',
         },
-        {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: 'center aligned',
-          dataClass: "center aligned text-center word-break",
-          width: "10%"
-        },
+        
       ]
+    }
+  },
+  watch: {
+    ['searchItems.end_dt'](v) {
+      if (v) {
+        this.getPgmOptions(v);
+      }
     }
   },
   created() {
@@ -197,7 +206,7 @@ export default {
     // 사용자 목록 조회
     this.getEditorOptions();
     // 사용처 목록 조회
-    this.getPgmOptions();
+    this.getPgmOptions(this.searchItems.end_dt);
   },
   methods: {
     getData() {

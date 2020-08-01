@@ -4,7 +4,7 @@ import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
 import CInputDatePicker from '../components/Input/CInputDatePicker';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
 
-let mixinFilterPage = {
+let mixinFillerPage = {
     mixins: [ mixinValidate ],
     components: {
         CInputText,
@@ -23,10 +23,12 @@ let mixinFilterPage = {
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             spotOptions: [],                         // 주조 spot 분류 목록
-            proOptions: [],                          // 필러(pr) 분류 목록
-            generalOptions: [],                      // 필러(일반) 분류 목록
+            categoryOptions: [],                     // 필러 화면별 카테고리 분류
+            // proOptions: [],                          // 필러(pr) 분류 목록
+            // generalOptions: [],                      // 필러(일반) 분류 목록
             timetoneOptions: [],                     // 필러(시간) 분류 목록
-            etcOptions: [],                          // 필러(기타) 분류 목록
+            // etcOptions: [],                          // 필러(기타) 분류 목록
+            reqStatusOptions: [],                    // 방송의뢰 상태 목록
             numRowsToBottom: 5,
         }
     },
@@ -93,13 +95,17 @@ let mixinFilterPage = {
         getSpotOptions(value) {
           this.requestCall('/api/Categories/mcr/spot' + '?media=' + value, 'spotOptions');
         },
+        // 방송의뢰 상태 목록 조회
+        getReqStatusOptions() {
+            this.requestCall('/api/Categories/req-status', 'reqStatusOptions');
+        },
         // 필러(pr) 분류 목록 조회
-        getProOptions(value) {
-            this.requestCall('/api/Categories/filler/pro' + '?media=' + value, 'proOptions');
+        getProOptions() {
+            this.requestCall('/api/Categories/filler/pro', 'categoryOptions');
         },
         // 필러(일반) 분류 목록 조회
         getGeneralOptions() {
-            this.requestCall('/api/Categories/filler/general', 'generalOptions');
+            this.requestCall('/api/Categories/filler/general', 'categoryOptions');
         },
         // 필러(시간) 분류 목록 조회
         getTimetoneOptions() {
@@ -107,7 +113,7 @@ let mixinFilterPage = {
         },
         // 필러(기타) 분류 목록 조회
         getEtcOptions() {
-            this.requestCall('/api/Categories/filler/etc', 'etcOptions');
+            this.requestCall('/api/Categories/filler/etc', 'categoryOptions');
         },
         // 제작자 선택
         onEditorSelected(data) {
@@ -118,4 +124,4 @@ let mixinFilterPage = {
     }
 }
 
-export default mixinFilterPage;
+export default mixinFillerPage;
