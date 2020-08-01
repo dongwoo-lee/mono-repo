@@ -78,7 +78,6 @@ namespace MAMBrowser.Controllers
         /// <param name="start_dt">시작일 : 20200101</param>
         ///  <param name="end_dt">종료일 : 20200620</param>
         /// <param name="pgm">사용처 : ex) PM1200NA, PM1900NA, PM1900SA</param>
-        /// <param name="pgmName">사용처 : ex) 1,2부</param>
         /// <param name="editor">제작자 : ex)010502</param>
         /// <param name="reporterName"> 취재인 이름 : ex) 한수연</param>
         /// <param name="name"> 여성, 뉴스</param>
@@ -88,13 +87,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindReport(cate, start_dt, end_dt, pgm, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindReport(cate, start_dt, end_dt, pgm, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -201,16 +200,15 @@ namespace MAMBrowser.Controllers
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="pgm"></param>
-        /// <param name="pgmName"></param>
         /// <returns></returns>
         [HttpGet("sb/mcr/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> FindMcrSB(string media, string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> FindMcrSB(string media, string brd_dt, [FromQuery] string pgm)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSB("MAIN", media, brd_dt, pgm, pgmName);
+                result.ResultObject = bll.FindSB("MAIN", media, brd_dt, pgm);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -226,16 +224,15 @@ namespace MAMBrowser.Controllers
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="pgm"></param>
-        /// <param name="pgmName"></param>
         /// <returns></returns>
         [HttpGet("sb/scr/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> FindScrSB(string media, string brd_dt, [FromQuery] string pgm, [FromQuery] string pgmName)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> FindScrSB(string media, string brd_dt, [FromQuery] string pgm)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSB("SUB", media, brd_dt, pgm, pgmName);
+                result.ResultObject = bll.FindSB("SUB", media, brd_dt, pgm);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -252,7 +249,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sbID">SB ID : ex) ASG201029</param>
         /// <returns></returns>
         [HttpGet("sb/contents/{brd_dt}/{sbID}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>> FindSBContents(string brd_dt, [FromQuery] string sbID)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>> FindSBContents(string brd_dt, string sbID)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>>();
             try
@@ -329,13 +326,13 @@ namespace MAMBrowser.Controllers
         /// <param name="editor"></param>
         /// <returns></returns>
         [HttpGet("spot/mcr/{media}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> FindMcrSpot(string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> FindMcrSpot(string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string editor, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindMcrSpot(media, cate, start_dt, end_dt, status, editor, editorName, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindMcrSpot(media, cate, start_dt, end_dt, status, editor, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -351,7 +348,6 @@ namespace MAMBrowser.Controllers
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
-        /// <param name="editorName"></param>
         /// <param name="name"></param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
@@ -359,13 +355,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/pr/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindProFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindProFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFiller("MEM_FILLER_PR_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindFiller("MEM_FILLER_PR_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -381,7 +377,6 @@ namespace MAMBrowser.Controllers
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
-        /// <param name="editorName"></param>
         /// <param name="name"></param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
@@ -389,13 +384,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/general/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -414,7 +409,6 @@ namespace MAMBrowser.Controllers
         /// <param name="status"></param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
-        /// <param name="editorName"></param>
         /// <param name="name"></param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
@@ -422,13 +416,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/time/{media}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status,[FromQuery]string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status,[FromQuery]string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFillerTime(media,start_dt, end_dt, cate, status, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindFillerTime(media,start_dt, end_dt, cate, status, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -444,7 +438,6 @@ namespace MAMBrowser.Controllers
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
         /// <param name="cate"></param>
         /// <param name="editor"></param>
-        /// <param name="editorName"></param>
         /// <param name="name"></param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
@@ -452,7 +445,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/etc/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindETCFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string editorName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindETCFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
@@ -471,15 +464,9 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// DL3.0 소재 조회 (페이징x)
         /// </summary>
-        /// <param name="media">매체(A,C,D,F)</param>
-        /// <param name="pgmID">프로그램 ID</param>
-        /// <param name="pgmName">프로그램 명</param>
-        /// <param name="start_dt">검색 시간(시작)</param>
-        /// <param name="end_dt">검색 시간(종료)</param>
-        /// <param name="end_dt">DAMS 처리 여부</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string start_dt, string end_dt, [FromQuery] string pgmID, [FromQuery] string pgmName)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string start_dt, string end_dt, [FromQuery] string pgmID)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try

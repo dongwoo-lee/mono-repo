@@ -9,9 +9,9 @@ namespace MAMBrowser.Controllers
 {
     public class APIBLL 
     {
-        public DTO_RESULT_PAGE_LIST<DTO_USER> GetUserList()
+        public DTO_RESULT_LIST<DTO_USER> GetUserList()
         {
-            DTO_RESULT_PAGE_LIST<DTO_USER> returnData = new DTO_RESULT_PAGE_LIST<DTO_USER>();
+            DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER");
             Repository<DTO_USER> repository = new Repository<DTO_USER>();

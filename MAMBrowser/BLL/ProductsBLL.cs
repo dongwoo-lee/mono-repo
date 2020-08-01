@@ -124,7 +124,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgm, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgm, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -164,17 +164,6 @@ namespace MAMBrowser.BLL
             if (!string.IsNullOrEmpty(pgm))
             {
                 builder.Where("PRODUCTID = :PGM");
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(pgmName))
-                {
-                    string[] nameArray = pgmName.Split(' ');
-                    foreach (var word in nameArray)
-                    {
-                        builder.Where($"LOWER(EVENTNAME) LIKE LOWER('%{word}%')");
-                    }
-                }
             }
             if (!string.IsNullOrEmpty(reporterName))
             {
@@ -307,7 +296,7 @@ namespace MAMBrowser.BLL
         }
         //public DTO_RESULT_LIST<DTO_SONG> FindMusic(int rowPerPage, int selectPage, string sortKey, string sortValue) { }
         //public DTO_RESULT_LIST<DTO_EFFECT> FindEffect(string searchWord, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
-        public DTO_RESULT_PAGE_LIST<DTO_SB> FindSB(string viewName,string media, string brd_dt, string pgm, string pgmName) 
+        public DTO_RESULT_PAGE_LIST<DTO_SB> FindSB(string viewName,string media, string brd_dt, string pgm) 
         {
             DTO_RESULT_PAGE_LIST<DTO_SB> returnData = new DTO_RESULT_PAGE_LIST<DTO_SB>();
             var builder = new SqlBuilder();
@@ -332,17 +321,6 @@ namespace MAMBrowser.BLL
             if (!string.IsNullOrEmpty(pgm))
             {
                 builder.Where("PRODUCTID = :PGM");
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(pgmName))
-                {
-                    string[] nameArray = pgmName.Split(' ');
-                    foreach (var word in nameArray)
-                    {
-                        builder.Where($"LOWER(EVENTNAME) LIKE LOWER('%{word}%')");
-                    }
-                }
             }
             builder.OrderBy("SBID ASC");
 
@@ -516,7 +494,7 @@ namespace MAMBrowser.BLL
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string cate, string start_dt, string end_dt, string status, string editor, string editorName, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string cate, string start_dt, string end_dt, string status, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -557,14 +535,6 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("EDITOR = :EDITOR");
             }
-            else if(!string.IsNullOrEmpty(editorName))
-            {
-                string[] nameArray = editorName.Split(' ');
-                foreach (var word in nameArray)
-                {
-                    builder.Where($"LOWER(EDITORNAME) LIKE LOWER('%{word}%')");
-                }
-            }
 
             builder.OrderBy("EDITTIME DESC");
 
@@ -604,7 +574,7 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_PAGE_LIST<DTO_FILLER> FindFiller(string viewName, string brd_dt, string cate, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_FILLER> FindFiller(string viewName, string brd_dt, string cate, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -633,14 +603,6 @@ namespace MAMBrowser.BLL
             if (!string.IsNullOrEmpty(editor))
             {
                 builder.Where("EDITOR = :EDITOR");
-            }
-            else if (!string.IsNullOrEmpty(editorName))
-            {
-                string[] nameArray = editorName.Split(' ');
-                foreach (var word in nameArray)
-                {
-                    builder.Where($"LOWER(EDITORNAME) LIKE LOWER('%{word}%')");
-                }
             }
             if (!string.IsNullOrEmpty(name))
             {
@@ -688,7 +650,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string editorName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -725,14 +687,6 @@ namespace MAMBrowser.BLL
             if (!string.IsNullOrEmpty(editor))
             {
                 builder.Where("EDITOR = :EDITOR");
-            }
-            else if (!string.IsNullOrEmpty(editorName))
-            {
-                string[] nameArray = editorName.Split(' ');
-                foreach (var word in nameArray)
-                {
-                    builder.Where($"LOWER(EDITORNAME) LIKE LOWER('%{word}%')");
-                }
             }
             if (!string.IsNullOrEmpty(name))
             {

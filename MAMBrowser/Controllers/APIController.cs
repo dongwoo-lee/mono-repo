@@ -223,7 +223,7 @@ namespace MAMBrowser.Controllers
         /// 권한목록 조회
         /// </summary>
         /// <returns></returns>      
-        [HttpGet("authority_list")]
+        [HttpGet("authority-list")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> GetAuthorList()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();

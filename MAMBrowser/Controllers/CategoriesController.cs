@@ -21,9 +21,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns>매체 목록 반환</returns>
         [HttpGet("media")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetMedia()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetMedia()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -42,9 +42,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("users")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER>> GetUserList()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> GetUserList()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
             try
             {
                 APIBLL bll = new APIBLL();
@@ -63,9 +63,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetReport()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetReport()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -84,9 +84,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("pro")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetPro()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPro()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -105,9 +105,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("cm")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetCM()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetCM()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -127,9 +127,9 @@ namespace MAMBrowser.Controllers
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <returns></returns>
         [HttpGet("mcr/spot")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetMcrSpot(string media)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetMcrSpot(string media)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -148,13 +148,13 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("filler/pro")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetFillerPr(string media)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerPr()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetFillerPr(media);
+                result.ResultObject = bll.GetFillerPr();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -169,9 +169,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("filler/general")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetFillerGeneral()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerGeneral()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -190,9 +190,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("filler/timetone")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetFillerTimetone()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerTimetone()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -212,9 +212,9 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("filler/etc")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetFillerETC()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetFillerETC()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -234,10 +234,10 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="brd_dt">방송 종료일</param>
         /// <returns></returns>
-        [HttpGet("pgmcodes")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetPgmCodes(string brd_dt)
+        [HttpGet("pgmcodes/{brd_dt}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPgmCodes(string brd_dt)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
@@ -256,13 +256,35 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("public")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> GetPublicCodes()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicCodes()
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CATEGORY>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
                 result.ResultObject = bll.GetPublicCodes();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 방송의뢰 상태 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("req-status")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetReqStatus()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                CategoriesBLL bll = new CategoriesBLL();
+                result.ResultObject = bll.GetReqStatus();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
