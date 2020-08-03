@@ -1,9 +1,11 @@
 ﻿using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +28,17 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                result.ResultCode = RESUlT_CODES.SUCCESS;
+                string directoryPath = @"c:\임시파일";
+                if (!System.IO.Directory.Exists(directoryPath))
+                    System.IO.Directory.CreateDirectory(directoryPath);
+
+                string filePath = Path.Combine(directoryPath, file.FileName);
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    file.CopyTo(fs);
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
             }
             catch (Exception ex)
             {
@@ -90,13 +102,20 @@ namespace MAMBrowser.Controllers
         [HttpGet("files/{fileid}")]
         public FileResult GetFile(string fileID)
         {
-            string filePath = @"E:\Download\완료";
-            IFileProvider provider = new PhysicalFileProvider(filePath);
+            string directoryPath = @"c:\임시파일";
+            string filePath = Path.Combine(directoryPath, fileID);
+            IFileProvider provider = new PhysicalFileProvider(directoryPath);
             IFileInfo fileInfo = provider.GetFileInfo(fileID);
             var readStream = fileInfo.CreateReadStream();
-            var mimeType = "audio/wav";
-            //Response. = false;
-            return File(readStream, mimeType, fileID);
+
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return File(readStream, contentType, fileID);
         }
     }
 }

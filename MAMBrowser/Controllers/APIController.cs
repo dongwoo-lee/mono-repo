@@ -58,7 +58,7 @@ namespace MAMBrowser.Controllers
                         var tokenDescriptor = new SecurityTokenDescriptor
                         {
                             Issuer = SystemConfig.AppSettings.TokenIssuer,
-                            Expires = now.AddSeconds(30),
+                            Expires = now.AddHours(1),
                             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Signature), SecurityAlgorithms.HmacSha256Signature),
                             IssuedAt = now,
                             NotBefore = now,
