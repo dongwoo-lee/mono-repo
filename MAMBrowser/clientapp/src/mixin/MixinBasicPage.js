@@ -18,7 +18,6 @@ let mixinBasicPage = {
     },
     data() {
         return {
-            showModalFileUpload: false,              // 파일 업로드 모달
             responseData: {                          // 응답 결과
                 data: null,
                 rowPerPage: 16,

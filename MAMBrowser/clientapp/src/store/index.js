@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import app from '../main'
 import menu from './modules/menu'
 import user from './modules/user'
+import file from './modules/file'
 
 Vue.use(Vuex)
 
@@ -24,6 +25,7 @@ const store = new Vuex.Store({
   modules: {
     menu,
     user,
+    file
   }
 })
 

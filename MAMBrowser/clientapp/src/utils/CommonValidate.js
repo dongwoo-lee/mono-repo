@@ -1,7 +1,7 @@
 import { helpers } from 'vuelidate/lib/validators';
 
 const required = (value) => {
-    if (!value || value === undefined) return true;
+    if (value === undefined) return true;
     return !helpers.req(value);
 }
 

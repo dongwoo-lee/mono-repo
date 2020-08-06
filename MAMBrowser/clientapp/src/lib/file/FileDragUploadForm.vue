@@ -1,0 +1,63 @@
+<template>
+<div>
+    <div class="drop-active" v-show="$refs.refFileDragUploadForm && $refs.refFileDragUploadForm.dropActive">
+        <h4>드래그 파일 업로드</h4>
+        <file-upload 
+            ref="refFileDragUploadForm" 
+            v-model="localFiles"
+            :multiple="true"
+            :drop="true"
+            :drop-directory="true"
+            @input-filter="inputFilter"
+            @input-file="inputFile">
+        </file-upload>
+    </div>
+</div>
+</template>
+
+<script>
+import { mapMutations, mapActions } from 'vuex';
+
+export default {
+    data() {
+        return {
+            localFiles: [],
+        }
+    },
+    watch: {
+        localFiles(files, oldFiles) {
+            if (files.length > 0) {
+                
+                let uniqIds = [];
+                oldFiles.forEach(data => {
+                    uniqIds.push(data.id);
+                })
+
+                const filterFileData = files.filter(data => {
+                    return !uniqIds.includes(data.id);
+                })
+
+                const newFileData = [];
+                filterFileData.forEach(data => {
+                    newFileData.push(data);
+                })
+
+                // 메타 데이터 입력창 오픈
+                this.open_meta_data_popup(newFileData);
+            }
+        }
+    },
+    methods: {
+        ...mapActions('file', ['open_meta_data_popup', 'close_meta_data_popup']),
+        inputFilter(data) { 
+        },
+        inputFile(data) {
+        },
+        closePopup() {
+            // 메타 데이터 입력창 닫기
+            this.close_meta_data_popup();
+            this.localFiles = [];
+        }
+    }
+}
+</script>

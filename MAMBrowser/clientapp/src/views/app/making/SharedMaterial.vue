@@ -69,7 +69,7 @@
       <b-card class="mb-4">
         <b-form class="mb-3" inline>
           <b-input-group class="mr-2">
-              <b-button class="mb-1" variant="primary default" size="sm" @click="showModalFileUpload = true">파일 업로드</b-button>
+              <b-button class="mb-1" variant="primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
           </b-input-group>
           <b-input-group class="mr-2">
               <b-button class="mb-1" variant="secondary default" size="sm">다운로드</b-button>
@@ -96,8 +96,6 @@
       </b-card>
     </b-colxx>
   </b-row>
-  <!-- 파일업로드 팝업 -->
-  <multi-file-upload-popup :show="showModalFileUpload" @close="showModalFileUpload=false"></multi-file-upload-popup>
 </div>
 </template>
 
@@ -221,8 +219,9 @@ export default {
             this.setResponseData(res);
       });
     },
-    
-    
+     onShowModalFileUpload() {
+      this.open_popup();
+    }
   }
 }
 </script>

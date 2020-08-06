@@ -13,6 +13,12 @@ let mixinValidate = {
             check_date: commonValidate.date,
           }
         },
+        title: {
+          required: commonValidate.required,
+        },
+        memo: {
+          required: commonValidate.required,
+        }
     }
 }
 

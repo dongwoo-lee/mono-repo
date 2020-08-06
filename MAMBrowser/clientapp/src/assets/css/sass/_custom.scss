@@ -49,6 +49,33 @@
     }
 }
 
+.drop-active {
+    width:100%;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    position: fixed;
+    z-index: 9999;
+    opacity: .6;
+    text-align: center;
+    background: #000;
+
+    h4 {
+        margin: -.5em 0 0;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        font-size: 40px;
+        color: #fff;
+        padding: 0;
+    }
+}
+
 // VueAutoSuggest 스크롤
 .autosuggest__results {
     max-height: 250px;
@@ -68,9 +95,9 @@
     width: 102%;
 }
 
-.c-upload-top {
-    padding: 0 1rem 0 1rem;
-}
+// .c-upload-top {
+//     padding: 0 1rem 0 1rem;
+// }
 
 .file-progress {
     display: -ms-flexbox;
@@ -116,4 +143,17 @@
     &:hover {
         background-color: #ffeeba;
     }
+}
+
+.notification-file-container {
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 999999;
+    width: 320px;
+    padding: 0px 15px;
+    max-height: calc(100% - 30px);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
