@@ -200,8 +200,8 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="authorCd">권한코드 : </param>
         /// <returns></returns>      
-        [HttpGet("behaviors")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior([FromQuery] string authorCd)
+        [HttpGet("behaviors/{authorCd}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior(string authorCd)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
             try

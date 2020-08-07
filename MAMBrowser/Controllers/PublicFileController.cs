@@ -106,8 +106,6 @@ namespace MAMBrowser.Controllers
             string filePath = Path.Combine(directoryPath, fileID);
             IFileProvider provider = new PhysicalFileProvider(directoryPath);
             IFileInfo fileInfo = provider.GetFileInfo(fileID);
-            var readStream = fileInfo.CreateReadStream();
-
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
             if (!fileExtProvider.TryGetContentType(filePath, out contentType))
@@ -115,7 +113,7 @@ namespace MAMBrowser.Controllers
                 contentType = "application/octet-stream";
             }
 
-            return File(readStream, contentType, fileID);
+            return PhysicalFile(filePath, contentType, true);
         }
     }
 }

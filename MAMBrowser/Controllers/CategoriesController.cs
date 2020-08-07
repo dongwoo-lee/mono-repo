@@ -252,17 +252,39 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 공유소재 분류 목록 조회
+        /// 공유소재 대분류 목록
         /// </summary>
         /// <returns></returns>
-        [HttpGet("public")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicCodes()
+        [HttpGet("public-codes/primary")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicPrimary()
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetPublicCodes();
+                result.ResultObject = bll.GetPublicPrimary();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 공유소재 소분류 목록
+        /// </summary>
+        /// <param name="primaryCode">대분류 코드</param>
+        /// <returns></returns>
+        [HttpGet("public-codes/primary/{primaryCode}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicSecond(string primaryCode)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                CategoriesBLL bll = new CategoriesBLL();
+                result.ResultObject = bll.GetPublicSecond(primaryCode);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
