@@ -53,7 +53,7 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT> FindSCRSpot(string start_dt, string end_dt, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT> FindSCRSpot(string media, string start_dt, string end_dt, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -64,6 +64,7 @@ namespace MAMBrowser.BLL
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
             {
+                MEDIA = media,
                 START_DT = start_dt,
                 END_DT = end_dt,
                 EDITOR = editor,
@@ -74,6 +75,7 @@ namespace MAMBrowser.BLL
             });
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_SUB_VIEW /**where**/");
             builder.Select("SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
+            builder.Where("MEDIA=:MEDIA");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(name))
             {

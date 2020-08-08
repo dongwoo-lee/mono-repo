@@ -8,9 +8,9 @@ namespace MAMBrowser.DTO
 {
     public class DTO_PRIVATE_FILE : DTO_BASE
     {
-        public string FileID { get; set; }
-        public string CatetoryID { get; set; }
-        public string CatetoryName { get; set; }
+        public long Seq { get; set; }
+        //public string CatetoryID { get; set; }
+        //public string CatetoryName { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
         public string FilePath { get; set; }

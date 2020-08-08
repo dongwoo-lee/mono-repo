@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
+using MAMBrowser.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,13 +85,13 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_ID");
         public DTO_USER_DETAIL GetUserDetail(string id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, M30_CODE.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_ID, B.NAME AS MENU_GRP_NAME, USED 
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, M30_CODE.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
 FROM MIROS_USER 
 INNER JOIN MIROS_ROLE ON MIROS_ROLE.ROLE=MIROS_USER.ROLE
 INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID 
 INNER JOIN M30_ROLE_EXT ON MIROS_USER.ROLE = M30_ROLE_EXT.ROLE_ID
 INNER JOIN M30_CODE ON M30_CODE.CODE = M30_ROLE_EXT.AUTHOR_CD
-LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_ID
+LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
 WHERE PERSONID='"+id +"'");
             Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
             var resultMapping = new Func<dynamic, DTO_USER_DETAIL>((row) =>
@@ -106,7 +107,7 @@ WHERE PERSONID='"+id +"'");
                     DiskMax = Convert.ToInt32(row.DISK_MAX),
                     DiskUsed = Convert.ToInt32(row.DISK_USED),
                     DiskAvailable = Convert.ToInt32(row.DISK_AVLB),
-                    MenuGrpID = row.MENU_GRP_ID,
+                    MenuGrpID = row.MENU_GRP_CD,
                     MenuGrpName = row.MENU_GRP_NAME,
                     Used = row.USED,
                 };
@@ -114,39 +115,16 @@ WHERE PERSONID='"+id +"'");
 
             return repository.Get(queryTemplate.RawSql, new {PERSONID=id}, resultMapping);
         }
-
         public DTO_RESULT_LIST<DTO_MENU> GetMenu(string id)
         {
             DTO_RESULT_LIST<DTO_MENU> returnData = new DTO_RESULT_LIST<DTO_MENU>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT MENU_CD, M30_CODE.NAME, VISIBLE, ENABLE FROM M30_USER_EXT
-INNER JOIN M30_MENU_MAP ON M30_MENU_MAP.MENU_GRP_CD=M30_USER_EXT.MENU_GRP_ID
-INNER JOIN M30_CODE ON M30_CODE.CODE = MENU_CD
-WHERE USER_ID='"+id+"'");
-
-            Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
-            var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
-            {
-                return new DTO_MENU
-                {
-                    ID = row.MENU_CD,
-                    Name = row.NAME,
-                    Visible = row.VISIBLE,
-                    Enable = row.ENABLE,
-                };
-            });
-
-           returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
-           return returnData;
-        }
-        public DTO_RESULT_LIST<DTO_MENU> GetBehavior(string authorCd)
-        {
-            DTO_RESULT_LIST<DTO_MENU> returnData = new DTO_RESULT_LIST<DTO_MENU>();
-            var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE_AUTHOR_MAP.*, M30_CODE.NAME FROM M30_CODE_AUTHOR_MAP
-LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_AUTHOR_MAP.CODE
-WHERE CODE_GRP='S01G02' AND AUTHOR_CD='" + authorCd + "'");
-
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.CODE, M30_CODE.NAME, VISIBLE, ENABLE FROM M30_USER_EXT
+INNER JOIN M30_MENU_MAP ON M30_MENU_MAP.GRP_CD=M30_USER_EXT.MENU_GRP_CD
+INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
+            DynamicParameters param = new DynamicParameters();
+            param.Add("USER_ID", id);
+            builder.Where("USER_ID = :USER_ID");
             Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
             var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
             {
@@ -159,14 +137,40 @@ WHERE CODE_GRP='S01G02' AND AUTHOR_CD='" + authorCd + "'");
                 };
             });
 
-            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+           returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
+           return returnData;
+        }
+        public DTO_RESULT_LIST<DTO_MENU> GetBehavior(string authorCd)
+        {
+            DTO_RESULT_LIST<DTO_MENU> returnData = new DTO_RESULT_LIST<DTO_MENU>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.CODE, M30_CODE.NAME, VISIBLE, ENABLE FROM (SELECT * FROM M30_MENU_MAP
+/**where**/) A
+LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
+            builder.Where("(MAP_CD='S00G01C002' AND GRP_CD=:AUTHOR_CD)");
+            DynamicParameters param = new DynamicParameters();
+            param.Add("AUTHOR_CD", authorCd);
+
+            Repository <DTO_MENU> repository = new Repository<DTO_MENU>();
+            var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
+            {
+                return new DTO_MENU
+                {
+                    ID = row.CODE,
+                    Name = row.NAME,
+                    Visible = row.VISIBLE,
+                    Enable = row.ENABLE,
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_COMMON_CODE> GetAuthorList()
         {
             DTO_RESULT_LIST<DTO_COMMON_CODE> returnData = new DTO_RESULT_LIST<DTO_COMMON_CODE>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G04'");
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G03'");
 
             Repository<DTO_COMMON_CODE> repository = new Repository<DTO_COMMON_CODE>();
             var resultMapping = new Func<dynamic, DTO_COMMON_CODE>((row) =>
@@ -186,7 +190,7 @@ WHERE CODE_GRP='S01G02' AND AUTHOR_CD='" + authorCd + "'");
         {
             DTO_RESULT_LIST<DTO_COMMON_CODE> returnData = new DTO_RESULT_LIST<DTO_COMMON_CODE>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05'");
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G04'");
 
             Repository<DTO_COMMON_CODE> repository = new Repository<DTO_COMMON_CODE>();
             var resultMapping = new Func<dynamic, DTO_COMMON_CODE>((row) =>
@@ -251,13 +255,9 @@ WHERE CODE_GRP='S01G02' AND AUTHOR_CD='" + authorCd + "'");
             DTO_USER_TOKEN token = new DTO_USER_TOKEN(userDetail);
             return token;
         }
-
-
-
-
-        public DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL> GetRoleDetailList()
+        public DTO_RESULT_LIST<DTO_ROLE_DETAIL> GetRoleDetailList()
         {
-            DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL> returnData = new DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>();
+            DTO_RESULT_LIST<DTO_ROLE_DETAIL> returnData = new DTO_RESULT_LIST<DTO_ROLE_DETAIL>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT ROLE_ID, ROLE_NAME, AUTHOR_CD FROM MIROS_ROLE, M30_ROLE_EXT WHERE MIROS_ROLE.ROLE=M30_ROLE_EXT.ROLE_ID");
             Repository<DTO_ROLE_DETAIL> repository = new Repository<DTO_ROLE_DETAIL>();
@@ -277,7 +277,61 @@ WHERE CODE_GRP='S01G02' AND AUTHOR_CD='" + authorCd + "'");
 
 
 
-
+        public int AddLog()
+        {
+            return -1;
+        }
+        public DTO_RESULT_LIST<DTO_LOG> FindLogs(string start_dt, string end_dt, string logLevel, string userName, string description)
+        {
+            DTO_RESULT_LIST<DTO_LOG> returnData = new DTO_RESULT_LIST<DTO_LOG>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("SELECT * FROM M30_LOG /**where**/");
+            DynamicParameters param = new DynamicParameters();
+            param.Add("START_DT", start_dt);
+            param.Add("END_DT", end_dt);
+            param.Add("LOG_LEVEL", logLevel);
+            param.Add("USER_NAME", userName);
+            param.Add("DESCRIPTION", description);
+            builder.Where("(TO_DATE(:START_DT,'YYYYMMDD') <= REG_DTM AND REG_DTM < TO_DATE(:END_DT,'YYYYMMDD')+1)");
+            if (!string.IsNullOrEmpty(logLevel))
+            {
+                builder.Where("LOG_LEVEL=:LOG_LEVEL");
+            }
+            if (!string.IsNullOrEmpty(userName))
+            {
+                string[] wordArray = userName.Split(' ');
+                foreach (var word in wordArray)
+                {
+                    builder.Where($"LOWER(USER_NAME) LIKE LOWER('%{word}%')");
+                }
+            }
+            if (!string.IsNullOrEmpty(description))
+            {
+                string[] wordArray = description.Split(' ');
+                foreach (var word in wordArray)
+                {
+                    builder.Where($"LOWER(DESCRIPTION) LIKE LOWER('%{word}%')");
+                }
+            }
+            Repository<DTO_LOG> repository = new Repository<DTO_LOG>();
+            var resultMapping = new Func<dynamic, DTO_LOG>((row) =>
+            {
+                return new DTO_LOG
+                {
+                    Seq = Convert.ToInt64(row.SEQ),
+                    SystemCode= row.SYSTEM_CD,
+                    UserID = row.USER_ID,
+                    UserName = row.USER_NAME,
+                    LogLevel = row.LOG_LEVEL,
+                    Title = row.TITLE,
+                    Description = row.DESCRIPTION,
+                    Note = row.NOTE,
+                    RegDtm = ((DateTime)row.REG_DTM).ToString(Utility.DTM19),
+                };
+            });
+            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
+            return returnData;
+        }
         //public DTO_RESULT UpdateRole()
         //{
         //    DTO_RESULT result = new DTO_RESULT();

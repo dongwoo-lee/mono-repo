@@ -200,8 +200,8 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="authorCd">권한코드 : </param>
         /// <returns></returns>      
-        [HttpGet("behaviors")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior([FromQuery] string authorCd)
+        [HttpGet("behaviors/{authorCd}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetBehavior(string authorCd)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
             try
@@ -248,10 +248,10 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("roles")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>> GetRoleList()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> GetRoleList()
         {
             
-             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>>();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>>();
             try
             {
                 APIBLL bll = new APIBLL();
@@ -312,6 +312,34 @@ namespace MAMBrowser.Controllers
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start_dt">검색 시작일</param>
+        /// <param name="end_dt">검색 종료일</param>
+        /// <param name="logLevel">로그 유형 : ex) DEBUG, INFO, WARN,ERROR</param>
+        /// <param name="userName">사용자 이름</param>
+        /// <param name="description">내용</param>
+        /// <returns></returns>
+        [HttpGet("Logs")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.FindLogs(start_dt, end_dt, logLevel, userName, description);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        
 
     }
 }

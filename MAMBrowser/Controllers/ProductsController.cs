@@ -4,9 +4,11 @@ using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 
@@ -44,6 +46,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 부조 SPOT 소재 조회
         /// </summary>
+        /// <param name="media">매체 : A, F, D</param>
         /// <param name="start_dt">20200101</param>
         /// <param name="end_dt">20200701</param>
         /// <param name="editor">사용자 ID: ex) 180988 (최지민)</param>
@@ -53,15 +56,15 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
         /// <returns></returns>
-        [HttpGet("spot/scr")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>> FindSCRSpot([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        [HttpGet("spot/scr/{media}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>> FindSCRSpot(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             //사용자 ID ex) 180988
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSCRSpot(start_dt, end_dt, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindSCRSpot(media, start_dt, end_dt, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -479,6 +482,55 @@ namespace MAMBrowser.Controllers
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
+        }
+
+        /// <summary>
+        /// 음악/효과음 소재를 제외한 미리듣기,다운로드
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        [HttpPost("files")]
+        public FileResult GetFile([FromBody] string filePath)
+        {
+            //string directoryPath = @"c:\임시파일";
+            //string filePath = Path.Combine(directoryPath, fileID);
+            //IFileProvider provider = new PhysicalFileProvider(directoryPath);
+            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
+            //var readStream = fileInfo.CreateReadStream();
+
+            //var fileExtProvider = new FileExtensionContentTypeProvider();
+            //string contentType;
+            //if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            //{
+            //    contentType = "application/octet-stream";
+            //}
+
+            //return File(readStream, contentType, fileID);
+            return null;
+        }
+        /// <summary>
+        /// 음악/효과음 소재 미리듣기/다운로드 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        [HttpPost("external/files")]
+        public FileResult GetExternalFile([FromBody] string filePath)
+        {
+            //string directoryPath = @"c:\임시파일";
+            //string filePath = Path.Combine(directoryPath, fileID);
+            //IFileProvider provider = new PhysicalFileProvider(directoryPath);
+            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
+            //var readStream = fileInfo.CreateReadStream();
+
+            //var fileExtProvider = new FileExtensionContentTypeProvider();
+            //string contentType;
+            //if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            //{
+            //    contentType = "application/octet-stream";
+            //}
+
+            //return File(readStream, contentType, fileID);
+            return null;
         }
     }
 }
