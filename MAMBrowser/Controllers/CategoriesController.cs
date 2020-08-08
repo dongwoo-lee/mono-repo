@@ -252,7 +252,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 공유소재 대분류 목록
+        /// (구)프로소재, 공유소재 매체목록 조회
         /// </summary>
         /// <returns></returns>
         [HttpGet("public-codes/primary")]
@@ -273,7 +273,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 공유소재 소분류 목록
+        /// 공유소재 분류 목록
         /// </summary>
         /// <param name="primaryCode">대분류 코드</param>
         /// <returns></returns>

@@ -200,14 +200,14 @@ ORDER BY NUM");
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G05'");
+            var queryTemplate = builder.AddTemplate("SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC'");
             Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
                 {
-                    ID = row.CODE,
-                    Name = row.NAME
+                    ID = row.CODEID,
+                    Name = row.CODENAME
                 };
             });
 
