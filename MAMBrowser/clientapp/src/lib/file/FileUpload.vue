@@ -6,15 +6,6 @@
             <label for="file" class="btn btn-primary default w-50">
                 파일 선택
             </label>
-            <!-- <file-upload 
-                ref="refFileSelect" 
-                :multiple="true"
-                :drop="true"
-                :drop-directory="true"
-                v-model="files"
-                @input-filter="inputFilter"
-                @input-file="inputFile">
-            </file-upload> -->
         </div>
         <!-- 파일이 존재할 경우, 테이블 -->
         <div v-show="localFiles.length > 0">
@@ -51,11 +42,11 @@
                         <div 
                             :class="{'progress-bar': true, 
                             'progress-bar-striped': true, 
-                            'bg-danger': props.rowData.file.error, 
-                            'progress-bar-animated': props.rowData.file.active}" 
+                            'bg-danger': props.rowData.error, 
+                            'progress-bar-animated': props.rowData.active}" 
                             role="progressbar" 
-                            :style="{width: props.rowData.file.progress + '%'}">
-                            {{props.rowData.file.progress}}%
+                            :style="{width: props.rowData.progress + '%'}">
+                            {{props.rowData.progress}}%
                         </div>
                     </div>
                 </template>
@@ -65,7 +56,9 @@
                 </template>
                 <!-- 액션 -->
                 <template slot="actions" scope="props">
-                    <b-button variant="outline-danger default" size="sm" @click="onRemoveFile(props.rowData)">
+                    <b-button 
+                        v-if="!props.rowData.active"
+                        variant="outline-danger default" size="sm" @click="onRemoveFile(props.rowData)">
                         <i class="iconsminds-remove-file"></i>삭제
                     </b-button>
                 </template>
@@ -136,34 +129,24 @@ export default {
         }
     },
     methods: {
-        ...mapActions('file', ['open_toast', 'remove_files']),
+        ...mapActions('file', ['open_toast', 'remove_files', 'cancel_upload', 'upload']),
         addFiles() {
             this.open_toast();
         },
-        inputFilter(newFile, oldFile) {
-            console.info('inputFilter', newFile, oldFile);
-        },
-        inputFile(newFile) {
-            console.info('inputFile', newFile);
-           this.dropActive = false;
-        },
-        onItemAction(data, index) {
-            console.info('onItemAction', data, index);
-        },
-        onProgress() {
-
-        },
         onStartUpload() {
             this.isUpload = true;
+            this.upload();
         },
         onStopUpload() {
             this.isUpload = false;
+            this.cancel_upload(true);
         },
         onRemoveFile(rowData) {
             this.remove_files(rowData.id);
         },
         getState(rowData) {
-            if (!rowData.success) return '대기중';
+            if (!rowData.active && !rowData.success) return '대기중';
+            if (rowData.active && !rowData.success) return '전송중';
             if (rowData.success) return '전송완료';
         },
     }

@@ -5,6 +5,7 @@ class FileUploadModel {
         this.uploadPopup = null;
         this.singleMetaPopup = null;
         this.multiMetaPopup = null;
+        this.fileUpload = null;
     }
 
     init(self) {
@@ -13,6 +14,7 @@ class FileUploadModel {
         this.uploadPopup = this.getUploadPopup();
         this.singleMetaPopup = this.getSingleFileMetaDataPopup();
         this.multiMetaPopup = this.getMultiFileMetaDataPopup();
+        this.fileUpload = this.getFileUpload();
     }
 
     refsFind(refsName, self) {
@@ -20,6 +22,19 @@ class FileUploadModel {
             return self.$refs[refsName];
         }
         return this.refsFind(refsName, self.$parent);
+    }
+
+    refsFindChildren(refsName, self) {
+        let findComponent = null;
+        // 강제로 하위 컴포넌트 찾기
+        const childrenComponent = self['$children'][0]['$children'];
+        childrenComponent.forEach(vueComponent => {
+            if (typeof vueComponent.$refs[refsName] !== 'undefined') {
+                findComponent = vueComponent.$refs[refsName];
+            }
+        })
+
+        return findComponent;
     }
 
     getUploadToast() {
@@ -36,6 +51,10 @@ class FileUploadModel {
 
     getMultiFileMetaDataPopup() {
         return this.refsFind('refMultiFileMetaDataPopup', this.self);
+    }
+
+    getFileUpload() {
+        return this.refsFindChildren('refFileUpload', this.self);
     }
 }
 

@@ -49,8 +49,8 @@ export default {
     },
     methods: {
         ...mapMutations('file', ['REMOVE_FILES']),
-        ...mapActions('file', ['open_toast', 'add_files']),
-        submit() {
+        ...mapActions('file', ['open_toast', 'upload']),
+        submit(event) {
             if (!this.$v.title.$invalid || !this.$v.memo.$invalid) {
                 this.$fn.notify('inputError', {});
                 return;
@@ -62,6 +62,7 @@ export default {
             }
 
             this.open_toast(data);
+            this.upload();
             this.reset();
         },
         reset() {

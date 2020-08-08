@@ -44,7 +44,10 @@ export default {
         return {
             isShow: false,
         }
-    }, 
+    },
+    computed: {
+        ...mapGetters('file', ['getFileData']),
+    },
     methods: {
         ...mapActions('file', ['open_toast']),
         ...mapMutations('file', ['REMOVE_FILES_ALL']),
@@ -58,7 +61,11 @@ export default {
             }
         }, 
         onClose() {
-            this.$bvModal.show('closeFileUploadModal');
+            if (this.getFileData.length > 0) {
+                this.$bvModal.show('closeFileUploadModal');
+                return;
+            }
+            this.isShow = false;
         },
         onCloseFileUploadModal() {
             // TODO: 파일 삭제 로직

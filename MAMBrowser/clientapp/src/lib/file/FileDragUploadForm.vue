@@ -1,9 +1,9 @@
 <template>
 <div>
-    <div class="drop-active" v-show="$refs.refFileDragUploadForm && $refs.refFileDragUploadForm.dropActive">
+    <div class="drop-active" v-show="$refs.refFileUpload && $refs.refFileUpload.dropActive">
         <h4>드래그 파일 업로드</h4>
         <file-upload 
-            ref="refFileDragUploadForm" 
+            ref="refFileUpload" 
             v-model="localFiles"
             :multiple="true"
             :drop="true"
@@ -26,6 +26,7 @@ export default {
     },
     watch: {
         localFiles(files, oldFiles) {
+            
             if (files.length > 0) {
                 
                 let uniqIds = [];
@@ -42,6 +43,7 @@ export default {
                     newFileData.push(data);
                 })
 
+                if (filterFileData.length === 0) return;
                 // 메타 데이터 입력창 오픈
                 this.open_meta_data_popup(newFileData);
             }
