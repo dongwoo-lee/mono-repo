@@ -9,7 +9,7 @@ namespace MAMBrowser.Models
     public class PublicFileModel
     {
         public string Media { get; set; }
-        public string FileID { get; set; }
+        public long Seq { get; set; }
         public string CatetoryID { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
@@ -26,7 +26,7 @@ namespace MAMBrowser.Models
         }
         public PublicFileModel(DTO_PUBLIC_FILE dto)
         {
-            FileID = dto.FileID;
+            Seq = dto.Seq;
             CatetoryID = dto.CatetoryID;
             Title = dto.Title;
             Memo = dto.Memo;

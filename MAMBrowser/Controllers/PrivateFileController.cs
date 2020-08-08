@@ -1,5 +1,7 @@
 ﻿using log4net.Util;
 using MAMBrowser.DTO;
+using MAMBrowser.Helpers;
+using MAMBrowser.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -21,27 +24,19 @@ namespace MAMBrowser.Controllers
         /// My 공간- 파일+메타데이터 등록
         /// </summary>
         /// <param name="file">파일</param>
-        /// <param name="jsonMetaData">메타데이터</param>
+        /// <param name="metaData">메타데이터</param>
         /// <returns></returns>
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("files")]
-        public DTO_RESULT UploadFile(IFormFile file, [FromForm] string jsonMetaData)
+        public DTO_RESULT UploadFile(IFormFile file, [FromForm] PrivateFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                string directoryPath = @"c:\임시파일";
-                if (!System.IO.Directory.Exists(directoryPath))
-                    System.IO.Directory.CreateDirectory(directoryPath);
-
-                string filePath = Path.Combine(directoryPath, file.FileName);
-
-                using (FileStream fs = new FileStream(filePath, FileMode.Create,FileAccess.ReadWrite))
-                {
-                    file.CopyTo(fs);
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                }
+                PrivateFileBLL bll = new PrivateFileBLL();
+                bll.UploadFile(file, metaData);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
@@ -56,7 +51,7 @@ namespace MAMBrowser.Controllers
         /// <param name="id">ID 값</param>
         /// <returns></returns>
         [HttpPut("meta")]
-        public DTO_RESULT UpdateData([FromBody] DTO_PRIVATE_FILE dto)
+        public DTO_RESULT UpdateData([FromForm] PrivateFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -133,18 +128,20 @@ namespace MAMBrowser.Controllers
         [HttpGet("files/{fileid}")]
         public FileResult GetFile(string fileID)
         {
-            string directoryPath = @"c:\임시파일";
-            string filePath = Path.Combine(directoryPath, fileID);
-            IFileProvider provider = new PhysicalFileProvider(directoryPath);
-            IFileInfo fileInfo = provider.GetFileInfo(fileID);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
+            //string relativePath = "/Private/radioeng/20200808/1.mp3";
 
-            return PhysicalFile(filePath, contentType, true);
+            //IFileProvider provider = new PhysicalFileProvider(relativePath);
+            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
+            //var fileExtProvider = new FileExtensionContentTypeProvider();
+            //string contentType;
+            //if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
+            //{
+            //    contentType = "application/octet-stream";
+            //}
+
+            //return File()
+            return null;
+            
         }
 
         

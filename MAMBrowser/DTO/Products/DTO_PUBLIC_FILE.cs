@@ -10,7 +10,7 @@ namespace MAMBrowser.DTO
     {
         public string Media { get; set; }
         public string MediaName { get; set; }
-        public string FileID { get; set; }
+        public long Seq { get; set; }
         public string CatetoryID { get; set; }
         public string CatetoryName { get; set; }
         public string Title { get; set; }

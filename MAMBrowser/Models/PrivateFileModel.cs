@@ -8,12 +8,11 @@ namespace MAMBrowser.Models
 {
     public class PrivateFileModel
     {
-        public string FileID { get; set; }
-        public string CatetoryID { get; set; }
+        public long Seq { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
-        //public string FilePath { get; set; }
-        //public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public string FileName { get; set; }
         public string AudioFormat { get; set; }
         public string Used { get; set; }
         public string EditorID { get; set; }
@@ -25,8 +24,7 @@ namespace MAMBrowser.Models
         }
         public PrivateFileModel(DTO_PRIVATE_FILE dto)
         {
-            FileID = dto.FileID;
-            CatetoryID = dto.CatetoryID;
+            Seq = dto.Seq;
             Title = dto.Title;
             Memo = dto.Memo;
             AudioFormat = dto.AudioFormat;

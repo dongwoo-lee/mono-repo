@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DAL
 {
-    public class Repository<T> where T : class, new()
+    public class Repository<T> 
     {
         private string _strCon =  "";
         public Repository()

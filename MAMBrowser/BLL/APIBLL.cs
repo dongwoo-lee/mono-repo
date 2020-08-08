@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
+using MAMBrowser.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,7 +115,6 @@ WHERE PERSONID='"+id +"'");
 
             return repository.Get(queryTemplate.RawSql, new {PERSONID=id}, resultMapping);
         }
-
         public DTO_RESULT_LIST<DTO_MENU> GetMenu(string id)
         {
             DTO_RESULT_LIST<DTO_MENU> returnData = new DTO_RESULT_LIST<DTO_MENU>();
@@ -255,13 +255,9 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             DTO_USER_TOKEN token = new DTO_USER_TOKEN(userDetail);
             return token;
         }
-
-
-
-
-        public DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL> GetRoleDetailList()
+        public DTO_RESULT_LIST<DTO_ROLE_DETAIL> GetRoleDetailList()
         {
-            DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL> returnData = new DTO_RESULT_PAGE_LIST<DTO_ROLE_DETAIL>();
+            DTO_RESULT_LIST<DTO_ROLE_DETAIL> returnData = new DTO_RESULT_LIST<DTO_ROLE_DETAIL>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT ROLE_ID, ROLE_NAME, AUTHOR_CD FROM MIROS_ROLE, M30_ROLE_EXT WHERE MIROS_ROLE.ROLE=M30_ROLE_EXT.ROLE_ID");
             Repository<DTO_ROLE_DETAIL> repository = new Repository<DTO_ROLE_DETAIL>();
@@ -281,7 +277,61 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
 
 
 
-
+        public int AddLog()
+        {
+            return -1;
+        }
+        public DTO_RESULT_LIST<DTO_LOG> FindLogs(string start_dt, string end_dt, string logLevel, string userName, string description)
+        {
+            DTO_RESULT_LIST<DTO_LOG> returnData = new DTO_RESULT_LIST<DTO_LOG>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("SELECT * FROM M30_LOG /**where**/");
+            DynamicParameters param = new DynamicParameters();
+            param.Add("START_DT", start_dt);
+            param.Add("END_DT", end_dt);
+            param.Add("LOG_LEVEL", logLevel);
+            param.Add("USER_NAME", userName);
+            param.Add("DESCRIPTION", description);
+            builder.Where("(TO_DATE(:START_DT,'YYYYMMDD') <= REG_DTM AND REG_DTM < TO_DATE(:END_DT,'YYYYMMDD')+1)");
+            if (!string.IsNullOrEmpty(logLevel))
+            {
+                builder.Where("LOG_LEVEL=:LOG_LEVEL");
+            }
+            if (!string.IsNullOrEmpty(userName))
+            {
+                string[] wordArray = userName.Split(' ');
+                foreach (var word in wordArray)
+                {
+                    builder.Where($"LOWER(USER_NAME) LIKE LOWER('%{word}%')");
+                }
+            }
+            if (!string.IsNullOrEmpty(description))
+            {
+                string[] wordArray = description.Split(' ');
+                foreach (var word in wordArray)
+                {
+                    builder.Where($"LOWER(DESCRIPTION) LIKE LOWER('%{word}%')");
+                }
+            }
+            Repository<DTO_LOG> repository = new Repository<DTO_LOG>();
+            var resultMapping = new Func<dynamic, DTO_LOG>((row) =>
+            {
+                return new DTO_LOG
+                {
+                    Seq = Convert.ToInt64(row.SEQ),
+                    SystemCode= row.SYSTEM_CD,
+                    UserID = row.USER_ID,
+                    UserName = row.USER_NAME,
+                    LogLevel = row.LOG_LEVEL,
+                    Title = row.TITLE,
+                    Description = row.DESCRIPTION,
+                    Note = row.NOTE,
+                    RegDtm = ((DateTime)row.REG_DTM).ToString(Utility.DTM19),
+                };
+            });
+            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
+            return returnData;
+        }
         //public DTO_RESULT UpdateRole()
         //{
         //    DTO_RESULT result = new DTO_RESULT();
