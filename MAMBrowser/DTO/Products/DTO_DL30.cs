@@ -10,7 +10,7 @@ namespace MAMBrowser.DTO
         //DAMS 처리 여부
         // 주/예비 어떤단말인지?
         public long Seq { get; set; }
-        public long MediaID { get; set; }
+        public long MediaCD { get; set; }
         public long MediaName { get; set; }
         public long ProgramID { get; set; }
         public long RecName { get; set; }

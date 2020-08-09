@@ -15,9 +15,26 @@ namespace MAMBrowser.DAL
         {
             _strCon = SystemConfig.AppSettings.ConnectionString;
         }
-        public string Insert(string insertQuery, object entities)
+        public void Insert(string insertQuery, object entities)
         {
-            return "";//고유키가 db에서 채번되고, 문자형식이 포함될 수 있음.
+            
+            using (OracleConnection con = new OracleConnection(_strCon))
+            {
+                con.Open();
+                using (var transaction = con.BeginTransaction())
+                {
+                    try
+                    {
+                        con.Execute(insertQuery, entities);
+                        transaction.Commit();//고유키가 db에서 채번되고, 문자형식이 포함될 수 있음.
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
         public int Update(string updateQuery, object entities)
         {

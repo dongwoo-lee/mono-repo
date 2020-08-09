@@ -14,13 +14,13 @@ namespace MAMBrowser.Controllers
 {
     public class PrivateFileBLL
     {
-        public bool UploadFile(IFormFile file, [FromBody] PrivateFileModel jsonMetaData)
+        public DTO_PRIVATE_FILE UploadFile(IFormFile file, PrivateFileModel metaData)
         {
-            string fileID = GetID().ToString();
+            long ID = GetID();
             string date = DateTime.Now.ToString(Utility.DTM8);
-            string fileName = $"{ fileID }_{ file.FileName}";
+            string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{SystemConfig.AppSettings.FtpTmpUploadFolder}";
-            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{jsonMetaData.EditorID}/{date}";
+            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{metaData.EditorID}/{date}";
             var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
             var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
 
@@ -28,23 +28,54 @@ namespace MAMBrowser.Controllers
             if (MyFtp.Upload(file.OpenReadStream(), relativeSourcePath, file.Length))
             {
                 MyFtp.MakeFTPDir(relativeTargetFolder);
-                return MyFtp.FtpRename(relativeSourcePath, relativeTargetPath);
+                if (MyFtp.FtpRename(relativeSourcePath, relativeTargetPath))
+                {
+                    metaData.FileSize = file.Length;
+                    //db에 데이터 등록
+                    var builder = new SqlBuilder();
+                    var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
+VALUES(:Seq, :EditorID, :Title, :Memo, :AudioFormat, :FileSize, :FilePath, 'Y', SYSDATE, NULL)");
+                    Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+                    DynamicParameters param = new DynamicParameters();
+                    param.AddDynamicParams(metaData);
+                    repository.Insert(queryTemplate.RawSql, param);
+                    return Get(ID);
+                }
             }
-            return false;
         }
-        public DTO_RESULT UpdateData(string id)
+        public void UpdateData(PrivateFileModel metaData)
         {
-            DTO_RESULT result = new DTO_RESULT();
-            try
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
+VALUES(:Seq, :EditorID, :Title, :Memo, :AudioFormat, :FileSize, :FilePath, 'Y', SYSDATE, NULL)");
+            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            DynamicParameters param = new DynamicParameters();
+            param.AddDynamicParams(metaData);
+            repository.Update(queryTemplate.RawSql, param);
+        }
+        public DTO_PRIVATE_FILE Get(long id)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE WHERE SEQ=:SEQ");
+            Repository<DTO_PRIVATE_FILE> repository = new Repository<DTO_PRIVATE_FILE>();
+            var resultMapping = new Func<dynamic, DTO_PRIVATE_FILE>((row) =>
             {
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
-            return result;
+                return new DTO_PRIVATE_FILE
+                {
+                    Seq = row.SEQ,
+                    EditorID = row.USER_ID,
+                    EditorName = row.USER_NAME,
+                    Title = row.TITLE,
+                    Memo = row.MEMO,
+                    AudioFormat = row.AUDIO_FORMAT,
+                    EditDtm = row.EDIT_DTM,
+                    //Seq = row.FILE_SIZE,
+                    //Seq = row.FILE_PATH,
+                    //Seq = row.USED,
+                    //Seq = row.DELETED_DTM,
+                };
+            });
+            return repository.Get(queryTemplate.RawSql, new { SEQ=id },resultMapping);
         }
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FineData(string filename, string title, string memo, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
