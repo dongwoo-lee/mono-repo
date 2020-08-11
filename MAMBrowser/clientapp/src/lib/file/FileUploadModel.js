@@ -3,8 +3,7 @@ class FileUploadModel {
         this.self = null;
         this.uploadToast = null;
         this.uploadPopup = null;
-        this.singleMetaPopup = null;
-        this.multiMetaPopup = null;
+        this.fileMetaPopup = null;
         this.fileUpload = null;
     }
 
@@ -12,8 +11,7 @@ class FileUploadModel {
         this.self = self;
         this.uploadToast = this.getUploadToast();
         this.uploadPopup = this.getUploadPopup();
-        this.singleMetaPopup = this.getSingleFileMetaDataPopup();
-        this.multiMetaPopup = this.getMultiFileMetaDataPopup();
+        this.fileMetaPopup = this.getFileMetaDataPopup();
         this.fileUpload = this.getFileUpload();
     }
 
@@ -45,12 +43,8 @@ class FileUploadModel {
         return this.refsFind('refFileUploadPopup', this.self);
     }
 
-    getSingleFileMetaDataPopup() {
-        return this.refsFind('refSingleFileMetaDataPopup', this.self);
-    }
-
-    getMultiFileMetaDataPopup() {
-        return this.refsFind('refMultiFileMetaDataPopup', this.self);
+    getFileMetaDataPopup() {
+        return this.refsFind('refFileMetaDataPopup', this.self);
     }
 
     getFileUpload() {

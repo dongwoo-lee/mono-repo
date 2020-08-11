@@ -2,7 +2,7 @@
     <div>
         <b-modal 
             id="upload-modal-closing"
-            title="파일 업로드 NEW"
+            title="파일 업로드"
             size="lg"
             modal-class="my-modal-file"
             no-close-on-backdrop

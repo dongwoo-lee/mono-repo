@@ -18,6 +18,15 @@ let mixinValidate = {
         },
         memo: {
           required: commonValidate.required,
+        },
+        type: {
+          required: commonValidate.required,
+        },
+        primary: {
+          required: commonValidate.required,
+        },
+        code: {
+          required: commonValidate.required,
         }
     }
 }

@@ -31,6 +31,7 @@ const routes = [
        */
       {
         // My 공간
+        name: 'private',
         path: "private",
         component: () => import("./views/app/private/index"),
       },
@@ -64,6 +65,7 @@ const routes = [
       },
       {
         // 제작 - 공유소재
+        name: 'shared',
         path: "shared-material",
         component: () => import("./views/app/making/SharedMaterial"),
       },

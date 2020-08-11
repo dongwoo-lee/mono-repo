@@ -8,12 +8,14 @@ export default {
     namespaced: true,
     getters:{
         getFileData: state => state.fileData,
+        getUploadState: state => state.uploadState,
     },
     state: {
         /**
          * fileData: [ { jsonMetaData: '', file: file, isUpload: false }, ....]
          */
         fileData: [],
+        uploadState: false,
         component: null,
     },
     mutations: {
@@ -39,7 +41,7 @@ export default {
                 }
                 return false;
             })
-        }
+        },
     },
     actions: {
         // 파일 추가
@@ -49,6 +51,7 @@ export default {
         },
         async upload({ state }) {
             FileUploadModel.fileUpload.active = true;
+            state.uploadState = true;
             try {
                 for (const file of state.fileData) {
                     if (!file.isUpload) {
@@ -79,12 +82,14 @@ export default {
                 }
 
                 FileUploadModel.fileUpload.active = false;
+                state.uploadState = false;
             } catch (ex) {
                 console.log(ex);
             }
         },
         cancel_upload: ({ state, commit }, value) => {
             fileUloadCancel();
+            state.uploadState = false;
             commit('CHANGE_FILE_UPLOAD_STATE');
             
         },
@@ -108,19 +113,11 @@ export default {
         },
         // 메타 데이터 입력 팝업 호출
         open_meta_data_popup: ({}, files) => {
-            if (files.length <= 1) {
-                FileUploadModel.singleMetaPopup.show(files);
-                return;
-            }
-            
-            if (files.length > 1) {
-                FileUploadModel.multiMetaPopup.show(files);
-            }
+            FileUploadModel.fileMetaPopup.show(files);
         },
         // 메타 데이터 입력 팝업 닫기
         close_meta_data_popup: () => {
-            FileUploadModel.singleMetaPopup.close();
-            FileUploadModel.multiMetaPopup.close();
+            FileUploadModel.fileMetaPopup.close();
         }
     }
 }

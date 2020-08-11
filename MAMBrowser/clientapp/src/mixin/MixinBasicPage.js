@@ -4,7 +4,6 @@ import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
 import CInputDatePicker from '../components/Input/CInputDatePicker';
 import CDataTable from '../components/DataTable/CDataTable';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
-import MultiFileUploadPopup from '../components/popup/MultiFileUploadPopup';
 
 let mixinBasicPage = {
     mixins: [ mixinValidate ],
@@ -14,7 +13,6 @@ let mixinBasicPage = {
         CInputDatePicker,
         CDataTable,
         CDataTableScrollPaging,
-        MultiFileUploadPopup,
     },
     data() {
         return {
@@ -128,7 +126,7 @@ let mixinBasicPage = {
             this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
         },
         // 공유 소재 분류 목록 조회
-        getpublicOptions() {
+        getPublicOptions() {
             this.$http.get('/api/Categories/public')
               .then(res => {
                   if (res.status === 200) {
@@ -155,7 +153,7 @@ let mixinBasicPage = {
             const { id, name } = data;
             this.searchItems.cate = id;
             this.searchItems.cateName = name;
-          }
+        }
     }
 }
 

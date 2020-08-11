@@ -7,9 +7,7 @@
 </div>
 </template>
 <script>
-import MultiFileUploadPopup from '../../../components/popup/MultiFileUploadPopup';
 export default {
-    components: { MultiFileUploadPopup },
     data() {
         return {
             show: false,

@@ -11,17 +11,17 @@
         <div v-show="localFiles.length > 0">
             <div class="c-upload-top d-flex flex-row">
                 <div class="flex-grow-1">
-                    총 {{localFiles.length}}개 파일 중 0개 업로드 완료
+                    총 {{localFiles.length}}개 파일 중 {{ getSuccessUploadFileLength() }}개 업로드 완료
                 </div>
-                <label v-show="!isUpload" for="file" class="btn btn-outline-primary btn-sm default mr-2">
+                <label v-show="uploadAddState()" for="file" class="btn btn-outline-primary btn-sm default mr-2">
                     <i class="iconsminds-add-file"></i>추가
                 </label>
-                <label v-show="isUpload" class="btn btn-outline-warning btn-sm default"
-                    :class="{ 'mr-2': !isUpload }"
+                <label v-show="uploadStopState()" class="btn btn-outline-warning btn-sm default"
+                    :class="{ 'mr-2': uploadStopState() }"
                     @click="onStopUpload">
                     <i class="iconsminds-add-file"></i>업로드 정지
                 </label>
-                <label v-show="!isUpload" class="btn btn-outline-primary btn-sm default"
+                <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default"
                     @click="onStartUpload">
                     <i class="iconsminds-add-file"></i>업로드 시작
                 </label>
@@ -75,7 +75,6 @@ export default {
     components: { Vuetable },
     data() {
         return {
-            isUpload: true,
             dropActive: true,
             fields: [
                 {
@@ -119,7 +118,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('file', ['getFileData']),
+        ...mapGetters('file', ['getFileData', 'getUploadState']),
         localFiles() {
             const tmpFiles = [];
             this.getFileData.forEach(data => {
@@ -134,11 +133,9 @@ export default {
             this.open_toast();
         },
         onStartUpload() {
-            this.isUpload = true;
             this.upload();
         },
         onStopUpload() {
-            this.isUpload = false;
             this.cancel_upload(true);
         },
         onRemoveFile(rowData) {
@@ -149,6 +146,19 @@ export default {
             if (rowData.active && !rowData.success) return '전송중';
             if (rowData.success) return '전송완료';
         },
+        getSuccessUploadFileLength() {
+            const filterSuccess = this.localFiles.filter(file => file.success)
+            return filterSuccess.length;
+        },
+        uploadAddState() {
+            return !this.uploadStopState();
+        },
+        uploadStopState() {
+            return this.getUploadState;
+        },
+        uploadStartState() {
+            return !this.getUploadState && this.localFiles.length > this.getSuccessUploadFileLength();
+        }
     }
 }
 </script>

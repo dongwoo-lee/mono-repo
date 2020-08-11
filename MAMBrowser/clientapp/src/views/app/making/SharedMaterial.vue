@@ -56,7 +56,7 @@
               </b-colxx>
               <!-- 메모 -->
               <b-colxx sm="2">
-                <b-form-group label="제목" class="has-float-label">
+                <b-form-group label="메모" class="has-float-label">
                   <c-input-text v-model="searchItems.memo"/>
                 </b-form-group>
               </b-colxx>
@@ -76,9 +76,6 @@
           </b-input-group>
           <b-input-group class="mr-2">
               <b-button class="mb-1" variant="danger default" size="sm">삭제</b-button>
-          </b-input-group>
-          <b-input-group class="mr-2">
-              <b-button class="mb-1" variant="info default" size="sm">정보편집</b-button>
           </b-input-group>
         </b-form>
         <c-data-table-scroll-paging
@@ -101,6 +98,7 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
+import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinBasicPage ],
@@ -210,9 +208,10 @@ export default {
     // 사용자 목록 조회
     this.getEditorOptions();
     // 공유 소재 분류 목록 조회
-    this.getpublicOptions();
+    this.getPublicOptions();
   },
   methods: {
+    ...mapActions('file', ['open_popup']),
     getData() {
       this.$http.get(`/api/Products/old_pro`, { params: this.searchItems })
         .then(res => {

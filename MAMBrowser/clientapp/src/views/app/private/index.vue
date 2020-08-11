@@ -12,18 +12,6 @@
         <b-card class="mb-4">
           <b-form @submit.stop>
             <b-row>
-              <!-- 제목 -->
-              <b-colxx sm="2">
-                <b-form-group label="제목" class="has-float-label c-zindex">
-                  <c-input-text v-model="searchItems.title" />
-                </b-form-group>
-              </b-colxx>
-              <!-- 메모 -->
-              <b-colxx sm="2">
-                <b-form-group label="메모" class="has-float-label c-zindex">
-                  <c-input-text v-model="searchItems.memo" />
-                </b-form-group>
-              </b-colxx>
               <!-- 등록일: 시작일 -->
               <b-colxx sm="2">
                 <b-form-group label="시작일" class="has-float-label c-zindex">
@@ -36,6 +24,18 @@
                 <b-form-group label="종료일" class="has-float-label c-zindex">
                     <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
                     <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+                </b-form-group>
+              </b-colxx>
+              <!-- 제목 -->
+              <b-colxx sm="2">
+                <b-form-group label="제목" class="has-float-label c-zindex">
+                  <c-input-text v-model="searchItems.title" />
+                </b-form-group>
+              </b-colxx>
+              <!-- 메모 -->
+              <b-colxx sm="2">
+                <b-form-group label="메모" class="has-float-label c-zindex">
+                  <c-input-text v-model="searchItems.memo" />
                 </b-form-group>
               </b-colxx>
               <b-button class="mb-1" variant="primary default" size="sm" @click="getData">검색</b-button>
@@ -54,9 +54,6 @@
                 </b-input-group>
                 <b-input-group class="mr-2">
                     <b-button class="mb-1" variant="danger default" size="sm">삭제</b-button>
-                </b-input-group>
-                <b-input-group class="mr-2">
-                    <b-button class="mb-1" variant="info default" size="sm">정보편집</b-button>
                 </b-input-group>
             </b-form>
             <c-data-table-scroll-paging
