@@ -39,9 +39,13 @@ VALUES(:Seq, :EditorID, :Title, :Memo, :AudioFormat, :FileSize, :FilePath, 'Y', 
                     DynamicParameters param = new DynamicParameters();
                     param.AddDynamicParams(metaData);
                     repository.Insert(queryTemplate.RawSql, param);
-                    return Get(ID);
+
+                    
+                    //return Get(ID);
                 }
             }
+
+            return new DTO_PRIVATE_FILE();
         }
         public void UpdateData(PrivateFileModel metaData)
         {

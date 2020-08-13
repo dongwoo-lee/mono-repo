@@ -36,7 +36,7 @@ namespace MAMBrowser.Controllers
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
                 var success = bll.UploadFile(file, metaData);
-                result.ResultCode = success ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                result.ResultCode = success!=null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
             {
