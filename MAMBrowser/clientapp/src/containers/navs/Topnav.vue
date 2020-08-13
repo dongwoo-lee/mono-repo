@@ -46,8 +46,8 @@
                   </span>
 
               </template>
-              <b-dropdown-item>사용자 로그보기</b-dropdown-item>
-              <b-dropdown-item>설정</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
               <b-dropdown-divider />
               <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
             </b-dropdown>
