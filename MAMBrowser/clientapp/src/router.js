@@ -146,6 +146,14 @@ const routes = [
         path: "dl3",
         component: () => import("./views/app/dl3/Index"),
       },
+      {
+        path: "config", // 설정
+        component: () => import("./views/app/config/Index"),
+      },
+      {
+        path: "log", // 사용자 로그보기
+        component: () => import("./views/app/log/Index"),
+      },
     ]
   },
   {
