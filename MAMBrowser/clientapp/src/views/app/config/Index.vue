@@ -2,7 +2,7 @@
 <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="설정" />
+        <piaf-breadcrumb heading="설정" :noNav="true"/>
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>

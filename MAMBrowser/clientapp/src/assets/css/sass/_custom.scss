@@ -82,11 +82,6 @@
     overflow-y: scroll;
 }
 
-// has-float-label일 때, datePicker input label z-index 우선 처리
-.c-zindex > legend{
-    z-index: 5;
-}
-
 .word-break {
     word-break: break-all !important;
 }
@@ -94,10 +89,6 @@
 .vuetable-fixed-layout tbody {
     width: 102%;
 }
-
-// .c-upload-top {
-//     padding: 0 1rem 0 1rem;
-// }
 
 .file-progress {
     display: -ms-flexbox;
