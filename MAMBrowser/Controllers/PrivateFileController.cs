@@ -37,7 +37,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                var success = bll.Upload(file, metaData);
+                var success = bll.Upload(userextid,file, metaData);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -86,7 +86,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-        [HttpGet("meta/{userExtID}")]
+        [HttpGet("meta/{userextid}")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData(long userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();

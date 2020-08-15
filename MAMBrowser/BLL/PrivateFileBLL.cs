@@ -14,7 +14,7 @@ namespace MAMBrowser.Controllers
 {
     public class PrivateFileBLL
     {
-        public DTO_PRIVATE_FILE Upload(IFormFile file, PrivateFileModel metaData)
+        public DTO_PRIVATE_FILE Upload(long userextid, IFormFile file, PrivateFileModel metaData)
         {
             long ID = GetID();
             string date = DateTime.Now.ToString(Utility.DTM8);
@@ -31,13 +31,13 @@ namespace MAMBrowser.Controllers
                 if (MyFtp.FtpRename(relativeSourcePath, relativeTargetPath))
                 {
                     DynamicParameters param = new DynamicParameters();
-                    param.Add("SEQ", metaData.Seq);
+                    param.Add("SEQ", ID);
                     param.Add("USEREXTID", metaData.UserExtID);
                     param.Add("TITLE", metaData.Title);
                     param.Add("MEMO", metaData.Memo);
                     param.Add("AUDIO_FORMAT", "test format");
                     param.Add("FILE_SIZE", file.Length);
-                    param.Add("FILE_PATH", metaData.FilePath);
+                    param.Add("FILE_PATH", relativeTargetFolder);
                     //db에 데이터 등록
                     var builder = new SqlBuilder();
                     var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
