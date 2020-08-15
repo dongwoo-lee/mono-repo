@@ -37,7 +37,7 @@ namespace MAMBrowser.Controllers
                     param.Add("MEMO", metaData.Memo);
                     param.Add("AUDIO_FORMAT", "test format");
                     param.Add("FILE_SIZE", file.Length);
-                    param.Add("FILE_PATH", relativeTargetFolder);
+                    param.Add("FILE_PATH", relativeTargetPath);
                     //db에 데이터 등록
                     var builder = new SqlBuilder();
                     var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
