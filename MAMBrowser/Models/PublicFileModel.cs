@@ -9,7 +9,7 @@ namespace MAMBrowser.Models
     public class PublicFileModel
     {
         public long Seq { get; set; }
-        public string UserExtID { get; set; }
+        public long UserExtID { get; set; }
         public string Title { get; set; }
         public string MediaCD { get; set; }
         public string CatetoryID { get; set; }

@@ -107,14 +107,17 @@ namespace MAMBrowser.Controllers
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("users")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<int>> UpdateUserDetail([FromBody] List<DTO_USER_DETAIL> dtoList)
+        public DTO_RESULT UpdateUserDetail([FromBody] List<DTO_USER_DETAIL> dtoList)
         {
-            DTO_RESULT<DTO_RESULT_OBJECT<int>> result = new DTO_RESULT<DTO_RESULT_OBJECT<int>>();
+            DTO_RESULT result = new DTO_RESULT();
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject.Data = bll.UpdateUserDetail(dtoList);
-                result.ResultCode = RESUlT_CODES.SUCCESS;
+                var updateCount = bll.UpdateUserDetail(dtoList);
+                if (updateCount >0)
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                else
+                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
             }
             catch (Exception ex)
             {
@@ -279,7 +282,7 @@ namespace MAMBrowser.Controllers
             {
                 APIBLL bll = new APIBLL();
                 var updateCount = bll.UpdateRole(dtoList);
-                if (updateCount == dtoList.Count)
+                if (updateCount >0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
