@@ -42,6 +42,7 @@ VALUES(:Seq, :EditorID, :Title, :Memo, :AudioFormat, :FileSize, :FilePath, 'Y', 
                     return Get(ID);
                 }
             }
+            return null;
         }
         public void UpdateData(PrivateFileModel metaData)
         {

@@ -2,6 +2,7 @@
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
+using MAMBrowser.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -333,22 +334,34 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
             return returnData;
         }
-        //public DTO_RESULT UpdateRole()
-        //{
-        //    DTO_RESULT result = new DTO_RESULT();
-        //    return result;
-        //}
+        public int UpdateRole(List<RoleExtModel> updateDtoList)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("UPDATE M30_ROLE_EXT SET AUTHOR_CD=:AUTHOR_CD /**where**/");
+            builder.AddParameters(updateDtoList);
+            builder.Where("ROLE_ID=:ROLE_ID");
+            Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
+            var paramMap = updateDtoList.Select((entity) =>
+            {
+                return new
+                {
+                    ROLE_ID = entity.ROLE_ID,
+                    AUTHOR_CD = entity.AUTHOR_CD,
+                };
+            });
 
-        //public DTO_RESULT Getconfig()
-        //{
-        //    DTO_RESULT result = new DTO_RESULT();
-        //    return result;
-        //}
-        //public DTO_RESULT UpdateConfig()
-        //{
-        //    DTO_RESULT result = new DTO_RESULT();
-        //    return result;
-        //}
+            return repository.Update(queryTemplate.RawSql, paramMap);
+        }
 
+        //public int Getconfig()
+        //{
+        //    DTO_RESULT result = new DTO_RESULT();
+        //    return result;
+        //}
+        //public int UpdateConfig()
+        //{
+        //    DTO_RESULT result = new DTO_RESULT();
+        //    return result;
+        //}
     }
 }
