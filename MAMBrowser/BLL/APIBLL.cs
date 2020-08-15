@@ -45,7 +45,7 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_ID");
             {
                 return new DTO_USER_DETAIL
                 {
-                    UserSeq = row.USER_SEQ,
+                    UserExtID = row.USER_SEQ,
                     ID = row.PERSONID,
                     Name = row.PERSONNAME,
                     RoleID = row.ROLE,
@@ -94,12 +94,17 @@ INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID
 INNER JOIN M30_ROLE_EXT ON MIROS_USER.ROLE = M30_ROLE_EXT.ROLE_ID
 INNER JOIN M30_CODE ON M30_CODE.CODE = M30_ROLE_EXT.AUTHOR_CD
 LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
-WHERE PERSONID='"+id +"'");
+/**where**/");
+            builder.Where("PERSONID=:PERSONID");
+            DynamicParameters param = new DynamicParameters();
+            param.Add("PERSONID", id);
+
             Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
             var resultMapping = new Func<dynamic, DTO_USER_DETAIL>((row) =>
             {
                 return new DTO_USER_DETAIL
                 {
+                    UserExtID = row.USER_EXT_ID,
                     ID = row.PERSONID,
                     Name = row.PERSONNAME,
                     RoleID = row.ROLE,
@@ -115,7 +120,7 @@ WHERE PERSONID='"+id +"'");
                 };
             });
 
-            return repository.Get(queryTemplate.RawSql, new {PERSONID=id}, resultMapping);
+            return repository.Get(queryTemplate.RawSql, param, resultMapping);
         }
         public DTO_RESULT_LIST<DTO_MENU> GetMenu(string id)
         {
@@ -261,7 +266,9 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
         {
             DTO_RESULT_LIST<DTO_ROLE_DETAIL> returnData = new DTO_RESULT_LIST<DTO_ROLE_DETAIL>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT ROLE_ID, ROLE_NAME, AUTHOR_CD FROM MIROS_ROLE, M30_ROLE_EXT WHERE MIROS_ROLE.ROLE=M30_ROLE_EXT.ROLE_ID");
+            var queryTemplate = builder.AddTemplate(@"SELECT ROLE_ID, ROLE_NAME, AUTHOR_CD, AUTHOR.NAME AS AUTHOR_NAME FROM MIROS_ROLE
+LEFT JOIN M30_ROLE_EXT ON M30_ROLE_EXT.ROLE_ID = MIROS_ROLE.ROLE
+LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.CODE = M30_ROLE_EXT.AUTHOR_CD");
             Repository<DTO_ROLE_DETAIL> repository = new Repository<DTO_ROLE_DETAIL>();
             var resultMapping = new Func<dynamic, DTO_ROLE_DETAIL>((row) =>
             {
@@ -269,7 +276,8 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
                 {
                     ID = row.ROLE_ID,
                     Name = row.ROLE_NAME,
-                    AuthorCode = row.AUTHOR_CD
+                    AuthorCode = row.AUTHOR_CD,
+                    AuthorName = row.AUTHOR_NAME
                 };
             });
 

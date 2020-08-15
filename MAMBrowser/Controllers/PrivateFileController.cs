@@ -46,9 +46,9 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// My 공간 - 메타데이터 편집
+        ///  My 공간 - 메타데이터 편집
         /// </summary>
-        /// <param name="id">ID 값</param>
+        /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta")]
         public DTO_RESULT UpdateData([FromForm] PrivateFileModel metaData)
@@ -68,9 +68,9 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// My 공간 - 검색
         /// </summary>
-        /// <param name="editor">제작자</param>
+        /// <param name="userExtID">사용자 확장ID</param>
         /// <param name="cate">분류</param>
-        /// <param name="filename">파일명</param>
+        /// <param name="fileName">파일명</param>
         /// <param name="title">제목</param>
         /// <param name="memo">메모</param>
         /// <param name="rowPerPage">페이지당 행 개수</param>
@@ -78,8 +78,8 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-        [HttpGet("meta/{editor}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        [HttpGet("meta/{userExtID}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData(string userExtID, [FromQuery] string cate, [FromQuery] string fileName, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
@@ -96,7 +96,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 휴지통 데이터 목록
         /// </summary>
-        /// <param name="editor">제작자</param>
+        /// <param name="userExtID">사용자 확장ID</param>
         /// <param name="cate">분류</param>
         /// <param name="filename">파일명</param>
         /// <param name="title">제목</param>
@@ -106,8 +106,8 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-        [HttpGet("recyclebin/{editor}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindRecycleBin(string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        [HttpGet("recyclebin/{userExtID}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindRecycleBin(string userExtID, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try

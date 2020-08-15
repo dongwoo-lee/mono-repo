@@ -20,7 +20,7 @@ namespace MAMBrowser.Controllers
             string date = DateTime.Now.ToString(Utility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{SystemConfig.AppSettings.FtpTmpUploadFolder}";
-            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{metaData.EditorID}/{date}";
+            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{metaData.UserExtID}/{date}";
             var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
             var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
 

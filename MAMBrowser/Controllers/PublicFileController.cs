@@ -53,7 +53,7 @@ namespace MAMBrowser.Controllers
         /// <param name="id">ID 값</param>
         /// <returns></returns>
         [HttpPut("meta")]
-        public DTO_RESULT UpdateData([FromBody] DTO_PRIVATE_FILE dto)
+        public DTO_RESULT UpdateData([FromBody] DTO_PUBLIC_FILE metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -70,7 +70,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 공유소재 - 메타데이터 검색
         /// </summary>
-        ///  <param name="editor">제작자</param>
+        ///  <param name="userExtID">사용자 확장ID</param>
         /// <param name="cate">분류</param>
         /// <param name="filename">파일명</param>
         /// <param name="title">제목</param>
@@ -81,9 +81,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData([FromQuery]string editor, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData([FromQuery]string userExtID, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
                 result.ResultCode = RESUlT_CODES.SUCCESS;

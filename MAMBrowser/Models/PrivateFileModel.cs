@@ -10,7 +10,7 @@ namespace MAMBrowser.Models
     public class PrivateFileModel
     {
         public long Seq { get; set; }
-        public string EditorID { get; set; }
+        public string UserExtID { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
         public string AudioFormat { get; set; }

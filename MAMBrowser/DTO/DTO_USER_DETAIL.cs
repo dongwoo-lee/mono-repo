@@ -7,7 +7,7 @@ namespace MAMBrowser.DTO
 {
     public class DTO_USER_DETAIL
     {
-        public long UserSeq { get; set; }
+        public long UserExtID { get; set; }
         public string ID { get; set; }
         public string Name { get; set; }
         public string RoleID { get; set; }
