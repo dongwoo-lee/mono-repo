@@ -267,14 +267,14 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="userextid"></param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> RecycleAll(long userextid)
+        [HttpPut("recyclebin/{userextid}/{seqlist}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> RecycleAll(long userextid, long[] seqlist)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.RecycleAll(userextid))
+                if (bll.RecycleAll(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

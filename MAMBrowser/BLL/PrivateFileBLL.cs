@@ -30,14 +30,19 @@ namespace MAMBrowser.Controllers
                 MyFtp.MakeFTPDir(relativeTargetFolder);
                 if (MyFtp.FtpRename(relativeSourcePath, relativeTargetPath))
                 {
-                    metaData.FileSize = file.Length;
+                    DynamicParameters param = new DynamicParameters();
+                    param.Add("SEQ", metaData.Seq);
+                    param.Add("USEREXTID", metaData.UserExtID);
+                    param.Add("TITLE", metaData.Title);
+                    param.Add("MEMO", metaData.Memo);
+                    param.Add("AUDIO_FORMAT", "test format");
+                    param.Add("FILE_SIZE", file.Length);
+                    param.Add("FILE_PATH", metaData.FilePath);
                     //db에 데이터 등록
                     var builder = new SqlBuilder();
                     var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
-VALUES(:Seq, :UserExtID, :Title, :Memo, :AudioFormat, :FileSize, :FilePath, 'Y', SYSDATE, NULL)");
+VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
                     Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
-                    DynamicParameters param = new DynamicParameters();
-                    param.AddDynamicParams(metaData);
                     repository.Insert(queryTemplate.RawSql, param);
                     return Get(ID);
                 }
@@ -84,12 +89,24 @@ VALUES(:Seq, :UserExtID, :Title, :Memo, :AudioFormat, :FileSize, :FilePath, 'Y',
         }
 
         public bool Recycle(long userextid, long seq)   //복원
-        {
-            return true;
+        { 
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y' WHERE SEQ=:SEQ");
+            builder.Where("SEQ=:SEQ");
+            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            DynamicParameters param = new DynamicParameters();
+            param.Add("SEQ", seq);
+            return repository.Update(queryTemplate.RawSql, param) > 0 ? true : false;
         }
-        public bool RecycleAll(long userextid)    //모두 복원
+        public bool RecycleAll(long userextid, long[] seqList)    //모두 복원
         {
-            return true;
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y' WHERE SEQ=:SEQ");
+            builder.Where("SEQ=:SEQ");
+            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            DynamicParameters param = new DynamicParameters();
+            param.Add("SEQ", seqList);
+            return repository.Update(queryTemplate.RawSql, param) > 0 ? true : false;
         }
 
         public int UpdateData(PrivateFileModel metaData)
