@@ -45,9 +45,10 @@ let mixinFillerPage = {
         },
         // 결과값 설정
         setResponseData(res, type = '') {
-            if (res.status === 200) {
+            if (res.status === 200 && !res.data.errorMsg) {
+                if (!res.data.resultObject) return;
                 if (type === 'nomal') {
-                    const { data } = res.data.resultObject;
+                    const { data } = data.resultObject;
                     this.responseData.data = row;
                 } else {
                     const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
@@ -63,7 +64,7 @@ let mixinFillerPage = {
                     }
                 }
             } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
+                this.$fn.notify('server-error', { message: '조회 에러: ' + res.data.errorMsg });
             }
         },
         // 정렬

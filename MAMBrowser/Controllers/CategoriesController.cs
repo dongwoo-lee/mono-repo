@@ -260,6 +260,7 @@ namespace MAMBrowser.Controllers
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
+
             {
                 CategoriesBLL bll = new CategoriesBLL();
                 result.ResultObject = bll.GetPublicPrimary();
@@ -275,7 +276,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 공유소재 분류 목록
         /// </summary>
-        /// <param name="primaryCode">대분류 코드</param>
+        /// <param name="primaryCode">공유소재 매체코드</param>
         /// <returns></returns>
         [HttpGet("public-codes/primary/{primaryCode}")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicSecond(string primaryCode)

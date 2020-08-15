@@ -12,6 +12,7 @@ import VueI18n from 'vue-i18n'
 import { defaultLocale, localeOptions } from './constants/config'
 // Notification Component Add
 import Notifications from './components/Common/Notification'
+// import Overlay from './components/Common/Overlay'
 // Breadcrumb Component Add
 import Breadcrumb from './components/Common/Breadcrumb'
 // RefreshButton Component Add
@@ -41,6 +42,7 @@ const i18n = new VueI18n({
   messages
 });
 Vue.use(Notifications);
+// Vue.use(Overlay);
 Vue.use(require('vue-shortkey'));
 Vue.use(contentmenu);
 Vue.use(VueScrollTo);

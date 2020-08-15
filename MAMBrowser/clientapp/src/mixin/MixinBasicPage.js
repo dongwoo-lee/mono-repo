@@ -22,11 +22,13 @@ let mixinBasicPage = {
                 selectPage: 1,
                 totalRowCount: 0,
             },
+            selectedItems: [],                       // 선택된 로우 데이터
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             pgmOptions: [],                          // 사용처 목록 조회
             publicOptions: [],                       // 공유소재 분류 목록
             rePortOptions: [],                       // 취재물 분류 목록
+            mediaPrimaryOptions: [],                      // (구)프로소재, 공유소재 매체목록 
             numRowsToBottom: 5,
             contextMenu: [
                 { name: 'edit', text: '편집' },
@@ -53,9 +55,10 @@ let mixinBasicPage = {
         },
         // 결과값 설정
         setResponseData(res, type = '') {
-            if (res.status === 200) {
+            if (res.status === 200 && !res.data.errorMsg) {
+                if (!res.data.resultObject) return;
                 if (type === 'nomal') {
-                    const { data } = res.data.resultObject;
+                    const { data } = data.resultObject;
                     this.responseData.data = row;
                 } else {
                     const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
@@ -71,8 +74,11 @@ let mixinBasicPage = {
                     }
                 }
             } else {
-                this.$fn.notify('server-error', { message: '조회 에러' });
+                this.$fn.notify('server-error', { message: '조회 에러: ' + res.data.errorMsg });
             }
+        },
+        onSelectedItems(items) {
+            this.selectedItems = items;
         },
         // 우측메뉴 액션
         onContextMenuAction(v) {
@@ -86,6 +92,18 @@ let mixinBasicPage = {
                 default: break;
             }
         },
+        // 다운로드
+        downLoad() {
+            this.$http.get('/api/products/workspace/private/files/{fileid}')
+                .then(res => {
+                    const { status, data } = res;
+                    if (status === 200 && !data.errorMsg) {
+                        // this.$fn.notify('success', { message: '다운로드 요청을 하였습니다.' });
+                    } else {
+                        this.$fn.notify('server-error', { message: '조회 에러:' + data.errorMsg });
+                    }
+                })
+        },
         // 정렬
         onSortable(sortKey) {
             this.searchItems.sortKey = sortKey;
@@ -96,16 +114,21 @@ let mixinBasicPage = {
         requestCall(url, attr) {
             this.$http.get(url)
                 .then(res => {
-                    if (res.status === 200) {
-                        this[attr] = res.data.resultObject.data;
+                    const { status, data } = res;
+                    if (status === 200 && !data.errorMsg) {
+                        this[attr] = data.resultObject.data;
                     } else {
-                        this.$fn.notify('server-error', { message: '조회 에러' });
+                        this.$fn.notify('server-error', { message: '조회 에러: ' + data.errorMsg });
                     }
             });
         },
         // 매체목록 조회
         getMediaOptions() {
             this.requestCall('/api/Categories/media', 'mediaOptions');
+        },
+        // (구)프로소재, 공유소재 매체 목록 조회
+        getMediaPrimaryOptions() {
+            this.requestCall('/api/Categories/public-codes/primary', 'mediaPrimaryOptions');
         },
         // (구)프로 목록 조회
         getProOptions() {
@@ -129,10 +152,11 @@ let mixinBasicPage = {
         getPublicOptions() {
             this.$http.get('/api/Categories/public')
               .then(res => {
-                  if (res.status === 200) {
-                      this.publicOptions = res.data.resultObject.data;
+                  const { status, data } = res;
+                  if (status === 200 && !data.errorMsg) {
+                      this.publicOptions = data.resultObject.data;
                   } else {
-                      this.$fn.notify('server-error', { message: '조회 에러' });
+                    this.$fn.notify('server-error', { message: '조회 에러: ' + data.errorMsg });
                   }
             });
         },

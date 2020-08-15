@@ -22,7 +22,7 @@ export default {
         SET_FILES: (state, { files, meta }) => {
             files.forEach(file => {
                 state.fileData.push(
-                    { jsonMetaData: JSON.stringify(meta), file: file, isUpload: false }
+                    { metaData: JSON.stringify(meta), file: file, isUpload: false }
                 );
             })
         },
@@ -57,7 +57,7 @@ export default {
                     if (!file.isUpload) {
                         const formData = new FormData();
                         formData.append('file', file.file.file);
-                        formData.append('jsonMetaData', file.jsonMetaData);
+                        formData.append('metaData', file.metaData);
 
                         const config = {
                             onUploadProgress: progressEvent => 
@@ -74,10 +74,12 @@ export default {
                             'Content-Type': 'multipart/form-data',
                         }
 
-                        const res = await $http.post('/api/products/workspace/private/files', formData, config);
-                        if (res && res.status === 200) {
+                        const res = await $http.post('/api/products/workspace/private/files/159', formData, config);
+                        if (res && res.status === 200 && !res.data.errorMsg) {
                             $fn.notify('success', { message: '파일 업로드 완료' })
-                        } 
+                        } else {
+                            $fn.notify('error', { message: '파일 업로드 실패: ' + res.data.errorMsg })
+                        }
                     }
                 }
 

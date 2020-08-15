@@ -16,7 +16,7 @@
                 <b-form-group label="매체" class="has-float-label">
                   <b-form-select 
                   v-model="searchItems.media"
-                  :options="mediaOptions"
+                  :options="mediaPrimaryOptions"
                   value-field="id"
                   text-field="name" 
                 />
@@ -87,6 +87,7 @@
           :num-rows-to-bottom="numRowsToBottom"
           :contextmenu="contextMenu"
           @scrollPerPage="onScrollPerPage"
+          @selectedItems="onSelectedItems"
           @contextMenuAction="onContextMenuAction"
           @sortableclick="onSortable"
         />
@@ -109,7 +110,7 @@ export default {
         cate: '',                  // 분류
         cateName: '',              // 분류명
         start_dt: '20200101',      // 시작일
-        end_dt: '20200706',        // 종료일
+        end_dt: '',                // 종료일
         type: '',                  // 구분
         editor: '',                // 제작자
         title: '',                 // 제목
@@ -197,14 +198,14 @@ export default {
           title: "파일경로",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center word-break",
-          width: "10%"
+          width: "17%"
         },
       ]
     }
   },
   created() {
-    // 매체 목록 조회
-    this.getMediaOptions();
+    // (구)프로소재, 공유소재 매체 목록 조회
+    this.getMediaPrimaryOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
     // 공유 소재 분류 목록 조회

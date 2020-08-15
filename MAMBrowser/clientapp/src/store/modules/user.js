@@ -80,6 +80,7 @@ export default {
         commit('setUser', { uid: 1, ...currentUser });
         sessionStorage.setItem('access_token', 'testtoken');
         sessionStorage.setItem('user_name', 'test');
+        sessionStorage.setItem('user_ext_id', '159');
         return { status: 200 };
       } catch (error) {
         // sever error

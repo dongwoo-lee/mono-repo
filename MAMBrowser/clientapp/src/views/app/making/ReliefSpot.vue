@@ -82,7 +82,7 @@ export default {
     return {
       searchItems: {
         start_dt: '20200101',       // 시작일
-        end_dt: '20200730',         // 종료일
+        end_dt: '',                 // 종료일
         editor: '',                 // 제작자ID
         editorName: '',             // 제작자이름
         name: '',                   // 소재명

@@ -7,7 +7,7 @@ namespace MAMBrowser.DTO
 {
     public class DTO_USER_DETAIL
     {
-        public long UserSeq { get; set; }
+        public long UserExtID { get; set; }
         public string ID { get; set; }
         public string Name { get; set; }
         public string RoleID { get; set; }
@@ -15,8 +15,8 @@ namespace MAMBrowser.DTO
         public string AuthorCD { get; set; }
         public string AuthorName { get; set; }
         public int DiskMax { get; set; }
-        public int DiskAvailable { get; set; }
-        public int DiskUsed { get; set; }
+        public long DiskAvailable { get; set; }
+        public long DiskUsed { get; set; }
         public string MenuGrpID { get; set; }
         public string MenuGrpName { get; set; }
         public string Used { get; set; }

@@ -11,15 +11,15 @@ namespace MAMBrowser.DTO
         public long Seq { get; set; }
         public string MediaCD { get; set; }
         public string MediaName { get; set; }
-        public string CatetoryID { get; set; }
+        public string CatetoryCD { get; set; }
         public string CatetoryName { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
-        //public string FilePath { get; set; }
-        //public string FileName { get; set; }
+        public string FilePath { get; set; }
+        
         public string AudioFormat { get; set; }
-        public string EditorID { get; set; }
-        public string EditorName { get; set; }
-        public string EditDtm { get; set; }
+        public long UserExtID { get; set; }
+        public string UserNAme { get; set; }
+        public string EditedDtm { get; set; }
     }
 }

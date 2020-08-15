@@ -59,7 +59,7 @@ namespace MAMBrowser.DAL
             return -1;
         }
      
-        public int Delete(T entity)
+        public int Delete(string updateQuery, object param)
         {
             return 0;
         }

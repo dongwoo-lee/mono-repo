@@ -12,6 +12,7 @@
         TOKEN_ERROR = 4,
         TOKEN_EXPIRATION = 5,
         SERVICE_ERROR = 6,
+        APPLIED_NONE_WARN = 7
     }
 
     public enum LOG_CATEGORIES
