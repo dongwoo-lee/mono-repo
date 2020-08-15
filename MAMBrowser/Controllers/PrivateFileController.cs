@@ -1,4 +1,5 @@
-﻿using log4net.Util;
+﻿using log4net.Appender;
+using log4net.Util;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -31,7 +34,7 @@ namespace MAMBrowser.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("files/{userextid}")]
-        public DTO_RESULT UploadFile(long userextid, IFormFile file, [FromForm] PrivateFileModel metaData)
+        public DTO_RESULT UploadFile(long userextid, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PrivateFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -150,11 +153,18 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-            var downloadStream = MyFtp.Download(fileData.FilePath);
+
+            var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+            //string tmpPath = @"d:\임시폴더\";
+            //BufferedStream bst = new BufferedStream(downloadStream);
+            //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);
+            //FileStream fs = new FileStream(Path.Combine(tmpPath, Path.GetRandomFileName()), FileMode.Create, FileAccess.ReadWrite);
+            //downloadStream.CopyToAsync(fs);
             return File(downloadStream, contentType, true);
 
 
         }
+
         /// <summary>
         /// My공간 - 휴지통으로 보내기(삭제)
         /// </summary>

@@ -20,7 +20,7 @@ namespace MAMBrowser.Controllers
             string date = DateTime.Now.ToString(Utility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{SystemConfig.AppSettings.FtpTmpUploadFolder}";
-            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{metaData.UserExtID}/{date}";
+            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{userextid}/{date}";
             var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
             var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
 
@@ -32,7 +32,7 @@ namespace MAMBrowser.Controllers
                 {
                     DynamicParameters param = new DynamicParameters();
                     param.Add("SEQ", ID);
-                    param.Add("USEREXTID", metaData.UserExtID);
+                    param.Add("USEREXTID", userextid);
                     param.Add("TITLE", metaData.Title);
                     param.Add("MEMO", metaData.Memo);
                     param.Add("AUDIO_FORMAT", "test format");
@@ -46,7 +46,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     repository.Insert(queryTemplate.RawSql, param);
 
                     
-                    //return Get(ID);
+                    return Get(ID);
                 }
             }
             return null;
@@ -137,6 +137,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
                     EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
+                    FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
                     DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
                     Used = row.USED,
