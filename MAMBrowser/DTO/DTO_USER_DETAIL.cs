@@ -15,8 +15,8 @@ namespace MAMBrowser.DTO
         public string AuthorCD { get; set; }
         public string AuthorName { get; set; }
         public int DiskMax { get; set; }
-        public int DiskAvailable { get; set; }
-        public int DiskUsed { get; set; }
+        public long DiskAvailable { get; set; }
+        public long DiskUsed { get; set; }
         public string MenuGrpID { get; set; }
         public string MenuGrpName { get; set; }
         public string Used { get; set; }
