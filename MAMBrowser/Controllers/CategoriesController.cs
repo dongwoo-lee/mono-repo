@@ -260,6 +260,7 @@ namespace MAMBrowser.Controllers
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
+
             {
                 CategoriesBLL bll = new CategoriesBLL();
                 result.ResultObject = bll.GetPublicPrimary();
