@@ -106,7 +106,7 @@ export default {
       searchItems: {
           media: 'A',                // 매체
           start_dt: '20200101',      // 시작일
-          end_dt: '20200706',        // 종료일
+          end_dt: '',                // 종료일
           cate: '',                  // 분류
           status: '',                // 상태
           editor: '',                // 사용자

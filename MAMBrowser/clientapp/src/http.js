@@ -18,13 +18,13 @@ let isRefreshing = false;
 
 axios.interceptors.response.use(res =>{
     const { config, status, data } = res;
-    if (status === 200 && data.resultObject === null) {
+    if (status === 200 && data.resultObject === null && data.errorMsg) {
         if (config && config['Content-Type'] === 'multipart/form-data') { return res; }
         window.$notify(
             "error",
             "응답값이 넘어오지 않았습니다. => " + config.url + ': ' + data.resultObject,
             data.errorMsg, {
-                duration: 10000,
+                duration: 8000,
                 permanent: false
             }
         )
@@ -46,7 +46,7 @@ axios.interceptors.response.use(res =>{
             "error",
             "응답값:" + status + '(' + statusText + ')',
             "url: " + config.url, {
-                duration: 10000,
+                duration: 8000,
                 permanent: false
             }
         )

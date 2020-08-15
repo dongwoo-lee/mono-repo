@@ -102,15 +102,27 @@ export default {
                 return;
             }
 
-            const data = {
-                files: this.localFiles,
-                meta: { 
-                    title: this.title,
-                    memo: this.memo,
-                    primary: this.primary,
-                    code: this.code,
+            let data = {};
+            if (this.type === 'private') {
+                data = {
+                    files: this.localFiles,
+                    meta: { 
+                        title: this.title,
+                        memo: this.memo,
+                    }
+                }
+            } else {
+                data = {
+                    files: this.localFiles,
+                    meta: { 
+                        title: this.title,
+                        memo: this.memo,
+                        primary: this.primary,
+                        code: this.code,
+                    }
                 }
             }
+            
 
             this.open_toast(data);
             this.upload();

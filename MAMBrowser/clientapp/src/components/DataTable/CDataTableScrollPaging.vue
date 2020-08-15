@@ -8,6 +8,7 @@
             :data="rows"
             :per-page="perPage"
             :row-class="onRowClass"
+            :noDataTemplate="noDataTemplate"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
         >
@@ -57,6 +58,10 @@ export default {
             type: Boolean,  
             default: false,
         },
+        noDataTemplate: {
+            type: String,
+            default: '데이터가 없습니다.'
+        },
         contextmenu: {            // 우측 클릭 메뉴
             type: Array,
             default: () => [
@@ -74,6 +79,12 @@ export default {
             rowElemHeight: 0,    // 로우 높이
             selectedItems: [],   // 선택 로우 데이터
             isRightClick: false,
+        }
+    },
+    watch: {
+        selectedItems(items) {
+            console.info('selectedItems', items)
+            this.$emit('selectedItems', items);
         }
     },
     mounted() {
@@ -123,7 +134,7 @@ export default {
             return "";
         },
         rowClicked(dataItem, event) {
-            const itemId = dataItem.id;
+            const itemId = dataItem.seq;
             if (this.selectedItems.includes(itemId)) {
                 this.selectedItems = this.selectedItems.filter(x => x !== itemId);
                 const findIndex = this.$refs.vuetable.selectedTo.findIndex(x => x === itemId);

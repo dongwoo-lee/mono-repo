@@ -150,10 +150,29 @@
 }
 
 .search-form-area {
-    padding: 15px 0 18px 15px;
+    padding: 17px 15px 10px 15px;
     border: 1px solid #d3d3d3;
+}
+
+.search-form {
+    padding-bottom: 5px;
 }
 
 .middle-button-group {
     margin-top: 15px;
+}
+
+.form-group {
+    margin-bottom: 0rem;    
+}
+
+.custom-select {
+    height: 34px;
+    padding: 0 0.75rem 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    &.page-size {
+        width: 78px;
+    }
 }

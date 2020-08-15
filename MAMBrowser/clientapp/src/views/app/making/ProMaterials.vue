@@ -16,7 +16,7 @@
                 <b-form-group label="매체" class="has-float-label">
                   <b-form-select 
                   v-model="searchItems.media"
-                  :options="mediaOptions"
+                  :options="mediaPrimaryOptions"
                   value-field="id"
                   text-field="name" 
                 />
@@ -99,12 +99,14 @@ export default {
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: "15%"
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: "15%"
         },
         {
           name: "duration",
@@ -153,14 +155,14 @@ export default {
           title: "파일경로",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center word-break",
-          width: "10%"
+          width: "17%"
         },
       ]
     }
   },
   created() {
-    // 매체 목록 조회
-    this.getMediaOptions();
+    // (구)프로소재, 공유소재 매체 목록 조회
+    this.getMediaPrimaryOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
     // (구)프로 목록 조회

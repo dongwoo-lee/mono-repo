@@ -59,7 +59,7 @@ const splitFirst = (d, g = '.') => {
  * @param {*} type 
  * @param {*} options 
  */
-const notify = (type, options = { title, message, options: { duration: 4000, permanent: false } }) => {
+const notify = (type, options = { title, message, options: { duration: 5000, permanent: false } }) => {
     if (type === 'server-error') {
         return window.$notify('error', 'Server Error', '서버 에러입니다.', options.options);
     }

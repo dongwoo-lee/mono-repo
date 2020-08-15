@@ -108,7 +108,7 @@ export default {
         media: 'A',                // 매체
         cate: '',                  // 분류
         start_dt: '20200101',      // 시작일
-        end_dt: '20200706',        // 종료일
+        end_dt: '',                // 종료일
         status: '',                // 상태
         editor: '',                // 사용자
         editorName: '',            // 사용자 이름

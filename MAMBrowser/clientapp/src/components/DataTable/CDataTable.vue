@@ -6,6 +6,7 @@
             :fields="fields"
             :data="rows"
             :row-class="onRowClass"
+            :noDataTemplate="noDataTemplate"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
           >
@@ -40,6 +41,10 @@ export default {
         isActionsSlot: {         // actions: button 등 slot 사용 유무
             type: Boolean,  
             default: false,
+        },
+        noDataTemplate: {
+            type: String,
+            default: '데이터가 없습니다.'
         },
         contextmenu: {            // 우측 클릭 메뉴
             type: Array,

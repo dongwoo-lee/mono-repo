@@ -18,8 +18,8 @@
                         <b-colxx sm="2">
                         <b-form-group label="매체" class="has-float-label c-zindex">
                             <b-form-select
-                                v-model="searchItems.logLevel"
-                                :options="logLevelOptions"
+                                v-model="searchItems.media"
+                                :options="mediaOptions"
                                 value-field="id"
                                 text-field="name"
                                 size="sm"
@@ -29,35 +29,47 @@
                         <!-- 편성일자: 시작일 -->
                         <b-colxx sm="2">
                         <b-form-group label="편성-시작일" class="has-float-label c-zindex">
-                            <c-input-date-picker v-model="searchItems.start_dt" />
-                            <!-- <b-form-invalid-feedback
+                            <c-input-date-picker v-model="$v.searchItems.start_dt.$model" />
+                            <b-form-invalid-feedback
                             :state="$v.searchItems.start_dt.check_date"
-                            >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
+                            >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                         </b-form-group>
                         </b-colxx>
                         <!-- 편성일자: 종료일 -->
                         <b-colxx sm="2">
-                        <b-form-group label="편성-종료일" class="has-float-label c-zindex">
-                            <c-input-date-picker v-model="searchItems.end_dt" />
-                            <!-- <b-form-invalid-feedback
-                            :state="$v.searchItems.end_dt.check_date"
-                            >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
-                        </b-form-group>
+                            <b-form-group label="편성-종료일" class="has-float-label c-zindex">
+                                <c-input-date-picker v-model="$v.searchItems.end_dt.$model" />
+                                <b-form-invalid-feedback
+                                :state="$v.searchItems.end_dt.check_date"
+                                >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+                            </b-form-group>
                         </b-colxx>
                         <!-- 녹음명 -->
                         <b-colxx sm="2">
-                        <b-form-group label="녹음명" class="has-float-label c-zindex">
-                            <c-input-text v-model="searchItems.userName" />
-                        </b-form-group>
+                            <b-form-group label="녹음명" class="has-float-label c-zindex">
+                                <c-input-text v-model="$v.searchItems.userName" />
+                            </b-form-group>
+                        </b-colxx>
+                        <!-- 등록일 -->
+                        <b-colxx sm="2">
+                            <b-form-group label="등록일" class="has-float-label c-zindex">
+                                <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
+                                <b-form-invalid-feedback
+                                :state="$v.searchItems.brd_dt.check_date"
+                                >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+                            </b-form-group>
                         </b-colxx>
                         <b-colxx sm="2">
-                        <b-button class="mb-1" variant="primary default" @click="getData">검색</b-button>
+                            <b-button class="mb-1" variant="primary default" @click="getData">검색</b-button>
                         </b-colxx>
                     </b-row>
                     </b-form>
                 </div>
                 <!-- 테이블 -->
-
+                <c-data-table
+                    :fields="fields"
+                    :rows="responseData.data"
+                />
                 </b-container>
             </b-card>
         </b-colxx>
@@ -65,33 +77,107 @@
   </div>
 </template>
 <script>
-import MixinLogPage from '../../../mixin/MixinLogPage';
+import MixinBasicPage from '../../../mixin/MixinBasicPage';
 
 export default {
-    mixins: [ MixinLogPage ],
+    mixins: [ MixinBasicPage ],
     data() {
         return {
             searchItems: {
-                logLevel: '',          // 로그 유형
-                userName: '',          // 작업자
-                start_dt: '20200101',  // 등록일 시작일
-                end_dt: '20200730',    // 등록일 종료일
+                media : 'A',            // 매체
+                start_dt: '',  // 등록일 시작일
+                end_dt: '',            // 등록일 종료일
+                pgmID: '',             // 녹음명
+                brd_dt: '',            // 등록일
                 rowPerPage: 16,
                 selectPage: 1,
                 sortKey: '',
                 sortValue: '',
             },
-            logLevelOptions: [
-                { id: 'DEBUG', name: "DEBUG" },
-                { id: 'INFO', name: "INFO" },
-                { id: 'WARN', name: "WARN" },
-                { id: 'ERROR', name: "ERROR" },
-            ],
+            fields: [
+                {
+                    name: 'rowNO',
+                    title: 'No',
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                    width: '4%',
+                },
+                {
+                    name: "mediaName",
+                    title: "단말",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                    width: '5%',
+                },
+                {
+                    name: "mediaName",
+                    title: "매체",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                    width: '5%',
+                },
+                {
+                    name: "mediaName",
+                    title: "녹음명",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+                {
+                    name: "mediaName",
+                    title: "편성일자",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+                {
+                    name: "mediaName",
+                    title: "녹음시작일시",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+                {
+                    name: "mediaName",
+                    title: "녹음종료일시",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+                {
+                    name: "mediaName",
+                    title: "방송분량",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+                {
+                    name: "mediaName",
+                    title: "파일크기(MB)",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+                {
+                    name: "mediaName",
+                    title: "등록일시",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                },
+            ]
         }
+    },
+    created() {
+        this.getMediaOptions();
     },
     methods: {
         getData() {
+            if (this.$v.$invalid) {
+                this.$fn.notify('inputError', {});
+                return;
+            }
 
+            const media = this.searchItems.media;
+            const brd_dt = this.searchItems.brd_dt;
+
+            this.$http.get(`/api/Products/dl30/${media}/${brd_dt}`, { params: this.searchItems })
+                .then(res => {
+                this.setResponseData(res, 'normal');
+            });
         },
     }
 }
