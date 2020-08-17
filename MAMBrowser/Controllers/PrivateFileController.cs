@@ -149,6 +149,7 @@ namespace MAMBrowser.Controllers
             var fileData =bll.Get(seq);
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
+            string fileName = fileData.Title; ;
             if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
             {
                 contentType = "application/octet-stream";
@@ -160,7 +161,7 @@ namespace MAMBrowser.Controllers
             //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);
             //FileStream fs = new FileStream(Path.Combine(tmpPath, Path.GetRandomFileName()), FileMode.Create, FileAccess.ReadWrite);
             //downloadStream.CopyToAsync(fs);
-            return File(downloadStream, contentType, true);
+            return File(downloadStream, contentType, fileName, true);
 
 
         }

@@ -17,7 +17,7 @@ import AppLayout from "../../layouts/AppLayout";
 import FileDragUploadForm from '../../lib/file/FileDragUploadForm';
 import fileUploadingToast from '../../lib/file/FileUploadingToast';
 import fileUploadPopup from '../../lib/file/FileUploadPopup';
-import FileUploadModel from '../../lib/file/FileUploadModel';
+import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import FileMetaDataPopup from '../../lib/file/FileMetaDataPopup';
 
 export default {
@@ -30,7 +30,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      FileUploadModel.init(this);
+      FileUploadRefElement.init(this);
     });
   },
 };

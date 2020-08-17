@@ -1,5 +1,5 @@
 import $http from '../../http';
-import FileUploadModel from '../../lib/file/FileUploadModel';
+import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
 
 let fileUloadCancel;
@@ -50,7 +50,7 @@ export default {
             commit('SET_FILES', { files, meta });
         },
         async upload({ state }) {
-            FileUploadModel.fileUpload.active = true;
+            FileUploadRefElement.fileUpload.active = true;
             state.uploadState = true;
             try {
                 for (const file of state.fileData) {
@@ -77,17 +77,35 @@ export default {
                         const res = await $http.post('/api/products/workspace/private/files/159', formData, config);
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             $fn.notify('success', { message: '파일 업로드 완료' })
+                            // 테이블 새로고침
+                            const refScrollPaging = FileUploadRefElement.getScrollPaging();
+                            refScrollPaging.tableRefresh();
+                            return { status: 'success' };
                         } else {
                             $fn.notify('error', { message: '파일 업로드 실패: ' + res.data.errorMsg })
+                            return { status: 'error'};
                         }
                     }
                 }
 
-                FileUploadModel.fileUpload.active = false;
+                FileUploadRefElement.fileUpload.active = false;
                 state.uploadState = false;
             } catch (ex) {
                 console.log(ex);
             }
+        },
+        download({}, ids) {
+            ids.forEach(id => {
+                $http.get(`/api/products/workspace/private/files/${id}`)
+                    .then(res => {
+                        $fn.fileDownload(res);
+                        $fn.notify('success', { message: '파일 업로드 완료' })
+                    })
+                    .catch(error => {
+                        $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
+                    })
+
+            })
         },
         cancel_upload: ({ state, commit }, value) => {
             fileUloadCancel();
@@ -101,8 +119,8 @@ export default {
         },
         // 파일 업로드딩 하단 창 호출
         open_toast: ({ dispatch }, data) => {
-            FileUploadModel.uploadPopup.hide(true);
-            FileUploadModel.uploadToast.show();
+            FileUploadRefElement.uploadPopup.hide(true);
+            FileUploadRefElement.uploadToast.show();
 
             if (data && data.files) {
                 dispatch('add_files', data);
@@ -110,16 +128,16 @@ export default {
         },
         // 파일 업로드 팝업 호출
         open_popup: () => {
-            FileUploadModel.uploadToast.close();
-            FileUploadModel.uploadPopup.show();
+            FileUploadRefElement.uploadToast.close();
+            FileUploadRefElement.uploadPopup.show();
         },
         // 메타 데이터 입력 팝업 호출
         open_meta_data_popup: ({}, files) => {
-            FileUploadModel.fileMetaPopup.show(files);
+            FileUploadRefElement.fileMetaPopup.show(files);
         },
         // 메타 데이터 입력 팝업 닫기
         close_meta_data_popup: () => {
-            FileUploadModel.fileMetaPopup.close();
+            FileUploadRefElement.fileMetaPopup.close();
         }
     }
 }

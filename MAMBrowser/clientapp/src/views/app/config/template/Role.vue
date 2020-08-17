@@ -79,8 +79,6 @@ export default {
             const findOptionItem = this.authorityOptions.filter(option => option.code === value);
             const selectData = this.rolesList[index];
 
-            console.info('findOptionItem', findOptionItem, item.authorCode);
-
             // 변경 횟수 증가 및 원데이터 저장
             if (selectData.originAuthorCode === undefined) {
                 selectData.originAuthorCode = item.authorCode;
@@ -94,8 +92,6 @@ export default {
             }
 
             selectData.authorCode = findOptionItem[0].code;
-            console.info('selectData.isChangeAuthorCode', selectData.isChangeAuthorCode)
-            // selectData.name = findOptionItem[0].name;
         },
         equalOringData(item) {
             return  item.isChangeAuthorCode;

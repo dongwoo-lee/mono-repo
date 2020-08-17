@@ -1,4 +1,4 @@
-class FileUploadModel {
+class FileUploadRefElement {
     constructor() {
         this.self = null;
         this.uploadToast = null;
@@ -50,6 +50,10 @@ class FileUploadModel {
     getFileUpload() {
         return this.refsFindChildren('refFileUpload', this.self);
     }
+
+    getScrollPaging() {
+        return this.refsFindChildren('scrollPaging', this.self);
+    }
 }
 
-export default new FileUploadModel;
+export default new FileUploadRefElement;

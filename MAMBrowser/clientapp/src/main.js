@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 
 // BootstrapVue add
-import BootstrapVue from 'bootstrap-vue'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 // Router & Store add
 import router from './router'
 import store from './store'
@@ -33,6 +33,7 @@ import commonFunctions from './utils/CommonFunctions';
 import commonFilters from './utils/CommonFilters';
 
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
 // const messages = { ko: ko, en: en };
 const locale = (localStorage.getItem('currentLanguage') && localeOptions.filter(x => x.id === localStorage.getItem('currentLanguage')).length > 0) ? localStorage.getItem('currentLanguage') : defaultLocale;

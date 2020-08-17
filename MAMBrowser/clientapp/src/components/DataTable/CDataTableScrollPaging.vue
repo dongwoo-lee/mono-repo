@@ -1,13 +1,14 @@
 <template>
     <div>
         <vuetable ref="vuetable"
-            class="order-with-arrow"
+            class="scrolltable order-with-arrow"
             :api-mode="false"
             :table-height="tableHeight"
             :fields="fields"
             :data="rows"
             :per-page="perPage"
             :row-class="onRowClass"
+            :track-by="keyName"
             :noDataTemplate="noDataTemplate"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
@@ -34,6 +35,10 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 export default {
     components: { Vuetable },
     props: {
+        keyName: {                  // rowData key
+            type: String,
+            default: 'seq',
+        },
         tableHeight: {          // 테이블 높이
             type: String,
             default: '500px',
@@ -78,16 +83,18 @@ export default {
             scrollTimeout: null, // 스크롤 동작 타임아웃
             rowElemHeight: 0,    // 로우 높이
             selectedItems: [],   // 선택 로우 데이터
-            isRightClick: false,
-        }
-    },
-    watch: {
-        selectedItems(items) {
-            console.info('selectedItems', items)
-            this.$emit('selectedItems', items);
         }
     },
     mounted() {
+        this.$watch(
+            () => {
+                return this.$refs.vuetable.selectedTo;
+            },
+            (selectedIds) => {
+                this.$emit('selectedIds', selectedIds);
+            }
+        )
+
         this.$nextTick(() => {
             const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
             [this.tBody] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
@@ -120,36 +127,31 @@ export default {
     },
     methods: {
         handlerScroll({ target }) {
-            const { clientHeight, scrollTop, scrollHeight } = target;
+            const { clientHeight, scrollTop, scrollHeight, scrollY } = target;
             if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
+                this.tBody.classList.add('scroll');
                 this.lastClientHeight = scrollTop;
                 this.$emit('scrollPerPage', this.currentPage * 10)
             }
             
         },
         onRowClass(dataItem, index) {
-            if (this.selectedItems.includes(dataItem.id)) {
+            if (this.selectedItems.includes(dataItem[this.keyName])) {
                 return "selected";
             }
             return "";
         },
-        rowClicked(dataItem, event) {
-            const itemId = dataItem.seq;
-            if (this.selectedItems.includes(itemId)) {
-                this.selectedItems = this.selectedItems.filter(x => x !== itemId);
-                const findIndex = this.$refs.vuetable.selectedTo.findIndex(x => x === itemId);
-                this.$refs.vuetable.selectedTo.splice(findIndex, 1);
+        rowClicked(dataItem, field) {
+            const itemId = dataItem[this.keyName];
+            const duplicateCheck = this.$refs.vuetable.selectedTo.includes(itemId);
+            if (duplicateCheck) {
+                this.$refs.vuetable.unselectId(itemId);
             } else {
-                this.selectedItems.push(itemId);
-                this.$refs.vuetable.selectedTo[itemId] = itemId;
+                this.$refs.vuetable.selectId(itemId);
             }
         },
         rightClicked(dataItem, field, event) {
             event.preventDefault();
-            this.isRightClick = true;
-            if (!this.selectedItems.includes(dataItem.id)) {
-                this.selectedItems = [dataItem.id];
-            }
             this.$refs.contextmenu.show({ top: event.pageY, left: event.pageX });
         },
         onContextMenuAction(data) {
@@ -158,6 +160,9 @@ export default {
         onSortable(e) {
             const targetId = e.target.id.replace('_', '');
             this.$emit('sortableclick', targetId);
+        },
+        tableRefresh() {
+            this.$emit('refresh');
         }
     }
 }

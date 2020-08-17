@@ -62,16 +62,16 @@
                   <b-button class="mb-1" variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
                 </b-input-group>
                 <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-secondary default" size="sm">선택 항목 다운로드</b-button>
+                  <b-button class="mb-1" variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
                 </b-input-group>
                 <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-danger default" size="sm">선택 항목 삭제</b-button>
+                  <b-button class="mb-1" variant="outline-danger default" size="sm" @click="onDelete">선택 항목 휴지통 보내기</b-button>
                 </b-input-group>
                </b-form>
             </b-col>
             <b-col cols="auto" class="pt-3">
-              전체 {{ responseData.totalRowCount }}개 중 {{ responseData.data.length }}개표시
-              <b-form-select class="page-size" v-model="searchItems.rowPerPage">
+              {{ getPageInfo() }}
+              <b-form-select class="page-size" v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
                 <b-form-select-option value="8">8개</b-form-select-option>
                 <b-form-select-option value="16">16개</b-form-select-option>
                 <b-form-select-option value="24">24개</b-form-select-option>
@@ -90,16 +90,58 @@
           :num-rows-to-bottom="5"
           :contextmenu="contextMenu"
           @scrollPerPage="onScrollPerPage"
-          @selectedItems="onSelectedItems"
+          @selectedIds="onSelectedIds"
           @contextMenuAction="onContextMenuAction"
           @sortableclick="onSortable"
+          @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <b-button class="mb-1" variant="primary default" @click="handlerPreview(props, props.rowIndex)">미리듣기</b-button>
+            <b-row>
+              <b-colxx>
+                <b-button variant="default" class="icon-buton" title="미리듣기">
+                  <b-icon icon="caret-right-square" class="icon"></b-icon>
+                </b-button>
+                <b-button variant="default" class="icon-buton" title="다운로드" @click.stop="onDownload(props.props.rowData.seq)">
+                  <b-icon icon="download" class="icon"></b-icon>
+                </b-button>
+                <b-button variant="default" class="icon-buton" title="휴지통" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
+                  <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
+                </b-button>
+                <b-button variant="default" class="icon-buton" title="정보편집">
+                  <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
+                </b-button>
+              </b-colxx>
+            </b-row>
           </template>
         </c-data-table-scroll-paging>
       </b-card>
     </b-row>
+    <!-- 휴지통 이동 모달 -->
+    <b-modal 
+        id="modalRemove" 
+        size="sm" 
+        title="휴지통 이동"
+        :hideHeaderClose="true">
+        휴지통으로 이동하시겠습니까?
+        <template v-slot:modal-footer>
+            <b-button
+              variant="primary"
+              size="sm"
+              class="float-right"
+              @click="onDelete()"
+            >
+              이동
+            </b-button>
+            <b-button
+              variant="danger"
+              size="sm"
+              class="float-right"
+              @click="$bvModal.hide('modalRemove')"
+            >
+              취소
+            </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -122,6 +164,7 @@ export default {
         sortKey: '',
         sortValue: '',
       },
+      selectedIds: null,
       fields: [
         {
           name: "__checkbox",
@@ -130,11 +173,18 @@ export default {
           width: "5%"
         },
         {
+          name: 'rowNO',
+          title: 'No',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '4%',
+        },
+        {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%"
+          width: "25%"
         },
         {
           name: "memo",
@@ -154,20 +204,28 @@ export default {
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "25%"
+          width: "8%"
         },
         {
           name: "editedDtm",
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "15%"
         },
+        {
+          name: '__slot:actions',
+          title: 'Actions',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "10%"
+        }
       ],
+      removeRowId: null,
     }
   },
   methods: {
-    ...mapActions('file', ['open_popup']),
+    ...mapActions('file', ['open_popup', 'download']),
     getData() {
       const userExtId = sessionStorage.getItem('user_ext_id');
 
@@ -178,6 +236,57 @@ export default {
     },
     onShowModalFileUpload() {
       this.open_popup();
+    },
+    getPageInfo() {
+      const dataLength = this.responseData.data ? this.responseData.data.length : 0;
+      return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개표시`
+    },
+    onSelectedIds(ids) {
+      this.selectedIds = ids;
+    },
+    onDownload(seq) {
+      let ids = this.selectedIds;
+
+      if (typeof seq !== 'object' && seq) {
+        ids = [];
+        ids.push(seq);
+      }
+
+      this.download(ids);
+    },
+    onRefresh() {
+      this.getData();
+    },
+    onDeleteConfirm(id) {
+      this.removeRowId = id;
+      this.$bvModal.show('modalRemove');
+    },
+    onDelete() {
+      const userExtId = sessionStorage.getItem('user_ext_id');
+      let ids = this.selectedIds;
+
+      if (typeof this.removeRowId) {
+        ids = [];
+        ids.push(this.removeRowId);
+        this.removeRowId = null;
+      }
+
+      ids.forEach(id => {
+        this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${id}`)
+          .then(res => {
+            if (res.status === 200 && !res.data.errorMsg) {
+              this.$fn.notify('success', { message: '휴지통 이동 성공' })
+              this.$bvModal.hide('modalRemove');
+              this.getData();
+            } else {
+              this.$fn.notify('error', { message: '휴지통 이동 실패' })
+            }
+        });  
+      });
+    },
+    onChangeRowPerpage(value) {
+      this.searchItems.rowPerPage = value;
+      this.getData();
     }
   }
 }

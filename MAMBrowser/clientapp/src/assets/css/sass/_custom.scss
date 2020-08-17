@@ -86,8 +86,8 @@
     word-break: break-all !important;
 }
 
-.vuetable-fixed-layout tbody {
-    width: 102%;
+.scrolltable .scroll {
+    width: calc(100% + 18px);
 }
 
 .file-progress {
@@ -113,10 +113,6 @@
 }
 .file-progress .bg-danger {
     background-color: #dc3545!important;
-}
-
-.vuetable-body-wrapper {
-    width: calc(100% + 18px);
 }
 
 .vuetable-body-wrapper tr td {
@@ -174,5 +170,14 @@
 
     &.page-size {
         width: 78px;
+    }
+}
+
+.icon-buton {
+    padding: 0;
+
+    .icon {
+        width: 20px;
+        height: 20px;
     }
 }

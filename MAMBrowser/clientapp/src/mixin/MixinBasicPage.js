@@ -144,7 +144,6 @@ let mixinBasicPage = {
         },
         // 사용처 목록 조회
         getPgmOptions(brd_dt) {
-            console.info("brd_dt", brd_dt);
             if (!brd_dt) return;
             this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
         },

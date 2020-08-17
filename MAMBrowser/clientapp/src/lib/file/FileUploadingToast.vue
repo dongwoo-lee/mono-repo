@@ -11,7 +11,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import FileUploadModel from './FileUploadModel';
+import FileUploadRefElement from './FileUploadRefElement';
 
 export default {
     data() {

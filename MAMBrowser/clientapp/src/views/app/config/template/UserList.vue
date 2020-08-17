@@ -138,7 +138,6 @@ export default {
                 selectData.isChangeMenuGrpID = true;
             }
 
-            console.info('findOptionItem[0]', findOptionItem[0])
             selectData.menuGrpID = findOptionItem[0].code;
             selectData.menuGrpName = findOptionItem[0].name;
         },

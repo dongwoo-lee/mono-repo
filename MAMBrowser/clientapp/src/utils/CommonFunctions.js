@@ -96,7 +96,7 @@ const fileDownload = (res, fileNm = '') => {
     if (!fileName) {
         const disposition = res.headers['content-disposition'];
         if (disposition && disposition.indexOf('attachment') != -1) {
-            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const filenameRegex = /filename[^;=\n]=((['"]).*?\2|[^;\n]*)/;
             const matches = filenameRegex.exec(disposition);
             if (matches != null && matches[1]) {
                 fileName = decodeURI(matches[1].replace(/['"]/g, ''));
