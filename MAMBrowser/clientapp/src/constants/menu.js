@@ -15,16 +15,6 @@ const data = [
         label: "menu.waste-basket", // 휴지통
         to: "/app/waste-basket"
       },
-      {
-        icon: "simple-icon-paper-plane",
-        label: "menu.dev",
-        to: "/app/dev"
-      },
-      {
-        icon: "simple-icon-paper-plane",
-        label: "menu.apidev",
-        to: "/app/apidev"
-      },
     ]
   },
   {
