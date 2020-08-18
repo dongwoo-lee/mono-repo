@@ -11,19 +11,19 @@ namespace MAMBrowser.Models
     public class PrivateFileModel
     {
         [JsonPropertyName("seq")]
-        public long Seq { get; set; }
+        public long SEQ { get; set; }
         [JsonPropertyName("userExtID")]
-        public long UserExtID { get; set; }
+        public long USER_EXT_ID { get; set; }
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string TITLE { get; set; }
         [JsonPropertyName("memo")]
-        public string Memo { get; set; }
+        public string MEMO { get; set; }
         [JsonPropertyName("audioFormat")]
-        public string AudioFormat { get; set; }
+        public string AUDIO_FORMAT { get; set; }
         [JsonPropertyName("fileSize")]
-        public long FileSize { get; set; }
+        public long FILE_SIZE { get; set; }
         [JsonPropertyName("filePath")]
-        public string FilePath { get; set; }
+        public string FILE_PATH { get; set; }
 
     }
 }
