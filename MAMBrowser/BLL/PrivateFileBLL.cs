@@ -203,7 +203,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                 };
             });
 
-            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
+            returnData.Data = repository.Select(queryMaxMinPaging.RawSql, param, resultMapping);
             returnData.RowPerPage = rowPerPage;
             returnData.SelectPage = selectPage;
             return returnData;
