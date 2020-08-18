@@ -76,9 +76,10 @@
                 </div>
                 <div class="page-size">
                   <b-form-select v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
-                    <b-form-select-option value="8">8개</b-form-select-option>
-                    <b-form-select-option value="16">16개</b-form-select-option>
-                    <b-form-select-option value="24">24개</b-form-select-option>
+                    <b-form-select-option value="15">15개</b-form-select-option>
+                    <b-form-select-option value="30">30개</b-form-select-option>
+                    <b-form-select-option value="50">50개</b-form-select-option>
+                    <b-form-select-option value="100">100개</b-form-select-option>
                   </b-form-select>
                 </div>
               </div>
@@ -174,7 +175,7 @@ export default {
         memo: '',              // 메모(memo)
         start_dt: '20200101',  // 등록일 시작일
         end_dt: '',            // 등록일 종료일
-        rowPerPage: 16,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: '',
@@ -248,6 +249,9 @@ export default {
       this.$http.get(`/api/products/workspace/private/meta/${userExtId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            setTimeout(() => {
+              this.$refs.scrollPaging.addClassScroll();  
+            }, 0);
       });
     },
     onShowModalFileUpload() {
@@ -255,7 +259,7 @@ export default {
     },
     getPageInfo() {
       const dataLength = this.responseData.data ? this.responseData.data.length : 0;
-      return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개표시`
+      return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개 표시`
     },
     getSelectedCount() {
       if (!this.selectedIds || this.selectedIds.length === 0) return '';
@@ -305,6 +309,8 @@ export default {
       });
     },
     onChangeRowPerpage(value) {
+      this.$refs.scrollPaging.init();
+      this.searchItems.selectPage = 1;
       this.searchItems.rowPerPage = value;
       this.getData();
     },
