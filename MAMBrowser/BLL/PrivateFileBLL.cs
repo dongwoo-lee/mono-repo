@@ -33,8 +33,8 @@ namespace MAMBrowser.Controllers
                     DynamicParameters param = new DynamicParameters();
                     param.Add("SEQ", ID);
                     param.Add("USEREXTID", userextid);
-                    param.Add("TITLE", metaData.Title);
-                    param.Add("MEMO", metaData.Memo);
+                    param.Add("TITLE", metaData.TITLE);
+                    param.Add("MEMO", metaData.MEMO);
                     param.Add("AUDIO_FORMAT", "test format");
                     param.Add("FILE_SIZE", file.Length);
                     param.Add("FILE_PATH", relativeTargetPath);
@@ -114,7 +114,8 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
         public int UpdateData(PrivateFileModel metaData)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET TITLE=:TITLE, MEMO=:MEMO, EDITED_DTM = SYSDATE");
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET TITLE=:TITLE, MEMO=:MEMO, EDITED_DTM = SYSDATE /**where**/");
+            builder.Where("SEQ=:SEQ");
             Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(metaData);
@@ -203,7 +204,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                 };
             });
 
-            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
+            returnData.Data = repository.Select(queryMaxMinPaging.RawSql, param, resultMapping);
             returnData.RowPerPage = rowPerPage;
             returnData.SelectPage = selectPage;
             return returnData;
