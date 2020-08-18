@@ -110,8 +110,6 @@ namespace MAMBrowser.Controllers
         /// 휴지통 데이터 목록
         /// </summary>
         /// <param name="userextid">사용자 확장ID</param>
-        /// <param name="cate">분류</param>
-        /// <param name="filename">파일명</param>
         /// <param name="title">제목</param>
         /// <param name="memo">메모</param>
         /// <param name="rowPerPage">페이지당 행 개수</param>
@@ -120,7 +118,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("recyclebin/{userextid}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindRecycleBin(long userextid, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindRecycleBin(long userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
@@ -252,7 +250,7 @@ namespace MAMBrowser.Controllers
         /// <param name="userextid"></param>
         /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}/{seq}")]
+        [HttpPut("recyclebin/{userextid}/single/{seq}")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> Recycle(long userextid, long seq)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
@@ -274,18 +272,19 @@ namespace MAMBrowser.Controllers
 
 
         /// <summary>
-        /// 휴지통 - 모두 복원
+        /// 휴지통 - 선택 목록 복원
         /// </summary>
         /// <param name="userextid"></param>
+        /// <param name="seqlist"></param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}/{seqlist}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> RecycleAll(long userextid, long[] seqlist)
+        [HttpPut("recyclebin/{userextid}/multiple/{seqlist}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> RecycleAll(long userextid, LongList seqlist)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.RecycleAll(userextid, seqlist))
+                if (bll.RecycleAll(userextid, seqlist.ToArray()))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

@@ -103,8 +103,8 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
         public bool RecycleAll(long userextid, long[] seqList)    //모두 복원
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y' WHERE SEQ=:SEQ");
-            builder.Where("SEQ=:SEQ");
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y' /**where**/");
+            builder.Where("SEQ IN :SEQ");
             Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
