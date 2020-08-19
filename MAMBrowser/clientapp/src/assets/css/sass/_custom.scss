@@ -132,6 +132,10 @@
     }
 }
 
+.vuetable-fixed-layout {
+    width:99.8%
+}
+
 .notification-file-container {
     box-sizing: border-box;
     position: fixed;
@@ -162,15 +166,12 @@
     margin-bottom: 0rem;    
 }
 
+//※ b-form-select에 이 클래스가 붙습니다.
 .custom-select {
     height: 34px;
     padding: 0 0.75rem 0 0.75rem;
     font-size: 0.9rem;
     line-height: 1.5;
-
-    &.page-size {
-        width: 78px;
-    }
 }
 
 .icon-buton {
@@ -179,5 +180,18 @@
     .icon {
         width: 20px;
         height: 20px;
+    }
+}
+
+.page-info-group {
+    display: flex;
+    flex-wrap: wrap;
+
+    .page-info {
+        margin: auto 10px auto 10px;
+    }
+
+    .page-size {
+        width: 78px;
     }
 }

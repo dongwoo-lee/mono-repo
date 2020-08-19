@@ -70,12 +70,19 @@
                </b-form>
             </b-col>
             <b-col cols="auto" class="pt-3">
-              {{ getPageInfo() }}
-              <b-form-select class="page-size" v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
-                <b-form-select-option value="8">8개</b-form-select-option>
-                <b-form-select-option value="16">16개</b-form-select-option>
-                <b-form-select-option value="24">24개</b-form-select-option>
-              </b-form-select>
+              <div class="page-info-group">
+                <div class="page-info">
+                  {{ getSelectedCount() }} {{ getPageInfo() }}
+                </div>
+                <div class="page-size">
+                  <b-form-select v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
+                    <b-form-select-option value="15">15개</b-form-select-option>
+                    <b-form-select-option value="30">30개</b-form-select-option>
+                    <b-form-select-option value="50">50개</b-form-select-option>
+                    <b-form-select-option value="100">100개</b-form-select-option>
+                  </b-form-select>
+                </div>
+              </div>
             </b-col>
           </b-row>
         </b-container>
@@ -107,7 +114,7 @@
                 <b-button variant="default" class="icon-buton" title="휴지통" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
                   <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
                 </b-button>
-                <b-button variant="default" class="icon-buton" title="정보편집">
+                <b-button variant="default" class="icon-buton" title="정보편집" @click.stop="onPrivateModifyPopup(props.props.rowData)">
                   <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
                 </b-button>
               </b-colxx>
@@ -142,15 +149,24 @@
             </b-button>
       </template>
     </b-modal>
+    <!-- My공간 메타데이터 수정 팝업 -->
+    <meta-data-private-modify-popup
+      ref="refMetaDataModifyPopup"
+      :show="metaDataModifyPopup"
+      @editSuccess="onEditSuccess"
+      @close="metaDataModifyPopup = false">
+    </meta-data-private-modify-popup>
   </div>
 </template>
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
+import MetaDataPrivateModifyPopup from '../../../components/popup/MetaDataPrivateModifyPopup';
 import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinBasicPage ],
+  components: { MetaDataPrivateModifyPopup },
   data() {
     return {
       searchItems: {
@@ -159,11 +175,12 @@ export default {
         memo: '',              // 메모(memo)
         start_dt: '20200101',  // 등록일 시작일
         end_dt: '',            // 등록일 종료일
-        rowPerPage: 16,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: '',
       },
+      metaDataModifyPopup: false,
       selectedIds: null,
       fields: [
         {
@@ -232,6 +249,9 @@ export default {
       this.$http.get(`/api/products/workspace/private/meta/${userExtId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            setTimeout(() => {
+              this.$refs.scrollPaging.addClassScroll();  
+            }, 0);
       });
     },
     onShowModalFileUpload() {
@@ -239,7 +259,11 @@ export default {
     },
     getPageInfo() {
       const dataLength = this.responseData.data ? this.responseData.data.length : 0;
-      return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개표시`
+      return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개 표시`
+    },
+    getSelectedCount() {
+      if (!this.selectedIds || this.selectedIds.length === 0) return '';
+      return `${ this.selectedIds.length }개 선택되었습니다. |`;
     },
     onSelectedIds(ids) {
       this.selectedIds = ids;
@@ -285,7 +309,16 @@ export default {
       });
     },
     onChangeRowPerpage(value) {
+      this.$refs.scrollPaging.init();
+      this.searchItems.selectPage = 1;
       this.searchItems.rowPerPage = value;
+      this.getData();
+    },
+    onPrivateModifyPopup(rowData) {
+      this.$refs.refMetaDataModifyPopup.setData(rowData);
+      this.metaDataModifyPopup = true;
+    },
+    onEditSuccess() {
       this.getData();
     }
   }

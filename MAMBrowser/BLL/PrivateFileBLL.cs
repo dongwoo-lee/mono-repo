@@ -164,14 +164,18 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             builder.Where("(USER_EXT_ID=:USER_EXT_ID AND USED=:USED)");
             if (!string.IsNullOrEmpty(title))
             {
-                builder.Where("TITLE = :TITLE");
+                string[] nameArray = title.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(TITLE) LIKE LOWER('%{word}%')");
+                }
             }
             if (!string.IsNullOrEmpty(memo))
             {
                 string[] nameArray = memo.Split(' ');
                 foreach (var word in nameArray)
                 {
-                    builder.Where($"LOWER(AUDIONAME) LIKE LOWER('%{word}%')");
+                    builder.Where($"LOWER(MEMO) LIKE LOWER('%{word}%')");
                 }
             }
 

@@ -10,15 +10,15 @@ namespace MAMBrowser.DTO
         //DAMS 처리 여부
         // 주/예비 어떤단말인지?
         public long Seq { get; set; }
-        public long MediaCD { get; set; }
-        public long MediaName { get; set; }
-        public long ProgramID { get; set; }
-        public long RecName { get; set; }
-        public long StartTime { get; set; }
-        public long EndTime { get; set; }
-        public long DeviceName { get; set; }    //DL #1
-        public long FilePath { get; set; }
+        public string MediaCD { get; set; }
+        public string MediaName { get; set; }
+        public string ProgramCD { get; set; }
+        public string RecName { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public string DeviceName { get; set; }    //DL #1
+        public string FilePath { get; set; }
         public long FileSize { get; set; }
-        public long RegDtm { get; set; }    //등록일시
+        public string RegDtm { get; set; }    //등록일시
     }
 }

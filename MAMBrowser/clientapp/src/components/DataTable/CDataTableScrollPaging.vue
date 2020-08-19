@@ -83,6 +83,7 @@ export default {
             scrollTimeout: null, // 스크롤 동작 타임아웃
             rowElemHeight: 0,    // 로우 높이
             selectedItems: [],   // 선택 로우 데이터
+            isChangeRowPerPage: false,
         }
     },
     mounted() {
@@ -99,6 +100,7 @@ export default {
             const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
             [this.tBody] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
             if (!rowElem || !this.tBody) return;
+
             this.rowElemHeight = rowElem.clientHeight;
             // scroll event linstener
             this.tBody.addEventListener('scroll', e => {
@@ -126,14 +128,36 @@ export default {
       }
     },
     methods: {
-        handlerScroll({ target }) {
-            const { clientHeight, scrollTop, scrollHeight, scrollY } = target;
-            if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
+        existScrollBar() {
+            const { clientHeight, scrollTop, scrollHeight } = this.tBody;
+            return ((scrollHeight === 0 && clientHeight === 0)
+            || (scrollHeight > clientHeight));
+        },
+        addClassScroll() {
+            if (this.existScrollBar()) {
                 this.tBody.classList.add('scroll');
+            } else {
+                this.tBody.classList.remove('scroll');
+            }
+        },
+        init() {
+            const { scrollTop } = this.tBody;
+            if (scrollTop > 0) {
+                this.tBody.scrollTop = 0;
+                this.isChangeRowPerPage = true;
+            }
+        },
+        handlerScroll({ target }) {
+            if (!this.existScrollBar()) return;
+            if (this.isChangeRowPerPage) {
+                this.isChangeRowPerPage = false;
+                return;
+            }
+            const { clientHeight, scrollTop, scrollHeight } = target;
+            if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
                 this.lastClientHeight = scrollTop;
                 this.$emit('scrollPerPage', this.currentPage * 10)
             }
-            
         },
         onRowClass(dataItem, index) {
             if (this.selectedItems.includes(dataItem[this.keyName])) {
