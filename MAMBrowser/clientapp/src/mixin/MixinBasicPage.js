@@ -23,6 +23,7 @@ let mixinBasicPage = {
                 totalRowCount: 0,
             },
             selectedItems: [],                       // 선택된 로우 데이터
+            selectedIds: null,
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             pgmOptions: [],                          // 사용처 목록 조회
@@ -77,9 +78,6 @@ let mixinBasicPage = {
                 this.$fn.notify('server-error', { message: '조회 에러: ' + res.data.errorMsg });
             }
         },
-        onSelectedItems(items) {
-            this.selectedItems = items;
-        },
         // 우측메뉴 액션
         onContextMenuAction(v) {
             switch(v) {
@@ -91,6 +89,26 @@ let mixinBasicPage = {
                 case 'delete':  console.log(v); break;
                 default: break;
             }
+        },
+        onRefresh() {
+            this.getData();
+        },
+        getPageInfo() {
+            const dataLength = this.responseData.data ? this.responseData.data.length : 0;
+            return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개 표시`
+        },
+        getSelectedCount() {
+            if (!this.selectedIds || this.selectedIds.length === 0) return '';
+            return `${ this.selectedIds.length }개 선택되었습니다. |`;
+        },
+        onSelectedIds(ids) {
+            this.selectedIds = ids;
+        },
+        onChangeRowPerpage(value) {
+            this.$refs.scrollPaging.init();
+            this.searchItems.selectPage = 1;
+            this.searchItems.rowPerPage = value;
+            this.getData();
         },
         // 다운로드
         downLoad() {
@@ -148,8 +166,8 @@ let mixinBasicPage = {
             this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
         },
         // 공유 소재 분류 목록 조회
-        getPublicOptions() {
-            this.$http.get('/api/Categories/public')
+        getPublicOptions(primaryCode = '') {
+            this.$http.get(`/api/Categories/public-codes/primary/${primaryCode}`)
               .then(res => {
                   const { status, data } = res;
                   if (status === 200 && !data.errorMsg) {

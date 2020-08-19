@@ -55,7 +55,7 @@ const routes = [
       },
       {
         // 제작 - 공유소재
-        name: 'shared',
+        name: 'public',
         path: "shared-material",
         component: () => import("./views/app/making/SharedMaterial"),
       },

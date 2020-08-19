@@ -26,23 +26,14 @@
                             />
                         </b-form-group>
                         </b-colxx>
-                        <!-- 편성일자: 시작일 -->
+                        <!-- 편성일자: 시작일자 -->
                         <b-colxx sm="2">
-                        <b-form-group label="편성-시작일" class="has-float-label c-zindex">
-                            <c-input-date-picker v-model="$v.searchItems.start_dt.$model" />
+                        <b-form-group label="편성일자" class="has-float-label c-zindex">
+                            <c-input-date-picker v-model="$v.searchItems.regDtm.$model" />
                             <b-form-invalid-feedback
-                            :state="$v.searchItems.start_dt.check_date"
+                            :state="$v.searchItems.regDtm.check_date"
                             >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                         </b-form-group>
-                        </b-colxx>
-                        <!-- 편성일자: 종료일 -->
-                        <b-colxx sm="2">
-                            <b-form-group label="편성-종료일" class="has-float-label c-zindex">
-                                <c-input-date-picker v-model="$v.searchItems.end_dt.$model" />
-                                <b-form-invalid-feedback
-                                :state="$v.searchItems.end_dt.check_date"
-                                >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                            </b-form-group>
                         </b-colxx>
                         <!-- 녹음명 -->
                         <b-colxx sm="2">
@@ -84,9 +75,8 @@ export default {
     data() {
         return {
             searchItems: {
-                media : 'A',            // 매체
-                start_dt: '',  // 등록일 시작일
-                end_dt: '',            // 등록일 종료일
+                media : 'A',           // 매체
+                regDtm: '',            // 편성일자
                 pgmID: '',             // 녹음명
                 brd_dt: '',            // 등록일
                 rowPerPage: 16,

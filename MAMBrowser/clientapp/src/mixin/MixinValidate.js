@@ -11,6 +11,9 @@ let mixinValidate = {
           },
           end_dt: {
             check_date: commonValidate.date,
+          },
+          regDtm: {
+            check_date: commonValidate.date,
           }
         },
         metaData: {
@@ -20,6 +23,12 @@ let mixinValidate = {
           memo: {
             required: commonValidate.required,
           },
+          primary: {
+            required: commonValidate.required,
+          },
+          code: {
+            required: commonValidate.required,
+          }
         },
         title: {
           required: commonValidate.required,

@@ -95,10 +95,8 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
-          :contextmenu="contextMenu"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
-          @contextMenuAction="onContextMenuAction"
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
@@ -114,7 +112,7 @@
                 <b-button variant="default" class="icon-buton" title="휴지통" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
                   <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
                 </b-button>
-                <b-button variant="default" class="icon-buton" title="정보편집" @click.stop="onPrivateModifyPopup(props.props.rowData)">
+                <b-button variant="default" class="icon-buton" title="정보편집" @click.stop="onMetaModifyPopup(props.props.rowData)">
                   <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
                 </b-button>
               </b-colxx>
@@ -181,7 +179,6 @@ export default {
         sortValue: '',
       },
       metaDataModifyPopup: false,
-      selectedIds: null,
       fields: [
         {
           name: "__checkbox",
@@ -209,13 +206,13 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },
-        // {
-        //   name: "",
-        //   title: "파일형식",
-        //   titleClass: "center aligned text-center",
-        //   dataClass: "center aligned text-center",
-        //   width: "20%"
-        // },
+        {
+          name: "fileExt",
+          title: "파일형식",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "8%"
+        },
         {
           name: "audioFormat",
           title: "오디오포맷",
@@ -257,17 +254,6 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    getPageInfo() {
-      const dataLength = this.responseData.data ? this.responseData.data.length : 0;
-      return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개 표시`
-    },
-    getSelectedCount() {
-      if (!this.selectedIds || this.selectedIds.length === 0) return '';
-      return `${ this.selectedIds.length }개 선택되었습니다. |`;
-    },
-    onSelectedIds(ids) {
-      this.selectedIds = ids;
-    },
     onDownload(seq) {
       let ids = this.selectedIds;
 
@@ -276,10 +262,7 @@ export default {
         ids.push(seq);
       }
 
-      this.download(ids);
-    },
-    onRefresh() {
-      this.getData();
+      this.download({ids: ids, type: 'private'});
     },
     onDeleteConfirm(id) {
       this.removeRowId = id;
@@ -308,13 +291,7 @@ export default {
         });  
       });
     },
-    onChangeRowPerpage(value) {
-      this.$refs.scrollPaging.init();
-      this.searchItems.selectPage = 1;
-      this.searchItems.rowPerPage = value;
-      this.getData();
-    },
-    onPrivateModifyPopup(rowData) {
+    onMetaModifyPopup(rowData) {
       this.$refs.refMetaDataModifyPopup.setData(rowData);
       this.metaDataModifyPopup = true;
     },

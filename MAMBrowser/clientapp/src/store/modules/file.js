@@ -49,7 +49,7 @@ export default {
             if (!files) return;
             commit('SET_FILES', { files, meta });
         },
-        async upload({ state }) {
+        async upload({ state }, type) {
             FileUploadRefElement.fileUpload.active = true;
             state.uploadState = true;
             try {
@@ -74,7 +74,9 @@ export default {
                             'Content-Type': 'multipart/form-data',
                         }
 
-                        const res = await $http.post('/api/products/workspace/private/files/159', formData, config);
+                        let userExtId = type === 'public' ? '' : '/159';
+
+                        const res = await $http.post(`/api/products/workspace/${type}/files${userExtId}`, formData, config);
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             $fn.notify('success', { message: '파일 업로드 완료' })
                             // 테이블 새로고침
@@ -94,9 +96,9 @@ export default {
                 console.log(ex);
             }
         },
-        download({}, ids) {
+        download({}, {ids, type}) {
             ids.forEach(id => {
-                $http.get(`/api/products/workspace/private/files/${id}`)
+                $http.get(`/api/products/workspace/${type}/files/${id}`)
                     .then(res => {
                         $fn.fileDownload(res);
                         $fn.notify('success', { message: '파일 업로드 완료' })

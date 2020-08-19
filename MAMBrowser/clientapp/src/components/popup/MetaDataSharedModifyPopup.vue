@@ -164,7 +164,12 @@ export default {
             this.metaData.code = code;
         },
         reset() {
-            this.metaData = {};
+            this.metaData = {
+                title: '',
+                memo: '',
+                primary: 'A',
+                code: '',    
+            };
         },
         close() {
             this.showDialog = false;

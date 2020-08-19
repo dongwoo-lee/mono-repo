@@ -9,7 +9,7 @@
         <b-form-group label="저장공간" label-for="input-title">
              <b-form-select v-model="$v.type.$model">
                 <b-form-select-option value="private">My공간</b-form-select-option>
-                <b-form-select-option value="shared">공유소재</b-form-select-option>
+                <b-form-select-option value="public">공유소재</b-form-select-option>
             </b-form-select>
             <b-form-invalid-feedback :state="!$v.type.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
@@ -85,7 +85,7 @@ export default {
             return this.$route.name === undefined ? 'private' : this.$route.name;
         },
         isSharedMaterial() {
-            if (this.type === 'shared') {
+            if (this.type === 'public') {
                 this.getPrimaryOptions();
                 this.getPrimaryCodeOptions();
                 return true;
@@ -125,7 +125,7 @@ export default {
             
 
             this.open_toast(data);
-            this.upload();
+            this.upload(this.type);
             this.reset();
         },
         reset() {

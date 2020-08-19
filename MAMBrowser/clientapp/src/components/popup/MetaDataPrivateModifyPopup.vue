@@ -105,7 +105,7 @@ export default {
             this.$bvModal.show('modalModify');
         },
         submit() {
-            this.$bvModal.hide('modalRemove');
+            this.$bvModal.hide('modalModify')
             const userextId = sessionStorage.getItem('user_ext_id');
             const formData = new FormData();
             formData.append('metaData', JSON.stringify(this.metaData));
@@ -118,7 +118,7 @@ export default {
                 .then(res => {
                     if (res.status === 200 && !res.data.errorMsg) {
                         this.$fn.notify('success', { message: '메타 데이터가 수정되었습니다.' })
-                        this.$emit('onEditSuccess');
+                        this.$emit('editSuccess');
                         this.showDialog = false;
                     } else {
                         this.$fn.notify('error', { message: '메타 데이터가 수정 실패: ' + res.data.errorMsg })
@@ -131,7 +131,10 @@ export default {
             this.metaData.memo = memo;
         },
         reset() {
-            this.metaData = {};
+            this.metaData = {
+                title: '',
+                memo: '',
+            };
         },
         close() {
             this.showDialog = false;
