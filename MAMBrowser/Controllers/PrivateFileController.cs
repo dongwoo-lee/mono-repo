@@ -250,7 +250,7 @@ namespace MAMBrowser.Controllers
         /// <param name="userextid"></param>
         /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}/single/{seq}")]
+        [HttpPut("recyclebin/{userextid}/single-recycle/{seq}")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> Recycle(long userextid, long seq)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
@@ -274,10 +274,10 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 휴지통 - 선택 목록 복원
         /// </summary>
-        /// <param name="userextid"></param>
-        /// <param name="seqlist"></param>
+        /// <param name="userextid">My공간 사용자확장ID</param>
+        /// <param name="seqlist">My공간 파일 고유키 목록</param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}/multiple/{seqlist}")]
+        [HttpPut("recyclebin/{userextid}/multiple-recycle/{seqlist}")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> RecycleAll(long userextid, LongList seqlist)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();

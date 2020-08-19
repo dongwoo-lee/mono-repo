@@ -65,24 +65,26 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD");
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public int UpdateUserDetail(List<DTO_USER_DETAIL> updateDtoList)
+        public int UpdateUserDetail(List<UserExtModel> updateDtoList)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_MAX=:DISK_MAX, DISK_USED=:DISK_USED, USED=:USED WHERE USER_ID=:USER_ID");
+            //USER_EXT_ID로 업데이트 되게끔... 향후수정.
+            var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_MAX=:DISK_MAX, DISK_USED=:DISK_USED, MENU_GRP_CD=:MENU_GRP_CD,USED=:USED WHERE USER_ID=:USER_ID");
             builder.AddParameters(updateDtoList);
-            Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
-            var paramMap = updateDtoList.Select((entity) =>
-            {
-                return new
-                {
-                    USER_ID = entity.ID,
-                    DISK_MAX = entity.DiskMax,
-                    DISK_USED = entity.DiskUsed,
-                    USED = entity.Used
-                };
-            });
+            Repository<UserExtModel> repository = new Repository<UserExtModel>();
+            //var paramMap = updateDtoList.Select((entity) =>
+            //{
+            //    return new
+            //    {
+            //        USER_ID = entity.USER_ID,
+            //        DISK_MAX = entity.DISK_MAX,
+            //        DISK_USED = entity.DISK_USED,
 
-            return repository.Update(queryTemplate.RawSql, paramMap);
+            //        USED = entity.USED
+            //    };
+            //});
+
+            return repository.Update(queryTemplate.RawSql, updateDtoList);
         }
         public DTO_USER_DETAIL GetUserDetail(string id)
         {
@@ -104,7 +106,7 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
             {
                 return new DTO_USER_DETAIL
                 {
-                    UserExtID = row.USER_EXT_ID,
+                    UserExtID = Convert.ToInt64(row.USER_EXT_ID),
                     ID = row.PERSONID,
                     Name = row.PERSONNAME,
                     RoleID = row.ROLE,
@@ -213,7 +215,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
-        public bool ExistUser(string id)
+        public bool ExistUser(AuthenticateModel user)
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER /**where**/");
@@ -228,14 +230,14 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
                 };
             });
 
-            var result = repository.Select(queryTemplate.RawSql, new { PERSONID = id }, resultMapping);
+            var result = repository.Select(queryTemplate.RawSql, user, resultMapping);
             if (result.Count() > 0)
                 return true;
             else
                 return false;
 
         }
-        public DTO_USER_TOKEN Authenticate(string id, string pass)
+        public DTO_USER_TOKEN Authenticate(AuthenticateModel user)
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PASSWD FROM MIROS_USER /**where**/");
@@ -250,9 +252,9 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
                 };
             });
 
-            var result = repository.Select(queryTemplate.RawSql, new { PERSONID = id, PASSWD = pass }, resultMapping);
+            var result = repository.Select(queryTemplate.RawSql, user, resultMapping);
             if (result.Count() > 0)
-                return GetToken(id);
+                return GetToken(user.PERSONID);
             else
                 return null;
         }

@@ -26,14 +26,14 @@ namespace MAMBrowser.Controllers
         /// <returns></returns>
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        [HttpPost("files/{userextid}")]
-        public DTO_RESULT UploadFile(long userextid, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
+        [HttpPost("files")]
+        public DTO_RESULT UploadFile([FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
                 PublicFileBLL bll = new PublicFileBLL();
-                var success = bll.Upload(userextid, file, metaData);
+                var success = bll.Upload(file, metaData);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -49,14 +49,14 @@ namespace MAMBrowser.Controllers
         /// <param name="userextid">유저확장ID</param>
         /// <param name="metaData"></param>
         /// <returns></returns>
-        [HttpPut("meta/{userextid}")]
-        public DTO_RESULT UpdateData(long userextid, [FromForm] PublicFileModel metaData)
+        [HttpPut("meta/{seq}")]
+        public DTO_RESULT UpdateData(long seq, [FromForm] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
                 PublicFileBLL bll = new PublicFileBLL();
-                if (bll.UpdateData(metaData) > 0)
+                if (bll.UpdateData(seq, metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
@@ -131,18 +131,17 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 공유소재 - 삭제
         /// </summary>
-        /// <param name="userextid"></param>
         /// <param name="seq"></param>
         /// <returns></returns>
 
-        [HttpDelete("meta/{userextid}/{seq}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeleteDB(long userextid, long seq)
+        [HttpDelete("meta/{seq}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeleteDB(long seq)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PublicFileBLL bll = new PublicFileBLL();
-                if (bll.DeletePhysical(userextid, seq))
+                if (bll.DeletePhysical(seq))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

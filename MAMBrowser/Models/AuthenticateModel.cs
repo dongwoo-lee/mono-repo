@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Models
@@ -9,9 +10,11 @@ namespace MAMBrowser.Models
     public class AuthenticateModel
     {
         [Required]
-        public string UserID { get; set; }
+        [JsonPropertyName("UserID")]
+        public string PERSONID { get; set; }
 
         [Required]
-        public string Pass { get; set; }
+        [JsonPropertyName("Pass")]
+        public string PASSWD { get; set; }
     }
 }

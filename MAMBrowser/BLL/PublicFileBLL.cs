@@ -16,7 +16,7 @@ namespace MAMBrowser.Controllers
 {
     public class PublicFileBLL 
     {
-        public DTO_PUBLIC_FILE Upload(long userextid, IFormFile file, PublicFileModel metaData)
+        public DTO_PUBLIC_FILE Upload(IFormFile file, PublicFileModel metaData)
         {
             //업로드 권한 처리 필요.
 
@@ -24,7 +24,7 @@ namespace MAMBrowser.Controllers
             string date = DateTime.Now.ToString(Utility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{SystemConfig.AppSettings.FtpTmpUploadFolder}";
-            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPublicUploadFolder}/{userextid}/{date}";      //공유소재도 유저확장ID 사용?
+            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPublicUploadFolder}/{metaData.USER_EXT_ID}/{date}";      //공유소재도 유저확장ID 사용?
             var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
             var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
 
@@ -47,7 +47,7 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH,
             }
             return null;
         }
-        public bool DeletePhysical(long userextid, long seq)
+        public bool DeletePhysical(long seq)
         {
             //파일 실제 삭제 이후
 
@@ -58,10 +58,10 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH,
             Repository<PublicFileModel> repository = new Repository<PublicFileModel>();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seq);
-            repository.Delete(queryTemplate.RawSql, seq);
+            repository.Delete(queryTemplate.RawSql, param);
             return true;
         }
-        public int UpdateData(PublicFileModel metaData)
+        public int UpdateData(long seq, PublicFileModel metaData)
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"UPDATE M30_PUBLIC_SPACE SET TITLE=:TITLE, MEMO=:MEMO, EDITED_DTM = SYSDATE /**where**/");

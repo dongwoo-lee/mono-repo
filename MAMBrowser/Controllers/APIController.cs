@@ -37,14 +37,14 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                if (!bll.ExistUser(account.UserID))
+                if (!bll.ExistUser(account))
                 {
                     result.ErrorMsg = "ID not found";
                     result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                 }
                 else
                 {
-                    DTO_USER_TOKEN userToken = bll.Authenticate(account.UserID, account.Pass);
+                    DTO_USER_TOKEN userToken = bll.Authenticate(account);
                     if (userToken == null)
                     {
                         result.ErrorMsg = "Password is incorrect";
@@ -107,7 +107,7 @@ namespace MAMBrowser.Controllers
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("users")]
-        public DTO_RESULT UpdateUserDetail([FromBody] List<DTO_USER_DETAIL> dtoList)
+        public DTO_RESULT UpdateUserDetail([FromBody] List<UserExtModel> dtoList)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
