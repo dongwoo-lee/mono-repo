@@ -1,4 +1,6 @@
 ﻿using MAMBrowser.DTO;
+using MAMBrowser.Helpers;
+using MAMBrowser.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -16,28 +18,50 @@ namespace MAMBrowser.Controllers
     public class PublicFileController : ControllerBase
     {
         /// <summary>
-        /// 공유소재- 파일+메타데이터 등록
+        /// 공유소재 -  파일+메타데이터 등록
         /// </summary>
+        /// <param name="userextid">유저확장ID</param>
         /// <param name="file">파일</param>
-        /// <param name="jsonMetaData">메타데이터</param>
+        /// <param name="metaData">메타데이터</param>
         /// <returns></returns>
+        [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        [HttpPost("files")]
-        public DTO_RESULT UploadFile(IFormFile file, [FromForm] string jsonMetaData)
+        [HttpPost("files/{userextid}")]
+        public DTO_RESULT UploadFile(long userextid, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                string directoryPath = @"c:\임시파일";
-                if (!System.IO.Directory.Exists(directoryPath))
-                    System.IO.Directory.CreateDirectory(directoryPath);
-
-                string filePath = Path.Combine(directoryPath, file.FileName);
-
-                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+                PublicFileBLL bll = new PublicFileBLL();
+                var success = bll.Upload(userextid, file, metaData);
+                result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        ///  공유소재 -  메타데이터 편집
+        /// </summary>
+        /// <param name="userextid">유저확장ID</param>
+        /// <param name="metaData"></param>
+        /// <returns></returns>
+        [HttpPut("meta/{userextid}")]
+        public DTO_RESULT UpdateData(long userextid, [FromForm] PublicFileModel metaData)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                PublicFileBLL bll = new PublicFileBLL();
+                if (bll.UpdateData(metaData) > 0)
                 {
-                    file.CopyTo(fs);
                     result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+                {
+                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
                 }
             }
             catch (Exception ex)
@@ -48,31 +72,9 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 공유소재 - 메타데이터 편집
+        /// 공유소재 -  검색
         /// </summary>
-        /// <param name="id">ID 값</param>
-        /// <returns></returns>
-        [HttpPut("meta")]
-        public DTO_RESULT UpdateData([FromBody] DTO_PUBLIC_FILE metaData)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            try
-            {
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
-            return result;
-        }
-        /// <summary>
-        /// 공유소재 - 메타데이터 검색
-        /// </summary>
-        ///  <param name="userExtID">사용자 확장ID</param>
-        /// <param name="cate">분류</param>
-        /// <param name="filename">파일명</param>
+        /// <param name="userextid">사용자 확장ID</param>
         /// <param name="title">제목</param>
         /// <param name="memo">메모</param>
         /// <param name="rowPerPage">페이지당 행 개수</param>
@@ -81,11 +83,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData([FromQuery] long userextid, [FromQuery] string cate, [FromQuery] string filename, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData([FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
+                PublicFileBLL bll = new PublicFileBLL();
+                result.ResultObject = bll.FineData(userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -95,25 +99,34 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
         /// <summary>
-        /// 공유소재 - 파일 다운로드 
+        /// 공유소재 - 파일 요청(미리듣기, 다운로드 시 사용)
         /// </summary>
-        [HttpGet("files/{fileid}")]
-        public FileResult GetFile(string fileID)
+        /// <param name="seq">파일 SEQ</param>
+        /// <returns></returns>
+        //[Authorize]
+        [HttpGet("files/{seq}")]
+        public FileResult GetFile(long seq)
         {
-            string directoryPath = @"c:\임시파일";
-            string filePath = Path.Combine(directoryPath, fileID);
-            IFileProvider provider = new PhysicalFileProvider(directoryPath);
-            IFileInfo fileInfo = provider.GetFileInfo(fileID);
+            PublicFileBLL bll = new PublicFileBLL();
+            var fileData = bll.Get(seq);
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
-            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            string fileName = fileData.Title; ;
+            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
 
-            return PhysicalFile(filePath, contentType, true);
+            var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+            //string tmpPath = @"d:\임시폴더\";
+            //BufferedStream bst = new BufferedStream(downloadStream);
+            //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);
+            //FileStream fs = new FileStream(Path.Combine(tmpPath, Path.GetRandomFileName()), FileMode.Create, FileAccess.ReadWrite);
+            //downloadStream.CopyToAsync(fs);
+            return File(downloadStream, contentType, fileName, true);
+
+
         }
     }
 }

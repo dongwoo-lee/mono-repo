@@ -474,6 +474,24 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
             {
+                List<DTO_DL30> mockDataList = new List<DTO_DL30>();
+                for (int i = 0; i < 24; i++)
+                {
+                    DTO_DL30 dto = new DTO_DL30();
+                    dto.MediaCD = "A";
+                    dto.MediaName = "A";
+                    dto.ProgramCD = $"PM00{i}";
+                    dto.RecName = $"{i}시 프로그램 입니다.";
+                    dto.StartTime = $"0{i}:00:00";
+                    dto.EndTime = $"0{i + 1}:00:00";
+                    dto.FileSize = 100000;
+                    dto.FilePath = @$"MIROS\\data1\wav{i}.wav";
+                    dto.RegDtm = DateTime.Now.ToString(Utility.DTM19);
+                    dto.DeviceName = "DL#1";
+                    mockDataList.Add(dto);
+                }
+                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_DL30>();
+                result.ResultObject.Data = mockDataList;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
