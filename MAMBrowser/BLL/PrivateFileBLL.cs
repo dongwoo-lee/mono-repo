@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -142,6 +143,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     FilePath = row.FILE_PATH,
                     DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
                     Used = row.USED,
+                    FileExt = Path.GetExtension(row.FILE_PATH)
                 };
             });
             return repository.Get(queryTemplate.RawSql, new { SEQ=id },resultMapping);
@@ -205,6 +207,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     FilePath = row.FILE_PATH,
                     DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
                     Used = row.USED,
+                    FileExt = Path.GetExtension(row.FILE_PATH)
                 };
             });
 

@@ -16,10 +16,11 @@ namespace MAMBrowser.DTO
         public string Title { get; set; }
         public string Memo { get; set; }
         public string FilePath { get; set; }
-        
+        public long FileSize { get; set; }
+        public string FileExt { get; set; }
         public string AudioFormat { get; set; }
         public long UserExtID { get; set; }
-        public string UserNAme { get; set; }
+        public string UserName { get; set; }
         public string EditedDtm { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace MAMBrowser.DTO
         public string UserName { get; set; }
         public long FileSize { get; set; }
         public string FilePath { get; set; }
+        public string FileExt { get; set; }
         public string EditedDtm { get; set; }
         public string DeletedDtm { get; set; }
     }

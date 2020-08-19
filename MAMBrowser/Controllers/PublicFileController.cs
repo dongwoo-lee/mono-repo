@@ -83,9 +83,9 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData([FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData([FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
                 PublicFileBLL bll = new PublicFileBLL();
@@ -127,6 +127,32 @@ namespace MAMBrowser.Controllers
             return File(downloadStream, contentType, fileName, true);
 
 
+        }
+        /// <summary>
+        /// 공유소재 - 삭제
+        /// </summary>
+        /// <param name="userextid"></param>
+        /// <param name="seq"></param>
+        /// <returns></returns>
+
+        [HttpDelete("meta/{userextid}/{seq}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeleteDB(long userextid, long seq)
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
+            try
+            {
+                PublicFileBLL bll = new PublicFileBLL();
+                if (bll.DeletePhysical(userextid, seq))
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                else
+                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
         }
     }
 }

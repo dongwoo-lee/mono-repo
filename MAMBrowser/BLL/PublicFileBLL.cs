@@ -7,14 +7,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
     public class PublicFileBLL 
     {
-        public DTO_PRIVATE_FILE Upload(long userextid, IFormFile file, PublicFileModel metaData)
+        public DTO_PUBLIC_FILE Upload(long userextid, IFormFile file, PublicFileModel metaData)
         {
             //업로드 권한 처리 필요.
 
@@ -69,16 +71,24 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH,
             param.AddDynamicParams(metaData);
             return repository.Update(queryTemplate.RawSql, param);
         }
-        public DTO_PRIVATE_FILE Get(long id)
+        public DTO_PUBLIC_FILE Get(long id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_PUBLIC_SPACE WHERE SEQ=:SEQ");
-            Repository<DTO_PRIVATE_FILE> repository = new Repository<DTO_PRIVATE_FILE>();
-            var resultMapping = new Func<dynamic, DTO_PRIVATE_FILE>((row) =>
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_PUBLIC_SPACE.*, MEDIA.CODENAME AS MEDIA_NAME, CATE.NAME AS CATE_NAME FROM M30_PUBLIC_SPACE 
+LEFT JOIN (select * from m30_code_map
+LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M ON M.CODEID=M30_CODE_MAP.GRP_CD
+where map_cd='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
+LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD WHERE SEQ=:SEQ");
+            Repository<DTO_PUBLIC_FILE> repository = new Repository<DTO_PUBLIC_FILE>();
+            var resultMapping = new Func<dynamic, DTO_PUBLIC_FILE>((row) =>
             {
-                return new DTO_PRIVATE_FILE
+                return new DTO_PUBLIC_FILE
                 {
                     Seq = Convert.ToInt64(row.SEQ),
+                    MediaCD = row.MEDIA_CD,
+                    MediaName = row.MEDIA_NAME,
+                    CatetoryCD = row.CATE_CD,
+                    CatetoryName = row.CATE_NAME,
                     UserExtID = Convert.ToInt64(row.USER_EXT_ID),
                     UserName = row.USER_NAME,
                     Title = row.TITLE,
@@ -87,15 +97,14 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH,
                     EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
-                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
-                    Used = row.USED,
+                    FileExt = Path.GetExtension(row.FILE_PATH)
                 };
             });
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FineData(long? userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> FineData(long? userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
-            DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> returnData = new DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>();
+            DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> returnData = new DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>();
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
             DynamicParameters param = new DynamicParameters();
@@ -106,7 +115,11 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH,
             param.Add("LAST_NO", lastNo);
 
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT * FROM M30_PUBLIC_SPACE /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT M30_PUBLIC_SPACE.*, MEDIA.CODENAME AS MEDIA_NAME, CATE.NAME AS CATE_NAME FROM M30_PUBLIC_SPACE 
+LEFT JOIN (select * from m30_code_map
+LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M ON M.CODEID=M30_CODE_MAP.GRP_CD
+where map_cd='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
+LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD /**where**/");
             if (userextid!=null)
             {
                 builder.Where("USER_EXT_ID=:USER_EXT_ID");
@@ -134,26 +147,29 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH,
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
 
-            Repository<DTO_PRIVATE_FILE> repository = new Repository<DTO_PRIVATE_FILE>();
-            var resultMapping = new Func<dynamic, DTO_PRIVATE_FILE>((row) =>
+            Repository<DTO_PUBLIC_FILE> repository = new Repository<DTO_PUBLIC_FILE>();
+            var resultMapping = new Func<dynamic, DTO_PUBLIC_FILE>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
                 {
                     returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
                 }
-                return new DTO_PRIVATE_FILE
+                return new DTO_PUBLIC_FILE
                 {
-                    RowNO = Convert.ToInt32(row.RNO),
                     Seq = Convert.ToInt64(row.SEQ),
+                    MediaCD = row.MEDIA_CD,
+                    MediaName = row.MEDIA_NAME,
+                    CatetoryCD = row.CATE_CD,
+                    CatetoryName = row.CATE_NAME,
                     UserExtID = Convert.ToInt64(row.USER_EXT_ID),
                     UserName = row.USER_NAME,
                     Title = row.TITLE,
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
                     EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
+                    FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
-                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
-                    Used = row.USED,
+                    FileExt = Path.GetExtension(row.FILE_PATH)
                 };
             });
 
