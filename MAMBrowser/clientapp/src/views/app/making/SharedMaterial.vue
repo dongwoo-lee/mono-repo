@@ -139,31 +139,13 @@
       </b-card>
     </b-row>
     <!-- 삭제 모달 -->
-    <b-modal 
-        id="modalRemove" 
-        size="sm" 
-        title="휴지통 이동"
-        :hideHeaderClose="true">
-        삭제하시겠습니까?
-        <template v-slot:modal-footer>
-            <b-button
-              variant="primary"
-              size="sm"
-              class="float-right"
-              @click="onDelete()"
-            >
-              이동
-            </b-button>
-            <b-button
-              variant="danger"
-              size="sm"
-              class="float-right"
-              @click="$bvModal.hide('modalRemove')"
-            >
-              취소
-            </b-button>
-      </template>
-    </b-modal>
+    <common-modal
+      id="modalRemove"
+      title="영구삭제"
+      message= "영구적으로 삭제하시겠습니까?"
+      submitBtn="영구삭제"
+      @ok="onDelete()"
+    />
      <!-- 공유소재 메타데이터 수정 팝업 -->
     <meta-data-shared-modify-popup
       ref="refMetaDataModifyPopup"
@@ -313,7 +295,6 @@ export default {
       this.$bvModal.show('modalRemove');
     },
     onDelete() {
-      const userExtId = sessionStorage.getItem('user_ext_id');
       let ids = this.selectedIds;
 
       if (typeof this.removeRowId) {
@@ -322,8 +303,8 @@ export default {
         this.removeRowId = null;
       }
 
-      ids.forEach(id => {
-        this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${id}`)
+      ids.forEach(seq => {
+        this.$http.delete(`/api/products/workspace/public/meta/${seq}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify('success', { message: '휴지통 이동 성공' })

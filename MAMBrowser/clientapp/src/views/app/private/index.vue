@@ -65,7 +65,7 @@
                   <b-button class="mb-1" variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
                 </b-input-group>
                 <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-danger default" size="sm" @click="onDelete">선택 항목 휴지통 보내기</b-button>
+                  <b-button class="mb-1" variant="outline-danger default" size="sm" @click="onMultiDeleteConfirm">선택 항목 휴지통 보내기</b-button>
                 </b-input-group>
                </b-form>
             </b-col>
@@ -121,32 +121,14 @@
         </c-data-table-scroll-paging>
       </b-card>
     </b-row>
-    <!-- 휴지통 이동 모달 -->
-    <b-modal 
-        id="modalRemove" 
-        size="sm" 
-        title="휴지통 이동"
-        :hideHeaderClose="true">
-        휴지통으로 이동하시겠습니까?
-        <template v-slot:modal-footer>
-            <b-button
-              variant="primary"
-              size="sm"
-              class="float-right"
-              @click="onDelete()"
-            >
-              이동
-            </b-button>
-            <b-button
-              variant="danger"
-              size="sm"
-              class="float-right"
-              @click="$bvModal.hide('modalRemove')"
-            >
-              취소
-            </b-button>
-      </template>
-    </b-modal>
+    <!-- 휴지통 이동 확인창 -->
+    <common-modal
+      id="modalRemove"
+      title="휴지통 이동"
+      message= "휴지통으로 이동하시겠습니까??"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <!-- My공간 메타데이터 수정 팝업 -->
     <meta-data-private-modify-popup
       ref="refMetaDataModifyPopup"
@@ -255,6 +237,7 @@ export default {
       this.open_popup();
     },
     onDownload(seq) {
+      if (this.isNoSelected()) return;
       let ids = this.selectedIds;
 
       if (typeof seq !== 'object' && seq) {
@@ -264,10 +247,17 @@ export default {
 
       this.download({ids: ids, type: 'private'});
     },
+    // 휴지통 보내기 확인창
     onDeleteConfirm(id) {
       this.removeRowId = id;
       this.$bvModal.show('modalRemove');
     },
+    // 선택항목 휴지통 보내기 확인창 
+    onMultiDeleteConfirm() {
+      if (this.isNoSelected()) return;
+      this.$bvModal.show('modalRemove');
+    },
+    // 휴지통 보내기
     onDelete() {
       const userExtId = sessionStorage.getItem('user_ext_id');
       let ids = this.selectedIds;
@@ -278,15 +268,15 @@ export default {
         this.removeRowId = null;
       }
 
-      ids.forEach(id => {
-        this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${id}`)
+      ids.forEach(seq => {
+        this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${seq}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify('success', { message: '휴지통 이동 성공' })
               this.$bvModal.hide('modalRemove');
               this.getData();
             } else {
-              this.$fn.notify('error', { message: '휴지통 이동 실패' })
+              this.$fn.notify('error', { message: '휴지통 이동 실패: ' + res.data.errorMsg })
             }
         });  
       });
@@ -297,6 +287,9 @@ export default {
     },
     onEditSuccess() {
       this.getData();
+    },
+    isNoSelected() {
+      return !this.selectedIds || this.selectedIds.length === 0;
     }
   }
 }

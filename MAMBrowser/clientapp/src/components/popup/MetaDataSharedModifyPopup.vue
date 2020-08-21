@@ -16,22 +16,22 @@
         </b-form-group>
         <b-form-group label="매체" label-for="input-title">
                 <b-form-select 
-                v-model="$v.metaData.primary.$model"
+                v-model="$v.metaData.mediaCD.$model"
                 :options="primaryOptions"
                 @change="onChangePrimary"
                 value-field="id"
                 text-field="name" 
             />
-            <b-form-invalid-feedback :state="!$v.metaData.primary.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-invalid-feedback :state="!$v.metaData.mediaCD.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <b-form-group label="분류" label-for="input-title">
             <b-form-select 
-                v-model="$v.metaData.code.$model"
+                v-model="$v.metaData.catetoryCD.$model"
                 :options="primaryCodeOptions"
                 value-field="id"
                 text-field="name" 
             />
-            <b-form-invalid-feedback :state="!$v.metaData.code.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-invalid-feedback :state="!$v.metaData.catetoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <b-form-group label="내용" label-for="input-memo">
             <b-form-textarea
@@ -98,8 +98,8 @@ export default {
                 seq: 0,
                 title: '',
                 memo: '',
-                primary: 'A',                     // 매체
-                code: '',                         // 분류
+                mediaCD: 'A',                     // 매체
+                catetoryCD: '',                         // 분류
             },
             primaryOptions: [],                   // 공유매체 목록
             primaryCodeOptions: [],               // 공유소재 분류 목록
@@ -115,9 +115,6 @@ export default {
                 if (!v) {
                     this.reset();
                     this.$emit('close');
-                } else {
-                    this.getPrimaryOptions();
-                    this.getPrimaryCodeOptions();
                 }
             }
         },
@@ -126,8 +123,8 @@ export default {
         submitConfirm() {
             if (!this.$v.metaData.title.$invalid 
                 || !this.$v.metaData.memo.$invalid
-                || !this.$v.metaData.primary.$invalid
-                || !this.$v.metaData.code.$invalid
+                || !this.$v.metaData.mediaCD.$invalid
+                || !this.$v.metaData.catetoryCD.$invalid
             ) {
                 this.$fn.notify('inputError', {});
                 return;
@@ -136,7 +133,7 @@ export default {
             this.$bvModal.show('modalModify');
         },
         submit() {
-            this.$bvModal.hide('modalRemove');
+            this.$bvModal.hide('modalModify')
             const userextId = sessionStorage.getItem('user_ext_id');
             const formData = new FormData();
             formData.append('metaData', JSON.stringify(this.metaData));
@@ -149,26 +146,28 @@ export default {
                 .then(res => {
                     if (res.status === 200 && !res.data.errorMsg) {
                         this.$fn.notify('success', { message: '메타 데이터가 수정되었습니다.' })
-                        this.$emit('onEditSuccess');
+                        this.$emit('editSuccess');
                         this.showDialog = false;
                     } else {
                         this.$fn.notify('error', { message: '메타 데이터가 수정 실패: ' + res.data.errorMsg })
                     }
                 })
         },
-        setData({ seq, title, memo, primary, code }) {
+        setData({ seq, title, memo, mediaCD, catetoryCD }) {
             this.metaData.seq = seq;
             this.metaData.title = title;
             this.metaData.memo = memo;
-            this.metaData.primary = primary;
-            this.metaData.code = code;
+            this.metaData.mediaCD = mediaCD;
+            this.metaData.catetoryCD = catetoryCD;
+            this.getPrimaryOptions();
+            this.getPrimaryCodeOptions();
         },
         reset() {
             this.metaData = {
                 title: '',
                 memo: '',
-                primary: 'A',
-                code: '',    
+                mediaCD: 'A',
+                catetoryCD: '',    
             };
         },
         close() {
@@ -190,7 +189,7 @@ export default {
         },
         // 공유 소재 분류 목록 조회
         getPrimaryCodeOptions() {
-            this.$http.get('/api/Categories/public-codes/primary/' + this.primary)
+            this.$http.get('/api/Categories/public-codes/primary/' + this.metaData.mediaCD)
               .then(res => {
                   if (res.status === 200) {
                       this.primaryCodeOptions = res.data.resultObject.data;

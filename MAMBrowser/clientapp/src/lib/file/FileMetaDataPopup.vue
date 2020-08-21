@@ -23,22 +23,22 @@
         <template v-if="isSharedMaterial">
             <b-form-group label="매체" label-for="input-title">
                     <b-form-select 
-                    v-model="$v.primary.$model"
+                    v-model="$v.mediaCD.$model"
                     :options="primaryOptions"
                     @change="onChangePrimary"
                     value-field="id"
                     text-field="name" 
                 />
-                <b-form-invalid-feedback :state="!$v.primary.required">필수 입력입니다.</b-form-invalid-feedback>
+                <b-form-invalid-feedback :state="!$v.mediaCD.required">필수 입력입니다.</b-form-invalid-feedback>
             </b-form-group>
             <b-form-group label="분류" label-for="input-title">
                 <b-form-select 
-                    v-model="$v.code.$model"
+                    v-model="$v.catetoryCD.$model"
                     :options="primaryCodeOptions"
                     value-field="id"
                     text-field="name" 
                 />
-            <b-form-invalid-feedback :state="!$v.code.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-invalid-feedback :state="!$v.catetoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
             </b-form-group>
         </template>
         <b-form-group label="내용" label-for="input-memo">
@@ -75,9 +75,9 @@ export default {
             memo: '',
             type: '',
             primaryOptions: [],                        // 공유매체 목록
-            primary: 'A',                               // 매체
+            mediaCD: 'A',                               // 매체
             primaryCodeOptions: [],                       // 공유소재 분류 목록
-            code: '',                                // 분류
+            catetoryCD: '',                                // 분류
         }
     },
     computed: {
@@ -117,8 +117,8 @@ export default {
                     meta: { 
                         title: this.title,
                         memo: this.memo,
-                        primary: this.primary,
-                        code: this.code,
+                        mediaCD: this.mediaCD,
+                        catetoryCD: this.catetoryCD,
                     }
                 }
             }
@@ -158,7 +158,7 @@ export default {
         },
         // 공유 소재 분류 목록 조회
         getPrimaryCodeOptions() {
-            this.$http.get('/api/Categories/public-codes/primary/' + this.primary)
+            this.$http.get('/api/Categories/public-codes/primary/' + this.mediaCD)
               .then(res => {
                   if (res.status === 200) {
                       this.primaryCodeOptions = res.data.resultObject.data;

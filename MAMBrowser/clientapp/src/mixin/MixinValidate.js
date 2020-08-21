@@ -23,10 +23,10 @@ let mixinValidate = {
           memo: {
             required: commonValidate.required,
           },
-          primary: {
+          mediaCD: {
             required: commonValidate.required,
           },
-          code: {
+          catetoryCD: {
             required: commonValidate.required,
           }
         },
@@ -39,10 +39,10 @@ let mixinValidate = {
         type: {
           required: commonValidate.required,
         },
-        primary: {
+        mediaCD: {
           required: commonValidate.required,
         },
-        code: {
+        catetoryCD: {
           required: commonValidate.required,
         }
     }
