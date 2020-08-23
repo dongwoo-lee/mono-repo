@@ -3,11 +3,12 @@
         :id="id" 
         size="sm" 
         :title="title"
+        modal-class="common-confirm"
         :hideHeaderClose="true">
         {{ message }}
         <template v-slot:modal-footer>
             <b-button
-              variant="primary"
+              variant="outline-primary"
               size="sm"
               class="float-right"
               @click="ok()"
@@ -15,7 +16,7 @@
               {{submitBtn}}
             </b-button>
             <b-button
-              variant="danger"
+              variant="outline-danger"
               size="sm"
               class="float-right"
               @click="close()"
@@ -49,14 +50,6 @@ export default {
             default: '닫기',
         }
     },
-    // data() {
-    //     return {
-    //         title: '',
-    //         message: '',
-    //         submitString: '확인',
-    //         closeString: '닫기',
-    //     }
-    // },
     methods: {
         ok() {
             this.$emit('ok');

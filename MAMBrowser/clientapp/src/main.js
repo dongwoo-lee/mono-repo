@@ -12,7 +12,6 @@ import VueI18n from 'vue-i18n'
 import { defaultLocale, localeOptions } from './constants/config'
 // Notification Component Add
 import Notifications from './components/Common/Notification'
-import CommonModal from './components/popup/CommonModal';
 // import Overlay from './components/Common/Overlay'
 // Breadcrumb Component Add
 import Breadcrumb from './components/Common/Breadcrumb'
@@ -32,6 +31,7 @@ import Vuelidate from 'vuelidate';
 import http from './http.js'
 import commonFunctions from './utils/CommonFunctions';
 import commonFilters from './utils/CommonFilters';
+import './components/index';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -54,13 +54,11 @@ Vue.use(VueLineClamp, {
 Vue.use(Vuelidate);
 Vue.use({ install(Vue) { Vue.prototype.$http = http } })
 
-
 Vue.component('piaf-breadcrumb', Breadcrumb);
 Vue.component('b-refresh-button', RefreshButton);
 Vue.component('b-colxx', Colxx);
 Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.component('file-upload', VueUploadComponent)
-Vue.component('commonModal', CommonModal);
 
 Vue.prototype.$fn = commonFunctions;
 

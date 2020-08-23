@@ -1,74 +1,48 @@
 <template>
   <div>
-    <!-- nav -->
     <b-row>
       <b-colxx xxs="12">
         <piaf-breadcrumb heading="휴지통" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
-    <b-row style="marin-top:-10px;">
-      <b-card>
-        <!-- 검색 영역 -->
-        <b-container fluid>
-          <div class="search-form-area">
-            <b-form class="search-form" @submit.stop>
-              <b-row>
-                <!-- 제목 -->
-                <b-colxx sm="2">
-                  <b-form-group label="제목" class="has-float-label c-zindex">
-                    <c-input-text v-model="searchItems.title" />
-                  </b-form-group>
-                </b-colxx>
-                <!-- 메모 -->
-                <b-colxx sm="2">
-                  <b-form-group label="메모" class="has-float-label c-zindex">
-                    <c-input-text v-model="searchItems.memo" />
-                  </b-form-group>
-                </b-colxx>
-                <b-colxx sm="2">
-                  <b-button class="mb-1" variant="outline-primary default" size="sm" @click="getData">검색</b-button>
-                </b-colxx>
-              </b-row>
-            </b-form>
-          </div>
-        </b-container>
-
-        <!-- 버튼 영역 -->
-        <b-container fluid class="text-center">
-          <!-- 버튼 모음 -->
-          <b-row align-v="center">
-            <b-col cols="auto" class="mr-auto pt-3">
-              <b-form class="mb-1" inline>
-                <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-primary default" size="sm" @click="onMultiDeleteConfirm">선택항목 삭제</b-button>
-                </b-input-group>
-                <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-secondary default" size="sm" @click="onMultiRecycleConfirm">선택항목 복원</b-button>
-                </b-input-group>
-                <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-danger default" size="sm" @click="onRecyclebinConfirm">휴지통 비우기</b-button>
-                </b-input-group>
-               </b-form>
-            </b-col>
-            <b-col cols="auto" class="pt-3">
-              <div class="page-info-group">
-                <div class="page-info">
-                  {{ getSelectedCount() }} {{ getPageInfo() }}
-                </div>
-                <div class="page-size">
-                  <b-form-select v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
-                    <b-form-select-option value="15">15개</b-form-select-option>
-                    <b-form-select-option value="30">30개</b-form-select-option>
-                    <b-form-select-option value="50">50개</b-form-select-option>
-                    <b-form-select-option value="100">100개</b-form-select-option>
-                  </b-form-select>
-                </div>
-              </div>
-            </b-col>
-          </b-row>
-        </b-container>
-        <!-- 테이블 영역 -->
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 제목 -->
+        <b-form-group label="제목" class="has-float-label c-zindex">
+          <common-input-text v-model="searchItems.title" />
+        </b-form-group>
+        <!-- 메모 -->
+        <b-form-group label="메모" class="has-float-label c-zindex">
+          <common-input-text v-model="searchItems.memo" />
+        </b-form-group>
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 버튼 -->
+      <template slot="form-btn-area">
+        <b-input-group>
+          <b-button variant="outline-primary default" size="sm" @click="onMultiDeleteConfirm">선택항목 삭제</b-button>
+        </b-input-group>
+        <b-input-group>
+          <b-button variant="outline-secondary default" size="sm" @click="onMultiRecycleConfirm">선택항목 복원</b-button>
+        </b-input-group>
+        <b-input-group>
+          <b-button variant="outline-danger default" size="sm" @click="onRecyclebinConfirm">휴지통 비우기</b-button>
+        </b-input-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
         <c-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
@@ -76,58 +50,59 @@
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
-          :num-rows-to-bottom="5" 
+          :num-rows-to-bottom="5"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <b-row>
-              <b-colxx>
-                <b-button variant="default" class="icon-buton" title="복원" @click.stop="onRecycleConfirm(props.props.rowData.seq)">
-                  <b-icon icon="shift-fill" class="icon"></b-icon>
-                </b-button>
-                <b-button variant="default" class="icon-buton" title="영구삭제" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
-                  <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
-                </b-button>
-              </b-colxx>
-            </b-row>
+            <b-colxx>
+              <b-button class="icon-buton" title="복원" @click.stop="onRecycleConfirm(props.props.rowData.seq)">
+                <b-icon icon="shift-fill" class="icon"></b-icon>
+              </b-button>
+              <b-button class="icon-buton" title="영구삭제" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
+                <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
+              </b-button>
+            </b-colxx>
           </template>
         </c-data-table-scroll-paging>
-      </b-card>
-    </b-row>
-    <!-- 영구삭제 확인창 -->
-    <common-modal
-      id="modalRemove"
-      title="영구삭제"
-      message= "영구적으로 삭제하시겠습니까?"
-      submitBtn="영구삭제"
-      @ok="onDelete()"
-    />
-    <!-- 복원 확인창 -->
-    <common-modal
-      id="modalRecycle"
-      title="복원"
-      message= "복원하시겠습니까?"
-      submitBtn="복원"
-      @ok="onRecycle()"
-    />
-    <!-- 선택항목 복원 확인창 -->
-    <common-modal
-      id="modalMultiRecycle"
-      title="선택 항목 복원"
-      message= "선택 항목들을 복원하시겠습니까?"
-      submitBtn="선택 항목 복원"
-      @ok="onMultipleRecycle()"
-    />
-    <!-- 휴지통 비우기 확인창 -->
-    <common-modal
-      id="modalRecyclebin"
-      title="휴지통 비우기"
-      message= "휴지통을 비우시겠습니까?"
-      submitBtn="휴지통 비우기"
-      @ok="onRecyclebin()"
-    />
+      </template>
+      <!-- 알림 -->
+      <template slot="form-confirm-area">
+        <!-- 영구삭제 확인창 -->
+        <common-confirm
+          id="modalRemove"
+          title="영구삭제"
+          message= "영구적으로 삭제하시겠습니까?"
+          submitBtn="영구삭제"
+          @ok="onDelete()"
+        />
+        <!-- 복원 확인창 -->
+        <common-confirm
+          id="modalRecycle"
+          title="복원"
+          message= "복원하시겠습니까?"
+          submitBtn="복원"
+          @ok="onRecycle()"
+        />
+        <!-- 선택항목 복원 확인창 -->
+        <common-confirm
+          id="modalMultiRecycle"
+          title="선택 항목 복원"
+          message= "선택 항목들을 복원하시겠습니까?"
+          submitBtn="선택 항목 복원"
+          @ok="onMultipleRecycle()"
+        />
+        <!-- 휴지통 비우기 확인창 -->
+        <common-confirm
+          id="modalRecyclebin"
+          title="휴지통 비우기"
+          message= "휴지통을 비우시겠습니까?"
+          submitBtn="휴지통 비우기"
+          @ok="onRecyclebin()"
+        />
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -228,7 +203,7 @@ export default {
       const userExtId = sessionStorage.getItem('user_ext_id');
       let ids = this.selectedIds;
 
-      if (typeof this.removeRowId) {
+      if (this.removeRowId) {
         ids = [];
         ids.push(this.removeRowId);
         this.removeRowId = null;

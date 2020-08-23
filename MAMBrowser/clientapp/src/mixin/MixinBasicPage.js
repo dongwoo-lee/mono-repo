@@ -1,7 +1,6 @@
 import mixinValidate from './MixinValidate';
 import CInputText from '../components/Input/CInputText';
 import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
-import CInputDatePicker from '../components/Input/CInputDatePicker';
 import CDataTable from '../components/DataTable/CDataTable';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
 
@@ -10,7 +9,6 @@ let mixinBasicPage = {
     components: {
         CInputText,
         CDropdownMenuInput,
-        CInputDatePicker,
         CDataTable,
         CDataTableScrollPaging,
     },
@@ -95,12 +93,12 @@ let mixinBasicPage = {
         },
         getPageInfo() {
             const dataLength = this.responseData.data ? this.responseData.data.length : 0;
-            return `전체 ${this.responseData.totalRowCount}개 중 ${dataLength}개 표시`
+            return `${dataLength}개 / 전체 ${this.responseData.totalRowCount}개`
         },
-        getSelectedCount() {
-            if (!this.selectedIds || this.selectedIds.length === 0) return '';
-            return `${ this.selectedIds.length }개 선택되었습니다. |`;
-        },
+        // getSelectedCount() {
+        //     if (!this.selectedIds || this.selectedIds.length === 0) return '';
+        //     return `${ this.selectedIds.length }개 선택되었습니다. |`;
+        // },
         onSelectedIds(ids) {
             this.selectedIds = ids;
         },

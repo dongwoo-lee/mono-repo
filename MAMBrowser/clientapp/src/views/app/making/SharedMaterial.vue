@@ -34,14 +34,14 @@
                 <!-- 시작일 -->
                 <b-colxx sm="2">
                   <b-form-group label="시작일" class="has-float-label c-zindex">
-                      <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
+                      <common-date-picker v-model="$v.searchItems.start_dt.$model"/>
                       <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                   </b-form-group>
                 </b-colxx>
                 <!-- 종료일 -->
                 <b-colxx sm="2">
                   <b-form-group label="종료일" class="has-float-label c-zindex">
-                      <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
+                      <common-date-picker v-model="$v.searchItems.end_dt.$model"/>
                       <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
                   </b-form-group>
                 </b-colxx>
@@ -90,7 +90,7 @@
             <b-col cols="auto" class="pt-3">
               <div class="page-info-group">
                 <div class="page-info">
-                  {{ getSelectedCount() }} {{ getPageInfo() }}
+                  {{ getPageInfo() }}
                 </div>
                 <div class="page-size">
                   <b-form-select v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
@@ -139,7 +139,7 @@
       </b-card>
     </b-row>
     <!-- 삭제 모달 -->
-    <common-modal
+    <common-confirm
       id="modalRemove"
       title="영구삭제"
       message= "영구적으로 삭제하시겠습니까?"
