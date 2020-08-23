@@ -59,9 +59,27 @@ namespace MAMBrowser.DAL
             return -1;
         }
      
-        public int Delete(string updateQuery, object param)
+        public int Delete(string deleteQuery, object param)
         {
-            return 0;
+            using (OracleConnection con = new OracleConnection(_strCon))
+            {
+                con.Open();
+                using (var transaction = con.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = con.Execute(deleteQuery, param);
+                        transaction.Commit();
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+            return -1;
         }
         public T Get(string query, object param, Func<dynamic, T> resultMapping)
         {
