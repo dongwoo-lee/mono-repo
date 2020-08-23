@@ -90,13 +90,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta/{userextid}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData(long userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> FindData(long userextid, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                result.ResultObject = bll.FineData("Y", userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FineData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -124,7 +124,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                result.ResultObject = bll.FineData("N", userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FineData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -168,17 +168,17 @@ namespace MAMBrowser.Controllers
         /// My공간 - 휴지통으로 보내기(삭제)
         /// </summary>
         /// <param name="userextid"></param>
-        /// <param name="seq"></param>
+        /// <param name="seqlist"></param>
         /// <returns></returns>
 
-        [HttpDelete("meta/{userextid}/{seq}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeleteDB(long userextid, long seq)
+        [HttpDelete("meta/{userextid}/{seqlist}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeleteDB(long userextid, LongList seqlist)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.DeleteDB(userextid, seq))
+                if (bll.DeleteDB(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -195,16 +195,16 @@ namespace MAMBrowser.Controllers
         /// 휴지통 - 삭제 (물리적인 파일 포함 영구삭제)
         /// </summary>
         /// <param name="userextid"></param>
-        /// <param name="seq"></param>
+        /// <param name="seqlist"></param>
         /// <returns></returns>
-        [HttpDelete("recyclebin/{userextid}/{seq}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeletePhysical(long userextid, long seq)
+        [HttpDelete("recyclebin/{userextid}/{seqlist}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeletePhysical(long userextid, LongList seqlist)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.DeletePhysical(userextid, seq))
+                if (bll.DeletePhysical(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -250,25 +250,25 @@ namespace MAMBrowser.Controllers
         /// <param name="userextid"></param>
         /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}/single-recycle/{seq}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> Recycle(long userextid, long seq)
-        {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
-            try
-            {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.Recycle(userextid, seq))
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                else
-                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
-            return result;
-        }
+        //[HttpPut("recyclebin/{userextid}/single-recycle/{seq}")]
+        //public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> Recycle(long userextid, long seq)
+        //{
+        //    DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
+        //    try
+        //    {
+        //        PrivateFileBLL bll = new PrivateFileBLL();
+        //        if (bll.Recycle(userextid, seq))
+        //            result.ResultCode = RESUlT_CODES.SUCCESS;
+        //        else
+        //            result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.ErrorMsg = ex.Message;
+        //        MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+        //    }
+        //    return result;
+        //}
 
 
         /// <summary>
@@ -277,14 +277,14 @@ namespace MAMBrowser.Controllers
         /// <param name="userextid">My공간 사용자확장ID</param>
         /// <param name="seqlist">My공간 파일 고유키 목록</param>
         /// <returns></returns>
-        [HttpPut("recyclebin/{userextid}/multiple-recycle/{seqlist}")]
+        [HttpPut("recyclebin/{userextid}/recycle/{seqlist}")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> RecycleAll(long userextid, LongList seqlist)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
                 PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.RecycleAll(userextid, seqlist.ToArray()))
+                if (bll.RecycleAll(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

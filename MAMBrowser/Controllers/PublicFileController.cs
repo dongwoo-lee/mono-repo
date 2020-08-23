@@ -84,13 +84,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData([FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
                 PublicFileBLL bll = new PublicFileBLL();
-                result.ResultObject = bll.FineData(userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FineData(start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
