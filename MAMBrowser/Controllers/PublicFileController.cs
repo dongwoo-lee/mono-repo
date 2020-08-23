@@ -50,7 +50,7 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{seq}")]
-        public DTO_RESULT UpdateData(long seq, [FromForm] PublicFileModel metaData)
+        public DTO_RESULT UpdateData(long seq, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -60,6 +60,7 @@ namespace MAMBrowser.Controllers
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
+                else 
                 {
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
                 }

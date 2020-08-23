@@ -57,7 +57,7 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{userextid}")]
-        public DTO_RESULT UpdateData(long userextid, [FromForm] PrivateFileModel metaData)
+        public DTO_RESULT UpdateData(long userextid, [ModelBinder(BinderType = typeof(JsonModelBinder))] PrivateFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -67,7 +67,7 @@ namespace MAMBrowser.Controllers
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
-                {
+                else {
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
                 }
             }
