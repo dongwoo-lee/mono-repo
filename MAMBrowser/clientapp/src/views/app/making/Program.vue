@@ -1,50 +1,52 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="프로그램"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="프로그램" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
       <!-- 검색 -->
-      <b-card class="mb-4">
-        <b-form @submit.stop>
-          <b-row>
-            <!-- 매체 -->
-            <b-colxx sm="2">
-              <b-form-group label="매체" class="has-float-label">
-                <b-form-select 
-                  v-model="searchItems.media"
-                  :options="mediaOptions"
-                  value-field="id"
-                  text-field="name" 
-                />
-              </b-form-group>
-            </b-colxx>
-            <!-- 방송일 -->
-            <b-colxx sm="2">
-              <b-form-group label="방송일" class="has-float-label">
-                <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
-                <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-              </b-form-group>
-            </b-colxx>
-            <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-          </b-row>
-        </b-form>
-      </b-card>
-      <!-- 테이블 -->
-      <b-card class="mb-4">
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.media"
+            :options="mediaOptions"
+            value-field="id"
+            text-field="name" 
+          />
+        </b-form-group>
+        <!-- 방송일 -->
+       <b-form-group label="방송일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
+          <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 검색버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
         <c-data-table
           :fields="fields"
           :rows="responseData.data"
           :contextmenu="contextMenu"
           @contextMenuAction="onContextMenuAction"
         />
-      </b-card>
-    </b-colxx>
-  </b-row>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -57,14 +59,16 @@ export default {
     return {
       searchItems: {
         media: 'A',
-        brd_dt: '20200101',
+        brd_dt: '',
+        rowPerPage: 15,
       },      
       fields: [
         {
-          name: '__sequence',
+          name: 'rowNO',
           title: 'No',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: '4%',
         },
         {
           name: "mediaName",
@@ -101,21 +105,21 @@ export default {
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '6%',
+          width: '8%',
         },
         {
           name: "duration",
           title: "길이",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '7%',
+          width: '8%',
         },
         {
           name: "track",
           title: "트랙",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '4%',
+          width: '8%',
         },
         {
           name: "editorName",
@@ -129,25 +133,14 @@ export default {
           title: "편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%'
+          width: '12%'
         },
         {
           name: "reqCompleteDtm",
           title: "방송의뢰일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '9%',
-        },
-        {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center word-break",
-          width: '10%',
-          callback: (v) => {
-            return v.substring(1, v.length).replace(/\\/g, '/');
-            // return v.replace(/\\\\/g, '/');
-          }
+          width: '15%',
         },
       ],
       contextMenu: [

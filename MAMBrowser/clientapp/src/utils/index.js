@@ -1,7 +1,5 @@
 import { defaultDirection } from '../constants/config'
 
-
-
 export const mapOrder = (array, order, key) => {
   array.sort(function (a, b) {
     var A = a[key]

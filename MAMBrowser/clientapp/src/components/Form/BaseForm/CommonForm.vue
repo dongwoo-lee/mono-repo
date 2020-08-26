@@ -1,7 +1,7 @@
 <template>
   <div class="common-form">
     <b-row style="marin-top:-10px;">
-      <b-card>
+      <b-card class="w-100">
         <!-- 검색 영역 -->
         <b-container fluid>
           <div class="search-form-area">
@@ -18,7 +18,7 @@
           <!-- 버튼 모음 -->
           <b-row align-v="center">
             <b-col cols="auto" class="mr-auto pt-3 form-btn">
-                <b-form class="mb-1" inline :isDisplayBtnArea="isDisplayBtnArea">
+                <b-form class="mb-1" inline :isDisplayBtnArea="isDisplayBtnArea" @submit.stop>
                     <slot name="form-btn-area"></slot>
                 </b-form>
             </b-col>

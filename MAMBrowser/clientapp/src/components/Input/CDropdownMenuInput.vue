@@ -5,6 +5,7 @@
         :suggestions="filteredOptions"
         :render-suggestion="renderSuggestion"
         :get-suggestion-value="getSuggestionValue"
+        @click="onClick"
         @selected="onSelected"
         @input="onAutoSuggestInputChange"
     ></vue-autosuggest>
@@ -24,9 +25,15 @@ export default {
         }
     },
     methods: {
+        onClick() {
+            if (this.filteredOptions.length > 0) return;
+            this.getfilteredData();
+        },
         onAutoSuggestInputChange(text, oldText) {
             if (text == null) return;
-            
+            this.getfilteredData(text, oldText);
+        },
+        getfilteredData(text = '', oldText = '') {
             const filteredData = this.suggestions.filter(option => {
                 return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
             });

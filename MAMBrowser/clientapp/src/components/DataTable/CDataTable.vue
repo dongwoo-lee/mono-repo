@@ -2,6 +2,7 @@
     <div>
         <vuetable
             ref="vuetable"
+            class="scrolltable order-with-arrow"
             :api-mode="false"
             :fields="fields"
             :data="rows"
@@ -30,6 +31,10 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 export default {
     components: { Vuetable },
     props: {
+        classString: {
+            type: String,
+            default: '',
+        },
         fields: {               // header 데이터
             type: Array,
             default: () => [],

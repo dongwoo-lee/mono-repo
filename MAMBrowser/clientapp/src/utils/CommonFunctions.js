@@ -116,20 +116,6 @@ const fileDownload = (res, fileNm = '') => {
     }
 }
 
-const getDirection = () => {
-    let direction = defaultDirection
-    if (localStorage.getItem('direction')) {
-      const localValue = localStorage.getItem('direction')
-      if (localValue === 'rtl' || localValue === 'ltr') {
-        direction = localValue
-      }
-    }
-    return {
-      direction,
-      isRtl: direction === 'rtl'
-    }
-}
-
 const formatBytes = (bytes, decimals = 2) => {
     if (bytes === 0) return '0 Bytes';
 
@@ -148,7 +134,6 @@ const commonFunctions = {
     notify,
     fileDownload,
     changeSortValue,
-    getDirection,
     formatBytes
 }
 

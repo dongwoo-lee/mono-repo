@@ -1,75 +1,66 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="부조 SPOT"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="부조 SPOT" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
       <!-- 검색 -->
-      <b-card class="mb-4">
-        <b-form @submit.stop>
-          <b-row>
-            <!-- 매체 -->
-            <b-colxx sm="2">
-              <b-form-group label="매체" class="has-float-label">
-                <b-form-select 
-                  v-model="searchItems.media"
-                  :options="mediaOptions"
-                  value-field="id"
-                  text-field="name"
-                />
-              </b-form-group>
-            </b-colxx>
-            <!-- 시작일-종료일 -->
-            <b-colxx sm="2">
-              <b-form-group label="시작일" class="has-float-label c-zindex">
-                  <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
-                  <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-              </b-form-group>
-            </b-colxx>
-            <b-colxx sm="2">
-              <b-form-group label="종료일" class="has-float-label c-zindex">
-                  <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
-                  <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-              </b-form-group>
-            </b-colxx>
-            <!-- 제작자 -->
-            <b-colxx sm="2">
-              <b-form-group label="제작자" class="has-float-label">
-                <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
-              </b-form-group>
-            </b-colxx>
-            <!-- 소재명 -->
-            <b-colxx sm="2">
-              <b-form-group label="소재명" class="has-float-label">
-                <c-input-text v-model="searchItems.name"/>
-              </b-form-group>
-            </b-colxx>
-            <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-          </b-row>
-        </b-form>
-      </b-card>
-
-      <!-- 테이블 -->
-      <b-card class="mb-4">
+      <template slot="form-search-area">
+        <!-- 등록일: 시작일 -->
+        <b-form-group label="시작일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.start_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+      <!-- 등록일: 종료일 -->
+        <b-form-group label="종료일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.end_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+      <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+        </b-form-group>
+      <!-- 소재명 -->
+        <b-form-group label="소재명" class="has-float-label">
+          <c-input-text v-model="searchItems.name"/>
+        </b-form-group>
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
         <c-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :num-rows-to-bottom="numRowsToBottom"
-          :contextmenu="contextMenu"
+          :is-actions-slot="true"
+          :num-rows-to-bottom="5"
           @scrollPerPage="onScrollPerPage"
-          @contextMenuAction="onContextMenuAction"
+          @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
-        />
-      </b-card>
-    </b-colxx>
-  </b-row>
+          @refresh="onRefresh"
+        >
+        </c-data-table-scroll-paging>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -81,13 +72,13 @@ export default {
   data() {
     return {
       searchItems: {
-        start_dt: '20200101',       // 시작일
+        start_dt: '',       // 시작일
         end_dt: '',                 // 종료일
         editor: '',                 // 제작자ID
         editorName: '',             // 제작자이름
         name: '',                   // 소재명
         media: 'A',
-        rowPerPage: 16,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: 'DESC',
