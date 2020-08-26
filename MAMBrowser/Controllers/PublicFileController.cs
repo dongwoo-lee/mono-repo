@@ -46,7 +46,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         ///  공유소재 -  메타데이터 편집
         /// </summary>
-        /// <param name="userextid">유저확장ID</param>
+        /// <param name="seq"></param>
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{seq}")]

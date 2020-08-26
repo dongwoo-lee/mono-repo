@@ -23,7 +23,9 @@ namespace MAMBrowser.Helpers
 
                 // Attempt to convert the input value
                 var valueAsString = valueProviderResult.FirstValue;
-                var result = Newtonsoft.Json.JsonConvert.DeserializeObject(valueAsString, bindingContext.ModelType);
+                //var result = Newtonsoft.Json.JsonConvert.DeserializeObject(valueAsString, bindingContext.ModelType);
+                var result = System.Text.Json.JsonSerializer.Deserialize(valueAsString, bindingContext.ModelType);
+                
                 if (result != null)
                 {
                     bindingContext.Result = ModelBindingResult.Success(result);

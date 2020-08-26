@@ -11,7 +11,7 @@ namespace MAMBrowser.DTO
         public long Seq { get; set; }
         public string MediaCD { get; set; }
         public string MediaName { get; set; }
-        public string CatetoryCD { get; set; }
+        public string CategoryCD { get; set; }
         public string CatetoryName { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }

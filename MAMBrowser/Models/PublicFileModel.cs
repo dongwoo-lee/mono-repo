@@ -17,7 +17,7 @@ namespace MAMBrowser.Models
         public string TITLE { get; set; }
         [JsonPropertyName("mediaCD")]
         public string MEDIA_CD { get; set; }
-        [JsonPropertyName("catetoryID")]
+        [JsonPropertyName("categoryCD")]
         public string CATE_CD { get; set; }
         [JsonPropertyName("memo")]
         public string MEMO { get; set; }
