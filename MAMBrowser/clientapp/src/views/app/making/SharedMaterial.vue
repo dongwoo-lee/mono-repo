@@ -205,7 +205,7 @@ export default {
           width: "5%"
         },
         {
-          name: "catetoryName",
+          name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",

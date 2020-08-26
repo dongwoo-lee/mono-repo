@@ -33,12 +33,12 @@
             </b-form-group>
             <b-form-group label="분류" label-for="input-title">
                 <b-form-select 
-                    v-model="$v.catetoryCD.$model"
+                    v-model="$v.categoryCD.$model"
                     :options="primaryCodeOptions"
                     value-field="id"
                     text-field="name" 
                 />
-            <b-form-invalid-feedback :state="!$v.catetoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-invalid-feedback :state="!$v.categoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
             </b-form-group>
         </template>
         <b-form-group label="내용" label-for="input-memo">
@@ -77,7 +77,7 @@ export default {
             primaryOptions: [],                        // 공유매체 목록
             mediaCD: 'A',                               // 매체
             primaryCodeOptions: [],                       // 공유소재 분류 목록
-            catetoryCD: '',                                // 분류
+            categoryCD: '',                                // 분류
         }
     },
     computed: {
@@ -118,7 +118,7 @@ export default {
                         title: this.title,
                         memo: this.memo,
                         mediaCD: this.mediaCD,
-                        catetoryCD: this.catetoryCD,
+                        categoryCD: this.categoryCD,
                     }
                 }
             }

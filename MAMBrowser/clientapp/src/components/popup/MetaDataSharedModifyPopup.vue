@@ -26,12 +26,12 @@
         </b-form-group>
         <b-form-group label="분류" label-for="input-title">
             <b-form-select 
-                v-model="$v.metaData.catetoryCD.$model"
+                v-model="$v.metaData.categoryCD.$model"
                 :options="primaryCodeOptions"
                 value-field="id"
                 text-field="name" 
             />
-            <b-form-invalid-feedback :state="!$v.metaData.catetoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-invalid-feedback :state="!$v.metaData.categoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <b-form-group label="내용" label-for="input-memo">
             <b-form-textarea
@@ -99,7 +99,7 @@ export default {
                 title: '',
                 memo: '',
                 mediaCD: 'A',                     // 매체
-                catetoryCD: '',                         // 분류
+                categoryCD: '',                         // 분류
             },
             primaryOptions: [],                   // 공유매체 목록
             primaryCodeOptions: [],               // 공유소재 분류 목록
@@ -124,7 +124,7 @@ export default {
             if (!this.$v.metaData.title.$invalid 
                 || !this.$v.metaData.memo.$invalid
                 || !this.$v.metaData.mediaCD.$invalid
-                || !this.$v.metaData.catetoryCD.$invalid
+                || !this.$v.metaData.categoryCD.$invalid
             ) {
                 this.$fn.notify('inputError', {});
                 return;
@@ -153,12 +153,12 @@ export default {
                     }
                 })
         },
-        setData({ seq, title, memo, mediaCD, catetoryCD }) {
+        setData({ seq, title, memo, mediaCD, categoryCD }) {
             this.metaData.seq = seq;
             this.metaData.title = title;
             this.metaData.memo = memo;
             this.metaData.mediaCD = mediaCD;
-            this.metaData.catetoryCD = catetoryCD;
+            this.metaData.categoryCD = categoryCD;
             this.getPrimaryOptions();
             this.getPrimaryCodeOptions();
         },
@@ -167,7 +167,7 @@ export default {
                 title: '',
                 memo: '',
                 mediaCD: 'A',
-                catetoryCD: '',    
+                categoryCD: '',    
             };
         },
         close() {

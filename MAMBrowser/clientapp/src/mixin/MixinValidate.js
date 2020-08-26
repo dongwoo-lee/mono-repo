@@ -26,7 +26,7 @@ let mixinValidate = {
           mediaCD: {
             required: commonValidate.required,
           },
-          catetoryCD: {
+          categoryCD: {
             required: commonValidate.required,
           }
         },
@@ -42,7 +42,7 @@ let mixinValidate = {
         mediaCD: {
           required: commonValidate.required,
         },
-        catetoryCD: {
+        categoryCD: {
           required: commonValidate.required,
         }
     }

@@ -71,27 +71,31 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <b-colxx>
-              <b-button class="icon-buton" title="미리듣기">
-                <b-icon icon="caret-right-square" class="icon"></b-icon>
-              </b-button>
-              <b-button :id="`download-${props.props.rowIndex}`" class="icon-buton">
-                <b-icon icon="download" class="icon"></b-icon>
-              </b-button>
-              <b-tooltip 
-                :target="`download-${props.props.rowIndex}`"
-                placement="top"
-                :offset="-20"
-                >
-                {{props.props.rowData.filePath}}
-              </b-tooltip>
-              <b-button class="icon-buton" title="휴지통" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
-                <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
-              </b-button>
-              <b-button class="icon-buton" title="정보편집" @click.stop="onMetaModifyPopup(props.props.rowData)">
-                <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
-              </b-button>
-            </b-colxx>
+            <b-button 
+              v-b-tooltip.hover.top="{ 
+                title: 'tooltip!!!',
+              }"
+              :offsetX="5"
+              class="icon-buton">
+              <b-icon icon="caret-right-square" class="icon"></b-icon>
+            </b-button>
+            <b-button :id="`download-${props.props.rowIndex}`" class="icon-buton"
+              @click.stop="onDownload(props.props.rowData.seq)">
+              <b-icon icon="download" class="icon"></b-icon>
+            </b-button>
+            <b-tooltip
+              :target="`download-${props.props.rowIndex}`"
+              placement="top"
+              :offsetY="30">
+              <!-- {{props.props.rowData.filePath}} -->
+              {{'download-' + props.props.rowIndex}}
+            </b-tooltip>
+            <b-button class="icon-buton" title="휴지통" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
+              <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
+            </b-button>
+            <b-button class="icon-buton" title="정보편집" @click.stop="onMetaModifyPopup(props.props.rowData)">
+              <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
+            </b-button>
           </template>
         </c-data-table-scroll-paging>
       </template>
@@ -195,7 +199,7 @@ export default {
           width: "10%"
         }
       ],
-      removeRowId: null,
+      singleSelectedId: null,
     }
   },
   methods: {
@@ -214,10 +218,12 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
+    // 선택항목 다운로드
     onSelectedDownload() {
       if (this.isNoSelected()) return;
       this.onDownload();
     },
+    // 단일 다운로드
     onDownload(seq) {
       let ids = this.selectedIds;
 
@@ -226,12 +232,11 @@ export default {
         ids.push(seq);
       }
 
-      console.info('download', ids);
       this.download({ids: ids, type: 'private'});
     },
-    // 휴지통 보내기 확인창
+    // 단일 휴지통 보내기 확인창
     onDeleteConfirm(id) {
-      this.removeRowId = id;
+      this.singleSelectedId = id;
       this.$bvModal.show('modalRemove');
     },
     // 선택항목 휴지통 보내기 확인창 
@@ -244,23 +249,21 @@ export default {
       const userExtId = sessionStorage.getItem('user_ext_id');
       let ids = this.selectedIds;
 
-      if (typeof this.removeRowId) {
+      if (this.singleSelectedId !== null) {
         ids = [];
-        ids.push(this.removeRowId);
-        this.removeRowId = null;
+        ids.push(this.singleSelectedId);
+        this.singleSelectedId = null;
       }
-
-      ids.forEach(seq => {
-        this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${seq}`)
-          .then(res => {
-            if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('success', { message: '휴지통 이동 성공' })
-              this.$bvModal.hide('modalRemove');
-              this.getData();
-            } else {
-              this.$fn.notify('error', { message: '휴지통 이동 실패: ' + res.data.errorMsg })
-            }
-        });  
+      
+      this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${ids}`)
+        .then(res => {
+          if (res.status === 200 && !res.data.errorMsg) {
+            this.$fn.notify('success', { message: '휴지통 이동 성공' })
+            this.$bvModal.hide('modalRemove');
+            this.getData();
+          } else {
+            this.$fn.notify('error', { message: '휴지통 이동 실패: ' + res.data.errorMsg })
+          }
       });
     },
     onMetaModifyPopup(rowData) {

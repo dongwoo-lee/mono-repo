@@ -85,14 +85,6 @@
           submitBtn="복원"
           @ok="onRecycle()"
         />
-        <!-- 선택항목 복원 확인창 -->
-        <common-confirm
-          id="modalMultiRecycle"
-          title="선택 항목 복원"
-          message= "선택 항목들을 복원하시겠습니까?"
-          submitBtn="선택 항목 복원"
-          @ok="onMultipleRecycle()"
-        />
         <!-- 휴지통 비우기 확인창 -->
         <common-confirm
           id="modalRecyclebin"
@@ -124,7 +116,7 @@ export default {
         sortKey: '',
         sortValue: '',
       },
-      removeRowId: null,
+      singleSelectedId: null,
       recycleId: null,
       fields: [
         {
@@ -188,41 +180,39 @@ export default {
             this.setResponseData(res);
       });
     },
-    // 휴지통 비우기(물리적인 파일 포함 영구 삭제) 확인창
+    // 단일 영구 삭제 확인창
     onDeleteConfirm(id) {
-      this.removeRowId = id;
+      this.singleSelectedId = id;
       this.$bvModal.show('modalRemove');
     },
-    // 선택항목 비우기(물리적인 파일 포함 영구 삭제) 확인창
+    // 선택항목 영구 삭제 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
       this.$bvModal.show('modalRemove');
     },
-    // 삭제하기(물리적인 파일 포함 영구 삭제)
+    // 영구 삭제
     onDelete() {
       const userExtId = sessionStorage.getItem('user_ext_id');
       let ids = this.selectedIds;
 
-      if (this.removeRowId) {
+      if (this.singleSelectedId) {
         ids = [];
-        ids.push(this.removeRowId);
-        this.removeRowId = null;
+        ids.push(this.singleSelectedId);
+        this.singleSelectedId = null;
       }
 
-      ids.forEach(seq => {
-        this.$http.delete(`/api/products/workspace/private/recyclebin/${userExtId}/${seq}`)
-          .then(res => {
-            if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('success', { message: '영구 삭제가 되었습니다.' })
-              this.$bvModal.hide('modalRemove');
-              this.getData();
-            } else {
-              this.$fn.notify('error', { message: '삭제 실패: ' + res.data.errorMsg })
-            }
-        });  
+      this.$http.delete(`/api/products/workspace/private/recyclebin/${userExtId}/${ids}`)
+        .then(res => {
+          if (res.status === 200 && !res.data.errorMsg) {
+            this.$fn.notify('success', { message: '영구 삭제가 되었습니다.' })
+            this.$bvModal.hide('modalRemove');
+            this.getData();
+          } else {
+            this.$fn.notify('error', { message: '삭제 실패: ' + res.data.errorMsg })
+          }
       });
     },
-    // 복원 확인창
+    // 단일 복원 확인창
     onRecycleConfirm(id) {
       this.recycleId = id;
       this.$bvModal.show('modalRecycle');
@@ -230,31 +220,24 @@ export default {
     // 선택항목 복원 확인창
     onMultiRecycleConfirm() {
       if (this.isNoSelected()) return;  
-      this.$bvModal.show('modalMultiRecycle');
+      this.$bvModal.show('modalRecycle');
     },
     // 복원하기
     onRecycle() {
       const userExtId = sessionStorage.getItem('user_ext_id');
-      this.$http.put(`/api/products/workspace/private/recyclebin/${userExtId}/single-recycle/${this.recycleId}`)
+      let ids = this.selectedIds;
+
+      if (this.singleSelectedId) {
+        ids = [];
+        ids.push(this.singleSelectedId);
+        this.singleSelectedId = null;
+      }
+
+      this.$http.put(`/api/products/workspace/private/recyclebin/${userExtId}/recycle/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '복원 성공' })
             this.$bvModal.hide('modalRecycle');
-            this.getData();
-          } else {
-            this.$fn.notify('error', { message: '복원 실패: ' + res.data.errorMsg })
-          }
-          this.recycleId = null;
-      });
-    },
-    // 선택항목 복원하기
-    onMultipleRecycle() {
-      const userExtId = sessionStorage.getItem('user_ext_id');
-      this.$http.put(`/api/products/workspace/private/recyclebin/${userExtId}/multiple-recycle/${this.selectedIds}`)
-        .then(res => {
-          if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify('success', { message: '복원 성공' })
-            this.$bvModal.hide('modalMultiRecycle');
             this.getData();
           } else {
             this.$fn.notify('error', { message: '복원 실패: ' + res.data.errorMsg })
