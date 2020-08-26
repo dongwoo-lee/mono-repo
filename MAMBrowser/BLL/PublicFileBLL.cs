@@ -50,7 +50,7 @@ namespace MAMBrowser.Controllers
 
 
                     var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PUBLIC_SPACE 
-VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
+VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
                     Repository<PublicFileModel> repository = new Repository<PublicFileModel>();
                     repository.Insert(queryTemplate.RawSql, param);
 
