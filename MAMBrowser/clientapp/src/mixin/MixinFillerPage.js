@@ -1,15 +1,9 @@
 import mixinValidate from './MixinValidate';
-import CInputText from '../components/Input/CInputText';
-import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
-import CInputDatePicker from '../components/Input/CInputDatePicker';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
 
 let mixinFillerPage = {
     mixins: [ mixinValidate ],
     components: {
-        CInputText,
-        CDropdownMenuInput,
-        CInputDatePicker,
         CDataTableScrollPaging,
     },
     data() {
@@ -71,6 +65,16 @@ let mixinFillerPage = {
         onSortable(sortKey) {
             this.searchItems.sortKey = sortKey;
             this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
+            this.getData();
+        },
+        getPageInfo() {
+            const dataLength = this.responseData.data ? this.responseData.data.length : 0;
+            return `${dataLength}개 / 전체 ${this.responseData.totalRowCount}개`
+        },
+        onChangeRowPerpage(value) {
+            this.$refs.scrollPaging.init();
+            this.searchItems.selectPage = 1;
+            this.searchItems.rowPerPage = value;
             this.getData();
         },
         // 카테고리 API 요청

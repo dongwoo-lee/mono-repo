@@ -1,70 +1,70 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="(구)프로소재"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4">
-          <b-form @submit.stop>
-            <b-row>
-              <!-- 매체 -->
-              <b-colxx sm="2">
-                <b-form-group label="매체" class="has-float-label">
-                  <b-form-select 
-                  v-model="searchItems.media"
-                  :options="mediaPrimaryOptions"
-                  value-field="id"
-                  text-field="name" 
-                />
-                </b-form-group>
-              </b-colxx>
-              <!-- 구분 -->
-              <b-colxx sm="2">
-                <b-form-group label="구분" class="has-float-label">
-                  <b-form-select 
-                    v-model="searchItems.type"
-                    :options="[{ value: '', text: '선택해주세요.' }, { value: 'Y', text: '방송중' }, { value: 'N', text: '폐지' }]"
-                  />
-                </b-form-group>
-              </b-colxx>
-              <!-- 제작자 -->
-              <b-colxx sm="2">
-                <b-form-group label="제작자" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
-                </b-form-group>
-              </b-colxx>
-              <!-- 소재명 -->
-              <b-colxx sm="2">
-                <b-form-group label="소재명" class="has-float-label">
-                  <c-input-text v-model="searchItems.name"/>
-                </b-form-group>
-              </b-colxx>
-              <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-            </b-row>
-          </b-form>
-        </b-card>
-
-        <!-- 테이블 -->
-        <b-card class="mb-4">
-          <c-data-table-scroll-paging
-            ref="scrollPaging"
-            :table-height="'500px'"
-            :fields="fields"
-            :rows="responseData.data"
-            :per-page="responseData.rowPerPage"
-            :num-rows-to-bottom="numRowsToBottom"
-            :contextmenu="contextMenu"
-            @scrollPerPage="onScrollPerPage"
-            @contextMenuAction="onContextMenuAction"
-            @sortableclick="onSortable"
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="(구)프로소재" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+          class="width-100"
+          v-model="searchItems.media"
+          :options="mediaPrimaryOptions"
+          value-field="id"
+          text-field="name" 
+        />
+        </b-form-group>
+        <!-- 구분 -->
+        <b-form-group label="구분" class="has-float-label">
+          <b-form-select
+            class="width-140"
+            v-model="searchItems.type"
+            :options="[{ value: '', text: '선택해주세요.' }, { value: 'Y', text: '방송중' }, { value: 'N', text: '폐지' }]"
           />
-        </b-card>
-    </b-colxx>
-  </b-row>
+        </b-form-group>
+        <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+        </b-form-group>
+        <!-- 소재명 -->
+         <b-form-group label="소재명" class="has-float-label">
+            <common-input-text v-model="searchItems.name"/>
+          </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
+        <c-data-table-scroll-paging
+          ref="scrollPaging"
+          :table-height="'500px'"
+          :fields="fields"
+          :rows="responseData.data"
+          :per-page="responseData.rowPerPage"
+          :is-actions-slot="true"
+          :num-rows-to-bottom="5"
+          @scrollPerPage="onScrollPerPage"
+          @sortableclick="onSortable"
+          @refresh="onRefresh"
+        >
+        </c-data-table-scroll-paging>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -81,7 +81,7 @@ export default {
         type: '',              // 타입
         editor: '',            // 제작자
         name: '',              // 소재명
-        rowPerPage: 16,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: '',
@@ -99,21 +99,19 @@ export default {
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%"
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%"
         },
         {
           name: "duration",
           title: "길이",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '5%',
+          width: '6%',
           callback: (v) => {
             return this.$fn.splitFirst(v);
           }
@@ -130,32 +128,28 @@ export default {
           title: "제작자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: '8%',
         },
         {
           name: "editDtm",
           title: "편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: '12%',
         },
         {
           name: "masteringDtm",
           title: "마스터링 일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '9%',
+          width: '12%',
         },
         {
           name: "proType",
           title: "타입",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-        },
-        {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: 'center aligned text-center',
-          dataClass: "center aligned text-center word-break",
-          width: "17%"
+          width: '8%',
         },
       ]
     }

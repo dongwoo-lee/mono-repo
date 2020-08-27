@@ -229,9 +229,37 @@
             font-size: 0.74rem;
             line-height: 1.3;
         }
+        
+        div.width-110 {
+            width: 110px;
+        }
+
+        div.width-120 {
+            width: 120px;
+        }
+
+        div.width-180 {
+            width: 180px;
+        }
+
+        div.width-220 {
+            width: 220px;
+        }
+
+        select.width-100 {
+            width: 100px;
+        }
 
         select.width-120 {
             width: 120px;
+        }
+
+        select.width-140 {
+            width: 140px;
+        }
+
+        select.width-220 {
+            width: 220px;
         }
     }
     
@@ -290,6 +318,10 @@
     }
 }
 
+.table th {
+    padding-top: 0.6em;
+    padding-bottom: 0.6em;
+}
 // .tooltip { top: 0; }
 
 // .common-table-tooltip {

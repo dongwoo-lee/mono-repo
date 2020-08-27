@@ -1,10 +1,7 @@
 import mixinValidate from './MixinValidate';
-import CInputDatePicker from '../components/Input/CInputDatePicker';
-import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
 
 let mixinTablePage = {
     mixins: [ mixinValidate ],
-    components: { CInputDatePicker, CDropdownMenuInput },
     data() {
         return {
             responseData: {
@@ -40,7 +37,7 @@ let mixinTablePage = {
     },
     mounted() {
         this.$nextTick(() => {
-          if (!this.type) {
+          if (!this.screenName) {
               // 광고 목록 조회
             this.getCmOptions();
           }
@@ -62,8 +59,8 @@ let mixinTablePage = {
             const media = this.searchItems.media;
             const brd_dt = this.searchItems.brd_dt;
 
-            let subUrl = `sb/${this.type}/${media}/${brd_dt}`;
-            if (!this.type) {
+            let subUrl = `sb/${this.screenName}/${media}/${brd_dt}`;
+            if (!this.screenName) {
                 subUrl = `cm/${media}/${brd_dt}`;
             }
             ///api/Products/cm/{media}/{brd_dt}

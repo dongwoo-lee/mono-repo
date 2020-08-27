@@ -1,110 +1,81 @@
 <template>
   <div>
-    <!-- nav -->
     <b-row>
       <b-colxx xxs="12">
         <piaf-breadcrumb heading="공유소재" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
-    <b-row style="marin-top:-10px;">
-      <b-card>
-        <!-- 검색 영역 -->
-        <b-container fluid>
-          <div class="search-form-area">
-            <b-form class="search-form" @submit.stop>
-              <b-row>
-                <!-- 매체 -->
-                <b-colxx sm="2">
-                  <b-form-group label="매체" class="has-float-label">
-                    <b-form-select 
-                    v-model="searchItems.media"
-                    :options="mediaPrimaryOptions"
-                    value-field="id"
-                    text-field="name" 
-                  />
-                  </b-form-group>
-                </b-colxx>
-                <!-- 분류 -->
-                <b-colxx sm="2">
-                  <b-form-group label="분류" class="has-float-label">
-                    <c-dropdown-menu-input :suggestions="publicOptions" @selected="onPublicSelected" />
-                  </b-form-group>
-                </b-colxx>
-                <!-- 시작일 -->
-                <b-colxx sm="2">
-                  <b-form-group label="시작일" class="has-float-label c-zindex">
-                      <common-date-picker v-model="$v.searchItems.start_dt.$model"/>
-                      <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-colxx>
-                <!-- 종료일 -->
-                <b-colxx sm="2">
-                  <b-form-group label="종료일" class="has-float-label c-zindex">
-                      <common-date-picker v-model="$v.searchItems.end_dt.$model"/>
-                      <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-colxx>
-                <!-- 제작자 -->
-                <b-colxx sm="2">
-                  <b-form-group label="제작자" class="has-float-label">
-                    <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
-                  </b-form-group>
-                </b-colxx>
-                <!-- 제목 -->
-                <b-colxx sm="2">
-                  <b-form-group label="제목" class="has-float-label">
-                    <c-input-text v-model="searchItems.title"/>
-                  </b-form-group>
-                </b-colxx>
-                <!-- 메모 -->
-                <b-colxx sm="2">
-                  <b-form-group label="메모" class="has-float-label">
-                    <c-input-text v-model="searchItems.memo"/>
-                  </b-form-group>
-                </b-colxx>
-                <b-colxx sm="2">
-                  <b-button class="mb-1" variant="outline-primary default" size="sm" @click="getData">검색</b-button>
-                </b-colxx>
-              </b-row>
-            </b-form>
-          </div>
-        </b-container>
-
-        <!-- 버튼 | 페이지 정보 영역 -->
-        <b-container fluid class="text-center mb-1">
-          <b-row align-v="center">
-            <b-col cols="auto" class="mr-auto pt-3">
-              <b-form class="mb-1" inline>
-                <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
-                </b-input-group>
-                <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
-                </b-input-group>
-                <b-input-group class="mr-2">
-                  <b-button class="mb-1" variant="outline-danger default" size="sm">선택 항목 삭제</b-button>
-                </b-input-group>
-               </b-form>
-            </b-col>
-            <b-col cols="auto" class="pt-3">
-              <div class="page-info-group">
-                <div class="page-info">
-                  {{ getPageInfo() }}
-                </div>
-                <div class="page-size">
-                  <b-form-select v-model="searchItems.rowPerPage" @change="onChangeRowPerpage">
-                    <b-form-select-option value="15">15개</b-form-select-option>
-                    <b-form-select-option value="30">30개</b-form-select-option>
-                    <b-form-select-option value="50">50개</b-form-select-option>
-                    <b-form-select-option value="100">100개</b-form-select-option>
-                  </b-form-select>
-                </div>
-              </div>
-            </b-col>
-          </b-row>
-        </b-container>
-        <!-- 테이블 영역 -->
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+          class="width-100"
+          v-model="searchItems.media"
+          :options="mediaPrimaryOptions"
+          value-field="id"
+          text-field="name" 
+        />
+        </b-form-group>
+        <!-- 분류 -->
+        <b-form-group label="분류" class="has-float-label">
+          <common-dropdown-menu-input classString="width-110" :suggestions="publicOptions" @selected="onPublicSelected" />
+        </b-form-group>
+        <!-- 시작일 -->
+        <b-form-group label="시작일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.start_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 종료일 -->
+        <b-form-group label="종료일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.end_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+        </b-form-group>
+        <!-- 제목 -->
+        <b-form-group label="제목" class="has-float-label">
+          <common-input-text v-model="searchItems.title"/>
+        </b-form-group>
+        <!-- 메모 -->
+        <b-form-group label="메모" class="has-float-label">
+          <common-input-text v-model="searchItems.memo"/>
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 버튼 -->
+      <template slot="form-btn-area">
+        <b-input-group>
+          <b-button variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
+        </b-input-group>
+        <b-input-group>
+          <b-button variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
+        </b-input-group>
+        <b-input-group>
+          <b-button variant="outline-danger default" size="sm" @click="onMultiDeleteConfirm">선택 항목 삭제</b-button>
+        </b-input-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
         <c-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
@@ -136,23 +107,26 @@
             </b-row>
           </template>
         </c-data-table-scroll-paging>
-      </b-card>
-    </b-row>
-    <!-- 삭제 모달 -->
-    <common-confirm
-      id="modalRemove"
-      title="영구삭제"
-      message= "영구적으로 삭제하시겠습니까?"
-      submitBtn="영구삭제"
-      @ok="onDelete()"
-    />
-     <!-- 공유소재 메타데이터 수정 팝업 -->
-    <meta-data-shared-modify-popup
-      ref="refMetaDataModifyPopup"
-      :show="metaDataModifyPopup"
-      @editSuccess="onEditSuccess"
-      @close="metaDataModifyPopup = false">
-    </meta-data-shared-modify-popup>
+      </template>
+      <!-- 알림 -->
+      <template slot="form-confirm-area">
+        <!-- 삭제 모달 -->
+        <common-confirm
+          id="modalRemove"
+          title="영구삭제"
+          message= "영구적으로 삭제하시겠습니까?"
+          submitBtn="영구삭제"
+          @ok="onDelete()"
+        />
+        <!-- 공유소재 메타데이터 수정 팝업 -->
+        <meta-data-shared-modify-popup
+          ref="refMetaDataModifyPopup"
+          :show="metaDataModifyPopup"
+          @editSuccess="onEditSuccess"
+          @close="metaDataModifyPopup = false">
+        </meta-data-shared-modify-popup>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -182,7 +156,7 @@ export default {
         sortValue: '',
       },
       metaDataModifyPopup: false,
-      removeRowId: null,
+      singleSelectedId: null,
       fields: [
         {
           name: "__checkbox",
@@ -290,28 +264,35 @@ export default {
 
       this.download({ids: ids, type: 'public'});
     },
+    // 단일 영구 삭제 확인창 
     onDeleteConfirm(id) {
-      this.removeRowId = id;
+      this.singleSelectedId = id;
       this.$bvModal.show('modalRemove');
     },
+    // 선택항목 영구 삭제 확인창 
+    onMultiDeleteConfirm() {
+      if (this.isNoSelected()) return;
+      this.$bvModal.show('modalRemove');
+    },
+    // 영구 삭제
     onDelete() {
       let ids = this.selectedIds;
 
-      if (typeof this.removeRowId) {
+      if (this.singleSelectedId !== null) {
         ids = [];
-        ids.push(this.removeRowId);
-        this.removeRowId = null;
+        ids.push(this.singleSelectedId);
+        this.singleSelectedId = null;
       }
 
       ids.forEach(seq => {
         this.$http.delete(`/api/products/workspace/public/meta/${seq}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('success', { message: '휴지통 이동 성공' })
+              this.$fn.notify('success', { message: '삭제하였습니다.' })
               this.$bvModal.hide('modalRemove');
               this.getData();
             } else {
-              this.$fn.notify('error', { message: '휴지통 이동 실패' })
+              this.$fn.notify('error', { message: '삭제 실패하였습니다.' })
             }
         });  
       });
@@ -322,6 +303,9 @@ export default {
     },
     onEditSuccess() {
       this.getData();
+    },
+    isNoSelected() {
+      return !this.selectedIds || this.selectedIds.length === 0;
     }
   }
 }

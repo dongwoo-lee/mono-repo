@@ -1,6 +1,7 @@
 <template>
     <vue-autosuggest
         class="autosuggest"
+        :class="classString"
         :input-props="{id:'autosuggest__input', class:'form-control', placeholder: '선택해주세요.'}"
         :suggestions="filteredOptions"
         :render-suggestion="renderSuggestion"
@@ -16,8 +17,14 @@ import { VueAutosuggest } from "vue-autosuggest";
 export default {
     components: { VueAutosuggest },
     props: {
-        suggestions: Array,   // list data
-        default: () => [],
+        suggestions: {
+            type: Array,   // list data
+            default: () => [],
+        },
+        classString: {
+            type: String,
+            default: '',
+        }
     },
     data() {
         return {

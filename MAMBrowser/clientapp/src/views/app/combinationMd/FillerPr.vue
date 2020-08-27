@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template-filler-form heading="필러(pr)" type="pr"></template-filler-form>
+    <template-filler-form heading="필러(pr)" screenName="pr"></template-filler-form>
   </div>
 </template>
 

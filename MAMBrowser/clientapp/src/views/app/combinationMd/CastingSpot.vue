@@ -1,86 +1,70 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="주조SPOT"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-      <b-card class="mb-4">
-        <b-form @submit.stop>
-          <b-row>
-            <!-- 매체 -->
-            <b-colxx sm="2">
-              <b-form-group label="매체" class="has-float-label">
-                <b-form-select 
-                  v-model="searchItems.media"
-                  :options="mediaOptions"
-                  value-field="id"
-                  text-field="name"
-                  @change="onChangeMedia"
-                />
-              </b-form-group>
-            </b-colxx>
-            <!-- 분류 -->
-            <b-colxx sm="3">
-              <b-form-group label="분류" class="has-float-label">
-                <b-form-select 
-                  v-model="searchItems.cate"
-                  :options="spotOptions"
-                  :disabled="spotOptions.length === 0"
-                  value-field="id"
-                  text-field="name" 
-                >
-                  <template v-slot:first>
-                    <b-form-select-option v-if="spotOptions.length > 0" value="">선택해주세요.</b-form-select-option>
-                    <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
-                  </template>
-                </b-form-select>
-              </b-form-group>
-            </b-colxx>
-            <!-- 시작일 -->
-            <b-colxx sm="2">
-              <b-form-group label="시작일" class="has-float-label c-zindex">
-                  <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
-                  <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-              </b-form-group>
-            </b-colxx>
-            <!-- 종료일 -->
-            <b-colxx sm="2">
-              <b-form-group label="종료일" class="has-float-label c-zindex">
-                  <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
-                  <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-              </b-form-group>
-            </b-colxx>
-            <!-- 상태 -->
-            <b-colxx sm="2">
-              <b-form-group label="상태" class="has-float-label">
-                <b-form-select 
-                  v-model="searchItems.status"
-                  :options="reqStatusOptions"
-                  value-field="id"
-                  text-field="name"
-                >
-                  <template v-slot:first>
-                    <b-form-select-option value="">선택해주세요.</b-form-select-option>
-                  </template>
-                </b-form-select>
-              </b-form-group>
-            </b-colxx>
-            <!-- 제작자 -->
-            <b-colxx sm="2">
-              <b-form-group label="제작자" class="has-float-label">
-                <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
-              </b-form-group>
-            </b-colxx>
-            <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-          </b-row>
-        </b-form>
-      </b-card>
-      <!-- 테이블 -->
-      <b-card class="mb-4">
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="주조SPOT" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.media"
+            :options="mediaOptions"
+            value-field="id"
+            text-field="name" 
+          />
+        </b-form-group>
+        <!-- 시작일 -->
+        <b-form-group label="시작일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.start_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 종료일 -->
+        <b-form-group label="종료일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.end_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 상태 -->
+        <b-form-group label="상태" class="has-float-label">
+          <b-form-select
+            class="width-140"
+            v-model="searchItems.status"
+            :options="reqStatusOptions"
+            value-field="id"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option value="">선택해주세요.</b-form-select-option>
+            </template>
+          </b-form-select>
+        </b-form-group>
+        <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <common-dropdown-menu-input classString="width-180" :suggestions="editorOptions" @selected="onEditorSelected" />
+        </b-form-group>
+        <!-- 검색버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
         <c-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
@@ -91,9 +75,8 @@
           @scrollPerPage="onScrollPerPage"
           @sortableclick="onSortable"
         />
-      </b-card>
-    </b-colxx>
-  </b-row>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -112,7 +95,7 @@ export default {
         status: '',                // 상태
         editor: '',                // 사용자
         editorName: '',            // 사용자 이름
-        rowPerPage: 16,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

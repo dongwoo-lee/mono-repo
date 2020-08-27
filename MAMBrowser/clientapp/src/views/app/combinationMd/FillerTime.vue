@@ -1,99 +1,100 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="필러(시간)"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4">
-          <b-form @submit.stop>
-            <b-row>
-              <!-- 매체 -->
-              <b-colxx sm="2">
-                <b-form-group label="매체" class="has-float-label">
-                  <b-form-select 
-                    v-model="searchItems.media"
-                    :options="mediaOptions"
-                    value-field="id"
-                    text-field="name"
-                  />
-                </b-form-group>
-              </b-colxx>
-              <!-- 시작일 -->
-              <b-colxx sm="2">
-                <b-form-group label="시작일" class="has-float-label c-zindex">
-                    <c-input-date-picker v-model="$v.searchItems.start_dt.$model"/>
-                    <b-form-invalid-feedback :state="$v.searchItems.start_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                </b-form-group>
-              </b-colxx>
-              <!-- 종료일 -->
-              <b-colxx sm="2">
-                <b-form-group label="종료일" class="has-float-label c-zindex">
-                    <c-input-date-picker v-model="$v.searchItems.end_dt.$model"/>
-                    <b-form-invalid-feedback :state="$v.searchItems.end_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                </b-form-group>
-              </b-colxx>
-              <!-- 분류 -->
-              <b-colxx sm="3">
-                <b-form-group label="분류" class="has-float-label">
-                  <b-form-select 
-                    v-model="searchItems.cate"
-                    :options="timetoneOptions"
-                    :disabled="timetoneOptions.length === 0"
-                    value-field="id"
-                    text-field="name"
-                  >
-                    <template v-slot:first>
-                      <b-form-select-option v-if="timetoneOptions.length > 0" value="">선택해주세요.</b-form-select-option>
-                      <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
-                    </template>
-                  </b-form-select>
-                </b-form-group>
-              </b-colxx>
-              <!-- 상태 -->
-              <b-colxx sm="2">
-                <b-form-group label="상태" class="has-float-label">
-                  <b-form-select 
-                    v-model="searchItems.status"
-                    :options="reqStatusOptions"
-                    value-field="id"
-                    text-field="name"
-                  >
-                    <template v-slot:first>
-                      <b-form-select-option value="">선택해주세요.</b-form-select-option>
-                    </template>
-                  </b-form-select>
-                </b-form-group>
-              </b-colxx>
-              <!-- 제작자 -->
-              <b-colxx sm="2">
-                <b-form-group label="제작자" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
-                </b-form-group>
-              </b-colxx>
-              <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-            </b-row>
-          </b-form>
-        </b-card>
-        <!-- 테이블 -->
-        <b-card class="mb-4">
-          <c-data-table-scroll-paging
-            ref="scrollPaging"
-            :table-height="'500px'"
-            :fields="fields"
-            :rows="responseData.data"
-            :per-page="responseData.rowPerPage"
-            :num-rows-to-bottom="numRowsToBottom"
-            @scrollPerPage="onScrollPerPage"
-            @sortableclick="onSortable"
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="필러(시간)" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.media"
+            :options="mediaOptions"
+            value-field="id"
+            text-field="name"
           />
-        </b-card>
-    </b-colxx>
-  </b-row>
-</div>
+        </b-form-group>
+        <!-- 시작일 -->
+        <b-form-group label="시작일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.start_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 종료일 -->
+        <b-form-group label="종료일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.end_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 분류 -->
+        <b-form-group label="분류" class="has-float-label">
+          <b-form-select
+            class="width-220"
+            v-model="searchItems.cate"
+            :options="categoryOptions"
+            :disabled="categoryOptions.length === 0"
+            value-field="id"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option v-if="categoryOptions.length > 0" value="">선택해주세요.</b-form-select-option>
+              <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
+            </template>
+          </b-form-select>
+        </b-form-group>
+        <!-- 상태 -->
+        <b-form-group label="상태" class="has-float-label">
+          <b-form-select
+            class="width-140"
+            v-model="searchItems.status"
+            :options="reqStatusOptions"
+            value-field="id"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option value="">선택해주세요.</b-form-select-option>
+            </template>
+          </b-form-select>
+        </b-form-group>
+        <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
+        <c-data-table-scroll-paging
+          ref="scrollPaging"
+          :table-height="'500px'"
+          :fields="fields"
+          :rows="responseData.data"
+          :per-page="responseData.rowPerPage"
+          :is-actions-slot="true"
+          :num-rows-to-bottom="5"
+          @scrollPerPage="onScrollPerPage"
+        >
+        </c-data-table-scroll-paging>
+      </template>
+    </common-form>
+  </div>
 </template>
 
 <script>
@@ -111,7 +112,7 @@ export default {
           status: '',                // 상태
           editor: '',                // 사용자
           editorName: '',            // 사용자 이름
-          rowPerPage: 16,
+          rowPerPage: 15,
           selectPage: 1,
           sortKey: '',
           sortValue: '',
@@ -139,7 +140,7 @@ export default {
           width: '6%',
         },
         {
-          name: "brdDT",
+          name: "startDT",
           title: "방송게시일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
@@ -149,7 +150,7 @@ export default {
           }
         },
         {
-          name: "brdDT",
+          name: "endDT",
           title: "방송종료일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
@@ -206,16 +207,6 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '12%'
-        },
-        {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center word-break",
-          width: '17%',
-          callback: (v) => {
-            return v.substring(1, v.length).replace(/\\/g, '/');
-          }
         },
       ],
     }

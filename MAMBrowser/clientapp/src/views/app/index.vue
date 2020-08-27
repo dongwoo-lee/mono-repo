@@ -8,7 +8,7 @@
     <!-- 파일 메타 데이터 팝업 -->
     <file-meta-data-popup ref="refFileMetaDataPopup"></file-meta-data-popup>
     <!-- 파일 드래그 업로드 폼 -->
-    <file-drag-upload-form></file-drag-upload-form>
+    <file-drag-upload-form v-show="isActive"></file-drag-upload-form>
   </app-layout>
 </template>
 
@@ -27,6 +27,19 @@ export default {
     "fileUploadingToast": fileUploadingToast,
     "fileUploadPopup": fileUploadPopup,
     "FileMetaDataPopup": FileMetaDataPopup,
+  },
+  watch: {
+    '$route': {
+      handler(to, from) {
+        const routeName = this.$route.name;
+        if (routeName && (routeName === 'private' || routeName === 'public')) {
+          this.isActive = true;
+        } else {
+          this.isActive = false;
+        }
+      },
+      immediate: true,
+    }
   },
   mounted() {
     this.$nextTick(() => {

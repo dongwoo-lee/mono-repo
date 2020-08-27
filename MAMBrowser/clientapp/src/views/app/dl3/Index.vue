@@ -6,67 +6,60 @@
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
-    <b-row>
-        <b-colxx>
-            <b-card>
-                <!-- 검색 -->
-                <b-container fluid>
-                <div class="search-form-area">
-                    <b-form @submit.stop>
-                    <b-row>
-                        <!-- 매체 -->
-                        <b-colxx sm="2">
-                        <b-form-group label="매체" class="has-float-label c-zindex">
-                            <b-form-select
-                                v-model="searchItems.media"
-                                :options="mediaOptions"
-                                value-field="id"
-                                text-field="name"
-                                size="sm"
-                            />
-                        </b-form-group>
-                        </b-colxx>
-                        <!-- 편성일자: 시작일자 -->
-                        <b-colxx sm="2">
-                        <b-form-group label="편성일자" class="has-float-label c-zindex">
-                            <c-input-date-picker v-model="$v.searchItems.regDtm.$model" />
-                            <b-form-invalid-feedback
-                            :state="$v.searchItems.regDtm.check_date"
-                            >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                        </b-form-group>
-                        </b-colxx>
-                        <!-- 녹음명 -->
-                        <b-colxx sm="2">
-                            <b-form-group label="녹음명" class="has-float-label c-zindex">
-                                <c-input-text v-model="$v.searchItems.userName" />
-                            </b-form-group>
-                        </b-colxx>
-                        <!-- 등록일 -->
-                        <b-colxx sm="2">
-                            <b-form-group label="등록일" class="has-float-label c-zindex">
-                                <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
-                                <b-form-invalid-feedback
-                                :state="$v.searchItems.brd_dt.check_date"
-                                >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                            </b-form-group>
-                        </b-colxx>
-                        <b-colxx sm="2">
-                            <b-button class="mb-1" variant="primary default" @click="getData">검색</b-button>
-                        </b-colxx>
-                    </b-row>
-                    </b-form>
-                </div>
-                <!-- 테이블 -->
-                <c-data-table
-                    :fields="fields"
-                    :rows="responseData.data"
-                />
-                </b-container>
-            </b-card>
-        </b-colxx>
-    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.media"
+            :options="mediaOptions"
+            value-field="id"
+            text-field="name"
+          />
+        </b-form-group>
+        <!-- 편성일자: 시작일자 -->
+        <b-form-group label="편성일자" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.regDtm.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.regDtm.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 녹음명 -->
+        <b-form-group label="녹음명" class="has-float-label c-zindex">
+            <common-input-text v-model="$v.searchItems.userName" />
+        </b-form-group>
+        <!-- 등록일 -->
+        <b-form-group label="편성일자" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.brd_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
+        <c-data-table
+            :fields="fields"
+            :rows="responseData.data"
+        />
+      </template>
+    </common-form>
   </div>
 </template>
+
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
 
@@ -79,7 +72,7 @@ export default {
                 regDtm: '',            // 편성일자
                 pgmID: '',             // 녹음명
                 brd_dt: '',            // 등록일
-                rowPerPage: 16,
+                rowPerPage: 15,
                 selectPage: 1,
                 sortKey: '',
                 sortValue: '',

@@ -14,7 +14,7 @@
             <!-- 키워드 검색 -->
             <b-colxx sm="2">
               <b-form-group label="검색어" class="has-float-label">
-                <c-input-text v-model="searchItems.name"/>
+                <common-input-text v-model="searchItems.name"/>
               </b-form-group>
             </b-colxx>
           </b-row>

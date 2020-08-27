@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template-filler-form heading="필터(기타)" type="etc"></template-filler-form>
+    <template-filler-form heading="필터(기타)" screenName="etc"></template-filler-form>
   </div>
 </template>
 

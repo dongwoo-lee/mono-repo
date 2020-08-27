@@ -22,7 +22,8 @@
                     <slot name="form-btn-area"></slot>
                 </b-form>
             </b-col>
-            <b-col cols="auto" class="pt-3">
+            <!-- 페이지 정보 -->
+            <b-col v-if="isDisplayPageArea" cols="auto" class="pt-3">
               <div class="page-info-group">
                 <div class="page-info">
                     <slot name="form-table-page-area"></slot>
@@ -60,6 +61,10 @@ export default {
       isDisplayBtnArea: {
         type: Boolean,
         default: false,
+      },
+      isDisplayPageArea: {
+        type: Boolean,
+        default: true,
       }
     },
     methods: {

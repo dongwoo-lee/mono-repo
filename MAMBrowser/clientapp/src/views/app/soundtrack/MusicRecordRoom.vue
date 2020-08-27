@@ -42,7 +42,7 @@
               <!-- 검색어 -->
               <b-colxx sm="2">
                 <b-form-group label="검색어" class="has-float-label">
-                  <c-input-text v-model="searchItems.keyword"/>
+                  <common-input-text v-model="searchItems.keyword"/>
                 </b-form-group>
               </b-colxx>
               <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>

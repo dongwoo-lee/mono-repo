@@ -1,6 +1,6 @@
 <template>
   <div>
-    <templateSBForm heading="주조SB" type="mcr"></templateSBForm>
+    <templateSBForm heading="주조SB" screenName="mcr"></templateSBForm>
   </div>
 </template>
 

@@ -1,91 +1,85 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb :heading="heading"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4">
-            <b-form @submit.stop>
-              <b-row>
-                <!-- 매체 -->
-                <b-colxx sm="2">
-                  <b-form-group label="매체" class="has-float-label">
-                    <b-form-select 
-                      v-model="searchItems.media"
-                      :options="mediaOptions"
-                      value-field="id"
-                      text-field="name"
-                    />
-                  </b-form-group>
-                </b-colxx>
-                <!-- 방송일 -->
-                <b-colxx sm="2">
-                  <b-form-group label="방송일" class="has-float-label">
-                    <c-input-date-picker v-model="$v.searchItems.brd_dt.$model" />
-                    <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-colxx>
-                <!-- 분류 -->
-                <b-colxx sm="2" v-if="!type">
-                  <b-form-group label="분류" class="has-float-label">
-                    <b-form-select 
-                      v-model="searchItems.cate"
-                      :options="cmOptions"
-                      value-field="id"
-                      text-field="name"
-                    />
-                  </b-form-group>
-                </b-colxx>
-                <!-- 사용처 -->
-                <b-colxx sm="2">
-                  <b-form-group label="사용처" class="has-float-label">
-                    <c-dropdown-menu-input :suggestions="pgmOptions" @selected="onPgmSelected" />
-                  </b-form-group>
-                </b-colxx>
-                <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-              </b-row>
-            </b-form>
-        </b-card>
-        <!-- 테이블, main -->
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb :heading="heading" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayPageArea="false"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.media"
+            :options="mediaOptions"
+            value-field="id"
+            text-field="name"
+          />
+        </b-form-group>
+        <!-- 방송일 -->
+        <b-form-group label="시작일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.brd_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 분류 -->
+        <b-form-group v-if="!screenName" label="분류" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.cate"
+            :options="cmOptions"
+            value-field="id"
+            text-field="name"
+          />
+        </b-form-group>
+        <!-- 사용처 -->
+        <b-form-group label="사용처" class="has-float-label">
+          <common-dropdown-menu-input classString="width-220" :suggestions="pgmOptions" @selected="onPgmSelected" />
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
         <b-row>
           <b-colxx xs="12" md="6">
-            <b-card>
-              <b-table
-                ref="custom-table"
-                class="vuetable"
-                sort-by="title" sort-desc.sync="false"
-                selectable
-                select-mode="single"
-                selectedVariant="primary"
-                :fields="fields"
-                :items="responseData.data"
-                @row-selected="rowSelected"
-              />
-            </b-card>
+            <b-table
+              ref="custom-table"
+              class="vuetable"
+              sort-by="title" sort-desc.sync="false"
+              selectable
+              select-mode="single"
+              selectedVariant="primary"
+              :fields="fields"
+              :items="responseData.data"
+              @row-selected="rowSelected"
+            />
           </b-colxx>
           <!-- sub -->
           <b-colxx xs="12" md="6">
-            <b-card>
-              <b-table
-                ref="custom-table"
-                class="vuetable"
-                sort-by="title" sort-desc.sync="false"
-                selectable
-                select-mode="single"
-                selectedVariant="primary"
-                :fields="fieldsContents"
-                :items="reponseContentsData.data"
-                @row-selected="rowSelected"
-              />
-            </b-card>
+            <b-table
+              ref="custom-table"
+              class="vuetable"
+              sort-by="title" sort-desc.sync="false"
+              selectable
+              select-mode="single"
+              selectedVariant="primary"
+              :fields="fieldsContents"
+              :items="reponseContentsData.data"
+            />
           </b-colxx>
         </b-row>
-    </b-colxx>
-  </b-row>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -95,7 +89,7 @@ import MixinTablePage from '../../../../mixin/MixinTablePage';
 export default {
   name: 'templateSBForm',
   mixins: [ MixinTablePage ],
-  props: ['heading', 'type'],
+  props: ['heading', 'screenName'],
   data() {
     return {
       searchItems: {
@@ -118,8 +112,8 @@ export default {
         { key: 'name', label: 'SB명', sortable: false, tdClass: 'text-muted' },
         { key: 'length', label: '길이', sortable: false, tdClass: 'text-muted' },
         { key: 'capacity', label: '분량', sortable: false, tdClass: 'text-muted', thStyle: { width: '10%' } },
-        { key: 'status', label: '상태', sortable: false, tdClass: 'text-muted', thStyle: { width: '14%' } },
-        { key: 'pgmName', label: '사용처명', sortable: false, tdClass: 'text-muted', thStyle: { width: '14%' } },
+        { key: 'status', label: '상태', sortable: false, tdClass: 'text-muted', thStyle: { width: '9%' } },
+        { key: 'pgmName', label: '사용처', sortable: false, tdClass: 'text-muted', thStyle: { width: '15%' } },
         { key: 'editorName', label: '담당자', sortable: false, tdClass: 'text-muted', thStyle: { width: '14%' } },
       ],
       fieldsContents: [

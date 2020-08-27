@@ -1,72 +1,73 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb :heading="heading"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4">
-          <b-form @submit.stop>
-            <b-row>
-              <!-- 방송일 -->
-              <b-colxx sm="2">
-                <b-form-group label="방송일" class="has-float-label c-zindex">
-                    <c-input-date-picker v-model="$v.searchItems.brd_dt.$model"/>
-                    <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
-                </b-form-group>
-              </b-colxx>
-              <!-- 분류 -->
-              <b-colxx sm="3">
-                <b-form-group label="분류" class="has-float-label">
-                  <b-form-select 
-                    v-model="searchItems.cate"
-                    :options="categoryOptions"
-                    :disabled="categoryOptions.length === 0"
-                    value-field="id"
-                    text-field="name"
-                  >
-                    <template v-slot:first>
-                      <b-form-select-option v-if="categoryOptions.length > 0" value="">선택해주세요.</b-form-select-option>
-                      <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
-                    </template>
-                  </b-form-select>
-                </b-form-group>
-              </b-colxx>
-              <!-- 제작자 -->
-              <b-colxx sm="2">
-                <b-form-group label="제작자" class="has-float-label">
-                  <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
-                </b-form-group>
-              </b-colxx>
-              <!-- 소재명 -->
-              <b-colxx sm="2">
-                <b-form-group label="소재명" class="has-float-label">
-                  <c-input-text v-model="searchItems.name"/>
-                </b-form-group>
-              </b-colxx>
-              <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-            </b-row>
-          </b-form>
-        </b-card>
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb :heading="heading" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+      <!-- 방송일 -->
+        <b-form-group label="방송일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
+          <b-form-invalid-feedback
+            :state="$v.searchItems.brd_dt.check_date"
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 분류 -->
+        <b-form-group label="분류" class="has-float-label">
+          <b-form-select
+            class="width-220"
+            v-model="searchItems.cate"
+            :options="categoryOptions"
+            :disabled="categoryOptions.length === 0"
+            value-field="id"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option v-if="categoryOptions.length > 0" value="">선택해주세요.</b-form-select-option>
+              <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
+            </template>
+          </b-form-select>
+        </b-form-group>
+        <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+        </b-form-group>
+        <!-- 소재명 -->
+        <b-form-group label="소재명" class="has-float-label">
+          <common-input-text v-model="searchItems.name"/>
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
         <!-- 테이블 -->
-        <b-card class="mb-4">
-          <c-data-table-scroll-paging
-            ref="scrollPaging"
-            :table-height="'500px'"
-            :fields="fields"
-            :rows="responseData.data"
-            :per-page="responseData.rowPerPage"
-            :num-rows-to-bottom="numRowsToBottom"
-            @scrollPerPage="onScrollPerPage"
-            @sortableclick="onSortable"
-          />
-        </b-card>
-    </b-colxx>
-  </b-row>
-</div>
+        <c-data-table-scroll-paging
+          ref="scrollPaging"
+          :table-height="'500px'"
+          :fields="fields"
+          :rows="responseData.data"
+          :per-page="responseData.rowPerPage"
+          :is-actions-slot="true"
+          :num-rows-to-bottom="5"
+          @scrollPerPage="onScrollPerPage"
+        >
+        </c-data-table-scroll-paging>
+      </template>
+    </common-form>
+  </div>
 </template>
 
 <script>
@@ -74,7 +75,7 @@ import MixinFillerPage from '../../../../mixin/MixinFillerPage';
 
 export default {
     mixins: [ MixinFillerPage ],
-    props: ['heading', 'type'],
+    props: ['heading', 'screenName'],
     data() {
         return {
         searchItems: {
@@ -83,7 +84,7 @@ export default {
             editor: '',                // 사용자
             editorName: '',            // 사용자 이름
             name: '',                  // 소재명
-            rowPerPage: 16,
+            rowPerPage: 15,
             selectPage: 1,
             sortKey: '',
             sortValue: '',
@@ -97,11 +98,11 @@ export default {
             width: '4%',
             },
             {
-            name: "mediaName",
+            name: "categoryName",
             title: "매체",
             titleClass: "center aligned text-center",
             dataClass: "center aligned text-center",
-            width: '5%',
+            width: '10%',
             },
             {
             name: "name",
@@ -180,7 +181,7 @@ export default {
 
             const brd_dt = this.searchItems.brd_dt;
 
-            this.$http.get(`/api/Products/filler/${this.type}/${brd_dt}`, { params: this.searchItems })
+            this.$http.get(`/api/Products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
                 .then(res => {
                 this.setResponseData(res, 'normal');
             });
@@ -193,11 +194,11 @@ export default {
             this.getEditorOptions();
 
             // 필러(pr)
-            if (this.type === 'pr') this.getProOptions();
+            if (this.screenName === 'pr') this.getProOptions();
             // 필러(일반)
-            if (this.type === 'general') this.getGeneralOptions();
+            if (this.screenName === 'general') this.getGeneralOptions();
             // 필러(기타)
-            if (this.type === 'etc') this.getEtcOptions();
+            if (this.screenName === 'etc') this.getEtcOptions();
         }
     }
 }

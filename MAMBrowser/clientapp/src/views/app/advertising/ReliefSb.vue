@@ -1,6 +1,6 @@
 <template>
   <div>
-    <templateSBForm heading="부조SB" type="scr"></templateSBForm>
+    <templateSBForm heading="부조SB" screenName="scr"></templateSBForm>
   </div>
 </template>
 

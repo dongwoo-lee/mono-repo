@@ -1,16 +1,10 @@
 import mixinValidate from './MixinValidate';
-import CInputText from '../components/Input/CInputText';
-import CDropdownMenuInput from '../components/Input/CDropdownMenuInput';
-import CInputDatePicker from '../components/Input/CInputDatePicker';
 import CDataTable from '../components/DataTable/CDataTable';
 import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
 
 let mixinBasicPage = {
     mixins: [ mixinValidate ],
     components: {
-        CInputText,
-        CDropdownMenuInput,
-        CInputDatePicker,
         CDataTable,
         CDataTableScrollPaging,
     },

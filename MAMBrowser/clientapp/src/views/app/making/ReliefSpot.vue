@@ -8,7 +8,6 @@
     </b-row>
     <common-form
       :searchItems="searchItems"
-      :isDisplayBtnArea="true"
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
@@ -29,11 +28,11 @@
         </b-form-group>
       <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <c-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
         </b-form-group>
       <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
-          <c-input-text v-model="searchItems.name"/>
+          <common-input-text v-model="searchItems.name"/>
         </b-form-group>
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
@@ -54,7 +53,6 @@
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
           @scrollPerPage="onScrollPerPage"
-          @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >

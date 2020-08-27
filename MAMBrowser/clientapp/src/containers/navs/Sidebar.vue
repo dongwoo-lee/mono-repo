@@ -50,7 +50,7 @@
                         </b-collapse>
                     </template>
                     <router-link v-else :to="sub.to">
-                        <i :class="sub.icon" />
+                        <!-- <i :class="sub.icon" /> -->
                         <span>{{ $t(sub.label) }}</span>
                     </router-link>
                 </li>
