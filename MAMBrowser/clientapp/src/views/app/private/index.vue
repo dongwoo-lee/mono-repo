@@ -35,6 +35,7 @@
         <b-form-group label="메모" class="has-float-label">
           <common-input-text class-string="memo" v-model="searchItems.memo" />
         </b-form-group>
+        <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
         </b-form-group>
@@ -57,7 +58,7 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <c-data-table-scroll-paging
+        <common-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
           :fields="fields"
@@ -97,7 +98,7 @@
               <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
             </b-button>
           </template>
-        </c-data-table-scroll-paging>
+        </common-data-table-scroll-paging>
       </template>
       <!-- 알림 -->
       <template slot="form-confirm-area">

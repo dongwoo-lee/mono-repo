@@ -14,6 +14,7 @@
         <template v-slot:cell(authorCode)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{item.authorCode}}</div>
             <b-form-select
+                class=""
                 v-show="rowSelected"
                 :value="item.authorCode"
                 :options="authorityOptions"
@@ -26,11 +27,7 @@
         </template>
         <template v-slot:cell(actions)="{ item, index }">
             <div v-if="equalOringData(item)">
-                <b-button
-                class="mb-1"
-                variant="primary default"
-                @click="onUpdate(item, index)"
-                >저장하기</b-button>
+                <b-button variant="primary default" class="common-btn" @click="onUpdate(item, index)">저장하기</b-button>
             </div>
         </template>
     </b-table>

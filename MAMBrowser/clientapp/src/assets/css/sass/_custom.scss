@@ -164,6 +164,14 @@
     line-height: 1.5;
 }
 
+.custom-select-sm {
+    height: 26px;
+    width: 50%;
+    padding: 0 0.75rem 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 .icon-buton {
     padding: 0;
 
@@ -246,6 +254,10 @@
             width: 220px;
         }
 
+        div.pt-26 {
+            padding-top: 26px;
+        }
+
         select.width-100 {
             width: 100px;
         }
@@ -318,13 +330,16 @@
     }
 }
 
+.common-btn {
+    height: 26px;
+    background-color: #008ecc;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-size: 0.74rem;
+    line-height: 0;
+}
+
 .table th {
     padding-top: 0.6em;
     padding-bottom: 0.6em;
 }
-// .tooltip { top: 0; }
-
-// .common-table-tooltip {
-//     position: absolute !important;
-//     top: -5px !important;
-// }

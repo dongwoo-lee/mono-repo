@@ -43,7 +43,7 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <c-data-table-scroll-paging
+        <common-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
           :fields="fields"
@@ -65,7 +65,7 @@
               </b-button>
             </b-colxx>
           </template>
-        </c-data-table-scroll-paging>
+        </common-data-table-scroll-paging>
       </template>
       <!-- 알림 -->
       <template slot="form-confirm-area">

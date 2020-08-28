@@ -1,13 +1,7 @@
 import mixinValidate from './MixinValidate';
-import CDataTable from '../components/DataTable/CDataTable';
-import CDataTableScrollPaging from '../components/DataTable/CDataTableScrollPaging';
 
-let mixinBasicPage = {
+let mixinCommon = {
     mixins: [ mixinValidate ],
-    components: {
-        CDataTable,
-        CDataTableScrollPaging,
-    },
     data() {
         return {
             responseData: {                          // 응답 결과
@@ -17,11 +11,8 @@ let mixinBasicPage = {
                 totalRowCount: 0,
             },
             numRowsToBottom: 5,
-            contextMenu: [
-                { name: 'edit', text: '편집' },
-                { name: 'throw', text: '휴지통으로 보내기' },
-                { name: 'download', text: '다운로드' },
-            ]
+            mediaOptions: [],                        // 매체 목록
+            editorOptions: [],                       // 사용자(제작자) 목록
         }
     },
     created() {
@@ -64,17 +55,17 @@ let mixinBasicPage = {
                 this.$fn.notify('server-error', { message: '조회 에러: ' + res.data.errorMsg });
             }
         },
-        // 우측메뉴 액션
-        onContextMenuAction(v) {
-            switch(v) {
-                case 'edit': console.log(v); break;
-                case 'throw': console.log(v); break;
-                case 'download':  console.log(v); break;
-                case 'storage':  console.log(v); break;
-                case 'restore':  console.log(v); break;
-                case 'delete':  console.log(v); break;
-                default: break;
-            }
+        // 페이지 정보
+        getPageInfo() {
+            const dataLength = this.responseData.data ? this.responseData.data.length : 0;
+            return `${dataLength}개 / 전체 ${this.responseData.totalRowCount}개`
+        },
+        // 페이지당 로우수 변경
+        onChangeRowPerpage(value) {
+            this.$refs.scrollPaging.init();
+            this.searchItems.selectPage = 1;
+            this.searchItems.rowPerPage = value;
+            this.getData();
         },
         // 정렬
         onSortable(sortKey) {
@@ -82,7 +73,32 @@ let mixinBasicPage = {
             this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
             this.getData();
         },
+        // 카테고리 API 요청
+        requestCall(url, attr) {
+            this.$http.get(url)
+                .then(res => {
+                    if (res.status === 200) {
+                        this[attr] = res.data.resultObject.data;
+                    } else {
+                        this.$fn.notify('server-error', { message: '조회 에러' });
+                    }
+          });
+        },
+        // 매체목록 조회
+        getMediaOptions() {
+            this.requestCall('/api/Categories/media', 'mediaOptions');
+        },
+        // 제작자(사용자) 목록 조회
+        getEditorOptions() {
+            this.requestCall('/api/Categories/users', 'editorOptions');
+        },
+        // 제작자 선택
+        onEditorSelected(data) {
+            const { id, name } = data;
+            this.searchItems.editor = id;
+            this.searchItems.editorName = name;
+        },
     }
 }
 
-export default mixinBasicPage;
+export default mixinCommon;

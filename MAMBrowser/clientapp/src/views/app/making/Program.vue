@@ -39,7 +39,7 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <c-data-table
+        <common-data-table
           :fields="fields"
           :rows="responseData.data"
           :contextmenu="contextMenu"

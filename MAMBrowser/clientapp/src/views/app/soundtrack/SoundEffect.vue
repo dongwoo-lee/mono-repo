@@ -1,43 +1,45 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="효과음"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-      <b-card class="mb-4">
-        <b-form @submit.stop>
-          <b-row>
-            <!-- 키워드 검색 -->
-            <b-colxx sm="2">
-              <b-form-group label="검색어" class="has-float-label">
-                <common-input-text v-model="searchItems.name"/>
-              </b-form-group>
-            </b-colxx>
-          </b-row>
-        </b-form>
-      </b-card>
-
-      <!-- 테이블 -->
-      <b-card class="mb-4">
-        <c-data-table-scroll-paging
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="효과음" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <b-form-group label="검색어" class="has-float-label">
+          <common-input-text v-model="searchItems.name"/>
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
+        <common-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :num-rows-to-bottom="numRowsToBottom"
-          :contextmenu="contextMenu"
+          :is-actions-slot="true"
+          :num-rows-to-bottom="5"
           @scrollPerPage="onScrollPerPage"
-          @contextMenuAction="onContextMenuAction"
-          @sortableclick="onSortable"
-        />
-      </b-card>
-    </b-colxx>
-  </b-row>
+        >
+        </common-data-table-scroll-paging>
+      </template>
+    </common-form>
   </div>
 </template>
 
@@ -50,7 +52,7 @@ export default {
     return {
       searchItems: {
         searchWord: '',
-        rowPerPage: 16,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: 'DESC',

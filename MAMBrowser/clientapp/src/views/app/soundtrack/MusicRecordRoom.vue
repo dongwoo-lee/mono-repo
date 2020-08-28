@@ -1,101 +1,104 @@
 <template>
-<div>
-  <b-row>
-    <b-colxx xxs="12">
-      <piaf-breadcrumb heading="음반 기록실"/>
-      <div class="separator mb-5"></div>
-    </b-colxx>
-  </b-row>
-  <b-row>
-    <b-colxx xxs="12">
-        <b-card class="mb-4">
-          <b-form @submit.stop>
-            <b-row>
-              <!-- 대분류 -->
-              <b-colxx sm="3">
-                <b-form-group label="대분류">
-                  <b-form-checkbox-group v-model="searchItems.topCategory">
-                    <b-form-checkbox value="own">ALL</b-form-checkbox>
-                    <b-form-checkbox value="two">국내</b-form-checkbox>
-                    <b-form-checkbox value="three">국외</b-form-checkbox>
-                    <b-form-checkbox value="four">클래식</b-form-checkbox>
-                  </b-form-checkbox-group>
-                </b-form-group>
-              </b-colxx>
-              <!-- 소분류 -->
-              <b-colxx sm="2">
-                <b-form-group label="소분류" class="has-float-label">
-                  <!-- <b-form-select size="sm" v-model="searchItems.bottomCategory" :options="mediaOptions"/> -->
-                </b-form-group>
-              </b-colxx>
-              <!-- 검색옵션 -->
-              <b-colxx sm="3">
-                <b-form-group label="검색옵션">
-                  <b-form-checkbox-group v-model="searchItems.searchKeyword">
-                    <b-form-checkbox value="own">히트곡</b-form-checkbox>
-                    <b-form-checkbox value="two">금지곡</b-form-checkbox>
-                    <b-form-checkbox value="three">주의</b-form-checkbox>
-                    <b-form-checkbox value="four">청소년유해</b-form-checkbox>
-                  </b-form-checkbox-group>
-                </b-form-group>
-              </b-colxx>
-              <!-- 검색어 -->
-              <b-colxx sm="2">
-                <b-form-group label="검색어" class="has-float-label">
-                  <common-input-text v-model="searchItems.keyword"/>
-                </b-form-group>
-              </b-colxx>
-              <b-button class="mb-1" variant="primary default" size="sm" @click="onSearch">검색</b-button>
-            </b-row>
-        </b-form>
-      </b-card>
-
-      <!-- 테이블 -->
-      <b-card class="mb-4">
-        <c-data-table-scroll-paging
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="음반 기록실" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 대분류 -->
+        <b-form-group label="대분류">
+          <b-form-checkbox-group v-model="searchItems.topCategory">
+            <b-form-checkbox value="own">ALL</b-form-checkbox>
+            <b-form-checkbox value="two">국내</b-form-checkbox>
+            <b-form-checkbox value="three">국외</b-form-checkbox>
+            <b-form-checkbox value="four">클래식</b-form-checkbox>
+          </b-form-checkbox-group>
+        </b-form-group>
+        <!-- 소분류 -->
+        <b-form-group label="소분류">
+          <b-form-select
+            class="width-100"
+            v-model="searchItems.cate"
+            :options="rePortOptions"
+            value-field="id"
+            text-field="name" 
+          />
+        </b-form-group>
+        <!-- 검색옵션 -->
+        <b-form-group label="검색옵션">
+          <b-form-checkbox-group v-model="searchItems.searchKeyword">
+            <b-form-checkbox value="own">히트곡</b-form-checkbox>
+            <b-form-checkbox value="two">금지곡</b-form-checkbox>
+            <b-form-checkbox value="three">주의</b-form-checkbox>
+            <b-form-checkbox value="four">청소년유해</b-form-checkbox>
+          </b-form-checkbox-group>
+        </b-form-group>
+        <!-- 검색어 -->
+         <b-form-group label="검색어">
+            <common-input-text v-model="searchItems.keyword"/>
+          </b-form-group>
+        <!-- 검색 버튼 -->
+        <fieldset class="form-group">
+          <div class="bv-no-focus-ring pt-26">
+              <button type="button" class="btn btn-outline-primary default" @click="onSearch">검색</button>
+          </div>
+        </fieldset>
+      </template>
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
+        <common-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :num-rows-to-bottom="numRowsToBottom"
-          :contextmenu="contextMenu"
-          :css="{'table-scroll-body': true}"
+          :is-actions-slot="true"
+          :num-rows-to-bottom="5"
           @scrollPerPage="onScrollPerPage"
-          @contextMenuAction="onContextMenuAction"
+          @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
-        />
-      </b-card>
-    </b-colxx>
-  </b-row>
+          @refresh="onRefresh"
+        >
+        </common-data-table-scroll-paging>
+      </template>
+    </common-form>
   </div>
 </template>
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import vSelect from "vue-select";
-import "vue-select/dist/vue-select.css";
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { vSelect },
   data() {
     return {
+      searchItems: {
+        topCategory: [],
+        bottomCategory: '',
+        keyword: '',
+        rowPerPage: 15,
+        selectPage: 1,
+        sortKey: '',
+        sortValue: '',
+      },
       topCategoryOptions: [
         { label: 'ALL', code: 'ALL' },
         { label: '국내', code: 'DOMESTIC' },
         { label: '국외', code: 'FOREIGN' },
         { label: '클래식', code: 'CLASSIC' },
       ],
-      searchItems: {
-        topCategory: [],
-        bottomCategory: '',
-        keyword: '',
-        rowPerPage: 16,
-        selectPage: 1,
-        sortKey: '',
-        sortValue: '',
-      },
       fields: [
         {
           name: 'rowNO',

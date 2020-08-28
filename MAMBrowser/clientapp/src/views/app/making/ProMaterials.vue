@@ -50,7 +50,7 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <c-data-table-scroll-paging
+        <common-data-table-scroll-paging
           ref="scrollPaging"
           :table-height="'500px'"
           :fields="fields"
@@ -62,7 +62,7 @@
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
-        </c-data-table-scroll-paging>
+        </common-data-table-scroll-paging>
       </template>
     </common-form>
   </div>
