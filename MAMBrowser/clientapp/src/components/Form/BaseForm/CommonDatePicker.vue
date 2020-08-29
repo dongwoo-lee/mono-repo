@@ -53,6 +53,14 @@ export default {
         size: {
             type: String,
             default: 'sm',
+        },
+        isCurrentDate: {
+            type: Boolean,
+            default: true,
+        },
+        dayAgo: {
+            type: Number,
+            defaut: 0,
         }
     },
     data() {
@@ -62,7 +70,11 @@ export default {
         }
     },
     created() {
-        if (!this.value) {
+        if (this.dayAgo > 0) {
+            const newDate = new Date();
+            newDate.setDate(newDate.getDate() - this.dayAgo);
+            this.date = newDate;
+        } else if (!this.value && this.isCurrentDate) {
             const currentDate = new Date().toISOString().substring(0, 10);
             this.date = currentDate;
         } else {

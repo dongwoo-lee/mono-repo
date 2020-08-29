@@ -14,7 +14,7 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 대분류 -->
-        <b-form-group label="대분류">
+        <b-form-group label="대분류" label-cols-lg="3">
           <b-form-checkbox-group v-model="searchItems.topCategory">
             <b-form-checkbox value="own">ALL</b-form-checkbox>
             <b-form-checkbox value="two">국내</b-form-checkbox>
@@ -23,7 +23,7 @@
           </b-form-checkbox-group>
         </b-form-group>
         <!-- 소분류 -->
-        <b-form-group label="소분류">
+        <b-form-group label="소분류" class="has-float-label">
           <b-form-select
             class="width-100"
             v-model="searchItems.cate"
@@ -42,7 +42,7 @@
           </b-form-checkbox-group>
         </b-form-group>
         <!-- 검색어 -->
-         <b-form-group label="검색어">
+         <b-form-group label="검색어" class="has-float-label">
             <common-input-text v-model="searchItems.keyword"/>
           </b-form-group>
         <!-- 검색 버튼 -->

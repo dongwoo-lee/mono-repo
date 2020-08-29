@@ -67,10 +67,7 @@ export default {
 
       try {
         // 서버 연결해서 작업할 경우
-        // const response = await $http.post('/api/Account/authenticate', JSON.stringify(requestBody),
-        // {
-        //   headers: { 'Content-Type': 'application/json' }
-        // });
+        // const response = await $http.post('/api/Authenticate', JSON.stringify(requestBody));
         // commit('setUser', { uid: response.data.username, ...currentUser });
         // commit('setProcessing', false);
         // sessionStorage.setItem('access_token', response.data.jwtToken);

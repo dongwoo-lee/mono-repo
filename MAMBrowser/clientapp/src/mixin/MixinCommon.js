@@ -13,6 +13,7 @@ let mixinCommon = {
             numRowsToBottom: 5,
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
+            sortItems: {},
         }
     },
     created() {
@@ -69,8 +70,17 @@ let mixinCommon = {
         },
         // 정렬
         onSortable(sortKey) {
+            if (!this.sortItems[sortKey]) {
+                this.sortItems[sortKey] = 'ASC';
+            } else {
+                this.sortItems[sortKey] = this.$fn.changeSortValue(this.sortItems, sortKey);
+            }
+
+            this.$refs.scrollPaging.init();
+            this.searchItems.selectPage = 1;
             this.searchItems.sortKey = sortKey;
-            this.searchItems.sortValue = this.$fn.changeSortValue(this.searchItems.sortValue);
+            this.searchItems.sortValue = this.sortItems[sortKey];
+            console.info('sorkKey', this.searchItems.sortKey, this.searchItems.sortValue);
             this.getData();
         },
         // 카테고리 API 요청

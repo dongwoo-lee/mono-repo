@@ -14,18 +14,23 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 등록일: 시작일 -->
-        <b-form-group label="시작일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        <b-form-group label="시작일" 
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
+          <common-date-picker 
+            v-model="$v.searchItems.start_dt.$model" 
+            :isCurrentDate="false"
+            :dayAgo="2"
+          />
         </b-form-group>
       <!-- 등록일: 종료일 -->
-        <b-form-group label="종료일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        <b-form-group label="종료일" 
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
+          <common-date-picker
+            v-model="$v.searchItems.end_dt.$model"
+            :isCurrentDate="true"
+          />
         </b-form-group>
       <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
@@ -143,6 +148,7 @@ export default {
         sortKey: '',
         sortValue: '',
       },
+      hasErrorClass: false,
       metaDataModifyPopup: false,
       fields: [
         {
@@ -190,6 +196,7 @@ export default {
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'editedDtm',
           width: "15%"
         },
         {
@@ -203,9 +210,26 @@ export default {
       singleSelectedId: null,
     }
   },
+  watch: {
+    ['searchItems.start_dt'](v) {
+      if (!this.$fn.checkGreaterStartDate(v, this.searchItems.end_dt)) {
+        this.hasErrorClass = false;
+      }
+    },
+    ['searchItems.end_dt'](v) {
+      if (!this.$fn.checkGreaterStartDate(this.searchItems.start_dt, v)) {
+        this.hasErrorClass = false;
+      }
+    }
+  },
   methods: {
     ...mapActions('file', ['open_popup', 'download']),
     getData() {
+      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('warning', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+      }
+
       const userExtId = sessionStorage.getItem('user_ext_id');
 
       this.$http.get(`/api/products/workspace/private/meta/${userExtId}`, { params: this.searchItems })

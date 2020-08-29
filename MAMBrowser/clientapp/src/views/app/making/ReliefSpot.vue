@@ -12,6 +12,16 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 매체 -->
+        <b-form-group label="매체" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.media"
+            :options="mediaOptions"
+            value-field="id"
+            text-field="name" 
+          />
+        </b-form-group>
         <!-- 등록일: 시작일 -->
         <b-form-group label="시작일" class="has-float-label">
           <common-date-picker v-model="$v.searchItems.start_dt.$model" />
@@ -90,6 +100,13 @@ export default {
           width: '4%',
         },
         {
+          name: "mediaName",
+          title: "매체",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '5%',
+        },
+        {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
@@ -164,7 +181,7 @@ export default {
         return;
       }
 
-      this.$http.get(`/api/Products/spot/scr`, { params: this.searchItems })
+      this.$http.get(`/api/Products/spot/scr/${this.searchItems.media}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
       });

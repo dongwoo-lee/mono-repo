@@ -10,6 +10,7 @@
             :row-class="onRowClass"
             :track-by="keyName"
             :noDataTemplate="noDataTemplate"
+            :multi-sort="true"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
         >
@@ -84,6 +85,7 @@ export default {
             rowElemHeight: 0,    // 로우 높이
             selectedItems: [],   // 선택 로우 데이터
             isChangeRowPerPage: false,
+            sortables: [],
         }
     },
     mounted() {
@@ -111,10 +113,12 @@ export default {
             });
 
             // sortable click event linstener
-            [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
+            this.sortable = this.$refs.vuetable.$el.querySelectorAll('th.sortable');
             if (!this.sortable) return;
-            this.sortable.addEventListener('click', e => {
-                this.onSortable(e);
+            this.sortable.forEach(element => {
+                element.addEventListener('click', e => {
+                    this.onSortable(e);
+                }); 
             });
         });
     },
@@ -124,7 +128,9 @@ export default {
       }
 
       if (this.sortable != null) {
-          this.sortable.removeEventListener('click', this.onSortable);
+          this.sortable.forEach(element => {
+            element.removeEventListener('click', this.onSortable);    
+          })
       }
     },
     methods: {

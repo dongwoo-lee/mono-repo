@@ -41,6 +41,19 @@ const formatDate = (d, p = 'yyyyMMdd') => {
 };
 
 /**
+ * 시작 날짜가 종료 날짜보다 큰지 체크
+ * emptyAlow : 빈값 허용(검색폼에서는 빈값 허용.)
+ * @param {*} sDate
+ * @param {*} eDate
+ */
+const checkGreaterStartDate = function(sDate, eDate, emptyAllow = true) {
+    if (!sDate || !eDate) return !emptyAllow;
+    const parseStartDate = Date.parse(this.formatDate(sDate, 'yyyy-MM-dd'));
+    const parseEndDate = Date.parse(this.formatDate(eDate, 'yyyy-MM-dd'));
+    return parseStartDate > parseEndDate;
+};
+
+/**
  * 값 분리하여 첫번째 값 가져오기
  * @param {*} d 
  * @param {*} g 
@@ -59,23 +72,28 @@ const splitFirst = (d, g = '.') => {
  * @param {*} type 
  * @param {*} options 
  */
-const notify = (type, options = { title, message, options: { duration: 5000, permanent: false } }) => {
+const notify = (type, options = { title, message, duration, permanent }) => {
+    const optionInOptions = {
+        duration: options.duration ? options.duration : 5000,
+        permanent: options.permanent ? options.permanent : false,
+    }
     if (type === 'server-error') {
-        return window.$notify('error', 'Server Error', '서버 에러입니다.', options.options);
+        return window.$notify('error', 'Server Error', '서버 에러입니다.', optionInOptions);
     }
     if (type === 'undefined') {
-        return window.$notify('error', 'Data undefined', '데이터가 없습니다.', options.options);
+        return window.$notify('error', 'Data undefined', '데이터가 없습니다.', optionInOptions);
     }
     if (type === 'inputError') {
-        return window.$notify('error', '입력 폼 에러', '입력 폼 양식을 확인해주세요.', options.options);
+        return window.$notify('error', '입력 폼 에러', '입력 폼 양식을 확인해주세요.', optionInOptions);
     }
 
-    window.$notify(type, options.title, options.message, options.options);
+    window.$notify(type, options.title, options.message, optionInOptions);
 }
 
-const changeSortValue = (v) => {
-    if (!v) { return 'ASC'; }
-    if (v === 'ASC') {
+const changeSortValue = (items, key) => {
+    if (!items[key]) return 'ASC'
+    const outValue = items[key];
+    if (outValue === 'ASC') {
         return 'DESC';
     }
 
@@ -130,6 +148,7 @@ const formatBytes = (bytes, decimals = 2) => {
 
 const commonFunctions = {
     formatDate,
+    checkGreaterStartDate,
     splitFirst,
     notify,
     fileDownload,

@@ -343,3 +343,9 @@
     padding-top: 0.6em;
     padding-bottom: 0.6em;
 }
+
+.hasError {
+    .input-group {
+        border: 1px solid #dc3545;
+    }
+}
