@@ -7,6 +7,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -74,7 +75,7 @@ namespace MAMBrowser.BLL
                 SORTVALUE = sortValue
             });
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_SUB_VIEW /**where**/");
-            builder.Select("SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
+            builder.Select("MEDIA, MEDIANAME, SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
             builder.Where("MEDIA=:MEDIA");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(name))
@@ -106,6 +107,8 @@ namespace MAMBrowser.BLL
                 }
                 return new DTO_SCR_SPOT
                 {
+                    MediaCD = row.MEDIA,
+                    MediaName = row.MEDIANAME,
                     RowNO = Convert.ToInt32(row.RNO),
                     Name = row.SPOTNAME,
                     CategoryName = row.CODENAME,
@@ -235,18 +238,25 @@ namespace MAMBrowser.BLL
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_PROAUDIOFILE_VIEW /**where**/");
             builder.Select("AUDIOID, AUDIONAME, CODENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, TYPENAME, MASTERFILE");
-            //if (!string.IsNullOrEmpty(media))
+            //if (!string.IsNullOrEmpty(media))  //DB단 매체 필드가 없어서 조건으로 넣을 수 없음.
             //{
-            //    builder.Where("?=:MEDIA");        ???매체 정보 없음;
+            //    builder.Where("MEDIA=:MEDIA");      
             //}
             if (!string.IsNullOrEmpty(cate))
             {
                 builder.Where("AUDIOID=:CATE");
             }
-            //if (!string.IsNullOrEmpty(cate))
-            //{
-            //    builder.Where("?=:TYPE");   // 방송//폐지
-            //}
+            if (!string.IsNullOrEmpty(type))
+            {
+                if (type == "Y")
+                {
+                    builder.Where("CODENAME NOT LIKE '%(폐지)%'");   // 방송//폐지    -> LIKE문 말고 다른걸로...
+                }
+                else
+                {
+                    builder.Where("TYPE LIKE '%(폐지)%'");   // 방송//폐지    -> LIKE문 말고 다른걸로...
+                }
+            }
             if (!string.IsNullOrEmpty(editor))
             {
                 builder.Where("EDITOR = :EDITOR");
@@ -277,9 +287,9 @@ namespace MAMBrowser.BLL
                 return new DTO_PRO
                 {
                     RowNO = Convert.ToInt32(row.RNO),
-                    CategoryID = row.AUDIOID,
-                    CategoryName = row.AUDIONAME,
-                    Name = row.CODENAME,
+                    CategoryID = row.CODEID,
+                    CategoryName = row.CODENAME,
+                    Name = row.AUDIONAME,
                     Duration = row.MILLISEC,
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
@@ -730,6 +740,7 @@ namespace MAMBrowser.BLL
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
                     ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(Utility.DTM19),
                     FilePath = row.MASTERFILE,
+                    FileName = Path.GetFileName(row.MASTERFILE)
                 };
             });
 

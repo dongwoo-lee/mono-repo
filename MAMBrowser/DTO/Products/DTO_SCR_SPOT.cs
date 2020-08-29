@@ -8,6 +8,8 @@ namespace MAMBrowser.DTO
 {
     public class DTO_SCR_SPOT : DTO_BASE
     {
+        public string MediaCD { get; set; }
+        public string MediaName { get; set; }
         public string Name { get; set; }    //소재명
         public string CategoryName { get; set; }    //분류명
         public string Duration { get; set; }  //길이

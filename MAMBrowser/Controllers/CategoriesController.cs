@@ -47,7 +47,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
             try
             {
-                APIBLL bll = new APIBLL();
+                CategoriesBLL bll = new CategoriesBLL();
                 result.ResultObject = bll.GetUserList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }

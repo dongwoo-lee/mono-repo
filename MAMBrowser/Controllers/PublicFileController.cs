@@ -76,6 +76,10 @@ namespace MAMBrowser.Controllers
         /// 공유소재 -  검색
         /// </summary>
         /// <param name="userextid">사용자 확장ID</param>
+        /// <param name="mediaCd">공유소재 매체</param>
+        /// <param name="cateCd">공유소재 소분류</param>
+        /// <param name="start_dt">검색시작일</param>
+        /// <param name="end_dt">검색종료일</param>
         /// <param name="title">제목</param>
         /// <param name="memo">메모</param>
         /// <param name="rowPerPage">페이지당 행 개수</param>
@@ -83,14 +87,14 @@ namespace MAMBrowser.Controllers
         /// <param name="sortKey">정렬 키(필드명)</param>
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
-        [HttpGet("meta")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        [HttpGet("meta/{mediaCd}/{cateCd}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData(string mediaCd, string cateCd, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
                 PublicFileBLL bll = new PublicFileBLL();
-                result.ResultObject = bll.FineData(start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FineData(mediaCd, cateCd, start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

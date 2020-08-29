@@ -115,12 +115,14 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
             });
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> FineData(string start_dt, string end_dt, long? userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> FineData(string mediaCd, string cateCd, string start_dt, string end_dt, long? userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> returnData = new DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>();
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
             DynamicParameters param = new DynamicParameters();
+            param.Add("MEDIA_CD", mediaCd);
+            param.Add("CATE_CD", cateCd);
             param.Add("USER_EXT_ID", userextid);
             param.Add("TITLE", title);
             param.Add("MEMO", memo);
@@ -137,6 +139,14 @@ LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M
 WHERE MAP_CD='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
 LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD /**where**/");
 
+            if (!string.IsNullOrEmpty(mediaCd))
+            {
+                builder.Where("MEDIA_CD =:MEDIA_CD");
+            }
+            if (!string.IsNullOrEmpty(cateCd))
+            {
+                builder.Where("CATE_CD =:CATE_CD");
+            }
             if (!string.IsNullOrEmpty(start_dt))
             {
                 builder.Where("TO_DATE(:START_DT,'YYYYMMDD') <= EDITED_DTM");

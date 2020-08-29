@@ -11,7 +11,24 @@ namespace MAMBrowser.BLL
 {
     public class CategoriesBLL
     {
-        
+        public DTO_RESULT_LIST<DTO_USER> GetUserList()
+        {
+            DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER ORDER BY CONVERT(PERSONNAME, 'US8ICL'), PERSONNAME ASC");
+            Repository<DTO_USER> repository = new Repository<DTO_USER>();
+            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
+            {
+                return new DTO_USER
+                {
+                    ID = row.PERSONID,
+                    Name = row.PERSONNAME
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            return returnData;
+        }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMedia()
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
