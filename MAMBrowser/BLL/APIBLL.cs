@@ -11,24 +11,7 @@ namespace MAMBrowser.Controllers
 {
     public class APIBLL 
     {
-        public DTO_RESULT_LIST<DTO_USER> GetUserList()
-        {
-            DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
-            var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER");
-            Repository<DTO_USER> repository = new Repository<DTO_USER>();
-            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
-            {
-                return new DTO_USER
-                {
-                    ID = row.PERSONID,
-                    Name = row.PERSONNAME
-                };
-            });
-
-            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
-            return returnData;
-        }
+        
         public DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL> GetUserDetailList()
         {
             DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL> returnData = new DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>();
