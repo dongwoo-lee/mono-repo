@@ -94,7 +94,7 @@ export default {
     },
     methods: {
         onInput(event) {
-            let targetValue = event.target.value;
+            const targetValue = event.target.value;
             // 값이 string.empty일경우
             if (!targetValue) {
                 this.date = targetValue;
@@ -109,7 +109,7 @@ export default {
 
             const replaceAllTargetValue = targetValue.replace(/-/g, '')
             if (replaceAllTargetValue.length === 8) {
-                const convertDate = this.convertDateStringToHaipun(targetValue);
+                const convertDate = this.convertDateStringToHaipun(replaceAllTargetValue);
                  // 유효한 날짜인지 체크
                 if (!this.$fn.validDate(convertDate)) {
                     const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);

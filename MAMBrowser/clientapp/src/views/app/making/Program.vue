@@ -161,7 +161,7 @@ export default {
         return;
       }
 
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
       const brd_dt = this.searchItems.brd_dt;
 
@@ -169,6 +169,7 @@ export default {
         .then(res => {
            this.setResponseData(res, 'normal');
            this.isTableLoading = false;
+           this.isScrollLodaing = false;
       });
     }
   },

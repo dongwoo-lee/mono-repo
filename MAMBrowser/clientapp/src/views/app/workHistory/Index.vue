@@ -161,7 +161,7 @@ export default {
             this.hasErrorClass = true;
           }
 
-          this.isTableLoading = true;
+          this.isTableLoading = this.isScrollLodaing ? false: true;
           this.$http.get('/api/Logs', { params: this.searchItems })
             .then(res => {
                 if (res.status === 200) {
@@ -180,6 +180,7 @@ export default {
                     this.$fn.notify('server-error', { message: '조회 에러' });
                 }
                 this.isTableLoading = false;
+                this.isScrollLodaing = false;
         });
       },
     }

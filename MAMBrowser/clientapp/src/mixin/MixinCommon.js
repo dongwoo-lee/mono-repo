@@ -16,6 +16,8 @@ let mixinCommon = {
             sortItems: {},
             isLoadingClass: false,
             hasErrorClass: false,
+            isTableLoading: false,
+            isScrollLodaing: false,
         }
     },
     watch: {
@@ -43,6 +45,8 @@ let mixinCommon = {
         },
         // 스크롤 페이징
         onScrollPerPage() {
+            console.info('onScrollPerPageonScrollPerPageonScrollPerPage');
+            this.isScrollLodaing = true;
             this.searchItems.selectPage++;
             this.getData();
         },

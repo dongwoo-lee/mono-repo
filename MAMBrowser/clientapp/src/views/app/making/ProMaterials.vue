@@ -103,7 +103,6 @@ export default {
         sortValue: '',
       },
       proOptions: [],
-      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -182,12 +181,13 @@ export default {
   },
   methods: {
     getData() {
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/Products/old_pro`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
+            this.isScrollLodaing = false;
       });
     },
     onProSelected(data) {

@@ -183,13 +183,14 @@ export default {
         return;
       }
 
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
 
       this.$http.get(`/api/Products/spot/scr/${this.searchItems.media}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
+            this.isScrollLodaing = false;
       });
     },
   }

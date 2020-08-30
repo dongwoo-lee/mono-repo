@@ -1,4 +1,5 @@
 import MixinCommon from './MixinCommon';
+import { mapActions } from 'vuex';
 
 let mixinTablePage = {
     mixins: [ MixinCommon ],
@@ -41,6 +42,7 @@ let mixinTablePage = {
         });
       },
     methods: {
+        ...mapActions('file', ['download']),
         // 검색
         onSearch() {
             this.reponseContentsData.data = null;
@@ -116,7 +118,18 @@ let mixinTablePage = {
         const { id, name } = data;
         this.searchItems.pgm = id;
         this.searchItems.pgmName = name;
-        }
+        },
+        // 단일 다운로드
+        onDownload(seq) {
+            let ids = this.selectedIds;
+    
+            if (typeof seq !== 'object' && seq) {
+            ids = [];
+            ids.push(seq);
+            }
+    
+            this.download({ids: ids, type: 'private'});
+        },
     }
 }
 

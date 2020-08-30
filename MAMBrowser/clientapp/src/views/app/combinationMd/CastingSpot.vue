@@ -199,7 +199,7 @@ export default {
         return;
       }
 
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
 
       this.$http.get(`/api/Products/spot/mcr/${media}`, { params: this.searchItems })
@@ -207,6 +207,7 @@ export default {
            this.setResponseData(res, 'normal');
            this.addScrollClass();
            this.isTableLoading = false;
+           this.isScrollLodaing = false;
       });
     },
     onChangeMedia(value) {

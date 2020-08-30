@@ -108,12 +108,13 @@ export default {
   },
   methods: {
     getData() {
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/Products/effect`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
+            this.isScrollLodaing = false;
       });
     }
   }

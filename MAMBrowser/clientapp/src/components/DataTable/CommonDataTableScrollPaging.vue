@@ -5,7 +5,7 @@
             <strong>Loading...</strong>
         </div>
         <vuetable 
-            v-else
+            v-show="!isTableLoading"
             ref="vuetable"
             class="scrolltable order-with-arrow"
             tableBodyClass="custom-vuetable-wrapper"
@@ -87,11 +87,15 @@ export default {
         isTableLoading: {
             type: Boolean,
             default: false,
+        },
+        isScrollLodaing: {
+            type: Boolean,
+            default: false,
         }
     },
     data() {
         return {
-            tBody: null,         // vuetable 테이블 body
+            tBodyWrapper: null,  // vuetable 테이블 body-wrapper
             scrollTimeout: null, // 스크롤 동작 타임아웃
             rowElemHeight: 0,    // 로우 높이
             selectedItems: [],   // 선택 로우 데이터
@@ -110,13 +114,13 @@ export default {
         )
 
         this.$nextTick(() => {
-            const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
-            [this.tBody] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
-            if (!rowElem || !this.tBody) return;
+            this.rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
+            [this.tBodyWrapper] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
+            if (!this.rowElem || !this.tBodyWrapper) return;
 
-            this.rowElemHeight = rowElem.clientHeight;
+            this.rowElemHeight = this.rowElem.clientHeight || 43;
             // scroll event linstener
-            this.tBody.addEventListener('scroll', e => {
+            this.tBodyWrapper.addEventListener('scroll', e => {
                 clearTimeout(this.scrollTimeout);
                 this.scrollTimeout = setTimeout(() => {
                     this.handlerScroll(e);
@@ -146,21 +150,21 @@ export default {
     },
     methods: {
         existScrollBar() {
-            const { clientHeight, scrollTop, scrollHeight } = this.tBody;
+            const { clientHeight, scrollTop, scrollHeight } = this.tBodyWrapper;
             return ((scrollHeight === 0 && clientHeight === 0)
             || (scrollHeight > clientHeight));
         },
         addClassScroll() {
             if (this.existScrollBar()) {
-                this.tBody.classList.add('scroll');
+                this.tBodyWrapper.classList.add('scroll');
             } else {
-                this.tBody.classList.remove('scroll');
+                this.tBodyWrapper.classList.remove('scroll');
             }
         },
         init() {
-            const { scrollTop } = this.tBody;
+            const { scrollTop } = this.tBodyWrapper;
             if (scrollTop > 0) {
-                this.tBody.scrollTop = 0;
+                this.tBodyWrapper.scrollTop = 0;
                 this.isChangeRowPerPage = true;
             }
         },
@@ -171,7 +175,11 @@ export default {
                 return;
             }
             const { clientHeight, scrollTop, scrollHeight } = target;
+            console.info('왜 안들어가지? 들어오는가???', clientHeight, scrollTop, scrollHeight, this.numRowsToBottom, this.rowElemHeight);
             if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
+                // const tBodyDom = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body');
+                // console.info('this.tBodyDom', tBodyDom);
+                // this.rowElem.appendChild(`<tr>testadfasdfsadf</tr>`);
                 this.lastClientHeight = scrollTop;
                 this.$emit('scrollPerPage', this.currentPage * 10)
             }

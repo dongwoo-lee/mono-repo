@@ -218,8 +218,10 @@ export default {
       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
         this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
         this.hasErrorClass = true;
+        return;
       }
-      this.isTableLoading = true;
+
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       const userExtId = sessionStorage.getItem('user_ext_id');
 
       this.$http.get(`/api/products/workspace/private/meta/${userExtId}`, { params: this.searchItems })
@@ -227,6 +229,7 @@ export default {
             this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
+            this.isScrollLodaing = false;
       });
     },    
     onShowModalFileUpload() {

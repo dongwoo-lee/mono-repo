@@ -79,6 +79,13 @@
                   <strong>Loading...</strong>
                 </div>
               </template>
+              <template v-if="screenName" v-slot:cell(actions)="data">
+                <!-- 다운로드 -->
+                <b-button :id="`download-${data.index}`" class="icon-buton"
+                  @click.stop="onDownload(data.item.id)">
+                  <b-icon icon="download" class="icon"></b-icon>
+                </b-button>
+              </template>
             </b-table>
           </b-colxx>
           <!-- sub -->
@@ -104,6 +111,17 @@
                   <b-spinner class="align-middle"></b-spinner>
                   <strong>Loading...</strong>
                 </div>
+              </template>
+              <template v-if="screenName" v-slot:cell(actions)="data">
+                <!-- 미리듣기 -->
+                <b-button class="icon-buton">
+                  <b-icon icon="caret-right-square" class="icon"></b-icon>
+                </b-button>
+                <!-- 다운로드 -->
+                <b-button :id="`download-${data.index}`" class="icon-buton"
+                  @click.stop="onDownload(data.item.id)">
+                  <b-icon icon="download" class="icon"></b-icon>
+                </b-button>
               </template>
             </b-table>
           </b-colxx>
@@ -145,6 +163,7 @@ export default {
         { key: 'status', label: '상태', tdClass: 'text-muted'},
         { key: 'pgmName', label: '사용처', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
+        { key: 'actions', label: '', tdClass: 'text-muted'},
       ],
       fieldsContents: [
         { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
@@ -154,6 +173,7 @@ export default {
         { key: 'name', label: '소재명', tdClass: 'text-muted' },
         { key: 'length', label: '길이', tdClass: 'text-muted' },
         { key: 'format', label: '포맷', tdClass: 'text-muted', thStyle: { width: '10%' } },
+        { key: 'actions', label: '', tdClass: 'text-muted'},
       ]
     }
   },

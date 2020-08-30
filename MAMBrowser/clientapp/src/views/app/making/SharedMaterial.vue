@@ -258,12 +258,13 @@ export default {
   methods: {
     ...mapActions('file', ['open_popup', 'download']),
     getData() {
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/products/workspace/public/meta`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
+            this.isScrollLodaing = false;
       });
     },
     onShowModalFileUpload() {

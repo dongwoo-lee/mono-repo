@@ -23,7 +23,7 @@
           <b-form-select
             class="width-220"
             v-model="searchItems.cate"
-            :options="categoryOptions"
+            :options="timetoneOptions"
             :disabled="categoryOptions.length === 0"
             value-field="id"
             text-field="name"
@@ -170,7 +170,7 @@ export default {
                 return;
             }
 
-            this.isTableLoading = true;
+            this.isTableLoading = this.isScrollLodaing ? false: true;
             const brd_dt = this.searchItems.brd_dt;
 
             this.$http.get(`/api/Products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
@@ -178,6 +178,7 @@ export default {
                 this.setResponseData(res, 'normal');
                 this.addScrollClass();
                 this.isTableLoading = false;
+                this.isScrollLodaing = false;
             });
         },
         onChangeMedia(value) {

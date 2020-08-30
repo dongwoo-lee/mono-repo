@@ -176,12 +176,14 @@ export default {
   },
   methods: {
     getData() {
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       const userExtId = sessionStorage.getItem('user_ext_id');
       this.$http.get(`/api/products/workspace/private/recyclebin/${userExtId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
             this.isTableLoading = false;
+            this.isScrollLodaing = false;
       });
     },
     // 단일 영구 삭제 확인창

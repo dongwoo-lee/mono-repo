@@ -39,13 +39,13 @@
           <b-form-select
             class="width-220"
             v-model="searchItems.cate"
-            :options="categoryOptions"
-            :disabled="categoryOptions.length === 0"
+            :options="timetoneOptions"
+            :disabled="timetoneOptions.length === 0"
             value-field="id"
             text-field="name"
           >
             <template v-slot:first>
-              <b-form-select-option v-if="categoryOptions.length > 0" value="">선택해주세요.</b-form-select-option>
+              <b-form-select-option v-if="timetoneOptions.length > 0" value="">선택해주세요.</b-form-select-option>
               <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
             </template>
           </b-form-select>
@@ -242,7 +242,7 @@ export default {
           return;
       }
 
-      this.isTableLoading = true;
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
 
       this.$http.get(`/api/Products/filler/time/${media}`, { params: this.searchItems })
@@ -250,6 +250,7 @@ export default {
           this.setResponseData(res, 'normal');
           this.addScrollClass();
           this.isTableLoading = false;
+          this.isScrollLodaing = false;
       });
     },
   }
