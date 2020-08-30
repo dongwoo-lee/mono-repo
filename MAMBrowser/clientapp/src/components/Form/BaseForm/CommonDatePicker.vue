@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <b-form @submit.prevent>
         <b-input-group :class="groupClass">
             <!-- 입력-->
            <input
-                type="text" 
+                type="text"
                 class="form-control input-picker" 
                 :placeholder="placeHolder" 
                 :value="inputValue | yyyyMMdd"
@@ -24,7 +24,7 @@
                 />
             </b-input-group-append>
         </b-input-group>
-    </div>
+    </b-form>
 </template>
 
 <script>
@@ -67,6 +67,7 @@ export default {
         return {
             date: '',
             inputValue: '',
+            validBeforeDate: this.value ? this.value : new Date().toISOString().substring(0, 10),
         }
     },
     created() {
@@ -86,6 +87,7 @@ export default {
             if (v !== o) {
                 const formatValue = this.$fn.formatDate(v);
                 this.$emit('input', formatValue);
+                this.validBeforeDate = formatValue;
                 this.inputValue = formatValue;
             }
         }
@@ -99,31 +101,41 @@ export default {
                 return;
             }
 
-            // 값 입력 체크
-            if (this.inValidDate(targetValue)) {
+            // 날짜 타입 체크
+            if (this.validDateType(targetValue)) {
                 event.target.value = targetValue.slice(0, -1);
                 return;
             }
 
-            // 날짜 체크
             const replaceAllTargetValue = targetValue.replace(/-/g, '')
             if (replaceAllTargetValue.length === 8) {
-                const yyyy = replaceAllTargetValue.substring(0, 4);
-                const mm = replaceAllTargetValue.substring(4, 6);
-                const dd = replaceAllTargetValue.substring(6, 8);
-                const mergeDate = `${yyyy}-${mm}-${dd}`;
-                event.target.value = mergeDate;
-                this.date = mergeDate;
+                const convertDate = this.convertDateStringToHaipun(targetValue);
+                 // 유효한 날짜인지 체크
+                if (!this.$fn.validDate(convertDate)) {
+                    const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);
+                    event.target.value = convertBeforeDate;
+                    this.date = convertBeforeDate;
+                } else {
+                    event.target.value = convertDate;
+                    this.validBeforeDate = convertDate;
+                    this.date = convertDate;
+                }
             }
-
+            
             return;
         },
-        inValidDate(value) {
+        validDateType(value) {
             // 유효한 입력값인지 체크
             // ex) 20201230 || 2020-12-30 둘다 가능한 정규표현식
             const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
             return !dateRegex.test(value);
         },
+        convertDateStringToHaipun(value) {
+            const yyyy = value.substring(0, 4);
+            const mm = value.substring(4, 6);
+            const dd = value.substring(6, 8);
+            return `${yyyy}-${mm}-${dd}`;
+        }
     },
 }
 </script>

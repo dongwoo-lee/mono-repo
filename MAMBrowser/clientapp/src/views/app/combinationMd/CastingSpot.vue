@@ -23,18 +23,16 @@
           />
         </b-form-group>
         <!-- 시작일 -->
-        <b-form-group label="시작일" class="has-float-label">
+        <b-form-group label="시작일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.start_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 종료일 -->
-        <b-form-group label="종료일" class="has-float-label">
+        <b-form-group label="종료일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 상태 -->
         <b-form-group label="상태" class="has-float-label">
@@ -72,6 +70,7 @@
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
           :num-rows-to-bottom="numRowsToBottom"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @sortableclick="onSortable"
         />
@@ -90,7 +89,7 @@ export default {
       searchItems: {
         media: 'A',                // 매체
         cate: '',                  // 분류
-        start_dt: '20200101',      // 시작일
+        start_dt: '',      // 시작일
         end_dt: '',                // 종료일
         status: '',                // 상태
         editor: '',                // 사용자
@@ -100,6 +99,7 @@ export default {
         sortKey: '',
         sortValue: '',
       },
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -128,7 +128,7 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
-            return this.$fn.formatDate(v, 'yyyy-mm-dd')
+            return this.$fn.dateStringTohaipun(v)
           }
         },
         {
@@ -173,16 +173,6 @@ export default {
           dataClass: "center aligned text-center",
           width: '14%',
         },
-        {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center word-break",
-          width: '17%',
-          callback: (v) => {
-            return v.substring(1, v.length).replace(/\\/g, '/');
-          }
-        },
       ],
     }
   },
@@ -199,16 +189,24 @@ export default {
   },
   methods: {
     getData() {
+      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+      }
+
       if (this.$v.$invalid) {
         this.$fn.notify('inputError', {});
         return;
       }
 
+      this.isTableLoading = true;
       const media = this.searchItems.media;
 
       this.$http.get(`/api/Products/spot/mcr/${media}`, { params: this.searchItems })
         .then(res => {
            this.setResponseData(res, 'normal');
+           this.addScrollClass();
+           this.isTableLoading = false;
       });
     },
     onChangeMedia(value) {

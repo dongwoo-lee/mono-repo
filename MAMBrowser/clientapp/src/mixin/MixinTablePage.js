@@ -1,25 +1,21 @@
-import mixinValidate from './MixinValidate';
+import MixinCommon from './MixinCommon';
 
 let mixinTablePage = {
-    mixins: [ mixinValidate ],
+    mixins: [ MixinCommon ],
     data() {
         return {
             responseData: {
                 data: null,
-                rowPerPage: 16,
-                selectPage: 1,
-                totalRowCount: 0,
             },
             reponseContentsData: {
                 data: null,
-                rowPerPage: 16,
-                selectPage: 1,
-                totalRowCount: 0,
             },
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             pgmOptions: [],                          // 사용처 목록 목록
             cmOptions: [],                           // 광고 분류 목록
+            isTableLoading: false,
+            isSubTableLoading: false,
         }
     },
     watch: {
@@ -47,6 +43,7 @@ let mixinTablePage = {
     methods: {
         // 검색
         onSearch() {
+            this.reponseContentsData.data = null;
             this.getData();
         },
         // 메인 데이터 조회
@@ -55,7 +52,8 @@ let mixinTablePage = {
               this.$fn.notify('inputError', {});
               return;
             }
-      
+            
+            this.isTableLoading = true;
             const media = this.searchItems.media;
             const brd_dt = this.searchItems.brd_dt;
 
@@ -67,15 +65,17 @@ let mixinTablePage = {
             this.$http.get(`/api/Products/${subUrl}`, { params: this.searchItems })
               .then(res => {
                  this.setResponseData(res);
+                 this.isTableLoading = false;
             });
           },
         // 서브 데이터 조회
-        getDataContents(sbID) {
+        getDataContents(sbID, brdDT) {
             if (sbID === undefined) return;
-            const brd_dt = this.searchItems.brd_dt;
-            this.$http.get(`/api/Products/sb/contents/${brd_dt}/${sbID}`)
+            this.isSubTableLoading = true;
+            this.$http.get(`/api/Products/sb/contents/${brdDT}/${sbID}`)
               .then(res => {
                  this.setReponseContentsData(res, 'normal');
+                 this.isSubTableLoading = false;
             });
         },
         // 메인 결과값 설정
@@ -97,27 +97,10 @@ let mixinTablePage = {
             }
         },
         // 레코드 선택 이벤트
-        rowSelected(v) {
-            this.getDataContents(v[0].id);
-        },
-        // 카테고리 API 요청
-        requestCall(url, attr) {
-            this.$http.get(url)
-                .then(res => {
-                    if (res.status === 200) {
-                        this[attr] = res.data.resultObject.data;
-                    } else {
-                        this.$fn.notify('server-error', { message: '조회 에러' });
-                    }
-          });
-        },
-        // 매체목록 조회
-        getMediaOptions() {
-            this.requestCall('/api/Categories/media', 'mediaOptions');
-        },
-        // 제작자(사용자) 목록 조회
-        getEditorOptions() {
-            this.requestCall('/api/Categories/users', 'editorOptions');
+        rowSelected(items) {
+            if (items.length === 0) return;
+            const { id, brdDT } = items[0];
+            this.getDataContents(id, brdDT);
         },
         // 사용처 목록 조회
         getPgmOptions(brd_dt) {
@@ -127,12 +110,6 @@ let mixinTablePage = {
         // 광고 분류 조회
         getCmOptions() {
             this.requestCall('/api/Categories/cm', 'cmOptions');
-        },
-        // 제작자 선택
-        onEditorSelected(data) {
-            const { id, name } = data;
-            this.searchItems.editor = id;
-            this.searchItems.editorName = name;
         },
         // 사용처 분류 선택
         onPgmSelected(data) {

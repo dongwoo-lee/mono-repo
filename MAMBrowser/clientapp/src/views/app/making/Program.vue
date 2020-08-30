@@ -42,7 +42,7 @@
         <common-data-table
           :fields="fields"
           :rows="responseData.data"
-          :contextmenu="contextMenu"
+          :isTableLoading="isTableLoading"
           @contextMenuAction="onContextMenuAction"
         />
       </template>
@@ -61,7 +61,8 @@ export default {
         media: 'A',
         brd_dt: '',
         rowPerPage: 15,
-      },      
+      },
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -90,7 +91,7 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
-            return this.$fn.formatDate(v, 'yyyy-mm-dd')
+            return this.$fn.dateStringTohaipun(v)
           }
         },
         {
@@ -160,12 +161,14 @@ export default {
         return;
       }
 
+      this.isTableLoading = true;
       const media = this.searchItems.media;
       const brd_dt = this.searchItems.brd_dt;
 
       this.$http.get(`/api/Products/pgm/${media}/${brd_dt}`)
         .then(res => {
            this.setResponseData(res, 'normal');
+           this.isTableLoading = false;
       });
     }
   },

@@ -3,8 +3,11 @@
         ref="refUserListTable"
         sort-by="title" sort-desc.sync="false"
         selectable
+        show-empty
+        empty-text="데이터가 없습니다."
         select-mode="single"
         selectedVariant="primary"
+        :busy="isLoading"
         :fields="fields"
         :items="rolesList"
     >
@@ -30,6 +33,12 @@
                 <b-button variant="primary default" class="common-btn" @click="onUpdate(item, index)">저장하기</b-button>
             </div>
         </template>
+        <template v-slot:table-busy>
+            <div class="text-center text-primary my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Loading...</strong>
+            </div>
+        </template>
     </b-table>
 </template>
 <script>
@@ -37,8 +46,9 @@ export default {
     data() {
         return {
             rolesList: [],
+            isLoading: false,
             fields: [
-                { key: 'no', label: 'No', sortable: false, tdClass: 'text-muted' },
+                { key: 'no', label: 'No', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
                 { key: 'id', label: 'Id', sortable: false, tdClass: 'text-muted' },
                 { key: 'name', label: '역할', sortable: false, tdClass: 'text-muted' },
                 { key: 'authorCode', label: '권한', sortable: false, tdClass: 'text-muted' },
@@ -53,6 +63,7 @@ export default {
     },
     methods: {
         getRolseData() {
+            this.isLoading = true;
             this.$http.get('/api/roles')
                 .then(res => {
                     if (res.status === 200) {
@@ -60,6 +71,7 @@ export default {
                     } else {
                         this.$fn.notify('server-error', { message: '조회 에러' });
                     }
+                    this.isLoading = false;
             });
         },
         getAuthorityOptions() {

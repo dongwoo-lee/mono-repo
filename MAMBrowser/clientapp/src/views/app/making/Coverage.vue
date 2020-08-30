@@ -24,18 +24,16 @@
           />
         </b-form-group>
         <!-- 방송 시작일 -->
-        <b-form-group label="시작일" class="has-float-label">
+        <b-form-group label="시작일" 
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.start_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 방송 종료일 -->
-        <b-form-group label="종료일" class="has-float-label">
+        <b-form-group label="종료일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
@@ -72,6 +70,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
@@ -105,6 +104,7 @@ export default {
         sortKey: '',
         sortValue: '',
       },
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -147,7 +147,7 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
-            return this.$fn.formatDate(v, 'yyyy-MM-dd');
+            return this.$fn.dateStringTohaipun(v);
           }
         },
         {
@@ -209,9 +209,18 @@ export default {
   },
   methods: {
     getData() {
+      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('warning', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+      }
+
+      this.isTableLoading = true;
+
       this.$http.get(`/api/Products/report`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
     },
   }

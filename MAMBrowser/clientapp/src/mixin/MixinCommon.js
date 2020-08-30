@@ -14,6 +14,20 @@ let mixinCommon = {
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             sortItems: {},
+            isLoadingClass: false,
+            hasErrorClass: false,
+        }
+    },
+    watch: {
+        ['searchItems.start_dt'](v) {
+          if (!this.$fn.checkGreaterStartDate(v, this.searchItems.end_dt)) {
+            this.hasErrorClass = false;
+          }
+        },
+        ['searchItems.end_dt'](v) {
+          if (!this.$fn.checkGreaterStartDate(this.searchItems.start_dt, v)) {
+            this.hasErrorClass = false;
+          }
         }
     },
     created() {
@@ -85,6 +99,7 @@ let mixinCommon = {
         },
         // 카테고리 API 요청
         requestCall(url, attr) {
+            this.isLoadingClass = true;
             this.$http.get(url)
                 .then(res => {
                     if (res.status === 200) {
@@ -92,6 +107,7 @@ let mixinCommon = {
                     } else {
                         this.$fn.notify('server-error', { message: '조회 에러' });
                     }
+                    this.isLoadingClass = false;
           });
         },
         // 매체목록 조회
@@ -108,6 +124,11 @@ let mixinCommon = {
             this.searchItems.editor = id;
             this.searchItems.editorName = name;
         },
+        addScrollClass() {
+            setTimeout(() => {
+                this.$refs.scrollPaging.addClassScroll();  
+            }, 0);
+        }
     }
 }
 

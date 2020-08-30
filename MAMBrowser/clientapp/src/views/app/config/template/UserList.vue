@@ -3,8 +3,11 @@
         ref="refUserListTable"
         sort-by="title" sort-desc.sync="false"
         selectable
+        show-empty
+        empty-text="데이터가 없습니다."
         select-mode="single"
         selectedVariant="primary"
+        :busy="isLoading"
         :fields="fields"
         :items="userList"
     >
@@ -45,6 +48,12 @@
                 <b-button variant="primary default" class="common-btn" @click="onUpdate(item, index)">저장하기</b-button>
             </div>
         </template>
+        <template v-slot:table-busy>
+            <div class="text-center text-primary my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Loading...</strong>
+            </div>
+        </template>
     </b-table>
 </template>
 <script>
@@ -52,6 +61,7 @@ export default {
     data() {
         return {
             userList: [],
+            isLoading: false,
             fields: [
                 { key: 'no', label: 'No', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
                 { key: 'name', label: '사용자', sortable: false, tdClass: 'text-center' },
@@ -81,6 +91,7 @@ export default {
     },
     methods: {
         getUserData() {
+            this.isLoading = true;
             this.$http.get('/api/users')
                 .then(res => {
                     if (res.status === 200) {
@@ -88,6 +99,7 @@ export default {
                     } else {
                         this.$fn.notify('server-error', { message: '조회 에러' });
                     }
+                    this.isLoading = false;
             });
         },
         getMenuGrpOptions() {
@@ -142,8 +154,7 @@ export default {
         }, 
         onUpdate(item, index) {
             item.isChangeDiskMax = false;
-            item.isChangeMenuGrp = false;
-
+            item.isChangeMenuGrpID = false;
 
             const params = [];
             params.push(item);
@@ -157,7 +168,8 @@ export default {
                       this.$fn.notify('server-error', { message: '조회 에러:' + data.errorMsg });
                   }
             });
-
+            console.info('this..equalOringData', this.equalOringData(item))
+    
             // click trigger
             const rowElem = this.$refs.refUserListTable.$el.querySelectorAll('tbody tr')[index];
             rowElem.click();

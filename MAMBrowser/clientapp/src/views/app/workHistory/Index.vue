@@ -33,18 +33,16 @@
             <common-input-text v-model="searchItems.userName" />
         </b-form-group>
         <!-- 시작일 -->
-        <b-form-group label="시작일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        <b-form-group label="시작일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
+          <common-date-picker v-model="$v.searchItems.start_dt.$model" :dayAgo="7"/>
         </b-form-group>
         <!-- 종료일 -->
-        <b-form-group label="종료일" class="has-float-label">
+        <b-form-group label="종료일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -65,6 +63,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
         >
         </common-data-table-scroll-paging>
@@ -83,13 +82,14 @@ export default {
             searchItems: {
                 logLevel: '',          // 로그 유형
                 userName: '',          // 작업자
-                start_dt: '20200101',  // 등록일 시작일
+                start_dt: '',  // 등록일 시작일
                 end_dt: '',    // 등록일 종료일
                 rowPerPage: 15,
                 selectPage: 1,
                 sortKey: '',
                 sortValue: '',
             },
+            isTableLoading: false,
             fields: [
                   {
                     name: '__sequence',
@@ -156,25 +156,32 @@ export default {
     },
     methods: {
         getData() {
-             this.$http.get('/api/Logs', { params: this.searchItems })
-                .then(res => {
-                    if (res.status === 200) {
-                        const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
-                        if (selectPage > 1) {
-                            data.forEach(row => {
-                                this.responseData.data.push(row);
-                            })
-                        } else {
-                            this.responseData.data = data;
-                            this.responseData.rowPerPage = rowPerPage;
-                            this.responseData.selectPage = selectPage;
-                            this.responseData.totalRowCount = totalRowCount;
-                        }
+          if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+            this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+            this.hasErrorClass = true;
+          }
+
+          this.isTableLoading = true;
+          this.$http.get('/api/Logs', { params: this.searchItems })
+            .then(res => {
+                if (res.status === 200) {
+                    const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
+                    if (selectPage > 1) {
+                        data.forEach(row => {
+                            this.responseData.data.push(row);
+                        })
                     } else {
-                        this.$fn.notify('server-error', { message: '조회 에러' });
+                        this.responseData.data = data;
+                        this.responseData.rowPerPage = rowPerPage;
+                        this.responseData.selectPage = selectPage;
+                        this.responseData.totalRowCount = totalRowCount;
                     }
-            });
-        },
+                } else {
+                    this.$fn.notify('server-error', { message: '조회 에러' });
+                }
+                this.isTableLoading = false;
+        });
+      },
     }
 }
 </script>

@@ -14,14 +14,17 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 대분류 -->
-        <b-form-group label="대분류" label-cols-lg="3">
-          <b-form-checkbox-group v-model="searchItems.topCategory">
-            <b-form-checkbox value="own">ALL</b-form-checkbox>
-            <b-form-checkbox value="two">국내</b-form-checkbox>
-            <b-form-checkbox value="three">국외</b-form-checkbox>
-            <b-form-checkbox value="four">클래식</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
+        <fieldset class="form-group">
+          <div class="form-row">
+            <span class="bv-no-focus-ring col-form-label">대분류: </span>
+            <b-form-checkbox-group class="custom-checkbox-group" v-model="searchItems.topCategory">
+              <b-form-checkbox value="own">ALL</b-form-checkbox>
+              <b-form-checkbox value="two">국내</b-form-checkbox>
+              <b-form-checkbox value="three">국외</b-form-checkbox>
+              <b-form-checkbox value="four">클래식</b-form-checkbox>
+            </b-form-checkbox-group>  
+          </div>
+        </fieldset>
         <!-- 소분류 -->
         <b-form-group label="소분류" class="has-float-label">
           <b-form-select
@@ -33,24 +36,25 @@
           />
         </b-form-group>
         <!-- 검색옵션 -->
-        <b-form-group label="검색옵션">
-          <b-form-checkbox-group v-model="searchItems.searchKeyword">
-            <b-form-checkbox value="own">히트곡</b-form-checkbox>
-            <b-form-checkbox value="two">금지곡</b-form-checkbox>
-            <b-form-checkbox value="three">주의</b-form-checkbox>
-            <b-form-checkbox value="four">청소년유해</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
+        <fieldset class="form-group">
+          <div class="form-row">
+            <span class="bv-no-focus-ring col-form-label">검색옵션: </span>
+            <b-form-checkbox-group class="custom-checkbox-group" v-model="searchItems.searchKeyword">
+              <b-form-checkbox value="own">히트곡</b-form-checkbox>
+              <b-form-checkbox value="two">금지곡</b-form-checkbox>
+              <b-form-checkbox value="three">주의</b-form-checkbox>
+              <b-form-checkbox value="four">청소년유해</b-form-checkbox>
+            </b-form-checkbox-group>
+          </div>
+        </fieldset>
         <!-- 검색어 -->
          <b-form-group label="검색어" class="has-float-label">
             <common-input-text v-model="searchItems.keyword"/>
           </b-form-group>
         <!-- 검색 버튼 -->
-        <fieldset class="form-group">
-          <div class="bv-no-focus-ring pt-26">
-              <button type="button" class="btn btn-outline-primary default" @click="onSearch">검색</button>
-          </div>
-        </fieldset>
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+        </b-form-group>
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
@@ -66,6 +70,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
@@ -99,6 +104,7 @@ export default {
         { label: '국외', code: 'FOREIGN' },
         { label: '클래식', code: 'CLASSIC' },
       ],
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -189,9 +195,12 @@ export default {
   },
   methods: {
     getData() {
+      this.isTableLoading = true;
       this.$http.get(`/api/Products/music`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
     },
   }

@@ -37,7 +37,12 @@
                     :options="primaryCodeOptions"
                     value-field="id"
                     text-field="name" 
-                />
+                >
+                    <template v-slot:first>
+                        <b-form-select-option v-if="primaryCodeOptions.length > 0" value="">선택해주세요.</b-form-select-option>
+                        <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
+                    </template>
+                </b-form-select>
             <b-form-invalid-feedback :state="!$v.categoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
             </b-form-group>
         </template>
@@ -97,11 +102,11 @@ export default {
         ...mapMutations('file', ['REMOVE_FILES']),
         ...mapActions('file', ['open_toast', 'upload']),
         submit() {
+            console.info('this.$v', this.$v);
             if (!this.$v.title.$invalid || !this.$v.memo.$invalid) {
                 this.$fn.notify('inputError', {});
                 return;
             }
-
             let data = {};
             if (this.type === 'private') {
                 data = {
@@ -112,6 +117,11 @@ export default {
                     }
                 }
             } else {
+                if (!this.$v.categoryCD.$invalid) {
+                    this.$fn.notify('inputError', {});
+                    return ;
+                }
+
                 data = {
                     files: this.localFiles,
                     meta: { 
@@ -122,7 +132,6 @@ export default {
                     }
                 }
             }
-            
 
             this.open_toast(data);
             this.upload(this.type);
@@ -158,6 +167,7 @@ export default {
         },
         // 공유 소재 분류 목록 조회
         getPrimaryCodeOptions() {
+            this.categoryCD = '';
             this.$http.get('/api/Categories/public-codes/primary/' + this.mediaCD)
               .then(res => {
                   if (res.status === 200) {

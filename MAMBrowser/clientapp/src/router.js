@@ -142,7 +142,7 @@ const routes = [
       },
       {
         path: "log", // 사용자 로그보기
-        component: () => import("./views/app/log/Index"),
+        component: () => import("./views/app/workHistory/Index"),
       },
     ]
   },

@@ -23,22 +23,20 @@
           />
         </b-form-group>
         <!-- 편성일자: 시작일자 -->
-        <b-form-group label="편성일자" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.regDtm.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.regDtm.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        <b-form-group label="편성일자"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.regDtm.$error) }">
+          <common-date-picker v-model="$v.searchItems.regDtm.$model"/>
         </b-form-group>
         <!-- 녹음명 -->
         <b-form-group label="녹음명" class="has-float-label c-zindex">
             <common-input-text v-model="$v.searchItems.userName" />
         </b-form-group>
         <!-- 등록일 -->
-        <b-form-group label="편성일자" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.brd_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        <b-form-group label="등록일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.$error) }">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" :isCurrentDate="false"/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -54,6 +52,7 @@
         <common-data-table
             :fields="fields"
             :rows="responseData.data"
+            :isTableLoading="isTableLoading"
         />
       </template>
     </common-form>
@@ -77,6 +76,7 @@ export default {
                 sortKey: '',
                 sortValue: '',
             },
+            isTableLoading: false,
             fields: [
                 {
                     name: 'rowNO',
@@ -154,12 +154,14 @@ export default {
                 return;
             }
 
+            this.isTableLoading = true;
             const media = this.searchItems.media;
             const brd_dt = this.searchItems.brd_dt;
 
             this.$http.get(`/api/Products/dl30/${media}/${brd_dt}`, { params: this.searchItems })
                 .then(res => {
                 this.setResponseData(res, 'normal');
+                this.isTableLoading = false;
             });
         },
     }

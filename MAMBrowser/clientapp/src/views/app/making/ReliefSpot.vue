@@ -24,7 +24,7 @@
         </b-form-group>
         <!-- 등록일: 시작일 -->
         <b-form-group label="시작일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          <common-date-picker v-model="$v.searchItems.start_dt.$model" :dayAgo="7" />
           <b-form-invalid-feedback
             :state="$v.searchItems.start_dt.check_date"
           >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
@@ -62,6 +62,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @sortableclick="onSortable"
           @refresh="onRefresh"
@@ -91,6 +92,7 @@ export default {
         sortKey: '',
         sortValue: 'DESC',
       },
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -142,8 +144,15 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
-            return this.$fn.formatDate(v, 'yyyy-MM-dd');
+            return this.$fn.dateStringTohaipun(v);
           }
+        },
+        {
+          name: "editorName",
+          title: "제작자",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '5%',
         },
         {
           name: "pgmName",
@@ -157,13 +166,6 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '9%',
-        },
-        {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: 'center aligned text-center',
-          dataClass: "center aligned word-break",
-          width: "10%"
         },
       ]
     }
@@ -181,9 +183,13 @@ export default {
         return;
       }
 
+      this.isTableLoading = true;
+
       this.$http.get(`/api/Products/spot/scr/${this.searchItems.media}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
     },
   }

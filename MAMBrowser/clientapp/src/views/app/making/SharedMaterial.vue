@@ -25,7 +25,12 @@
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
-          <common-dropdown-menu-input classString="width-110" :suggestions="publicOptions" @selected="onPublicSelected" />
+          <common-dropdown-menu-input 
+            classString="width-120" 
+            :isLoadingClass="isLoadingClass"
+            :suggestions="publicCodesOptions" 
+            @selected="onPublicCodesSelected"
+          />
         </b-form-group>
         <!-- 시작일 -->
         <b-form-group label="시작일" class="has-float-label">
@@ -84,6 +89,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
           @refresh="onRefresh"
@@ -114,7 +120,7 @@
         <common-confirm
           id="modalRemove"
           title="영구삭제"
-          message= "영구적으로 삭제하시겠습니까?"
+          message= "다시 복원할 수 없습니다. 정말 삭제하시겠습니까?"
           submitBtn="영구삭제"
           @ok="onDelete()"
         />
@@ -157,6 +163,7 @@ export default {
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
+      isTableLoading: false,
       fields: [
         {
           name: "__checkbox",
@@ -235,20 +242,28 @@ export default {
       ]
     }
   },
+  watch: {
+    ['searchItems.media'](v) {
+      this.getPublicCodesOptions(v);
+    }
+  },
   created() {
     // (구)프로소재, 공유소재 매체 목록 조회
     this.getMediaPrimaryOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
     // 공유 소재 분류 목록 조회
-    this.getPublicOptions(this.media);
+    this.getPublicCodesOptions(this.searchItems.media);
   },
   methods: {
     ...mapActions('file', ['open_popup', 'download']),
     getData() {
+      this.isTableLoading = true;
       this.$http.get(`/api/products/workspace/public/meta`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
     },
     onShowModalFileUpload() {

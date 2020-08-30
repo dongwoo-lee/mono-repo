@@ -1,6 +1,11 @@
 <template>
-    <div>
+    <div class="custom-vuetable-wrapper">
+        <div class="text-center text-primary my-2" v-if="isTableLoading">
+            <b-spinner class="align-middle"></b-spinner>
+            <strong>Loading...</strong>
+        </div>
         <vuetable
+            v-else
             ref="vuetable"
             class="scrolltable order-with-arrow"
             :api-mode="false"
@@ -60,6 +65,10 @@ export default {
                 // }
             ]
         },
+        isTableLoading: {
+            type: Boolean,
+            default: false,
+        }
     },
     data() {
         return {

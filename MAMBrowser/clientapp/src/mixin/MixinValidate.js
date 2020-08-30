@@ -15,7 +15,6 @@ let mixinValidate = {
           regDtm: {
             check_date: commonValidate.date,
           },
-          validationGroup: ['start_dt', 'end_dt'],
         },
         metaData: {
           title: {

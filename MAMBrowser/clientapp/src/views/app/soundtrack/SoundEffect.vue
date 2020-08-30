@@ -35,6 +35,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
         >
         </common-data-table-scroll-paging>
@@ -57,6 +58,7 @@ export default {
         sortKey: '',
         sortValue: 'DESC',
       },
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -106,9 +108,12 @@ export default {
   },
   methods: {
     getData() {
+      this.isTableLoading = true;
       this.$http.get(`/api/Products/effect`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
     }
   }

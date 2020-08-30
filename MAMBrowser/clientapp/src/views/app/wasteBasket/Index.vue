@@ -51,6 +51,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
           @refresh="onRefresh"
@@ -118,6 +119,7 @@ export default {
       },
       singleSelectedId: null,
       recycleId: null,
+      isTableLoading: false,
       fields: [
         {
           name: "__checkbox",
@@ -174,10 +176,12 @@ export default {
   },
   methods: {
     getData() {
+      this.isTableLoading = true;
       const userExtId = sessionStorage.getItem('user_ext_id');
       this.$http.get(`/api/products/workspace/private/recyclebin/${userExtId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.isTableLoading = false;
       });
     },
     // 단일 영구 삭제 확인창
@@ -227,10 +231,10 @@ export default {
       const userExtId = sessionStorage.getItem('user_ext_id');
       let ids = this.selectedIds;
 
-      if (this.singleSelectedId) {
+      if (this.recycleId) {
         ids = [];
-        ids.push(this.singleSelectedId);
-        this.singleSelectedId = null;
+        ids.push(this.recycleId);
+        this.recycleId = null;
       }
 
       this.$http.put(`/api/products/workspace/private/recyclebin/${userExtId}/recycle/${ids}`)

@@ -31,6 +31,21 @@
             :options="[{ value: '', text: '선택해주세요.' }, { value: 'Y', text: '방송중' }, { value: 'N', text: '폐지' }]"
           />
         </b-form-group>
+        <!-- 분류 -->
+        <b-form-group label="분류" class="has-float-label">
+            <common-dropdown-menu-input 
+            classString="width-220" 
+            :suggestions="proOptions" 
+            @selected="onProSelected"
+          />
+          <!-- <b-form-select
+            class="width-120"
+            v-model="searchItems.cate"
+            :options="proOptions"
+            value-field="id"
+            text-field="name"
+          /> -->
+        </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
@@ -58,6 +73,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @sortableclick="onSortable"
           @refresh="onRefresh"
@@ -86,6 +102,8 @@ export default {
         sortKey: '',
         sortValue: '',
       },
+      proOptions: [],
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -164,10 +182,16 @@ export default {
   },
   methods: {
     getData() {
+      this.isTableLoading = true;
       this.$http.get(`/api/Products/old_pro`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
+    },
+    onProSelected(data) {
+      this.searchItems.cate = data.id;
     }
   }
 }

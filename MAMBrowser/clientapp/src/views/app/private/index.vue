@@ -71,6 +71,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
@@ -148,8 +149,9 @@ export default {
         sortKey: '',
         sortValue: '',
       },
-      hasErrorClass: false,
       metaDataModifyPopup: false,
+      singleSelectedId: null,
+      isTableLoading: false,
       fields: [
         {
           name: "__checkbox",
@@ -207,37 +209,24 @@ export default {
           width: "10%"
         }
       ],
-      singleSelectedId: null,
-    }
-  },
-  watch: {
-    ['searchItems.start_dt'](v) {
-      if (!this.$fn.checkGreaterStartDate(v, this.searchItems.end_dt)) {
-        this.hasErrorClass = false;
-      }
-    },
-    ['searchItems.end_dt'](v) {
-      if (!this.$fn.checkGreaterStartDate(this.searchItems.start_dt, v)) {
-        this.hasErrorClass = false;
-      }
+      
     }
   },
   methods: {
     ...mapActions('file', ['open_popup', 'download']),
     getData() {
       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
-        this.$fn.notify('warning', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
         this.hasErrorClass = true;
       }
-
+      this.isTableLoading = true;
       const userExtId = sessionStorage.getItem('user_ext_id');
 
       this.$http.get(`/api/products/workspace/private/meta/${userExtId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
-            setTimeout(() => {
-              this.$refs.scrollPaging.addClassScroll();  
-            }, 0);
+            this.addScrollClass();
+            this.isTableLoading = false;
       });
     },    
     onShowModalFileUpload() {

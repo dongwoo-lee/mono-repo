@@ -3,14 +3,15 @@
  * @param {*} d 
  * @param {*} p 
  */
-const formatDate = (d, p = 'yyyyMMdd') => {
+const formatDate = (d, p = 'yyyyMMdd', haipunToString = true) => {
     if (!d) { return d; }
 
     let parseDate = d;
     if (d.length === 8) {
-        const sY = d.substring(0,4);
+        const sY = d.substring(0, 4);
         const sM = d.substring(4, 6);
         const sD = d.substring(6, 8);
+        
         parseDate = `${sY}-${sM}-${sD}`;
     }
 
@@ -41,6 +42,24 @@ const formatDate = (d, p = 'yyyyMMdd') => {
 };
 
 /**
+ * 스트링 날짜를 하이픈(대쉬) 넣기 
+ * @param {*} d 
+ */
+const dateStringTohaipun = (d) => {
+    if (!d) { return d; }
+
+    let parseDate = d;
+    if (d.length === 8) {
+        const sY = d.substring(0, 4);
+        const sM = d.substring(4, 6);
+        const sD = d.substring(6, 8);
+        
+        return parseDate = `${sY}-${sM}-${sD}`;
+    }
+    return parseDate;
+}
+
+/**
  * 시작 날짜가 종료 날짜보다 큰지 체크
  * emptyAlow : 빈값 허용(검색폼에서는 빈값 허용.)
  * @param {*} sDate
@@ -52,6 +71,17 @@ const checkGreaterStartDate = function(sDate, eDate, emptyAllow = true) {
     const parseEndDate = Date.parse(this.formatDate(eDate, 'yyyy-MM-dd'));
     return parseStartDate > parseEndDate;
 };
+
+/**
+ * 날짜가 유효한지 체크
+ * @param {*} value 
+ */
+const validDate = (value) => {
+    if (!value || value === undefined) return true;
+    // 2599년까지 가능
+    const fullDateRegex = /^(19|20|21|22|23|24|25)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
+    return fullDateRegex.test(value);
+}
 
 /**
  * 값 분리하여 첫번째 값 가져오기
@@ -84,8 +114,11 @@ const notify = (type, options = { title, message, duration, permanent }) => {
         return window.$notify('error', 'Data undefined', '데이터가 없습니다.', optionInOptions);
     }
     if (type === 'inputError') {
-        return window.$notify('error', '입력 폼 에러', '입력 폼 양식을 확인해주세요.', optionInOptions);
+        return window.$notify('error', '입력 폼 에러', '필수 입력 항목을 확인해주세요.', optionInOptions);
     }
+    if (type === 'dateError') {
+        return window.$notify('error', '날짜 입력 에러', '날짜 항목을 확인해주세요.', optionInOptions);
+    }   
 
     window.$notify(type, options.title, options.message, optionInOptions);
 }
@@ -148,7 +181,9 @@ const formatBytes = (bytes, decimals = 2) => {
 
 const commonFunctions = {
     formatDate,
+    dateStringTohaipun,
     checkGreaterStartDate,
+    validDate,
     splitFirst,
     notify,
     fileDownload,

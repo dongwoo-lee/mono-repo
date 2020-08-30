@@ -65,7 +65,7 @@
               class="float-right"
               @click="submit()"
             >
-              이동
+              수정
             </b-button>
             <b-button
               variant="danger"

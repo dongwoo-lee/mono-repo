@@ -11,17 +11,6 @@ let mixinFillerPage = {
         }
     },
     methods: {
-        // 카테고리 API 요청
-        requestCall(url, attr) {
-            this.$http.get(url)
-                .then(res => {
-                    if (res.status === 200) {
-                        this[attr] = res.data.resultObject.data;
-                    } else {
-                        this.$fn.notify('server-error', { message: '조회 에러' });
-                    }
-          });
-        },
         // 주조 spot 분류 목록 조회
         getSpotOptions(value) {
           this.requestCall('/api/Categories/mcr/spot' + '?media=' + value, 'spotOptions');

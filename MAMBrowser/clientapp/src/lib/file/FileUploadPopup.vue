@@ -24,14 +24,14 @@
             <!-- BODY: 파일업로드 -->
             <file-upload></file-upload>
         </b-modal>
-        <b-modal 
-            id="closeFileUploadModal" 
-            size="sm" 
-            title="파일 업로드창 닫기"
-            :hideHeaderClose="true"
-            @ok="onCloseFileUploadModal">
-            파일 업로드 창을 닫으시겠습니까?
-        </b-modal>
+        <!-- 휴지통 이동 확인창 -->
+        <common-confirm
+          id="closeFileUploadModal"
+          title="파일 업로드창 닫기"
+          message= " 파일 업로드 창을 닫으시겠습니까?"
+          submitBtn="확인"
+          @ok="onCloseFileUploadModal()"
+        />
     </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
         onCloseFileUploadModal() {
             // TODO: 파일 삭제 로직
             this.REMOVE_FILES_ALL();
-            this.$bvModal.hide('modal-prevent-closing');
+            this.$bvModal.hide('closeFileUploadModal');
             this.isShow = false;
         },
     }

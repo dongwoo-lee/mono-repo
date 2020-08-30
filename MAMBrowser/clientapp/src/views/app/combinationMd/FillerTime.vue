@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="필러(시간)" />
+        <piaf-breadcrumb heading="FILLER(시간)" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -23,18 +23,16 @@
           />
         </b-form-group>
         <!-- 시작일 -->
-        <b-form-group label="시작일" class="has-float-label">
+        <b-form-group label="시작일" 
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.start_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 종료일 -->
-        <b-form-group label="종료일" class="has-float-label">
+        <b-form-group label="종료일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
           <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
@@ -89,6 +87,7 @@
           :per-page="responseData.rowPerPage"
           :is-actions-slot="true"
           :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
         >
         </common-data-table-scroll-paging>
@@ -117,6 +116,7 @@ export default {
           sortKey: '',
           sortValue: '',
       },
+      isTableLoading: false,
       fields: [
         {
           name: 'rowNO',
@@ -146,7 +146,7 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
-              return this.$fn.formatDate(v, 'yyyy-mm-dd')
+              return this.$fn.dateStringTohaipun(v)
           }
         },
         {
@@ -156,7 +156,7 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
           callback: (v) => {
-              return this.$fn.formatDate(v, 'yyyy-mm-dd')
+              return this.$fn.dateStringTohaipun(v)
           }
         },
         {
@@ -185,7 +185,7 @@ export default {
           title: "편집자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%'
+          width: '7%'
         },
         {
           name: "editDtm",
@@ -199,8 +199,16 @@ export default {
           title: "방송의뢰일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '14%',
+          width: '12%',
         },
+        {
+          name: "fileName",
+          title: "파일명",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: '10%',
+        },
+        
         {
           name: "masteringDtm",
           title: "미스터링일자",
@@ -224,16 +232,24 @@ export default {
   },
   methods: {
     getData() {
+      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+      }
+
       if (this.$v.$invalid) {
           this.$fn.notify('inputError', {});
           return;
       }
 
+      this.isTableLoading = true;
       const media = this.searchItems.media;
 
       this.$http.get(`/api/Products/filler/time/${media}`, { params: this.searchItems })
           .then(res => {
           this.setResponseData(res, 'normal');
+          this.addScrollClass();
+          this.isTableLoading = false;
       });
     },
   }

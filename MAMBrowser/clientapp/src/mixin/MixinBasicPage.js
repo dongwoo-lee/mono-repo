@@ -7,7 +7,7 @@ let mixinBasicPage = {
             selectedItems: [],                       // 선택된 로우 데이터
             selectedIds: null,
             pgmOptions: [],                          // 사용처 목록 조회
-            publicOptions: [],                       // 공유소재 분류 목록
+            publicCodesOptions: [],                       // 공유소재 분류 목록
             rePortOptions: [],                       // 취재물 분류 목록
             mediaPrimaryOptions: [],                      // (구)프로소재, 공유소재 매체목록 
             contextMenu: [
@@ -48,18 +48,6 @@ let mixinBasicPage = {
                     }
                 })
         },
-        // 카테고리 API 요청
-        requestCall(url, attr) {
-            this.$http.get(url)
-                .then(res => {
-                    const { status, data } = res;
-                    if (status === 200 && !data.errorMsg) {
-                        this[attr] = data.resultObject.data;
-                    } else {
-                        this.$fn.notify('server-error', { message: '조회 에러: ' + data.errorMsg });
-                    }
-            });
-        },
         // (구)프로소재, 공유소재 매체 목록 조회
         getMediaPrimaryOptions() {
             this.requestCall('/api/Categories/public-codes/primary', 'mediaPrimaryOptions');
@@ -78,16 +66,8 @@ let mixinBasicPage = {
             this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
         },
         // 공유 소재 분류 목록 조회
-        getPublicOptions(primaryCode = '') {
-            this.$http.get(`/api/Categories/public-codes/primary/${primaryCode}`)
-              .then(res => {
-                  const { status, data } = res;
-                  if (status === 200 && !data.errorMsg) {
-                      this.publicOptions = data.resultObject.data;
-                  } else {
-                    this.$fn.notify('server-error', { message: '조회 에러: ' + data.errorMsg });
-                  }
-            });
+        getPublicCodesOptions(primaryCode = '') {
+            this.requestCall(`/api/Categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions');
         },
         // 사용처 분류 선택
         onPgmSelected(data) {
@@ -96,7 +76,7 @@ let mixinBasicPage = {
             this.searchItems.pgmName = name;
         },
         // 공유 소재 분류 선택
-        onPublicSelected(data) {
+        onPublicCodesSelected(data) {
             const { id, name } = data;
             this.searchItems.cate = id;
             this.searchItems.cateName = name;
