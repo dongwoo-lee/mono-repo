@@ -1,5 +1,14 @@
 .my-modal-file {
     .modal-header {
+        .close {
+            padding: 0;
+            margin: 0;
+
+            .icon {
+                width: 36px;
+                height: 26px;
+            }
+        }
         padding: 1.2em;
     }
     .modal-body {

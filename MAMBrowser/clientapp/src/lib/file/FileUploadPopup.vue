@@ -13,12 +13,8 @@
             <!-- HEADER-CLOSE -->
             <template slot="modal-header-close">
                 <div>
-                    <b-button variant="outline-primary" size="sm" @click.stop="hide(false)">
-                        <i class="iconsminds-minimize"></i>최소화
-                    </b-button>
-                    <b-button variant="outline-danger" class="icon-button" @click.stop="onClose">
-                        <i class="simple-icon-close"></i>
-                    </b-button>
+                    <b-icon icon="dash" class="icon" variant="info" v-show="getBeingUploaded" @click.stop="hide(false)"></b-icon>
+                    <b-icon icon="x" class="icon" variant="danger" @click.stop="onClose"></b-icon>
                 </div>
             </template>
             <!-- BODY: 파일업로드 -->
@@ -28,7 +24,7 @@
         <common-confirm
           id="closeFileUploadModal"
           title="파일 업로드창 닫기"
-          message= " 파일 업로드 창을 닫으시겠습니까?"
+          message= "업로드가 중단됩니다. 파일 업로드 창을 닫으시겠습니까?"
           submitBtn="확인"
           @ok="onCloseFileUploadModal()"
         />
@@ -46,7 +42,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('file', ['getFileData']),
+        ...mapGetters('file', ['getBeingUploaded']),
     },
     methods: {
         ...mapActions('file', ['open_toast']),
@@ -61,14 +57,16 @@ export default {
             }
         }, 
         onClose() {
-            if (this.getFileData.length > 0) {
+            // 업로드 진행 중
+            if (this.getBeingUploaded) {
                 this.$bvModal.show('closeFileUploadModal');
                 return;
-            }
+            } 
+
+            this.REMOVE_FILES_ALL();
             this.isShow = false;
         },
         onCloseFileUploadModal() {
-            // TODO: 파일 삭제 로직
             this.REMOVE_FILES_ALL();
             this.$bvModal.hide('closeFileUploadModal');
             this.isShow = false;

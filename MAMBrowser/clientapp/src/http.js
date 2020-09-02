@@ -31,6 +31,10 @@ axios.interceptors.response.use(res =>{
     }
     return res;
 }, async err => {
+    if (!err.response) {
+        return Promise.reject(err);
+    }
+
     const{
         response: { config, status, data, statusText }
     } = err;

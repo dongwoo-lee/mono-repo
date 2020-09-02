@@ -59,7 +59,7 @@
             <div class="flex-grow-1">
             </div>
             <div>
-                <b-button variant="outline-success default" @click="submit">업로드</b-button>
+                <b-button variant="outline-primary default" @click="submit">업로드</b-button>
                 <b-button variant="outline-danger default" @click="close">취소</b-button>
             </div>
         </template>
@@ -99,10 +99,9 @@ export default {
         }
     },
     methods: {
-        ...mapMutations('file', ['REMOVE_FILES']),
-        ...mapActions('file', ['open_toast', 'upload']),
+        ...mapMutations('file', ['SET_FILES', 'REMOVE_FILES', 'SET_UPLOAD_VIEW_TYPE']),
+        ...mapActions('file', ['upload']),
         submit() {
-            console.info('this.$v', this.$v);
             if (!this.$v.title.$invalid || !this.$v.memo.$invalid) {
                 this.$fn.notify('inputError', {});
                 return;
@@ -133,8 +132,9 @@ export default {
                 }
             }
 
-            this.open_toast(data);
-            this.upload(this.type);
+            this.SET_FILES(data);
+            this.SET_UPLOAD_VIEW_TYPE(this.type);
+            this.upload();
             this.reset();
         },
         reset() {
