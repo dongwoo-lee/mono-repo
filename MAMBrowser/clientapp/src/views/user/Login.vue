@@ -4,11 +4,11 @@
         <b-card class="auth-card" no-body>
             <div class="position-relative image-side">
                 <p class="text-white h2">MAMBrowser</p>
-                <p class="white mb-0">
+                <!-- <p class="white mb-0">
                     Please use your credentials to login.
                     <br />If you are not a member, please
                     <router-link tag="a" to="/user/register" class="white">register</router-link>.
-                </p>
+                </p> -->
             </div>
             <div class="form-side">
                 <router-link tag="a" to="/">
@@ -16,27 +16,24 @@
                 </router-link>
                 <h6 class="mb-4">Login</h6>
 
-                <b-form @submit.prevent="formSubmit" class="av-tooltip tooltip-label-bottom">
-                    <b-form-group label="E-mail" class="has-float-label mb-4">
-                        <b-form-input type="text" v-model="$v.form.email.$model" :state="!$v.form.email.$error" />
-                        <b-form-invalid-feedback v-if="!$v.form.email.required">Please enter your email address</b-form-invalid-feedback>
-                        <b-form-invalid-feedback v-else-if="!$v.form.email.email">Please enter a valid email address</b-form-invalid-feedback>
-                        <b-form-invalid-feedback v-else-if="!$v.form.email.minLength">Your email must be minimum 4 characters</b-form-invalid-feedback>
+                <b-form @submit.prevent class="av-tooltip tooltip-label-bottom">
+                    <b-form-group label="아이디" class="has-float-label mb-4">
+                        <b-form-input type="text" v-model="$v.userId.$model" :state="!$v.userId.$error"/>
+                        <b-form-invalid-feedback v-if="!$v.userId.required">아이디를 입력해주세요.</b-form-invalid-feedback>
                     </b-form-group>
 
-                    <b-form-group label="Password" class="has-float-label mb-4">
-                        <b-form-input type="password" v-model="$v.form.password.$model" :state="!$v.form.password.$error" />
-                        <b-form-invalid-feedback v-if="!$v.form.password.required">Please enter your password</b-form-invalid-feedback>
-                        <b-form-invalid-feedback v-else-if="!$v.form.password.minLength || !$v.form.password.maxLength">Your password must be between 4 and 16 characters</b-form-invalid-feedback>
+                    <b-form-group label="패스워드" class="has-float-label mb-4">
+                        <b-form-input type="password" v-model="$v.password.$model" :state="!$v.password.$error" />
+                        <b-form-invalid-feedback v-if="!$v.password.required">패스워드를 입력해주세요.</b-form-invalid-feedback>
                     </b-form-group>
                     <div class="d-flex justify-content-between align-items-center">
                         <b-form-checkbox
                             value="accepted"
                         >로그인 정보 기억</b-form-checkbox>
-                        <b-button type="submit" variant="primary" size="lg" :disabled="processing" :class="{'btn-multiple-state btn-shadow': true,
-                    'show-spinner': processing,
-                    'show-success': !processing && loginError===false,
-                    'show-fail': !processing && loginError }">
+                        <b-button
+                            @click="formSubmit"
+                            type="button" variant="primary" size="lg" :disabled="processing"
+                            :class="{'btn-multiple-state btn-shadow': true }">
                             <span class="spinner d-inline-block">
                                 <span class="bounce1"></span>
                                 <span class="bounce2"></span>
@@ -48,9 +45,10 @@
                             <span class="icon fail">
                                 <i class="simple-icon-exclamation"></i>
                             </span>
-                            <span class="label">LOGIN</span>
+                            <span class="label">로그인</span>
                         </b-button>
                     </div>
+                    <div v-if="errorMsg" style="color: #dc3545">로그인에 실패하였습니다. 아이디 및 패스워드를 확인해주세요.</div>
                 </b-form>
             </div>
         </b-card>
@@ -59,62 +57,53 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapActions
-} from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import {
     validationMixin
 } from "vuelidate";
-const {
-    required,
-    maxLength,
-    minLength,
-    email
-} = require("vuelidate/lib/validators");
+const { required } = require("vuelidate/lib/validators");
 
 export default {
     data() {
         return {
-            form: {
-                email: "test@adsoft.com",
-                password: "12341234"
-            },
+            userId: '',
+            password: '',
+            errorMsg: '',
         };
     },
     mixins: [validationMixin],
     validations: {
-        form: {
-            password: {
-                required,
-                maxLength: maxLength(16),
-                minLength: minLength(4)
-            },
-            email: {
-                required,
-                email,
-                minLength: minLength(4)
-            }
+        password: {
+            required,
+        },
+        userId: {
+            required,
         }
     },
     computed: {
-        ...mapGetters('user', ['currentUser', 'processing', 'loginError'])
+        ...mapGetters('user', ['currentUser', 'processing'])
+    },
+    watch: {
+        password(v) {
+            this.errorMsg = '';
+        }
     },
     methods: {
         ...mapActions('user', ['login']),
         formSubmit() {
-            // this.$v.$touch();
-            // this.form.email = "piaf-vue@coloredstrategies.com";
-            // this.form.password = "piaf123";
-            // this.$v.form.$touch();
-
-           if (!this.$v.form.$anyError) {
+            console.info('.$v', this.$v);
+            this.$v.$touch();
+           if (!this.$v.$anyError) {
                 this.login({
-                    email: this.form.email,
-                    password: this.form.password
+                    userId: this.userId,
+                    pass: this.password
                 }).then(res => {
                     if (res.status === 200) {
-                        this.$router.push("/");
+                        if (res.data.resultCode !== 0) {
+                            this.errorMsg = res.data.errorMsg;
+                        } else {
+                            this.$router.push("/");
+                        }
                     } else {
                         var errMsg = res.response.data.message;
                         this.$notify("error", "Login Error", errMsg, {
@@ -126,23 +115,5 @@ export default {
             }
         }
     },
-    // watch: {
-    //     currentUser(val) {
-    //         if (val && val.uid && val.uid.length > 0) {
-    //             setTimeout(() => {
-    //                 this.$router.push("/");
-    //             }, 200);
-    //         }
-    //     },
-    //     loginError(val) {
-    //         if (val != null) {
-    //             this.$notify("error", "Login Error", val, {
-    //                 duration: 3000,
-    //                 permanent: false
-    //             });
-
-    //         }
-    //     }
-    // }
 };
 </script>
