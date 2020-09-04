@@ -1837,7 +1837,7 @@ button {
         text-align: right;
 
         .user {
-            margin-right: $main-margin;
+            margin-right: $main-margin - 16;
 
             @include respond-below(xl) {
                 margin-right: $main-margin-lg;
@@ -4773,7 +4773,7 @@ input:-webkit-autofill {
 // /* 25.Progress */
 .progress {
     background-color: $separator-color-light;
-    height: 3px;
+    height: 5px;
 }
 
 .progress-bar {

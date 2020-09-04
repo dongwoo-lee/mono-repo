@@ -25,37 +25,46 @@
 
     <div class="navbar-right">
       <div class="user d-inline-block">
-        <b-row>
-          <b-colxx sm="8" class="user-storage-info">
-            <span class="current col-sm-6 col-md-offset-2">2.7GB / 30GB</span>
-            <span class="free-space col-sm-6">여유 27.3GB</span>
-          </b-colxx>
-          <b-colxx sm="4">
-            <b-dropdown
-              class="dropdown-menu-right"
-              right
-              variant="empty"
-              toggle-class="p-0"
-              menu-class="mt-3"
-              no-caret
-            >
-              <template slot="button-content">
-                <span class="name mr-1">
-                  {{currentUser.title}}(일반 사용자)
-                  <i class="iconsminds-administrator"></i>
-                  </span>
+        <table>
+            <tr>
+              <td>
+                <span class="current col-sm-6 col-md-offset-2"> {{currentUser.diskUsed}} / {{currentUser.diskMax}}</span>
+                <span class="free-space col-sm-6">{{ $fn.formatBytes(currentUser.diskAvailable) }}</span>
+              </td>
+              <td rowspan="2">
+                <b-dropdown
+                  class="dropdown-menu-right"
+                  right
+                  variant="empty"
+                  toggle-class="p-0"
+                  menu-class="mt-3"
+                  no-caret
+                >
+                  <template slot="button-content">
+                    <span class="name mr-1">
+                      {{currentUser.name}}({{currentUser.menuGrpName}})
+                      <i class="iconsminds-administrator"></i>
+                      </span>
 
-              </template>
-              <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
-              <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
-            </b-dropdown>
-          </b-colxx>
-        </b-row>
-        <div class="storage-progress">
-          <b-progress :value="30" variant="info" striped class="w-50"></b-progress>
-        </div>
+                  </template>
+                  <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
+                  <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
+                  <b-dropdown-divider />
+                  <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
+                </b-dropdown>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <b-progress 
+                  class=""
+                  :value="2"
+                  :max="10"
+                  animated>
+                </b-progress>
+              </td>
+            </tr>
+        </table>
       </div>
     </div>
   </nav>
@@ -86,12 +95,17 @@ export default {
       isDarkActive: false
     };
   },
+  created() {
+    this.$nextTick(() => {
+      this.getUser();
+    })
+  },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["setLang", "signOut"]),
+    ...mapActions("user", ["getUser", "setLang", "signOut"]),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
@@ -115,3 +129,12 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+table { border-collapse:collapse; }  
+td {
+  .dropdown {
+     margin-left: 10px;
+  }
+}
+
+</style>
