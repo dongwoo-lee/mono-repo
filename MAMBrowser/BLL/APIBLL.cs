@@ -72,7 +72,7 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD");
         public DTO_USER_DETAIL GetUserDetail(string id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, M30_CODE.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, (DISK_MAX-DISK_USED) AS DISK_AVLB, MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, M30_CODE.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, ((DISK_MAX*1000000000)-DISK_USED) AS DISK_AVLB, MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
 FROM MIROS_USER 
 INNER JOIN MIROS_ROLE ON MIROS_ROLE.ROLE=MIROS_USER.ROLE
 INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID 
@@ -97,8 +97,8 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
                     AuthorCD = row.AUTHOR_CD,
                     AuthorName = row.AUTHOR_NAME,
                     DiskMax = Convert.ToInt32(row.DISK_MAX),
-                    DiskUsed = Convert.ToInt32(row.DISK_USED),
-                    DiskAvailable = Convert.ToInt32(row.DISK_AVLB),
+                    DiskUsed = Convert.ToInt64(row.DISK_USED),
+                    DiskAvailable = Convert.ToInt64(row.DISK_AVLB),
                     MenuGrpID = row.MENU_GRP_CD,
                     MenuGrpName = row.MENU_GRP_NAME,
                     Used = row.USED,
