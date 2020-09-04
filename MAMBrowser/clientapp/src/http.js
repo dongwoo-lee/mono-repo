@@ -22,7 +22,7 @@ axios.interceptors.response.use(res =>{
         if (config && config['Content-Type'] === 'multipart/form-data') { return res; }
         window.$notify(
             "error",
-            "응답값이 넘어오지 않았습니다. => " + config.url + ': ' + data.resultObject,
+            '',
             data.errorMsg, {
                 duration: 8000,
                 permanent: false
@@ -31,6 +31,10 @@ axios.interceptors.response.use(res =>{
     }
     return res;
 }, async err => {
+    if (!err.response) {
+        return Promise.reject(err);
+    }
+
     const{
         response: { config, status, data, statusText }
     } = err;
@@ -42,14 +46,14 @@ axios.interceptors.response.use(res =>{
     }
 
     if (status !== 200) {
-        window.$notify(
-            "error",
-            "응답값:" + status + '(' + statusText + ')',
-            "url: " + config.url, {
-                duration: 8000,
-                permanent: false
-            }
-        )
+        // window.$notify(
+        //     "error",
+        //     "응답값:" + status + '(' + statusText + ')',
+        //     "url: " + config.url, {
+        //         duration: 8000,
+        //         permanent: false
+        //     }
+        // )
     }
 
     return Promise.reject(err);

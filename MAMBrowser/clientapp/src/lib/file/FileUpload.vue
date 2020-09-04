@@ -49,10 +49,11 @@
                             {{props.rowData.progress}}%
                         </div>
                     </div>
+                    <div v-show="props.rowData.uploadState === 'save'">※용량에 따라 저장시간이 오래 걸릴수 있습니다.</div>
                 </template>
                 <!-- 상태 -->
                 <template slot="state" scope="props">
-                    <div>{{ getState(props.rowData) }}</div>
+                    <div>{{ getState(props.rowData.uploadState) }}</div>
                 </template>
                 <!-- 액션 -->
                 <template slot="actions" scope="props">
@@ -118,10 +119,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('file', ['getFileData', 'getUploadState']),
+        ...mapGetters('file', ['getFileData', 'getUploadTransmitState', 'getBeingUploaded']),
         localFiles() {
             const tmpFiles = [];
             this.getFileData.forEach(data => {
+                this.$set(data.file, 'uploadState', data.uploadState);
                 tmpFiles.push(data.file);
             })
             return tmpFiles;
@@ -136,28 +138,31 @@ export default {
             this.upload();
         },
         onStopUpload() {
-            this.cancel_upload(true);
+            this.cancel_upload();
         },
         onRemoveFile(rowData) {
             this.remove_files(rowData.id);
         },
-        getState(rowData) {
-            if (!rowData.active && !rowData.success) return '대기중';
-            if (rowData.active && !rowData.success) return '전송중';
-            if (rowData.success) return '전송완료';
+        getState(state) {
+            if (state === 'wait') return '대기중';
+            if (state === 'stop') return '정지';
+            if (state === 'start') return '전송중';
+            if (state === 'success') return '전송완료';
+            if (state === 'save') return '저장중';
+            return '';
         },
         getSuccessUploadFileLength() {
             const filterSuccess = this.localFiles.filter(file => file.success)
             return filterSuccess.length;
         },
         uploadAddState() {
-            return !this.uploadStopState();
-        },
-        uploadStopState() {
-            return this.getUploadState;
+            return !this.getUploadTransmitState || !this.getBeingUploaded;
         },
         uploadStartState() {
-            return !this.getUploadState && this.localFiles.length > this.getSuccessUploadFileLength();
+            return !this.getUploadTransmitState && this.localFiles.length > this.getSuccessUploadFileLength();
+        },
+        uploadStopState() {
+            return this.getUploadTransmitState && this.getBeingUploaded;
         }
     }
 }
