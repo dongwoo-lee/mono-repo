@@ -10,13 +10,21 @@ namespace MAMBrowser.DTO
         //DAMS 처리 여부
         // 주/예비 어떤단말인지?
         public long Seq { get; set; }
+        public long DeviceSeq { get; set; }
+        public string DeviceName { get; set; }
         public string MediaCD { get; set; }
         public string MediaName { get; set; }
-        public string ProgramCD { get; set; }
+        /// <summary>
+        /// 송출표에서 편성일
+        /// </summary>
+        public string SchDate { get; set; }
+        /// <summary>
+        /// 송출표에서 실제 방송일시
+        /// </summary>
+        public string BrdDate { get; set; }
+        public string ProgramID { get; set; }
+        public string SourceID { get; set; }
         public string RecName { get; set; }
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
-        public string DeviceName { get; set; }    //DL #1
         public string FilePath { get; set; }
         public long FileSize { get; set; }
         public string RegDtm { get; set; }    //등록일시

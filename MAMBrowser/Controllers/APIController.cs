@@ -128,7 +128,29 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 특정 사용자 조회
+        /// 특정 사용자 조회(개요)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>      
+        [HttpGet("users/summary/{id}")]
+        public DTO_RESULT<DTO_USER_DETAIL> GetUserSummary(string id)
+        {
+            DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.GetUserSummary(id);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 특정 사용자 조회(상세)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>      
@@ -139,7 +161,11 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetUserDetail(id);
+                var user = bll.GetUserSummary(id);
+                var menu = "";
+                var author = "";
+
+                //result.ResultObject = 
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

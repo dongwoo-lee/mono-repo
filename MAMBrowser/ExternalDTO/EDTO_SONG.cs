@@ -7,9 +7,10 @@ using System.Xml.Serialization;
 
 namespace MAMBrowser.DTO
 {
-    [XmlRoot(ElementName = "alert")]
     public class EDTO_SONG
     {
+        [XmlElement(ElementName = "DISC_COMM_SEQ_SR")]
+        public string DISC_COMM_SEQ_SR { get; set; }    //고유번호
         [XmlElement(ElementName = "TRACK_NO_SR")]
         public string Track_NO { get; set; }    //트랙번호
         [XmlElement(ElementName = "COMPOSER_SR")]
@@ -28,31 +29,37 @@ namespace MAMBrowser.DTO
         public string ALBUM_NO { get; set; } // 앨범 번호
         [XmlElement(ElementName = "DISC_NAME_SR")]
         public string ALBUM_NAME { get; set; } //앨번 이름
+        [XmlElement(ElementName = "DISC_DNAME_PRON_SR")]
+        public string ALBUM_PRON_NAME { get; set; } //앨번 이름
+        [XmlElement(ElementName = "DISC_DNAME_TRANS_SR")]
+        public string ALBUM_TRANS_NAME { get; set; } //앨번 이름
+
+        [XmlElement(ElementName = "JPG_COUNT_SR")]
+        public string JPG_COUNT_SR { get; set; } // 앨범커버 개수
 
         [XmlElement(ElementName = "JPG_FILE_PATH_SR")]
         public string JPG_FILE_PATH_SR { get; set; } // 앨범커버 경로
         [XmlElement(ElementName = "JPG_FILE_NAME_SR")]
         public string JPG_FILE_NAME_SR { get; set; } //앨범커버 파일명
-
-
-        [XmlElement(ElementName = "ORIGIN_PATH_SR")]
-        public string ORIGIN_PATH_SR { get; set; } // 파일경로??
+        [XmlElement(ElementName = "MB_FILE_PATH_SR")]
+        public string MB_FILE_PATH_SR { get; set; } // 파일경로
         [XmlElement(ElementName = "FILE_NAME_SR")]
         public string FILE_NAME_SR { get; set; } //파일이름
 
         //<MB_FILE_PATH_SR><![CDATA[\\MIBIS-WAVE1\MIDAS_52\20140709\14]]></MB_FILE_PATH_SR> //뮤직뱅크 파일경로??
-
-
         [XmlElement(ElementName = "ISSUE_YEAR_SR")]
         public string ISSUE_YEAR_SR { get; set; } //발매년도??? 2004.02.14
 
-        [XmlElement(ElementName = "JPG_FILE_NAME_SR")]
+        [XmlElement(ElementName = "WK_DATE_SR")]
         public string WK_DATE_SR { get; set; } //등록일??? 2004.02.14
 
+        [XmlElement(ElementName = "SONG_NAME_SR")]  //음원명
+        public string SONG_NAME_SR { get; set; }
+        [XmlElement(ElementName = "SNAME_TRANS_SR")]
+        public string SNAME_TRANS_SR { get; set; } //음원 번역명
 
-        //<SONG_NAME_SR><![CDATA[花(화)]]></SONG_NAME_SR>     //제목들????
-        //<SNAME_TRANS_SR><![CDATA[꽃]]></SNAME_TRANS_SR>
-        //<SNAME_PRON_SR><![CDATA[하나]]></SNAME_PRON_SR>
+        [XmlElement(ElementName = "SNAME_PRON_SR")]
+        public string SNAME_PRON_SR { get; set; } //음원 발음명
 
     }
 }

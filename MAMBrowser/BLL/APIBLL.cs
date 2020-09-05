@@ -69,15 +69,15 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD");
 
             return repository.Update(queryTemplate.RawSql, updateDtoList);
         }
-        public DTO_USER_DETAIL GetUserDetail(string id)
+        public DTO_USER_DETAIL GetUserSummary(string id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, M30_CODE.NAME AS AUTHOR_NAME, DISK_MAX, DISK_USED, ((DISK_MAX*1000000000)-DISK_USED) AS DISK_AVLB, MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
-FROM MIROS_USER 
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, A.NAME AS AUTHOR_NAME, USER_EXT_ID, DISK_MAX, DISK_USED, ((DISK_MAX*1000000000)-DISK_USED) AS DISK_AVLB, MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
+FROM MIROS_USER
 INNER JOIN MIROS_ROLE ON MIROS_ROLE.ROLE=MIROS_USER.ROLE
 INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID 
 INNER JOIN M30_ROLE_EXT ON MIROS_USER.ROLE = M30_ROLE_EXT.ROLE_ID
-INNER JOIN M30_CODE ON M30_CODE.CODE = M30_ROLE_EXT.AUTHOR_CD
+INNER JOIN M30_CODE A ON A.CODE = M30_ROLE_EXT.AUTHOR_CD
 LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
 /**where**/");
             builder.Where("PERSONID=:PERSONID");
@@ -243,7 +243,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
         }
         private DTO_USER_TOKEN GetToken(string id)
         {
-            var userDetail = GetUserDetail(id);
+            var userDetail = GetUserSummary(id);
             DTO_USER_TOKEN token = new DTO_USER_TOKEN(userDetail);
             return token;
         }

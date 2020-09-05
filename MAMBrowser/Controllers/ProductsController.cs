@@ -3,6 +3,7 @@ using MAMBrowser.BLL;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Oracle.ManagedDataAccess.Client;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Xml.Serialization;
 
 namespace MAMBrowser.Controllers
 {
@@ -18,7 +20,12 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-     
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        public ProductsController(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
 
         /// <summary>
         /// 프로그램 소재 조회 (페이징 x)
@@ -153,17 +160,21 @@ namespace MAMBrowser.Controllers
                 var startNO = 1;
                 startNO += (rowPerPage * selectPage) - rowPerPage;
                 var lastNO = startNO + rowPerPage;
-
-                //var resultObj = "";
-                //var obj = resultObj.FirstOrDefault();
-                //if (obj != null)
-                //{
-                //    result.ResultObject.TotalRowCount = obj.Count;
-                //    result.ResultObject.RowPerPage = rowPerPage;
-                //    result.ResultObject.SelectPage = selectPage;
-                //    //result.ResultObject
-                //}
-
+                string projectRootPath = _hostingEnvironment.ContentRootPath;
+                string root = _hostingEnvironment.WebRootPath;
+                PhysicalFileProvider pr = new PhysicalFileProvider(projectRootPath);
+                var songXml = pr.GetFileInfo("song.xml");
+                XmlSerializer xs = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
+                using (Stream fs = songXml.CreateReadStream())
+                {
+                    var data = (EDTO_MB_RETURN<EDTO_SONG>)xs.Deserialize(fs);
+                    var data2 = data.Section.Data.Select(edto => new DTO_SONG(edto));
+                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                    result.ResultObject.Data = data2.ToList();
+                    result.ResultObject.RowPerPage = rowPerPage;
+                    result.ResultObject.SelectPage = selectPage;
+                    result.ResultObject.TotalRowCount = data.Section.TOTAL_COUNT;
+                }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -188,6 +199,24 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
             try
             {
+                var startNO = 1;
+                startNO += (rowPerPage * selectPage) - rowPerPage;
+                var lastNO = startNO + rowPerPage;
+                string projectRootPath = _hostingEnvironment.ContentRootPath;
+                string root = _hostingEnvironment.WebRootPath;
+                PhysicalFileProvider pr = new PhysicalFileProvider(projectRootPath);
+                var songXml = pr.GetFileInfo("effect.xml");
+                XmlSerializer xs = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_EFFECT>));
+                using (Stream fs = songXml.CreateReadStream())
+                {
+                    var data = (EDTO_MB_RETURN<EDTO_EFFECT>)xs.Deserialize(fs);
+                    var data2 = data.Section.Data.Select(edto => new DTO_EFFECT(edto));
+                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
+                    result.ResultObject.Data = data2.ToList();
+                    result.ResultObject.RowPerPage = rowPerPage;
+                    result.ResultObject.SelectPage = selectPage;
+                    result.ResultObject.TotalRowCount = data.Section.TOTAL_COUNT;
+                }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -467,9 +496,13 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// DL3.0 소재 조회 (페이징x)
         /// </summary>
+        /// <param name="media">매체코드</param>
+        /// <param name="schDate">송출표의 편성일자</param>
+        /// <param name="cate">프로그램 유형 코드</param>
+        /// <param name="pgmID">프로그램 ID</param>
         /// <returns></returns>
-        [HttpGet("dl30/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string start_dt, string end_dt, [FromQuery] string pgmID)
+        [HttpGet("dl30/{media}/{schDate}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string schDate, [FromQuery] string cate, [FromQuery] string pgmID)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
@@ -478,12 +511,15 @@ namespace MAMBrowser.Controllers
                 for (int i = 0; i < 24; i++)
                 {
                     DTO_DL30 dto = new DTO_DL30();
+                    dto.Seq = i;
+                    dto.DeviceSeq = 1;
                     dto.MediaCD = "A";
-                    dto.MediaName = "A";
-                    dto.ProgramCD = $"PM00{i}";
+                    dto.MediaName = "AM";
+                    dto.SchDate = DateTime.Now.ToString(Utility.DTM8);
+                    dto.BrdDate = DateTime.Now.ToString(Utility.DTM19);
+                    dto.ProgramID = $"PM00{i}";
+                    dto.SourceID = $"PM0000{i}";
                     dto.RecName = $"{i}시 프로그램 입니다.";
-                    dto.StartTime = $"0{i}:00:00";
-                    dto.EndTime = $"0{i + 1}:00:00";
                     dto.FileSize = 100000;
                     dto.FilePath = @$"MIROS\\data1\wav{i}.wav";
                     dto.RegDtm = DateTime.Now.ToString(Utility.DTM19);
@@ -492,6 +528,10 @@ namespace MAMBrowser.Controllers
                 }
                 result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_DL30>();
                 result.ResultObject.Data = mockDataList;
+
+                result.ResultObject.RowPerPage = 200;
+                result.ResultObject.SelectPage = 1;
+                result.ResultObject.TotalRowCount = mockDataList.Count;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

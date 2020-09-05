@@ -7,18 +7,18 @@ using System.Xml.Serialization;
 
 namespace MAMBrowser.DTO
 {
-    public class EDTO_MB_SECTION
+    public class EDTO_MB_SECTION<T>
     {
         [XmlElement(ElementName = "totcnt")]
-        public List<EDTO_SONG> TOTAL_COUNT { get; set; }
+        public long TOTAL_COUNT { get; set; }
         [XmlElement(ElementName = "maxcnt")]
-        public List<EDTO_SONG> MAX_CNT { get; set; }
+        public long MAX_CNT { get; set; }
         [XmlElement(ElementName = "outcnt")]
-        public List<EDTO_SONG> OUT_CNT { get; set; }
+        public long OUT_CNT { get; set; }
         [XmlElement(ElementName = "pagenum")]
-        public List<EDTO_SONG> PAGE_NO { get; set; }
+        public int PAGE_NO { get; set; }
 
         [XmlElement(ElementName = "doc")]
-        public List<EDTO_SONG> SONG_LIST { get; set; }
+        public List<T> Data { get; set; }
     }
 }

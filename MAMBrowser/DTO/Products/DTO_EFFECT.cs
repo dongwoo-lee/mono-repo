@@ -22,7 +22,7 @@ namespace MAMBrowser.DTO
         {
             this.Name = edto.Name;
             this.Description = edto.Description;
-            this.Duration = edto.Duration;
+            this.Duration = edto.Duration2;
             this.AudioFormat = edto.AudioFormat;
             this.FilePath = Path.Combine(edto.WavFilePath, edto.WavFileName);
         }
