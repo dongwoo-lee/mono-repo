@@ -160,12 +160,16 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                APIBLL bll = new APIBLL();
-                var user = bll.GetUserSummary(id);
-                var menu = "";
-                var author = "";
+                //APIBLL bll = new APIBLL();
+                //var user = bll.GetUserSummary(id);
+                //var menu = "";
+                //var author = "";
 
                 //result.ResultObject = 
+
+                APIBLL bll = new APIBLL();
+                result.ResultObject = bll.GetUserSummary(id);
+
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
