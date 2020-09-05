@@ -175,7 +175,6 @@ export default {
                 return;
             }
             const { clientHeight, scrollTop, scrollHeight } = target;
-            console.info('왜 안들어가지? 들어오는가???', clientHeight, scrollTop, scrollHeight, this.numRowsToBottom, this.rowElemHeight);
             if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
                 // const tBodyDom = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body');
                 // console.info('this.tBodyDom', tBodyDom);

@@ -1,5 +1,9 @@
 import { defaultMenuType } from '../../constants/config'
+import $http from '../../http';
+import $fn from '../../utils/CommonFunctions';
+
 const state = {
+  menus: [],
   menuType: defaultMenuType,
   clickCount: 0,
   selectedMenuHasSubItems: defaultMenuType === 'menu-default'
@@ -107,10 +111,29 @@ const mutations = {
     
     state.menuType = nextClasses
     state.clickCount = 0
-  }
+  },
+  SET_MENUS(state, payload) {
+    state.menus = payload;
+    console.info('state.menus', state.menus);
+  },
 }
 
-const actions = {}
+const actions = {
+  getMenus({commit}) {
+    const userId = sessionStorage.getItem('user_id');
+    $http.get(`/api/users/${userId}/menu`).then(response => {
+      const {status, data } = response;
+      if (status === 200 && data.resultCode === 0) {
+        commit('SET_MENUS', response.data.resultObject.data);
+      } else {
+        $fn.notify('error', { title: '메뉴 조회 실패', message: data.errorMsg });
+      }
+    })
+    .catch(error=> {
+      console.error(error);
+    })
+  },
+}
 
 export default {
   namespaced: true,

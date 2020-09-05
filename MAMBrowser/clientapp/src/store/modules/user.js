@@ -28,7 +28,7 @@ export default {
     },
     SET_USER(state, data) {
       state.currentUser = data;
-      sessionStorage.setItem('user_ext_id', data.userExtID);
+      sessionStorage.setItem('user_ext_id', '159');
     },
     SET_LOGOUT(state) {
       state.isAuth = false;
