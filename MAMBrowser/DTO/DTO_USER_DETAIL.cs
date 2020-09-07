@@ -20,6 +20,9 @@ namespace MAMBrowser.DTO
         public string MenuGrpID { get; set; }
         public string MenuGrpName { get; set; }
         public string Used { get; set; }
-        
+
+        public List<DTO_MENU> MenuList { get; set; } = new List<DTO_MENU>();
+        public List<DTO_MENU> BehaviorList { get; set; } = new List<DTO_MENU>();
+
     }
 }

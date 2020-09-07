@@ -107,11 +107,11 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
 
             return repository.Get(queryTemplate.RawSql, param, resultMapping);
         }
-        public DTO_RESULT_LIST<DTO_MENU> GetMenu(string id)
+        public List<DTO_MENU> GetMenu(string id)
         {
-            DTO_RESULT_LIST<DTO_MENU> returnData = new DTO_RESULT_LIST<DTO_MENU>();
+            List<DTO_MENU> returnData = new List<DTO_MENU>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.CODE, M30_CODE.NAME, VISIBLE, ENABLE FROM M30_USER_EXT
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.PARENT_CODE, M30_CODE.CODE, M30_CODE.NAME, VISIBLE, ENABLE FROM M30_USER_EXT
 INNER JOIN M30_MENU_MAP ON M30_MENU_MAP.GRP_CD=M30_USER_EXT.MENU_GRP_CD
 INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
             DynamicParameters param = new DynamicParameters();
@@ -122,6 +122,7 @@ INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
             {
                 return new DTO_MENU
                 {
+                    ParentID = row.PARENT_CODE,
                     ID = row.CODE,
                     Name = row.NAME,
                     Visible = row.VISIBLE,
@@ -129,14 +130,13 @@ INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
                 };
             });
 
-           returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
-           return returnData;
+           return repository.Select(queryTemplate.RawSql, param, resultMapping).ToList();
         }
-        public DTO_RESULT_LIST<DTO_MENU> GetBehavior(string authorCd)
+        public List<DTO_MENU> GetBehavior(string authorCd)
         {
-            DTO_RESULT_LIST<DTO_MENU> returnData = new DTO_RESULT_LIST<DTO_MENU>();
+            List<DTO_MENU> returnData = new List<DTO_MENU>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.CODE, M30_CODE.NAME, VISIBLE, ENABLE FROM (SELECT * FROM M30_MENU_MAP
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.PARENT_CODE, M30_CODE.CODE, M30_CODE.NAME, VISIBLE, ENABLE FROM (SELECT * FROM M30_MENU_MAP
 /**where**/) A
 LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             builder.Where("(MAP_CD='S00G01C002' AND GRP_CD=:AUTHOR_CD)");
@@ -148,6 +148,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             {
                 return new DTO_MENU
                 {
+                    ParentID = row.PARENT_CODE,
                     ID = row.CODE,
                     Name = row.NAME,
                     Visible = row.VISIBLE,
@@ -155,8 +156,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
                 };
             });
 
-            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
-            return returnData;
+            return repository.Select(queryTemplate.RawSql, param, resultMapping).ToList();
         }
         public DTO_RESULT_LIST<DTO_COMMON_CODE> GetAuthorList()
         {

@@ -31,9 +31,9 @@ namespace MAMBrowser.Controllers
         /// <param name="account">인증 정보</param>
         /// <returns></returns>
         [HttpPost("Authenticate")]
-        public DTO_RESULT Authenticate([FromBody] AuthenticateModel account)
+        public DTO_RESULT<DTO_USER_DETAIL> Authenticate([FromBody] AuthenticateModel account)
         {
-            DTO_RESULT result = new DTO_RESULT();
+            DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
                 APIBLL bll = new APIBLL();
@@ -68,6 +68,8 @@ namespace MAMBrowser.Controllers
                         var token = tokenHandler.CreateToken(tokenDescriptor);
                         var tokenString = tokenHandler.WriteToken(token);
                         result.Token = tokenString;
+
+                        result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
                     }
                 }
             }
@@ -160,16 +162,27 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                //APIBLL bll = new APIBLL();
-                //var user = bll.GetUserSummary(id);
-                //var menu = "";
-                //var author = "";
-
-                //result.ResultObject = 
-
                 APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetUserSummary(id);
+                var user = bll.GetUserSummary(id);
+                var menuList = bll.GetMenu(id);
+                var lookup = menuList.ToLookup(menu => menu.ParentID);
+                menuList.ForEach(menu =>
+                {
+                    if (menu.ParentID == "S01G01")
+                    {
+                        user.MenuList.Add(menu);//최상위 메뉴
+                    }
 
+                    if (lookup.Contains(menu.ID))   
+                    {
+                        //자식이있으면 자식추가.
+                        menu.Children = lookup[menu.ID].ToList();
+                    }
+                });
+
+                user.BehaviorList = bll.GetBehavior(user.AuthorCD);
+
+                result.ResultObject = user;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -193,7 +206,8 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetMenu(id);
+                result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
+                result.ResultObject.Data = bll.GetMenu(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -240,7 +254,8 @@ namespace MAMBrowser.Controllers
             try
             {
                 APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetBehavior(authorCd);
+                result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
+                result.ResultObject.Data = bll.GetBehavior(authorCd);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
