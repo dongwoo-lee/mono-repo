@@ -62,6 +62,7 @@
 
 <script>
 import {
+  mapActions,
     mapGetters,
     mapMutations
 } from "vuex";
@@ -78,6 +79,10 @@ export default {
             menuItems,
             viewingParentMenu: ""
         };
+    },
+    created() {
+        console.info('sidebar 호출');
+        this.getMenus();
     },
     mounted() {
         this.selectMenu();
@@ -96,6 +101,7 @@ export default {
             "addMenuClassname",
             "changeSelectedMenuHasSubItems"
         ]),
+        ...mapActions('menu', ['getMenus']),
         selectMenu() {
             const currentParentUrl = this.$route.path
                 .split("/")

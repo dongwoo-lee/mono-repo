@@ -167,16 +167,24 @@ const fileDownload = (res, fileNm = '') => {
     }
 }
 
-const formatBytes = (bytes, decimals = 2) => {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
+const formatBytes = (bytes, decimals = 1) => {    
+    if (bytes === 0) return '0 MB';
+    // 1 000 = 1kb
+    // 1 000 000 = 1mb
+    // 1 000 000 000 = 1gb
+    const baseBytes = 1000000; // 기본 MB단위입니다.
     const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    let i = 0;
+    let k = Math.floor(bytes / baseBytes);
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    while(k >= 1000) {
+        i = i + 1;
+        k = Math.floor(k / 1000);
+    }
+
+    return parseFloat((bytes / (baseBytes * Math.pow(1000, i))).toFixed(dm)) + ' ' + sizes[i];
 }
 
 const commonFunctions = {

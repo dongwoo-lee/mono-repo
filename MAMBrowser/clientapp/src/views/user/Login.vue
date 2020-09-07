@@ -27,9 +27,12 @@
                         <b-form-invalid-feedback v-if="!$v.password.required">패스워드를 입력해주세요.</b-form-invalid-feedback>
                     </b-form-group>
                     <div class="d-flex justify-content-between align-items-center">
-                        <b-form-checkbox
-                            value="accepted"
-                        >로그인 정보 기억</b-form-checkbox>
+                        <div>
+                            <div v-if="errorMsg" style="color: #dc3545">{{ errorMsg }}</div>
+                            <!-- <b-form-checkbox
+                                value="accepted"
+                            >로그인 정보 기억</b-form-checkbox> -->
+                        </div>
                         <b-button
                             @click="formSubmit"
                             type="button" variant="primary" size="lg" :disabled="processing"
@@ -48,7 +51,6 @@
                             <span class="label">로그인</span>
                         </b-button>
                     </div>
-                    <div v-if="errorMsg" style="color: #dc3545">로그인에 실패하였습니다. 아이디 및 패스워드를 확인해주세요.</div>
                 </b-form>
             </div>
         </b-card>
@@ -89,9 +91,8 @@ export default {
         }
     },
     methods: {
-        ...mapActions('user', ['login']),
+        ...mapActions('user', ['login', 'getUser']),
         formSubmit() {
-            console.info('.$v', this.$v);
             this.$v.$touch();
            if (!this.$v.$anyError) {
                 this.login({
@@ -103,6 +104,7 @@ export default {
                             this.errorMsg = res.data.errorMsg;
                         } else {
                             this.$router.push("/");
+                            this.getUser();
                         }
                     } else {
                         var errMsg = res.response.data.message;

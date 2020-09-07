@@ -28,8 +28,8 @@
         <table>
             <tr>
               <td>
-                <span class="current col-sm-6 col-md-offset-2"> {{currentUser.diskUsed}} / {{currentUser.diskMax}}</span>
-                <span class="free-space col-sm-6">{{ $fn.formatBytes(currentUser.diskAvailable) }}</span>
+                <span class="current"> {{$fn.formatBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
+                <span class="free-space">여유 {{ $fn.formatBytes(currentUser.diskAvailable) }}</span>
               </td>
               <td rowspan="2">
                 <b-dropdown
@@ -58,8 +58,8 @@
               <td>
                 <b-progress 
                   class=""
-                  :value="2"
-                  :max="10"
+                  :value="currentUser.diskUsed"
+                  :max="(currentUser.diskMax * 1000000000)"
                   animated>
                 </b-progress>
               </td>
@@ -95,17 +95,12 @@ export default {
       isDarkActive: false
     };
   },
-  created() {
-    this.$nextTick(() => {
-      this.getUser();
-    })
-  },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["getUser", "setLang", "signOut"]),
+    ...mapActions("user", ["setLang", "signOut"]),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
