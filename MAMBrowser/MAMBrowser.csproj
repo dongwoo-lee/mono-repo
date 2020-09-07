@@ -32,5 +32,17 @@
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="effect.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="lyrics.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="song.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 
 </Project>
