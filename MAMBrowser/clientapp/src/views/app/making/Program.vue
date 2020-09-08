@@ -24,9 +24,11 @@
           />
         </b-form-group>
         <!-- 방송일 -->
-       <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
-          <b-form-invalid-feedback :state="$v.searchItems.brd_dt.check_date">날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+       <b-form-group label="방송일" 
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.required) }">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" isCurrentDate/>
+          <b-form-invalid-feedback :state="!$v.searchItems.brd_dt.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 검색버튼 -->
         <b-form-group>
@@ -166,7 +168,7 @@ export default {
   },
   methods: {
     getData() {
-      if (this.$v.$invalid) {
+      if (!this.$v.searchItems.brd_dt.$invalid) {
         this.$fn.notify('inputError', {});
         return;
       }

@@ -23,20 +23,20 @@
           />
         </b-form-group>
         <!-- 편성일자: 시작일자 -->
-        <b-form-group label="편성일자"
+        <b-form-group label="편성일자*"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.regDtm.$error) }">
+          :class="{ 'hasError': $v.searchItems.regDtm.required }">
           <common-date-picker v-model="$v.searchItems.regDtm.$model"/>
+          <b-form-invalid-feedback :state="!$v.searchItems.regDtm.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 녹음명 -->
         <b-form-group label="녹음명" class="has-float-label c-zindex">
             <common-input-text v-model="$v.searchItems.userName" />
         </b-form-group>
         <!-- 등록일 -->
-        <b-form-group label="등록일"
-          class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" :isCurrentDate="false"/>
+        <b-form-group label="등록일" class="has-float-label">
+          <common-date-picker 
+            v-model="searchItems.brd_dt" isCurrentDate />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -149,16 +149,16 @@ export default {
     },
     methods: {
         getData() {
-            if (this.$v.$invalid) {
+            if (!this.$v.searchItems.regDtm.$invalid) {
                 this.$fn.notify('inputError', {});
                 return;
             }
 
             this.isTableLoading = true;
             const media = this.searchItems.media;
-            const brd_dt = this.searchItems.brd_dt;
+            const regDtm = this.searchItems.regDtm;
 
-            this.$http.get(`/api/Products/dl30/${media}/${brd_dt}`, { params: this.searchItems })
+            this.$http.get(`/api/Products/dl30/${media}/${regDtm}`, { params: this.searchItems })
                 .then(res => {
                 this.setResponseData(res, 'normal');
                 this.isTableLoading = false;

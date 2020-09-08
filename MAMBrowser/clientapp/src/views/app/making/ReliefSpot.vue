@@ -23,18 +23,22 @@
           />
         </b-form-group>
         <!-- 등록일: 시작일 -->
-        <b-form-group label="시작일" class="has-float-label">
+        <b-form-group label="시작일"
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.required) }">
           <common-date-picker v-model="$v.searchItems.start_dt.$model" :dayAgo="7" />
           <b-form-invalid-feedback
-            :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+            :state="!$v.searchItems.start_dt.required"
+          >날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
       <!-- 등록일: 종료일 -->
-        <b-form-group label="종료일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
-            :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+        <b-form-group label="종료일" 
+          class="has-float-label"
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.required) }">
+          <common-date-picker v-model="$v.searchItems.end_dt.$model" isCurrentDate/>
+            <b-form-invalid-feedback
+            :state="!$v.searchItems.end_dt.required"
+          >날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
       <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
@@ -178,13 +182,19 @@ export default {
   },
   methods: {
     getData() {
-      if (this.$v.$invalid) {
+      const { start_dt, end_dt} = this.$v.searchItems;
+      if (!start_dt.$invalid || !end_dt.$invalid) {
         this.$fn.notify('inputError', {});
         return;
       }
 
-      this.isTableLoading = this.isScrollLodaing ? false: true;
+      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+        return;
+      }
 
+      this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/Products/spot/scr/${this.searchItems.media}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);

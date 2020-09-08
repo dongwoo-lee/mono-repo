@@ -5,15 +5,19 @@ let mixinValidate = {
         searchItems: {
           brd_dt: {
             check_date: commonValidate.date,
+            required: commonValidate.required,
           }, 
           start_dt: {
             check_date: commonValidate.date,
+            required: commonValidate.required,
           },
           end_dt: {
             check_date: commonValidate.date,
+            required: commonValidate.required,
           },
           regDtm: {
             check_date: commonValidate.date,
+            required: commonValidate.required,
           },
         },
         metaData: {

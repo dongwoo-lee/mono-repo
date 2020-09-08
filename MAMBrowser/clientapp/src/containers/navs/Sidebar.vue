@@ -80,10 +80,6 @@ export default {
             viewingParentMenu: ""
         };
     },
-    created() {
-        console.info('sidebar 호출');
-        this.getMenus();
-    },
     mounted() {
         this.selectMenu();
         window.addEventListener("resize", this.handleWindowResize);
@@ -94,14 +90,12 @@ export default {
         document.removeEventListener("click", this.handleDocumentClick);
         window.removeEventListener("resize", this.handleWindowResize);
     },
-
     methods: {
         ...mapMutations('menu', [
             "changeSideMenuStatus",
             "addMenuClassname",
             "changeSelectedMenuHasSubItems"
         ]),
-        ...mapActions('menu', ['getMenus']),
         selectMenu() {
             const currentParentUrl = this.$route.path
                 .split("/")

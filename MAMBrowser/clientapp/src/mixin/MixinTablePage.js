@@ -1,7 +1,7 @@
 import MixinCommon from './MixinCommon';
 import { mapActions } from 'vuex';
 
-let mixinTablePage = {
+let mixinTablePage = apiType => ({
     mixins: [ MixinCommon ],
     data() {
         return {
@@ -74,7 +74,7 @@ let mixinTablePage = {
         getDataContents(sbID, brdDT) {
             if (sbID === undefined) return;
             this.isSubTableLoading = true;
-            this.$http.get(`/api/Products/sb/contents/${brdDT}/${sbID}`)
+            this.$http.get(`/api/Products/${apiType}/contents/${brdDT}/${sbID}`)
               .then(res => {
                  this.setReponseContentsData(res, 'normal');
                  this.isSubTableLoading = false;
@@ -131,6 +131,6 @@ let mixinTablePage = {
             this.download({ids: ids, type: 'private'});
         },
     }
-}
+})
 
 export default mixinTablePage;

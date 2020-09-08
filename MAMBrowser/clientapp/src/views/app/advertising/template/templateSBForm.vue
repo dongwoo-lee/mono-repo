@@ -39,7 +39,7 @@
           />
         </b-form-group>
         <!-- 사용처 -->
-        <b-form-group label="사용처" class="has-float-label">
+        <b-form-group v-if="screenName !== 'mcr'" label="사용처" class="has-float-label">
           <common-dropdown-menu-input 
             classString="width-220"
             :isLoadingClass="isLoadingClass"
@@ -136,7 +136,7 @@ import MixinTablePage from '../../../../mixin/MixinTablePage';
 
 export default {
   name: 'templateSBForm',
-  mixins: [ MixinTablePage ],
+  mixins: [ MixinTablePage('sb') ],
   props: ['heading', 'screenName'],
   data() {
     return {
@@ -161,7 +161,6 @@ export default {
         { key: 'length', label: '길이', tdClass: 'text-muted' },
         { key: 'capacity', label: '분량', tdClass: 'text-muted'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},
-        { key: 'pgmName', label: '사용처', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
         { key: 'actions', label: '', tdClass: 'text-muted'},
       ],

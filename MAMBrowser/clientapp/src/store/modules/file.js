@@ -96,7 +96,7 @@ export default {
                         'Content-Type': 'multipart/form-data',
                     }
 
-                    let userExtId = state.uploadViewType === 'public' ? '' : '/159';
+                    let userExtId = state.uploadViewType === 'public' ? '' : `/${sessionStorage.getItem('user_ext_id')}`;
                     try {
                         const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files${userExtId}`, formData, config);
 

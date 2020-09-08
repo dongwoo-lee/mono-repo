@@ -11,24 +11,31 @@ export default {
       diskAvailable: 0,
       diskUsed: 0,
     },
+    menuList: [],
+    behaviorList: [],
     processing: false,
-    userId: '',
   },
   getters: {
+    menuList: state => state.menuList,
+    behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
   },
   mutations: {
-    SET_AUTH(state, {token, userId }) {
+    SET_AUTH(state, {token, userId, userExtId }) {
       state.isAuth = true;
       state.processing = false;
-      sessionStorage.setItem('user_id', userId);
       sessionStorage.setItem('access_token', token);
+      sessionStorage.setItem('user_id', userId);
+      sessionStorage.setItem('user_ext_id', userExtId);
       // $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
     SET_USER(state, data) {
+      state.menuList = data.menuList;
+      state.behaviorList = data.behaviorList;
+      delete data.menuList;
+      delete data.behaviorList;
       state.currentUser = data;
-      sessionStorage.setItem('user_ext_id', '159');
     },
     SET_LOGOUT(state) {
       state.isAuth = false;
@@ -54,8 +61,9 @@ export default {
 
       try {
         const response = await $http.post('/api/Authenticate', params);
-        if (response.data.resultCode === 0) {
-          commit('SET_AUTH', { token: response.data.token, userId: payload.userId });
+        const { resultCode, resultObject, token } = response.data;
+        if (resultObject && resultCode === 0) {
+          commit('SET_AUTH', { token: token, userId: resultObject.id, userExtId: resultObject.userExtID });
         }
         commit('SET_PROCESSING', false);
         return response;
@@ -70,9 +78,8 @@ export default {
     getUser({ commit, state }) {
       const userId = sessionStorage.getItem('user_id');
       $http.get(`/api/users/${userId}`).then(response => {
-        console.info('response', response);
         const { status, data } = response;
-        if (status === 200 && data.resultCode === 0) {
+        if (status === 200 && data.resultObject && data.resultCode === 0) {
           commit('SET_USER', data.resultObject);
         } else {
           $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })

@@ -61,13 +61,17 @@ export default {
         dayAgo: {
             type: Number,
             defaut: 0,
+        },
+        required: {
+            type: Boolean,
+            default: false,
         }
     },
     data() {
         return {
             date: '',
             inputValue: '',
-            validBeforeDate: this.value ? this.value : new Date().toISOString().substring(0, 10),
+            validBeforeDate: this.getValidBeforeDate(),
         }
     },
     created() {
@@ -87,7 +91,7 @@ export default {
             if (v !== o) {
                 const formatValue = this.$fn.formatDate(v);
                 this.$emit('input', formatValue);
-                this.validBeforeDate = formatValue;
+                if (v) this.validBeforeDate = formatValue;
                 this.inputValue = formatValue;
             }
         }
@@ -111,14 +115,14 @@ export default {
             if (replaceAllTargetValue.length === 8) {
                 const convertDate = this.convertDateStringToHaipun(replaceAllTargetValue);
                  // 유효한 날짜인지 체크
-                if (!this.$fn.validDate(convertDate)) {
-                    const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);
-                    event.target.value = convertBeforeDate;
-                    this.date = convertBeforeDate;
-                } else {
+                if (this.$fn.validDate(convertDate)) {
                     event.target.value = convertDate;
                     this.validBeforeDate = convertDate;
                     this.date = convertDate;
+                } else {
+                    const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);
+                    event.target.value = convertBeforeDate;
+                    this.date = convertBeforeDate;
                 }
             }
             
@@ -135,6 +139,18 @@ export default {
             const mm = value.substring(4, 6);
             const dd = value.substring(6, 8);
             return `${yyyy}-${mm}-${dd}`;
+        }, 
+        getValidBeforeDate() {
+            if (this.value) {
+                return this.value;
+            }
+
+            if (this.dayAgo > 0) {
+                 const newDate = new Date();
+                return newDate.setDate(newDate.getDate() - this.dayAgo);
+            }
+
+            return new Date().toISOString().substring(0, 10);
         }
     },
 }
