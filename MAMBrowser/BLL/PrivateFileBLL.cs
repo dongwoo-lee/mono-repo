@@ -152,7 +152,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             param.Add("END_DT", end_dt);
 
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE /**where**/ /**orderby**/");
             builder.Where("(USER_EXT_ID=:USER_EXT_ID AND USED=:USED)");
             if (!string.IsNullOrEmpty(start_dt))
             {
@@ -180,6 +180,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                 }
             }
 
+            builder.OrderBy("EDITED_DTM DESC");
 
             var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");

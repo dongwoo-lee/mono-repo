@@ -498,11 +498,10 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media">매체코드</param>
         /// <param name="schDate">송출표의 편성일자</param>
-        /// <param name="cate">프로그램 유형 코드</param>
-        /// <param name="pgmID">프로그램 ID</param>
+        /// <param name="name">녹음명</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{schDate}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string schDate, [FromQuery] string cate, [FromQuery] string pgmID)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string schDate, [FromQuery] string name)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try

@@ -69,7 +69,7 @@ export default {
         },
         {
           name: "name",
-          title: "제목",
+          title: "효과음명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },
@@ -80,14 +80,8 @@ export default {
           dataClass: "center aligned text-center",
         },
         {
-          name: "name",
-          title: "길이",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-        },
-        {
           name: "duration",
-          title: "음반",
+          title: "길이",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
         },

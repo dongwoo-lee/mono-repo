@@ -141,10 +141,30 @@ namespace MAMBrowser.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpGet("files/{seq}")]
-        public FileResult GetFile(long seq)
+        public IActionResult GetFile(long seq)
         {
             PrivateFileBLL bll = new PrivateFileBLL();
-            var fileData =bll.Get(seq);
+            var fileData = bll.Get(seq);
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            string fileName = fileData.Title;
+          
+            contentType = "application/octet-stream";
+       
+            var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+            string tmpPath = @"d:\임시폴더\";
+            var filePath = Path.Combine(tmpPath, Path.GetRandomFileName());
+            BufferedStream bst = new BufferedStream(downloadStream);
+            FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+            downloadStream.CopyTo(fs);
+            
+            return PhysicalFile(filePath, contentType);
+        }
+        [HttpGet("files2/{seq}")]
+        public FileResult GetFile2(long seq)
+        {
+            PrivateFileBLL bll = new PrivateFileBLL();
+            var fileData = bll.Get(seq);
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
             string fileName = fileData.Title; ;
@@ -154,14 +174,7 @@ namespace MAMBrowser.Controllers
             }
 
             var downloadStream = MyFtp.Download(fileData.FilePath, 0);
-            //string tmpPath = @"d:\임시폴더\";
-            //BufferedStream bst = new BufferedStream(downloadStream);
-            //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);
-            //FileStream fs = new FileStream(Path.Combine(tmpPath, Path.GetRandomFileName()), FileMode.Create, FileAccess.ReadWrite);
-            //downloadStream.CopyToAsync(fs);
-            return File(downloadStream, contentType, fileName, true);
-
-
+            return File(downloadStream, contentType, true);
         }
 
         /// <summary>

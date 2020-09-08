@@ -152,11 +152,11 @@ namespace MAMBrowser.BLL
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_REPORT_VIEW /**where**/");
-            builder.Select("CODENAME, REPORTER, PRODUCTID, EVENTNAME, ONAIRDATE, MILLISEC, EDITFORMAT, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE");
+            builder.Select("REPORTNAME, CODENAME, REPORTER, PRODUCTID, EVENTNAME, ONAIRDATE, MILLISEC, EDITFORMAT, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(cate))
             {
-                builder.Where("CODENAME=:CATE");
+                builder.Where("CODEID=:CATE");
             }
             //if (!string.IsNullOrEmpty(name))
             //{
@@ -244,7 +244,7 @@ namespace MAMBrowser.BLL
             //}
             if (!string.IsNullOrEmpty(cate))
             {
-                builder.Where("AUDIOID=:CATE");
+                builder.Where("CODEID=:CATE");
             }
             if (!string.IsNullOrEmpty(type))
             {
@@ -254,7 +254,7 @@ namespace MAMBrowser.BLL
                 }
                 else
                 {
-                    builder.Where("TYPE LIKE '%(폐지)%'");   // 방송//폐지    -> LIKE문 말고 다른걸로...
+                    builder.Where("CODENAME LIKE '%(폐지)%'");   // 방송//폐지    -> LIKE문 말고 다른걸로...
                 }
             }
             if (!string.IsNullOrEmpty(editor))
@@ -425,6 +425,10 @@ namespace MAMBrowser.BLL
             }
             if (!string.IsNullOrEmpty(brd_dt))
             {
+                builder.Where("PROTYPE = :CATE");   // 방송//폐지
+            }
+            if (!string.IsNullOrEmpty(brd_dt))
+            {
                 builder.Where("ONAIRDATE = :BRD_DT");   // 방송//폐지
             }
             if (!string.IsNullOrEmpty(pgm))
@@ -520,7 +524,7 @@ namespace MAMBrowser.BLL
                 CATE = cate,
                 START_DT = start_dt,
                 END_DT = end_dt,
-                STATUS = status,
+                STATEID = status,
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
@@ -539,9 +543,9 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("SPOTID=:CATE");
             }
-            if (!string.IsNullOrEmpty(cate))
+            if (!string.IsNullOrEmpty(status))
             {
-                builder.Where("STATUS=:STATUS");   
+                builder.Where("STATEID=:STATEID");   
             }
             if (!string.IsNullOrEmpty(editor))
             {
@@ -749,8 +753,9 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        //public DTO_RESULT_LIST<DTO_DL30> FindNewDL(string media, string cate, string brd_dt) 
-        //{
-        //}
+        public DTO_RESULT_LIST<DTO_DL30> FindNewDL(string media, string brd_dt, string name)
+        {
+            return null;
+        }
     }
 }

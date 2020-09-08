@@ -137,7 +137,7 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
 LEFT JOIN (SELECT * FROM M30_CODE_MAP
 LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M ON M.CODEID=M30_CODE_MAP.GRP_CD
 WHERE MAP_CD='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
-LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD /**where**/");
+LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD /**where**/ /**orderby**/");
 
             if (!string.IsNullOrEmpty(mediaCd))
             {
@@ -176,7 +176,7 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                     builder.Where($"LOWER(MEMO) LIKE LOWER('%{word}%')");
                 }
             }
-
+            builder.OrderBy("EDITED_DTM DESC");
 
             var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
