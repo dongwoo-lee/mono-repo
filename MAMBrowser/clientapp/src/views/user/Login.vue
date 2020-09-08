@@ -35,20 +35,11 @@
                         </div>
                         <b-button
                             @click="formSubmit"
-                            type="button" variant="primary" size="lg" :disabled="processing"
+                            type="button" variant="primary" size="lg" 
                             :class="{'btn-multiple-state btn-shadow': true }">
-                            <span class="spinner d-inline-block">
-                                <span class="bounce1"></span>
-                                <span class="bounce2"></span>
-                                <span class="bounce3"></span>
-                            </span>
-                            <span class="icon success">
-                                <i class="simple-icon-check"></i>
-                            </span>
-                            <span class="icon fail">
-                                <i class="simple-icon-exclamation"></i>
-                            </span>
-                            <span class="label">로그인</span>
+                             <b-spinner v-show="processing" small type="grow"></b-spinner>
+                             <span v-show="processing">로그인중...</span>
+                            <span v-show="!processing" class="label">로그인</span>
                         </b-button>
                     </div>
                 </b-form>
@@ -83,7 +74,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('user', ['currentUser', 'processing'])
+        ...mapGetters('user', ['processing'])
     },
     watch: {
         password(v) {
@@ -104,7 +95,6 @@ export default {
                             this.errorMsg = res.data.errorMsg;
                         } else {
                             this.$router.push("/");
-                            this.getUser();
                         }
                     } else {
                         var errMsg = res.response.data.message;

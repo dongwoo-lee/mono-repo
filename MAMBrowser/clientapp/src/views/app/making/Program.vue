@@ -44,7 +44,17 @@
           :rows="responseData.data"
           :isTableLoading="isTableLoading"
           @contextMenuAction="onContextMenuAction"
-        />
+        >
+          <template slot="actions" scope="props">
+            <common-actions
+              :rowData="props.props.rowData"
+              :arrData="['preview', 'download']"
+              @preview="onPreview"
+              @download="onDownload"
+            >
+            </common-actions>
+          </template>
+        </common-data-table>
       </template>
     </common-form>
   </div>
@@ -171,7 +181,18 @@ export default {
            this.isTableLoading = false;
            this.isScrollLodaing = false;
       });
-    }
+    },
+    // 단일 다운로드
+    onDownload(seq) {
+      let ids = this.selectedIds;
+
+      if (typeof seq !== 'object' && seq) {
+        ids = [];
+        ids.push(seq);
+      }
+
+      this.download({ids: seq, type: 'etc'});
+    },
   },
 }
 </script>

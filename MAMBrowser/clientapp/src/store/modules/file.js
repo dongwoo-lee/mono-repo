@@ -8,7 +8,7 @@ export default {
     getters:{
         getFileData: state => state.fileData,
         getUploadTransmitState: state => state.uploadTransmitState,
-        getBeingUploaded: state => state.fileData.length > 0 && state.fileData.some(file => !file.isUpload),
+        getBeingUploaded: state => state.fileData.length > 0 && state.fileData.some(file => !file.uploadState === 'success'),
     },
     state: {
         fileData: [],
@@ -36,8 +36,7 @@ export default {
                     { 
                         metaData: JSON.stringify(meta), // 메타데이터
                         file: file,                     // 파일
-                        isUpload: false,                // 업로드 상태 유무
-                        uploadState: 'wait'             // 업로드 상태(wait:대기중, stop:정지, start:전송중, success:전송완료, save:저장중)
+                       uploadState: 'wait'             // 업로드 상태(wait:대기중, stop:정지, start:전송중, success:전송완료, save:저장중)
                     }
                 );
             })
@@ -51,8 +50,7 @@ export default {
         },
         CHANGE_FILE_UPLOAD_STATE: (state) => {
             state.fileData.some(data => {
-                if (!data.file.success && data.isUpload) {
-                    data.isUpload = false;
+                if (!data.file.success) {
                     data.uploadState = 'stop';
                     return true;
                 }
@@ -61,6 +59,7 @@ export default {
         },
         SET_UPLOAD_STATE: (state, value) => {
             state.uploadTransmitState = value;
+            console.info('state.uploadTransmitState', state.uploadTransmitState);
         },
         SET_UPLOAD_VIEW_TYPE: (state, value) => {
             state.uploadViewType = value;
@@ -68,13 +67,14 @@ export default {
     },
     actions: {
         async upload({ state, commit }) {
+            console.info('test');
             // 취소 토큰 생성
             uploadCancelToken = new $http.CancelToken.source();
             // 업로드 상태 변경
             commit('SET_UPLOAD_STATE', true);
             // 파일 업로드
             for (const data of state.fileData) {
-                if (!data.isUpload && data.uploadState !== 'success') {
+                if (data.uploadState !== 'success') {
                     const formData = new FormData();
                     formData.append('file', data.file.file);
                     formData.append('metaData', data.metaData);
@@ -84,7 +84,6 @@ export default {
                         onUploadProgress: progressEvent => 
                         {
                             data.file.active = true;
-                            data.isUpload = true;
                             data.uploadState = 'start';
                             data.file.progress = Math.round((progressEvent.loaded / data.file.size) * 100);
 
@@ -103,7 +102,7 @@ export default {
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';
-                            $fn.notify('success', { message: '파일 업로드 완료' })
+                            $fn.notify('success', { message: '파일 다운로드 완료' })
                             // 테이블 새로고침
                             const refScrollPaging = FileUploadRefElement.getScrollPaging();
                             refScrollPaging.tableRefresh();
@@ -114,7 +113,7 @@ export default {
                         console.log(e);
                     }
                 }
-
+                console.info('test-2');
                 commit('SET_UPLOAD_STATE', false);
             }
         },
@@ -123,7 +122,7 @@ export default {
                 $http.get(`/api/products/workspace/${type}/files/${id}`)
                     .then(res => {
                         $fn.fileDownload(res);
-                        $fn.notify('success', { message: '파일 업로드 완료' })
+                        $fn.notify('success', { message: '파일 다운로드 완료' })
                     })
                     .catch(error => {
                         $fn.notify('error', { message: '파일 다운로드 실패: ' + error })

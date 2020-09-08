@@ -35,6 +35,7 @@ export default {
       state.currentUser = {};
       state.processing = false;
       sessionStorage.removeItem('access_token')
+      sessionStorage.removeItem('user_id');
       sessionStorage.removeItem('user_ext_id')
       // $http.defaults.headers.common['X-Csrf-Token'] = undefined;
     },

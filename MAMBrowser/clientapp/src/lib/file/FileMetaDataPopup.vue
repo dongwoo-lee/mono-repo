@@ -59,8 +59,8 @@
             <div class="flex-grow-1">
             </div>
             <div>
-                <b-button variant="outline-primary default" @click="submit">업로드</b-button>
-                <b-button variant="outline-danger default" @click="close">취소</b-button>
+                <b-button variant="outline-primary default cutom-label" @click="submit">업로드</b-button>
+                <b-button variant="outline-danger default cutom-label-cancel" @click="close">취소</b-button>
             </div>
         </template>
     </b-modal>

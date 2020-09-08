@@ -4343,7 +4343,8 @@ input:-webkit-autofill {
 /* 24.Tooltip and popover */
 .popover,
 .tooltip {
-    top: -145px !important;
+    top: -100px !important;
+    //top: -145px !important;
 
     @include respond-below(xl) {
         top: -130px !important;

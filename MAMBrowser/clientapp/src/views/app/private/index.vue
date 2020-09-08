@@ -78,31 +78,15 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <b-button 
-              v-b-tooltip.hover.top="{ 
-                title: 'tooltip!!!',
-              }"
-              :offsetX="5"
-              class="icon-buton">
-              <b-icon icon="caret-right-square" class="icon"></b-icon>
-            </b-button>
-            <b-button :id="`download-${props.props.rowIndex}`" class="icon-buton"
-              @click.stop="onDownload(props.props.rowData.seq)">
-              <b-icon icon="download" class="icon"></b-icon>
-            </b-button>
-            <b-tooltip
-              :target="`download-${props.props.rowIndex}`"
-              placement="top"
-              :offsetY="30">
-              <!-- {{props.props.rowData.filePath}} -->
-              {{'download-' + props.props.rowIndex}}
-            </b-tooltip>
-            <b-button class="icon-buton" title="휴지통" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
-              <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
-            </b-button>
-            <b-button class="icon-buton" title="정보편집" @click.stop="onMetaModifyPopup(props.props.rowData)">
-              <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
-            </b-button>
+              <common-actions
+                :rowData="props.props.rowData"
+                :arrData="['preview', 'download', 'delete', 'modify']"
+                @preview="onPreview"
+                @download="onDownload"
+                @delete="onDeleteConfirm"
+                @modify="onMetaModifyPopup"
+              >
+              </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
@@ -209,7 +193,6 @@ export default {
           width: "10%"
         }
       ],
-      
     }
   },
   methods: {
@@ -286,6 +269,9 @@ export default {
     onMetaModifyPopup(rowData) {
       this.$refs.refMetaDataModifyPopup.setData(rowData);
       this.metaDataModifyPopup = true;
+    },
+    onPreview() {
+
     },
     onEditSuccess() {
       this.getData();

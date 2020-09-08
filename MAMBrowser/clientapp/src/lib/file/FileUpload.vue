@@ -3,7 +3,7 @@
         <!-- 파일이 없을 경우, 버튼 및 드롭 -->
         <div class="drop-active" v-show="localFiles.length === 0">
             <h4>드래그 또는 클릭으로 파일을 업로드하세요.</h4>
-            <label for="file" class="btn btn-primary default w-50">
+            <label for="file" class="btn btn-outline-primary default cutom-label w-50">
                 파일 선택
             </label>
         </div>
@@ -13,15 +13,15 @@
                 <div class="flex-grow-1">
                     총 {{localFiles.length}}개 파일 중 {{ getSuccessUploadFileLength() }}개 업로드 완료
                 </div>
-                <label v-show="uploadAddState()" for="file" class="btn btn-outline-primary btn-sm default mr-2">
+                <label v-show="uploadAddState()" for="file" class="btn btn-outline-primary btn-sm default cutom-label mr-2">
                     <i class="iconsminds-add-file"></i>추가
                 </label>
-                <label v-show="uploadStopState()" class="btn btn-outline-warning btn-sm default"
+                <label v-show="uploadStopState()" class="btn btn-outline-warning btn-sm default cutom-label"
                     :class="{ 'mr-2': uploadStopState() }"
                     @click="onStopUpload">
                     <i class="iconsminds-add-file"></i>업로드 정지
                 </label>
-                <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default"
+                <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default cutom-label"
                     @click="onStartUpload">
                     <i class="iconsminds-add-file"></i>업로드 시작
                 </label>
@@ -162,6 +162,7 @@ export default {
             return !this.getUploadTransmitState && this.localFiles.length > this.getSuccessUploadFileLength();
         },
         uploadStopState() {
+            console.info('uploadStopState', this.getUploadTransmitState, this.getBeingUploaded);
             return this.getUploadTransmitState && this.getBeingUploaded;
         }
     }

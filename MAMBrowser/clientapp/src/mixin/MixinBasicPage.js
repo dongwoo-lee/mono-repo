@@ -36,18 +36,6 @@ let mixinBasicPage = {
         onSelectedIds(ids) {
             this.selectedIds = ids;
         },
-        // 다운로드
-        downLoad() {
-            this.$http.get('/api/products/workspace/private/files/{fileid}')
-                .then(res => {
-                    const { status, data } = res;
-                    if (status === 200 && !data.errorMsg) {
-                        // this.$fn.notify('success', { message: '다운로드 요청을 하였습니다.' });
-                    } else {
-                        this.$fn.notify('server-error', { message: '조회 에러:' + data.errorMsg });
-                    }
-                })
-        },
         // (구)프로소재, 공유소재 매체 목록 조회
         getMediaPrimaryOptions() {
             this.requestCall('/api/Categories/public-codes/primary', 'mediaPrimaryOptions');

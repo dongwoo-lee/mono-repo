@@ -95,12 +95,15 @@ export default {
       isDarkActive: false
     };
   },
+  created() {
+    this.getUser();
+  },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["setLang", "signOut"]),
+    ...mapActions("user", ["setLang", "getUser", "signOut"]),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
