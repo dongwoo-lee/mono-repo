@@ -55,7 +55,14 @@ let mixinBasicPage = {
         },
         // 공유 소재 분류 목록 조회
         getPublicCodesOptions(primaryCode = '') {
-            this.requestCall(`/api/Categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions');
+            this.requestCall(`/api/Categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions')
+            .then(data => {
+                if(data.resultObject && data.resultCode === 0) {
+                    if (data.resultObject.data.length > 0) {
+                        this.searchItems.cate =  data.resultObject.data[0].id;
+                    }
+                }
+            });
         },
         // 사용처 분류 선택
         onPgmSelected(data) {
@@ -63,12 +70,6 @@ let mixinBasicPage = {
             this.searchItems.pgm = id;
             this.searchItems.pgmName = name;
         },
-        // 공유 소재 분류 선택
-        onPublicCodesSelected(data) {
-            const { id, name } = data;
-            this.searchItems.cate = id;
-            this.searchItems.cateName = name;
-        }
     }
 }
 

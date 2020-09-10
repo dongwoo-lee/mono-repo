@@ -27,7 +27,7 @@
        <b-form-group label="방송일" 
           class="has-float-label"
           :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.required) }">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" isCurrentDate/>
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" isCurrentDate required/>
           <b-form-invalid-feedback :state="!$v.searchItems.brd_dt.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 검색버튼 -->

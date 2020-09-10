@@ -167,7 +167,7 @@ const fileDownload = (res, fileNm = '') => {
     }
 }
 
-const formatBytes = (bytes, decimals = 1) => {    
+const formatMBBytes = (bytes, decimals = 1) => {    
     if (bytes === 0) return '0 MB';
     // 1 000 = 1kb
     // 1 000 000 = 1mb
@@ -187,6 +187,16 @@ const formatBytes = (bytes, decimals = 1) => {
     return parseFloat((bytes / (baseBytes * Math.pow(1000, i))).toFixed(dm)) + ' ' + sizes[i];
 }
 
+const formatBytes = (bytes, decimals = 2) => {
+    if (bytes === 0) return '0 B';
+
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 const commonFunctions = {
     formatDate,
     dateStringTohaipun,
@@ -196,6 +206,7 @@ const commonFunctions = {
     notify,
     fileDownload,
     changeSortValue,
+    formatMBBytes,
     formatBytes
 }
 

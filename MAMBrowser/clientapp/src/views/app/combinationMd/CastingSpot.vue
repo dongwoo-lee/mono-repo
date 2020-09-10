@@ -25,14 +25,14 @@
         <!-- 시작일 -->
         <b-form-group label="시작일"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.start_dt" :dayAgo="7" required/>
         </b-form-group>
         <!-- 종료일 -->
         <b-form-group label="종료일"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.end_dt" required/>
         </b-form-group>
         <!-- 상태 -->
         <b-form-group label="상태" class="has-float-label">
@@ -192,11 +192,6 @@ export default {
       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
         this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
         this.hasErrorClass = true;
-      }
-
-      if (this.$v.$invalid) {
-        this.$fn.notify('inputError', {});
-        return;
       }
 
       this.isTableLoading = this.isScrollLodaing ? false: true;

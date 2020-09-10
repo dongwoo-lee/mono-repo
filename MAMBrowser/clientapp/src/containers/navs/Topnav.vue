@@ -28,8 +28,8 @@
         <table>
             <tr>
               <td>
-                <span class="current"> {{$fn.formatBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
-                <span class="free-space">여유 {{ $fn.formatBytes(currentUser.diskAvailable) }}</span>
+                <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
+                <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable) }}</span>
               </td>
               <td rowspan="2">
                 <b-dropdown

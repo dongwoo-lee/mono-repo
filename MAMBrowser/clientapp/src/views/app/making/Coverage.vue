@@ -26,14 +26,14 @@
         <!-- 방송 시작일 -->
         <b-form-group label="시작일" 
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.start_dt" required/>
         </b-form-group>
         <!-- 방송 종료일 -->
         <b-form-group label="종료일"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.end_dt" required/>
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">

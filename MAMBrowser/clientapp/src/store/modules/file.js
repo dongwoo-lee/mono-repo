@@ -102,7 +102,7 @@ export default {
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';
-                            $fn.notify('success', { message: '파일 다운로드 완료' })
+                            $fn.notify('success', { message: '파일 업로드 완료' })
                             // 테이블 새로고침
                             const refScrollPaging = FileUploadRefElement.getScrollPaging();
                             refScrollPaging.tableRefresh();
@@ -129,6 +129,12 @@ export default {
                     })
 
             })
+        },
+        downloadSound({}, {}) {
+            // TODO:
+        },
+        downloadEtc({}, {}) {
+            // TODO:
         },
         cancel_upload: ({ commit }) => {
             // 취소 토큰 실행

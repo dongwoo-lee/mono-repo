@@ -35,14 +35,14 @@
         <!-- 시작일 -->
         <b-form-group label="시작일"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.start_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" :dayAgo="7"/>
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.start_dt" :dayAgo="7" required/>
         </b-form-group>
         <!-- 종료일 -->
         <b-form-group label="종료일"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.end_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.end_dt" required/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>

@@ -15,15 +15,15 @@
       <!-- 방송일 -->
         <b-form-group label="방송일"
           class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.$error) }">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
+          :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.required) }">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
             class="width-220"
             v-model="searchItems.cate"
-            :options="timetoneOptions"
+            :options="categoryOptions"
             :disabled="categoryOptions.length === 0"
             value-field="id"
             text-field="name"
@@ -164,37 +164,37 @@ export default {
         this.getData();
     },
     methods: {
-        getData() {
-            if (this.$v.$invalid) {
-                this.$fn.notify('inputError', {});
-                return;
-            }
-
-            this.isTableLoading = this.isScrollLodaing ? false: true;
-            const brd_dt = this.searchItems.brd_dt;
-
-            this.$http.get(`/api/Products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
-                .then(res => {
-                this.setResponseData(res, 'normal');
-                this.addScrollClass();
-                this.isTableLoading = false;
-                this.isScrollLodaing = false;
-            });
-        },
-        onChangeMedia(value) {
-            this.getProOptions(value);
-        },
-        getOptions() {
-            this.getMediaOptions();
-            this.getEditorOptions();
-
-            // 필러(pr)
-            if (this.screenName === 'pr') this.getProOptions();
-            // 필러(일반)
-            if (this.screenName === 'general') this.getGeneralOptions();
-            // 필러(기타)
-            if (this.screenName === 'etc') this.getEtcOptions();
+      getData() {
+        if (!this.$v.searchItems.brd_dt.$invalid) {
+          this.$fn.notify('inputError', {});
+          return;
         }
+
+        this.isTableLoading = this.isScrollLodaing ? false: true;
+        const brd_dt = this.searchItems.brd_dt;
+
+        this.$http.get(`/api/Products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
+            .then(res => {
+            this.setResponseData(res, 'normal');
+            this.addScrollClass();
+            this.isTableLoading = false;
+            this.isScrollLodaing = false;
+        });
+      },
+      onChangeMedia(value) {
+          this.getProOptions(value);
+      },
+      getOptions() {
+          this.getMediaOptions();
+          this.getEditorOptions();
+
+          // 필러(pr)
+          if (this.screenName === 'pr') this.getProOptions();
+          // 필러(일반)
+          if (this.screenName === 'general') this.getGeneralOptions();
+          // 필러(기타)
+          if (this.screenName === 'etc') this.getEtcOptions();
+      }
     }
 }
 </script>

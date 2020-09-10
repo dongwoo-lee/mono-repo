@@ -99,6 +99,15 @@ export default {
     methods: {
         onInput(event) {
             const targetValue = event.target.value;
+
+            // 필수 입력값일 경우
+            if (this.required && !targetValue) {
+                const convertDate = this.convertDateStringToHaipun(this.validBeforeDate);
+                event.target.value = convertDate;
+                this.date = convertDate;
+                return;
+            }
+
             // 값이 string.empty일경우
             if (!targetValue) {
                 this.date = targetValue;

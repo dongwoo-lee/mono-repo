@@ -23,10 +23,10 @@
           />
         </b-form-group>
         <!-- 편성일자: 시작일자 -->
-        <b-form-group label="편성일자*"
+        <b-form-group label="편성일자"
           class="has-float-label"
           :class="{ 'hasError': $v.searchItems.regDtm.required }">
-          <common-date-picker v-model="$v.searchItems.regDtm.$model"/>
+          <common-date-picker v-model="$v.searchItems.regDtm.$model" required/>
           <b-form-invalid-feedback :state="!$v.searchItems.regDtm.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
         <!-- 녹음명 -->

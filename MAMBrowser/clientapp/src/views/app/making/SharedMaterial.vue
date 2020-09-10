@@ -25,26 +25,28 @@
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
-          <common-dropdown-menu-input 
-            classString="width-120" 
-            :isLoadingClass="isLoadingClass"
-            :suggestions="publicCodesOptions" 
-            @selected="onPublicCodesSelected"
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.cate"
+            :options="publicCodesOptions"
+            value-field="id"
+            text-field="name"
+            :disabled="publicCodesOptions.length === 0"
           />
         </b-form-group>
         <!-- 시작일 -->
         <b-form-group label="시작일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.start_dt.$model" />
-          <b-form-invalid-feedback
+          <common-date-picker v-model="searchItems.start_dt" />
+          <!-- <b-form-invalid-feedback
             :state="$v.searchItems.start_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
         </b-form-group>
         <!-- 종료일 -->
         <b-form-group label="종료일" class="has-float-label">
-          <common-date-picker v-model="$v.searchItems.end_dt.$model" />
-          <b-form-invalid-feedback
+          <common-date-picker v-model="searchItems.end_dt" />
+          <!-- <b-form-invalid-feedback
             :state="$v.searchItems.end_dt.check_date"
-          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback>
+          >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
@@ -148,7 +150,7 @@ export default {
     return {
       searchItems: {
         media: 'A',                // 매체
-        cate: '',                  // 분류
+        cate: 'S01G05C001',        // 분류
         cateName: '',              // 분류명
         start_dt: '20200101',      // 시작일
         end_dt: '',                // 종료일
@@ -259,7 +261,8 @@ export default {
     ...mapActions('file', ['open_popup', 'download']),
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/products/workspace/public/meta`, { params: this.searchItems })
+      const {media, cate} = this.searchItems;
+      this.$http.get(`/api/products/workspace/public/meta/${media}/${cate}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();

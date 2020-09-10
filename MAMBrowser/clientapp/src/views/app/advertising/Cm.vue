@@ -25,8 +25,8 @@
         <!-- 방송일 -->
         <b-form-group label="시작일"
           class="has-float-label"
-          :class="{ 'hasError': $v.searchItems.brd_dt.$error }">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" />
+          :class="{ 'hasError': $v.searchItems.brd_dt.required }">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">

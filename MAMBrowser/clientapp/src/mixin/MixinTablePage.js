@@ -50,7 +50,7 @@ let mixinTablePage = apiType => ({
         },
         // 메인 데이터 조회
         getData() {
-            if (this.$v.$invalid) {
+            if (!this.$v.searchItems.brd_dt.$invalid) {
               this.$fn.notify('inputError', {});
               return;
             }

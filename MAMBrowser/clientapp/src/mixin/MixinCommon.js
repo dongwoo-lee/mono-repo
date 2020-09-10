@@ -104,7 +104,7 @@ let mixinCommon = {
         // 카테고리 API 요청
         requestCall(url, attr) {
             this.isLoadingClass = true;
-            this.$http.get(url)
+            return this.$http.get(url)
                 .then(res => {
                     if (res.status === 200) {
                         this[attr] = res.data.resultObject.data;
@@ -112,6 +112,7 @@ let mixinCommon = {
                         this.$fn.notify('server-error', { message: '조회 에러' });
                     }
                     this.isLoadingClass = false;
+                    return res.data;
           });
         },
         // 매체목록 조회

@@ -17,13 +17,13 @@
         <b-form-group label="시작일"
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.start_dt" :dayAgo="2"/>
+          <common-date-picker v-model="searchItems.start_dt" :dayAgo="2" required/>
         </b-form-group>
       <!-- 등록일: 종료일 -->
         <b-form-group label="종료일" 
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.end_dt" isCurrentDate />
+          <common-date-picker v-model="searchItems.end_dt" isCurrentDate required/>
         </b-form-group>
       <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
@@ -162,6 +162,16 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%"
+        },
+         {
+          name: "fileSize",
+          title: "파일사이즈",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "8%",
+          callback: (v) => {
+            return this.$fn.formatBytes(v)
+          }
         },
         {
           name: "audioFormat",
