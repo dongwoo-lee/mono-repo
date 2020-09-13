@@ -1,4 +1,5 @@
 import mixinValidate from './MixinValidate';
+import { mapGetters, mapActions } from 'vuex';
 
 let mixinCommon = {
     mixins: [ mixinValidate ],
@@ -20,6 +21,9 @@ let mixinCommon = {
             isScrollLodaing: false,
         }
     },
+    computed: {
+        ...mapGetters('user', ['behaviorList'])
+    },
     watch: {
         ['searchItems.start_dt'](v) {
           if (!this.$fn.checkGreaterStartDate(v, this.searchItems.end_dt)) {
@@ -38,6 +42,7 @@ let mixinCommon = {
         });
     },
     methods: {
+        ...mapActions('file', ['download', 'downloadSound', 'downloadEtc']),
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
@@ -45,7 +50,6 @@ let mixinCommon = {
         },
         // 스크롤 페이징
         onScrollPerPage() {
-            console.info('onScrollPerPageonScrollPerPageonScrollPerPage');
             this.isScrollLodaing = true;
             this.searchItems.selectPage++;
             this.getData();
@@ -73,6 +77,9 @@ let mixinCommon = {
             } else {
                 this.$fn.notify('server-error', { message: '조회 에러: ' + res.data.errorMsg });
             }
+        },
+        getTotalRowCount() {
+            return `전체 ${this.responseData.totalRowCount}개`;
         },
         // 페이지 정보
         getPageInfo() {
@@ -133,6 +140,17 @@ let mixinCommon = {
             setTimeout(() => {
                 this.$refs.scrollPaging.addClassScroll();  
             }, 0);
+        },
+        onPreview(seq) {
+            console.info('미리보기 seq번호:: ', seq);
+        },
+        onDownloadSound() {
+            console.info('다운로드-음반 seq번호:: ', seq);
+            this.downloadSound(seq);
+        },
+        onDownloadEtc(seq) {
+            console.info('다운로드-기타 seq번호:: ', seq);
+            this.downloadEtc(seq);
         }
     }
 }

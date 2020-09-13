@@ -48,7 +48,7 @@
 
                   </template>
                   <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
-                  <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
+                  <b-dropdown-item v-if="isDisplaySetting()" @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
                   <b-dropdown-divider />
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
                 </b-dropdown>
@@ -108,10 +108,13 @@ export default {
       this.signOut().then(() => {
         this.$router.push("/user/login");
       });
+    },
+    isDisplaySetting() {
+      return this.behaviorList.some(item => item.id === 'S01G02C005' && item.visible === 'Y');
     }
   },
   computed: {
-    ...mapGetters("user", ["currentUser"]),
+    ...mapGetters("user", ["currentUser", 'behaviorList']),
     ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",

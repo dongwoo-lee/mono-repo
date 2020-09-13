@@ -68,7 +68,7 @@
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :is-actions-slot="true"
+          is-actions-slot
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
@@ -76,6 +76,15 @@
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
+          <template slot="actions" scope="props">
+            <common-actions
+              :rowData="props.props.rowData"
+              :behaviorData="behaviorList"
+              @preview="onPreview"
+              @download="onDownloadSound"
+            >
+            </common-actions>
+          </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
@@ -118,28 +127,28 @@ export default {
           title: "곡명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%"
+          width: "10%"
         },
         {
           name: "artistName",
           title: "아티스트",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
         },
         {
           name: "duration",
           title: "재생시간",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
         },
         {
           name: "albumName",
           title: "음반",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: '15%',
         },
         {
           name: "trackNO",
@@ -160,14 +169,14 @@ export default {
           title: "작곡가",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
         },
         {
           name: "writer",
           title: "작사가",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
         },
         {
           name: "sequenceNO",
@@ -184,12 +193,12 @@ export default {
           width: '8%',
         },
         {
-          name: "filePath",
-          title: "파일경로",
-          titleClass: 'center aligned text-center',
-          dataClass: "center aligned text-center word-break",
-          width: "10%"
-        },
+          name: '__slot:actions',
+          title: 'Actions',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
+        }
       ]
     }
   },

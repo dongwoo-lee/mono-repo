@@ -28,7 +28,7 @@
                 <div class="page-info">
                     <slot name="form-table-page-area"></slot>
                 </div>
-                <div class="page-size">
+                <div v-if="isDisplayPageSize" class="page-size">
                   <b-form-select :value="searchItems.rowPerPage" @change="onChagne">
                     <b-form-select-option value="15">15개</b-form-select-option>
                     <b-form-select-option value="30">30개</b-form-select-option>
@@ -63,6 +63,10 @@ export default {
         default: false,
       },
       isDisplayPageArea: {
+        type: Boolean,
+        default: true,
+      },
+      isDisplayPageSize: {
         type: Boolean,
         default: true,
       }

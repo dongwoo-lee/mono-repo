@@ -62,7 +62,7 @@
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :is-actions-slot="true"
+          is-actions-slot
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
@@ -73,7 +73,8 @@
           <template slot="actions" scope="props">
               <common-actions
                 :rowData="props.props.rowData"
-                :arrData="['preview', 'download', 'delete', 'modify']"
+                :behaviorData="behaviorList"
+                :etcData="['delete', 'modify']"
                 @preview="onPreview"
                 @download="onDownload"
                 @delete="onDeleteConfirm"
@@ -199,7 +200,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('file', ['open_popup', 'download']),
+    ...mapActions('file', ['open_popup']),
     getData() {
       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
         this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
@@ -272,9 +273,6 @@ export default {
     onMetaModifyPopup(rowData) {
       this.$refs.refMetaDataModifyPopup.setData(rowData);
       this.metaDataModifyPopup = true;
-    },
-    onPreview() {
-
     },
     onEditSuccess() {
       this.getData();

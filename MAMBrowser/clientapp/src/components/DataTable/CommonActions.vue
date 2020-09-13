@@ -1,27 +1,30 @@
 <template>
     <div>
         <b-button
-            v-if="display('preview')"
+            v-if="display('S01G02C001')"
             class="icon-buton"
+            title="미리보기"
             @click.stop="onPreview()">
             <b-icon icon="caret-right-square" class="icon"></b-icon>
         </b-button>
         <b-button
-            v-if="display('download')"
+            v-if="display('S01G02C002')"
             :id="`download-${rowData.rowNO}`" class="icon-buton"
             v-b-tooltip.hover.top="{ title: rowData.filePath }"
             @click.stop="onDownload()">
             <b-icon icon="download" class="icon"></b-icon>
         </b-button>           
         <b-button
-            v-if="display('delete')"
-            class="icon-buton" title="휴지통"
+            v-if="displayEtc('delete')"
+            class="icon-buton"
+            title="휴지통"
             @click.stop="onDelete()">
             <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
         </b-button>
         <b-button
-            v-if="display('modify')"
-            class="icon-buton" title="정보편집"
+            v-if="displayEtc('modify')"
+            class="icon-buton"
+            title="정보편집"
             @click.stop="onMetaModify()">
             <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
         </b-button>
@@ -34,14 +37,21 @@ export default {
             type: Object,
             default: () => {}
         },
-        arrData: {
+        etcData: {
+            type: Array,
+            default: () => []
+        }, 
+        behaviorData: {
             type: Array,
             default: () => []
         }
     },
     methods: {
         display(value) {
-            return this.arrData.some(data => data === value);
+            return this.behaviorData.some(data => data.id === value && data.visible === 'Y');
+        },
+        displayEtc(value) {
+            return this.etcData.some(data => data === value);
         },
         onPreview() {
             this.$emit('preview', this.rowData);

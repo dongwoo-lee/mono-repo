@@ -8,6 +8,7 @@
     </b-row>
     <common-form
       :searchItems="searchItems"
+      :isDisplayPageSize="false"
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
@@ -45,7 +46,7 @@
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
-        {{ getPageInfo() }}
+        {{ getTotalRowCount() }}
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
@@ -53,7 +54,18 @@
             :fields="fields"
             :rows="responseData.data"
             :isTableLoading="isTableLoading"
-        />
+            is-actions-slot
+        >
+          <template slot="actions" scope="props">
+            <common-actions
+              :rowData="props.props.rowData"
+              :behaviorData="behaviorList"
+              @preview="onPreview"
+              @download="onDownloadEtc"
+            >
+            </common-actions>
+          </template>
+        </common-data-table>
       </template>
     </common-form>
   </div>
@@ -141,6 +153,13 @@ export default {
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                 },
+                {
+                  name: '__slot:actions',
+                  title: 'Actions',
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: "6%"
+                }
             ]
         }
     },

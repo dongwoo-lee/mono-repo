@@ -130,10 +130,10 @@ export default {
 
             })
         },
-        downloadSound({}, {}) {
+        downloadSound({}, etc) {
             // TODO:
         },
-        downloadEtc({}, {}) {
+        downloadEtc({}, etc) {
             // TODO:
         },
         cancel_upload: ({ commit }) => {

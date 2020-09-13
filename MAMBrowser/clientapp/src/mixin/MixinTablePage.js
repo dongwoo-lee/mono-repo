@@ -6,10 +6,12 @@ let mixinTablePage = apiType => ({
     data() {
         return {
             responseData: {
-                data: null,
+                data: [],
+                totalRowCount: 0,
             },
             reponseContentsData: {
-                data: null,
+                data: [],
+                totalRowCount: 0,
             },
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
@@ -45,7 +47,7 @@ let mixinTablePage = apiType => ({
         ...mapActions('file', ['download']),
         // 검색
         onSearch() {
-            this.reponseContentsData.data = null;
+            this.reponseContentsData.data = [];
             this.getData();
         },
         // 메인 데이터 조회
@@ -83,8 +85,9 @@ let mixinTablePage = apiType => ({
         // 메인 결과값 설정
         setResponseData(res) {
             if (res.status === 200) {
-                const { data } = res.data.resultObject;
+                const { data, totalRowCount } = res.data.resultObject;
                 this.responseData.data = data;
+                this.responseData.totalRowCount = totalRowCount;
             } else {
                 this.$fn.notify('server-error', { message: '조회 에러' });
             }
@@ -92,8 +95,9 @@ let mixinTablePage = apiType => ({
         // 서브 결과값 설정
         setReponseContentsData(res) {
             if (res.status === 200) {
-                const { data } = res.data.resultObject;
+                const { data, totalRowCount } = res.data.resultObject;
                 this.reponseContentsData.data = data;
+                this.reponseContentsData.totalRowCount = totalRowCount;
             } else {
                 this.$fn.notify('server-error', { message: '조회 에러' });
             }

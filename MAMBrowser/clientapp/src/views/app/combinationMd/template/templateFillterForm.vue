@@ -59,11 +59,20 @@
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :is-actions-slot="true"
+          is-actions-slot
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
         >
+          <template slot="actions" scope="props">
+            <common-actions
+              :rowData="props.props.rowData"
+              :behaviorData="behaviorList"
+              @preview="onPreview"
+              @download="onDownloadEtc"
+            >
+            </common-actions>
+          </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
@@ -92,70 +101,77 @@ export default {
         isTableLoading: false,
         fields: [
             {
-            name: 'rowNO',
-            title: 'No',
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '4%',
+              name: 'rowNO',
+              title: 'No',
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '4%',
             },
             {
-            name: "categoryName",
-            title: "매체",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '10%',
+              name: "categoryName",
+              title: "매체",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '10%',
             },
             {
-            name: "name",
-            title: "소재명",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
+              name: "name",
+              title: "소재명",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
             },
             {
-            name: "brdDT",
-            title: "방송일유효일",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '8%',
-            callback: (v) => {
-                return this.$fn.dateStringTohaipun(v)
+              name: "brdDT",
+              title: "방송일유효일",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '8%',
+              callback: (v) => {
+                  return this.$fn.dateStringTohaipun(v)
+              }
+            },
+            {
+              name: "duration",
+              title: "길이",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '8%',
+            },
+            {
+              name: "track",
+              title: "트랙",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '4%',
+            },
+            {
+              name: "editorName",
+              title: "편집자",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '8%'
+            },
+            {
+              name: "editDtm",
+              title: "편집일자",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '12%'
+            },
+            {
+              name: "masteringDtm",
+              title: "미스터링일자",
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: '12%'
+            },
+            {
+              name: '__slot:actions',
+              title: 'Actions',
+              titleClass: "center aligned text-center",
+              dataClass: "center aligned text-center",
+              width: "6%"
             }
-            },
-            {
-            name: "duration",
-            title: "길이",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '8%',
-            },
-            {
-            name: "track",
-            title: "트랙",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '4%',
-            },
-            {
-            name: "editorName",
-            title: "편집자",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '8%'
-            },
-            {
-            name: "editDtm",
-            title: "편집일자",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '12%'
-            },
-            {
-            name: "masteringDtm",
-            title: "미스터링일자",
-            titleClass: "center aligned text-center",
-            dataClass: "center aligned text-center",
-            width: '12%'
-            },
           ],
         }
     },

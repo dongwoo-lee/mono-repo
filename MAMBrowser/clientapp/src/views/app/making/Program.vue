@@ -8,7 +8,7 @@
     </b-row>
     <common-form
       :searchItems="searchItems"
-      :isDisplayBtnArea="true"
+      :isDisplayPageSize="false"
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
@@ -37,22 +37,23 @@
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
-        {{ getPageInfo() }}
+        {{ getTotalRowCount() }}
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
         <common-data-table
           :fields="fields"
           :rows="responseData.data"
+          is-actions-slot
           :isTableLoading="isTableLoading"
           @contextMenuAction="onContextMenuAction"
         >
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
-              :arrData="['preview', 'download']"
+              :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownload"
+              @download="onDownloadEtc"
             >
             </common-actions>
           </template>
@@ -155,6 +156,13 @@ export default {
           dataClass: "center aligned text-center",
           width: '15%',
         },
+        {
+          name: '__slot:actions',
+          title: 'Actions',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
+        }
       ],
       contextMenu: [
         { name: 'download', text: '다운로드' },
@@ -183,17 +191,6 @@ export default {
            this.isTableLoading = false;
            this.isScrollLodaing = false;
       });
-    },
-    // 단일 다운로드
-    onDownload(seq) {
-      let ids = this.selectedIds;
-
-      if (typeof seq !== 'object' && seq) {
-        ids = [];
-        ids.push(seq);
-      }
-
-      this.download({ids: seq, type: 'etc'});
     },
   },
 }

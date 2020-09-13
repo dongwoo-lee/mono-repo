@@ -64,13 +64,22 @@
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :is-actions-slot="true"
+          is-actions-slot
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
+          <template slot="actions" scope="props">
+            <common-actions
+              :rowData="props.props.rowData"
+              :behaviorData="behaviorList"
+              @preview="onPreview"
+              @download="onDownloadEtc"
+            >
+            </common-actions>
+          </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
@@ -123,6 +132,7 @@ export default {
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: '13%',
         },
         {
           name: "duration",
@@ -163,14 +173,22 @@ export default {
           title: "사용처명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: '15%',
         },
         {
           name: "masteringDtm",
           title: "마스터링 일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '9%',
+          width: '12%',
         },
+        {
+          name: '__slot:actions',
+          title: 'Actions',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
+        }
       ]
     }
   },

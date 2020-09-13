@@ -97,22 +97,16 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <b-row>
-              <b-colxx>
-                <b-button variant="default" class="icon-buton" title="미리듣기">
-                  <b-icon icon="caret-right-square" class="icon"></b-icon>
-                </b-button>
-                <b-button variant="default" class="icon-buton" title="다운로드" @click.stop="onDownload(props.props.rowData.seq)">
-                  <b-icon icon="download" class="icon"></b-icon>
-                </b-button>
-                <b-button variant="default" class="icon-buton" title="삭제" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
-                  <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
-                </b-button>
-                <b-button variant="default" class="icon-buton" title="정보편집" @click.stop="onMetaModifyPopup(props.props.rowData)">
-                  <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
-                </b-button>
-              </b-colxx>
-            </b-row>
+            <common-actions
+                :rowData="props.props.rowData"
+                :behaviorData="behaviorList"
+                :etcData="['delete', 'modify']"
+                @preview="onPreview"
+                @download="onDownload"
+                @delete="onDeleteConfirm"
+                @modify="onMetaModifyPopup"
+              >
+            </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>

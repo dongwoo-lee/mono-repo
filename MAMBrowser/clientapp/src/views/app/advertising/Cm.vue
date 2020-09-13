@@ -55,7 +55,10 @@
       <template slot="form-table-area">
         <!-- 테이블 -->
         <b-row>
-          <b-colxx xs="12" md="6">
+          <b-colxx xs="12" md="6" class="no-r-p">
+            <div class="table-page-info-group pb-1">
+              <div class="page-info">전체 {{responseData.totalRowCount}}개</div>
+            </div>
             <b-table
               class="custom-table"
               ref="custom-table"
@@ -74,7 +77,7 @@
               @row-selected="rowSelected"
             >
               <template v-slot:table-busy>
-                <div class="text-center text-danger my-2">
+                <div class="text-center text-primary my-2">
                   <b-spinner class="align-middle"></b-spinner>
                   <strong>Loading...</strong>
                 </div>
@@ -82,7 +85,7 @@
               <template v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
                 <b-button :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownload(data.item.id)">
+                  @click.stop="onDownloadEtc(data.item.id)">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
               </template>
@@ -90,6 +93,9 @@
           </b-colxx>
           <!-- sub -->
           <b-colxx xs="12" md="6">
+            <div class="table-page-info-group pb-1">
+              <div class="page-info">전체 {{reponseContentsData.totalRowCount}}개</div>
+            </div>
             <b-table
               class="custom-table"
               ref="custom-table"
@@ -107,7 +113,7 @@
               :items="reponseContentsData.data"
             >
               <template v-slot:table-busy>
-                <div class="text-center text-danger my-2">
+                <div class="text-center text-primary my-2">
                   <b-spinner class="align-middle"></b-spinner>
                   <strong>Loading...</strong>
                 </div>
@@ -119,7 +125,7 @@
                 </b-button>
                 <!-- 다운로드 -->
                 <b-button :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownload(data.item.id)">
+                  @click.stop="onDownloadEtc(data.item.id)">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
               </template>
@@ -162,7 +168,7 @@ export default {
         { key: 'status', label: '상태', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
         { key: 'editDtm', label: '편집일', tdClass: 'text-muted'},
-        { key: 'actions', label: '', tdClass: 'text-muted'},
+        { key: 'actions', label: 'Actions', tdClass: 'text-muted'},
       ],
       fieldsContents: [
         { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
@@ -172,7 +178,7 @@ export default {
         { key: 'format', label: '포맷', tdClass: 'text-muted', thStyle: { width: '10%' } },
         { key: 'codingUserID', label: '코딩인', tdClass: 'text-muted' },
         { key: 'codingDT', label: '코딩일', tdClass: 'text-muted' },
-        { key: 'actions', label: '', tdClass: 'text-muted'},
+        { key: 'actions', label: 'Actions', tdClass: 'text-muted'},
       ]
     }
   },

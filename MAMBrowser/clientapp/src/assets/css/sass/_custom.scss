@@ -198,8 +198,18 @@
         width: 78px;
     }
 }
+
+.table-page-info-group {
+    display: flex;
+
+    .page-info {
+        margin-left: auto;
+    }
+}
+
 .custom-table {
-    width: calc(100% + 18px);
+    // width: calc(100% + 18px);
+    width: calc(100%);
     max-height: 600px;
     white-space: nowrap;
 
@@ -404,4 +414,8 @@
         border-color: #dc3545;
         background-color: #fff;
     }
+}
+
+.no-r-p {
+    padding-right: 0 !important;
 }

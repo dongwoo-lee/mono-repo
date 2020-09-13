@@ -71,13 +71,22 @@
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
-          :is-actions-slot="true"
+          is-actions-slot
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
+          <template slot="actions" scope="props">
+            <common-actions
+              :rowData="props.props.rowData"
+              :behaviorData="behaviorList"
+              @preview="onPreview"
+              @download="onDownloadEtc"
+            >
+            </common-actions>
+          </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
@@ -168,6 +177,13 @@ export default {
           dataClass: "center aligned text-center",
           width: '8%',
         },
+        {
+          name: '__slot:actions',
+          title: 'Actions',
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
+        }
       ]
     }
   },
