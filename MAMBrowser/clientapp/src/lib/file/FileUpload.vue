@@ -55,6 +55,10 @@
                 <template slot="state" scope="props">
                     <div>{{ getState(props.rowData.uploadState) }}</div>
                 </template>
+                <!-- 비고 -->
+                <template slot="remark" scope="props">
+                    <div>{{ getRemark(props.rowData.metaData) }}</div>
+                </template>
                 <!-- 액션 -->
                 <template slot="actions" scope="props">
                     <b-button 
@@ -106,14 +110,21 @@ export default {
                     title: '상태',
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
-                    width: '15%',
+                    width: '10%',
+                },
+                {
+                    name: '__slot:remark',
+                    title: '비고',
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                    width: '20%',
                 },
                 {
                     name: '__slot:actions',
-                    title: '',
+                    title: 'Actions',
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
-                    width: '15%',
+                    width: '12%',
                 }
             ]
         }
@@ -124,6 +135,7 @@ export default {
             const tmpFiles = [];
             this.getFileData.forEach(data => {
                 this.$set(data.file, 'uploadState', data.uploadState);
+                this.$set(data.file, 'metaData', data.metaData);
                 tmpFiles.push(data.file);
             })
             return tmpFiles;
@@ -150,6 +162,11 @@ export default {
             if (state === 'success') return '전송완료';
             if (state === 'save') return '저장중';
             return '';
+        },
+        getRemark(metaData) {
+            const metaDataToJson = JSON.parse(metaData);
+            const {title, mediaCD } = metaDataToJson;
+            return `${mediaCD}/${title}`;
         },
         getSuccessUploadFileLength() {
             const filterSuccess = this.localFiles.filter(file => file.success)

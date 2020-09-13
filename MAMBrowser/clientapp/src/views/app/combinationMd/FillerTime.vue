@@ -23,13 +23,13 @@
           />
         </b-form-group>
         <!-- 시작일 -->
-        <b-form-group label="시작일" 
+        <b-form-group label="방송기간(시작일)" 
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
           <common-date-picker v-model="searchItems.start_dt" :dayAgo="30" required/>
         </b-form-group>
         <!-- 종료일 -->
-        <b-form-group label="종료일"
+        <b-form-group label="방송기간(종료일)"
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
           <common-date-picker v-model="$v.searchItems.end_dt.$model" required/>

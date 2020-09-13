@@ -2,13 +2,13 @@
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
       <!-- 메뉴 네비 -->
-      <a
+      <!-- <a
         href="#"
         class="menu-button d-none d-md-block"
         @click.prevent.stop="changeSideMenuStatus({step :menuClickCount+1,classNames:menuType,selectedMenuHasSubItems})"
       >
         <menu-icon />
-      </a>
+      </a> -->
       <a
         href="#"
         class="menu-button-mobile d-xs-block d-sm-block d-md-none"
@@ -110,7 +110,8 @@ export default {
       });
     },
     isDisplaySetting() {
-      return this.behaviorList.some(item => item.id === 'S01G02C005' && item.visible === 'Y');
+      return true;
+      // return this.behaviorList.some(item => item.id === 'S01G02C005' && item.visible === 'Y');
     }
   },
   computed: {

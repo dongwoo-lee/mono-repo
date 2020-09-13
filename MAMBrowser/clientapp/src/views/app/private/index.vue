@@ -103,6 +103,12 @@
         </meta-data-private-modify-popup>
       </template>
     </common-form>
+    <!-- 미리듣기 팝업 -->
+    <common-preview-popup
+      :item="previewItem"
+      :show="showPreviewPopup"
+      @close="showPreviewPopup = false">
+    </common-preview-popup>
   </div>
 </template>
 
@@ -130,6 +136,7 @@ export default {
       metaDataModifyPopup: false,
       singleSelectedId: null,
       isTableLoading: false,
+      showPreviewPopup: false,
       fields: [
         {
           name: "__checkbox",

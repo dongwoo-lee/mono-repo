@@ -177,7 +177,6 @@ export default {
     },
     created() {
         this.getOptions();
-        this.getData();
     },
     methods: {
       getData() {

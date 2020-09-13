@@ -15,6 +15,7 @@ let mixinCommon = {
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             sortItems: {},
+            previewItem: {},
             isLoadingClass: false,
             hasErrorClass: false,
             isTableLoading: false,
@@ -141,8 +142,9 @@ let mixinCommon = {
                 this.$refs.scrollPaging.addClassScroll();  
             }, 0);
         },
-        onPreview(seq) {
-            console.info('미리보기 seq번호:: ', seq);
+        onPreview(item) {
+            this.showPreviewPopup = true;
+            this.previewItem = item;
         },
         onDownloadSound() {
             console.info('다운로드-음반 seq번호:: ', seq);

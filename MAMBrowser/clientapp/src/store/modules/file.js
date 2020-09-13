@@ -8,7 +8,7 @@ export default {
     getters:{
         getFileData: state => state.fileData,
         getUploadTransmitState: state => state.uploadTransmitState,
-        getBeingUploaded: state => state.fileData.length > 0 && state.fileData.some(file => !file.uploadState === 'success'),
+        getBeingUploaded: state => state.fileData.length > 0 && state.fileData.some(file => file.uploadState !== 'success'),
     },
     state: {
         fileData: [],

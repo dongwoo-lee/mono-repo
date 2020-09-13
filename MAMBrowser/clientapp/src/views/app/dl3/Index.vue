@@ -34,11 +34,6 @@
         <b-form-group label="녹음명" class="has-float-label c-zindex">
             <common-input-text v-model="$v.searchItems.userName" />
         </b-form-group>
-        <!-- 등록일 -->
-        <b-form-group label="등록일" class="has-float-label">
-          <common-date-picker 
-            v-model="searchItems.brd_dt" isCurrentDate />
-        </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>

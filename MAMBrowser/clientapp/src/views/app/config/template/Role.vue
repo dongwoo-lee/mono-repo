@@ -15,7 +15,7 @@
             <div class="text-nowrap">{{ index + 1 }}</div>
         </template>
         <template v-slot:cell(authorCode)="{ item, rowSelected, index }">
-            <div v-show="!rowSelected">{{item.authorCode}}</div>
+            <div v-show="!rowSelected">{{getAuthorName(item.authorCode)}}</div>
             <b-form-select
                 class=""
                 v-show="rowSelected"
@@ -127,6 +127,14 @@ export default {
             // click trigger
             const rowElem = this.$refs.refUserListTable.$el.querySelectorAll('tbody tr')[index];
             rowElem.click();
+        },
+        getAuthorName(code) {
+            const findAuthOption = this.authorityOptions.filter(option => option.code === code);
+            if (findAuthOption.length > 0) {
+                return findAuthOption[0].name;
+            }
+            
+            return code;
         }
     }
 }
