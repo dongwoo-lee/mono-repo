@@ -148,33 +148,30 @@ namespace MAMBrowser.Controllers
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
             string fileName = fileData.Title;
-          
             contentType = "application/octet-stream";
-       
             var downloadStream = MyFtp.Download(fileData.FilePath, 0);
-            string tmpPath = @"d:\임시폴더\";
-            var filePath = Path.Combine(tmpPath, Path.GetRandomFileName());
-            BufferedStream bst = new BufferedStream(downloadStream);
-            FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
-            downloadStream.CopyTo(fs);
-            
-            return PhysicalFile(filePath, contentType);
+            return File(downloadStream, contentType);
         }
         [HttpGet("files2/{seq}")]
         public FileResult GetFile2(long seq)
         {
-            PrivateFileBLL bll = new PrivateFileBLL();
-            var fileData = bll.Get(seq);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            string fileName = fileData.Title; ;
-            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
+            //PrivateFileBLL bll = new PrivateFileBLL();
+            //var fileData = bll.Get(seq);
+            //var fileExtProvider = new FileExtensionContentTypeProvider();
+            //string contentType;
+            //string fileName = fileData.Title;
 
-            var downloadStream = MyFtp.Download(fileData.FilePath, 0);
-            return File(downloadStream, contentType, true);
+            //contentType = "application/octet-stream";
+
+            //var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+            //string tmpPath = @"d:\임시폴더\";
+            //var filePath = Path.Combine(tmpPath, Path.GetRandomFileName());
+            //BufferedStream bst = new BufferedStream(downloadStream);
+            //FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+            //downloadStream.CopyTo(fs);
+
+            //return PhysicalFile(filePath, contentType);
+            return null;
         }
 
         /// <summary>
