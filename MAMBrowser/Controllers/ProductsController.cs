@@ -546,8 +546,8 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        [HttpPost("files")]
-        public FileResult GetFile([FromBody] string filePath)
+        [HttpGet("files")]
+        public FileResult GetFile([FromQuery] string filePath)
         {
             //string directoryPath = @"c:\임시파일";
             //string filePath = Path.Combine(directoryPath, fileID);
@@ -571,7 +571,7 @@ namespace MAMBrowser.Controllers
         /// <param name="filePath"></param>
         /// <returns></returns>
         [HttpPost("external/files")]
-        public FileResult GetExternalFile([FromBody] string filePath)
+        public FileResult GetExternalFile([FromQuery] string filePath)
         {
             //string directoryPath = @"c:\임시파일";
             //string filePath = Path.Combine(directoryPath, fileID);
