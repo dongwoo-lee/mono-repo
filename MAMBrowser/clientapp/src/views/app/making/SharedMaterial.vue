@@ -267,7 +267,8 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    onDownload(seq) {
+    onDownload(item) {
+      const seq = item.seq;
       let ids = this.selectedIds;
 
       if (typeof seq !== 'object' && seq) {

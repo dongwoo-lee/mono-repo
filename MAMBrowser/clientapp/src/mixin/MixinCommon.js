@@ -146,13 +146,11 @@ let mixinCommon = {
             this.showPreviewPopup = true;
             this.previewItem = item;
         },
-        onDownloadSound() {
-            console.info('다운로드-음반 seq번호:: ', seq);
-            this.downloadSound(seq);
+        onDownloadSound(item) {
+            this.downloadSound(item);
         },
-        onDownloadEtc(seq) {
-            console.info('다운로드-기타 seq번호:: ', seq);
-            this.downloadEtc(seq);
+        onDownloadEtc(item) {
+            this.downloadEtc(item);
         }
     }
 }

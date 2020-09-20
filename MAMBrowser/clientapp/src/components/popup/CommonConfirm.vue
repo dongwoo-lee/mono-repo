@@ -8,7 +8,7 @@
         {{ message }}
         <template v-slot:modal-footer>
             <b-button
-              variant="outline-primary"
+              variant="outline-primary default cutom-label"
               size="sm"
               class="float-right"
               @click="ok()"
@@ -16,7 +16,7 @@
               {{submitBtn}}
             </b-button>
             <b-button
-              variant="outline-danger"
+              variant="outline-danger default cutom-label-cancel"
               size="sm"
               class="float-right"
               @click="close()"

@@ -57,7 +57,7 @@ export default {
             this.$emit('preview', this.rowData);
         },
         onDownload() {
-            this.$emit('download', this.rowData.seq);
+            this.$emit('download', this.rowData);
         },
         onDelete() {
             this.$emit('delete', this.rowData.seq);
