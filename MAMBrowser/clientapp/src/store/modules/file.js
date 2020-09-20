@@ -67,7 +67,6 @@ export default {
     },
     actions: {
         async upload({ state, commit }) {
-            console.info('test');
             // 취소 토큰 생성
             uploadCancelToken = new $http.CancelToken.source();
             // 업로드 상태 변경
@@ -130,11 +129,25 @@ export default {
 
             })
         },
-        downloadSound({}, etc) {
-            // TODO:
+        downloadSound({}, item) {
+            $http.get(`/api/Products/external/files?filePath=${item.filePath}`)
+                .then(res => {
+                    $fn.fileDownload(res);
+                    $fn.notify('success', { message: '파일 다운로드 완료' })
+                })
+                .catch(error => {
+                    $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
+                })
         },
-        downloadEtc({}, etc) {
-            // TODO:
+        downloadEtc({}, item) {
+            $http.get(`/api/Products/files?filePath=${item.filePath}`)
+                .then(res => {
+                    $fn.fileDownload(res);
+                    $fn.notify('success', { message: '파일 다운로드 완료' })
+                })
+                .catch(error => {
+                    $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
+                })
         },
         cancel_upload: ({ commit }) => {
             // 취소 토큰 실행

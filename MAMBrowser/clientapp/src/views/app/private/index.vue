@@ -235,7 +235,8 @@ export default {
       this.onDownload();
     },
     // 단일 다운로드
-    onDownload(seq) {
+    onDownload(item) {
+      const seq = item.seq;
       let ids = this.selectedIds;
 
       if (typeof seq !== 'object' && seq) {
