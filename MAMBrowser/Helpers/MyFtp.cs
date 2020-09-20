@@ -77,8 +77,9 @@ namespace MAMBrowser.Helpers
             FtpWebRequest ftpRequest = FtpWebRequest.Create($"{SystemConfig.AppSettings.FtpUri}/{relativeSourcePath}") as FtpWebRequest;
             ftpRequest.Credentials = new NetworkCredential(SystemConfig.AppSettings.FtpId, SystemConfig.AppSettings.FtpPass);
             ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
-            //ftpRequest.ContentOffset = offSet;
+            ftpRequest.ContentOffset = offSet;
             return ftpRequest.GetResponse().GetResponseStream();
         }
     }
 }
+   

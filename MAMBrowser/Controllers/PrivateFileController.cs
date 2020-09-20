@@ -10,12 +10,15 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using NAudio.Wave;
+using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -143,35 +146,86 @@ namespace MAMBrowser.Controllers
         [HttpGet("files/{seq}")]
         public IActionResult GetFile(long seq)
         {
+            //range 있을떄는 206 반환하도록
             PrivateFileBLL bll = new PrivateFileBLL();
             var fileData = bll.Get(seq);
+            string fileName = $"{fileData.Title}{fileData.FileExt}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
-            string fileName = fileData.Title;
-            contentType = "application/octet-stream";
-            var downloadStream = MyFtp.Download(fileData.FilePath, 0);
-            return File(downloadStream, contentType);
+            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            return new PushStreamResult(OnStreamAvailable, contentType, seq, fileName, fileData.FileSize);
         }
-        [HttpGet("files2/{seq}")]
-        public FileResult GetFile2(long seq)
+        [HttpGet("waveform/{seq}")]
+        public List<float> GetWaveform(long seq)
         {
-            //PrivateFileBLL bll = new PrivateFileBLL();
-            //var fileData = bll.Get(seq);
-            //var fileExtProvider = new FileExtensionContentTypeProvider();
-            //string contentType;
-            //string fileName = fileData.Title;
+            PrivateFileBLL bll = new PrivateFileBLL();
+            var fileData = bll.Get(seq);
+            string waveFileName = Path.GetFileName(fileData.FilePath);
+            string waveformFileName = $"{Path.GetFileNameWithoutExtension(fileData.FilePath)}.egy";
+            string waveformFilePath = fileData.FilePath.Replace(waveFileName, waveformFileName);
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            var downloadStream = MyFtp.Download(waveformFilePath, 0);
+            return Utility.GetPeekValues(downloadStream);
+        }
+        
+        private void OnStreamAvailable(Stream stream/*, CancellationToken requestAborted*/, long seq)
+        {
+            PrivateFileBLL bll = new PrivateFileBLL();
+            var fileData = bll.Get(seq);
+            
+            var rangeData = HttpContext.Request.GetTypedHeaders().Range;
+            if (rangeData == null)
+            {
+                var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+                Response.ContentLength = fileData.FileSize;
+                if (fileData.FileExt != ".mp2")
+                {
+                    downloadStream.CopyTo(stream);
+                }
+                else
+                {
+                    var builder = new Mp3FileReader.FrameDecompressorBuilder(wf => new Mp3FrameDecompressor(wf));
+                    MemoryStream ms = new MemoryStream();
+                    downloadStream.CopyTo(ms);
+                    Mp3FileReader reader = new Mp3FileReader(ms, builder);
+                    reader.CopyTo(stream);
+                }
+            }
+            else
+            {
+                var range = rangeData.Ranges.First();
+                if (range.To == null)
+                {
+                }
+                var contentSize = fileData.FileSize - range.From;
 
-            //contentType = "application/octet-stream";
+                var downloadStream = MyFtp.Download(fileData.FilePath, (long)range.From);
+                HttpContext.Response.GetTypedHeaders().ContentRange = new Microsoft.Net.Http.Headers.ContentRangeHeaderValue((long)range.From, fileData.FileSize - 1, fileData.FileSize);
+                HttpContext.Response.GetTypedHeaders().ContentLength = (long)contentSize;
+                HttpContext.Response.StatusCode = 206;
 
-            //var downloadStream = MyFtp.Download(fileData.FilePath, 0);
-            //string tmpPath = @"d:\임시폴더\";
-            //var filePath = Path.Combine(tmpPath, Path.GetRandomFileName());
-            //BufferedStream bst = new BufferedStream(downloadStream);
-            //FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
-            //downloadStream.CopyTo(fs);
-
-            //return PhysicalFile(filePath, contentType);
-            return null;
+                if (fileData.FileExt != ".mp2")
+                {
+                    downloadStream.CopyTo(stream);
+                }
+                else
+                {
+                    var builder = new Mp3FileReader.FrameDecompressorBuilder(wf => new Mp3FrameDecompressor(wf));
+                    MemoryStream ms = new MemoryStream();
+                    downloadStream.CopyTo(ms);
+                    Mp3FileReader reader = new Mp3FileReader(ms, builder);
+                    reader.CopyTo(stream);
+                }
+            }
+            Thread.Sleep(1000);
         }
 
         /// <summary>
