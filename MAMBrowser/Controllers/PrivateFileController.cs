@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using NAudio.Wave;
-using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -158,6 +156,22 @@ namespace MAMBrowser.Controllers
             }
             return new PushStreamResult(OnStreamAvailable, contentType, seq, fileName, fileData.FileSize);
         }
+       
+        [HttpGet("files2")]
+        public FileResult GetFile2(long seq)
+        {
+            //range 있을떄는 206 반환하도록
+            //string filePath = @"ftp/VOL2/SHARE/3. 개인자료/이동우/mam storage/private/159/20200920/262_1hour.wav";
+            string filePath = @"d:\PM20200907300NA.wav";
+            string fileName = @"PM20200907300NA.wav";
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            return PhysicalFile(filePath, contentType, true);
+        }
         [HttpGet("waveform/{seq}")]
         public List<float> GetWaveform(long seq)
         {
@@ -190,14 +204,6 @@ namespace MAMBrowser.Controllers
                 {
                     downloadStream.CopyTo(stream);
                 }
-                else
-                {
-                    var builder = new Mp3FileReader.FrameDecompressorBuilder(wf => new Mp3FrameDecompressor(wf));
-                    MemoryStream ms = new MemoryStream();
-                    downloadStream.CopyTo(ms);
-                    Mp3FileReader reader = new Mp3FileReader(ms, builder);
-                    reader.CopyTo(stream);
-                }
             }
             else
             {
@@ -216,16 +222,8 @@ namespace MAMBrowser.Controllers
                 {
                     downloadStream.CopyTo(stream);
                 }
-                else
-                {
-                    var builder = new Mp3FileReader.FrameDecompressorBuilder(wf => new Mp3FrameDecompressor(wf));
-                    MemoryStream ms = new MemoryStream();
-                    downloadStream.CopyTo(ms);
-                    Mp3FileReader reader = new Mp3FileReader(ms, builder);
-                    reader.CopyTo(stream);
-                }
             }
-            Thread.Sleep(1000);
+            
         }
 
         /// <summary>

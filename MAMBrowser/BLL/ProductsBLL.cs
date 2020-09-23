@@ -753,9 +753,69 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_DL30> FindNewDL(string media, string brd_dt, string name)
+        public DTO_RESULT_PAGE_LIST<DTO_DL30> FindNewDL(string media, string brd_dt, string name, string sortKey, string sortValue)
         {
-            return null;
+            DTO_RESULT_PAGE_LIST<DTO_DL30> returnData = new DTO_RESULT_PAGE_LIST<DTO_DL30>();
+            var builder = new SqlBuilder();
+            DynamicParameters param = new DynamicParameters();
+            param.AddDynamicParams(new
+            {
+                MEDIA_CD = media,
+                SCH_DATE = brd_dt,
+                REC_NAME = name,
+                SORTKEY = sortKey,
+                SORTVALUE = sortValue
+            });
+
+            var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, D.* FROM (SELECT ROWNUM AS RNO, A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
+LEFT JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
+LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
+/**where**/
+ORDER BY BRD_DTM) D");
+            if (!string.IsNullOrEmpty(media))
+            {
+                builder.Where("MEDIA_CD=:MEDIA_CD");
+            }
+            if (!string.IsNullOrEmpty(brd_dt))
+            {
+                builder.Where("SCH_DATE=:SCH_DATE");
+            }
+            if (!string.IsNullOrEmpty(name))
+            {
+                string[] nameArray = name.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(REC_NAME) LIKE LOWER('%{word}%')");
+                }
+            }
+
+            Repository<DTO_DL30> repository = new Repository<DTO_DL30>();
+            var resultMapping = new Func<dynamic, DTO_DL30>((row) =>
+            {
+                return new DTO_DL30
+                {
+                    RowNO = Convert.ToInt32(row.RNO),
+                    Seq = Convert.ToInt64(row.SEQ),
+                    DeviceSeq = Convert.ToInt64(row.DEVICE_SEQ),
+                    MediaCD = row.MEDIA_CD,
+                    MediaName = row.MEDIA_CD,
+                    SchDate = row.SCH_DATE,
+                    BrdDate = ((DateTime)row.BRD_DTM).ToString(Utility.DTM19),
+                    ProgramID = row.PRODUCT_ID,
+                    SourceID = row.SOURCE_ID,
+                    RecName = row.REC_NAME,
+                    FileSize = Convert.ToInt64(row.FILE_SIZE),
+                    //FilePath = Path.Combine(row.RELATIVE_PATH, $"{row.SOURCE_ID}.{row.FILE_EXT}"),
+                    RegDtm = ((DateTime)row.REG_DTM).ToString(Utility.DTM19),
+                    DeviceName = row.DEVICE_NAME,
+                };
+            });
+
+            returnData.Data = repository.Select(querySource.RawSql, param, resultMapping);
+            returnData.RowPerPage = 200;
+            returnData.SelectPage = 1;
+            returnData.TotalRowCount = returnData.Data.Count;
+            return returnData;
         }
     }
 }

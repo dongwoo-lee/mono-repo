@@ -1,15 +1,14 @@
 <template>
     <b-modal
         title="미리듣기"
-        size="sm"
         v-model="showDialog">
           <div id='waveform'>
           </div>
-          <b-btn variant="info btn-fill" size="sm" @click.prevent="Play" >재생</b-btn>
-          <b-btn variant="info btn-fill ml-3"  size="sm" @click.prevent="Stop">정지</b-btn>
-          <b-btn variant="info btn-fill ml-3"  size="sm" @click.prevent="LoadAudio">로드 오디오</b-btn>
-    미리듣기 팝업 내용(들어오는 데이터)<br>
-    {{item}}
+          <b-btn variant="outline-primary" size="sm" @click.prevent="Play" >재생</b-btn>
+          <b-btn variant="outline-primary"  size="sm" @click.prevent="Stop">정지</b-btn>
+          <b-btn variant="outline-primary"  size="sm" @click.prevent="LoadAudio">로드 오디오</b-btn>
+    <!-- 미리듣기 팝업 내용(들어오는 데이터)<br>
+    {{item}} -->
     </b-modal>
 </template>
 <script>
@@ -40,7 +39,7 @@ export default {
     }
   },
   mounted() {
-    
+    // this.LoadAudio();
   },
   beforeDestroy(){
     this.Stop();
@@ -89,8 +88,8 @@ export default {
     LoadAudio(){
         this.InjectWaveSurfer();
     this.SetWaveSurfer();
-      let url ='/api/products/workspace/private/files/262';
-      let url2 ='/api/products/workspace/private/waveform/262';
+      let url =`/api/products/workspace/private/files/${this.item.seq}`;
+      let url2 =`/api/products/workspace/private/waveform/${this.item.seq}`;
       //     console.info('this.returnData',this.returnData);
 
       httpClient.get(url2,null).then(res=>

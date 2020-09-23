@@ -24,7 +24,7 @@
           />
         </b-form-group>
         <!-- 편성일자: 시작일자 -->
-        <b-form-group label="편성일자"
+        <b-form-group label="방송일"
           class="has-float-label"
           :class="{ 'hasError': $v.searchItems.regDtm.required }">
           <common-date-picker v-model="$v.searchItems.regDtm.$model" required/>
@@ -32,7 +32,7 @@
         </b-form-group>
         <!-- 녹음명 -->
         <b-form-group label="녹음명" class="has-float-label c-zindex">
-            <common-input-text v-model="$v.searchItems.userName" />
+            <common-input-text v-model="searchItems.pgmName" />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -76,7 +76,7 @@ export default {
             searchItems: {
                 media : 'A',           // 매체
                 regDtm: '',            // 편성일자
-                pgmID: '',             // 녹음명
+                pgmName: '',             // 녹음명
                 brd_dt: '',            // 등록일
                 rowPerPage: 15,
                 selectPage: 1,
@@ -93,11 +93,11 @@ export default {
                     width: '4%',
                 },
                 {
-                    name: "mediaName",
+                    name: "deviceName",
                     title: "단말",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
-                    width: '5%',
+                    width: '10%',
                 },
                 {
                     name: "mediaName",
@@ -106,47 +106,60 @@ export default {
                     dataClass: "center aligned text-center",
                     width: '5%',
                 },
+                // {
+                //     name: "schDate",
+                //     title: "방송일",
+                //     titleClass: "center aligned text-center",
+                //     dataClass: "center aligned text-center",
+                //     width: '10%',
+                // },
                 {
-                    name: "mediaName",
+                    name: "brdDate",
+                    title: "송출일시",
+                    titleClass: "center aligned text-center",
+                    dataClass: "center aligned text-center",
+                    width: '15%',
+                },
+                {
+                    name: "recName",
                     title: "녹음명",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                 },
+                // {
+                //     name: "programID",
+                //     title: "Product ID",
+                //     titleClass: "center aligned text-center",
+                //     dataClass: "center aligned text-center",
+                //     width: '5%',
+                // },
                 {
-                    name: "mediaName",
-                    title: "편성일자",
+                    name: "sourceID",
+                    title: "Source ID",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    width: '5%',
                 },
                 {
-                    name: "mediaName",
-                    title: "녹음시작일시",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                },
-                {
-                    name: "mediaName",
-                    title: "녹음종료일시",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                },
-                {
-                    name: "mediaName",
+                    name: "dd",
                     title: "방송분량",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    width: '10%',
                 },
                 {
-                    name: "mediaName",
-                    title: "파일크기(MB)",
+                    name: "fileSize",
+                    title: "파일크기",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    width: '5%',
                 },
                 {
-                    name: "mediaName",
+                    name: "regDtm",
                     title: "등록일시",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    width: '15%',
                 },
                 {
                   name: '__slot:actions',

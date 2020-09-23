@@ -14,14 +14,14 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 매체 -->
-        <b-form-group label="매체" class="has-float-label">
+        <!-- <b-form-group label="매체" class="has-float-label">
           <b-form-select
           class="width-100"
           v-model="searchItems.media"
           :options="mediaPrimaryOptions"
           value-field="id"
           text-field="name" 
-        />
+        /> -->
         </b-form-group>
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">

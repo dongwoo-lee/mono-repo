@@ -501,36 +501,13 @@ namespace MAMBrowser.Controllers
         /// <param name="name">녹음명</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{schDate}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string schDate, [FromQuery] string name)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string schDate, [FromQuery] string pgmName, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
             {
-                List<DTO_DL30> mockDataList = new List<DTO_DL30>();
-                for (int i = 0; i < 24; i++)
-                {
-                    DTO_DL30 dto = new DTO_DL30();
-                    dto.Seq = i;
-                    dto.DeviceSeq = 1;
-                    dto.MediaCD = "A";
-                    dto.MediaName = "AM";
-                    dto.SchDate = DateTime.Now.ToString(Utility.DTM8);
-                    dto.BrdDate = DateTime.Now.ToString(Utility.DTM19);
-                    dto.ProgramID = $"PM00{i}";
-                    dto.SourceID = $"PM0000{i}";
-                    dto.RecName = $"{i}시 프로그램 입니다.";
-                    dto.FileSize = 100000;
-                    dto.FilePath = @$"MIROS\\data1\wav{i}.wav";
-                    dto.RegDtm = DateTime.Now.ToString(Utility.DTM19);
-                    dto.DeviceName = "DL#1";
-                    mockDataList.Add(dto);
-                }
-                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_DL30>();
-                result.ResultObject.Data = mockDataList;
-
-                result.ResultObject.RowPerPage = 200;
-                result.ResultObject.SelectPage = 1;
-                result.ResultObject.TotalRowCount = mockDataList.Count;
+                ProductsBLL bll = new ProductsBLL();
+                result.ResultObject = bll.FindNewDL(media, schDate, pgmName, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

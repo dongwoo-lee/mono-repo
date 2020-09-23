@@ -3,7 +3,7 @@
         <b-button
             v-if="display('S01G02C001')"
             class="icon-buton"
-            title="미리보기"
+            title="미리듣기"
             @click.stop="onPreview()">
             <b-icon icon="caret-right-square" class="icon"></b-icon>
         </b-button>
