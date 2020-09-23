@@ -46,16 +46,19 @@ export default {
                 if (filterFileData.length === 0) return;
                 // 메타 데이터 입력창 오픈
                 this.open_meta_data_popup(newFileData);
+                this.SET_DRAG_DROP_STATE(true);
             }
         }
     },
     methods: {
         ...mapActions('file', ['open_meta_data_popup', 'close_meta_data_popup']),
+        ...mapMutations('file', ['SET_DRAG_DROP_STATE']),
         inputFilter(data) { 
         },
         inputFile(data) {
         },
         closePopup() {
+            this.SET_DRAG_DROP_STATE(false);
             // 메타 데이터 입력창 닫기
             this.close_meta_data_popup();
             this.localFiles = [];

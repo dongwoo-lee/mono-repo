@@ -68,7 +68,7 @@
 
 <script>
 import mixinValidate from '../../mixin/MixinValidate';
-import { mapMutations, mapActions } from 'vuex';
+import { mapMutations, mapActions, mapState } from 'vuex';
 
 export default {
     mixins: [ mixinValidate ],
@@ -86,6 +86,7 @@ export default {
         }
     },
     computed: {
+        ...mapState('file', ['isDragDropState']),
         routeName() {
             return this.$route.name === undefined ? 'private' : this.$route.name;
         },
@@ -99,8 +100,8 @@ export default {
         }
     },
     methods: {
-        ...mapMutations('file', ['SET_FILES', 'REMOVE_FILES', 'SET_UPLOAD_VIEW_TYPE']),
-        ...mapActions('file', ['upload']),
+        ...mapMutations('file', ['SET_FILES', 'REMOVE_FILES', 'SET_UPLOAD_VIEW_TYPE', 'SET_DRAG_DROP_STATE']),
+        ...mapActions('file', ['upload', 'open_popup']),
         submit() {
             if (!this.$v.title.$invalid || !this.$v.memo.$invalid) {
                 this.$fn.notify('inputError', {});
@@ -136,6 +137,11 @@ export default {
             this.SET_UPLOAD_VIEW_TYPE(this.type);
             this.upload();
             this.reset();
+
+            if (this.isDragDropState) {
+                this.open_popup();
+                this.SET_DRAG_DROP_STATE(false);
+            }
         },
         reset() {
             this.isShow = false;

@@ -14,6 +14,7 @@ export default {
         fileData: [],
         uploadTransmitState: false,                    // 업로드 전송 상태
         uploadViewType: '',                            // 업로드 화면 타입: 'private, 'public
+        isDragDropState: false,
     },
     mutations: {
         SET_FILES: (state, { files, meta }) => {
@@ -59,11 +60,13 @@ export default {
         },
         SET_UPLOAD_STATE: (state, value) => {
             state.uploadTransmitState = value;
-            console.info('state.uploadTransmitState', state.uploadTransmitState);
         },
         SET_UPLOAD_VIEW_TYPE: (state, value) => {
             state.uploadViewType = value;
         },
+        SET_DRAG_DROP_STATE: (state, value) => {
+            state.isDragDropState = value;
+        }
     },
     actions: {
         async upload({ state, commit }) {
