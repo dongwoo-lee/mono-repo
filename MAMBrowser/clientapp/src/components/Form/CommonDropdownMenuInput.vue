@@ -7,7 +7,7 @@
         :suggestions="filteredOptions"
         @click="onClick"
         @selected="onSelected"
-        @input="onAutoSuggestInputChange"
+        @input="onInput"
         @blur="onBlur"
     >
         <template slot-scope="{suggestion}">
@@ -49,6 +49,7 @@ export default {
     data() {
         return {
             filteredOptions: [], // filtered
+            isSelected: false,
         }
     },
     methods: {
@@ -57,7 +58,7 @@ export default {
             if (interalValue !== null && this.filteredOptions.length > 0) return;
             this.getfilteredData();
         },
-        onAutoSuggestInputChange(text, oldText) {
+        onInput(text, oldText) {
             if (text == null) return;
             this.getfilteredData(text, oldText);
         },
@@ -72,20 +73,31 @@ export default {
                 }
             ];
         },
-        // renderSuggestion(suggestion) {
-        //     const character = suggestion.item;
-        //     return character.name;
-        // },
-        // getSuggestionValue(suggestion) {
-        //     console.info('getSuggestionValue')
-        //     return suggestion.item.name;
-        // },
-        onSelected(data) {
+        onSelected(item) {
             const interalValue = this.$refs.refAutosuggest.internalValue;
-            this.$emit('selected', { id: data.item.id, name: data.item.name });
-            this.getfilteredData(interalValue);
+            if (item) {
+                this.$emit('selected', { id: item.item.id, name: item.item.name });
+                this.getfilteredData(interalValue);
+                return;
+            }
+
+            const suggestions = this.$refs.refAutosuggest.suggestions;
+            const { data } = suggestions[0];
+            if (data.length === 1) {
+                const obj = data[0];
+                if (obj.name === interalValue) {
+                    this.isSelected = true;
+                    this.$emit('selected', { id: obj.id, name: obj.name });
+                    this.getfilteredData(interalValue);
+                }
+            }
         },
         onBlur(e) {
+            if (this.isSelected) {
+                this.isSelected = false;
+                return;
+            }
+
             if (e.relatedTarget && e.relatedTarget.localName === 'div') { return; }
             this.resetInputData();
         },
