@@ -1,5 +1,6 @@
 import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
+import url from '@/constants/url';
 
 export default {
   namespaced: true,
@@ -16,7 +17,31 @@ export default {
     processing: false,
   },
   getters: {
-    menuList: state => state.menuList,
+    menuList: state => { 
+      state.menuList.forEach(menus => {
+        url.forEach(item => {
+          // 자식요소
+          if (menus.children && menus.children.length > 0) {
+            menus.children.forEach(menu => {
+              if (menu && menu.id === item.id) {
+                menu.to = item.to;
+                menu.icon = item.icon;
+              }
+            });
+          } 
+
+          // 부모요소
+          if (menus.id === item.id) {
+            if (item.to) {
+              menus.to = item.to; 
+            }
+            menus.icon = item.icon;
+          }
+        });
+      })
+      console.info('url', state.menuList);
+      return state.menuList;
+    },
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
@@ -49,6 +74,9 @@ export default {
     SET_PROCESSING(state, payload) {
       state.processing = payload
     },
+    SET_MENU(state, payload) {
+      state.menuList = payload;
+    }
   },
   actions: {
     async login({ commit }, payload) {
@@ -88,6 +116,15 @@ export default {
       .catch(error => {
         console.error(error);
       });
+    },
+    getMenu({commit}, userId) {
+      $http.get(`/api/users/${userId}/menu`).then(response => {
+        const { status, data } = response;
+        console.info('getMenu', response);
+        if (status === 200 && data.resultObject && data.resultCode === 0) {
+          commit('SET_MENU', data.resultObject.data);
+        }
+      })
     }
   }
 }

@@ -20,7 +20,8 @@
   "menu": {
     "app": "Home",
     "dashboards": "Dashboards",
-    "private": "My 공간",
+    "my": "My 공간",
+    "private": "My 디스크",
     "waste-basket": "휴지통",
     "making": "제작",
     "program": "프로그램",
@@ -35,7 +36,7 @@
     "casting-sb": "주조 SB",
     "relief-sb": "부조 SB",
     "cm": "CM",
-    "combination-md": "편성MD",
+    "combinationmd": "편성MD",
     "casting-spot": "주조SPOT",
     "filler-pr": "FILLER(PR)",
     "filler-material": "FILLER(소재)",
