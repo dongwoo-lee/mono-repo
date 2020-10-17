@@ -130,7 +130,32 @@ INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
                 };
             });
 
-           return repository.Select(queryTemplate.RawSql, param, resultMapping).ToList();
+            return repository.Select(queryTemplate.RawSql, param, resultMapping).ToList();
+        }
+        public List<DTO_MENU> GetMenuByGrpId(string grpId)
+        {
+            List<DTO_MENU> returnData = new List<DTO_MENU>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_MENU_MAP.*, M30_CODE.NAME FROM M30_MENU_MAP
+LEFT JOIN M30_CODE ON M30_CODE.CODE= M30_MENU_MAP.CODE /**where**/");
+            DynamicParameters param = new DynamicParameters();
+            builder.Where("MAP_CD='S00G01C001'");
+            param.Add("GRP_CD", grpId);
+            builder.Where("GRP_CD = :GRP_CD");
+            Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
+            var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
+            {
+                return new DTO_MENU
+                {
+                    ParentID = row.PARENT_CODE,
+                    ID = row.CODE,
+                    Name = row.NAME,
+                    Visible = row.VISIBLE,
+                    Enable = row.ENABLE,
+                };
+            });
+
+            return repository.Select(queryTemplate.RawSql, param, resultMapping).ToList();
         }
         public List<DTO_MENU> GetBehavior(string authorCd)
         {

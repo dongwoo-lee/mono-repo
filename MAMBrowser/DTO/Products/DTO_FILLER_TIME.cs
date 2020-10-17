@@ -15,7 +15,7 @@
         public string EditorID { get; set; }  //제작자ID
         public string EditorName { get; set; }   //제작자
         public string EditDtm { get; set; } //편집일시
-        public string ReqCompleteDtm { get; set; } //방송의뢰일시
+        public string MasteringDtm { get; set; }
         public string FilePath { get; set; }//파일 경로
         public string FileName { get; set; }//파일명
     }

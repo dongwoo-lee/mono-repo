@@ -39,7 +39,7 @@ namespace MAMBrowser.Controllers
                 APIBLL bll = new APIBLL();
                 if (!bll.ExistUser(account))
                 {
-                    result.ErrorMsg = "ID not found";
+                    result.ErrorMsg = "ID 를 찾을 수 없습니다.";
                     result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                 }
                 else
@@ -47,7 +47,7 @@ namespace MAMBrowser.Controllers
                     DTO_USER_TOKEN userToken = bll.Authenticate(account);
                     if (userToken == null)
                     {
-                        result.ErrorMsg = "Password is incorrect";
+                        result.ErrorMsg = "비밀번호가 틀립니다.";
                         result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                     }
                     else
@@ -208,6 +208,30 @@ namespace MAMBrowser.Controllers
                 APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
                 result.ResultObject.Data = bll.GetMenu(id);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 메뉴그룹별 메뉴목록 조회
+        /// </summary>
+        /// <param name="grpId">메뉴그룹 ID </param>
+        /// <returns></returns>      
+        [HttpGet("menugrp/{grpId}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> GetMenuByGrpId(string grpId)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
+                result.ResultObject.Data = bll.GetMenuByGrpId(grpId);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -406,7 +430,29 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        
 
+        /// <summary>
+        /// 디스크 할당 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("assigndisks")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> GetAssignDiskList()
+        {
+
+            DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>();
+            try
+            {
+                APIBLL bll = new APIBLL();
+                result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
+                result.ResultObject.Data = SystemConfig.AppSettings.AssignDiskList;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
     }
 }

@@ -122,7 +122,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 주조 SPOT 분류 주회
+        /// 주조 SPOT 분류 조회
         /// </summary>
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <returns></returns>
