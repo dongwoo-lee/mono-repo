@@ -2,6 +2,32 @@ import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
 
+const getMenuList = (menuList) => {
+  menuList.forEach(menus => {
+    url.forEach(item => {
+      // 자식요소
+      if (menus.children && menus.children.length > 0) {
+        menus.children.forEach(menu => {
+          if (menu && menu.id === item.id) {
+            menu.to = item.to;
+            menu.icon = item.icon;
+          }
+        });
+      } 
+
+      // 부모요소
+      if (menus.id === item.id) {
+        if (item.to) {
+          menus.to = item.to; 
+        }
+        menus.icon = item.icon;
+      }
+    });
+  });
+  console.info('menuList', menuList);
+  return menuList;
+};
+
 export default {
   namespaced: true,
   state: {
@@ -18,41 +44,20 @@ export default {
   },
   getters: {
     menuList: state => { 
-      state.menuList.forEach(menus => {
-        url.forEach(item => {
-          // 자식요소
-          if (menus.children && menus.children.length > 0) {
-            menus.children.forEach(menu => {
-              if (menu && menu.id === item.id) {
-                menu.to = item.to;
-                menu.icon = item.icon;
-              }
-            });
-          } 
-
-          // 부모요소
-          if (menus.id === item.id) {
-            if (item.to) {
-              menus.to = item.to; 
-            }
-            menus.icon = item.icon;
-          }
-        });
-      })
-      console.info('url', state.menuList);
-      return state.menuList;
+      return getMenuList(state.menuList);
     },
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
   },
   mutations: {
-    SET_AUTH(state, {token, userId, userExtId }) {
+    SET_AUTH(state, {token, userId, userExtId, role }) {
       state.isAuth = true;
       state.processing = false;
       sessionStorage.setItem('access_token', token);
       sessionStorage.setItem('user_id', userId);
       sessionStorage.setItem('user_ext_id', userExtId);
+      sessionStorage.setItem('role', JSON.stringify(getMenuList(role)));
       // $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
     SET_USER(state, data) {
@@ -66,9 +71,10 @@ export default {
       state.isAuth = false;
       state.currentUser = {};
       state.processing = false;
-      sessionStorage.removeItem('access_token')
+      sessionStorage.removeItem('access_token');
       sessionStorage.removeItem('user_id');
-      sessionStorage.removeItem('user_ext_id')
+      sessionStorage.removeItem('user_ext_id');
+      sessionStorage.removeItem('role');
       // $http.defaults.headers.common['X-Csrf-Token'] = undefined;
     },
     SET_PROCESSING(state, payload) {
@@ -90,8 +96,14 @@ export default {
       try {
         const response = await $http.post('/api/Authenticate', params);
         const { resultCode, resultObject, token } = response.data;
+        console.info('response.data', response.data);
         if (resultObject && resultCode === 0) {
-          commit('SET_AUTH', { token: token, userId: resultObject.id, userExtId: resultObject.userExtID });
+          commit('SET_AUTH', { 
+            token: token, 
+            userId: resultObject.id, 
+            userExtId: resultObject.userExtID,
+            role: resultObject.menuList,
+          });
         }
         commit('SET_PROCESSING', false);
         return response;

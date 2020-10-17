@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from './store';
 
 Vue.use(VueRouter);
 
@@ -167,13 +168,45 @@ router.beforeEach((to, from, next) => {
   // 토큰 유무 체크
   const tokenString = sessionStorage.getItem('access_token');
   if (!tokenString) {
-    if (to.path !== '/user/login') {
-      next({ path: '/user/login', replace: true });
-    }
+    next({ path: '/user', replace: true });
+    return;
   }
 
-  next();
-});
+  const roles = JSON.parse(sessionStorage.getItem('role'));
 
+  let isAuth = true;
+  if (roles) {
+    roles.filter(role => {
+       if (role.children && role.children.length > 0) {
+          role.children.filter(child => {
+            const isMatchPath = child.to === to.patch;
+            if (isMatchPath) {
+              isAuth = role.children.visible === 'Y';
+            }
+          })
+         return isMatchPath;
+       }
+
+       const isMatchPath = role.to === to.path && role.visible === 'Y';
+       if (isMatchPath) {
+        isAuth = role.visible === 'N';
+      }
+       return isMatchPath;
+    })
+
+    if (isAuth) {
+      next();
+      return;
+    }
+
+    console.info('from', from);
+    if (!from) {
+      next('/user/login');
+    }
+    
+    alert("접근 권한이 없습니다.");
+    next(from);
+  }
+});
 
 export default router;
