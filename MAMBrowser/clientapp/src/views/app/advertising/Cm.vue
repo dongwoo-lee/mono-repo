@@ -23,7 +23,7 @@
           />
         </b-form-group>
         <!-- 방송일 -->
-        <b-form-group label="시작일"
+        <b-form-group label="방송일"
           class="has-float-label"
           :class="{ 'hasError': $v.searchItems.brd_dt.required }">
           <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
@@ -89,6 +89,11 @@
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
               </template>
+              <!-- ID Tooltip -->
+              <template v-slot:cell(name)="data">
+                <span v-b-tooltip.hover :title=data.item.id>{{ data.item.name}}</span>
+              </template>
+
             </b-table>
           </b-colxx>
           <!-- sub -->
@@ -123,11 +128,6 @@
                 <b-button class="icon-buton">
                   <b-icon icon="caret-right-square" class="icon"></b-icon>
                 </b-button>
-                <!-- 다운로드 -->
-                <b-button :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadEtc(data.item.id)">
-                  <b-icon icon="download" class="icon"></b-icon>
-                </b-button>
               </template>
             </b-table>
           </b-colxx>
@@ -161,13 +161,11 @@ export default {
       fields: [
         { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
         { key: 'brdDT', label: '방송일', tdClass: 'text-muted' },
-        { key: 'id', label: 'ID', tdClass: 'text-muted' },
-        { key: 'name', label: 'SB명', tdClass: 'text-muted' },
+        { key: 'name', label: 'CM명', tdClass: 'text-muted' },
         { key: 'length', label: '길이', tdClass: 'text-muted' },
         { key: 'capacity', label: '분량', tdClass: 'text-muted'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
-        { key: 'editDtm', label: '편집일', tdClass: 'text-muted'},
         { key: 'actions', label: 'Actions', tdClass: 'text-muted'},
       ],
       fieldsContents: [

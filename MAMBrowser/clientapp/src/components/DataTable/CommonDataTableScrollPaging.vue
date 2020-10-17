@@ -167,6 +167,11 @@ export default {
                 this.tBodyWrapper.scrollTop = 0;
                 this.isChangeRowPerPage = true;
             }
+            this.initSelectedIds();
+            this.addClassScroll();
+        },
+        initSelectedIds() {
+            this.$refs.vuetable.selectedTo = [];
         },
         handlerScroll({ target }) {
             if (!this.existScrollBar()) return;

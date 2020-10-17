@@ -7,7 +7,7 @@
         no-close-on-backdrop
         v-model="isShow">
         <b-form-group label="저장공간" label-for="input-title">
-             <b-form-select v-model="$v.type.$model">
+             <b-form-select v-model="$v.type.$model" disabled>
                 <b-form-select-option value="private">My공간</b-form-select-option>
                 <b-form-select-option value="public">공유소재</b-form-select-option>
             </b-form-select>

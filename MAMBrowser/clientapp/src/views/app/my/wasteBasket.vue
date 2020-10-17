@@ -58,10 +58,10 @@
         >
           <template slot="actions" scope="props">
             <b-colxx>
-              <b-button class="icon-buton" title="복원" @click.stop="onRecycleConfirm(props.props.rowData.seq)">
+              <b-button class="icon-buton" title="복원" @click.stop="onRecycleConfirm(props.props.rowData)">
                 <b-icon icon="shift-fill" class="icon"></b-icon>
               </b-button>
-              <b-button class="icon-buton" title="영구삭제" @click.stop="onDeleteConfirm(props.props.rowData.seq)">
+              <b-button class="icon-buton" title="영구삭제" @click.stop="onDeleteConfirm(props.props.rowData)">
                 <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
               </b-button>
             </b-colxx>
@@ -74,7 +74,7 @@
         <common-confirm
           id="modalRemove"
           title="영구삭제"
-          message= "영구적으로 삭제하시겠습니까?"
+          :message="getDeleteMsg()"
           submitBtn="영구삭제"
           @ok="onDelete()"
         />
@@ -82,7 +82,7 @@
         <common-confirm
           id="modalRecycle"
           title="복원"
-          message= "복원하시겠습니까?"
+          :message="getMoveRecycleMsg()"
           submitBtn="복원"
           @ok="onRecycle()"
         />
@@ -120,6 +120,7 @@ export default {
       singleSelectedId: null,
       recycleId: null,
       isTableLoading: false,
+      innerHtmlSelectedFileNames: '',
       fields: [
         {
           name: "__checkbox",
@@ -176,6 +177,7 @@ export default {
   },
   methods: {
     getData() {
+      this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const userExtId = sessionStorage.getItem('user_ext_id');
       this.$http.get(`/api/products/workspace/private/recyclebin/${userExtId}`, { params: this.searchItems })
@@ -187,13 +189,16 @@ export default {
       });
     },
     // 단일 영구 삭제 확인창
-    onDeleteConfirm(id) {
-      this.singleSelectedId = id;
+    onDeleteConfirm(rowData) {
+      console.info('rowData', rowData);
+      this.singleSelectedId = rowData.id;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRemove');
     },
     // 선택항목 영구 삭제 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(this.selectedIds, this.responseData.data);
       this.$bvModal.show('modalRemove');
     },
     // 영구 삭제
@@ -219,13 +224,15 @@ export default {
       });
     },
     // 단일 복원 확인창
-    onRecycleConfirm(id) {
-      this.recycleId = id;
+    onRecycleConfirm(rowData) {
+      this.recycleId = rowData.id;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRecycle');
     },
     // 선택항목 복원 확인창
     onMultiRecycleConfirm() {
-      if (this.isNoSelected()) return;  
+      if (this.isNoSelected()) return;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(this.selectedIds, this.responseData.data);
       this.$bvModal.show('modalRecycle');
     },
     // 복원하기
@@ -272,6 +279,12 @@ export default {
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
+    },
+    getMoveRecycleMsg() {
+      return this.innerHtmlSelectedFileNames + "복원하시겠습니까?";
+    },
+    getDeleteMsg() {
+      return this.innerHtmlSelectedFileNames + "영구적으로 삭제하시겠습니까?";
     }
   }
 }

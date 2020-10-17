@@ -5,7 +5,8 @@
         :title="title"
         modal-class="common-confirm"
         :hideHeaderClose="true">
-        {{ message }}
+        <span v-html="message"></span>
+        <!-- {{ message }} -->
         <template v-slot:modal-footer>
             <b-button
               variant="outline-primary default cutom-label"

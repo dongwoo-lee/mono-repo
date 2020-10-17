@@ -47,6 +47,7 @@ let mixinCommon = {
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
+            this.initSelectedIds();
             this.getData();
         },
         // 스크롤 페이징
@@ -141,6 +142,9 @@ let mixinCommon = {
             setTimeout(() => {
                 this.$refs.scrollPaging.addClassScroll();  
             }, 0);
+        },
+        initSelectedIds() {
+            this.$refs.scrollPaging.initSelectedIds();  
         },
         onPreview(item) {
             this.showPreviewPopup = true;

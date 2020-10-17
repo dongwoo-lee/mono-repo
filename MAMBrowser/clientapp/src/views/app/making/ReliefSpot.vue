@@ -145,13 +145,6 @@ export default {
           }
         },
         {
-          name: "track",
-          title: "트랙",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '4%',
-        },
-        {
           name: "brdDT",
           title: "방송일",
           titleClass: "center aligned text-center",

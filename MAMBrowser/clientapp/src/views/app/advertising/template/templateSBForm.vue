@@ -124,11 +124,6 @@
                 <b-button class="icon-buton">
                   <b-icon icon="caret-right-square" class="icon"></b-icon>
                 </b-button>
-                <!-- 다운로드 -->
-                <b-button :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadEtc(data.item.id)">
-                  <b-icon icon="download" class="icon"></b-icon>
-                </b-button>
               </template>
             </b-table>
           </b-colxx>

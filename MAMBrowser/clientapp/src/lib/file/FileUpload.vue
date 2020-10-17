@@ -179,7 +179,6 @@ export default {
             return !this.getUploadTransmitState && this.localFiles.length > this.getSuccessUploadFileLength();
         },
         uploadStopState() {
-            console.info('uploadStopState', this.getUploadTransmitState, this.getBeingUploaded);
             return this.getUploadTransmitState && this.getBeingUploaded;
         }
     }

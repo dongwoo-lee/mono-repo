@@ -35,7 +35,7 @@
           <common-date-picker v-model="searchItems.end_dt" required/>
         </b-form-group>
         <!-- 상태 -->
-        <b-form-group label="상태" class="has-float-label">
+        <!-- <b-form-group label="상태" class="has-float-label">
           <b-form-select
             class="width-140"
             v-model="searchItems.status"
@@ -47,7 +47,7 @@
               <b-form-select-option value="">선택해주세요.</b-form-select-option>
             </template>
           </b-form-select>
-        </b-form-group>
+        </b-form-group> -->
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-dropdown-menu-input classString="width-180" :suggestions="editorOptions" @selected="onEditorSelected" />
@@ -157,13 +157,6 @@ export default {
           width: '8%',
         },
         {
-          name: "track",
-          title: "트랙",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '4%',
-        },
-        {
           name: "editorName",
           title: "제작자",
           titleClass: "center aligned text-center",
@@ -202,7 +195,7 @@ export default {
     // 주조 spot 분류 목록 조회
     this.getSpotOptions(this.searchItems.media);
     // 방송의뢰 상태 목록 조회
-    this.getReqStatusOptions();
+    // this.getReqStatusOptions();
     this.getData();
   },
   methods: {

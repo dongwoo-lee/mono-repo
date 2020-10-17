@@ -44,7 +44,7 @@
           <b-button variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
         </b-input-group>
         <b-input-group>
-          <b-button variant="outline-secondary default" size="sm" @click="onSelectedDownload">선택 항목 다운로드</b-button>
+          <b-button variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
         </b-input-group>
         <b-input-group>
           <b-button variant="outline-danger default" size="sm" @click="onMultiDeleteConfirm">선택 항목 휴지통 보내기</b-button>
@@ -87,10 +87,11 @@
       <!-- 알림 -->
       <template slot="form-confirm-area">
         <!-- 휴지통 이동 확인창 -->
+        <!-- :message= "휴지통으로 이동하시겠습니까??" -->
         <common-confirm
           id="modalRemove"
           title="휴지통 이동"
-          message= "휴지통으로 이동하시겠습니까??"
+          :message="getMoveRecyclebinMsg()"
           submitBtn="이동"
           @ok="onDelete()"
         />
@@ -137,6 +138,7 @@ export default {
       singleSelectedId: null,
       isTableLoading: false,
       showPreviewPopup: false,
+      innerHtmlSelectedFileNames: '',
       fields: [
         {
           name: "__checkbox",
@@ -215,6 +217,7 @@ export default {
         return;
       }
 
+      this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const userExtId = sessionStorage.getItem('user_ext_id');
 
@@ -229,12 +232,7 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    // 선택항목 다운로드
-    onSelectedDownload() {
-      if (this.isNoSelected()) return;
-      this.onDownload();
-    },
-    // 단일 다운로드
+    // 다운로드
     onDownload(item) {
       const seq = item.seq;
       let ids = this.selectedIds;
@@ -247,13 +245,15 @@ export default {
       this.download({ids: ids, type: 'private'});
     },
     // 단일 휴지통 보내기 확인창
-    onDeleteConfirm(id) {
-      this.singleSelectedId = id;
+    onDeleteConfirm(rowData) {
+      this.singleSelectedId = rowData.id;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRemove');
     },
     // 선택항목 휴지통 보내기 확인창 
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(this.selectedIds, this.responseData.data);
       this.$bvModal.show('modalRemove');
     },
     // 휴지통 보내기
@@ -287,7 +287,10 @@ export default {
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
-    }
-  }
+    },
+    getMoveRecyclebinMsg() {
+      return this.innerHtmlSelectedFileNames + "휴지통으로 이동하시겠습니까?";
+    },
+  },
 }
 </script>

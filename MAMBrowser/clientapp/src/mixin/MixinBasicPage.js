@@ -70,6 +70,23 @@ let mixinBasicPage = {
             this.searchItems.pgm = id;
             this.searchItems.pgmName = name;
         },
+        getInnerHtmlSelectdFileNames(title) {
+            return `파일명:<text style="color:red;">${title}</text><br><br>`;
+        },
+        getInnerHtmlSelectdFileNamesFromMulti(selectedIds, rows) {
+            const selectedNames = [];
+            selectedIds.forEach(id => {
+                rows.some(data => {
+                  if (data.seq === id) {
+                    selectedNames.push(data.title);
+                    return true;
+                  }
+                  return false;
+                });
+            });
+      
+            return `파일명:<text style="color:red;">${selectedNames.join(',')}</text><br>파일 개수:${selectedNames.length}개<br><br>`;
+        }
     }
 }
 

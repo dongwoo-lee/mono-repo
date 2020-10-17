@@ -5,7 +5,7 @@
         <file-upload 
             ref="refFileUpload" 
             v-model="localFiles"
-            :multiple="true"
+            :multiple="false"
             :drop="true"
             :drop-directory="true"
             @input-filter="inputFilter"

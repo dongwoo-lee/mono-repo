@@ -129,13 +129,6 @@ export default {
           width: '8%',
         },
         {
-          name: "track",
-          title: "트랙",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '8%',
-        },
-        {
           name: "editorName",
           title: "제작자",
           titleClass: "center aligned text-center",

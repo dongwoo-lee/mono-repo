@@ -116,7 +116,7 @@
         <common-confirm
           id="modalRemove"
           title="영구삭제"
-          message= "다시 복원할 수 없습니다. 정말 삭제하시겠습니까?"
+          :message="getDeleteMsg()"
           submitBtn="영구삭제"
           @ok="onDelete()"
         />
@@ -160,6 +160,7 @@ export default {
       metaDataModifyPopup: false,
       singleSelectedId: null,
       isTableLoading: false,
+      innerHtmlSelectedFileNames: '',
       fields: [
         {
           name: "__checkbox",
@@ -254,6 +255,7 @@ export default {
   methods: {
     ...mapActions('file', ['open_popup', 'download']),
     getData() {
+      this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const {media, cate} = this.searchItems;
       this.$http.get(`/api/products/workspace/public/meta/${media}/${cate}`, { params: this.searchItems })
@@ -279,13 +281,15 @@ export default {
       this.download({ids: ids, type: 'public'});
     },
     // 단일 영구 삭제 확인창 
-    onDeleteConfirm(id) {
-      this.singleSelectedId = id;
+    onDeleteConfirm(rowData) {      
+      this.singleSelectedId = rowData.id;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRemove');
     },
     // 선택항목 영구 삭제 확인창 
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(this.selectedIds, this.responseData.data);
       this.$bvModal.show('modalRemove');
     },
     // 영구 삭제
@@ -320,7 +324,10 @@ export default {
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
-    }
+    },
+    getDeleteMsg() {
+      return this.innerHtmlSelectedFileNames + "다시 복원할 수 없습니다. 정말 삭제하시겠습니까?";
+    },
   }
 }
 </script>

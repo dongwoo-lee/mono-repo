@@ -151,13 +151,6 @@ export default {
           width: '15%',
         },
         {
-          name: "trackNO",
-          title: "트랙번호",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "10%"
-        },
-        {
           name: "releaseDate",
           title: "발매년도",
           titleClass: "center aligned text-center",

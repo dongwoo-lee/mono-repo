@@ -138,13 +138,6 @@ export default {
               width: '8%',
             },
             {
-              name: "track",
-              title: "트랙",
-              titleClass: "center aligned text-center",
-              dataClass: "center aligned text-center",
-              width: '4%',
-            },
-            {
               name: "editorName",
               title: "편집자",
               titleClass: "center aligned text-center",
@@ -160,7 +153,7 @@ export default {
             },
             {
               name: "masteringDtm",
-              title: "미스터링일자",
+              title: "마스터링일자",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
               width: '12%'

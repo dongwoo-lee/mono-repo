@@ -74,13 +74,17 @@ export default {
             ];
         },
         onSelected(item) {
+            console.info('onSelected', item);
             const interalValue = this.$refs.refAutosuggest.internalValue;
             if (item) {
+                // 리스트 클릭 & 방향키 아래로 엔터시 여기로 진입
                 this.$emit('selected', { id: item.item.id, name: item.item.name });
                 this.getfilteredData(interalValue);
+                this.isSelected = true;
                 return;
             }
 
+            // input text 입력 후 엔터시 여기로 진입 -> onBlur 시점에 다시 체크
             const suggestions = this.$refs.refAutosuggest.suggestions;
             const { data } = suggestions[0];
             if (data.length === 1) {

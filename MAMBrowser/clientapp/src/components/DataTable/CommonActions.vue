@@ -60,7 +60,7 @@ export default {
             this.$emit('download', this.rowData);
         },
         onDelete() {
-            this.$emit('delete', this.rowData.seq);
+            this.$emit('delete', this.rowData);
         },
         onMetaModify() {
             this.$emit('modify', this.rowData);
