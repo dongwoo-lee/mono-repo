@@ -24,7 +24,7 @@ const getMenuList = (menuList) => {
       }
     });
   });
-  console.info('menuList', menuList);
+
   return menuList;
 };
 

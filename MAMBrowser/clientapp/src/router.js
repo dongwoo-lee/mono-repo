@@ -167,13 +167,15 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // 토큰 유무 체크
   const tokenString = sessionStorage.getItem('access_token');
-  if (!tokenString) {
-    next({ path: '/user', replace: true });
-    return;
+  if (!tokenString || !from) {
+    if (to.path !== '/user/login') {
+      next({ path: '/user/login', replace: true });
+      return;
+    }
   }
-
+  
+  // 권한체크
   const roles = JSON.parse(sessionStorage.getItem('role'));
-
   let isAuth = true;
   if (roles) {
     roles.filter(role => {
@@ -189,24 +191,19 @@ router.beforeEach((to, from, next) => {
 
        const isMatchPath = role.to === to.path && role.visible === 'Y';
        if (isMatchPath) {
-        isAuth = role.visible === 'N';
+        isAuth = role.visible === 'Y';
       }
        return isMatchPath;
     })
-
-    if (isAuth) {
-      next();
-      return;
-    }
-
-    console.info('from', from);
-    if (!from) {
-      next('/user/login');
-    }
-    
-    alert("접근 권한이 없습니다.");
-    next(from);
   }
+
+  if (isAuth) {
+    next();
+    return;
+  }
+
+  alert("접근 권한이 없습니다.");
+  next(from);
 });
 
 export default router;
