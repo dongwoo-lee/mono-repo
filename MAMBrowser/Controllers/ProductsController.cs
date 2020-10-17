@@ -32,15 +32,17 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="brd_dt">방송일(20200101)</param>
+        /// <param name="pgm">프로그램 ID</param>
+        /// <param name="editor">제작자 ID</param>
         /// <returns></returns>
-        [HttpGet("pgm/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> FindPGM(string media, string brd_dt)
+        [HttpGet("pgm/{media}")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> FindPGM(string media, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string editor)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindPGM(media, brd_dt);
+                result.ResultObject = bll.FindPGM(media, brd_dt, pgm, editor);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -303,17 +305,17 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="brd_dt">방송일 : ex) 20200620</param>
-        /// <param name="cate"></param>
-        /// <param name="pgm"></param>
+        /// <param name="cate">분류코드</param>
+        /// <param name="pgmName">사용처명</param>
         /// <returns></returns>
         [HttpGet("cm/{media}/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>> FindCM(string media, string brd_dt, [FromQuery] string cate, [FromQuery] string pgm)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>> FindCM(string media, string brd_dt, [FromQuery] string cate, [FromQuery] string pgmName)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindCM(media, brd_dt, cate, pgm);
+                result.ResultObject = bll.FindCM(media, brd_dt, cate, pgmName);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -323,6 +325,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
         /// <summary>
         /// 광고그룹 내 소재 조회 (페이징x)
         /// </summary>
@@ -346,25 +349,24 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        
+
         /// <summary>
         /// 주조SPOT 소재 조회
         /// </summary>
         /// <param name="media">매체 : ex)A,C,F,D</param>
-        /// <param name="cate"></param>
         /// <param name="start_dt"></param>
         /// <param name="end_dt"></param>
-        /// <param name="status"></param>
+        /// <param name="spotId">SPOT소재 ID</param>
         /// <param name="editor"></param>
         /// <returns></returns>
         [HttpGet("spot/mcr/{media}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> FindMcrSpot(string media, [FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string editor, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> FindMcrSpot(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string spotId, [FromQuery] string editor, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>>();
             try
             {
                 ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindMcrSpot(media, cate, start_dt, end_dt, status, editor, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = bll.FindMcrSpot(media, start_dt, end_dt, spotId, editor, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

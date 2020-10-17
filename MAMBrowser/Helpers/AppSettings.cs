@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MAMBrowser.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,8 @@ namespace MAMBrowser.Helpers
         public string FtpPublicUploadFolder { get; set; }
         public string MusicSystemUri { get; set; }
 
-        
-            
+        public List<DTO_NAMEVALUE> AssignDiskList { get; set; } = new List<DTO_NAMEVALUE>();
+
+
     }
 }

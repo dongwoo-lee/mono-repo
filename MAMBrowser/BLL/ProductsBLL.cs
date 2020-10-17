@@ -16,16 +16,27 @@ namespace MAMBrowser.BLL
 {
     public class ProductsBLL
     {
-        public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt)
+        public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt, string pgm, string editor)
         {
             DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT ROWNUM AS RNO, MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
                      FROM
                      MEM_PROGRAM_VIEW /**where**/");
-            var param = new { MEDIA = media, ONAIRDATE = brd_dt };
-            builder.Where("MEDIA = :MEDIA", param);
-            builder.Where("ONAIRDATE = :ONAIRDATE", param);
+            var param = new { MEDIA = media, ONAIRDATE = brd_dt, PDQ_PRODUCTID = pgm, EDITOR=editor };
+            builder.Where("MEDIA = :MEDIA");
+            if (!string.IsNullOrEmpty(brd_dt))
+            {
+                builder.Where("ONAIRDATE = :ONAIRDATE");
+            }
+            if (!string.IsNullOrEmpty(pgm))
+            {
+                builder.Where("PDQ_PRODUCTID = :PDQ_PRODUCTID");
+            }
+            if (!string.IsNullOrEmpty(editor))
+            {
+                builder.Where("EDITOR = :EDITOR");
+            }
             builder.OrderBy("ONAIRDATE, ONAIRTIME");
             Repository<DTO_PGM_INFO> repository = new Repository<DTO_PGM_INFO>();
             var resultMapping = new Func<dynamic, DTO_PGM_INFO>((row) =>
@@ -42,7 +53,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(Utility.DTM19),
+                    ReqCompleteDtm = row.REQTIME!=null ? ((DateTime)row.REQTIME).ToString(Utility.DTM19) : null,
                     FilePath = row.MASTERFILE
                 };
             });
@@ -404,7 +415,7 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_PAGE_LIST<DTO_CM> FindCM(string media, string brd_dt, string cate, string pgm)
+        public DTO_RESULT_PAGE_LIST<DTO_CM> FindCM(string media, string brd_dt, string cate, string pgmName)
         {
             DTO_RESULT_PAGE_LIST<DTO_CM> returnData = new DTO_RESULT_PAGE_LIST<DTO_CM>();
             var builder = new SqlBuilder();
@@ -414,7 +425,6 @@ namespace MAMBrowser.BLL
                 MEDIA = media,
                 BRD_DT = brd_dt,
                 CATE= cate,
-                PGM = pgm,
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ /**orderby**/");
@@ -429,12 +439,17 @@ namespace MAMBrowser.BLL
             }
             if (!string.IsNullOrEmpty(brd_dt))
             {
-                builder.Where("ONAIRDATE = :BRD_DT");   // 방송//폐지
+                builder.Where("ONAIRDATE = :BRD_DT");   
             }
-            if (!string.IsNullOrEmpty(pgm))
+            if (!string.IsNullOrEmpty(pgmName))
             {
-                builder.Where("PROID = :PGM");
+                string[] nameArray = pgmName.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(CMGROUPNAME) LIKE LOWER('%{word}%')");
+                }
             }
+            
             builder.OrderBy("MEDIA, ONAIRTIME, CMGROUPNAME");
 
             Repository<DTO_CM> repository = new Repository<DTO_CM>();
@@ -510,7 +525,7 @@ namespace MAMBrowser.BLL
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string cate, string start_dt, string end_dt, string status, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string start_dt, string end_dt, string spotId, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue) 
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -521,10 +536,9 @@ namespace MAMBrowser.BLL
             param.AddDynamicParams(new
             {
                 MEDIA = media,
-                CATE = cate,
                 START_DT = start_dt,
                 END_DT = end_dt,
-                STATEID = status,
+                SPOTID = spotId,
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
@@ -539,13 +553,9 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("MEDIA=:MEDIA");
             }
-            if (!string.IsNullOrEmpty(cate))
+            if (!string.IsNullOrEmpty(spotId))
             {
-                builder.Where("SPOTID=:CATE");
-            }
-            if (!string.IsNullOrEmpty(status))
-            {
-                builder.Where("STATEID=:STATEID");   
+                builder.Where("SPOTID=:SPOTID");   
             }
             if (!string.IsNullOrEmpty(editor))
             {
@@ -629,7 +639,7 @@ namespace MAMBrowser.BLL
                 }
             }
 
-            builder.OrderBy("EDITTIME DESC");
+            builder.OrderBy("MASTERTIME DESC");
 
 
             var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
@@ -742,7 +752,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME != null ? ((DateTime)row.MASTERTIME).ToString(Utility.DTM19) : null,
                     FilePath = row.MASTERFILE,
                     FileName = Path.GetFileName(row.MASTERFILE)
                 };
