@@ -435,7 +435,7 @@ namespace MAMBrowser.Controllers
         /// 디스크 할당 목록 조회
         /// </summary>
         /// <returns></returns>
-        [HttpGet("assigndisks")]
+        [HttpGet("disk-scope")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> GetAssignDiskList()
         {
 
@@ -444,7 +444,7 @@ namespace MAMBrowser.Controllers
             {
                 APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
-                result.ResultObject.Data = SystemConfig.AppSettings.AssignDiskList;
+                result.ResultObject.Data = SystemConfig.AppSettings.DiskScope;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
