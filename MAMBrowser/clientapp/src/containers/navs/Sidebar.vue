@@ -4,11 +4,11 @@
         <vue-perfect-scrollbar class="scroll" :settings="{ suppressScrollX: true, wheelPropagation: false }">
             <ul class="list-unstyled">
                 <li v-for="item in menuList" :class="{ 'active' : (selectedParentMenu === item.id && viewingParentMenu === '') || viewingParentMenu === item.id }" :key="`parent_${item.id}`" :data-flag="item.id">
-                    <a v-if="item.children && item.children.length > 0 && item.visible === 'Y'" @click.prevent="openSubMenu($event,item)" :href="`#${item.to}`">
+                    <a v-if="item.children && item.children.length > 0 && item.visible === 'Y'" @click.prevent="openSubMenu($event,item)" :href="`#${getTo(item.to)}`">
                         <i :class="item.icon" />
                         {{ item.name }}
                     </a>
-                    <router-link v-if="item.children === null && item.visible === 'Y'" @click.native="changeSelectedParentHasNoSubmenu(item.id)" :to="item.to">
+                    <router-link v-if="item.children === null && item.visible === 'Y'" @click.native="changeSelectedParentHasNoSubmenu(item.id)" :to="getTo(item.to)">
                         <i :class="item.icon" />
                         {{ item.name }}
                     </router-link>
@@ -25,9 +25,11 @@
                 :key="`sub_${item.id}`">
 
                 <li v-for="(sub,subIndex) in item.children" :key="subIndex" :class="{'active' : $route.path.indexOf(sub.to)>-1}">
-                    <router-link v-if="sub.visible === 'Y'" :to="sub.to">
-                        <span>{{ sub.name }}</span>
-                    </router-link>
+                    <template v-if="sub.visible === 'Y' && sub.to">
+                        <router-link :to="getTo(sub.to)">
+                            <span>{{ sub.name }}</span>
+                        </router-link>
+                    </template>
                 </li>
             </ul>
         </vue-perfect-scrollbar>
@@ -226,6 +228,9 @@ export default {
                 }
             }
             return nextClasses;
+        },
+        getTo(to) {
+            return to ? to : '';
         }
     },
     computed: {

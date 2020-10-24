@@ -263,6 +263,10 @@
             padding: 0.5rem 1rem;
             font-size: 0.74rem;
             line-height: 1.3;
+
+            &:focus {
+                border: 1px solid #008ecc;
+            }
         }
 
         .custom-checkbox-group {
@@ -312,6 +316,10 @@
     .form-btn {
         .btn {
             margin-right: .5rem;
+
+            &:focus {
+                border: 1px solid #008ecc;
+            }
         }
     }
 

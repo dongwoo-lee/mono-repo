@@ -21,8 +21,8 @@
           :options="mediaPrimaryOptions"
           value-field="id"
           text-field="name" 
-        /> -->
-        </b-form-group>
+        /> 
+        </b-form-group>-->
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">
           <b-form-select

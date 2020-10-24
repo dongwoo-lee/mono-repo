@@ -36,8 +36,10 @@
           <common-date-picker v-model="searchItems.end_dt" required/>
         </b-form-group>
         <!-- 사용처 -->
-        <b-form-group label="사용처" class="has-float-label">
-          <common-dropdown-menu-input classString="width-180" :suggestions="pgmOptions" @selected="onPgmSelected" />
+        <b-form-group label="사용처명" class="has-float-label">
+          <common-input-text v-model="searchItems.pgmName"/>
+          <!-- 2020-10-24 JSH: 취재물 사용처가 맞지 않는다고 input text로 변경 -->
+          <!-- <common-dropdown-menu-input classString="width-180" :suggestions="pgmOptions" @selected="onPgmSelected" /> -->
         </b-form-group>
         <!-- 취재인 -->
         <b-form-group label="취재인" class="has-float-label">

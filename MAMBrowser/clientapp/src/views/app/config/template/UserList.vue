@@ -18,29 +18,36 @@
             <div class="text-nowrap">{{ $fn.formatBytes(item.diskUsed, 1) }}</div>
         </template>
         <template v-slot:cell(diskMax)="{ item, rowSelected, index }">
-            <span v-show="!rowSelected">{{item.diskMax}}GB</span>
-            <b-form-select
-                v-show="rowSelected"
-                :value="item.diskMax"
-                :options="diskMaxOptions"
-                value-field="id"
-                text-field="name"
-                size="sm"
-                @change="onChangeDiskMax($event, item, index)"
-            >
-            </b-form-select>
+            <template v-if="isDisplayMyDiskMenu">
+                <span v-show="!rowSelected">{{item.diskMax}}GB</span>
+                <b-form-select
+                    v-show="rowSelected"
+                    :value="item.diskMax"
+                    :options="diskScopeOptions"
+                    value-field="value"
+                    text-field="name"
+                    size="sm"
+                    @change="onChangeDiskMax($event, item, index)"
+                >
+                </b-form-select>
+            </template>
+             <template v-else>
+                <span>디스크할당없음</span>
+            </template>
         </template>
         <template v-slot:cell(menuGrpID)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{item.menuGrpName}}</div>
-            <b-form-select
+            <b-form-select 
+                v-model="item.menuGrpID"
                 v-show="rowSelected"
-                :value="item.menuGrpID"
-                :options="menuGrpOptions"
-                value-field="code"
-                text-field="name"
-                size="sm"
-                @change="onChangeMenuGrp($event, item, index)"
-            >
+                @change="onChangeMenuGrp($event, item, index)">
+                <option
+                    v-for="(option, idx) in menuGrpOptions"
+                    :key="idx"
+                    :value="option.code"
+                    :title="option.description">
+                    {{option.name}}
+                </option>
             </b-form-select>
         </template>
         <template v-slot:cell(actions)="{ item, index }">
@@ -57,6 +64,7 @@
     </b-table>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
@@ -70,24 +78,17 @@ export default {
                 { key: 'menuGrpID', label: '메뉴 유형', sortable: false, tdClass: 'text-muted' },
                 { key: 'actions', label: '', thStyle: { width: '200px' } }
             ],
-            diskMaxOptions: [
-                { id: 1, name: "1GB" },
-                { id: 2, name: "2GB" },
-                { id: 3, name: "3GB" },
-                { id: 4, name: "4GB" },
-                { id: 5, name: "5GB" },
-                { id: 6, name: "6GB" },
-                { id: 7, name: "7GB" },
-                { id: 8, name: "8GB" },
-                { id: 9, name: "9GB" },
-                { id: 10, name: "10GB" },
-            ],
             menuGrpOptions: [],
+            diskScopeOptions: [],
         }
+    },
+    computed: {
+        ...mapGetters('user', ['isDisplayMyDiskMenu']),
     },
     created() {
         this.getUserData();
         this.getMenuGrpOptions();
+        this.getDiskScopeOptions();
     },
     methods: {
         getUserData() {
@@ -107,13 +108,40 @@ export default {
               .then(res => {
                   if (res.status === 200) {
                       this.menuGrpOptions = res.data.resultObject.data;
+                        this.menuGrpOptions.forEach(menu => {
+                            this.setMenuGrpDescription(menu);
+                        })
+                  } else {
+                      this.$fn.notify('server-error', { message: '조회 에러' });
+                  }
+                  console.info('menuGrpOptions', this.menuGrpOptions);
+            });
+        },
+        setMenuGrpDescription(menu) {
+            this.$http.get('/api/menugrp/' + menu.code)
+              .then(res => {
+                  if (res.status === 200) {
+                      const list = res.data.resultObject.data;
+                      const values = [];
+                      list.forEach(data => {
+                          values.push(data.name);
+                      });
+                      menu.description = values.join('\n')
+                  }
+            });
+        },
+        getDiskScopeOptions() {
+            this.$http.get('/api/disk-scope')
+              .then(res => {
+                  if (res.status === 200) {
+                      this.diskScopeOptions = res.data.resultObject.data;
                   } else {
                       this.$fn.notify('server-error', { message: '조회 에러' });
                   }
             });
         },
         onChangeDiskMax(value, item, index) {
-            const findOptionItem = this.diskMaxOptions.filter(option => option.id === value);
+            const findOptionItem = this.diskMaxOptions.filter(option => option.value === value);
             const selectData = this.userList[index];
             
             // 변경 횟수 증가 및 원데이터 저장
@@ -128,7 +156,7 @@ export default {
                 selectData.isChangeDiskMax = true;
             }
 
-            selectData.diskMax = findOptionItem[0].id;
+            selectData.diskMax = findOptionItem[0].value;
         },
         onChangeMenuGrp(value, item, index) {
             const findOptionItem = this.menuGrpOptions.filter(option => option.code === value);

@@ -12,8 +12,8 @@ let mixinFillerPage = {
     },
     methods: {
         // 주조 spot 분류 목록 조회
-        getSpotOptions(value) {
-          this.requestCall('/api/Categories/mcr/spot' + '?media=' + value, 'spotOptions');
+        getSpotOptions(media) {
+          this.requestCall('/api/Categories/mcr/spot?media=' + media, 'spotOptions');
         },
         // 방송의뢰 상태 목록 조회
         getReqStatusOptions() {
@@ -35,6 +35,11 @@ let mixinFillerPage = {
         getEtcOptions() {
             this.requestCall('/api/Categories/filler/etc', 'categoryOptions');
         },
+        onSpotSelected(data) {
+            const { id, name } = data;
+            this.searchItems.spotId = id;
+            this.searchItems.spotName = name;
+        }
     }
 }
 

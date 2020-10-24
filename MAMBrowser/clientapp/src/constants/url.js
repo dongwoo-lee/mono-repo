@@ -86,8 +86,14 @@ const url = [
         icon: "iconsminds-optimization",
     },
     {
-        // CM
+        // 프로그램CM
         id: "S01G01C018",
+        to: "/app/advertising/program-cm",
+        icon: "iconsminds-optimization",
+    },
+    {
+        // CM
+        id: "S01G01C019",
         to: "/app/advertising/cm",
         icon: "iconsminds-optimization",
     },
@@ -98,31 +104,31 @@ const url = [
     },
     {
         // 주조SPOT
-        id: "S01G01C019",
+        id: "S01G01C020",
         to: "/app/combinationmd/casting-spot",
         icon: "iconsminds-notepad",
     },
     {
        // Filler(PR)
-        id: "S01G01C020",
+        id: "S01G01C021",
         to: "/app/combinationmd/filler-pr",
         icon: "iconsminds-notepad",
     },
     {
         // Filler(소재)
-        id: "S01G01C021",
+        id: "S01G01C022",
         to: "/app/combinationmd/filler-material",
         icon: "iconsminds-notepad",
     },
     {
         // Filler(시간)
-        id: "S01G01C022",
+        id: "S01G01C023",
         to: "/app/combinationmd/filler-time",
         icon: "iconsminds-notepad",
     },
     {
         // Filler(기타)
-        id: "S01G01C023",
+        id: "S01G01C024",
         to: "/app/combinationmd/filler-other",
         icon: "iconsminds-notepad",
     },

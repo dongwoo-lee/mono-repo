@@ -16,7 +16,7 @@
                 </router-link>
                 <h6 class="mb-4">Login</h6>
 
-                <b-form @submit.prevent class="av-tooltip tooltip-label-bottom">
+                <b-form @submit.prevent="formSubmit" class="av-tooltip tooltip-label-bottom">
                     <b-form-group label="아이디" class="has-float-label mb-4">
                         <b-form-input type="text" v-model="$v.userId.$model" :state="!$v.userId.$error"/>
                         <b-form-invalid-feedback v-if="!$v.userId.required">아이디를 입력해주세요.</b-form-invalid-feedback>
@@ -34,8 +34,7 @@
                             >로그인 정보 기억</b-form-checkbox> -->
                         </div>
                         <b-button
-                            @click="formSubmit"
-                            type="button" variant="primary" size="lg" 
+                            type="submit" variant="primary" size="lg" 
                             :class="{'btn-multiple-state btn-shadow': true }">
                              <b-spinner v-show="processing" small type="grow"></b-spinner>
                              <span v-show="processing">로그인중...</span>

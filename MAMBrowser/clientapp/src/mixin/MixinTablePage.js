@@ -117,12 +117,6 @@ let mixinTablePage = apiType => ({
         getCmOptions() {
             this.requestCall('/api/Categories/cm', 'cmOptions');
         },
-        // 사용처 분류 선택
-        onPgmSelected(data) {
-        const { id, name } = data;
-        this.searchItems.pgm = id;
-        this.searchItems.pgmName = name;
-        },
         // 단일 다운로드
         onDownload(seq) {
             let ids = this.selectedIds;

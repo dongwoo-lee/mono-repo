@@ -12,6 +12,11 @@
             @input-file="inputFile">
         </file-upload>
     </div>
+    <common-confirm
+        id="modalOverSize"
+        title="파일 용량 초과"
+        message="파일은 최대 2GB까지 업로드할 수 있습니다."
+    />
 </div>
 </template>
 
@@ -22,11 +27,17 @@ export default {
     data() {
         return {
             localFiles: [],
+            maxSize: (1000 * 1000 * 1000) * 2,  //  KB -> MB -> GB * 2 = 2GB
         }
     },
     watch: {
         localFiles(files, oldFiles) {
-            
+            const overSize = files.some(file => file.size >= this.maxSize);
+            if (overSize) {
+                this.$bvModal.show('modalOverSize');
+                return;
+            }
+
             if (files.length > 0) {
                 
                 let uniqIds = [];
@@ -53,9 +64,11 @@ export default {
     methods: {
         ...mapActions('file', ['open_meta_data_popup', 'close_meta_data_popup']),
         ...mapMutations('file', ['SET_DRAG_DROP_STATE']),
-        inputFilter(data) { 
+        inputFilter(data) {
+            console.info('inputFilter', data);
         },
         inputFile(data) {
+            console.info('inputFile', data);
         },
         closePopup() {
             this.SET_DRAG_DROP_STATE(false);

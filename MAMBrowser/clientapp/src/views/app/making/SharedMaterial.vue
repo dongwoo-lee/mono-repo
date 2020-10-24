@@ -282,7 +282,7 @@ export default {
     },
     // 단일 영구 삭제 확인창 
     onDeleteConfirm(rowData) {      
-      this.singleSelectedId = rowData.id;
+      this.singleSelectedId = rowData.seq;
       this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRemove');
     },

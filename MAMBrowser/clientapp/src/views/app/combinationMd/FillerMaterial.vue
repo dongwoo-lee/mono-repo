@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template-filler-form heading="FILLER(기본)" screenName="general"></template-filler-form>
+    <template-filler-form heading="FILLER(소재)" screenName="general"></template-filler-form>
   </div>
 </template>
 

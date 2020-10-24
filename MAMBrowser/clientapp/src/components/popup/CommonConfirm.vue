@@ -9,6 +9,7 @@
         <!-- {{ message }} -->
         <template v-slot:modal-footer>
             <b-button
+              v-if="submitBtn"
               variant="outline-primary default cutom-label"
               size="sm"
               class="float-right"
@@ -44,7 +45,6 @@ export default {
         },
         submitBtn: {
             type: String,
-            default: '확인'
         },
         closeBtn: {
             type: String,

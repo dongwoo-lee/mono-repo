@@ -165,8 +165,9 @@ export default {
         },
         getRemark(metaData) {
             const metaDataToJson = JSON.parse(metaData);
+            console.info('metaDataToJson', metaDataToJson);
             const {title, mediaCD } = metaDataToJson;
-            return `${mediaCD}/${title}`;
+            return `${title}`;
         },
         getSuccessUploadFileLength() {
             const filterSuccess = this.localFiles.filter(file => file.success)

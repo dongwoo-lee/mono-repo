@@ -63,6 +63,7 @@
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
+          @sortableclick="onSortable"
         >
           <template slot="actions" scope="props">
             <common-actions
@@ -109,7 +110,7 @@ export default {
             },
             {
               name: "categoryName",
-              title: "매체",
+              title: "분류",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
               width: '10%',
@@ -122,7 +123,7 @@ export default {
             },
             {
               name: "brdDT",
-              title: "방송일유효일",
+              title: "방송유효일",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
               width: '8%',
@@ -156,6 +157,7 @@ export default {
               title: "마스터링일자",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
+              sortField: 'masteringDtm',
               width: '12%'
             },
             {

@@ -162,7 +162,7 @@ export default {
         remove_files: ({ commit }, id) => {
             commit('REMOVE_FILES', id);
         },
-        // 파일 업로드딩 하단 창 호출
+        // 파일 업로드 하단 창 호출
         open_toast: ({}) => {
             FileUploadRefElement.uploadPopup.hide(true);
             FileUploadRefElement.uploadToast.show();

@@ -24,11 +24,19 @@
           />
         </b-form-group>
         <!-- 방송일 -->
-       <b-form-group label="방송일" 
+        <b-form-group label="방송일" 
           class="has-float-label"
           :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.required) }">
           <common-date-picker v-model="$v.searchItems.brd_dt.$model" isCurrentDate required/>
           <b-form-invalid-feedback :state="!$v.searchItems.brd_dt.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
+        </b-form-group>
+        <!-- 프로그램명 -->
+        <b-form-group label="프로그램" class="has-float-label">
+          <common-dropdown-menu-input :suggestions="pgmOptions" @selected="onPgmSelected" />
+        </b-form-group>
+        <!-- 제작자 -->
+        <b-form-group label="제작자" class="has-float-label">
+          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
         </b-form-group>
         <!-- 검색버튼 -->
         <b-form-group>
@@ -72,7 +80,7 @@ export default {
     return {
       searchItems: {
         media: 'A',
-        brd_dt: '',
+        brd_dt: '20200101',
         rowPerPage: 15,
       },
       isTableLoading: false,
@@ -166,6 +174,10 @@ export default {
   created() {
     // 매체목록 조회
     this.getMediaOptions();
+    // 사용처 조회
+    this.getPgmOptions(this.searchItems.brd_dt);
+    // 제작자 조회
+    this.getEditorOptions();
   },
   methods: {
     getData() {
@@ -178,7 +190,7 @@ export default {
       const media = this.searchItems.media;
       const brd_dt = this.searchItems.brd_dt;
 
-      this.$http.get(`/api/Products/pgm/${media}/${brd_dt}`)
+      this.$http.get(`/api/Products/pgm/${media}`)
         .then(res => {
            this.setResponseData(res, 'normal');
            this.isTableLoading = false;

@@ -77,7 +77,6 @@ export default {
                 media : 'A',           // 매체
                 regDtm: '',            // 편성일자
                 pgmName: '',             // 녹음명
-                brd_dt: '',            // 등록일
                 rowPerPage: 15,
                 selectPage: 1,
                 sortKey: '',
@@ -106,13 +105,6 @@ export default {
                     dataClass: "center aligned text-center",
                     width: '5%',
                 },
-                // {
-                //     name: "schDate",
-                //     title: "방송일",
-                //     titleClass: "center aligned text-center",
-                //     dataClass: "center aligned text-center",
-                //     width: '10%',
-                // },
                 {
                     name: "brdDate",
                     title: "송출일시",
@@ -126,19 +118,12 @@ export default {
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
                 },
-                // {
-                //     name: "programID",
-                //     title: "Product ID",
-                //     titleClass: "center aligned text-center",
-                //     dataClass: "center aligned text-center",
-                //     width: '5%',
-                // },
                 {
                     name: "sourceID",
                     title: "Source ID",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
-                    width: '5%',
+                    width: '7%',
                 },
                 {
                     name: "dd",
@@ -149,10 +134,10 @@ export default {
                 },
                 {
                     name: "fileSize",
-                    title: "파일크기",
+                    title: "파일크기(byte)",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
-                    width: '5%',
+                    width: '10%',
                 },
                 {
                     name: "regDtm",

@@ -20,6 +20,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name" 
+            @change="onChangeMedia()"
           />
         </b-form-group>
         <!-- 시작일 -->
@@ -33,6 +34,15 @@
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
           <common-date-picker v-model="searchItems.end_dt" required/>
+        </b-form-group>
+        <!-- 사용처 -->
+        <b-form-group label="사용처" class="has-float-label">
+          <common-dropdown-menu-input 
+            classString="width-220"
+            :isLoadingClass="isLoadingClass"
+            :suggestions="spotOptions"
+            @selected="onSpotSelected"
+          />
         </b-form-group>
         <!-- 상태 -->
         <!-- <b-form-group label="상태" class="has-float-label">
@@ -100,11 +110,12 @@ export default {
       searchItems: {
         media: 'A',                // 매체
         cate: '',                  // 분류
-        start_dt: '',      // 시작일
+        start_dt: '',              // 시작일
         end_dt: '',                // 종료일
         status: '',                // 상태
         editor: '',                // 사용자
         editorName: '',            // 사용자 이름
+        spotId: '',                // spotId
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
@@ -216,9 +227,9 @@ export default {
            this.isScrollLodaing = false;
       });
     },
-    onChangeMedia(value) {
-        this.getSpotOptions(value);
-    }
+    onChangeMedia() {
+        this.getSpotOptions(this.searchItems.media);
+    },
   },
 }
 </script>

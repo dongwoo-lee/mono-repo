@@ -18,7 +18,7 @@
       </a>
     </div>
     <!-- 로고 -->
-    <router-link class="navbar-logo" tag="a" to="/app">
+    <router-link class="navbar-logo" tag="a" :to="getTo()">
       <span class="logo d-none d-xs-block"></span>
       <span class="logo-mobile d-block d-xs-none"></span>
     </router-link>
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions, mapState } from "vuex";
 import { MenuIcon, MobileMenuIcon } from "../../components/Svg";
 import {
   menuHiddenBreakpoint,
@@ -112,10 +112,20 @@ export default {
     isDisplaySetting() {
       return true;
       // return this.behaviorList.some(item => item.id === 'S01G02C005' && item.visible === 'Y');
+    },
+    getTo() {
+      if (this.roleList) {
+        const firstVisibleIndex = this.roleList.findIndex(role => role.visible === 'Y' );
+        if (this.roleList[firstVisibleIndex]) {
+          return this.roleList[firstVisibleIndex].to;  
+        }
+      }
+
+      return '';
     }
   },
   computed: {
-    ...mapGetters("user", ["currentUser", 'behaviorList']),
+    ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList']),
     ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",

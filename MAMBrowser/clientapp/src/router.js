@@ -97,6 +97,11 @@ const routes = [
         component: () => import("./views/app/advertising/ReliefSb"),
       },
       {
+        // 광고 - 프로그램CM
+        path: "advertising/program-cm",
+        component: () => import("./views/app/advertising/ProgramCm"),
+      },
+      {
         // 광고 - CM
         path: "advertising/cm",
         component: () => import("./views/app/advertising/Cm"),
@@ -181,9 +186,9 @@ router.beforeEach((to, from, next) => {
     roles.filter(role => {
        if (role.children && role.children.length > 0) {
           role.children.filter(child => {
-            const isMatchPath = child.to === to.patch;
+            const isMatchPath = child.to === to.path;
             if (isMatchPath) {
-              isAuth = role.children.visible === 'Y';
+              isAuth = child.visible === 'Y';
             }
           })
          return isMatchPath;

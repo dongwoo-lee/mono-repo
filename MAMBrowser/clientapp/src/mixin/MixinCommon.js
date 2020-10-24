@@ -144,6 +144,7 @@ let mixinCommon = {
             }, 0);
         },
         initSelectedIds() {
+            if(!this.$refs.scrollPaging) return;
             this.$refs.scrollPaging.initSelectedIds();  
         },
         onPreview(item) {

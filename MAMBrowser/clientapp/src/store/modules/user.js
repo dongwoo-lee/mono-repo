@@ -2,7 +2,8 @@ import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
 
-const getMenuList = (menuList) => {
+// URL주소와 ICON 요소 추가 & Role 데이터 생성
+const getAddUrlAndIconMenuList = (menuList, roleList) => {
   menuList.forEach(menus => {
     url.forEach(item => {
       // 자식요소
@@ -11,14 +12,16 @@ const getMenuList = (menuList) => {
           if (menu && menu.id === item.id) {
             menu.to = item.to;
             menu.icon = item.icon;
+            roleList.push(getRole(menu));
           }
         });
-      } 
+      }
 
       // 부모요소
       if (menus.id === item.id) {
         if (item.to) {
-          menus.to = item.to; 
+          menus.to = item.to;
+          roleList.push(getRole(menus));
         }
         menus.icon = item.icon;
       }
@@ -27,6 +30,16 @@ const getMenuList = (menuList) => {
 
   return menuList;
 };
+
+const getRole = (menu) => {
+  return {
+    parentID: menu.parentID
+    , id: menu.id
+    , visible: menu.visible
+    , enable: menu.enable
+    , to: menu.to
+  }
+}
 
 export default {
   namespaced: true,
@@ -40,32 +53,41 @@ export default {
     },
     menuList: [],
     behaviorList: [],
+    roleList: [],
     processing: false,
+    isDisplayMyDiskMenu: false,
   },
   getters: {
-    menuList: state => { 
-      return getMenuList(state.menuList);
-    },
+    menuList: state => state.menuList,
+    roleList: state => state.roleList,
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
+    isDisplayMyDiskMenu: state => {
+      const findIndex = state.roleList.findIndex(role => role.id === 'S01G01C007' && role.visible === 'Y');
+      return findIndex > -1;
+    }
   },
   mutations: {
+    // 최초 로그인 시점 실행
     SET_AUTH(state, {token, userId, userExtId, role }) {
       state.isAuth = true;
       state.processing = false;
+      state.menuList = getAddUrlAndIconMenuList(role, state.roleList);
       sessionStorage.setItem('access_token', token);
       sessionStorage.setItem('user_id', userId);
       sessionStorage.setItem('user_ext_id', userExtId);
-      sessionStorage.setItem('role', JSON.stringify(getMenuList(role)));
+      sessionStorage.setItem('role', JSON.stringify(state.roleList));
       // $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
+    // 새로고침 시점 실행
     SET_USER(state, data) {
-      state.menuList = data.menuList;
+      state.menuList = getAddUrlAndIconMenuList(data.menuList, state.roleList);
       state.behaviorList = data.behaviorList;
       delete data.menuList;
       delete data.behaviorList;
       state.currentUser = data;
+      sessionStorage.setItem('role', JSON.stringify(state.roleList));
     },
     SET_LOGOUT(state) {
       state.isAuth = false;

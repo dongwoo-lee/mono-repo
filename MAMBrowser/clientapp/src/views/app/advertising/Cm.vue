@@ -40,12 +40,14 @@
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
-          <common-dropdown-menu-input 
+          <common-input-text v-model="searchItems.pgmName"/>
+          <!-- 2020-10-24 JSH: 사용처를 input text로 변경 -->
+          <!-- <common-dropdown-menu-input 
             classString="width-220"
             :isLoadingClass="isLoadingClass"
             :suggestions="pgmOptions"
             @selected="onPgmSelected"
-          />
+          /> -->
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -162,6 +164,7 @@ export default {
         { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
         { key: 'brdDT', label: '방송일', tdClass: 'text-muted' },
         { key: 'name', label: 'CM명', tdClass: 'text-muted' },
+        { key: 'pgmName', label: '사용처명', tdClass: 'text-muted' },
         { key: 'length', label: '길이', tdClass: 'text-muted' },
         { key: 'capacity', label: '분량', tdClass: 'text-muted'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},

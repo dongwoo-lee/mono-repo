@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-row>
+     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb :heading="heading" />
+        <piaf-breadcrumb heading="프로그램CM" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -23,13 +23,13 @@
           />
         </b-form-group>
         <!-- 방송일 -->
-        <b-form-group label="시작일"
+        <b-form-group label="방송일"
           class="has-float-label"
           :class="{ 'hasError': $v.searchItems.brd_dt.required }">
           <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
         </b-form-group>
         <!-- 분류 -->
-        <b-form-group v-if="!screenName" label="분류" class="has-float-label">
+        <b-form-group label="분류" class="has-float-label">
           <b-form-select
             class="width-120"
             v-model="searchItems.cate"
@@ -39,13 +39,15 @@
           />
         </b-form-group>
         <!-- 사용처 -->
-        <b-form-group v-if="screenName !== 'mcr'" label="사용처" class="has-float-label">
-          <common-dropdown-menu-input 
+        <b-form-group label="사용처" class="has-float-label">
+          <common-input-text v-model="searchItems.pgmName"/>
+          <!-- 2020-10-24 JSH: 사용처를 input text로 변경 -->
+          <!-- <common-dropdown-menu-input 
             classString="width-220"
             :isLoadingClass="isLoadingClass"
             :suggestions="pgmOptions"
             @selected="onPgmSelected"
-          />
+          /> -->
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -77,19 +79,23 @@
               @row-selected="rowSelected"
             >
               <template v-slot:table-busy>
-                <div class="text-center text-danger my-2">
+                <div class="text-center text-primary my-2">
                   <b-spinner class="align-middle"></b-spinner>
                   <strong>Loading...</strong>
                 </div>
               </template>
-              <template v-if="screenName" v-slot:cell(actions)="data">
+              <template v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
-                <b-button
-                  :id="`download-${data.index}`" class="icon-buton"
+                <b-button :id="`download-${data.index}`" class="icon-buton"
                   @click.stop="onDownloadEtc(data.item.id)">
                   <b-icon icon="download" class="icon"></b-icon>
-                </b-button>   
+                </b-button>
               </template>
+              <!-- ID Tooltip -->
+              <template v-slot:cell(name)="data">
+                <span v-b-tooltip.hover :title=data.item.id>{{ data.item.name}}</span>
+              </template>
+
             </b-table>
           </b-colxx>
           <!-- sub -->
@@ -114,12 +120,12 @@
               :items="reponseContentsData.data"
             >
               <template v-slot:table-busy>
-                <div class="text-center text-danger my-2">
+                <div class="text-center text-primary my-2">
                   <b-spinner class="align-middle"></b-spinner>
                   <strong>Loading...</strong>
                 </div>
               </template>
-              <template v-if="screenName" v-slot:cell(actions)="data">
+              <template v-slot:cell(actions)="data">
                 <!-- 미리듣기 -->
                 <b-button class="icon-buton">
                   <b-icon icon="caret-right-square" class="icon"></b-icon>
@@ -134,18 +140,11 @@
 </template>
 
 <script>
-import MixinTablePage from '../../../../mixin/MixinTablePage';
+import MixinTablePage from '../../../mixin/MixinTablePage';
 
 export default {
   name: 'templateSBForm',
-  mixins: [ MixinTablePage('sb') ],
-  props: ['heading', 'screenName'],
-  created() {
-      // 부조SB의 경우 사용처명 표시
-      if (this.screenName === 'scr') {
-        this.fields.splice(4, 0, { key: 'pgmName', label: '사용처명', tdClass: 'text-muted' })
-      }
-  },
+  mixins: [ MixinTablePage('cm') ],
   data() {
     return {
       searchItems: {
@@ -164,8 +163,8 @@ export default {
       fields: [
         { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
         { key: 'brdDT', label: '방송일', tdClass: 'text-muted' },
-        { key: 'id', label: 'ID', tdClass: 'text-muted' },
-        { key: 'name', label: 'SB명', tdClass: 'text-muted' },
+        { key: 'name', label: 'CM명', tdClass: 'text-muted' },
+        { key: 'pgmName', label: '사용처명', tdClass: 'text-muted' },
         { key: 'length', label: '길이', tdClass: 'text-muted' },
         { key: 'capacity', label: '분량', tdClass: 'text-muted'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},
@@ -174,12 +173,12 @@ export default {
       ],
       fieldsContents: [
         { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
-        { key: 'categoryID', label: '구분', tdClass: 'text-muted', thStyle: { width: '10%' } },
-        { key: 'categoryName', label: '광고주명/분류명', tdClass: 'text-muted', thStyle: { width: '20%' } },
-        { key: 'id', label: '소재ID', tdClass: 'text-muted' },
+        { key: 'advertiser', label: '광고주', tdClass: 'text-muted', thStyle: { width: '20%' } },
         { key: 'name', label: '소재명', tdClass: 'text-muted' },
         { key: 'length', label: '길이', tdClass: 'text-muted' },
         { key: 'format', label: '포맷', tdClass: 'text-muted', thStyle: { width: '10%' } },
+        { key: 'codingUserID', label: '코딩인', tdClass: 'text-muted' },
+        { key: 'codingDT', label: '코딩일', tdClass: 'text-muted' },
         { key: 'actions', label: 'Actions', tdClass: 'text-muted'},
       ]
     }

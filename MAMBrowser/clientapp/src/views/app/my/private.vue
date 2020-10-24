@@ -35,7 +35,7 @@
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="btn-outline-primary default" @click="onSearch">검색</b-button>
         </b-form-group>
       </template>
       <!-- 버튼 -->
@@ -246,7 +246,7 @@ export default {
     },
     // 단일 휴지통 보내기 확인창
     onDeleteConfirm(rowData) {
-      this.singleSelectedId = rowData.id;
+      this.singleSelectedId = rowData.seq;
       this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRemove');
     },

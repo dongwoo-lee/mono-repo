@@ -16,16 +16,17 @@
         </template>
         <template v-slot:cell(authorCode)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{getAuthorName(item.authorCode)}}</div>
-            <b-form-select
-                class=""
+             <b-form-select 
+                v-model="item.authorCode"
                 v-show="rowSelected"
-                :value="item.authorCode"
-                :options="authorityOptions"
-                value-field="code"
-                text-field="name"
-                size="sm"
-                @change="onChangeAuthority($event, item, index)"
-            >
+                @change="onChangeAuthority($event, item, index)">
+                <option
+                    v-for="(option, idx) in authorityOptions"
+                    :key="idx"
+                    :value="option.code"
+                    :title="option.description">
+                    {{option.name}}
+                </option>
             </b-form-select>
         </template>
         <template v-slot:cell(actions)="{ item, index }">
@@ -79,8 +80,24 @@ export default {
               .then(res => {
                   if (res.status === 200) {
                       this.authorityOptions = res.data.resultObject.data;
+                      this.authorityOptions.forEach(menu => {
+                            this.setAuthorityDescription(menu);
+                        })
                   } else {
                       this.$fn.notify('server-error', { message: '조회 에러' });
+                  }
+            });
+        },
+        setAuthorityDescription(menu) {
+            this.$http.get('/api/behaviors/' + menu.code)
+              .then(res => {
+                  if (res.status === 200) {
+                      const list = res.data.resultObject.data;
+                      const values = [];
+                      list.forEach(data => {
+                          values.push(data.name);
+                      });
+                      menu.description = values.join('\n')
                   }
             });
         },

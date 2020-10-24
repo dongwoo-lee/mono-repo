@@ -4,11 +4,11 @@ let mixinBasicPage = {
     mixins: [ MixinCommon ],
     data() {
         return {
-            selectedItems: [],                       // 선택된 로우 데이터
+            selectedItems: [],                            // 선택된 로우 데이터
             selectedIds: null,
-            pgmOptions: [],                          // 사용처 목록 조회
+            pgmOptions: [],                               // 사용처 목록 조회
             publicCodesOptions: [],                       // 공유소재 분류 목록
-            rePortOptions: [],                       // 취재물 분류 목록
+            rePortOptions: [],                            // 취재물 분류 목록
             mediaPrimaryOptions: [],                      // (구)프로소재, 공유소재 매체목록 
             contextMenu: [
                 { name: 'edit', text: '편집' },
