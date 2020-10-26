@@ -1,10 +1,12 @@
 ﻿using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
+using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +19,13 @@ namespace MAMBrowser.Controllers
     [Route("api/products/workspace/public")]
     public class PublicFileController : ControllerBase
     {
+        private readonly IFileService _fileService;
+        private readonly IOptions<AppSettings> _appSesstings;
+        public PublicFileController(IOptions<AppSettings> appSesstings, ServiceResolver sr)
+        {
+            _appSesstings = appSesstings;
+            _fileService = sr("PublicWorkConnection");
+        }
         /// <summary>
         /// 공유소재 -  파일+메타데이터 등록
         /// </summary>
@@ -60,7 +69,7 @@ namespace MAMBrowser.Controllers
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
-                else 
+                else
                 {
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
                 }
@@ -88,7 +97,7 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta/{mediaCd}/{cateCd}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData(string mediaCd, string cateCd, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery]  long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData(string mediaCd, string cateCd, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
@@ -122,8 +131,7 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-
-            var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+            var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, 0);
             //string tmpPath = @"d:\임시폴더\";
             //BufferedStream bst = new BufferedStream(downloadStream);
             //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);

@@ -3,12 +3,14 @@ using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,6 +18,11 @@ namespace MAMBrowser.BLL
 {
     public class ProductsBLL
     {
+        private readonly AppSettings _appSesstings;
+        public ProductsBLL(IOptions<AppSettings> appSesstings)
+        {
+            _appSesstings = appSesstings.Value;
+        }
         public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt, string pgm, string editor)
         {
             DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
@@ -23,7 +30,7 @@ namespace MAMBrowser.BLL
             var queryTemplate = builder.AddTemplate(@"SELECT ROWNUM AS RNO, MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
                      FROM
                      MEM_PROGRAM_VIEW /**where**/");
-            var param = new { MEDIA = media, ONAIRDATE = brd_dt, PDQ_PRODUCTID = pgm, EDITOR=editor };
+            var param = new { MEDIA = media, ONAIRDATE = brd_dt, PDQ_PRODUCTID = pgm, EDITOR = editor };
             builder.Where("MEDIA = :MEDIA");
             if (!string.IsNullOrEmpty(brd_dt))
             {
@@ -38,7 +45,7 @@ namespace MAMBrowser.BLL
                 builder.Where("EDITOR = :EDITOR");
             }
             builder.OrderBy("ONAIRDATE, ONAIRTIME");
-            Repository<DTO_PGM_INFO> repository = new Repository<DTO_PGM_INFO>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PGM_INFO>((row) =>
             {
                 return new DTO_PGM_INFO
@@ -53,7 +60,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    ReqCompleteDtm = row.REQTIME!=null ? ((DateTime)row.REQTIME).ToString(Utility.DTM19) : null,
+                    ReqCompleteDtm = row.REQTIME != null ? ((DateTime)row.REQTIME).ToString(Utility.DTM19) : null,
                     FilePath = row.MASTERFILE
                 };
             });
@@ -104,12 +111,12 @@ namespace MAMBrowser.BLL
             }
             builder.OrderBy("EDITTIME DESC");
 
-            
+
             var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
-            Repository<DTO_SCR_SPOT> repository = new Repository<DTO_SCR_SPOT>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_SCR_SPOT>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -123,13 +130,13 @@ namespace MAMBrowser.BLL
                     RowNO = Convert.ToInt32(row.RNO),
                     Name = row.SPOTNAME,
                     CategoryName = row.CODENAME,
-                    Duration= row.MILLISEC,
-                    Track= row.EDITFORMAT,
-                    BrdDT= row.ONAIRDATE,
-                    EditorID= row.EDITOR,
-                    PGMName= row.EVENTNAME,
-                    MasteringDtm= row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
-                    FilePath= row.MASTERFILE,
+                    Duration = row.MILLISEC,
+                    Track = row.EDITFORMAT,
+                    BrdDT = row.ONAIRDATE,
+                    EditorID = row.EDITOR,
+                    PGMName = row.EVENTNAME,
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    FilePath = row.MASTERFILE,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
                 };
@@ -196,7 +203,7 @@ namespace MAMBrowser.BLL
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
-            Repository<DTO_REPORT> repository = new Repository<DTO_REPORT>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_REPORT>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -209,7 +216,7 @@ namespace MAMBrowser.BLL
                     Name = row.REPORTNAME,
                     CategoryName = row.CODENAME,
                     Reporter = row.REPORTER,
-                    PGMID= row.PRODUCTID,
+                    PGMID = row.PRODUCTID,
                     PGMName = row.EVENTNAME,
                     BrdDT = row.ONAIRDATE,
                     Duration = row.MILLISEC,
@@ -217,7 +224,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -235,11 +242,11 @@ namespace MAMBrowser.BLL
             DTO_RESULT_PAGE_LIST<DTO_PRO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PRO>();
             var builder = new SqlBuilder();
             DynamicParameters param = new DynamicParameters();
-            param.AddDynamicParams(new 
+            param.AddDynamicParams(new
             {
                 MEDIA = media,
                 CATE = cate,
-                TYPE= type,
+                TYPE = type,
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
@@ -288,7 +295,7 @@ namespace MAMBrowser.BLL
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
-            Repository<DTO_PRO> repository = new Repository<DTO_PRO>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PRO>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -306,7 +313,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     ProType = row.TYPENAME,
                     FilePath = row.MASTERFILE,
                 };
@@ -317,9 +324,32 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        //public DTO_RESULT_LIST<DTO_SONG> FindMusic(int rowPerPage, int selectPage, string sortKey, string sortValue) { }
+        //public DTO_RESULT_LIST<DTO_SONG> FindMusic(int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        //{
+        //    //var data = netDrivePath.Split(Path.DirectorySeparatorChar);
+        //    //var hostName = data[2];
+        //    //var albumDomain = $@"http://{hostName}.{mbcDomain}";
+        //}
+        //public DTO_RESULT_LIST<DTO_SONG> GetAlbumImage(string directory, string fileName)
+        //{
+        //    var scraps = directory.Split(Path.DirectorySeparatorChar);
+        //    var hostName = scraps[2];
+        //    var albumUrl = $@"http://{hostName}.{_appSesstings.Value.MbcDomain}/{string.Join("/", scraps.Skip(3).ToList())}";
+        //    HttpClient client = new HttpClient();
+
+        //}
+        //public DTO_RESULT_LIST<DTO_SONG> GetAlbumImagePathList(string directory, string fileName)
+        //{
+        //    var filePath = $@"{directory}\{fileName}";
+        //    var hostName = scraps[2];
+        //    var albumUrl = $@"http://{hostName}.{_appSesstings.Value.MbcDomain}/{string.Join("/", scraps.Skip(3).ToList())}";
+        //    HttpClient client = new HttpClient();
+        //    //client.
+        //    return null;
+        //}
+
         //public DTO_RESULT_LIST<DTO_EFFECT> FindEffect(string searchWord, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
-        public DTO_RESULT_PAGE_LIST<DTO_SB> FindSB(string viewName,string media, string brd_dt, string pgm) 
+        public DTO_RESULT_PAGE_LIST<DTO_SB> FindSB(string viewName, string media, string brd_dt, string pgm)
         {
             DTO_RESULT_PAGE_LIST<DTO_SB> returnData = new DTO_RESULT_PAGE_LIST<DTO_SB>();
             var builder = new SqlBuilder();
@@ -347,7 +377,7 @@ namespace MAMBrowser.BLL
             }
             builder.OrderBy("SBID ASC");
 
-            Repository<DTO_SB> repository = new Repository<DTO_SB>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_SB>((row) =>
             {
                 return new DTO_SB
@@ -357,10 +387,10 @@ namespace MAMBrowser.BLL
                     ID = row.SBID,
                     Name = row.SBNAME,
                     Length = row.DURSEC,
-                    Capacity=row.CAPACITY,
+                    Capacity = row.CAPACITY,
                     Status = row.STATENAME,
-                    PGMName =row.EVENTNAME ,
-                    EditorID=row.EDITOR,
+                    PGMName = row.EVENTNAME,
+                    EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                 };
             });
@@ -385,7 +415,7 @@ namespace MAMBrowser.BLL
             var querySource = builder.AddTemplate(@"SELECT * FROM MEM_SB_CLIP_VIEW /**where**/ /**orderby**/");
             if (!string.IsNullOrEmpty(brd_dt))
             {
-                builder.Where("ONAIRDATE = :BRD_DT");   
+                builder.Where("ONAIRDATE = :BRD_DT");
             }
             if (!string.IsNullOrEmpty(sbID))
             {
@@ -393,7 +423,7 @@ namespace MAMBrowser.BLL
             }
             builder.OrderBy("NUM, CMSEQNUM");
 
-            Repository<DTO_SB_CONTENT> repository = new Repository<DTO_SB_CONTENT>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_SB_CONTENT>((row) =>
             {
                 return new DTO_SB_CONTENT
@@ -424,7 +454,7 @@ namespace MAMBrowser.BLL
             {
                 MEDIA = media,
                 BRD_DT = brd_dt,
-                CATE= cate,
+                CATE = cate,
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ /**orderby**/");
@@ -439,7 +469,7 @@ namespace MAMBrowser.BLL
             }
             if (!string.IsNullOrEmpty(brd_dt))
             {
-                builder.Where("ONAIRDATE = :BRD_DT");   
+                builder.Where("ONAIRDATE = :BRD_DT");
             }
             if (!string.IsNullOrEmpty(pgmName))
             {
@@ -449,10 +479,10 @@ namespace MAMBrowser.BLL
                     builder.Where($"LOWER(CMGROUPNAME) LIKE LOWER('%{word}%')");
                 }
             }
-            
+
             builder.OrderBy("MEDIA, ONAIRTIME, CMGROUPNAME");
 
-            Repository<DTO_CM> repository = new Repository<DTO_CM>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CM>((row) =>
             {
                 return new DTO_CM
@@ -499,7 +529,7 @@ namespace MAMBrowser.BLL
             }
             builder.OrderBy("NUM");
 
-            Repository<DTO_CM_CONTENT> repository = new Repository<DTO_CM_CONTENT>();
+            Repository repository = new Repository();
 
             var resultMapping = new Func<dynamic, DTO_CM_CONTENT>((row) =>
             {
@@ -525,7 +555,7 @@ namespace MAMBrowser.BLL
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string start_dt, string end_dt, string spotId, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT> FindMcrSpot(string media, string start_dt, string end_dt, string spotId, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -555,7 +585,7 @@ namespace MAMBrowser.BLL
             }
             if (!string.IsNullOrEmpty(spotId))
             {
-                builder.Where("SPOTID=:SPOTID");   
+                builder.Where("SPOTID=:SPOTID");
             }
             if (!string.IsNullOrEmpty(editor))
             {
@@ -569,7 +599,7 @@ namespace MAMBrowser.BLL
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
-            Repository<DTO_MCR_SPOT> repository = new Repository<DTO_MCR_SPOT>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_MCR_SPOT>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -600,7 +630,7 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_PAGE_LIST<DTO_FILLER> FindFiller(string viewName, string brd_dt, string cate, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_FILLER> FindFiller(string viewName, string brd_dt, string cate, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -646,7 +676,7 @@ namespace MAMBrowser.BLL
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
-            Repository<DTO_FILLER> repository = new Repository<DTO_FILLER>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_FILLER>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -666,7 +696,7 @@ namespace MAMBrowser.BLL
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME==null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -676,7 +706,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue) 
+        public DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME> FindFillerTime(string media, string start_dt, string end_dt, string cate, string status, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -686,7 +716,7 @@ namespace MAMBrowser.BLL
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(new
             {
-                MEDIA= media,
+                MEDIA = media,
                 CATE = cate,
                 START_DT = start_dt,
                 END_DT = end_dt,
@@ -730,7 +760,7 @@ namespace MAMBrowser.BLL
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
-            Repository<DTO_FILLER_TIME> repository = new Repository<DTO_FILLER_TIME>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_FILLER_TIME>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -799,7 +829,7 @@ ORDER BY BRD_DTM) D");
                 }
             }
 
-            Repository<DTO_DL30> repository = new Repository<DTO_DL30>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_DL30>((row) =>
             {
                 return new DTO_DL30

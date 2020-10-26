@@ -23,7 +23,7 @@ INNER JOIN M30_USER_EXT ON MIROS_USER.PERSONID = M30_USER_EXT.USER_ID
 INNER JOIN M30_ROLE_EXT ON MIROS_USER.ROLE = M30_ROLE_EXT.ROLE_ID
 INNER JOIN M30_CODE A ON A.CODE = M30_ROLE_EXT.AUTHOR_CD
 LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD");
-            Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_USER_DETAIL>((row) =>
             {
                 return new DTO_USER_DETAIL
@@ -54,7 +54,7 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD");
             //USER_EXT_ID로 업데이트 되게끔... 향후수정.
             var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_MAX=:DISK_MAX, DISK_USED=:DISK_USED, MENU_GRP_CD=:MENU_GRP_CD,USED=:USED WHERE USER_ID=:USER_ID");
             builder.AddParameters(updateDtoList);
-            Repository<UserExtModel> repository = new Repository<UserExtModel>();
+            Repository repository = new Repository();
             //var paramMap = updateDtoList.Select((entity) =>
             //{
             //    return new
@@ -84,7 +84,7 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD
             DynamicParameters param = new DynamicParameters();
             param.Add("PERSONID", id);
 
-            Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_USER_DETAIL>((row) =>
             {
                 return new DTO_USER_DETAIL
@@ -117,7 +117,7 @@ INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
             DynamicParameters param = new DynamicParameters();
             param.Add("USER_ID", id);
             builder.Where("USER_ID = :USER_ID");
-            Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
             {
                 return new DTO_MENU
@@ -142,7 +142,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE= M30_MENU_MAP.CODE /**where**/");
             builder.Where("MAP_CD='S00G01C001'");
             param.Add("GRP_CD", grpId);
             builder.Where("GRP_CD = :GRP_CD");
-            Repository<DTO_MENU> repository = new Repository<DTO_MENU>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
             {
                 return new DTO_MENU
@@ -168,7 +168,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             DynamicParameters param = new DynamicParameters();
             param.Add("AUTHOR_CD", authorCd);
 
-            Repository <DTO_MENU> repository = new Repository<DTO_MENU>();
+            Repository  repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_MENU>((row) =>
             {
                 return new DTO_MENU
@@ -189,7 +189,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G03'");
 
-            Repository<DTO_COMMON_CODE> repository = new Repository<DTO_COMMON_CODE>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_COMMON_CODE>((row) =>
             {
                 return new DTO_COMMON_CODE
@@ -209,7 +209,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G04'");
 
-            Repository<DTO_COMMON_CODE> repository = new Repository<DTO_COMMON_CODE>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_COMMON_CODE>((row) =>
             {
                 return new DTO_COMMON_CODE
@@ -228,7 +228,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER /**where**/");
             builder.Where("PERSONID=:PERSONID");
-            Repository<DTO_USER> repository = new Repository<DTO_USER>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_USER>((row) =>
             {
                 return new DTO_USER
@@ -250,7 +250,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PASSWD FROM MIROS_USER /**where**/");
             builder.Where("PERSONID=:PERSONID AND PASSWD=:PASSWD");
-            Repository<DTO_USER> repository = new Repository<DTO_USER>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_USER>((row) =>
             {
                 return new DTO_USER
@@ -279,7 +279,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = A.CODE");
             var queryTemplate = builder.AddTemplate(@"SELECT ROLE_ID, ROLE_NAME, AUTHOR_CD, AUTHOR.NAME AS AUTHOR_NAME FROM MIROS_ROLE
 LEFT JOIN M30_ROLE_EXT ON M30_ROLE_EXT.ROLE_ID = MIROS_ROLE.ROLE
 LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.CODE = M30_ROLE_EXT.AUTHOR_CD");
-            Repository<DTO_ROLE_DETAIL> repository = new Repository<DTO_ROLE_DETAIL>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_ROLE_DETAIL>((row) =>
             {
                 return new DTO_ROLE_DETAIL
@@ -333,7 +333,7 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
                     builder.Where($"LOWER(DESCRIPTION) LIKE LOWER('%{word}%')");
                 }
             }
-            Repository<DTO_LOG> repository = new Repository<DTO_LOG>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_LOG>((row) =>
             {
                 return new DTO_LOG
@@ -358,7 +358,7 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
             var queryTemplate = builder.AddTemplate("UPDATE M30_ROLE_EXT SET AUTHOR_CD=:AUTHOR_CD /**where**/");
             builder.AddParameters(updateDtoList);
             builder.Where("ROLE_ID=:ROLE_ID");
-            Repository<DTO_USER_DETAIL> repository = new Repository<DTO_USER_DETAIL>();
+            Repository repository = new Repository();
             var paramMap = updateDtoList.Select((entity) =>
             {
                 return new

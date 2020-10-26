@@ -21,8 +21,10 @@ namespace MAMBrowser.Controllers
     [Route("api")]
     public class APIController : ControllerBase
     {
-        public APIController()
+        private readonly AppSettings _appSesstings;
+        public APIController(IOptions<AppSettings> appSesstings)
         {
+            _appSesstings = appSesstings.Value;
         }
 
         /// <summary>
@@ -53,11 +55,11 @@ namespace MAMBrowser.Controllers
                     else
                     {
                         var tokenHandler = new JwtSecurityTokenHandler();
-                        var Signature = Encoding.ASCII.GetBytes(SystemConfig.AppSettings.TokenSignature);
+                        var Signature = Encoding.ASCII.GetBytes(_appSesstings.TokenSignature);
                         var now = DateTime.UtcNow;
                         var tokenDescriptor = new SecurityTokenDescriptor
                         {
-                            Issuer = SystemConfig.AppSettings.TokenIssuer,
+                            Issuer = _appSesstings.TokenIssuer,
                             Expires = now.AddHours(1),
                             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Signature), SecurityAlgorithms.HmacSha256Signature),
                             IssuedAt = now,
@@ -116,7 +118,7 @@ namespace MAMBrowser.Controllers
             {
                 APIBLL bll = new APIBLL();
                 var updateCount = bll.UpdateUserDetail(dtoList);
-                if (updateCount >0)
+                if (updateCount > 0)
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -173,7 +175,7 @@ namespace MAMBrowser.Controllers
                         user.MenuList.Add(menu);//최상위 메뉴
                     }
 
-                    if (lookup.Contains(menu.ID))   
+                    if (lookup.Contains(menu.ID))
                     {
                         //자식이있으면 자식추가.
                         menu.Children = lookup[menu.ID].ToList();
@@ -322,7 +324,7 @@ namespace MAMBrowser.Controllers
         [HttpGet("roles")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> GetRoleList()
         {
-            
+
             DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>>();
             try
             {
@@ -351,7 +353,7 @@ namespace MAMBrowser.Controllers
             {
                 APIBLL bll = new APIBLL();
                 var updateCount = bll.UpdateRole(dtoList);
-                if (updateCount >0)
+                if (updateCount > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
@@ -444,7 +446,7 @@ namespace MAMBrowser.Controllers
             {
                 APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
-                result.ResultObject.Data = SystemConfig.AppSettings.DiskScope;
+                result.ResultObject.Data = _appSesstings.DiskScope;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

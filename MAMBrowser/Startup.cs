@@ -5,7 +5,6 @@ using MAMBrowser.Helpers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using MAMBrowser.Entiies;
 using System;
 using VueCliMiddleware;
 using Microsoft.Extensions.Hosting;
@@ -13,14 +12,15 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
+using MAMBrowser.Processor;
 using MAMBrowser.Controllers;
-using System.Text.Json.Serialization;
-using MAMBrowser.DTO;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using MAMBrowser.Services;
+using System.Linq;
+using MAMBrowser.DAL;
 
 namespace MAMBrowser
 {
+    public delegate IFileService ServiceResolver(string key);
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -34,11 +34,13 @@ namespace MAMBrowser
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            StorageDISetting(services);
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
-            services.AddSwaggerGen(c=>
+
+            services.AddSwaggerGen(c =>
             {
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -53,12 +55,14 @@ namespace MAMBrowser
                 configuration.RootPath = "ClientApp";
             });
 
+
             // configure strongly typed settings objects.  DI등록 안함.
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            var appSettings = appSettingsSection.Get<AppSettings>();
+            var optionSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(optionSection);
+            var appSettings = optionSection.Get<AppSettings>();
             var signatureKey = Encoding.ASCII.GetBytes(appSettings.TokenSignature);
+            Repository.ConnectionString = appSettings.ConnectionString;
             //var issuerKey = Encoding.ASCII.GetBytes(appSettings.TokenIssuer);
-            SystemConfig.AppSettings = appSettings;
 
             services.AddAuthentication(x =>
             {
@@ -81,7 +85,7 @@ namespace MAMBrowser
                  {
                      ValidateIssuerSigningKey = true,
                      IssuerSigningKey = new SymmetricSecurityKey(signatureKey),
-                     ValidIssuer = SystemConfig.AppSettings.TokenIssuer,
+                     ValidIssuer = appSettings.TokenIssuer,
                      ValidateIssuer = true,
                      ValidateAudience = false,
                      ClockSkew = TimeSpan.Zero,
@@ -90,7 +94,7 @@ namespace MAMBrowser
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, ILoggerFactory  logFactory)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, ILoggerFactory logFactory)
         {
             app.UseFileServer();
             app.UseSwagger();
@@ -136,6 +140,84 @@ namespace MAMBrowser
                     spa.UseVueCli(npmScript: "serve");
                 }
 
+            });
+        }
+
+        private void StorageDISetting(IServiceCollection services)
+        {
+            
+            services.AddTransient<PrivateFileBLL>();
+
+            var storagesSection = Configuration.GetSection("Storages");
+            var storage = storagesSection.Get<Storages>();
+
+            services.AddTransient<IFileService, NetDriveService>(serviceProvider =>
+            {
+                return new NetDriveService
+                {
+                    UserId = storage.MirosConnection["UserId"].ToString(),
+                    UserPass = storage.MirosConnection["UserPass"].ToString()
+                };
+            });
+            services.AddTransient<IFileService, MusicService>(serviceProvider =>
+            {
+                return new MusicService
+                {
+                    AuthorKey = storage.MusicConnection["AuthorKey"].ToString(),
+                    MbcDomain = storage.MusicConnection["MbcDomain"].ToString(),
+                };
+            });
+            services.AddTransient<IFileService, FtpService>(serviceProvider =>
+            {
+                return new FtpService
+                {
+                    Name = "PrivateWorkConnection",
+                    Host = storage.PrivateWorkConnection["Host"].ToString(),
+                    UserId = storage.PrivateWorkConnection["UserId"].ToString(),
+                    UserPass = storage.PrivateWorkConnection["UserPass"].ToString(),
+                    TmpUploadFolder = storage.PrivateWorkConnection["TmpUploadFolder"].ToString(),
+                    UploadFolder = storage.PrivateWorkConnection["UploadFolder"].ToString(),
+                };
+            });
+            services.AddTransient<IFileService, FtpService>(serviceProvider =>
+            {
+                return new FtpService
+                {
+                    Name = "PublicWorkConnection",
+                    Host = storage.PublicWorkConnection["Host"].ToString(),
+                    UserId = storage.PublicWorkConnection["UserId"].ToString(),
+                    UserPass = storage.PublicWorkConnection["UserPass"].ToString(),
+                    TmpUploadFolder = storage.PublicWorkConnection["TmpUploadFolder"].ToString(),
+                    UploadFolder = storage.PublicWorkConnection["UploadFolder"].ToString(),
+                };
+            });
+            services.AddTransient<IFileService, FtpService>(serviceProvider =>
+            {
+                return new FtpService
+                {
+                    Name = "DLArchiveConnection",
+                    Host = storage.DLArchiveConnection["Host"].ToString(),
+                    UserId = storage.DLArchiveConnection["UserId"].ToString(),
+                    UserPass = storage.DLArchiveConnection["UserPass"].ToString()
+                };
+            });
+            services.AddTransient<ServiceResolver>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case "PrivateWorkConnection":
+                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                    case "PublicWorkConnection":
+                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                    case "MirosConnection":
+                        return serviceProvider.GetService<NetDriveService>();
+                    case "MusicConnection":
+                        return serviceProvider.GetService<MusicService>();
+                    case "DLArchiveConnection":
+                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                    default:
+                        throw new Exception("KeyNotFoundException"); // or maybe return null, up to you
+                }
             });
         }
     }

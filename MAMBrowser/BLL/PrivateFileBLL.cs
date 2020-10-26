@@ -1,10 +1,14 @@
 ﻿using Dapper;
+using log4net.Util;
+using MAMBrowser.BLL;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
+using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,50 +19,52 @@ namespace MAMBrowser.Controllers
 {
     public class PrivateFileBLL
     {
+        private readonly AppSettings _appSettings;
+        private readonly IFileService _fileService;
+        public PrivateFileBLL(IOptions<AppSettings> appSesstings, ServiceResolver sr)
+        {
+            _appSettings = appSesstings.Value;
+            _fileService = sr("PrivateWorkConnection");
+        }
+
         public DTO_PRIVATE_FILE Upload(long userextid, IFormFile file, PrivateFileModel metaData)
         {
             long ID = GetID();
             string date = DateTime.Now.ToString(Utility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
-            var relativeSourceFolder = $"{SystemConfig.AppSettings.FtpTmpUploadFolder}";
-            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPrivateUploadFolder}/{userextid}/{date}";
+            var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
+            var relativeTargetFolder = $"{_fileService.UploadFolder}/{userextid}/{date}";
             var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
             var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
 
-            MyFtp.MakeFTPDir(relativeSourceFolder);
-            if (MyFtp.Upload(file.OpenReadStream(), relativeSourcePath, file.Length))
-            {
-                MyFtp.MakeFTPDir(relativeTargetFolder);
-                if (MyFtp.FtpRename(relativeSourcePath, relativeTargetPath))
-                {
-                    DynamicParameters param = new DynamicParameters();
-                    param.Add("SEQ", ID);
-                    param.Add("USEREXTID", userextid);
-                    param.Add("TITLE", metaData.TITLE);
-                    param.Add("MEMO", metaData.MEMO);
-                    param.Add("AUDIO_FORMAT", "test format");
-                    param.Add("FILE_SIZE", file.Length);
-                    param.Add("FILE_PATH", relativeTargetPath);
-                    //db에 데이터 등록
-                    var builder = new SqlBuilder();
-                    var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
+            _fileService.MakeDirectory(relativeSourceFolder);
+            _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
+            _fileService.MakeDirectory(relativeTargetFolder);
+            _fileService.Move(relativeSourcePath, relativeTargetPath);
+            DynamicParameters param = new DynamicParameters();
+            param.Add("SEQ", ID);
+            param.Add("USEREXTID", userextid);
+            param.Add("TITLE", metaData.TITLE);
+            param.Add("MEMO", metaData.MEMO);
+            param.Add("AUDIO_FORMAT", "test format");
+            param.Add("FILE_SIZE", file.Length);
+            param.Add("FILE_PATH", relativeTargetPath);
+            //db에 데이터 등록
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
 VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
-                    Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
-                    repository.Insert(queryTemplate.RawSql, param);
+            Repository repository = new Repository();
+            repository.Insert(queryTemplate.RawSql, param);
 
-                    
-                    return Get(ID);
-                }
-            }
-            return null;
+            return Get(ID);
         }
-     
+
         public bool DeleteDB(long userextid, LongList seqList)
         {
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='N', DELETED_DTM=SYSDATE WHERE SEQ IN :SEQ");
-            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
             return repository.Update(queryTemplate.RawSql, param) > 0 ? true : false;
@@ -70,7 +76,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"DELETE M30_PRIVATE_SPACE WHERE USED='N' AND SEQ IN :SEQ");
-            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
             repository.Delete(queryTemplate.RawSql, param);
@@ -84,7 +90,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"DELETE M30_PRIVATE_SPACE WHERE USED='N'");
-            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             repository.Delete(queryTemplate.RawSql, null);
             return true;
@@ -94,7 +100,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y', DELETED_DTM=NULL WHERE SEQ IN :SEQ");
-            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
             return repository.Update(queryTemplate.RawSql, param) > 0 ? true : false;
@@ -105,17 +111,17 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET TITLE=:TITLE, MEMO=:MEMO, EDITED_DTM = SYSDATE /**where**/");
             builder.Where("SEQ=:SEQ");
-            Repository<PrivateFileModel> repository = new Repository<PrivateFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(metaData);
             return repository.Update(queryTemplate.RawSql, param);
         }
-        
+
         public DTO_PRIVATE_FILE Get(long id)
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE WHERE SEQ=:SEQ");
-            Repository<DTO_PRIVATE_FILE> repository = new Repository<DTO_PRIVATE_FILE>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PRIVATE_FILE>((row) =>
             {
                 return new DTO_PRIVATE_FILE
@@ -134,7 +140,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     FileExt = Path.GetExtension(row.FILE_PATH)
                 };
             });
-            return repository.Get(queryTemplate.RawSql, new { SEQ=id },resultMapping);
+            return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
         public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FineData(string used, string start_dt, string end_dt, long userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
@@ -187,7 +193,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
 
-            Repository<DTO_PRIVATE_FILE> repository = new Repository<DTO_PRIVATE_FILE>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PRIVATE_FILE>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -220,7 +226,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT M30_PRIVATE_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");
-            Repository<long> repository = new Repository<long>();
+            Repository repository = new Repository();
 
             var resultMapping = new Func<dynamic, long>((row) =>
             {

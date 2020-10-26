@@ -1,15 +1,21 @@
 ﻿using log4net.Appender;
 using log4net.Util;
+using MAMBrowser.BLL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
+using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +31,17 @@ namespace MAMBrowser.Controllers
     [Route("api/products/workspace/private")]
     public class PrivateFileController : ControllerBase
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IOptions<AppSettings> _appSesstings;
+        private readonly PrivateFileBLL _bll;
+        private readonly IFileService _fileService;
+        public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, PrivateFileBLL bll, ServiceResolver sr)
+        {
+            _bll = bll;
+            _appSesstings = appSesstings;
+            _fileService = sr("PrivateWorkConnection");
+            _hostingEnvironment = hostingEnvironment;
+        }
         /// <summary>
         /// My 공간- 파일+메타데이터 등록
         /// </summary>
@@ -40,8 +57,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                var success = bll.Upload(userextid,file, metaData);
+                var success = _bll.Upload(userextid, file, metaData);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -63,12 +79,12 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.UpdateData(metaData) > 0)
+                if (_bll.UpdateData(metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
-                else {
+                else
+                {
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
                 }
             }
@@ -96,8 +112,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                result.ResultObject = bll.FineData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FineData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -124,8 +139,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                result.ResultObject = bll.FineData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FineData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -145,8 +159,7 @@ namespace MAMBrowser.Controllers
         public IActionResult GetFile(long seq)
         {
             //range 있을떄는 206 반환하도록
-            PrivateFileBLL bll = new PrivateFileBLL();
-            var fileData = bll.Get(seq);
+            var fileData = _bll.Get(seq);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
@@ -156,27 +169,32 @@ namespace MAMBrowser.Controllers
             }
             return new PushStreamResult(OnStreamAvailable, contentType, seq, fileName, fileData.FileSize);
         }
-       
+
         [HttpGet("files2")]
         public FileResult GetFile2(long seq)
         {
-            //range 있을떄는 206 반환하도록
-            //string filePath = @"ftp/VOL2/SHARE/3. 개인자료/이동우/mam storage/private/159/20200920/262_1hour.wav";
-            string filePath = @"d:\PM20200907300NA.wav";
-            string fileName = @"PM20200907300NA.wav";
+            var fileData = _bll.Get(seq);
+            string fileName = $"{fileData.Title}{fileData.FileExt}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
-            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-            return PhysicalFile(filePath, contentType, true);
+            var stream = _fileService.GetDownloadStream(fileData.FilePath, 0);
+            string projectRootPath = _hostingEnvironment.ContentRootPath;
+            string root = _hostingEnvironment.WebRootPath;
+            string path = @$"{projectRootPath}/bin/debug/netcoreapp3.1/tmpdownload/{fileName}";
+            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
+            {
+                stream.CopyTo(fs);
+            }
+            return PhysicalFile(path, contentType, fileName, true);
         }
         [HttpGet("waveform/{seq}")]
         public List<float> GetWaveform(long seq)
         {
-            PrivateFileBLL bll = new PrivateFileBLL();
-            var fileData = bll.Get(seq);
+            var fileData = _bll.Get(seq);
             string waveFileName = Path.GetFileName(fileData.FilePath);
             string waveformFileName = $"{Path.GetFileNameWithoutExtension(fileData.FilePath)}.egy";
             string waveformFilePath = fileData.FilePath.Replace(waveFileName, waveformFileName);
@@ -186,19 +204,19 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-            var downloadStream = MyFtp.Download(waveformFilePath, 0);
+            var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, 0);
             return Utility.GetPeekValues(downloadStream);
         }
-        
+
         private void OnStreamAvailable(Stream stream/*, CancellationToken requestAborted*/, long seq)
         {
-            PrivateFileBLL bll = new PrivateFileBLL();
-            var fileData = bll.Get(seq);
-            
+            var fileData = _bll.Get(seq);
+
+
             var rangeData = HttpContext.Request.GetTypedHeaders().Range;
             if (rangeData == null)
             {
-                var downloadStream = MyFtp.Download(fileData.FilePath, 0);
+                var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, 0);
                 Response.ContentLength = fileData.FileSize;
                 if (fileData.FileExt != ".mp2")
                 {
@@ -213,7 +231,7 @@ namespace MAMBrowser.Controllers
                 }
                 var contentSize = fileData.FileSize - range.From;
 
-                var downloadStream = MyFtp.Download(fileData.FilePath, (long)range.From);
+                var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, (long)range.From);
                 HttpContext.Response.GetTypedHeaders().ContentRange = new Microsoft.Net.Http.Headers.ContentRangeHeaderValue((long)range.From, fileData.FileSize - 1, fileData.FileSize);
                 HttpContext.Response.GetTypedHeaders().ContentLength = (long)contentSize;
                 HttpContext.Response.StatusCode = 206;
@@ -223,7 +241,7 @@ namespace MAMBrowser.Controllers
                     downloadStream.CopyTo(stream);
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -239,8 +257,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.DeleteDB(userextid, seqlist))
+                if (_bll.DeleteDB(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -265,8 +282,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.DeletePhysical(userextid, seqlist))
+                if (_bll.DeletePhysical(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -291,8 +307,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.DeleteAllPhysical(userextid))
+                if (_bll.DeleteAllPhysical(userextid))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -345,8 +360,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PrivateFileBLL bll = new PrivateFileBLL();
-                if (bll.RecycleAll(userextid, seqlist))
+                if (_bll.RecycleAll(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

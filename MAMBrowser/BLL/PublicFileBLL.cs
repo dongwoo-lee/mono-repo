@@ -3,8 +3,10 @@ using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
+using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +16,19 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
-    public class PublicFileBLL 
+    public class PublicFileBLL
     {
+        public PublicFileBLL()
+        {
+
+        }
+        private readonly AppSettings _appSettings;
+        private readonly IFileService _fileService;
+        public PublicFileBLL(IOptions<AppSettings> appSesstings, ServiceResolver sr)
+        {
+            _appSettings = appSesstings.Value;
+            _fileService = sr("PublicWorkConnection");
+        }
         public DTO_PUBLIC_FILE Upload(IFormFile file, PublicFileModel metaData)
         {
             //업로드 권한 처리 필요.
@@ -23,42 +36,37 @@ namespace MAMBrowser.Controllers
             long ID = GetID();
             string date = DateTime.Now.ToString(Utility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
-            var relativeSourceFolder = $"{SystemConfig.AppSettings.FtpTmpUploadFolder}";
-            var relativeTargetFolder = $"{SystemConfig.AppSettings.FtpPublicUploadFolder}/{metaData.USER_EXT_ID}/{date}";      //공유소재도 유저확장ID 사용?
+            var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
+            var relativeTargetFolder = $"{_fileService.UploadFolder}/{metaData.USER_EXT_ID}/{date}";      //공유소재도 유저확장ID 사용?
             var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
             var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
 
-            MyFtp.MakeFTPDir(relativeSourceFolder);
-            if (MyFtp.Upload(file.OpenReadStream(), relativeSourcePath, file.Length))
-            {
-                MyFtp.MakeFTPDir(relativeTargetFolder);
-                if (MyFtp.FtpRename(relativeSourcePath, relativeTargetPath))
-                {
-                    //db에 데이터 등록
-                    var builder = new SqlBuilder();
-                    //metaData.SEQ = ID;
-                    DynamicParameters param = new DynamicParameters();
-                    param.Add("SEQ", ID);
-                    param.Add("USER_EXT_ID", metaData.USER_EXT_ID);
-                    param.Add("TITLE", metaData.TITLE);
-                    param.Add("MEDIA_CD", metaData.MEDIA_CD);
-                    param.Add("CATE_CD", metaData.CATE_CD);
-                    param.Add("MEMO", metaData.MEMO);
-                    param.Add("AUDIO_FORMAT", "test format");
-                    param.Add("FILE_SIZE", file.Length);
-                    param.Add("FILE_PATH", relativeTargetPath);
+            _fileService.MakeDirectory(relativeSourceFolder);
+            _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
+            _fileService.MakeDirectory(relativeTargetFolder);
+            _fileService.Move(relativeSourcePath, relativeTargetPath);
+            //db에 데이터 등록
+            var builder = new SqlBuilder();
+            //metaData.SEQ = ID;
+            DynamicParameters param = new DynamicParameters();
+            param.Add("SEQ", ID);
+            param.Add("USER_EXT_ID", metaData.USER_EXT_ID);
+            param.Add("TITLE", metaData.TITLE);
+            param.Add("MEDIA_CD", metaData.MEDIA_CD);
+            param.Add("CATE_CD", metaData.CATE_CD);
+            param.Add("MEMO", metaData.MEMO);
+            param.Add("AUDIO_FORMAT", "test format");
+            param.Add("FILE_SIZE", file.Length);
+            param.Add("FILE_PATH", relativeTargetPath);
 
 
-                    var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PUBLIC_SPACE 
+            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PUBLIC_SPACE 
 VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
-                    Repository<PublicFileModel> repository = new Repository<PublicFileModel>();
-                    repository.Insert(queryTemplate.RawSql, param);
+            Repository repository = new Repository();
+            repository.Insert(queryTemplate.RawSql, param);
 
 
-                    return Get(ID);
-                }
-            }
-            return null;
+            return Get(ID);
         }
         public bool DeletePhysical(long seq)
         {
@@ -68,7 +76,7 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :F
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"DELETE M30_PUBLIC_SPACE WHERE SEQ=:SEQ");
             builder.Where("SEQ=:SEQ");
-            Repository<PublicFileModel> repository = new Repository<PublicFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seq);
             repository.Delete(queryTemplate.RawSql, param);
@@ -79,7 +87,7 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :F
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"UPDATE M30_PUBLIC_SPACE SET TITLE=:TITLE, MEMO=:MEMO,MEDIA_CD=:MEDIA_CD, CATE_CD=:CATE_CD, EDITED_DTM = SYSDATE /**where**/");
             builder.Where("SEQ=:SEQ");
-            Repository<PublicFileModel> repository = new Repository<PublicFileModel>();
+            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.AddDynamicParams(metaData);
             return repository.Update(queryTemplate.RawSql, param);
@@ -92,7 +100,7 @@ LEFT JOIN (select * from m30_code_map
 LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M ON M.CODEID=M30_CODE_MAP.GRP_CD
 where map_cd='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
 LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD WHERE SEQ=:SEQ");
-            Repository<DTO_PUBLIC_FILE> repository = new Repository<DTO_PUBLIC_FILE>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PUBLIC_FILE>((row) =>
             {
                 return new DTO_PUBLIC_FILE
@@ -156,7 +164,7 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                 builder.Where("EDITED_DTM < TO_DATE(:END_DT,'YYYYMMDD')+1");
             }
 
-            if (userextid!=null)
+            if (userextid != null)
             {
                 builder.Where("USER_EXT_ID=:USER_EXT_ID");
             }
@@ -183,7 +191,7 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
 
-            Repository<DTO_PUBLIC_FILE> repository = new Repository<DTO_PUBLIC_FILE>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PUBLIC_FILE>((row) =>
             {
                 if (returnData.TotalRowCount == 0)
@@ -218,7 +226,7 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT M30_PUBLIC_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");
-            Repository<long> repository = new Repository<long>();
+            Repository repository = new Repository();
 
             var resultMapping = new Func<dynamic, long>((row) =>
             {

@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DAL
 {
-    public class Repository<T> 
+    public class Repository 
     {
-        private string _strCon =  "";
+        public static string ConnectionString { get; set; }
         public Repository()
         {
-            _strCon = SystemConfig.AppSettings.ConnectionString;
         }
         public void Insert(string insertQuery, object entities)
         {
             
-            using (OracleConnection con = new OracleConnection(_strCon))
+            using (OracleConnection con = new OracleConnection(ConnectionString))
             {
                 con.Open();
                 using (var transaction = con.BeginTransaction())
@@ -38,7 +37,7 @@ namespace MAMBrowser.DAL
         }
         public int Update(string updateQuery, object entities)
         {
-            using (OracleConnection con = new OracleConnection(_strCon))
+            using (OracleConnection con = new OracleConnection(ConnectionString))
             {
                 con.Open();
                 using (var transaction = con.BeginTransaction())
@@ -61,7 +60,7 @@ namespace MAMBrowser.DAL
      
         public int Delete(string deleteQuery, object param)
         {
-            using (OracleConnection con = new OracleConnection(_strCon))
+            using (OracleConnection con = new OracleConnection(ConnectionString))
             {
                 con.Open();
                 using (var transaction = con.BeginTransaction())
@@ -81,18 +80,18 @@ namespace MAMBrowser.DAL
             }
             return -1;
         }
-        public T Get(string query, object param, Func<dynamic, T> resultMapping)
+        public T Get<T>(string query, object param, Func<dynamic, T> resultMapping)
         {
-            using (OracleConnection con = new OracleConnection(_strCon))
+            using (OracleConnection con = new OracleConnection(ConnectionString))
             {
                 con.Open();
                 var queryData = con.Query(query, param).Select<dynamic, T>(resultMapping).FirstOrDefault();
                 return queryData;
             }
         }
-        public IList<T> Select(string query, object param,Func<dynamic, T> resultMapping)
+        public IList<T> Select<T>(string query, object param,Func<dynamic, T> resultMapping)
         {
-            using (OracleConnection con = new OracleConnection(_strCon))
+            using (OracleConnection con = new OracleConnection(ConnectionString))
             {
                 con.Open();
                 var queryData = con.Query(query, param).Select<dynamic,T>(resultMapping);

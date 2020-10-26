@@ -16,7 +16,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PERSONNAME FROM MIROS_USER ORDER BY CONVERT(PERSONNAME, 'US8ICL'), PERSONNAME ASC");
-            Repository<DTO_USER> repository = new Repository<DTO_USER>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_USER>((row) =>
             {
                 return new DTO_USER
@@ -34,7 +34,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'CH' ORDER BY NUM");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -52,7 +52,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'RP' ORDER BY CODENAME");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -70,7 +70,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PA' AND SUBCODEID='Y'");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -88,7 +88,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODENAME, CODEID FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PT'");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -106,7 +106,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'SP' AND MEDIA = :MEDIA ORDER BY CODENAME");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -124,7 +124,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FP'");
-            Repository <DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository  repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -142,7 +142,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FF'");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -160,7 +160,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FT' ORDER BY NUM");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -178,7 +178,7 @@ namespace MAMBrowser.BLL
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'FE'");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -200,7 +200,7 @@ WHERE CODETYPE = 'UP'
 AND SUBCODEID = (SELECT MAX(SUBCODEID) FROM MEM_CATEGORY_VIEW /**where**/)
 ORDER BY NUM");
             builder.Where("SUBCODEID <= 'BRD_DT'");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -218,7 +218,7 @@ ORDER BY NUM");
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC'");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -236,7 +236,7 @@ ORDER BY NUM");
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'SE' ORDER BY NUM");
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -262,7 +262,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
             DynamicParameters param = new DynamicParameters();
             param.Add("GRP_CD", primaryCode);
 
-            Repository<DTO_CATEGORY> repository = new Repository<DTO_CATEGORY>();
+            Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY

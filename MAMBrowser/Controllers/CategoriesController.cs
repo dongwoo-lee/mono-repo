@@ -1,7 +1,9 @@
 ﻿using MAMBrowser.BLL;
 using MAMBrowser.DTO;
+using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,11 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
+        private readonly IOptions<AppSettings> _appSesstings;
+        public CategoriesController(IOptions<AppSettings> appSesstings)
+        {
+            _appSesstings = appSesstings;
+        }
         /// <summary>
         /// 매체 목록
         /// </summary>
@@ -241,7 +248,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject =bll.GetPgmCodes(brd_dt);
+                result.ResultObject = bll.GetPgmCodes(brd_dt);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

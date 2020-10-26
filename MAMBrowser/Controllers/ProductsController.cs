@@ -6,6 +6,7 @@ using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,13 @@ namespace MAMBrowser.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-
-        public ProductsController(IHostingEnvironment hostingEnvironment)
+        private readonly IOptions<AppSettings> _appSesstings;
+        private readonly ProductsBLL _bll;
+        public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsBLL bll)
         {
             _hostingEnvironment = hostingEnvironment;
+            _appSesstings = appSesstings;
+            _bll = bll;
         }
 
         /// <summary>
@@ -41,8 +45,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindPGM(media, brd_dt, pgm, editor);
+
+                result.ResultObject = _bll.FindPGM(media, brd_dt, pgm, editor);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -72,8 +76,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSCRSpot(media, start_dt, end_dt, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindSCRSpot(media, start_dt, end_dt, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -104,8 +108,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindReport(cate, start_dt, end_dt, pgm, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindReport(cate, start_dt, end_dt, pgm, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -134,8 +138,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRO>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRO>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindOldPro(media, cate, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindOldPro(media, cate, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -241,8 +245,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSB("MAIN", media, brd_dt, pgm);
+
+                result.ResultObject = _bll.FindSB("MAIN", media, brd_dt, pgm);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -265,8 +269,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSB("SUB", media, brd_dt, pgm);
+
+                result.ResultObject = _bll.FindSB("SUB", media, brd_dt, pgm);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -288,8 +292,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SB_CONTENT>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindSBContents(brd_dt, sbID);
+
+                result.ResultObject = _bll.FindSBContents(brd_dt, sbID);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -314,8 +318,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindCM(media, brd_dt, cate, pgmName);
+
+                result.ResultObject = _bll.FindCM(media, brd_dt, cate, pgmName);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -338,8 +342,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_CM_CONTENT>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindCMContents(brd_dt, cmgrpid);
+
+                result.ResultObject = _bll.FindCMContents(brd_dt, cmgrpid);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -365,8 +369,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindMcrSpot(media, start_dt, end_dt, spotId, editor, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindMcrSpot(media, start_dt, end_dt, spotId, editor, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -394,8 +398,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFiller("MEM_FILLER_PR_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindFiller("MEM_FILLER_PR_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -423,8 +427,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -450,13 +454,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/time/{media}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status,[FromQuery]string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindFillerTime(media,start_dt, end_dt, cate, status, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindFillerTime(media, start_dt, end_dt, cate, status, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -484,8 +488,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
             {
-                //ProductsBLL bll = new ProductsBLL();
-                //result.ResultObject = bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                //
+                //result.ResultObject = _bll.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -508,8 +512,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
             {
-                ProductsBLL bll = new ProductsBLL();
-                result.ResultObject = bll.FindNewDL(media, schDate, pgmName, sortKey, sortValue);
+
+                result.ResultObject = _bll.FindNewDL(media, schDate, pgmName, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
