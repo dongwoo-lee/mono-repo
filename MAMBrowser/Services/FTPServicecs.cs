@@ -1,4 +1,5 @@
-﻿using MAMBrowser.Helpers;
+﻿using FluentFTP;
+using MAMBrowser.Helpers;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -23,72 +24,86 @@ namespace MAMBrowser.Processor
 
         public void MakeDirectory(string relativeDirectoryPath)
         {
-            FtpWebRequest ftpRequest = null;
-            Stream ftpStream = null;
-
-            string[] subDirs = relativeDirectoryPath.Split('/');
-            string currentDir = Host;
-
-            foreach (string subDir in subDirs)
+            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
             {
-                try
-                {
-                    currentDir = $"{currentDir}/{subDir}";
-                    ftpRequest = (FtpWebRequest)FtpWebRequest.Create(currentDir);
-                    ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
-                    ftpRequest.UseBinary = true;
-                    ftpRequest.Credentials = new NetworkCredential(UserId, UserPass);
-                    FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
-                    ftpStream = response.GetResponseStream();
-                    ftpStream.Close();
-                    response.Close();
-                }
-                catch (Exception ex)
-                {
-                    //directory already exist I know that is weak but there is no way to check if a folder exist on ftp...
-                }
+                ftpClient.CreateDirectory(relativeDirectoryPath);
             }
+            
+            //FtpWebRequest ftpRequest = null;
+            //Stream ftpStream = null;
+
+            //string[] subDirs = relativeDirectoryPath.Split('/');
+            //string currentDir = Host;
+
+            //foreach (string subDir in subDirs)
+            //{
+            //    try
+            //    {
+            //        currentDir = $"{currentDir}/{subDir}";
+            //        ftpRequest = (FtpWebRequest)FtpWebRequest.Create(currentDir);
+            //        ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
+            //        ftpRequest.UseBinary = true;
+            //        ftpRequest.Credentials = new NetworkCredential(UserId, UserPass);
+            //        FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
+            //        ftpStream = response.GetResponseStream();
+            //        ftpStream.Close();
+            //        response.Close();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        //directory already exist I know that is weak but there is no way to check if a folder exist on ftp...
+            //    }
+            //}
         }
 
-        public void Upload(Stream fileStream, string relativeSourcePath, long fileLength)
+        public void Upload(Stream fileStream, string relativePath, long fileLength)
         {
-            FtpWebRequest ftpRequest = FtpWebRequest.Create($"{Host}/{relativeSourcePath}") as FtpWebRequest;
-            ftpRequest.Credentials = new NetworkCredential(UserId, UserPass);
-            ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
-            ftpRequest.ContentLength = fileLength;
-            using (Stream stream = ftpRequest.GetRequestStream())
+            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
             {
-                fileStream.CopyTo(stream);
+                ftpClient.Upload(fileStream, relativePath);
             }
         }
 
         public void Move(string source, string destination)
         {
-            //if (source == destination)
-            //    return;
-
-            Uri uriSource = new Uri($"{Host}/{source}", UriKind.Absolute);
-            Uri uriDestination = new Uri($"{Host}/{destination}", UriKind.Absolute);
-            Uri targetUriRelative = uriSource.MakeRelativeUri(uriDestination);
-
-            //perform rename
-            FtpWebRequest ftpRequest = FtpWebRequest.Create(uriSource.AbsoluteUri) as FtpWebRequest;
-            ftpRequest.Credentials = new NetworkCredential(UserId, UserPass);
-            ftpRequest.Method = WebRequestMethods.Ftp.Rename;
-            ftpRequest.RenameTo = Uri.UnescapeDataString(targetUriRelative.OriginalString);
-
-            using (FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse())
+            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
             {
+                ftpClient.MoveFile(source, destination);
             }
         }
 
-        public Stream GetDownloadStream(string relativeSourcePath, long offSet)
+        public bool DownloadFile(string fromRelativePath, string toRelativePath)
         {
-            FtpWebRequest ftpRequest = FtpWebRequest.Create($"{Host}/{relativeSourcePath}") as FtpWebRequest;
-            ftpRequest.Credentials = new NetworkCredential(UserId, UserPass);
-            ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
-            ftpRequest.ContentOffset = offSet;
-            return ftpRequest.GetResponse().GetResponseStream();
+            Stream returnStream = new FileStream(toRelativePath, FileMode.Create, FileAccess.ReadWrite);
+            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            {
+                if (!ftpClient.FileExists(fromRelativePath))
+                    throw new FileNotFoundException();
+
+                return ftpClient.Download(returnStream, fromRelativePath);
+            }
+        }
+        public Stream GetFileStream(string relativePath, long offSet)
+        {
+            //using ()
+            //{
+            FtpClient ftpClient = new FtpClient(Host, UserId, UserPass);
+            if (!ftpClient.FileExists(relativePath))
+                throw new FileNotFoundException();
+            var stream = ftpClient.OpenRead(relativePath, offSet);
+            return stream;
+            //}
+        }
+
+        public bool ExistFile(string fromRelativePath)
+        {
+            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            {
+                if (!ftpClient.FileExists(fromRelativePath))
+                    return false;
+                else
+                    return true;
+            }
         }
     }
 }

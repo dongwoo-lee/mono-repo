@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>MAMBrowser</RootNamespace>
+    <UserSecretsId>e3e68b19-222d-49f7-bc96-d2329e75f809</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Work\LocalRepository\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+    <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,8 +23,10 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.35" />
+    <PackageReference Include="FluentFTP" Version="33.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="ODP.NetCore" Version="2.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.5.1" />
@@ -37,6 +40,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="lyrics.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MAMBrowser.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="song.xml">

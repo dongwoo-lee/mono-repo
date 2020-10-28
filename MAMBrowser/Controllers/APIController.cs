@@ -22,9 +22,11 @@ namespace MAMBrowser.Controllers
     public class APIController : ControllerBase
     {
         private readonly AppSettings _appSesstings;
-        public APIController(IOptions<AppSettings> appSesstings)
+        private readonly APIDAL _dal;  
+        public APIController(IOptions<AppSettings> appSesstings, APIDAL dal)
         {
             _appSesstings = appSesstings.Value;
+            _dal = dal;
         }
 
         /// <summary>
@@ -38,15 +40,14 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                APIBLL bll = new APIBLL();
-                if (!bll.ExistUser(account))
+                if (!_dal.ExistUser(account))
                 {
                     result.ErrorMsg = "ID 를 찾을 수 없습니다.";
                     result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                 }
                 else
                 {
-                    DTO_USER_TOKEN userToken = bll.Authenticate(account);
+                    DTO_USER_TOKEN userToken = _dal.Authenticate(account);
                     if (userToken == null)
                     {
                         result.ErrorMsg = "비밀번호가 틀립니다.";
@@ -93,8 +94,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>>();
             try
             {
-                APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetUserDetailList();
+                result.ResultObject = _dal.GetUserDetailList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -116,8 +116,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                APIBLL bll = new APIBLL();
-                var updateCount = bll.UpdateUserDetail(dtoList);
+                var updateCount = _dal.UpdateUserDetail(dtoList);
                 if (updateCount > 0)
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
@@ -142,8 +141,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetUserSummary(id);
+                result.ResultObject = _dal.GetUserSummary(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -164,9 +162,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                APIBLL bll = new APIBLL();
-                var user = bll.GetUserSummary(id);
-                var menuList = bll.GetMenu(id);
+                var user = _dal.GetUserSummary(id);
+                var menuList = _dal.GetMenu(id);
                 var lookup = menuList.ToLookup(menu => menu.ParentID);
                 menuList.ForEach(menu =>
                 {
@@ -182,7 +179,7 @@ namespace MAMBrowser.Controllers
                     }
                 });
 
-                user.BehaviorList = bll.GetBehavior(user.AuthorCD);
+                user.BehaviorList = _dal.GetBehavior(user.AuthorCD);
 
                 result.ResultObject = user;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -207,9 +204,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
             try
             {
-                APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                result.ResultObject.Data = bll.GetMenu(id);
+                result.ResultObject.Data = _dal.GetMenu(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -231,9 +227,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
             try
             {
-                APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                result.ResultObject.Data = bll.GetMenuByGrpId(grpId);
+                result.ResultObject.Data = _dal.GetMenuByGrpId(grpId);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -255,8 +250,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
             try
             {
-                APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetMenuGrpList();
+                result.ResultObject = _dal.GetMenuGrpList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -279,9 +273,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MENU>>();
             try
             {
-                APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                result.ResultObject.Data = bll.GetBehavior(authorCd);
+                result.ResultObject.Data = _dal.GetBehavior(authorCd);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -303,8 +296,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
             try
             {
-                APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetAuthorList();
+                result.ResultObject = _dal.GetAuthorList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -328,8 +320,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>>();
             try
             {
-                APIBLL bll = new APIBLL();
-                result.ResultObject = bll.GetRoleDetailList();
+                result.ResultObject = _dal.GetRoleDetailList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -351,8 +342,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                APIBLL bll = new APIBLL();
-                var updateCount = bll.UpdateRole(dtoList);
+                var updateCount = _dal.UpdateRole(dtoList);
                 if (updateCount > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -421,8 +411,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>>();
             try
             {
-                APIBLL bll = new APIBLL();
-                result.ResultObject = bll.FindLogs(start_dt, end_dt, logLevel, userName, description);
+                result.ResultObject = _dal.FindLogs(start_dt, end_dt, logLevel, userName, description);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -444,7 +433,6 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>();
             try
             {
-                APIBLL bll = new APIBLL();
                 result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
                 result.ResultObject.Data = _appSesstings.DiskScope;
                 result.ResultCode = RESUlT_CODES.SUCCESS;

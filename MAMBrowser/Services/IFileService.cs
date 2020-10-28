@@ -16,7 +16,8 @@ namespace MAMBrowser.Processor
         void MakeDirectory(string relativeDirectoryPath);
         void Upload(Stream fileStream, string relativeSourcePath, long fileLength);
         void Move(string source, string destination);
-        Stream GetDownloadStream(string relativeSourcePath, long offSet);
-
+        bool DownloadFile(string fromRelativePath, string toFilePath);
+        Stream GetFileStream(string relativeSourcePath, long offSet);
+        bool ExistFile(string fromRelativePath);
     }
 }

@@ -19,11 +19,20 @@ namespace MAMBrowser.Processor
         public NetDriveService()
         {
         }
-        public Stream GetDownloadStream(string relativeSourcePath, long offSet)
+        public Stream GetFileStream(string relativeSourcePath, long offSet)
         {
-            return null;
+            FileStream fs = new FileStream(relativeSourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return fs;
         }
-
+        public bool DownloadFile(string fromRelativePath, string toFilePath)
+        {
+            using (FileStream inStream = new FileStream(fromRelativePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                FileStream outStream = new FileStream(toFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                inStream.CopyTo(outStream);
+                return true;
+            }
+        }
         public void MakeDirectory(string relativeDirectoryPath)
         {
             throw new NotImplementedException();
@@ -35,6 +44,11 @@ namespace MAMBrowser.Processor
         }
 
         public void Upload(Stream fileStream, string relativeSourcePath, long fileLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ExistFile(string fromRelativePath)
         {
             throw new NotImplementedException();
         }

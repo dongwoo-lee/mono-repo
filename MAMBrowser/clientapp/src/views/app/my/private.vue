@@ -104,23 +104,23 @@
         </meta-data-private-modify-popup>
       </template>
     </common-form>
-    <!-- 미리듣기 팝업 -->
-    <common-preview-popup
-      :item="previewItem"
-      :show="showPreviewPopup"
-      @close="showPreviewPopup = false">
-    </common-preview-popup>
+    <PlayerPopup 
+    :showPreviewPopup = "showPreviewPopup"
+    :previewItem = "previewItem"
+    @closePreview="onClosePreview" />
+
   </div>
 </template>
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import MetaDataPrivateModifyPopup from '../../../components/popup/MetaDataPrivateModifyPopup';
+import PlayerPopup from '../../../components/popup/PlayerPopup.vue';
 import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { MetaDataPrivateModifyPopup },
+  components: { MetaDataPrivateModifyPopup,PlayerPopup },
   data() {
     return {
       searchItems: {
@@ -137,7 +137,6 @@ export default {
       metaDataModifyPopup: false,
       singleSelectedId: null,
       isTableLoading: false,
-      showPreviewPopup: false,
       innerHtmlSelectedFileNames: '',
       fields: [
         {

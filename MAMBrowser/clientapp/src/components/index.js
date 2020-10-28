@@ -7,7 +7,7 @@ import CommonDropdownMenuInput from './Form/CommonDropdownMenuInput';
 import CommonDataTable from './DataTable/CommonDataTable';
 import CommonDataTableScrollPaging from './DataTable/CommonDataTableScrollPaging';
 import CommonActions from './DataTable/CommonActions';
-import CommonPreviewPopup from './popup/CommonPreviewPopup';
+import Player from './popup/Player';
 
 Vue.component('CommonConfirm', CommonConfirm);
 Vue.component('CommonForm', CommonForm);
@@ -17,6 +17,6 @@ Vue.component('CommonDropdownMenuInput', CommonDropdownMenuInput);
 Vue.component('CommonDataTable', CommonDataTable);
 Vue.component('CommonDataTableScrollPaging', CommonDataTableScrollPaging);
 Vue.component('CommonActions', CommonActions);
-Vue.component('CommonPreviewPopup', CommonPreviewPopup);
+Vue.component('Player', Player);
 
 export default {};

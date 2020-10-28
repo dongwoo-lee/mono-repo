@@ -21,9 +21,11 @@ namespace MAMBrowser.Controllers
     {
         private readonly IFileService _fileService;
         private readonly IOptions<AppSettings> _appSesstings;
-        public PublicFileController(IOptions<AppSettings> appSesstings, ServiceResolver sr)
+        private readonly PublicFileDAL _dal;
+        public PublicFileController(IOptions<AppSettings> appSesstings, PublicFileDAL dal, ServiceResolver sr)
         {
             _appSesstings = appSesstings;
+            _dal = dal;
             _fileService = sr("PublicWorkConnection");
         }
         /// <summary>
@@ -41,8 +43,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                PublicFileBLL bll = new PublicFileBLL();
-                var success = bll.Upload(file, metaData);
+                var success = _dal.Upload(file, metaData);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -64,8 +65,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                PublicFileBLL bll = new PublicFileBLL();
-                if (bll.UpdateData(seq, metaData) > 0)
+                if (_dal.UpdateData(seq, metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
@@ -102,8 +102,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
-                PublicFileBLL bll = new PublicFileBLL();
-                result.ResultObject = bll.FineData(mediaCd, cateCd, start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FineData(mediaCd, cateCd, start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -122,8 +121,7 @@ namespace MAMBrowser.Controllers
         [HttpGet("files/{seq}")]
         public FileResult GetFile(long seq)
         {
-            PublicFileBLL bll = new PublicFileBLL();
-            var fileData = bll.Get(seq);
+            var fileData = _dal.Get(seq);
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
             string fileName = fileData.Title; ;
@@ -131,13 +129,14 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-            var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, 0);
+            string filePath = @$"d:\work\tmpdownload\" + Path.GetRandomFileName();
+            var downloadStream = _fileService.DownloadFile(fileData.FilePath, filePath);
             //string tmpPath = @"d:\임시폴더\";
             //BufferedStream bst = new BufferedStream(downloadStream);
             //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);
             //FileStream fs = new FileStream(Path.Combine(tmpPath, Path.GetRandomFileName()), FileMode.Create, FileAccess.ReadWrite);
             //downloadStream.CopyToAsync(fs);
-            return File(downloadStream, contentType, fileName, true);
+            return File(filePath, contentType, fileName, true);
 
 
         }
@@ -153,8 +152,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                PublicFileBLL bll = new PublicFileBLL();
-                if (bll.DeletePhysical(seq))
+                if (_dal.DeletePhysical(seq))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

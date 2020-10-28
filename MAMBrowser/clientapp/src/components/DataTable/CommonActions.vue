@@ -44,7 +44,7 @@ export default {
         behaviorData: {
             type: Array,
             default: () => []
-        }
+        },
     },
     methods: {
         display(value) {

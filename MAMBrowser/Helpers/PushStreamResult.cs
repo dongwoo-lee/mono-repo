@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MAMBrowser.Processor;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,19 +13,70 @@ namespace MAMBrowser.Helpers
 {
     public class PushStreamResult : IActionResult
     {
-        private readonly Action<Stream, long> _onStreamAvailabe;
+        private readonly Action<ActionContext,Stream> _onStreamAvailabe;
         private readonly string _contentType;
-        private readonly long _seq;
-        private readonly string _fileName;
+        private readonly string _filePath;
+        private readonly string _newFileName;
         private readonly long _fileSize;
+        private readonly IFileService _fileService;
 
-        public PushStreamResult(Action<Stream, long> onStreamAvailabe, string contentType, long seq, string fileName, long fileSize)
+        public PushStreamResult(string contentType, string filePath, string newFileName, long fileSize, IFileService fileService)
         {
-            _onStreamAvailabe = onStreamAvailabe;
+            _onStreamAvailabe = OnStreamAvailable;
             _contentType = contentType;
-            _seq = seq;
-            _fileName = fileName;
+            _filePath = filePath;
+            _newFileName = newFileName;
             _fileSize = fileSize;
+            _fileService = fileService;
+        }
+        
+        public Task ExecuteResultAsync(ActionContext context)
+        {
+            var outStream = context.HttpContext.Response.Body;
+            context.HttpContext.Response.ContentType = _contentType;
+            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = _newFileName,
+                Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
+            };
+            context.HttpContext.Response.Headers.Add("Accept-Ranges", "bytes");
+            context.HttpContext.Response.Headers.Add("Content-Disposition", cd.ToString());
+
+            _onStreamAvailabe(context, outStream);
+            return Task.CompletedTask;
+        }
+        public void OnStreamAvailable(ActionContext context, Stream stream /*, CancellationToken requestAborted*/)
+        {
+            var rangeData = context.HttpContext.Request.GetTypedHeaders().Range;
+            var fileExt = Path.GetExtension(_filePath);
+            if (rangeData == null)
+            {
+                var inputStream = _fileService.GetFileStream(_filePath, 0);
+                context.HttpContext.Response.ContentLength = _fileSize;
+                if (fileExt != ".mp2")
+                {
+                    inputStream.CopyTo(stream);
+                }
+            }
+            else
+            {
+                var range = rangeData.Ranges.First();
+                if (range.To == null)
+                {
+                }
+                var contentSize = _fileSize - range.From;
+
+                var downloadStream = _fileService.GetFileStream(_filePath, (long)range.From);
+                context.HttpContext.Response.GetTypedHeaders().ContentRange = new Microsoft.Net.Http.Headers.ContentRangeHeaderValue((long)range.From, _fileSize - 1, _fileSize);
+                context.HttpContext.Response.GetTypedHeaders().ContentLength = (long)contentSize;
+                context.HttpContext.Response.StatusCode = 206;
+
+                if (fileExt != ".mp2")
+                {
+                    downloadStream.CopyTo(stream);
+                }
+            }
+
         }
         //private static bool IsMultipartRequest(RangeHeaderValue range)
         //{
@@ -34,22 +86,6 @@ namespace MAMBrowser.Helpers
         //{
         //    return range != null && range.Ranges != null && range.Ranges.Count > 0;
         //}
-        public Task ExecuteResultAsync(ActionContext context)
-        {
-            var stream = context.HttpContext.Response.Body;
-            context.HttpContext.Response.ContentType = _contentType;
-            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
-            {
-                FileName = _fileName,
-                Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
-            };
-            context.HttpContext.Response.Headers.Add("Accept-Ranges", "bytes");
-            context.HttpContext.Response.Headers.Add("Content-Disposition", cd.ToString());
-
-            _onStreamAvailabe(stream, _seq);
-            Thread.Sleep(1000);
-            return Task.CompletedTask;
-        }
         //public static RangeHeaderValue GetRanges(this HttpContext context, long contentSize)
         //{
         //    RangeHeaderValue rangesResult = null;

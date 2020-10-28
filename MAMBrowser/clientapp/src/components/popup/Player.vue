@@ -1,18 +1,39 @@
 <template>
-    <b-modal
-        title="미리듣기"
-        v-model="showDialog">
-          <div id='waveform'>
-          </div>
-          <b-btn variant="outline-primary" size="sm" @click.prevent="Play" >재생</b-btn>
-          <b-btn variant="outline-primary"  size="sm" @click.prevent="Stop">정지</b-btn>
-          <b-btn variant="outline-primary"  size="sm" @click.prevent="LoadAudio">로드 오디오</b-btn>
-    <!-- 미리듣기 팝업 내용(들어오는 데이터)<br>
-    {{item}} -->
-    </b-modal>
+<div>
+    <div>
+      <h1>{{item.title}} : {{item.memo}}</h1>
+      <div class="text-center" v-if="spinnerFlag" >
+        <b-spinner style="width: 4rem; height: 4rem;" variant="primary"></b-spinner>
+      </div>
+      <div id="waveform" >
+      </div>
+        <div id='wave-timeline'>
+      </div>
+      <br>
+      <br>
+      <b-container class="bv-example-row" v-if="isSuccess">
+        <b-row>
+          <b-col>
+          </b-col>
+          <b-col>
+            <div align="center" >
+             <b-btn variant="outline-primary" size="sm" @click.prevent="Play" >▶</b-btn>
+            <b-btn variant="outline-primary"  size="sm" @click.prevent="Stop">■</b-btn>
+            </div>
+          </b-col>
+          <b-col >
+            <p align="right" >{{CurrentTime}} / {{TotalTime}}</p>
+          </b-col>
+        </b-row>
+      </b-container>
+    </div>
+  </div>
 </template>
+
 <script>
 import WaveSurfer from 'wavesurfer.js';
+import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
+
 import axios from 'axios';
 var wavesurfer;
 const httpClient = axios.create({
@@ -28,18 +49,21 @@ var CancelToken;
 var source;
 
 
-
 export default {
     data () {
     return {
       wavesurfer: null,
-      CurrentTime : 0,
-      TotalTime : 0,
+      CurrentTime : '00:00:00',
+      TotalTime : '00:00:00',
       loadComplete:false,
+      isSuccess : false,
+      spinnerFlag : true
     }
   },
   mounted() {
-    // this.LoadAudio();
+    CancelToken = axios.CancelToken;
+    source = CancelToken.source();
+    this.LoadAudio();
   },
   beforeDestroy(){
     this.Stop();
@@ -49,6 +73,11 @@ export default {
   methods : {
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
+                plugins: [
+                 TimelinePlugin.create({
+                      container:"#wave-timeline"
+                  }),
+                ],
                 container: '#waveform',
                 waveColor: 'gray',
                 progressColor: 'skyblue',
@@ -82,31 +111,30 @@ export default {
       });
     },
     LoadAudioInfo(){
-        this.TotalTime = wavesurfer.getDuration().toFixed(2);
-        this.CurrentTime = wavesurfer.getCurrentTime().toFixed(2);
+      this.TotalTime = new Date(wavesurfer.getDuration().toFixed(2) * 1000).toISOString().substr(11, 8);
+      this.CurrentTime = new Date(wavesurfer.getCurrentTime().toFixed(2) * 1000).toISOString().substr(11, 8);
     },
     LoadAudio(){
-        this.InjectWaveSurfer();
-    this.SetWaveSurfer();
-      let url =`/api/products/workspace/private/files/${this.item.seq}`;
-      let url2 =`/api/products/workspace/private/waveform/${this.item.seq}`;
-      //     console.info('this.returnData',this.returnData);
+      this.InjectWaveSurfer();
+      this.SetWaveSurfer();
+        let url =`/api/products/workspace/private/streaming/direct/${this.item.seq}`;
+        let url2 =`/api/products/workspace/private/waveform/${this.item.seq}`;
+        //     console.info('this.returnData',this.returnData);
 
-      httpClient.get(url2,null).then(res=>
-      {
-        console.info('res.data', res.data);
-        wavesurfer.load(url, res.data);
-      });
-          
-      // });
-      
+        httpClient.get(url2,null).then(res=>
+        {
+          wavesurfer.load(url, res.data);
+          this.spinnerFlag = false;
+          this.isSuccess = true;
+        });
+        // });
     },
     Play(){
       wavesurfer.play();
     },
     Stop(){
       wavesurfer.stop();
-      this.TotalTime = wavesurfer.getDuration().toFixed(2);
+       this.TotalTime = wavesurfer.getDuration().toFixed(2);
       this.CurrentTime = (0).toFixed(2);
     },
   },

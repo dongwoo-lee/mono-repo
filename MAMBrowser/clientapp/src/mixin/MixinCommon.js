@@ -16,6 +16,7 @@ let mixinCommon = {
             editorOptions: [],                       // 사용자(제작자) 목록
             sortItems: {},
             previewItem: {},
+            showPreviewPopup : false,
             isLoadingClass: false,
             hasErrorClass: false,
             isTableLoading: false,
@@ -148,8 +149,12 @@ let mixinCommon = {
             this.$refs.scrollPaging.initSelectedIds();  
         },
         onPreview(item) {
-            this.showPreviewPopup = true;
             this.previewItem = item;
+            this.showPreviewPopup = true;
+        },
+        onClosePreview() {
+            this.previewItem = null;
+            this.showPreviewPopup = false;
         },
         onDownloadSound(item) {
             this.downloadSound(item);

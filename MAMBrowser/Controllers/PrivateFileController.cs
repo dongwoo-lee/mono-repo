@@ -16,6 +16,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,11 +34,11 @@ namespace MAMBrowser.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IOptions<AppSettings> _appSesstings;
-        private readonly PrivateFileBLL _bll;
+        private readonly PrivateFileDAL _dal;
         private readonly IFileService _fileService;
-        public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, PrivateFileBLL bll, ServiceResolver sr)
+        public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, PrivateFileDAL dal, ServiceResolver sr)
         {
-            _bll = bll;
+            _dal = dal;
             _appSesstings = appSesstings;
             _fileService = sr("PrivateWorkConnection");
             _hostingEnvironment = hostingEnvironment;
@@ -57,7 +58,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var success = _bll.Upload(userextid, file, metaData);
+                var success = _dal.Upload(userextid, file, metaData);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -79,7 +80,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                if (_bll.UpdateData(metaData) > 0)
+                if (_dal.UpdateData(metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
@@ -112,7 +113,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                result.ResultObject = _bll.FineData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FineData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -139,7 +140,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                result.ResultObject = _bll.FineData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FineData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -156,10 +157,30 @@ namespace MAMBrowser.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpGet("files/{seq}")]
-        public IActionResult GetFile(long seq)
+        public IActionResult Download(long seq)
+        {
+            var fileData = _dal.Get(seq);
+            string fileName = $"{fileData.Title}{fileData.FileExt}";
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            var stream = _fileService.GetFileStream(fileData.FilePath, 0);
+
+            //var newPath =  @$"c:\tmpwork\2{fileName}";
+            //using (FileStream fs = new FileStream(newPath, FileMode.Create, FileAccess.ReadWrite))
+            //{
+            //    stream.CopyTo(fs);
+            //}
+            return File(stream, contentType, fileName);
+        }
+        [HttpGet("streaming/indirect/{seq}")]
+        public IActionResult IndirectStreaming(long seq)
         {
             //range 있을떄는 206 반환하도록
-            var fileData = _bll.Get(seq);
+            var fileData = _dal.Get(seq);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
@@ -167,13 +188,16 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-            return new PushStreamResult(OnStreamAvailable, contentType, seq, fileName, fileData.FileSize);
-        }
 
-        [HttpGet("files2")]
-        public FileResult GetFile2(long seq)
+            var targetPath = @$"c:\tmpwork\{fileName}";
+            _fileService.DownloadFile(fileData.FilePath, targetPath);
+            return PhysicalFile(targetPath, contentType, true);
+        }
+        [HttpGet("streaming/direct/{seq}")]
+        public IActionResult Streaming(long seq)
         {
-            var fileData = _bll.Get(seq);
+            //range 있을떄는 206 반환하도록
+            var fileData = _dal.Get(seq);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
@@ -181,67 +205,34 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-            var stream = _fileService.GetDownloadStream(fileData.FilePath, 0);
-            string projectRootPath = _hostingEnvironment.ContentRootPath;
-            string root = _hostingEnvironment.WebRootPath;
-            string path = @$"{projectRootPath}/bin/debug/netcoreapp3.1/tmpdownload/{fileName}";
-            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
-            {
-                stream.CopyTo(fs);
-            }
-            return PhysicalFile(path, contentType, fileName, true);
+            return new PushStreamResult(contentType, fileData.FilePath, fileName, fileData.FileSize, _fileService);
         }
         [HttpGet("waveform/{seq}")]
         public List<float> GetWaveform(long seq)
         {
-            var fileData = _bll.Get(seq);
+            var fileData = _dal.Get(seq);
             string waveFileName = Path.GetFileName(fileData.FilePath);
             string waveformFileName = $"{Path.GetFileNameWithoutExtension(fileData.FilePath)}.egy";
             string waveformFilePath = fileData.FilePath.Replace(waveFileName, waveformFileName);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+
+            if (_fileService.ExistFile(waveformFilePath))
             {
-                contentType = "application/octet-stream";
-            }
-            var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, 0);
-            return Utility.GetPeekValues(downloadStream);
-        }
-
-        private void OnStreamAvailable(Stream stream/*, CancellationToken requestAborted*/, long seq)
-        {
-            var fileData = _bll.Get(seq);
-
-
-            var rangeData = HttpContext.Request.GetTypedHeaders().Range;
-            if (rangeData == null)
-            {
-                var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, 0);
-                Response.ContentLength = fileData.FileSize;
-                if (fileData.FileExt != ".mp2")
-                {
-                    downloadStream.CopyTo(stream);
-                }
+                var downloadStream = _fileService.GetFileStream(waveformFilePath, 0);
+                return AudioEngine.GetPeekValuesFromEgy(downloadStream);
             }
             else
             {
-                var range = rangeData.Ranges.First();
-                if (range.To == null)
-                {
-                }
-                var contentSize = fileData.FileSize - range.From;
-
-                var downloadStream = _fileService.GetDownloadStream(fileData.FilePath, (long)range.From);
-                HttpContext.Response.GetTypedHeaders().ContentRange = new Microsoft.Net.Http.Headers.ContentRangeHeaderValue((long)range.From, fileData.FileSize - 1, fileData.FileSize);
-                HttpContext.Response.GetTypedHeaders().ContentLength = (long)contentSize;
-                HttpContext.Response.StatusCode = 206;
-
-                if (fileData.FileExt != ".mp2")
-                {
-                    downloadStream.CopyTo(stream);
-                }
+                
+                var inputStream =_fileService.GetFileStream(fileData.FilePath, 0);
+                MemoryStream ms = new MemoryStream();
+                inputStream.CopyTo(ms);
+                ms.Position = 0;
+                WaveFileReader reader = new WaveFileReader(ms);
+                var data = AudioEngine.GetPeekValuesFromWav(ms, 2);
+                inputStream.Close();
+                ms.Dispose();
+                return data;
             }
-
         }
 
         /// <summary>
@@ -257,7 +248,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_bll.DeleteDB(userextid, seqlist))
+                if (_dal.DeleteDB(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -282,7 +273,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_bll.DeletePhysical(userextid, seqlist))
+                if (_dal.DeletePhysical(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -307,7 +298,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_bll.DeleteAllPhysical(userextid))
+                if (_dal.DeleteAllPhysical(userextid))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -360,7 +351,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_bll.RecycleAll(userextid, seqlist))
+                if (_dal.RecycleAll(userextid, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

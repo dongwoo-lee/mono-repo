@@ -16,15 +16,15 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
-    public class PublicFileBLL
+    public class PublicFileDAL
     {
-        public PublicFileBLL()
+        public PublicFileDAL()
         {
 
         }
         private readonly AppSettings _appSettings;
         private readonly IFileService _fileService;
-        public PublicFileBLL(IOptions<AppSettings> appSesstings, ServiceResolver sr)
+        public PublicFileDAL(IOptions<AppSettings> appSesstings, ServiceResolver sr)
         {
             _appSettings = appSesstings.Value;
             _fileService = sr("PublicWorkConnection");

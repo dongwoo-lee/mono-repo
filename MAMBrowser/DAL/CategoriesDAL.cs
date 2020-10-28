@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.BLL
 {
-    public class CategoriesBLL
+    public class CategoriesDAL
     {
         public DTO_RESULT_LIST<DTO_USER> GetUserList()
         {

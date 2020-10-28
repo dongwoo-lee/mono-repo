@@ -17,6 +17,7 @@ using MAMBrowser.Controllers;
 using MAMBrowser.Services;
 using System.Linq;
 using MAMBrowser.DAL;
+using MAMBrowser.BLL;
 
 namespace MAMBrowser
 {
@@ -145,8 +146,13 @@ namespace MAMBrowser
 
         private void StorageDISetting(IServiceCollection services)
         {
-            
-            services.AddTransient<PrivateFileBLL>();
+
+            services.AddTransient<APIDAL>();
+            services.AddTransient<CategoriesDAL>();
+            services.AddTransient<PrivateFileDAL>();
+            services.AddTransient<ProductsDAL>();
+            services.AddTransient<PublicFileDAL>();
+
 
             var storagesSection = Configuration.GetSection("Storages");
             var storage = storagesSection.Get<Storages>();

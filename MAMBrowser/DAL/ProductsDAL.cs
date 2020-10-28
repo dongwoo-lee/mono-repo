@@ -16,10 +16,10 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.BLL
 {
-    public class ProductsBLL
+    public class ProductsDAL
     {
         private readonly AppSettings _appSesstings;
-        public ProductsBLL(IOptions<AppSettings> appSesstings)
+        public ProductsDAL(IOptions<AppSettings> appSesstings)
         {
             _appSesstings = appSesstings.Value;
         }

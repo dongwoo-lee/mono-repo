@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
-    public class PrivateFileBLL
+    public class PrivateFileDAL
     {
         private readonly AppSettings _appSettings;
         private readonly IFileService _fileService;
-        public PrivateFileBLL(IOptions<AppSettings> appSesstings, ServiceResolver sr)
+        public PrivateFileDAL(IOptions<AppSettings> appSesstings, ServiceResolver sr)
         {
             _appSettings = appSesstings.Value;
             _fileService = sr("PrivateWorkConnection");

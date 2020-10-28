@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace MAMBrowser.Controllers
 {
-    public class APIBLL 
+    public class APIDAL 
     {
         
         public DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL> GetUserDetailList()

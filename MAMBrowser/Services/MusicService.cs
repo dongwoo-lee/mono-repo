@@ -52,7 +52,16 @@ namespace MAMBrowser.Services
             throw new NotImplementedException();
         }
 
-        public Stream GetDownloadStream(string relativeSourcePath, long offSet)
+        public Stream GetFileStream(string relativeSourcePath, long offSet)
+        {
+            throw new NotImplementedException();
+        }
+        public bool DownloadFile(string fromRelativePath, string toRelativePath)
+        {
+            return true;
+        }
+
+        public bool ExistFile(string fromRelativePath)
         {
             throw new NotImplementedException();
         }

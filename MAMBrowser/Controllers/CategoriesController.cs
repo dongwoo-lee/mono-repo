@@ -18,10 +18,13 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
+        private readonly CategoriesDAL _dal;
         private readonly IOptions<AppSettings> _appSesstings;
-        public CategoriesController(IOptions<AppSettings> appSesstings)
+
+        public CategoriesController(IOptions<AppSettings> appSesstings, CategoriesDAL dal)
         {
             _appSesstings = appSesstings;
+            _dal = dal;
         }
         /// <summary>
         /// 매체 목록
@@ -33,8 +36,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetMedia();
+                result.ResultObject = _dal.GetMedia();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -54,8 +56,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetUserList();
+                result.ResultObject = _dal.GetUserList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -75,8 +76,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetReport();
+                result.ResultObject = _dal.GetReport();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -96,8 +96,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetPro();
+                result.ResultObject = _dal.GetPro();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -117,8 +116,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetCM();
+                result.ResultObject = _dal.GetCM();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -139,8 +137,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetMcrSpot(media);
+                result.ResultObject = _dal.GetMcrSpot(media);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -160,8 +157,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetFillerPr();
+                result.ResultObject = _dal.GetFillerPr();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -181,8 +177,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetFillerGeneral();
+                result.ResultObject = _dal.GetFillerGeneral();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -202,8 +197,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetFillerTimetone();
+                result.ResultObject = _dal.GetFillerTimetone();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -224,8 +218,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetFillerETC();
+                result.ResultObject = _dal.GetFillerETC();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -247,8 +240,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetPgmCodes(brd_dt);
+                result.ResultObject = _dal.GetPgmCodes(brd_dt);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -269,8 +261,7 @@ namespace MAMBrowser.Controllers
             try
 
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetPublicPrimary();
+                result.ResultObject = _dal.GetPublicPrimary();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -291,8 +282,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetPublicSecond(primaryCode);
+                result.ResultObject = _dal.GetPublicSecond(primaryCode);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -313,8 +303,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                CategoriesBLL bll = new CategoriesBLL();
-                result.ResultObject = bll.GetReqStatus();
+                result.ResultObject = _dal.GetReqStatus();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
