@@ -105,6 +105,7 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
             {
                 return new DTO_PUBLIC_FILE
                 {
+                    RowNO = Convert.ToInt32(row.RNO),
                     Seq = Convert.ToInt64(row.SEQ),
                     MediaCD = row.MEDIA_CD,
                     MediaName = row.MEDIA_NAME,
@@ -200,6 +201,7 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                 }
                 return new DTO_PUBLIC_FILE
                 {
+                    RowNO = Convert.ToInt32(row.RNO),
                     Seq = Convert.ToInt64(row.SEQ),
                     MediaCD = row.MEDIA_CD,
                     MediaName = row.MEDIA_NAME,

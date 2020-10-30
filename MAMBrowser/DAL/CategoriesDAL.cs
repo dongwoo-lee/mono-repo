@@ -105,7 +105,7 @@ namespace MAMBrowser.BLL
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'SP' AND MEDIA = :MEDIA ORDER BY CODENAME");
+            var queryTemplate = builder.AddTemplate("SELECT CODEID, CODENAME FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'SP' AND MEDIA = :MEDIA ORDER BY CODENAME");
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {

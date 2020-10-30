@@ -1,4 +1,6 @@
-﻿namespace MAMBrowser
+﻿using System;
+
+namespace MAMBrowser
 {
     /// <summary>
     /// 결과 코드
@@ -23,6 +25,28 @@
         MANUAL_EXECUTE,
         KNOWN_EXCEPTION,
         UNKNOWN_EXCEPTION,
+
     }
-   
+    [Flags]
+    public enum SearchTypes : int
+    {
+        None = 0,
+        Internal = 1,
+        External = 2,
+        Classic = 4,
+        All = 7,
+
+    }
+    [Flags]
+    public enum GradeTypes : int
+    {
+        None = 0,
+        Heat = 1,   //히트 p4=1
+        Forbid = 2, //금지  p5=2
+        Caution = 4,    //주의 p8=1
+        HarmfulJuveniles = 8,    //청소년 유해 p7=1
+        All = 15, //p4=1&p5=2&p8=1&p7=1
+
+    }
+
 }

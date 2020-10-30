@@ -25,6 +25,7 @@ namespace MAMBrowser.DTO
         public string ProgramID { get; set; }
         public string SourceID { get; set; }
         public string RecName { get; set; }
+        public int Duration { get; set; }
         public string FilePath { get; set; }
         public long FileSize { get; set; }
         public string RegDtm { get; set; }    //등록일시

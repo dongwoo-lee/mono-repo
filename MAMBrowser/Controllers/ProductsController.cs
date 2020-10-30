@@ -4,18 +4,22 @@ using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
+using MAMBrowser.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -45,15 +49,19 @@ namespace MAMBrowser.Controllers
         /// <param name="brd_dt">방송일(20200101)</param>
         /// <param name="pgm">프로그램 ID</param>
         /// <param name="editor">제작자 ID</param>
+        /// <param name="rowPerPage">16</param>
+        /// <param name="selectPage">1</param>
+        /// <param name="sortKey"></param>
+        /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("pgm/{media}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> FindPGM(string media, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string editor)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> FindPGM(string media, [FromQuery] string brd_dt, [FromQuery] string pgm, [FromQuery] string editor, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>>();
             try
             {
 
-                result.ResultObject = _dal.FindPGM(media, brd_dt, pgm, editor);
+                result.ResultObject = _dal.FindPGM(media, brd_dt, pgm, editor, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -100,7 +108,7 @@ namespace MAMBrowser.Controllers
         /// <param name="cate">분류 : ex)NPS-M</param>
         /// <param name="start_dt">시작일 : 20200101</param>
         ///  <param name="end_dt">종료일 : 20200620</param>
-        /// <param name="pgm">사용처 : ex) PM1200NA, PM1900NA, PM1900SA</param>
+        /// <param name="pgmName">사용처 : ex) PM1200NA, PM1900NA, PM1900SA</param>
         /// <param name="editor">제작자 : ex)010502</param>
         /// <param name="reporterName"> 취재인 이름 : ex) 한수연</param>
         /// <param name="name"> 여성, 뉴스</param>
@@ -110,13 +118,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgm, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>>();
             try
             {
 
-                result.ResultObject = _dal.FindReport(cate, start_dt, end_dt, pgm, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindReport(cate, start_dt, end_dt, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -532,36 +540,28 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 음반 기록실 조회
         /// </summary>
+        /// <param name="searchType"></param>
+        /// <param name="gradeType"></param>
+        /// <param name="searchText"></param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("music")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromServices] ServiceResolver sr, [FromQuery] int searchType, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
             try
             {
-                var startNO = 1;
-                startNO += (rowPerPage * selectPage) - rowPerPage;
-                var lastNO = startNO + rowPerPage;
-                string projectRootPath = _hostingEnvironment.ContentRootPath;
-                string root = _hostingEnvironment.WebRootPath;
-                PhysicalFileProvider pr = new PhysicalFileProvider(projectRootPath);
-                var songXml = pr.GetFileInfo("song.xml");
-                XmlSerializer xs = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
-                using (Stream fs = songXml.CreateReadStream())
-                {
-                    var data = (EDTO_MB_RETURN<EDTO_SONG>)xs.Deserialize(fs);
-                    var data2 = data.Section.Data.Select(edto => new DTO_SONG(edto));
-                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
-                    result.ResultObject.Data = data2.ToList();
-                    result.ResultObject.RowPerPage = rowPerPage;
-                    result.ResultObject.SelectPage = selectPage;
-                    result.ResultObject.TotalRowCount = data.Section.TOTAL_COUNT;
-                }
+                var musicService = sr("MusicConnection") as MusicService;
+                long totalCount;
+                result.ResultObject.Data = musicService.SearchSong((SearchTypes)searchType, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+                result.ResultObject.RowPerPage = rowPerPage;
+                result.ResultObject.SelectPage = selectPage;
+                result.ResultObject.TotalRowCount = totalCount;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
+                return result;
             }
             catch (Exception ex)
             {
@@ -573,37 +573,25 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 효과음 조회
         /// </summary>
-        /// <param name="searchWord"></param>
+        /// <param name="searchText"></param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("effect")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> FindEffect([FromQuery] string searchWord, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> FindEffect([FromServices] MusicService musicService, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
             try
             {
-                var startNO = 1;
-                startNO += (rowPerPage * selectPage) - rowPerPage;
-                var lastNO = startNO + rowPerPage;
-                string projectRootPath = _hostingEnvironment.ContentRootPath;
-                string root = _hostingEnvironment.WebRootPath;
-                PhysicalFileProvider pr = new PhysicalFileProvider(projectRootPath);
-                var songXml = pr.GetFileInfo("effect.xml");
-                XmlSerializer xs = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_EFFECT>));
-                using (Stream fs = songXml.CreateReadStream())
-                {
-                    var data = (EDTO_MB_RETURN<EDTO_EFFECT>)xs.Deserialize(fs);
-                    var data2 = data.Section.Data.Select(edto => new DTO_EFFECT(edto));
-                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
-                    result.ResultObject.Data = data2.ToList();
-                    result.ResultObject.RowPerPage = rowPerPage;
-                    result.ResultObject.SelectPage = selectPage;
-                    result.ResultObject.TotalRowCount = data.Section.TOTAL_COUNT;
-                }
+                long totalCount;
+                result.ResultObject.Data = musicService.SearchLyrics(searchText, rowPerPage, selectPage, out totalCount);
+                result.ResultObject.RowPerPage = rowPerPage;
+                result.ResultObject.SelectPage = selectPage;
+                result.ResultObject.TotalRowCount = totalCount;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
+                return result;
             }
             catch (Exception ex)
             {
@@ -612,6 +600,8 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+
 
         /// <summary>
         /// 음악/효과음 소재 wav, egy 파일 다운로드

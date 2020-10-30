@@ -240,6 +240,9 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
+                if (string.IsNullOrEmpty(brd_dt))
+                    brd_dt = "22000101";
+
                 result.ResultObject = _dal.GetPgmCodes(brd_dt);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }

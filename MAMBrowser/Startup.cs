@@ -165,7 +165,7 @@ namespace MAMBrowser
                     UserPass = storage.MirosConnection["UserPass"].ToString()
                 };
             });
-            services.AddTransient<IFileService, MusicService>(serviceProvider =>
+            services.AddTransient<MusicService>(serviceProvider =>
             {
                 return new MusicService
                 {

@@ -23,14 +23,24 @@ namespace MAMBrowser.BLL
         {
             _appSesstings = appSesstings.Value;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt, string pgm, string editor)
+        public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt, string pgm, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
+            int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
+            int lastNo = startNo + rowPerPage;
+
             DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT ROWNUM AS RNO, MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
+            var querySource = builder.AddTemplate(@"SELECT MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
                      FROM
                      MEM_PROGRAM_VIEW /**where**/");
-            var param = new { MEDIA = media, ONAIRDATE = brd_dt, PDQ_PRODUCTID = pgm, EDITOR = editor };
+            var param = new {
+                MEDIA = media, 
+                ONAIRDATE = brd_dt, 
+                PDQ_PRODUCTID = pgm, 
+                EDITOR = editor,
+                START_NO = startNo,
+                LAST_NO = lastNo,
+            };
             builder.Where("MEDIA = :MEDIA");
             if (!string.IsNullOrEmpty(brd_dt))
             {
@@ -45,9 +55,19 @@ namespace MAMBrowser.BLL
                 builder.Where("EDITOR = :EDITOR");
             }
             builder.OrderBy("ONAIRDATE, ONAIRTIME");
+
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
+            var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
+
+
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PGM_INFO>((row) =>
             {
+                if (returnData.TotalRowCount == 0)
+                {
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
+                }
                 return new DTO_PGM_INFO
                 {
                     RowNO = Convert.ToInt32(row.RNO),
@@ -65,10 +85,9 @@ namespace MAMBrowser.BLL
                 };
             });
 
-            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
-            returnData.RowPerPage = 200;
-            returnData.SelectPage = 1;
-            returnData.TotalRowCount = returnData.Data.Count;
+            returnData.Data = repository.Select(queryMaxMinPaging.RawSql, param, resultMapping);
+            returnData.RowPerPage = rowPerPage;
+            returnData.SelectPage = selectPage;
             return returnData;
         }
 
@@ -147,7 +166,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgm, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -160,7 +179,7 @@ namespace MAMBrowser.BLL
                 CATE = cate,
                 START_DT = start_dt,
                 END_DT = end_dt,
-                PGM = pgm,
+                PGM = pgmName,
                 EDITOR = editor,
                 REPORTER = reporterName,
                 START_NO = startNo,
@@ -176,17 +195,13 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("CODEID=:CATE");
             }
-            //if (!string.IsNullOrEmpty(name))
-            //{
-            //    string[] nameArray = name.Split(' ');
-            //    foreach (var word in nameArray)
-            //    {
-            //        builder.Where($"LOWER(???) LIKE LOWER('%{word}%')");
-            //    }
-            //}
-            if (!string.IsNullOrEmpty(pgm))
+            if (!string.IsNullOrEmpty(pgmName))
             {
-                builder.Where("PRODUCTID = :PGM");
+                string[] nameArray = name.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(EVENTNAME) LIKE LOWER('%{word}%')");
+                }
             }
             if (!string.IsNullOrEmpty(reporterName))
             {
@@ -457,8 +472,8 @@ namespace MAMBrowser.BLL
                 CATE = cate,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ /**orderby**/");
-            builder.Select("ROWNUM AS RNO, MEDIA, ONAIRDATE, CMGROUPNAME, CMGROUPID, PROID, DURSEC, CMCAPACITY, STATENAME, EDITOR, EDITORNAME, EDITTIME");
+            var querySource = builder.AddTemplate(@"SELECT ROWNUM AS RNO, A.* FROM (SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ /**orderby**/) A");
+            builder.Select("MEDIA, ONAIRDATE, CMGROUPNAME, CMGROUPID, PROID, DURSEC, CMCAPACITY, STATENAME, EDITOR, EDITORNAME, EDITTIME");
             if (!string.IsNullOrEmpty(media))
             {
                 builder.Where("MEDIA=:MEDIA");
@@ -729,7 +744,7 @@ namespace MAMBrowser.BLL
             });
 
             var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_FILLER_TIME_VIEW /**where**/ /**orderby**/");
-            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE");
+            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
             builder.Where("MEDIA=:MEDIA");
             builder.Where("(STARTDATE >= :START_DT AND ENDDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(cate))
@@ -808,7 +823,7 @@ namespace MAMBrowser.BLL
             });
 
             var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, D.* FROM (SELECT ROWNUM AS RNO, A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
-LEFT JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
+INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
 LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
 /**where**/
 ORDER BY BRD_DTM) D");
@@ -844,6 +859,7 @@ ORDER BY BRD_DTM) D");
                     ProgramID = row.PRODUCT_ID,
                     SourceID = row.SOURCE_ID,
                     RecName = row.REC_NAME,
+                    Duration = Convert.ToInt32(row.LENGTH),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     //FilePath = Path.Combine(row.RELATIVE_PATH, $"{row.SOURCE_ID}.{row.FILE_EXT}"),
                     RegDtm = ((DateTime)row.REG_DTM).ToString(Utility.DTM19),
