@@ -512,14 +512,14 @@ namespace MAMBrowser.Controllers
             {
                 using (var downloadStream = _fileService.GetFileStream(waveformFilePath, 0))
                 {
-                    return AudioEngine.GetPeekValuesFromEgy(downloadStream);
+                    return AudioEngine.GetVolumeFromEgy(downloadStream);
                 }
             }
             else
             {
                 var inputStream = _fileService.GetFileStream(filePath, 0);
                 WaveFileReader reader = new WaveFileReader(inputStream);
-                var data = AudioEngine.GetPeekValuesFromWav(reader, 2);
+                var data = AudioEngine.GetVolumeFromWav(reader, 2);
                 inputStream.Close();
                 return data;
             }

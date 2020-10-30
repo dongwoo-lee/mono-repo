@@ -189,6 +189,7 @@ namespace MAMBrowser.Controllers
                 contentType = "application/octet-stream";
             }
 
+
             var targetPath = @$"c:\tmpwork\{fileName}";
             _fileService.DownloadFile(fileData.FilePath, targetPath);
             return PhysicalFile(targetPath, contentType, true);
@@ -218,7 +219,7 @@ namespace MAMBrowser.Controllers
             if (_fileService.ExistFile(waveformFilePath))
             {
                 var downloadStream = _fileService.GetFileStream(waveformFilePath, 0);
-                return AudioEngine.GetPeekValuesFromEgy(downloadStream);
+                return AudioEngine.GetDecibelFromEgy(downloadStream);
             }
             else
             {
@@ -227,8 +228,9 @@ namespace MAMBrowser.Controllers
                 MemoryStream ms = new MemoryStream();
                 inputStream.CopyTo(ms);
                 ms.Position = 0;
+                
                 WaveFileReader reader = new WaveFileReader(ms);
-                var data = AudioEngine.GetPeekValuesFromWav(ms, 2);
+                var data = AudioEngine.GetDecibelFromWav(ms, 2);
                 inputStream.Close();
                 ms.Dispose();
                 return data;

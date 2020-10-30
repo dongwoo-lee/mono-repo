@@ -1,6 +1,7 @@
 import $http from '../../http';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
+
 let uploadCancelToken;
 
 export default {
@@ -121,15 +122,19 @@ export default {
         },
         download({}, {ids, type}) {
             ids.forEach(id => {
-                $http.get(`/api/products/workspace/${type}/files/${id}`)
-                    .then(res => {
-                        $fn.fileDownload(res);
-                        $fn.notify('success', { message: '파일 다운로드 완료' })
-                    })
-                    .catch(error => {
-                        $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
-                    })
-
+                
+                // $http.get(`/api/products/workspace/${type}/files/${id}`,{headers: { responseType: 'blob' }})
+                //     .then(res => {
+                //         $fn.fileDownload(res);
+                //         $fn.notify('success', { message: '파일 다운로드 완료' })
+                //     })
+                //     .catch(error => {
+                //         $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
+                //     })
+                //이동우
+                const link = document.createElement('a');
+                link.href = `/api/products/workspace/${type}/files/${id}`;
+                link.click();
             })
         },
         downloadSound({}, item) {
