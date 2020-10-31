@@ -60,11 +60,10 @@ namespace MAMBrowser
             // configure strongly typed settings objects.  DI등록 안함.
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
+            services.AddScoped<IUserService, UserService>();
+
             var appSettings = optionSection.Get<AppSettings>();
             Repository.ConnectionString = appSettings.ConnectionString;
-            SystemConfig.AppSettings = appSettings;
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

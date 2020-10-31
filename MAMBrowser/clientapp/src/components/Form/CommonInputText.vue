@@ -6,6 +6,7 @@
         :placeholder="placeholder"
         @input="onInput"
         :pattern="pattern"
+        @keydown.enter.prevent
     >
     </b-form-input>
 </template>

@@ -118,7 +118,6 @@ export default {
       try {
         const response = await $http.post('/api/Authenticate', params);
         const { resultCode, resultObject, token } = response.data;
-        console.info('response.data', response.data);
         if (resultObject && resultCode === 0) {
           commit('SET_AUTH', { 
             token: token, 

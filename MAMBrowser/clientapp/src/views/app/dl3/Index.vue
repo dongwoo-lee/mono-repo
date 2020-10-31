@@ -126,7 +126,7 @@ export default {
                     width: '7%',
                 },
                 {
-                    name: "dd",
+                    name: "duration",
                     title: "방송분량",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",

@@ -38,7 +38,7 @@
         <template v-slot:cell(menuGrpID)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{item.menuGrpName}}</div>
             <b-form-select 
-                v-model="item.menuGrpID"
+                :value="item.menuGrpID"
                 v-show="rowSelected"
                 @change="onChangeMenuGrp($event, item, index)">
                 <option
@@ -114,7 +114,6 @@ export default {
                   } else {
                       this.$fn.notify('server-error', { message: '조회 에러' });
                   }
-                  console.info('menuGrpOptions', this.menuGrpOptions);
             });
         },
         setMenuGrpDescription(menu) {
