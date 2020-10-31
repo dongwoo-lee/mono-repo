@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,7 +61,7 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{seq}")]
-        public DTO_RESULT UpdateData(long seq, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
+        public DTO_RESULT UpdateData(long seq, [FromBody] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -112,40 +113,73 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
         /// <summary>
-        /// 공유소재 - 파일 요청(미리듣기, 다운로드 시 사용)
+        /// 공유소재 - 다운로드
         /// </summary>
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
-        //[Authorize]
         [HttpGet("files/{seq}")]
-        public FileResult GetFile(long seq)
+        public IActionResult Download(long seq)
         {
             var fileData = _dal.Get(seq);
+            string fileName = $"{fileData.Title}{fileData.FileExt}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
-            string fileName = fileData.Title; ;
             if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-            string filePath = @$"d:\work\tmpdownload\" + Path.GetRandomFileName();
-            var downloadStream = _fileService.DownloadFile(fileData.FilePath, filePath);
-            //string tmpPath = @"d:\임시폴더\";
-            //BufferedStream bst = new BufferedStream(downloadStream);
-            //FileBufferingReadStream bst = new FileBufferingReadStream(downloadStream, int.MaxValue, int.MaxValue, tmpPath);
-            //FileStream fs = new FileStream(Path.Combine(tmpPath, Path.GetRandomFileName()), FileMode.Create, FileAccess.ReadWrite);
-            //downloadStream.CopyToAsync(fs);
-            return File(filePath, contentType, fileName, true);
+            var stream = _fileService.GetFileStream(fileData.FilePath, 0);
 
-
+            //var newPath =  @$"c:\tmpwork\2{fileName}";
+            //using (FileStream fs = new FileStream(newPath, FileMode.Create, FileAccess.ReadWrite))
+            //{
+            //    stream.CopyTo(fs);
+            //}
+            return File(stream, contentType, fileName);
         }
+        /// <summary>
+        /// 공유소재 - 스트리밍
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
+        /// <returns></returns>
+        [HttpGet("streaming/{seq}")]
+        public IActionResult Streaming(long seq, [FromQuery] string direct = "N")
+        {
+            //range 있을떄는 206 반환하도록
+            var fileData = _dal.Get(seq);
+            string fileName = $"{fileData.Title}{fileData.FileExt}";
+
+            if (direct.ToUpper() == "Y")
+            {
+                return new PushStreamResult(fileData.FilePath, fileName, fileData.FileSize, _fileService);
+            }
+            else
+            {
+                string contentType;
+                var downloadPath = Utility.DownloadFile(_fileService, fileData.FilePath, fileName, out contentType);
+                return PhysicalFile(downloadPath, contentType, true);
+            }
+        }
+        /// <summary>
+        /// 공유소재 - 파형 요청
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <returns></returns>
+        [HttpGet("waveform/{seq}")]
+        public List<float> GetWaveform(long seq)
+        {
+            var fileData = _dal.Get(seq);
+            return Utility.GetWaveform(_fileService, fileData.FilePath);
+        }
+
         /// <summary>
         /// 공유소재 - 삭제
         /// </summary>
         /// <param name="seq"></param>
         /// <returns></returns>
-
         [HttpDelete("meta/{seq}")]
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> DeleteDB(long seq)
         {

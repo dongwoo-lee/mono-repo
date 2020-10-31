@@ -197,7 +197,7 @@ namespace MAMBrowser.BLL
             }
             if (!string.IsNullOrEmpty(pgmName))
             {
-                string[] nameArray = name.Split(' ');
+                string[] nameArray = pgmName.Split(' ');
                 foreach (var word in nameArray)
                 {
                     builder.Where($"LOWER(EVENTNAME) LIKE LOWER('%{word}%')");

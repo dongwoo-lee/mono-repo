@@ -75,7 +75,7 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{userextid}")]
-        public DTO_RESULT UpdateData(long userextid, [ModelBinder(BinderType = typeof(JsonModelBinder))] PrivateFileModel metaData)
+        public DTO_RESULT UpdateData(long userextid, [FromBody] PrivateFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
@@ -96,6 +96,27 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        /// <summary>
+        /// VerifyModel
+        /// </summary>
+        /// <param name="userextid"></param>
+        /// <param name="metaData"></param>
+        /// <returns></returns>
+        [HttpPost("meta/verify/{userextid}")]
+        public DTO_RESULT VerifyModel(long userextid, [FromBody] PrivateFileModel metaData)
+        {
+            return new DTO_RESULT();
+            //return true;
+            //if (!_userService.VerifyEmail(email))
+            //{
+            //    return Json($"Email {email} is already in use.");
+            //}
+
+            //return Json(true);
+        }
+
+
         /// <summary>
         /// My 공간 - 검색
         /// </summary>
@@ -151,11 +172,10 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// My공간 - 파일 요청(미리듣기, 다운로드 시 사용)
+        /// My공간 - 다운로드
         /// </summary>
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
-        //[Authorize]
         [HttpGet("files/{seq}")]
         public IActionResult Download(long seq)
         {
@@ -176,65 +196,40 @@ namespace MAMBrowser.Controllers
             //}
             return File(stream, contentType, fileName);
         }
-        [HttpGet("streaming/indirect/{seq}")]
-        public IActionResult IndirectStreaming(long seq)
+        /// <summary>
+        /// My공간 - 스트리밍
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
+        /// <returns></returns>
+        [HttpGet("streaming/{seq}")]
+        public IActionResult Streaming(long seq, [FromQuery] string direct = "N")
         {
             //range 있을떄는 206 반환하도록
             var fileData = _dal.Get(seq);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
 
-
-            var targetPath = @$"c:\tmpwork\{fileName}";
-            _fileService.DownloadFile(fileData.FilePath, targetPath);
-            return PhysicalFile(targetPath, contentType, true);
-        }
-        [HttpGet("streaming/direct/{seq}")]
-        public IActionResult Streaming(long seq)
-        {
-            //range 있을떄는 206 반환하도록
-            var fileData = _dal.Get(seq);
-            string fileName = $"{fileData.Title}{fileData.FileExt}";
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            if (direct.ToUpper() == "Y")
             {
-                contentType = "application/octet-stream";
+                return new PushStreamResult(fileData.FilePath, fileName, fileData.FileSize, _fileService);
             }
-            return new PushStreamResult(contentType, fileData.FilePath, fileName, fileData.FileSize, _fileService);
+            else
+            {
+                string contentType;
+                var downloadPath = Utility.DownloadFile(_fileService, fileData.FilePath, fileName, out contentType);
+                return PhysicalFile(downloadPath, contentType, true);
+            }
         }
+        /// <summary>
+        /// My공간 - 파형 요청
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <returns></returns>
         [HttpGet("waveform/{seq}")]
         public List<float> GetWaveform(long seq)
         {
             var fileData = _dal.Get(seq);
-            string waveFileName = Path.GetFileName(fileData.FilePath);
-            string waveformFileName = $"{Path.GetFileNameWithoutExtension(fileData.FilePath)}.egy";
-            string waveformFilePath = fileData.FilePath.Replace(waveFileName, waveformFileName);
-
-            if (_fileService.ExistFile(waveformFilePath))
-            {
-                var downloadStream = _fileService.GetFileStream(waveformFilePath, 0);
-                return AudioEngine.GetDecibelFromEgy(downloadStream);
-            }
-            else
-            {
-                
-                var inputStream =_fileService.GetFileStream(fileData.FilePath, 0);
-                MemoryStream ms = new MemoryStream();
-                inputStream.CopyTo(ms);
-                ms.Position = 0;
-                
-                WaveFileReader reader = new WaveFileReader(ms);
-                var data = AudioEngine.GetDecibelFromWav(ms, 2);
-                inputStream.Close();
-                ms.Dispose();
-                return data;
-            }
+            return Utility.GetWaveform(_fileService, fileData.FilePath);
         }
 
         /// <summary>

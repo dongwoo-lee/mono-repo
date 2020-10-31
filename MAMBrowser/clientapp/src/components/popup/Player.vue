@@ -117,7 +117,7 @@ export default {
     LoadAudio(){
       this.InjectWaveSurfer();
       this.SetWaveSurfer();
-        let url =`/api/products/workspace/private/streaming/direct/${this.item.seq}`;
+        let url =`/api/products/workspace/private/streaming/${this.item.seq}`;
         let url2 =`/api/products/workspace/private/waveform/${this.item.seq}`;
         //     console.info('this.returnData',this.returnData);
 

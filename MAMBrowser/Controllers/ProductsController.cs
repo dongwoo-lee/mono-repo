@@ -448,9 +448,9 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 소재 다운로드
+        /// 일반 소재 - 다운로드
         /// </summary>
-        /// <param name="seq"></param>
+        /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpPost("files")]
         public IActionResult Download([FromBody] string filePath)
@@ -463,15 +463,57 @@ namespace MAMBrowser.Controllers
                 contentType = "application/octet-stream";
             }
             var stream = _fileService.GetFileStream(filePath, 0);
+
+            //var newPath =  @$"c:\tmpwork\2{fileName}";
+            //using (FileStream fs = new FileStream(newPath, FileMode.Create, FileAccess.ReadWrite))
+            //{
+            //    stream.CopyTo(fs);
+            //}
             return File(stream, contentType, fileName);
         }
         /// <summary>
-        /// 소재 스트리밍2
+        /// 일반 소재  - 스트리밍
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
+        /// <returns></returns>
+        [HttpPost("streaming")]
+        public IActionResult Streaming([FromBody] string filePath, [FromQuery] string direct = "N")
+        {
+            string fileName = Path.GetFileName(filePath);
+            if (direct.ToUpper() == "Y")
+            {
+                int fileSize = 0;
+                return new PushStreamResult(filePath, fileName, fileSize, _fileService);
+            }
+            else
+            {
+                string contentType;
+                var downloadPath = Utility.DownloadFile(_fileService, filePath, fileName, out contentType);
+                return PhysicalFile(downloadPath, contentType, true);
+            }
+        }
+        /// <summary>
+        /// 일반 소재 - 파형 요청
         /// </summary>
         /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpPost("streaming/indirect")]
-        public IActionResult IndirectStreaming([FromBody] string filePath)
+        [HttpPost("waveform")]
+        public List<float> GetWaveform([FromBody] string filePath)
+        {
+            string fileName = Path.GetFileName(filePath);
+            //var fileData = _dal.Get(seq);
+            return Utility.GetWaveform(_fileService, filePath);
+        }
+
+
+        /// <summary>
+        /// 일반 소재 - 다운로드
+        /// </summary>
+        /// <param name="seq">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpGet("dl30/files")]
+        public IActionResult Dl30Download([FromBody] string filePath)
         {
             string fileName = Path.GetFileName(filePath);
             var fileExtProvider = new FileExtensionContentTypeProvider();
@@ -480,51 +522,49 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-           
-            string newFilePath = @$"c:\tmpdownload\{Path.GetRandomFileName()}";
-            _fileService.DownloadFile(filePath, newFilePath);
-            return File(newFilePath, contentType, fileName, true);
-        }
-        /// <summary>
-        /// 소재 스트리밍
-        /// </summary>
-        /// <param name="seq"></param>
-        /// <returns></returns>
-        [HttpPost("streaming/direct")]
-        public IActionResult Streaming([FromBody] string filePath)
-        {
-            return null;
-        }
-        /// <summary>
-        /// 소재 파형
-        /// </summary>
-        /// <param name="seq"></param>
-        /// <returns></returns>
-        [HttpPost("waveform")]
-        public List<float> GetWaveform([FromBody] string filePath)
-        {
-            string waveFileName = Path.GetFileName(filePath);
-            string waveformFileName = $"{Path.GetFileNameWithoutExtension(filePath)}.egy";
-            string waveformFilePath = filePath.Replace(waveFileName, waveformFileName);
+            var stream = _fileService.GetFileStream(filePath, 0);
 
-            if (_fileService.ExistFile(waveformFilePath))
+            //var newPath =  @$"c:\tmpwork\2{fileName}";
+            //using (FileStream fs = new FileStream(newPath, FileMode.Create, FileAccess.ReadWrite))
+            //{
+            //    stream.CopyTo(fs);
+            //}
+            return File(stream, contentType, fileName);
+        }
+        /// <summary>
+        /// 일반 소재  - 스트리밍
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
+        /// <returns></returns>
+        [HttpGet("dl30/streaming")]
+        public IActionResult Dl30Streaming([FromBody] string filePath, [FromQuery] string direct = "N")
+        {
+            string fileName = Path.GetFileName(filePath);
+            if (direct.ToUpper() == "Y")
             {
-                using (var downloadStream = _fileService.GetFileStream(waveformFilePath, 0))
-                {
-                    return AudioEngine.GetVolumeFromEgy(downloadStream);
-                }
+                int fileSize = 0;
+                return new PushStreamResult(filePath, fileName, fileSize, _fileService);
             }
             else
             {
-                var inputStream = _fileService.GetFileStream(filePath, 0);
-                WaveFileReader reader = new WaveFileReader(inputStream);
-                var data = AudioEngine.GetVolumeFromWav(reader, 2);
-                inputStream.Close();
-                return data;
+                string contentType;
+                var downloadPath = Utility.DownloadFile(_fileService, filePath, fileName, out contentType);
+                return PhysicalFile(downloadPath, contentType, true);
             }
         }
-
-
+        /// <summary>
+        /// 일반 소재 - 파형 요청
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <returns></returns>
+        [HttpGet("dl30/waveform")]
+        public List<float> GetDl30Waveform([FromBody] string filePath)
+        {
+            string fileName = Path.GetFileName(filePath);
+            //var fileData = _dal.Get(seq);
+            return Utility.GetWaveform(_fileService, filePath);
+        }
 
 
 
@@ -595,53 +635,69 @@ namespace MAMBrowser.Controllers
 
 
         /// <summary>
-        /// 음악/효과음 소재 wav, egy 파일 다운로드
+        /// 음악/효과음 소재 - 다운로드
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
-        [HttpGet("music/files")]
-        public FileResult GetMusicFileDownload([FromQuery] string filePath)
+        [HttpPost("music/files")]
+        public IActionResult MusicDownload([FromQuery] string filePath)
         {
-            //string directoryPath = @"c:\임시파일";
-            //string filePath = Path.Combine(directoryPath, fileID);
-            //IFileProvider provider = new PhysicalFileProvider(directoryPath);
-            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
-            //var readStream = fileInfo.CreateReadStream();
 
-            //var fileExtProvider = new FileExtensionContentTypeProvider();
-            //string contentType;
-            //if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            string fileName = Path.GetFileName(filePath);
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            var stream = _fileService.GetFileStream(filePath, 0);
+
+            //var newPath =  @$"c:\tmpwork\2{fileName}";
+            //using (FileStream fs = new FileStream(newPath, FileMode.Create, FileAccess.ReadWrite))
             //{
-            //    contentType = "application/octet-stream";
+            //    stream.CopyTo(fs);
             //}
-
-            //return File(readStream, contentType, fileID);
-            return null;
+            return File(stream, contentType, fileName);
         }
         /// <summary>
-        /// 음악/효과음 소재 미리듣기/다운로드 
+        /// 음악/효과음 소재  - 스트리밍
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
         /// <returns></returns>
-        [HttpGet("music/streaming/indirect")]
-        public FileResult MusicFileStreaming([FromQuery] string filePath)
+        [HttpPost("music/streaming")]
+        public IActionResult MusicStreaming([FromQuery] string filePath, [FromQuery] string direct = "N")
         {
-            //string directoryPath = @"c:\임시파일";
-            //string filePath = Path.Combine(directoryPath, fileID);
-            //IFileProvider provider = new PhysicalFileProvider(directoryPath);
-            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
-            //var readStream = fileInfo.CreateReadStream();
+            //range 있을떄는 206 반환하도록
+            //var fileData = _dal.Get(seq);
+            //string fileName = $"{fileData.Title}{fileData.FileExt}";
+            string fileName = Path.GetFileName(filePath);
 
-            //var fileExtProvider = new FileExtensionContentTypeProvider();
-            //string contentType;
-            //if (!fileExtProvider.TryGetContentType(filePath, out contentType))
-            //{
-            //    contentType = "application/octet-stream";
-            //}
-
-            //return File(readStream, contentType, fileID);
-            return null;
+            if (direct.ToUpper() == "Y")
+            {
+                int fileSize = 0;
+                return new PushStreamResult(filePath, fileName, fileSize, _fileService);
+            }
+            else
+            {
+                string contentType;
+                var downloadPath = Utility.DownloadFile(_fileService, filePath, fileName, out contentType);
+                return PhysicalFile(downloadPath, contentType, true);
+            }
         }
+        /// <summary>
+        /// 일반 소재 - 파형 요청
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <returns></returns>
+        [HttpPost("music/waveform")]
+        public List<float> MusicGetWaveform([FromQuery] string filePath)
+        {
+            //var fileData = _dal.Get(seq);
+            return Utility.GetWaveform(_fileService, filePath);
+        }
+
+
         /// <summary>
         /// 앨범 이미지 목록 반환
         /// </summary>
