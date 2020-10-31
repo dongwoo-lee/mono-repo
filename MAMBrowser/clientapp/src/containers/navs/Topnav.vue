@@ -47,9 +47,11 @@
                       </span>
 
                   </template>
-                  <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
-                  <b-dropdown-item v-if="isDisplaySetting()" @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
-                  <b-dropdown-divider />
+                  <div v-if="isDisplaySetting()">
+                    <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
+                    <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
+                    <b-dropdown-divider />
+                  </div>
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
                 </b-dropdown>
               </td>
@@ -110,8 +112,7 @@ export default {
       });
     },
     isDisplaySetting() {
-      return true;
-      // return this.behaviorList.some(item => item.id === 'S01G02C005' && item.visible === 'Y');
+      return this.behaviorList.some(item => item.id === 'S01G02C001' && item.visible === 'Y');
     },
     getTo() {
       if (this.roleList) {

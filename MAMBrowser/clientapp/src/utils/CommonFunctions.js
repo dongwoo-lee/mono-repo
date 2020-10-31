@@ -190,7 +190,7 @@ const formatMBBytes = (bytes, decimals = 1) => {
 const formatBytes = (bytes, decimals = 2) => {
     if (bytes === 0) return '0 B';
 
-    const k = 1024;
+    const k = 1000;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 

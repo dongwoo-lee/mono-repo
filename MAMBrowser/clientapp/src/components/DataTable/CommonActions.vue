@@ -1,14 +1,14 @@
 <template>
     <div>
         <b-button
-            v-if="display('S01G02C001')"
+            v-if="display('S01G02C002')"
             class="icon-buton"
             title="미리듣기"
             @click.stop="onPreview()">
             <b-icon icon="caret-right-square" class="icon"></b-icon>
         </b-button>
         <b-button
-            v-if="display('S01G02C002')"
+            v-if="display('S01G02C003')"
             :id="`download-${rowData.rowNO}`" class="icon-buton"
             v-b-tooltip.hover.top="{ title: rowData.filePath }"
             @click.stop="onDownload()">

@@ -108,13 +108,8 @@ export default {
             this.$bvModal.hide('modalModify')
             const userextId = sessionStorage.getItem('user_ext_id');
             const formData = new FormData();
-            formData.append('metaData', JSON.stringify(this.metaData));
-            this.$http.put(`/api/products/workspace/private/meta/${userextId}`, formData,
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    }
-                })
+
+            this.$http.put(`/api/products/workspace/private/meta/${userextId}`, this.metaData)
                 .then(res => {
                     if (res.status === 200 && !res.data.errorMsg) {
                         this.$fn.notify('success', { message: '메타 데이터가 수정되었습니다.' })

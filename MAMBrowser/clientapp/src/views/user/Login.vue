@@ -73,7 +73,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('user', ['processing'])
+        ...mapGetters('user', ['processing', 'roleList'])
     },
     watch: {
         password(v) {
@@ -93,7 +93,15 @@ export default {
                         if (res.data.resultCode !== 0) {
                             this.errorMsg = res.data.errorMsg;
                         } else {
-                            this.$router.push("/");
+                            console.info('this.roleList', this.roleList);
+                            if (this.roleList) {
+                                const firstVisibleIndex = this.roleList.findIndex(role => role.visible === 'Y' );
+                                if (this.roleList[firstVisibleIndex]) {
+                                    this.$router.push(this.roleList[firstVisibleIndex].to);
+                                }
+                            } else {
+                                this.$router.push("/");
+                            }
                         }
                     } else {
                         var errMsg = res.response.data.message;

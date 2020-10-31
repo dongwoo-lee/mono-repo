@@ -82,6 +82,7 @@ export default {
     },
     // 새로고침 시점 실행
     SET_USER(state, data) {
+      state.roleList = [];
       state.menuList = getAddUrlAndIconMenuList(data.menuList, state.roleList);
       state.behaviorList = data.behaviorList;
       delete data.menuList;
@@ -119,7 +120,7 @@ export default {
         const response = await $http.post('/api/Authenticate', params);
         const { resultCode, resultObject, token } = response.data;
         if (resultObject && resultCode === 0) {
-          commit('SET_AUTH', { 
+          commit('SET_AUTH', {
             token: token, 
             userId: resultObject.id, 
             userExtId: resultObject.userExtID,
@@ -153,8 +154,7 @@ export default {
     getMenu({commit}, userId) {
       $http.get(`/api/users/${userId}/menu`).then(response => {
         const { status, data } = response;
-        console.info('getMenu', response);
-        if (status === 200 && data.resultObject && data.resultCode === 0) {
+          if (status === 200 && data.resultObject && data.resultCode === 0) {
           commit('SET_MENU', data.resultObject.data);
         }
       })

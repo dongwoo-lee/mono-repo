@@ -122,8 +122,11 @@ export default {
                   if (res.status === 200) {
                       const list = res.data.resultObject.data;
                       const values = [];
+
                       list.forEach(data => {
-                          values.push(data.name);
+                          if (data.visible === 'Y') {
+                              values.push(data.name);
+                          }
                       });
                       menu.description = values.join('\n')
                   }
