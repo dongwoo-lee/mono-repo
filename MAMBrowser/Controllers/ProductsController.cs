@@ -43,7 +43,7 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 프로그램 소재 조회 (페이징 x)
+        /// 프로그램 소재 조회 
         /// </summary>
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="brd_dt">방송일(20200101)</param>

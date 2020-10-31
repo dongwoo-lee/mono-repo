@@ -234,8 +234,8 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="brd_dt">방송 종료일</param>
         /// <returns></returns>
-        [HttpGet("pgmcodes/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPgmCodes(string brd_dt)
+        [HttpGet("pgmcodes")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPgmCodes([FromQuery] string brd_dt)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
