@@ -14,7 +14,8 @@ namespace MAMBrowser.Helpers
         public string TokenSignature { get; set; }
         public string ConnectionString { get; set; }
         public List<DTO_NAMEVALUE> DiskScope { get; set; } = new List<DTO_NAMEVALUE>();
-        
+        public string Secret { get; set; }
+
         public AppSettings GetInstance()
         {
             return _obj;

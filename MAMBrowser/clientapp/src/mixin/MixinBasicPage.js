@@ -50,12 +50,11 @@ let mixinBasicPage = {
         },
         // 사용처 목록 조회
         getPgmOptions(brd_dt) {
-            if (!brd_dt) return;
-            this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
+            this.requestCall('/api/Categories/pgmcodes?brd_dt=' + brd_dt, 'pgmOptions');
         },
         // 공유 소재 분류 목록 조회
         getPublicCodesOptions(primaryCode = '') {
-            this.requestCall(`/api/Categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions')
+            this.requestCall(`/api/Categories/public-codes/primary${primaryCode}`, 'publicCodesOptions')
             .then(data => {
                 if(data.resultObject && data.resultCode === 0) {
                     if (data.resultObject.data.length > 0) {

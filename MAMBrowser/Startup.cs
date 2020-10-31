@@ -61,37 +61,10 @@ namespace MAMBrowser
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
             var appSettings = optionSection.Get<AppSettings>();
-            var signatureKey = Encoding.ASCII.GetBytes(appSettings.TokenSignature);
             Repository.ConnectionString = appSettings.ConnectionString;
-            //var issuerKey = Encoding.ASCII.GetBytes(appSettings.TokenIssuer);
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-             .AddJwtBearer(x =>
-             {
-                 x.Events = new JwtBearerEvents
-                 {
-                     OnTokenValidated = context =>
-                     {
-                         //global check author
-                         return Task.CompletedTask;
-                     }
-                 };
-                 x.RequireHttpsMetadata = false;
-                 x.SaveToken = true;
-                 x.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(signatureKey),
-                     ValidIssuer = appSettings.TokenIssuer,
-                     ValidateIssuer = true,
-                     ValidateAudience = false,
-                     ClockSkew = TimeSpan.Zero,
-                 };
-             });
+            SystemConfig.AppSettings = appSettings;
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -121,8 +94,9 @@ namespace MAMBrowser
                 .AllowCredentials());
 
             app.UseSpaStaticFiles();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

@@ -24,13 +24,10 @@
           />
         </b-form-group>
         <!-- 방송일 -->
-        <b-form-group label="방송일" 
-          class="has-float-label"
-          :class="{ 'hasError': (hasErrorClass || $v.searchItems.brd_dt.required) }">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" isCurrentDate required/>
-          <b-form-invalid-feedback :state="!$v.searchItems.brd_dt.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
+        <b-form-group label="방송일" class="has-float-label">
+          <common-date-picker v-model="searchItems.brd_dt" :isCurrentDate="false"/>
         </b-form-group>
-        <!-- 프로그램명 -->
+        <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">
           <common-dropdown-menu-input :suggestions="pgmOptions" @selected="onPgmSelected" />
         </b-form-group>
@@ -49,12 +46,18 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <common-data-table
+        <common-data-table-scroll-paging
+          ref="scrollPaging"
+          :table-height="'500px'"
           :fields="fields"
           :rows="responseData.data"
+          :per-page="responseData.rowPerPage"
           is-actions-slot
           :isTableLoading="isTableLoading"
           @contextMenuAction="onContextMenuAction"
+          @scrollPerPage="onScrollPerPage"
+          @sortableclick="onSortable"
+          @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
             <common-actions
@@ -65,7 +68,7 @@
             >
             </common-actions>
           </template>
-        </common-data-table>
+        </common-data-table-scroll-paging>
       </template>
     </common-form>
   </div>
@@ -80,8 +83,11 @@ export default {
     return {
       searchItems: {
         media: 'A',
-        brd_dt: '20200101',
-        rowPerPage: 15,
+        brd_dt: '',
+       rowPerPage: 15,
+        selectPage: 1,
+        sortKey: '',
+        sortValue: '',
       },
       isTableLoading: false,
       fields: [
@@ -181,16 +187,10 @@ export default {
   },
   methods: {
     getData() {
-      if (!this.$v.searchItems.brd_dt.$invalid) {
-        this.$fn.notify('inputError', {});
-        return;
-      }
-
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
-      const brd_dt = this.searchItems.brd_dt;
 
-      this.$http.get(`/api/Products/pgm/${media}`)
+      this.$http.get(`/api/Products/pgm/${media}`, { params: this.searchItems })
         .then(res => {
            this.setResponseData(res, 'normal');
            this.isTableLoading = false;

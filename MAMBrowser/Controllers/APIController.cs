@@ -1,19 +1,13 @@
 ﻿using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
+using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Writers;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
@@ -22,11 +16,14 @@ namespace MAMBrowser.Controllers
     public class APIController : ControllerBase
     {
         private readonly AppSettings _appSesstings;
-        private readonly APIDAL _dal;  
-        public APIController(IOptions<AppSettings> appSesstings, APIDAL dal)
+        private readonly APIDAL _dal;
+        private IUserService _userService;
+
+        public APIController(IOptions<AppSettings> appSesstings, APIDAL dal, IUserService userService)
         {
             _appSesstings = appSesstings.Value;
             _dal = dal;
+            _userService = userService;
         }
 
         /// <summary>
@@ -55,23 +52,7 @@ namespace MAMBrowser.Controllers
                     }
                     else
                     {
-                        var tokenHandler = new JwtSecurityTokenHandler();
-                        var Signature = Encoding.ASCII.GetBytes(_appSesstings.TokenSignature);
-                        var now = DateTime.UtcNow;
-                        var tokenDescriptor = new SecurityTokenDescriptor
-                        {
-                            Issuer = _appSesstings.TokenIssuer,
-                            Expires = now.AddHours(1),
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Signature), SecurityAlgorithms.HmacSha256Signature),
-                            IssuedAt = now,
-                            NotBefore = now,
-                        };
-                        tokenDescriptor.Claims = new Dictionary<string, object>();
-                        tokenDescriptor.Claims.Add("accessInfo", userToken);
-                        var token = tokenHandler.CreateToken(tokenDescriptor);
-                        var tokenString = tokenHandler.WriteToken(token);
-                        result.Token = tokenString;
-
+                        result = _userService.Authenticate(result, account);
                         result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
                     }
                 }

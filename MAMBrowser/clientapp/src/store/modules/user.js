@@ -78,7 +78,7 @@ export default {
       sessionStorage.setItem('user_id', userId);
       sessionStorage.setItem('user_ext_id', userExtId);
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
-      // $http.defaults.headers.common['X-Csrf-Token'] = token;
+      $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
     // 새로고침 시점 실행
     SET_USER(state, data) {
@@ -97,7 +97,7 @@ export default {
       sessionStorage.removeItem('user_id');
       sessionStorage.removeItem('user_ext_id');
       sessionStorage.removeItem('role');
-      // $http.defaults.headers.common['X-Csrf-Token'] = undefined;
+      $http.defaults.headers.common['X-Csrf-Token'] = undefined;
     },
     SET_PROCESSING(state, payload) {
       state.processing = payload

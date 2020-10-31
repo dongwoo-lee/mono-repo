@@ -207,7 +207,6 @@ export default {
     this.getSpotOptions(this.searchItems.media);
     // 방송의뢰 상태 목록 조회
     // this.getReqStatusOptions();
-    this.getData();
   },
   methods: {
     getData() {

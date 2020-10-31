@@ -39,21 +39,19 @@ axios.interceptors.response.use(res =>{
         response: { config, status, data, statusText }
     } = err;
 
-    if (status === 401 && data.message === 'Invalid token') {
+    if (status === 401) {
+        window.$notify(
+            "error",
+            `세션이 만료되었습니다. 로그인 페이지로 이동합니다.[ERROR:${status}]`,
+            '', {
+                duration: 8000,
+                permanent: false
+            }
+        )
+            
         isRefreshing = true;
-        store.commit('user/signOut');
+        store.dispatch('user/signOut');
         router.push({path: '/user/login' });
-    }
-
-    if (status !== 200) {
-        // window.$notify(
-        //     "error",
-        //     "응답값:" + status + '(' + statusText + ')',
-        //     "url: " + config.url, {
-        //         duration: 8000,
-        //         permanent: false
-        //     }
-        // )
     }
 
     return Promise.reject(err);

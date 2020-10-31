@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
-using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
@@ -8,25 +7,17 @@ using MAMBrowser.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.Json;
-using System.Xml.Serialization;
 
 namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [CustomAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
