@@ -15,8 +15,8 @@ let mixinCommon = {
             mediaOptions: [],                        // 매체 목록
             editorOptions: [],                       // 사용자(제작자) 목록
             sortItems: {},
-            previewItem: {},
-            showPreviewPopup : false,
+            soundItem: {},
+            showPlayerPopup : false,
             isLoadingClass: false,
             hasErrorClass: false,
             isTableLoading: false,
@@ -44,7 +44,7 @@ let mixinCommon = {
         });
     },
     methods: {
-        ...mapActions('file', ['download', 'downloadSound', 'downloadEtc']),
+        ...mapActions('file', ['downloadWorkspace', 'downloadProduct', 'downloadMusic', 'downloadDl30','downloadConcatenate']),
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
@@ -149,19 +149,25 @@ let mixinCommon = {
             this.$refs.scrollPaging.initSelectedIds();  
         },
         onPreview(item) {
-            this.previewItem = item;
-            this.showPreviewPopup = true;
+            this.soundItem = item;
+            this.showPlayerPopup = true;
         },
-        onClosePreview() {
-            this.previewItem = null;
-            this.showPreviewPopup = false;
+        onClosePlayer() {
+            this.soundItem = null;
+            this.showPlayerPopup = false;
         },
-        onDownloadSound(item) {
-            this.downloadSound(item);
+        onDownloadProduct(item) {
+            this.downloadProduct(item);
         },
-        onDownloadEtc(item) {
-            this.downloadEtc(item);
-        }
+        onDownloadMusic(item) {
+            this.downloadMusic(item);
+        },
+        onDownloadDl30(item) {
+            this.downloadDl30(item);
+        },
+        onDownloadConcatenate(item) {
+            this.downloadConcatenate(item);
+        },
     }
 }
 

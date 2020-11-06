@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_FILLER : DTO_BASE
+    public class DTO_FILLER : DTO_FILEBASE
     {
         public string ID { get; set; }    //소재ID
         public string Name { get; set; }    //소재명
@@ -18,6 +18,5 @@ namespace MAMBrowser.DTO
         public string EditorName { get; set; }   //제작자
         public string EditDtm { get; set; } //편집일시
         public string MasteringDtm { get; set; } //마스터링 일시
-        public string FilePath { get; set; }//파일 경로
     }
 }

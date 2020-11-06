@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_CM_CONTENT : DTO_BASE
+    public class DTO_CM_CONTENT : DTO_FILEBASE
     {
 
         //public int Order { get; set; }   //순번
@@ -18,6 +18,5 @@ namespace MAMBrowser.DTO
         public string CodingUserName { get; set; }  //코딩인
         public string CodingDT { get; set; }   //코딩일
         public string Format { get; set; }  //text값
-        public string FilePath { get; set; }    // 파일경로
     }
 }

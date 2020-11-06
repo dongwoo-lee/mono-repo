@@ -9,15 +9,15 @@ namespace MAMBrowser.Processor
 {
     public interface IFileService
     {
+        string Host { get; set; }
         string Name { get; set; }
         string TmpUploadFolder { get; set; }
         string UploadFolder { get; set; }
-
-        void MakeDirectory(string relativeDirectoryPath);
-        void Upload(Stream fileStream, string relativeSourcePath, long fileLength);
+        void MakeDirectory(string directoryPath);
+        void Upload(Stream fileStream, string sourcePath, long fileLength);
         void Move(string source, string destination);
-        bool DownloadFile(string fromRelativePath, string toFilePath);
-        Stream GetFileStream(string relativeSourcePath, long offSet);
-        bool ExistFile(string fromRelativePath);
+        bool DownloadFile(string fromPath, string toPath);
+        Stream GetFileStream(string sourcePath, long offSet);
+        bool ExistFile(string fromPath);
     }
 }

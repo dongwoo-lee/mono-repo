@@ -25,6 +25,8 @@ namespace MAMBrowser.Models
         public string AUDIO_FORMAT { get; set; }
         [JsonPropertyName("fileSize")]
         public long FILE_SIZE { get; set; }
+        [JsonPropertyName("storageHost")]
+        public string STORAGE_HOST { get; set; }
         [JsonPropertyName("filePath")]
         public string FILE_PATH { get; set; }
 

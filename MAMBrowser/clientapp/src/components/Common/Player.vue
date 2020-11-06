@@ -1,7 +1,7 @@
 <template>
 <div>
     <div>
-      <h1>{{item.title}} : {{item.memo}}</h1>
+      <h1> {{title}} </h1>
       <div class="text-center" v-if="spinnerFlag" >
         <b-spinner style="width: 4rem; height: 4rem;" variant="primary"></b-spinner>
       </div>
@@ -84,8 +84,8 @@ export default {
                 backend: 'MediaElementWebAudio',
                 // splitChannels: true,
                 xhr:{requestHeaders: [{
-                key: "Authorization",
-                value: "Bearer " + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJbmZvIjp7IklEIjoicmFkaW9lbmciLCJSb2xlSUQiOiJSX1NZU19TVVBFUiIsIkF1dGhvckNEIjoiUzAxRzA0QzAwMyIsIkF1dGhvck5hbWUiOiLsi5zsiqTthZwg6rSA66as7J6QIiwiTWVudUdycElEIjoiUzAxRzA1QzAwMSJ9LCJuYmYiOjE1OTY0NDA3MTAsImV4cCI6MTU5NjQ0NDMxMCwiaWF0IjoxNTk2NDQwNzEwLCJpc3MiOiJNQU0ifQ.21U1T0q5iz2X9Cr_n6SVy_dLaM9EIm-ycPD5f_DiNkg'
+                key: "X-Csrf-Token",
+                value: sessionStorage.getItem('access_token')
                 }]}
                 })
     },
@@ -117,17 +117,27 @@ export default {
     LoadAudio(){
       this.InjectWaveSurfer();
       this.SetWaveSurfer();
-        let url =`/api/products/workspace/private/streaming/${this.item.seq}`;
-        let url2 =`/api/products/workspace/private/waveform/${this.item.seq}`;
-        //     console.info('this.returnData',this.returnData);
-
-        httpClient.get(url2,null).then(res=>
+      if(this.httpMethod === "post")
+      {
+        console.info('post');
+        httpClient.post(this.waveformUrl, { params : this.params}).then(res=>
+        {
+          wavesurfer.load(this.streamingUrl, res.data);
+          this.spinnerFlag = false;
+          this.isSuccess = true;
+        });
+      }
+      else
+      {
+        let url =`${this.streamingUrl}/${this.params}?direct=${this.direct}`;
+        let url2 =`${this.waveformUrl}/${this.params}`;
+        httpClient.get(url2, null).then(res=>
         {
           wavesurfer.load(url, res.data);
           this.spinnerFlag = false;
           this.isSuccess = true;
         });
-        // });
+      }
     },
     Play(){
       wavesurfer.play();
@@ -138,28 +148,30 @@ export default {
       this.CurrentTime = (0).toFixed(2);
     },
   },
-
-    props: {
-        show: {
-            type: Boolean,
-            default: false,
-        },
-        item: {
-            type: Object,
-            default: () => {},
-        }
-    },
-    computed: {
-        showDialog: {
-            get() {
-                return this.show;
-            },
-            set(v) {
-                if (!v) {
-                    this.$emit('close');
-                }
-            }
-        },
-    },
+  props: {
+      httpMethod : {
+          type: String,
+          default: () => {},
+      },
+      params: {
+          type: Object,
+      },
+      title: {
+          type: String,
+          default: () => {},
+      },
+      streamingUrl :{
+          type: String,
+          default: () => {},
+      },
+      waveformUrl :{
+          type: String,
+          default: () => {},
+      },
+      direct : {
+        type: String,
+        default: () => {},
+      }
+  },
 }
 </script>

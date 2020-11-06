@@ -1,12 +1,27 @@
 <template>
 <!-- 미리듣기 팝업 --> 
-<b-modal id="modal-player" size="lg" v-model="showPreviewPopup" no-close-on-backdrop no-close-on-esc>
+<b-modal id="modal-player" size="xl" v-model="showPlayerPopup" no-close-on-backdrop no-close-on-esc>
     <template slot="modal-title" >
     <h5>미리듣기</h5>
     </template>
     <template slot="default" >
+    <b-row>
+    <b-col cols="9"> 
+    <slot name="top">
+    </slot>
+    </b-col>
+    <b-col cols="3">
+        <slot name="right">
+        </slot>
+    </b-col>
+    </b-row>
     <Player 
-        :item="previewItem" 
+        :httpMethod="httpMethod" 
+        :params = "params"
+        :title = "title"
+        :streamingUrl = "streamingUrl"
+        :waveformUrl = "waveformUrl"
+        :direct = "direct"
     />
     </template>
     <template v-slot:modal-footer>
@@ -23,37 +38,38 @@
 <script>
 export default {
     props:{
-        previewItem : {
-            type: Object,
-            default: () => {}
+        httpMethod : {
+            type: String,
+            default: () => {},
         },
-        showPreviewPopup :{
+        params: {
+            type: Object,
+        },
+        title: {
+            type: String,
+            default: () => {},
+        },
+        streamingUrl :{
+            type: String,
+            default: () => {},
+        },
+        waveformUrl :{
+            type: String,
+            default: () => {},
+        },     
+        showPlayerPopup : {
             type: Boolean,
-            default: () =>false
+            default: () => false,
+        },
+        direct : {
+            type: String,
+            default: () => {},
         }
     },
     methods: {
-        display(value) {
-            return this.behaviorData.some(data => data.id === value && data.visible === 'Y');
-        },
-        displayEtc(value) {
-            return this.etcData.some(data => data === value);
-        },
-        onPreview() {
-            this.$emit('preview', this.rowData);
-        },
-        onDownload() {
-            this.$emit('download', this.rowData);
-        },
-        onDelete() {
-            this.$emit('delete', this.rowData);
-        },
-        onMetaModify() {
-            this.$emit('modify', this.rowData);
-        },
         closePlayer(){
-            this.$emit('closePreview');
-            // this.$bvModal.hide('modal-player')
+            this.$bvModal.hide('modal-player')
+            this.$emit('closePlayer');
         }
     },
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_SCR_SPOT : DTO_BASE
+    public class DTO_SCR_SPOT : DTO_FILEBASE
     {
         public string MediaCD { get; set; }
         public string MediaName { get; set; }
@@ -18,7 +18,6 @@ namespace MAMBrowser.DTO
         public string EditorID { get; set; }  //제작자ID
         public string PGMName { get; set; } //사용처명
         public string MasteringDtm { get; set; }    //마스터링 일시
-        public string FilePath { get; set; }    //파일경로
         public string EditorName { get; set; }    //제작자
         public string EditDtm { get; set; } //편집일시
         

@@ -120,42 +120,41 @@ export default {
                 commit('SET_UPLOAD_STATE', false);
             }
         },
-        download({}, {ids, type}) {
+        downloadWorkspace({}, {ids, type}) {     //private, public 파일 다운로드
             ids.forEach(id => {
-                
-                // $http.get(`/api/products/workspace/${type}/files/${id}`,{headers: { responseType: 'blob' }})
-                //     .then(res => {
-                //         $fn.fileDownload(res);
-                //         $fn.notify('success', { message: '파일 다운로드 완료' })
-                //     })
-                //     .catch(error => {
-                //         $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
-                //     })
-                //이동우
                 const link = document.createElement('a');
                 link.href = `/api/products/workspace/${type}/files/${id}`;
-                link.click();
+                window.open(link); 
             })
         },
-        downloadSound({}, item) {
-            $http.get(`/api/Products/external/files?filePath=${item.filePath}`)
-                .then(res => {
-                    $fn.fileDownload(res);
-                    $fn.notify('success', { message: '파일 다운로드 완료' })
-                })
-                .catch(error => {
-                    $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
-                })
+        downloadProduct({}, item) { //products 파일 다운로드
+            const link = document.createElement('a');
+            link.href =`/api/Products/files?token=${item.fileToken}`;
+            link.click();
         },
-        downloadEtc({}, item) {
-            $http.get(`/api/Products/files?filePath=${item.filePath}`)
-                .then(res => {
-                    $fn.fileDownload(res);
-                    $fn.notify('success', { message: '파일 다운로드 완료' })
-                })
-                .catch(error => {
-                    $fn.notify('error', { message: '파일 다운로드 실패: ' + error })
-                })
+        downloadMusic({}, item) {       //music 파일 다운로드
+            const encoded = encodeURI(item.filePath);
+            const link = document.createElement('a');
+            // link.href =`/api/Products/files?token=${item.fileToken}`;
+            // link.click();
+        },
+        downloadDl30({}, item) { //dl30 파일 다운로드
+            const encoded = encodeURI(item.filePath);
+            const link = document.createElement('a');
+            link.href =`/api/Products/dl30/files?token=${item.fileToken}`;
+            link.click();
+        },
+        downloadConcatenate({}, item){
+            console.info('item',item);
+            var tokenList =[];
+            item.forEach(dt => {
+                tokenList.push(dt.fileToken);
+            })
+            console.info('tokenList',tokenList);
+            
+             $http.get(`/api/Products/concatenate-files?tokenList=${tokenList}`).then(res=>{
+                console.info('res.data',res.data);
+             })
         },
         cancel_upload: ({ commit }) => {
             // 취소 토큰 실행

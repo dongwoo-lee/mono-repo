@@ -88,6 +88,7 @@
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+   
   </div>
 </template>
 
@@ -192,13 +193,13 @@ export default {
           dataClass: "center aligned text-center",
           width: "6%"
         }
-      ]
+      ],
     }
   },
   methods: {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/Products/music`, { params: this.searchItems })
+      this.$http.get(`/api/music`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();

@@ -83,13 +83,26 @@
               :rowData="props.props.rowData"
               :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownloadEtc"
+              @download="onDownloadProduct"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+
+    <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.title"
+    :params="soundItem.seq"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    httpMethod="get"
+    direct ="Y"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
+
+
   </div>
 </template>
 
@@ -100,6 +113,9 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
+      streamingUrl : '/api/products/streaming',
+      waveformUrl : '/api/products/waveform',
+
       searchItems: {
         media: 'A',             // 매체
         cate: '',              // 분류

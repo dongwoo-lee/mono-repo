@@ -29,24 +29,23 @@ namespace MAMBrowser.Controllers
             _appSettings = appSesstings.Value;
             _fileService = sr("PublicWorkConnection");
         }
-        public DTO_PUBLIC_FILE Upload(IFormFile file, PublicFileModel metaData)
+        public DTO_PUBLIC_FILE Insert(IFormFile file, PublicFileModel metaData, string host)
         {
             //업로드 권한 처리 필요.
 
             long ID = GetID();
-            string date = DateTime.Now.ToString(Utility.DTM8);
+            string date = DateTime.Now.ToString(MAMUtility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
-            var relativeTargetFolder = $"{_fileService.UploadFolder}/{metaData.USER_EXT_ID}/{date}";      //공유소재도 유저확장ID 사용?
-            var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
-            var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
+            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{metaData.USER_EXT_ID}\{date}";      //공유소재도 유저확장ID 사용?
+            var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
+            var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
             _fileService.MakeDirectory(relativeSourceFolder);
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
-            //db에 데이터 등록
-            var builder = new SqlBuilder();
+            
             //metaData.SEQ = ID;
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
@@ -57,9 +56,10 @@ namespace MAMBrowser.Controllers
             param.Add("MEMO", metaData.MEMO);
             param.Add("AUDIO_FORMAT", "test format");
             param.Add("FILE_SIZE", file.Length);
-            param.Add("FILE_PATH", relativeTargetPath);
+            param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
 
-
+            //db에 데이터 등록
+            var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PUBLIC_SPACE 
 VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
             Repository repository = new Repository();
@@ -116,7 +116,7 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                     Title = row.TITLE,
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
-                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
+                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(MAMUtility.DTM19),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
                     FileExt = Path.GetExtension(row.FILE_PATH)
@@ -212,7 +212,7 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                     Title = row.TITLE,
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
-                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
+                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(MAMUtility.DTM19),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
                     FileExt = Path.GetExtension(row.FILE_PATH)

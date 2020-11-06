@@ -54,7 +54,7 @@ let mixinBasicPage = {
         },
         // 공유 소재 분류 목록 조회
         getPublicCodesOptions(primaryCode = '') {
-            this.requestCall(`/api/Categories/public-codes/primary${primaryCode}`, 'publicCodesOptions')
+            this.requestCall(`/api/categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions')
             .then(data => {
                 if(data.resultObject && data.resultCode === 0) {
                     if (data.resultObject.data.length > 0) {

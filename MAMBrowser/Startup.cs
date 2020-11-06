@@ -64,6 +64,8 @@ namespace MAMBrowser
 
             var appSettings = optionSection.Get<AppSettings>();
             Repository.ConnectionString = appSettings.ConnectionString;
+            MAMUtility.TokenIssuer = appSettings.TokenIssuer;
+            MAMUtility.TokenSignature = appSettings.TokenSignature;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -134,8 +136,8 @@ namespace MAMBrowser
             {
                 return new NetDriveService
                 {
-                    UserId = storage.MirosConnection["UserId"].ToString(),
-                    UserPass = storage.MirosConnection["UserPass"].ToString()
+                    Name = "MirosConnection",
+                    Host = storage.PrivateWorkConnection["Host"].ToString(),
                 };
             });
             services.AddTransient<MusicService>(serviceProvider =>
@@ -189,7 +191,7 @@ namespace MAMBrowser
                     case "PublicWorkConnection":
                         return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
                     case "MirosConnection":
-                        return serviceProvider.GetService<NetDriveService>();
+                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
                     case "MusicConnection":
                         return serviceProvider.GetService<MusicService>();
                     case "DLArchiveConnection":

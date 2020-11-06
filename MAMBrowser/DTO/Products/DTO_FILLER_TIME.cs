@@ -1,6 +1,6 @@
 ﻿namespace MAMBrowser.DTO
 {
-    public class DTO_FILLER_TIME : DTO_BASE
+    public class DTO_FILLER_TIME : DTO_FILEBASE
     {
         public string MediaName { get; set; }    //매체명
         public string ID { get; set; }    //소재ID
@@ -16,7 +16,6 @@
         public string EditorName { get; set; }   //제작자
         public string EditDtm { get; set; } //편집일시
         public string MasteringDtm { get; set; }
-        public string FilePath { get; set; }//파일 경로
         public string FileName { get; set; }//파일명
     }
 }

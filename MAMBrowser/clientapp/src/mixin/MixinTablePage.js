@@ -5,6 +5,7 @@ let mixinTablePage = apiType => ({
     mixins: [ MixinCommon ],
     data() {
         return {
+            selectedItem : {},
             responseData: {
                 data: [],
                 totalRowCount: 0,
@@ -105,6 +106,7 @@ let mixinTablePage = apiType => ({
         // 레코드 선택 이벤트
         rowSelected(items) {
             if (items.length === 0) return;
+            this.selectedItem = items[0];
             const { id, brdDT } = items[0];
             this.getDataContents(id, brdDT);
         },
@@ -117,17 +119,17 @@ let mixinTablePage = apiType => ({
         getCmOptions() {
             this.requestCall('/api/Categories/cm', 'cmOptions');
         },
-        // 단일 다운로드
-        onDownload(seq) {
-            let ids = this.selectedIds;
+        // 단일 다운로드 -> 혼동소지있어서 삭제.
+        // onDownload(seq) {
+        //     let ids = this.selectedIds;
     
-            if (typeof seq !== 'object' && seq) {
-            ids = [];
-            ids.push(seq);
-            }
+        //     if (typeof seq !== 'object' && seq) {
+        //     ids = [];
+        //     ids.push(seq);
+        //     }
     
-            this.download({ids: ids, type: 'private'});
-        },
+        //     this.download({ids: ids, type: 'private'});
+        // },
     }
 })
 

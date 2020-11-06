@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_PRIVATE_FILE : DTO_BASE
+    public class DTO_PRIVATE_FILE : DTO_FILEBASE
     {
         public long Seq { get; set; }
         public string Title { get; set; }
@@ -17,7 +17,6 @@ namespace MAMBrowser.DTO
         public long UserExtID { get; set; }
         public string UserName { get; set; }
         public long FileSize { get; set; }
-        public string FilePath { get; set; }
         public string FileExt { get; set; }
         public string EditedDtm { get; set; }
         public string DeletedDtm { get; set; }

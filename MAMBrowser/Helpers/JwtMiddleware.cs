@@ -37,15 +37,16 @@ namespace MAMBrowser.Helpers
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var signatureKey = Encoding.UTF8.GetBytes(_appSettings.TokenSignature);
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
+                    ValidIssuer = _appSettings.TokenIssuer,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(signatureKey),
+                    ValidateIssuer = true,
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
+                }, out SecurityToken validatedToken); ;
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;

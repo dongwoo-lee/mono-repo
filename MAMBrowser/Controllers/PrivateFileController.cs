@@ -33,13 +33,13 @@ namespace MAMBrowser.Controllers
     public class PrivateFileController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IOptions<AppSettings> _appSesstings;
+        private readonly AppSettings _appSesstings;
         private readonly PrivateFileDAL _dal;
         private readonly IFileService _fileService;
         public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, PrivateFileDAL dal, ServiceResolver sr)
         {
             _dal = dal;
-            _appSesstings = appSesstings;
+            _appSesstings = appSesstings.Value;
             _fileService = sr("PrivateWorkConnection");
             _hostingEnvironment = hostingEnvironment;
         }
@@ -58,7 +58,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var success = _dal.Upload(userextid, file, metaData);
+                var success = _dal.Insert(userextid, file, metaData, _fileService.Host);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -134,7 +134,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                result.ResultObject = _dal.FineData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindData("Y", start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -161,7 +161,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                result.ResultObject = _dal.FineData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindData("N", null, null, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -177,24 +177,25 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("files/{seq}")]
-        public IActionResult Download(long seq)
+        public IActionResult Download(long seq, [FromQuery] string inline = "N")
         {
             var fileData = _dal.Get(seq);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
+            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
-            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-            var stream = _fileService.GetFileStream(fileData.FilePath, 0);
-
-            //var newPath =  @$"c:\tmpwork\2{fileName}";
-            //using (FileStream fs = new FileStream(newPath, FileMode.Create, FileAccess.ReadWrite))
-            //{
-            //    stream.CopyTo(fs);
-            //}
-            return File(stream, contentType, fileName);
+            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = fileName,
+                Inline = inline == "Y" ? true : false
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+            var stream = _fileService.GetFileStream(relativePath, 0);
+            return File(stream, contentType);
         }
         /// <summary>
         /// My공간 - 스트리밍
@@ -208,15 +209,15 @@ namespace MAMBrowser.Controllers
             //range 있을떄는 206 반환하도록
             var fileData = _dal.Get(seq);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
-
+            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
             if (direct.ToUpper() == "Y")
             {
-                return new PushStreamResult(fileData.FilePath, fileName, fileData.FileSize, _fileService);
+                return new PushStreamResult(relativePath, fileName, fileData.FileSize, _fileService);
             }
             else
             {
                 string contentType;
-                var downloadPath = Utility.DownloadFile(_fileService, fileData.FilePath, fileName, out contentType);
+                var downloadPath = MAMUtility.DownloadFile(_fileService, relativePath, fileName, out contentType);
                 return PhysicalFile(downloadPath, contentType, true);
             }
         }
@@ -229,7 +230,8 @@ namespace MAMBrowser.Controllers
         public List<float> GetWaveform(long seq)
         {
             var fileData = _dal.Get(seq);
-            return Utility.GetWaveform(_fileService, fileData.FilePath);
+            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
+            return MAMUtility.GetWaveform(_fileService, relativePath);
         }
 
         /// <summary>
