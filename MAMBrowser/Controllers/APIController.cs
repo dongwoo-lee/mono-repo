@@ -54,8 +54,39 @@ namespace MAMBrowser.Controllers
                     {
                         result = _userService.Authenticate(result, account);
                         result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
+                        result.ResultCode = RESUlT_CODES.SUCCESS;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+        /// <summary>
+        /// 인증 연장
+        /// </summary>
+        /// <param name="account">인증 연장</param>
+        /// <returns></returns>
+        [HttpPost("Renewal")]
+        public DTO_RESULT<DTO_USER_DETAIL> Renewal([FromBody] AuthenticateModel account)
+        {
+            DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
+            try
+            {
+                //if (HttpContext.Items["User"] as string == account.PERSONID)  //인증작업 완료 이후 주석 풀 예정
+                //{
+                    result = _userService.Renewal(result, account);
+                    result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                //}
+                //else
+                //{
+                //    result.ErrorMsg = "잘못된 요청입니다.";
+                //    result.ResultCode = RESUlT_CODES.SUCCESS;
+                //}
             }
             catch (Exception ex)
             {
