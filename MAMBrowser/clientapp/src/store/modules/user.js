@@ -75,14 +75,20 @@ export default {
     },
   },
   mutations: {
-    // 최초 로그인 시점 실행
-    SET_AUTH(state, {token, userId, userExtId, role }) {
+    SET_AUTH(state, {token, resultObject }) {
+      const { menuList, behaviorList, id, userExtID } = resultObject;
       state.isAuth = true;
       state.processing = false;
-      state.menuList = getAddUrlAndIconMenuList(role, state.roleList);
+      state.roleList = [];
+      state.behaviorList = behaviorList;
+      state.menuList = getAddUrlAndIconMenuList(menuList, state.roleList);
+      delete resultObject.menuList;
+      delete resultObject.behaviorList;
+      state.currentUser = resultObject;
+      
       sessionStorage.setItem('access_token', token);
-      sessionStorage.setItem('user_id', userId);
-      sessionStorage.setItem('user_ext_id', userExtId);
+      sessionStorage.setItem('user_id', id);
+      sessionStorage.setItem('user_ext_id', userExtID);
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
       $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
@@ -118,9 +124,7 @@ export default {
         if (resultObject && resultCode === 0) {
           commit('SET_AUTH', {
             token: token, 
-            userId: resultObject.id, 
-            userExtId: resultObject.userExtID,
-            role: resultObject.menuList,
+            resultObject: resultObject
           });
         }
         commit('SET_PROCESSING', false);
@@ -137,16 +141,19 @@ export default {
       const userId = sessionStorage.getItem('user_id');
       $http.defaults.headers.common['X-Csrf-Token'] = sessionStorage.getItem('access_token');;
 
+      const params = {
+        UserID: userId,
+        Pass: 'undefined',
+      };
+
       try {
-        const response = await $http.get(`/api/users/${userId}`);
+        const response = await $http.post('/api/Renewal', params);
         const { resultCode, resultObject, token } = response.data;
 
         if (resultObject && resultCode === 0) {
           commit('SET_AUTH', {
             token: token, 
-            userId: resultObject.id, 
-            userExtId: resultObject.userExtID,
-            role: resultObject.menuList,
+            resultObject: resultObject
           });
         } else {
           $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })
