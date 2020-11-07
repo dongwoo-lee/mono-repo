@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_SB_CONTENT : DTO_BASE
+    public class DTO_SB_CONTENT : DTO_FILEBASE
     {
         //public int Order { get; set; }   //순서
         public string CategoryID { get; set; }    //구분

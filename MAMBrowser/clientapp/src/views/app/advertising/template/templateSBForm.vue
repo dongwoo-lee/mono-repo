@@ -85,8 +85,9 @@
               <template v-if="screenName" v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
                 <b-button
+                  v-if="data.item.id==selectedItem.id"
                   :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadEtc(data.item.id)">
+                  @click.stop="onDownloadConcatenate(reponseContentsData.data)">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>   
               </template>

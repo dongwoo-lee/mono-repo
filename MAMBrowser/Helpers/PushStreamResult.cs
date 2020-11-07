@@ -1,6 +1,7 @@
 ﻿using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,10 +21,14 @@ namespace MAMBrowser.Helpers
         private readonly long _fileSize;
         private readonly IFileService _fileService;
 
-        public PushStreamResult(string contentType, string filePath, string newFileName, long fileSize, IFileService fileService)
+        public PushStreamResult(string filePath, string newFileName, long fileSize, IFileService fileService)
         {
             _onStreamAvailabe = OnStreamAvailable;
-            _contentType = contentType;
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            if (!fileExtProvider.TryGetContentType(filePath, out _contentType))
+            {
+                _contentType = "application/octet-stream";
+            }
             _filePath = filePath;
             _newFileName = newFileName;
             _fileSize = fileSize;

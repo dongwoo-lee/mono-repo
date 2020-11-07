@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_DL30 : DTO_BASE
+    public class DTO_DL30 : DTO_FILEBASE
     {
         //DAMS 처리 여부
         // 주/예비 어떤단말인지?
@@ -26,7 +26,6 @@ namespace MAMBrowser.DTO
         public string SourceID { get; set; }
         public string RecName { get; set; }
         public int Duration { get; set; }
-        public string FilePath { get; set; }
         public long FileSize { get; set; }
         public string RegDtm { get; set; }    //등록일시
     }

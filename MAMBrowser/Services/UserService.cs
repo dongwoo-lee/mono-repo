@@ -14,7 +14,7 @@ namespace MAMBrowser.Services
     public interface IUserService
     {
         DTO_RESULT<DTO_USER_DETAIL> Authenticate(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
-        string RefreshToken(string userId);
+        DTO_RESULT<DTO_USER_DETAIL>  Renewal(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
     }
 
     public class UserService : IUserService
@@ -33,23 +33,24 @@ namespace MAMBrowser.Services
             DTO_USER_TOKEN userToken = _dal.Authenticate(model);
 
             if (userToken == null) return result;
-            var jwtToken = generateJwtToken(userToken.ID);
+            var jwtToken = GenerateJwtToken(userToken.ID);
 
             result.Token = jwtToken;
 
             return result;
         }
-
-        public string RefreshToken(string userId)
+        public DTO_RESULT<DTO_USER_DETAIL> Renewal(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model)
         {
-            var jwtToken = generateJwtToken(userId);
-            return jwtToken;
+            var jwtToken = GenerateJwtToken(model.PERSONID);
+            result.Token = jwtToken;
+            return result;
         }
+        
 
-        private string generateJwtToken(string userId)
+        private string GenerateJwtToken(string userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_appSettings.TokenSignature);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] {

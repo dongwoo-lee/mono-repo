@@ -15,6 +15,13 @@ namespace MAMBrowser.Helpers
         {
         }
     }
+    [TypeConverter(typeof(StringListConverter))]
+    public class StringList : List<string>
+    {
+        public StringList(List<string> collection) : base(Array.ConvertAll(collection.ToArray(), item => item))
+        {
+        }
+    }
 
     public class LongListConverter : TypeConverter
     {
@@ -33,6 +40,27 @@ namespace MAMBrowser.Helpers
                 if (string.IsNullOrEmpty(s))
                     return null;
                 return new LongList(s.Split(',').ToList());
+            }
+            return base.ConvertFrom(context, culture, value);
+        }
+    }
+    public class StringListConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            if (value == null)
+                return null;
+
+            if (value is string s)
+            {
+                if (string.IsNullOrEmpty(s))
+                    return null;
+                return new StringList(s.Split(',').ToList());
             }
             return base.ConvertFrom(context, culture, value);
         }

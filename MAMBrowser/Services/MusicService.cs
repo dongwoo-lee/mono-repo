@@ -1,5 +1,6 @@
 ﻿using FluentFTP;
 using MAMBrowser.DTO;
+using MAMBrowser.Entiies;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +12,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Serialization;
-using static MAMBrowser.Helpers.Utility;
+using static MAMBrowser.Helpers.MAMUtility;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MAMBrowser.Services
 {
@@ -25,6 +28,7 @@ namespace MAMBrowser.Services
         public string UploadFolder { get; set; }
         public string MbcDomain { get; set; }
         public string AuthorKey { get; set; }
+        public string Host { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public MusicService()
         {
@@ -95,8 +99,7 @@ namespace MAMBrowser.Services
             }
             return lastValue;
         }
-
-        public IList<DTO_SONG> SearchSong(SearchTypes searchType, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
+        public IList<DTO_SONG> SearchSong(DTO_MUSIC_REQUEST requestInfo, SearchTypes searchType, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
             //HttpValueCollection
             totalCount = 0;
@@ -116,7 +119,10 @@ namespace MAMBrowser.Services
             HttpClient client = new HttpClient();
             var builder = new UriBuilder("http", MbcDomain, 80, "MusicService.asmx/MirosGetSongSearchData"); 
             builder.Query = queryString.ToString();
-            var result = client.GetAsync(builder.Uri).Result;
+
+            
+            HttpContent content = new StringContent(JsonSerializer.Serialize(requestInfo));
+            var result = client.PostAsync(builder.Uri, content).Result;
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
@@ -131,7 +137,7 @@ namespace MAMBrowser.Services
             else
                 throw new Exception(result.StatusCode.ToString());
         }
-        public IList<DTO_EFFECT> SearchLyrics(string searchText, int rowPerPage, int selectPage, out long totalCount)
+        public IList<DTO_EFFECT> SearchLyrics(DTO_MUSIC_REQUEST requestInfo, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
             //HttpValueCollection
             totalCount = 0;
@@ -147,7 +153,9 @@ namespace MAMBrowser.Services
             HttpClient client = new HttpClient();
             var builder = new UriBuilder("MusicService.asmx/MirosGetSongSearchData", MbcDomain);
             builder.Query = queryString.ToString();
-            var result = client.GetAsync(builder.Path).Result;
+
+            HttpContent content = new StringContent(JsonSerializer.Serialize(requestInfo));
+            var result = client.PostAsync(builder.Path, content).Result;
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
@@ -163,6 +171,18 @@ namespace MAMBrowser.Services
                 return null;
 
         }
+
+        public IList<string> GetImages()
+        {
+            List<string> pathList = new List<string>();
+            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001.jpg");
+            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001-a.jpg");
+            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001-b.jpg");
+            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001-c.jpg");
+            return pathList;
+        }
+
+
         private string GetAlbumPath(string filePath)
         {
             var wordArray = filePath.Split(Path.DirectorySeparatorChar);
@@ -177,7 +197,7 @@ namespace MAMBrowser.Services
             throw new NotImplementedException();
         }
 
-        public void Upload(Stream fileStream, string relativeSourcePath, long fileLength)
+        public void Upload(Stream fileStream, string sourcePath, long fileLength)
         {
             throw new NotImplementedException();
         }
@@ -187,7 +207,7 @@ namespace MAMBrowser.Services
             throw new NotImplementedException();
         }
 
-        public Stream GetFileStream(string relativeSourcePath, long offSet)
+        public Stream GetFileStream(string sourcePath, long offSet)
         {
             throw new NotImplementedException();
         }

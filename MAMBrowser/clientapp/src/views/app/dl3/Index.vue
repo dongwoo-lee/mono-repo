@@ -56,7 +56,7 @@
               :rowData="props.props.rowData"
               :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownloadEtc"
+              @download="onDownloadProduct"
             >
             </common-actions>
           </template>

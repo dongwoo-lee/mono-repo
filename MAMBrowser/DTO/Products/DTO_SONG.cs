@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MAMBrowser.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_SONG : DTO_BASE
+    public class DTO_SONG : DTO_FILEBASE
     {
         /// <summary>
         /// 배열번호
@@ -66,6 +67,8 @@ namespace MAMBrowser.DTO
         //public string RegDate { get; set; } //등록일??? 2004.02.14
         public string Lyrics { get; set; }      //가사
 
+        public DTO_MUSIC_REQUEST FileRequestInfo { get; set; }
+
         public DTO_SONG()
         {
 
@@ -86,6 +89,7 @@ namespace MAMBrowser.DTO
             this.AlbumNO = edto.ALBUM_NO;
             this.AlbumCoverFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
             //this.Lyrics = edto.ly;
+            MAMUtility.GetMusicRequest(this.FilePath);
         }
     }
 }

@@ -3,14 +3,18 @@ using MAMBrowser.Services;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Processor
 {
+    //path : 호스트명이 포함됨 풀경로
     public class NetDriveService : IFileService
     {
+        public string Host { get; set; }
         public string Name { get; set; }
         public string TmpUploadFolder { get; set; }
         public string UploadFolder { get; set; }
@@ -19,38 +23,42 @@ namespace MAMBrowser.Processor
         public NetDriveService()
         {
         }
-        public Stream GetFileStream(string relativeSourcePath, long offSet)
+        public Stream GetFileStream(string sourcePath, long offSet)
         {
-            FileStream fs = new FileStream(relativeSourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return fs;
-        }
-        public bool DownloadFile(string fromRelativePath, string toFilePath)
-        {
-            using (FileStream inStream = new FileStream(fromRelativePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (NetworkShareAccessor.Access("test_svr", "administrator", "1234"))
             {
-                FileStream outStream = new FileStream(toFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                return fs;
+            }
+        }
+        public bool DownloadFile(string fromPath, string toPath)
+        {
+            //확인필요
+            using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                FileStream outStream = new FileStream(toPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 inStream.CopyTo(outStream);
                 return true;
             }
         }
-        public void MakeDirectory(string relativeDirectoryPath)
+        public void MakeDirectory(string directoryPath)
         {
-            throw new NotImplementedException();
+            Directory.CreateDirectory(directoryPath);
         }
 
         public void Move(string source, string destination)
         {
-            throw new NotImplementedException();
+            File.Move(source, destination, true);
         }
 
-        public void Upload(Stream fileStream, string relativeSourcePath, long fileLength)
+        public void Upload(Stream fileStream, string sourcePath, long fileLength)
         {
             throw new NotImplementedException();
         }
 
-        public bool ExistFile(string fromRelativePath)
+        public bool ExistFile(string fromPath)
         {
-            throw new NotImplementedException();
+            return File.Exists(fromPath);
         }
     }
 }

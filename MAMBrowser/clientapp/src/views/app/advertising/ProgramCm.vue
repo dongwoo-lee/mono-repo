@@ -70,7 +70,7 @@
               <template v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
                 <b-button :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadEtc(data.item.id)">
+                  @click.stop="onDownloadProduct(data.item.id)">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
               </template>

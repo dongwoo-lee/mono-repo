@@ -1,34 +1,39 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
 using MAMBrowser.DTO;
+using MAMBrowser.Entiies;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
 using MAMBrowser.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 
 namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [CustomAuthorize]
+    //[CustomAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IOptions<AppSettings> _appSesstings;
+        private readonly AppSettings _appSesstings;
         private readonly ProductsDAL _dal;
         private readonly IFileService _fileService;
-        
+
         public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsDAL dal, ServiceResolver sr)
         {
             _hostingEnvironment = hostingEnvironment;
-            _appSesstings = appSesstings;
+            _appSesstings = appSesstings.Value;
             _dal = dal;
             _fileService = sr("MirosConnection");
         }
@@ -430,13 +435,13 @@ namespace MAMBrowser.Controllers
         /// <param name="name">녹음명</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{schDate}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindNewDL(string media, string schDate, [FromQuery] string pgmName, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindDLArchive(string media, string schDate, [FromQuery] string pgmName, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
             {
 
-                result.ResultObject = _dal.FindNewDL(media, schDate, pgmName, sortKey, sortValue);
+                result.ResultObject = _dal.FineDLArchive(media, schDate, pgmName, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -448,226 +453,226 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// 소재 다운로드
+        /// 일반 소재 - 다운로드
         /// </summary>
-        /// <param name="seq"></param>
+        /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
-        [HttpPost("files")]
-        public IActionResult Download([FromBody] string filePath)
+        [HttpGet("files")]
+        public IActionResult Download([FromQuery] string token, [FromQuery] string inline = "N")
         {
-            string fileName = Path.GetFileName(filePath);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+            try
             {
-                contentType = "application/octet-stream";
-            }
-            var stream = _fileService.GetFileStream(filePath, 0);
-            return File(stream, contentType, fileName);
-        }
-        /// <summary>
-        /// 소재 스트리밍2
-        /// </summary>
-        /// <param name="seq"></param>
-        /// <returns></returns>
-        [HttpPost("streaming/indirect")]
-        public IActionResult IndirectStreaming([FromBody] string filePath)
-        {
-            string fileName = Path.GetFileName(filePath);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-           
-            string newFilePath = @$"c:\tmpdownload\{Path.GetRandomFileName()}";
-            _fileService.DownloadFile(filePath, newFilePath);
-            return File(newFilePath, contentType, fileName, true);
-        }
-        /// <summary>
-        /// 소재 스트리밍
-        /// </summary>
-        /// <param name="seq"></param>
-        /// <returns></returns>
-        [HttpPost("streaming/direct")]
-        public IActionResult Streaming([FromBody] string filePath)
-        {
-            return null;
-        }
-        /// <summary>
-        /// 소재 파형
-        /// </summary>
-        /// <param name="seq"></param>
-        /// <returns></returns>
-        [HttpPost("waveform")]
-        public List<float> GetWaveform([FromBody] string filePath)
-        {
-            string waveFileName = Path.GetFileName(filePath);
-            string waveformFileName = $"{Path.GetFileNameWithoutExtension(filePath)}.egy";
-            string waveformFilePath = filePath.Replace(waveFileName, waveformFileName);
-
-            if (_fileService.ExistFile(waveformFilePath))
-            {
-                using (var downloadStream = _fileService.GetFileStream(waveformFilePath, 0))
+                string filePath = "";
+                if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
                 {
-                    return AudioEngine.GetVolumeFromEgy(downloadStream);
+                    string fileName = Path.GetFileName(filePath);
+                    var fileExtProvider = new FileExtensionContentTypeProvider();
+                    string contentType;
+                    if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+                    {
+                        contentType = "application/octet-stream";
+                    }
+                    var stream = _fileService.GetFileStream(filePath, 0);
+                    System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+                    {
+                        FileName = fileName,
+                        Inline = inline == "Y" ? true : false
+                    };
+                    Response.Headers.Add("Content-Disposition", cd.ToString());
+                    return File(stream, contentType);
+                }
+                else
+                    return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+
+        }
+        /// <summary>
+        /// 일반소재 - 병합 다운로드
+        /// </summary>
+        /// <param name="seq">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpGet("concatenate-files")]
+        public IActionResult ConcatenateDownload([FromQuery] StringList tokenList, [FromQuery] string inline = "N")
+        {
+            try
+            {
+                List<string> filePathList = new List<string>();
+                foreach (var token in tokenList)
+                {
+                    string filePath = "";
+                    if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
+                    {
+                        filePathList.Add(filePath);
+                    }
+                    else
+                        return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+                }
+                var firstFilePath = filePathList.First();
+                string fileName = Path.GetFileName(firstFilePath);
+                var fileExtProvider = new FileExtensionContentTypeProvider();
+                string contentType;
+                if (!fileExtProvider.TryGetContentType(firstFilePath, out contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
+
+
+                byte[] buffer = new byte[1024];
+                MemoryStream outStream = new MemoryStream();
+                WaveFileWriter waveFileWriter = new WaveFileWriter(outStream, new WaveFormat(44100, 16, 2));
+
+                foreach (var filePath in filePathList)
+                {
+                    var stream = _fileService.GetFileStream(filePath, 0);
+                    System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+                    {
+                        FileName = fileName,
+                        Inline = inline == "Y" ? true : false
+                    };
+                    Response.Headers.Add("Content-Disposition", cd.ToString());
+
+
+                    MemoryStream inStream = new MemoryStream();
+                    stream.CopyTo(inStream);
+                    using (WaveFileReader reader = new WaveFileReader(inStream))
+                    {
+                        if (!reader.WaveFormat.Equals(waveFileWriter.WaveFormat))
+                        {
+                            waveFileWriter.Dispose();
+                            throw new InvalidOperationException("Can't concatenate WAV Files that don't share the same format");
+                        }
+
+                        int read;
+                        while ((read = reader.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            waveFileWriter.Write(buffer, 0, read);
+                        }
+                    }
+
+                }
+                return File(outStream, contentType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 일반 소재  - 스트리밍
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
+        /// <returns></returns>
+        [HttpGet("streaming")]
+        public IActionResult Streaming([FromQuery] string token, [FromQuery] string direct = "N")
+        {
+            string filePath = "";
+            if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
+            {
+                string fileName = Path.GetFileName(filePath);
+                if (direct.ToUpper() == "Y")
+                {
+                    int fileSize = 0;
+                    return new PushStreamResult(filePath, fileName, fileSize, _fileService);
+                }
+                else
+                {
+                    string contentType;
+                    var downloadPath = MAMUtility.DownloadFile(_fileService, filePath, fileName, out contentType);
+                    return PhysicalFile(downloadPath, contentType, true);
                 }
             }
             else
+                return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+        }
+        /// <summary>
+        /// 일반 소재 - 파형 요청
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <returns></returns>
+        [HttpGet("waveform")]
+        [Authorize()]
+        public ActionResult<List<float>> GetWaveform([FromQuery] string token)
+        {
+            string filePath = "";
+            if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
             {
-                var inputStream = _fileService.GetFileStream(filePath, 0);
-                WaveFileReader reader = new WaveFileReader(inputStream);
-                var data = AudioEngine.GetVolumeFromWav(reader, 2);
-                inputStream.Close();
-                return data;
+                string fileName = Path.GetFileName(filePath);
+                //var fileData = _dal.Get(seq);
+                return MAMUtility.GetWaveform(_fileService, filePath);
+            }
+            else
+                return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+        }
+
+
+        /// <summary>
+        /// 일반 소재 - 다운로드
+        /// </summary>
+        /// <param name="seq">파일 SEQ</param>
+        /// <param name="inline">inline 여부</param>
+        /// <returns></returns>
+        [HttpGet("dl30/files")]
+        public IActionResult Dl30Download([FromQuery] long seq, [FromQuery] string fileType = "WAV", [FromQuery] string inline = "N")
+        {
+            var fileData = _dal.GetDLArchive(seq);
+            string fileName = $"{fileData.SourceID}.{fileType}";
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = fileName,
+                Inline = inline == "Y" ? true : false
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+            var stream = _fileService.GetFileStream(fileData.FilePath, 0);
+            return File(stream, contentType);
+        }
+        /// <summary>
+        /// 일반 소재  - 스트리밍
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <param name="direct">Y, N</param>
+        /// <returns></returns>
+        [HttpGet("dl30/streaming")]
+        public IActionResult Dl30Streaming([FromQuery] long seq, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
+        {
+
+            //range 있을떄는 206 반환하도록
+            var fileData = _dal.GetDLArchive(seq);
+            string fileName = $"{fileData.SourceID}.{fileType}";
+
+            if (direct.ToUpper() == "Y")
+            {
+                return new PushStreamResult(fileData.FilePath, fileName, fileData.FileSize, _fileService);
+            }
+            else
+            {
+                string contentType;
+                var downloadPath = MAMUtility.DownloadFile(_fileService, fileData.FilePath, fileName, out contentType);
+                return PhysicalFile(downloadPath, contentType, true);
             }
         }
-
-
-
-
-
         /// <summary>
-        /// 음반 기록실 조회
+        /// 일반 소재 - 파형 요청
         /// </summary>
-        /// <param name="searchType"></param>
-        /// <param name="gradeType"></param>
-        /// <param name="searchText"></param>
-        /// <param name="rowPerPage"></param>
-        /// <param name="selectPage"></param>
-        /// <param name="sortKey"></param>
-        /// <param name="sortValue"></param>
+        /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpGet("music")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromServices] ServiceResolver sr, [FromQuery] int searchType, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        [HttpGet("dl30/waveform")]
+        public List<float> GetDl30Waveform([FromQuery] long seq)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
-            try
-            {
-                var musicService = sr("MusicConnection") as MusicService;
-                long totalCount;
-                result.ResultObject.Data = musicService.SearchSong((SearchTypes)searchType, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
-                result.ResultObject.RowPerPage = rowPerPage;
-                result.ResultObject.SelectPage = selectPage;
-                result.ResultObject.TotalRowCount = totalCount;
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
-            return result;
-        }
-        /// <summary>
-        /// 효과음 조회
-        /// </summary>
-        /// <param name="searchText"></param>
-        /// <param name="rowPerPage"></param>
-        /// <param name="selectPage"></param>
-        /// <param name="sortKey"></param>
-        /// <param name="sortValue"></param>
-        /// <returns></returns>
-        [HttpGet("effect")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> FindEffect([FromServices] MusicService musicService, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
-        {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
-            try
-            {
-                long totalCount;
-                result.ResultObject.Data = musicService.SearchLyrics(searchText, rowPerPage, selectPage, out totalCount);
-                result.ResultObject.RowPerPage = rowPerPage;
-                result.ResultObject.SelectPage = selectPage;
-                result.ResultObject.TotalRowCount = totalCount;
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
-            return result;
-        }
-
-
-
-        /// <summary>
-        /// 음악/효과음 소재 wav, egy 파일 다운로드
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        [HttpGet("music/files")]
-        public FileResult GetMusicFileDownload([FromQuery] string filePath)
-        {
-            //string directoryPath = @"c:\임시파일";
-            //string filePath = Path.Combine(directoryPath, fileID);
-            //IFileProvider provider = new PhysicalFileProvider(directoryPath);
-            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
-            //var readStream = fileInfo.CreateReadStream();
-
-            //var fileExtProvider = new FileExtensionContentTypeProvider();
-            //string contentType;
-            //if (!fileExtProvider.TryGetContentType(filePath, out contentType))
-            //{
-            //    contentType = "application/octet-stream";
-            //}
-
-            //return File(readStream, contentType, fileID);
-            return null;
-        }
-        /// <summary>
-        /// 음악/효과음 소재 미리듣기/다운로드 
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        [HttpGet("music/streaming/indirect")]
-        public FileResult MusicFileStreaming([FromQuery] string filePath)
-        {
-            //string directoryPath = @"c:\임시파일";
-            //string filePath = Path.Combine(directoryPath, fileID);
-            //IFileProvider provider = new PhysicalFileProvider(directoryPath);
-            //IFileInfo fileInfo = provider.GetFileInfo(fileID);
-            //var readStream = fileInfo.CreateReadStream();
-
-            //var fileExtProvider = new FileExtensionContentTypeProvider();
-            //string contentType;
-            //if (!fileExtProvider.TryGetContentType(filePath, out contentType))
-            //{
-            //    contentType = "application/octet-stream";
-            //}
-
-            //return File(readStream, contentType, fileID);
-            return null;
-        }
-        /// <summary>
-        /// 앨범 이미지 목록 반환
-        /// </summary>
-        /// <param name="filaPath"></param>
-        /// <returns></returns>
-        [HttpGet("music/albums/images")]
-        public IActionResult GetAlbumImage([FromQuery] string filaPath)
-        {
-            //1. 앨범 이미지 목록 받아오기.
-            //2. 앨범 이미지 스트리밍 서비스 받기.
-            //3. 
-            return null;
-        }
-        /// <summary>
-        /// 앨범 이미지 목록 반환
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        [HttpGet("music/albums/images-list")]
-        public IActionResult GetAlbumImageList([FromQuery] string filePath)
-        {
-            //1. 앨범이미지 fullPath에서 상대경로를 일단 저장해놈
-            //2. 정보컨텐츠부서로부터 이미지파일 이름 목록을 서비스 받음.(파라매터는 파일 풀 경로)
-            //3. 파일이름을 반환받으면, 상대경로를 전부 붙여서 프론트로 전달.(암호화해서;)
-
-            return null;
+            var fileData = _dal.GetDLArchive(seq);
+            return MAMUtility.GetWaveform(_fileService, fileData.FilePath);
         }
     }
 }

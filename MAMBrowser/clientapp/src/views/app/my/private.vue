@@ -44,7 +44,7 @@
           <b-button variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
         </b-input-group>
         <b-input-group>
-          <b-button variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
+          <b-button variant="outline-secondary default" size="sm" @click="onDownloadMultiple">선택 항목 다운로드</b-button>
         </b-input-group>
         <b-input-group>
           <b-button variant="outline-danger default" size="sm" @click="onMultiDeleteConfirm">선택 항목 휴지통 보내기</b-button>
@@ -76,7 +76,7 @@
                 :behaviorData="behaviorList"
                 :etcData="['delete', 'modify']"
                 @preview="onPreview"
-                @download="onDownload"
+                @download="onDownloadSingle"
                 @delete="onDeleteConfirm"
                 @modify="onMetaModifyPopup"
               >
@@ -104,10 +104,17 @@
         </meta-data-private-modify-popup>
       </template>
     </common-form>
+
     <PlayerPopup 
-    :showPreviewPopup = "showPreviewPopup"
-    :previewItem = "previewItem"
-    @closePreview="onClosePreview" />
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.title"
+    :params="soundItem.seq"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    httpMethod="get"
+    direct ="Y"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
 
   </div>
 </template>
@@ -115,14 +122,15 @@
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import MetaDataPrivateModifyPopup from '../../../components/popup/MetaDataPrivateModifyPopup';
-import PlayerPopup from '../../../components/popup/PlayerPopup.vue';
 import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { MetaDataPrivateModifyPopup,PlayerPopup },
+  components: { MetaDataPrivateModifyPopup },
   data() {
     return {
+      streamingUrl : '/api/products/workspace/private/streaming',
+      waveformUrl : '/api/products/workspace/private/waveform',
       searchItems: {
         cate: '',              // 분류(cate)
         title: '',             // 제목
@@ -231,17 +239,14 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    // 다운로드
-    onDownload(item) {
-      const seq = item.seq;
+    onDownloadSingle(item) {
+      let ids = [];
+      ids.push(item.seq);
+      this.downloadWorkspace({ids: ids, type: 'private'});
+    },
+    onDownloadMultiple() {
       let ids = this.selectedIds;
-
-      if (typeof seq !== 'object' && seq) {
-        ids = [];
-        ids.push(seq);
-      }
-
-      this.download({ids: ids, type: 'private'});
+      this.downloadWorkspace({ids: ids, type: 'private'});
     },
     // 단일 휴지통 보내기 확인창
     onDeleteConfirm(rowData) {

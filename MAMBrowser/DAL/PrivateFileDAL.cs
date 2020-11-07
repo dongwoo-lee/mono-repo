@@ -27,15 +27,15 @@ namespace MAMBrowser.Controllers
             _fileService = sr("PrivateWorkConnection");
         }
 
-        public DTO_PRIVATE_FILE Upload(long userextid, IFormFile file, PrivateFileModel metaData)
+        public DTO_PRIVATE_FILE Insert(long userextid, IFormFile file, PrivateFileModel metaData, string host)
         {
             long ID = GetID();
-            string date = DateTime.Now.ToString(Utility.DTM8);
+            string date = DateTime.Now.ToString(MAMUtility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
-            var relativeTargetFolder = $"{_fileService.UploadFolder}/{userextid}/{date}";
-            var relativeSourcePath = $"{relativeSourceFolder}/{fileName}";
-            var relativeTargetPath = $"{relativeTargetFolder}/{fileName}";
+            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userextid}\{date}";
+            var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
+            var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
             _fileService.MakeDirectory(relativeSourceFolder);
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
@@ -48,7 +48,7 @@ namespace MAMBrowser.Controllers
             param.Add("MEMO", metaData.MEMO);
             param.Add("AUDIO_FORMAT", "test format");
             param.Add("FILE_SIZE", file.Length);
-            param.Add("FILE_PATH", relativeTargetPath);
+            param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
             //db에 데이터 등록
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
@@ -132,17 +132,17 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     Title = row.TITLE,
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
-                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
+                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(MAMUtility.DTM19),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
-                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
+                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(MAMUtility.DTM19),
                     Used = row.USED,
                     FileExt = Path.GetExtension(row.FILE_PATH)
                 };
             });
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FineData(string used, string start_dt, string end_dt, long userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FindData(string used, string start_dt, string end_dt, long userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> returnData = new DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>();
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
@@ -209,9 +209,9 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                     Title = row.TITLE,
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
-                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(Utility.DTM19),
+                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(MAMUtility.DTM19),
                     FilePath = row.FILE_PATH,
-                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(Utility.DTM19),
+                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(MAMUtility.DTM19),
                     Used = row.USED,
                     FileExt = Path.GetExtension(row.FILE_PATH)
                 };

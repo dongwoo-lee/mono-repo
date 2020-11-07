@@ -25,7 +25,7 @@
         </b-form-group>
         <!-- 방송일 -->
         <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker v-model="searchItems.brd_dt" :isCurrentDate="false"/>
+          <common-date-picker v-model="searchItems.brd_dt" :isCurrentDate="true"/>
         </b-form-group>
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">
@@ -64,13 +64,22 @@
               :rowData="props.props.rowData"
               :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownloadEtc"
+              @download="onDownloadProduct"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+    <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.title"
+    :params="soundItem.filePath"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    httpMethod="get"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
   </div>
 </template>
 
@@ -81,6 +90,8 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
+      streamingUrl : '/api/products/streaming',
+      waveformUrl : '/api/products/waveform',
       searchItems: {
         media: 'A',
         brd_dt: '',

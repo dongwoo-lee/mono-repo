@@ -71,7 +71,7 @@
           <b-button variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
         </b-input-group>
         <b-input-group>
-          <b-button variant="outline-secondary default" size="sm" @click="onDownload">선택 항목 다운로드</b-button>
+          <b-button variant="outline-secondary default" size="sm" @click="onDownloadMultiple">선택 항목 다운로드</b-button>
         </b-input-group>
         <b-input-group>
           <b-button variant="outline-danger default" size="sm" @click="onMultiDeleteConfirm">선택 항목 삭제</b-button>
@@ -102,7 +102,7 @@
                 :behaviorData="behaviorList"
                 :etcData="['delete', 'modify']"
                 @preview="onPreview"
-                @download="onDownload"
+                @download="onDownloadSingle"
                 @delete="onDeleteConfirm"
                 @modify="onMetaModifyPopup"
               >
@@ -129,6 +129,18 @@
         </meta-data-shared-modify-popup>
       </template>
     </common-form>
+
+    <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.title"
+    :params="soundItem.seq"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    httpMethod="get"
+    direct ="Y"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
+
   </div>
 </template>
 
@@ -142,6 +154,9 @@ export default {
   components: { MetaDataSharedModifyPopup },
   data() {
     return {
+      streamingUrl : '/api/products/workspace/public/streaming',
+      waveformUrl : '/api/products/workspace/public/waveform',
+
       searchItems: {
         media: 'A',                // 매체
         cate: 'S01G05C001',        // 분류
@@ -253,7 +268,7 @@ export default {
     this.getPublicCodesOptions(this.searchItems.media);
   },
   methods: {
-    ...mapActions('file', ['open_popup', 'download']),
+    ...mapActions('file', ['open_popup', 'downloadWorkspace']),
     getData() {
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
@@ -269,16 +284,14 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    onDownload(item) {
-      const seq = item.seq;
+    onDownloadSingle(item) {
+      let ids = [];
+      ids.push(item.seq);
+      this.downloadWorkspace({ids: ids, type: 'public'});
+    },
+    onDownloadMultiple() {
       let ids = this.selectedIds;
-
-      if (typeof seq !== 'object' && seq) {
-        ids = [];
-        ids.push(seq);
-      }
-
-      this.download({ids: ids, type: 'public'});
+      this.downloadWorkspace({ids: ids, type: 'public'});
     },
     // 단일 영구 삭제 확인창 
     onDeleteConfirm(rowData) {      

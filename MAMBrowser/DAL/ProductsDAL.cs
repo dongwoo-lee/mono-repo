@@ -79,8 +79,8 @@ namespace MAMBrowser.BLL
                     Duration = row.MILLISEC,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    ReqCompleteDtm = row.REQTIME != null ? ((DateTime)row.REQTIME).ToString(Utility.DTM19) : null,
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
+                    ReqCompleteDtm = row.REQTIME != null ? ((DateTime)row.REQTIME).ToString(MAMUtility.DTM19) : null,
                     FilePath = row.MASTERFILE
                 };
             });
@@ -154,10 +154,10 @@ namespace MAMBrowser.BLL
                     BrdDT = row.ONAIRDATE,
                     EditorID = row.EDITOR,
                     PGMName = row.EVENTNAME,
-                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(MAMUtility.DTM19),
                     FilePath = row.MASTERFILE,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
                 };
             });
 
@@ -197,7 +197,7 @@ namespace MAMBrowser.BLL
             }
             if (!string.IsNullOrEmpty(pgmName))
             {
-                string[] nameArray = name.Split(' ');
+                string[] nameArray = pgmName.Split(' ');
                 foreach (var word in nameArray)
                 {
                     builder.Where($"LOWER(EVENTNAME) LIKE LOWER('%{word}%')");
@@ -238,8 +238,8 @@ namespace MAMBrowser.BLL
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(MAMUtility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -327,8 +327,8 @@ namespace MAMBrowser.BLL
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(MAMUtility.DTM19),
                     ProType = row.TYPENAME,
                     FilePath = row.MASTERFILE,
                 };
@@ -449,6 +449,7 @@ namespace MAMBrowser.BLL
                     ID = row.CLIPID,
                     Name = row.CLIPNAME,
                     Length = row.CLIPSEC,
+                    FilePath = row.MASTERFILE,
                     Format = "",
                 };
             });
@@ -511,7 +512,7 @@ namespace MAMBrowser.BLL
                     Status = row.STATENAME,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
                 };
             });
 
@@ -633,8 +634,8 @@ namespace MAMBrowser.BLL
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(Utility.DTM19),
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
+                    ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(MAMUtility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -710,8 +711,8 @@ namespace MAMBrowser.BLL
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Utility.DTM19),
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
+                    MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(MAMUtility.DTM19),
                     FilePath = row.MASTERFILE,
                 };
             });
@@ -796,8 +797,8 @@ namespace MAMBrowser.BLL
                     Track = row.EDITFORMAT,
                     EditorID = row.EDITOR,
                     EditorName = row.EDITORNAME,
-                    EditDtm = ((DateTime)row.EDITTIME).ToString(Utility.DTM19),
-                    MasteringDtm = row.MASTERTIME != null ? ((DateTime)row.MASTERTIME).ToString(Utility.DTM19) : null,
+                    EditDtm = ((DateTime)row.EDITTIME).ToString(MAMUtility.DTM19),
+                    MasteringDtm = row.MASTERTIME != null ? ((DateTime)row.MASTERTIME).ToString(MAMUtility.DTM19) : null,
                     FilePath = row.MASTERFILE,
                     FileName = Path.GetFileName(row.MASTERFILE)
                 };
@@ -808,7 +809,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_DL30> FindNewDL(string media, string brd_dt, string name, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_DL30> FineDLArchive(string media, string brd_dt, string name, string sortKey, string sortValue)
         {
             DTO_RESULT_PAGE_LIST<DTO_DL30> returnData = new DTO_RESULT_PAGE_LIST<DTO_DL30>();
             var builder = new SqlBuilder();
@@ -855,14 +856,14 @@ ORDER BY BRD_DTM) D");
                     MediaCD = row.MEDIA_CD,
                     MediaName = row.MEDIA_CD,
                     SchDate = row.SCH_DATE,
-                    BrdDate = ((DateTime)row.BRD_DTM).ToString(Utility.DTM19),
+                    BrdDate = ((DateTime)row.BRD_DTM).ToString(MAMUtility.DTM19),
                     ProgramID = row.PRODUCT_ID,
                     SourceID = row.SOURCE_ID,
                     RecName = row.REC_NAME,
                     Duration = Convert.ToInt32(row.LENGTH),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    //FilePath = Path.Combine(row.RELATIVE_PATH, $"{row.SOURCE_ID}.{row.FILE_EXT}"),
-                    RegDtm = ((DateTime)row.REG_DTM).ToString(Utility.DTM19),
+                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{row.FILE_EXT}",
+                    RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
                     DeviceName = row.DEVICE_NAME,
                 };
             });
@@ -872,6 +873,46 @@ ORDER BY BRD_DTM) D");
             returnData.SelectPage = 1;
             returnData.TotalRowCount = returnData.Data.Count;
             return returnData;
+        }
+        public DTO_DL30 GetDLArchive(long seq)
+        {
+            var builder = new SqlBuilder();
+            DynamicParameters param = new DynamicParameters();
+            param.AddDynamicParams(new
+            {
+                SEQ = seq,
+            });
+
+            var querySource = builder.AddTemplate(@$"SELECT A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
+INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
+LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
+WHERE A.SEQ := SEQ
+ORDER BY BRD_DTM");
+
+            Repository repository = new Repository();
+            var resultMapping = new Func<dynamic, DTO_DL30>((row) =>
+            {
+                return new DTO_DL30
+                {
+                    RowNO = Convert.ToInt32(row.RNO),
+                    Seq = Convert.ToInt64(row.SEQ),
+                    DeviceSeq = Convert.ToInt64(row.DEVICE_SEQ),
+                    MediaCD = row.MEDIA_CD,
+                    MediaName = row.MEDIA_CD,
+                    SchDate = row.SCH_DATE,
+                    BrdDate = ((DateTime)row.BRD_DTM).ToString(MAMUtility.DTM19),
+                    ProgramID = row.PRODUCT_ID,
+                    SourceID = row.SOURCE_ID,
+                    RecName = row.REC_NAME,
+                    Duration = Convert.ToInt32(row.LENGTH),
+                    FileSize = Convert.ToInt64(row.FILE_SIZE),
+                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{row.FILE_EXT}", 
+                    RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
+                    DeviceName = row.DEVICE_NAME,
+                };
+            });
+
+           return repository.Get(querySource.RawSql, param, resultMapping);
         }
     }
 }

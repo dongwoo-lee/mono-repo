@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Processor
 {
+    //path : 상대경로
     public class FtpService : IFileService
     {
+        private const string FTP = @"ftp://";
         public FtpService()
         {
         }
@@ -22,84 +24,58 @@ namespace MAMBrowser.Processor
         public string UserId { get; set; }
         public string UserPass { get; set; }
 
-        public void MakeDirectory(string relativeDirectoryPath)
+        public void MakeDirectory(string directoryPath)
         {
             using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
             {
-                ftpClient.CreateDirectory(relativeDirectoryPath);
+                ftpClient.CreateDirectory(directoryPath);
             }
-            
-            //FtpWebRequest ftpRequest = null;
-            //Stream ftpStream = null;
-
-            //string[] subDirs = relativeDirectoryPath.Split('/');
-            //string currentDir = Host;
-
-            //foreach (string subDir in subDirs)
-            //{
-            //    try
-            //    {
-            //        currentDir = $"{currentDir}/{subDir}";
-            //        ftpRequest = (FtpWebRequest)FtpWebRequest.Create(currentDir);
-            //        ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
-            //        ftpRequest.UseBinary = true;
-            //        ftpRequest.Credentials = new NetworkCredential(UserId, UserPass);
-            //        FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
-            //        ftpStream = response.GetResponseStream();
-            //        ftpStream.Close();
-            //        response.Close();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        //directory already exist I know that is weak but there is no way to check if a folder exist on ftp...
-            //    }
-            //}
         }
 
-        public void Upload(Stream fileStream, string relativePath, long fileLength)
+        public void Upload(Stream fileStream, string sourcePath, long fileLength)
         {
-            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(FTP+Host, UserId, UserPass))
             {
-                ftpClient.Upload(fileStream, relativePath);
+                ftpClient.Upload(fileStream, sourcePath);
             }
         }
 
         public void Move(string source, string destination)
         {
-            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
             {
                 ftpClient.MoveFile(source, destination);
             }
         }
 
-        public bool DownloadFile(string fromRelativePath, string toRelativePath)
+        public bool DownloadFile(string fromPath, string toPath)
         {
-            Stream returnStream = new FileStream(toRelativePath, FileMode.Create, FileAccess.ReadWrite);
-            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            Stream toStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite);
+            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
             {
-                if (!ftpClient.FileExists(fromRelativePath))
+                if (!ftpClient.FileExists(fromPath))
                     throw new FileNotFoundException();
 
-                return ftpClient.Download(returnStream, fromRelativePath);
+                return ftpClient.Download(toStream, fromPath);
             }
         }
-        public Stream GetFileStream(string relativePath, long offSet)
+        public Stream GetFileStream(string path, long offSet)
         {
             //using ()
             //{
-            FtpClient ftpClient = new FtpClient(Host, UserId, UserPass);
-            if (!ftpClient.FileExists(relativePath))
+            FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass);
+            if (!ftpClient.FileExists(path))
                 throw new FileNotFoundException();
-            var stream = ftpClient.OpenRead(relativePath, offSet);
+            var stream = ftpClient.OpenRead(path, offSet);
             return stream;
             //}
         }
 
-        public bool ExistFile(string fromRelativePath)
+        public bool ExistFile(string fromPath)
         {
-            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
             {
-                if (!ftpClient.FileExists(fromRelativePath))
+                if (!ftpClient.FileExists(fromPath))
                     return false;
                 else
                     return true;

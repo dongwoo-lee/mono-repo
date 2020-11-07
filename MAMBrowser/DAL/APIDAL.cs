@@ -346,7 +346,7 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
                     Title = row.TITLE,
                     Description = row.DESCRIPTION,
                     Note = row.NOTE,
-                    RegDtm = ((DateTime)row.REG_DTM).ToString(Utility.DTM19),
+                    RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
                 };
             });
             returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);

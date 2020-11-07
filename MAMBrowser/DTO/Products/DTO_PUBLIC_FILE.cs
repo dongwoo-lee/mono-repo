@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_PUBLIC_FILE : DTO_BASE
+    public class DTO_PUBLIC_FILE : DTO_FILEBASE
     {
         public long Seq { get; set; }
         public string MediaCD { get; set; }
@@ -15,7 +15,6 @@ namespace MAMBrowser.DTO
         public string CatetoryName { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
-        public string FilePath { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string AudioFormat { get; set; }
