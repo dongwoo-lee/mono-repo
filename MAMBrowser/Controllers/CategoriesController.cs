@@ -16,6 +16,7 @@ namespace MAMBrowser.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [CustomAuthorize]
     public class CategoriesController : ControllerBase
     {
         private readonly CategoriesDAL _dal;

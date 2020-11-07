@@ -423,7 +423,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_LOG>>();
             try
             {
-                result.ResultObject = _dal.FindLogs(start_dt, end_dt, logLevel, userName, description);
+                result.ResultObject = _dal.SearchLog(start_dt, end_dt, logLevel, userName, description);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

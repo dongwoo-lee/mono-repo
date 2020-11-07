@@ -22,7 +22,7 @@ namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[CustomAuthorize]
+    [CustomAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;

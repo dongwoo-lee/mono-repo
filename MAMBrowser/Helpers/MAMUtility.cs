@@ -133,7 +133,6 @@ namespace MAMBrowser.Helpers
                 return false;
             }
         }
-
         public static string GetRelativePath(string filePath)
         {
             string domainPath = "";

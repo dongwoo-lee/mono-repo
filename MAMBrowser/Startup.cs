@@ -18,6 +18,8 @@ using MAMBrowser.Services;
 using System.Linq;
 using MAMBrowser.DAL;
 using MAMBrowser.BLL;
+using MAMBrowser.Middleware;
+using Microsoft.Extensions.Options;
 
 namespace MAMBrowser
 {
@@ -50,7 +52,6 @@ namespace MAMBrowser
             });
 
             services.AddControllers();
-            services.AddHostedService<MyLoopWorker>();
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp";
@@ -69,7 +70,7 @@ namespace MAMBrowser
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, ILoggerFactory logFactory)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, ILoggerFactory logFactory, IOptions<AppSettings> appSettings)
         {
             app.UseFileServer();
             app.UseSwagger();
@@ -98,7 +99,10 @@ namespace MAMBrowser
             //app.UseAuthentication();
             //app.UseAuthorization();
             app.UseMiddleware<JwtMiddleware>();
-
+            if (appSettings.Value.RequestLog)
+            {
+                app.UseMiddleware<RequestResponseLoggingMiddleware>();
+            }
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -121,14 +125,15 @@ namespace MAMBrowser
 
         private void StorageDISetting(IServiceCollection services)
         {
-
+            //DAL 등록
             services.AddTransient<APIDAL>();
             services.AddTransient<CategoriesDAL>();
             services.AddTransient<PrivateFileDAL>();
             services.AddTransient<ProductsDAL>();
             services.AddTransient<PublicFileDAL>();
 
-
+            //서비스 등록
+            services.AddTransient<LogService>();
             var storagesSection = Configuration.GetSection("Storages");
             var storage = storagesSection.Get<Storages>();
 

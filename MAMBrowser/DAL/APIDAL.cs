@@ -297,11 +297,23 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
 
 
 
-        public int AddLog()
+        public void AddLog(string logLevel, string clientIp, string userId, string userName, string description, string note)
         {
-            return -1;
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate("INSERT INTO FROM M30_LOG VALUES(:SYSTEM_CD, :LOG_LEVEL, :CLIENT_IP, :USER_ID, :USER_NAME, :DESCRIPTION, :NOTE, SYSDATE)");
+            DynamicParameters param = new DynamicParameters();
+            param.Add("SYSTEM_CD", "S01");
+            param.Add("LOG_LEVEL", logLevel);
+            param.Add("CLIENT_IP", clientIp);
+            param.Add("USER_ID", userId);
+            param.Add("USER_NAME", userName);
+            param.Add("DESCRIPTION", description);
+            param.Add("NOTE", note);
+            
+            Repository repository = new Repository();
+            repository.Insert(queryTemplate.RawSql, param);
         }
-        public DTO_RESULT_LIST<DTO_LOG> FindLogs(string start_dt, string end_dt, string logLevel, string userName, string description)
+        public DTO_RESULT_LIST<DTO_LOG> SearchLog(string start_dt, string end_dt, string logLevel, string userName, string description)
         {
             DTO_RESULT_LIST<DTO_LOG> returnData = new DTO_RESULT_LIST<DTO_LOG>();
             var builder = new SqlBuilder();
@@ -340,10 +352,10 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
                 {
                     Seq = Convert.ToInt64(row.SEQ),
                     SystemCode= row.SYSTEM_CD,
+                    LogLevel = row.LOG_LEVEL,
+                    ClientIp = row.CLIENT_IP,
                     UserID = row.USER_ID,
                     UserName = row.USER_NAME,
-                    LogLevel = row.LOG_LEVEL,
-                    Title = row.TITLE,
                     Description = row.DESCRIPTION,
                     Note = row.NOTE,
                     RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),

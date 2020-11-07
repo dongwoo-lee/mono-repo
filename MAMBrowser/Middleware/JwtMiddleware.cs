@@ -1,4 +1,5 @@
-﻿using MAMBrowser.Services;
+﻿using MAMBrowser.Helpers;
+using MAMBrowser.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MAMBrowser.Helpers
+namespace MAMBrowser.Middleware
 {
     public class JwtMiddleware
     {
@@ -43,7 +44,7 @@ namespace MAMBrowser.Helpers
                     ValidIssuer = _appSettings.TokenIssuer,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(signatureKey),
-                    ValidateIssuer = true,
+                    ValidateIssuer = false,
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken); ;
@@ -51,7 +52,7 @@ namespace MAMBrowser.Helpers
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
 
-                context.Items["User"] = userId;
+                context.Items["UserId"] = userId;
             }
             catch
             {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class M30_LOG
+    public class DTO_M30_LOG
     {
         public long Seq { get; set; }
         public string SystemCode { get; set; }
