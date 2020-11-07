@@ -93,7 +93,6 @@ export default {
                         if (res.data.resultCode !== 0) {
                             this.errorMsg = res.data.errorMsg;
                         } else {
-                            console.info('this.roleList', this.roleList);
                             if (this.roleList) {
                                 const firstVisibleIndex = this.roleList.findIndex(role => role.visible === 'Y' );
                                 if (this.roleList[firstVisibleIndex]) {

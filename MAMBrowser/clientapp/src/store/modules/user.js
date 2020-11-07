@@ -57,6 +57,7 @@ export default {
     roleList: [],
     processing: false,
     isDisplayMyDiskMenu: false,
+    callLoginAuthTryCnt: 0,
   },
   getters: {
     menuList: state => state.menuList,
@@ -73,6 +74,7 @@ export default {
     getDecodeToken: () => {
       return jwt_decode(sessionStorage.getItem('access_token'));
     },
+    token: () => sessionStorage.getItem('access_token'),
   },
   mutations: {
     SET_AUTH(state, {token, resultObject }) {
@@ -90,7 +92,6 @@ export default {
       sessionStorage.setItem('user_id', id);
       sessionStorage.setItem('user_ext_id', userExtID);
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
-      $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
     SET_LOGOUT(state) {
       state.isAuth = false;
@@ -100,18 +101,21 @@ export default {
       sessionStorage.removeItem('user_id');
       sessionStorage.removeItem('user_ext_id');
       sessionStorage.removeItem('role');
-      $http.defaults.headers.common['X-Csrf-Token'] = null;
     },
     SET_PROCESSING(state, payload) {
       state.processing = payload
     },
     SET_MENU(state, payload) {
       state.menuList = payload;
+    },
+    SET_CALL_LOGIN_AUTH_TRY_CNT(state) {
+      state.callLoginAuthTryCnt += 1;
     }
   },
   actions: {
     async login({ commit }, payload) {
       commit('SET_PROCESSING', true);
+      commit('SET_CALL_LOGIN_AUTH_TRY_CNT');
 
       const params = {
         UserID: payload.userId,
@@ -137,12 +141,11 @@ export default {
       commit('SET_LOGOUT');
       return true;
     },
-    async getUser({ commit }) {
-      const userId = sessionStorage.getItem('user_id');
-      $http.defaults.headers.common['X-Csrf-Token'] = sessionStorage.getItem('access_token');;
+    async getUser({ state, commit }) {
+      if (state.callLoginAuthTryCnt > 0) { return; }
 
       const params = {
-        UserID: userId,
+        UserID: sessionStorage.getItem('user_id'),
         Pass: 'undefined',
       };
 

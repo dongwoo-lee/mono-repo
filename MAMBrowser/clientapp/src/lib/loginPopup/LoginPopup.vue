@@ -30,7 +30,7 @@
           </b-form-group>
 
           <div>
-            <b-from-group style="float:right">
+            <b-form-group style="float:right">
               <!-- 로그인 버튼 -->
               <b-button type="submit" variant="outline-primary default cutom-label">
                   <b-spinner v-show="processing" small type="grow"></b-spinner>
@@ -41,7 +41,7 @@
               <b-button variant="outline-danger default cutom-label-cancel" @click="close()">
                 닫기
               </b-button>
-            </b-from-group>
+            </b-form-group>
           </div>
         </b-form>
       </div>
@@ -79,13 +79,11 @@ export default {
     ...mapGetters('user', ['processing', 'getUserId'])
   },
   beforeDestroy() {
-    console.info('loginPopup desctory');
     this.isShow = false;
   },
   methods: {
     ...mapActions('user', ['login', 'signOut']),
     show() {
-      console.info('loginInfo', this.isShow);
       this.isShow = true;
       this.userId = this.getUserId;
     },
@@ -99,12 +97,10 @@ export default {
           userId: this.userId,
           pass: this.password
         }).then(res => {
-          console.info('resssss', res);
           if (res.status === 200) {
               if (res.data.resultCode !== 0) {
                 this.errorMsg = res.data.errorMsg;
               } else {
-                console.info('this.$router.currentRoute', this.$router.currentRoute);
                 this.$router.go(this.$router.currentRoute);
               }
           } else {

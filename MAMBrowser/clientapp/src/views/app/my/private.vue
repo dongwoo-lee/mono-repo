@@ -15,15 +15,13 @@
       <template slot="form-search-area">
         <!-- 등록일: 시작일 -->
         <b-form-group label="시작일"
-          class="has-float-label"
-          :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.start_dt" :dayAgo="2" required/>
+          class="has-float-label">
+          <common-date-picker v-model="searchItems.start_dt"/>
         </b-form-group>
       <!-- 등록일: 종료일 -->
         <b-form-group label="종료일" 
-          class="has-float-label"
-          :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.end_dt" isCurrentDate required/>
+          class="has-float-label">
+          <common-date-picker v-model="searchItems.end_dt"/>
         </b-form-group>
       <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">

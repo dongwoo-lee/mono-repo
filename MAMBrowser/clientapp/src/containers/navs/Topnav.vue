@@ -109,16 +109,14 @@ export default {
     };
   },
   created() {
-    if (this.isAuth) {
-      this.getUser();
-    }
+    this.getUser();
   },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["setLang", "getUser", "signOut"]),
+    ...mapActions("user", ["setLang", "signOut", 'getUser']),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
@@ -139,7 +137,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList', 'isAuth']),
+    ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList']),
     ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",

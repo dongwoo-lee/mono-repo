@@ -16,15 +16,15 @@
                 <label v-show="uploadAddState()" for="file" class="btn btn-outline-primary btn-sm default cutom-label mr-2">
                     <i class="iconsminds-add-file"></i>추가
                 </label>
-                <label v-show="uploadStopState()" class="btn btn-outline-warning btn-sm default cutom-label"
+                <!-- <label v-show="uploadStopState()" class="btn btn-outline-warning btn-sm default cutom-label"
                     :class="{ 'mr-2': uploadStopState() }"
                     @click="onStopUpload">
                     <i class="iconsminds-add-file"></i>업로드 정지
-                </label>
-                <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default cutom-label"
+                </label> -->
+                <!-- <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default cutom-label"
                     @click="onStartUpload">
                     <i class="iconsminds-add-file"></i>업로드 시작
-                </label>
+                </label> -->
             </div>
             <vuetable
                 table-height="340px"
@@ -61,10 +61,9 @@
                 </template>
                 <!-- 액션 -->
                 <template slot="actions" scope="props">
-                    <b-button 
-                        v-if="!props.rowData.active"
+                    <b-button
                         variant="outline-danger default" size="sm" @click="onRemoveFile(props.rowData)">
-                        <i class="iconsminds-remove-file"></i>삭제
+                        삭제
                     </b-button>
                 </template>
             </vuetable>
@@ -138,11 +137,13 @@ export default {
                 this.$set(data.file, 'metaData', data.metaData);
                 tmpFiles.push(data.file);
             })
+
+            console.info('localFiles', tmpFiles);
             return tmpFiles;
         }
     },
     methods: {
-        ...mapActions('file', ['open_toast', 'remove_files', 'cancel_upload', 'upload']),
+        ...mapActions('file', ['open_toast', 'remove_file', 'cancel_upload', 'upload']),
         addFiles() {
             this.open_toast();
         },
@@ -153,7 +154,7 @@ export default {
             this.cancel_upload();
         },
         onRemoveFile(rowData) {
-            this.remove_files(rowData.id);
+            this.remove_file(rowData.id);
         },
         getState(state) {
             if (state === 'wait') return '대기중';
@@ -165,7 +166,6 @@ export default {
         },
         getRemark(metaData) {
             const metaDataToJson = JSON.parse(metaData);
-            console.info('metaDataToJson', metaDataToJson);
             const {title, mediaCD } = metaDataToJson;
             return `${title}`;
         },

@@ -52,31 +52,13 @@
         </template>
     </b-modal>
     <!-- 수정 확인 창 -->
-    <b-modal 
-        id="modalModify" 
-        size="sm" 
+    <common-confirm
+        id="modalModify"
         title="메타 데이터 수정 확인"
-        :hideHeaderClose="true">
-        메타 데이터를 수정하시겠습니까?
-        <template v-slot:modal-footer>
-            <b-button
-              variant="primary"
-              size="sm"
-              class="float-right"
-              @click="submit()"
-            >
-              수정
-            </b-button>
-            <b-button
-              variant="danger"
-              size="sm"
-              class="float-right"
-              @click="$bvModal.hide('modalModify')"
-            >
-              취소
-            </b-button>
-      </template>
-    </b-modal>
+        message="메타 데이터를 수정하시겠습니까?"
+        submitBtn="수정"
+        @ok="submit()"
+    />
 </div>
 </template>
 

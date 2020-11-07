@@ -45,8 +45,7 @@ export default {
         ...mapGetters('file', ['getBeingUploaded']),
     },
     methods: {
-        ...mapActions('file', ['open_toast']),
-        ...mapMutations('file', ['REMOVE_FILES_ALL']),
+        ...mapActions('file', ['open_toast', 'remove_file_all']),
         show() {
             this.isShow = true;
         },
@@ -63,11 +62,11 @@ export default {
                 return;
             } 
 
-            this.REMOVE_FILES_ALL();
+            this.remove_file_all();
             this.isShow = false;
         },
         onCloseFileUploadModal() {
-            this.REMOVE_FILES_ALL();
+            this.remove_file_all();
             this.$bvModal.hide('closeFileUploadModal');
             this.isShow = false;
         },

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import $http from '../../http';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
@@ -20,19 +21,23 @@ export default {
     mutations: {
         SET_FILES: (state, { files, meta }) => {
             if (!files) return;
-            const existFiles = state.fileData.filter(data => {
-                return files.some(file => data.file.name === file.name);
+
+            const existMetaList = state.fileData.filter(data => {
+                const metaData = JSON.parse(data.metaData);
+                return metaData.title === meta.title
             });
 
-            if (existFiles.length > 0) {
-                const existFileNames = [];
-                existFiles.forEach(file => {
-                    existFileNames.push(file.file.name);
+            if (existMetaList.length > 0) {
+                const metaTitles = [];
+                existMetaList.forEach(data => {
+                    const metaData = JSON.parse(data.metaData);
+                    metaTitles.push(metaData.title);
                 })
 
-                $fn.notify('warning', { message:  `${existFileNames.join(',')}인 파일이 존재합니다.` })
+                $fn.notify('warning', { message:  `${metaTitles.join(',')}인 파일이 존재합니다.` })
                 return;
             }
+
             files.forEach(file => {
                 state.fileData.push(
                     { 
@@ -43,7 +48,7 @@ export default {
                 );
             })
         },
-        REMOVE_FILES: (state, id) => {
+        REMOVE_FILE: (state, id) => {
             const findIndex = state.fileData.findIndex(data => data.file.id === id);
             state.fileData.splice(findIndex, 1);
         },
@@ -72,7 +77,7 @@ export default {
     actions: {
         async upload({ state, commit }) {
             // 취소 토큰 생성
-            uploadCancelToken = new $http.CancelToken.source();
+            uploadCancelToken = new axios.CancelToken.source();
             // 업로드 상태 변경
             commit('SET_UPLOAD_STATE', true);
             // 파일 업로드
@@ -97,6 +102,7 @@ export default {
                         },
                         cancelToken: uploadCancelToken.token,
                         'Content-Type': 'multipart/form-data',
+                        timeout: 3600000,
                     }
 
                     let userExtId = state.uploadViewType === 'public' ? '' : `/${sessionStorage.getItem('user_ext_id')}`;
@@ -116,7 +122,7 @@ export default {
                         console.log(e);
                     }
                 }
-                console.info('test-2');
+
                 commit('SET_UPLOAD_STATE', false);
             }
         },
@@ -163,8 +169,13 @@ export default {
             commit('CHANGE_FILE_UPLOAD_STATE');
         },
         // 파일 제거
-        remove_files: ({ commit }, id) => {
-            commit('REMOVE_FILES', id);
+        remove_file: ({ commit, dispatch }, id) => {
+            commit('REMOVE_FILE', id);
+            dispatch('cancel_upload');
+        },
+        remove_file_all: ({commit, dispatch}) => {
+            commit('REMOVE_FILES_ALL');
+            dispatch('cancel_upload');
         },
         // 파일 업로드 하단 창 호출
         open_toast: ({}) => {
