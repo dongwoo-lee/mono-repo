@@ -1,6 +1,7 @@
 import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
+import jwt_decode from 'jwt-decode';
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
 const getAddUrlAndIconMenuList = (menuList, roleList) => {
@@ -66,7 +67,12 @@ export default {
     isDisplayMyDiskMenu: state => {
       const findIndex = state.roleList.findIndex(role => role.id === 'S01G01C007' && role.visible === 'Y');
       return findIndex > -1;
-    }
+    },
+    isAuth: () => sessionStorage.getItem('access_token') != null && sessionStorage.getItem('user_id') != null,
+    getUserId: () => sessionStorage.getItem('user_id'),
+    getDecodeToken: () => {
+      return jwt_decode(sessionStorage.getItem('access_token'));
+    },
   },
   mutations: {
     // 최초 로그인 시점 실행
@@ -80,16 +86,6 @@ export default {
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
       $http.defaults.headers.common['X-Csrf-Token'] = token;
     },
-    // 새로고침 시점 실행
-    SET_USER(state, data) {
-      state.roleList = [];
-      state.menuList = getAddUrlAndIconMenuList(data.menuList, state.roleList);
-      state.behaviorList = data.behaviorList;
-      delete data.menuList;
-      delete data.behaviorList;
-      state.currentUser = data;
-      sessionStorage.setItem('role', JSON.stringify(state.roleList));
-    },
     SET_LOGOUT(state) {
       state.isAuth = false;
       state.currentUser = {};
@@ -98,7 +94,7 @@ export default {
       sessionStorage.removeItem('user_id');
       sessionStorage.removeItem('user_ext_id');
       sessionStorage.removeItem('role');
-      $http.defaults.headers.common['X-Csrf-Token'] = undefined;
+      $http.defaults.headers.common['X-Csrf-Token'] = null;
     },
     SET_PROCESSING(state, payload) {
       state.processing = payload
@@ -137,19 +133,27 @@ export default {
       commit('SET_LOGOUT');
       return true;
     },
-    getUser({ commit, state }) {
+    async getUser({ commit }) {
       const userId = sessionStorage.getItem('user_id');
-      $http.get(`/api/users/${userId}`).then(response => {
-        const { status, data } = response;
-        if (status === 200 && data.resultObject && data.resultCode === 0) {
-          commit('SET_USER', data.resultObject);
+      $http.defaults.headers.common['X-Csrf-Token'] = sessionStorage.getItem('access_token');;
+
+      try {
+        const response = await $http.get(`/api/users/${userId}`);
+        const { resultCode, resultObject, token } = response.data;
+
+        if (resultObject && resultCode === 0) {
+          commit('SET_AUTH', {
+            token: token, 
+            userId: resultObject.id, 
+            userExtId: resultObject.userExtID,
+            role: resultObject.menuList,
+          });
         } else {
           $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })
         }
-      })
-      .catch(error => {
+      } catch(error) {
         console.error(error);
-      });
+      }
     },
     getMenu({commit}, userId) {
       $http.get(`/api/users/${userId}/menu`).then(response => {

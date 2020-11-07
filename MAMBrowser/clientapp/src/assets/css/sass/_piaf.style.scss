@@ -1837,7 +1837,7 @@ button {
         text-align: right;
 
         .user {
-            margin-right: $main-margin - 16;
+            margin-right: $main-margin - 5;
 
             @include respond-below(xl) {
                 margin-right: $main-margin-lg;

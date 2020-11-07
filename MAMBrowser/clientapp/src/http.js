@@ -1,7 +1,7 @@
-import Vue from 'vue';
 import axios from 'axios'
 import store from './store'
 import router from './router'
+import LoginPopupRefElement from './lib/loginPopup/LoginPopupRefElement';
 
 const $http = axios.create({
     baseURL: process.env.baseURL,
@@ -13,8 +13,6 @@ const $http = axios.create({
     },
     timeout: 10000,
 });
-
-let isRefreshing = false;
 
 axios.interceptors.response.use(res =>{
     const { config, status, data } = res;
@@ -40,18 +38,17 @@ axios.interceptors.response.use(res =>{
     } = err;
 
     if (status === 401) {
+        LoginPopupRefElement.loginPopup.show();
         window.$notify(
             "error",
-            `세션이 만료되었습니다. 로그인 페이지로 이동합니다.[ERROR:${status}]`,
+            `세션이 만료되었습니다. 재로그인이 필요합니다.[ERROR:${status}]`,
             '', {
                 duration: 8000,
                 permanent: false
             }
         )
-            
-        isRefreshing = true;
-        store.dispatch('user/signOut');
-        router.push({path: '/user/login' });
+        // store.dispatch('user/signOut');
+        // router.push({path: '/user/login' });
     }
 
     return Promise.reject(err);

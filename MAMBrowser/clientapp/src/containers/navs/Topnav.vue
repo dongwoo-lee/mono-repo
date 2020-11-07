@@ -24,50 +24,61 @@
     </router-link>
 
     <div class="navbar-right">
-      <div class="user d-inline-block">
-        <table>
-            <tr>
-              <td>
-                <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
-                <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable) }}</span>
-              </td>
-              <td rowspan="2">
-                <b-dropdown
-                  class="dropdown-menu-right"
-                  right
-                  variant="empty"
-                  toggle-class="p-0"
-                  menu-class="mt-3"
-                  no-caret
-                >
-                  <template slot="button-content">
-                    <span class="name mr-1">
-                      {{currentUser.name}}({{currentUser.menuGrpName}})
-                      <i class="iconsminds-administrator"></i>
-                      </span>
+      <b-row style="justify-content: flex-end;">
+        <!-- 타이머 -->
+        <!-- <div class="user">
+          <b-row>
+            <h3>00:00:00</h3>
+            <b-button size="sm">갱신</b-button>
+          </b-row>
+        </div> -->
 
-                  </template>
-                  <div v-if="isDisplaySetting()">
-                    <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
-                    <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
-                    <b-dropdown-divider />
-                  </div>
-                  <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
-                </b-dropdown>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <b-progress 
-                  class=""
-                  :value="currentUser.diskUsed"
-                  :max="(currentUser.diskMax * 1000000000)"
-                  animated>
-                </b-progress>
-              </td>
-            </tr>
-        </table>
-      </div>
+        <!-- 유저 정보 -->
+        <div class="user d-inline-block">
+          <table>
+              <tr>
+                <td>
+                  <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
+                  <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable) }}</span>
+                </td>
+                <td rowspan="2">
+                  <b-dropdown
+                    class="dropdown-menu-right"
+                    right
+                    variant="empty"
+                    toggle-class="p-0"
+                    menu-class="mt-3"
+                    no-caret
+                  >
+                    <template slot="button-content">
+                      <span class="name mr-1">
+                        {{currentUser.name}}({{currentUser.menuGrpName}})
+                        <i class="iconsminds-administrator"></i>
+                        </span>
+
+                    </template>
+                    <div v-if="isDisplaySetting()">
+                      <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
+                      <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
+                      <b-dropdown-divider />
+                    </div>
+                    <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
+                  </b-dropdown>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <b-progress 
+                    class=""
+                    :value="currentUser.diskUsed"
+                    :max="(currentUser.diskMax * 1000000000)"
+                    animated>
+                  </b-progress>
+                </td>
+              </tr>
+          </table>
+        </div>
+      </b-row>
     </div>
   </nav>
 </template>
@@ -98,7 +109,9 @@ export default {
     };
   },
   created() {
-    this.getUser();
+    if (this.isAuth) {
+      this.getUser();
+    }
   },
   methods: {
     ...mapMutations("menu", [
@@ -126,7 +139,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList']),
+    ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList', 'isAuth']),
     ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",

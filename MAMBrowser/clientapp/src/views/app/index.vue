@@ -9,6 +9,8 @@
     <file-meta-data-popup ref="refFileMetaDataPopup"></file-meta-data-popup>
     <!-- 파일 드래그 업로드 폼 -->
     <file-drag-upload-form v-show="isActive"></file-drag-upload-form>
+    <!-- 로그인 팝업 -->
+    <login-popup ref="refLoginPopup"></login-popup>
   </app-layout>
 </template>
 
@@ -17,8 +19,10 @@ import AppLayout from "../../layouts/AppLayout";
 import FileDragUploadForm from '../../lib/file/FileDragUploadForm';
 import fileUploadingToast from '../../lib/file/FileUploadingToast';
 import fileUploadPopup from '../../lib/file/FileUploadPopup';
-import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import FileMetaDataPopup from '../../lib/file/FileMetaDataPopup';
+import LoginPopup from '../../lib/loginPopup/LoginPopup';
+import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
+import LoginPopupRefElement from '../../lib/loginPopup/LoginPopupRefElement';
 
 export default {
   components: {
@@ -27,6 +31,7 @@ export default {
     "fileUploadingToast": fileUploadingToast,
     "fileUploadPopup": fileUploadPopup,
     "FileMetaDataPopup": FileMetaDataPopup,
+    "LoginPopup": LoginPopup,
   },
   watch: {
     '$route': {
@@ -44,6 +49,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       FileUploadRefElement.init(this);
+      LoginPopupRefElement.init(this);
     });
   },
 };
