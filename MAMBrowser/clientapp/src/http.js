@@ -1,5 +1,4 @@
 import axios from 'axios'
-import store from './store'
 import LoginPopupRefElement from './lib/loginPopup/LoginPopupRefElement';
 
 const $http = axios.create({
@@ -48,6 +47,7 @@ $http.interceptors.response.use(res =>{
     } = err;
 
     if (status === 401) {
+        // sessionStorage.removeItem('access_token');
         LoginPopupRefElement.loginPopup.show();
         window.$notify(
             "error",

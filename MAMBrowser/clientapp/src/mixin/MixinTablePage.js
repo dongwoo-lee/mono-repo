@@ -66,8 +66,8 @@ let mixinTablePage = apiType => ({
             if (!this.screenName) {
                 subUrl = `cm/${media}/${brd_dt}`;
             }
-            ///api/Products/cm/{media}/{brd_dt}
-            this.$http.get(`/api/Products/${subUrl}`, { params: this.searchItems })
+            ///api/products/cm/{media}/{brd_dt}
+            this.$http.get(`/api/products/${subUrl}`, { params: this.searchItems })
               .then(res => {
                  this.setResponseData(res);
                  this.isTableLoading = false;
@@ -77,7 +77,7 @@ let mixinTablePage = apiType => ({
         getDataContents(sbID, brdDT) {
             if (sbID === undefined) return;
             this.isSubTableLoading = true;
-            this.$http.get(`/api/Products/${apiType}/contents/${brdDT}/${sbID}`)
+            this.$http.get(`/api/products/${apiType}/contents/${brdDT}/${sbID}`)
               .then(res => {
                  this.setReponseContentsData(res, 'normal');
                  this.isSubTableLoading = false;

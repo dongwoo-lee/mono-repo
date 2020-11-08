@@ -51,6 +51,7 @@
 import { mapGetters, mapActions } from "vuex";
 import { validationMixin } from "vuelidate";
 const { required } = require("vuelidate/lib/validators");
+import { eventBus } from '../../eventBus';
 
 export default {
   mixins: [validationMixin],
@@ -91,6 +92,8 @@ export default {
         this.isShow = false;
     }, 
     formSubmit() {
+      if (!this.userId) { return; }
+
       this.$v.$touch();
       if (!this.$v.$anyError) {
         this.login({
@@ -101,7 +104,11 @@ export default {
               if (res.data.resultCode !== 0) {
                 this.errorMsg = res.data.errorMsg;
               } else {
-                this.$router.go(this.$router.currentRoute);
+                this.$bvModal.hide('loginPopup');
+                this.$router.replace();
+                //eventBus.$emit('loadData');
+                eventBus.$emit('loadData', this.$router.currentRoute.name);
+                // this.$router.go(this.$router.currentRoute);
               }
           } else {
             var errMsg = res.response.data.message;
@@ -110,6 +117,7 @@ export default {
                   permanent: false
               });
           }
+          this.password = '';
         });
       }
     },

@@ -5,7 +5,7 @@
         :title="title"
         modal-class="common-confirm"
         :hideHeaderClose="true">
-        <span v-html="message"></span>
+        <span v-html="message" style="word-break:break-all;"></span>
         <!-- {{ message }} -->
         <template v-slot:modal-footer>
             <b-button
@@ -49,6 +49,10 @@ export default {
         closeBtn: {
             type: String,
             default: '닫기',
+        },
+        customClose: {
+            type: Boolean,
+            default: false,
         }
     },
     methods: {
@@ -56,7 +60,11 @@ export default {
             this.$emit('ok');
         },
         close() {
-            this.$bvModal.hide(this.id)
+            if (this.customClose) {
+                this.$emit('close');
+            } else {
+                this.$bvModal.hide(this.id)
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ import $http from '../../http';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
 
-let uploadCancelToken;
+let uploadCancelToken = {};
 
 export default {
     namespaced: true,
@@ -76,13 +76,17 @@ export default {
     },
     actions: {
         async upload({ state, commit }) {
-            // 취소 토큰 생성
-            uploadCancelToken = new axios.CancelToken.source();
             // 업로드 상태 변경
             commit('SET_UPLOAD_STATE', true);
             // 파일 업로드
             for (const data of state.fileData) {
                 if (data.uploadState !== 'success') {
+                    console.info('cancelToken-fileId', data.file.id);
+                    if (!uploadCancelToken[data.file.id]) {
+                        // 취소 토큰 생성
+                        uploadCancelToken[data.file.id] = new axios.CancelToken.source();
+                    
+                    // 폼데이터 생성
                     const formData = new FormData();
                     formData.append('file', data.file.file);
                     formData.append('metaData', data.metaData);
@@ -100,7 +104,7 @@ export default {
                                 data.uploadState = 'save';
                             }
                         },
-                        cancelToken: uploadCancelToken.token,
+                        cancelToken: uploadCancelToken[data.file.id].token,
                         'Content-Type': 'multipart/form-data',
                         timeout: 3600000,
                     }
@@ -124,6 +128,7 @@ export default {
                 }
 
                 commit('SET_UPLOAD_STATE', false);
+                }
             }
         },
         downloadWorkspace({}, {ids, type}) {     //private, public 파일 다운로드
@@ -135,19 +140,19 @@ export default {
         },
         downloadProduct({}, item) { //products 파일 다운로드
             const link = document.createElement('a');
-            link.href =`/api/Products/files?token=${item.fileToken}`;
+            link.href =`/api/products/files?token=${item.fileToken}`;
             link.click();
         },
         downloadMusic({}, item) {       //music 파일 다운로드
             const encoded = encodeURI(item.filePath);
             const link = document.createElement('a');
-            // link.href =`/api/Products/files?token=${item.fileToken}`;
+            // link.href =`/api/products/files?token=${item.fileToken}`;
             // link.click();
         },
         downloadDl30({}, item) { //dl30 파일 다운로드
             const encoded = encodeURI(item.filePath);
             const link = document.createElement('a');
-            link.href =`/api/Products/dl30/files?token=${item.fileToken}`;
+            link.href =`/api/products/dl30/files?token=${item.fileToken}`;
             link.click();
         },
         downloadConcatenate({}, item){
@@ -156,23 +161,38 @@ export default {
             item.forEach(dt => {
                 tokenList.push(dt.fileToken);
             })
-            console.info('tokenList',tokenList);
-            
-             $http.get(`/api/Products/concatenate-files?tokenList=${tokenList}`).then(res=>{
+             $http.get(`/api/products/concatenate-files?tokenList=${tokenList}`).then(res=>{
                 console.info('res.data',res.data);
              })
         },
-        cancel_upload: ({ commit }) => {
-            // 취소 토큰 실행
-            uploadCancelToken.cancel();
+        // 파일 제거(취소 토근)
+        cancel_upload: ({ commit }, fileId) => {
+            if (fileId) {
+                uploadCancelToken[fileId].cancel();
+                delete uploadCancelToken[fileId];
+            } else {
+                // 전체 cancel Token 실행
+                const cancelTokenObject = Object.keys(uploadCancelToken);
+                if (cancelTokenObject.length > 0) {
+                    cancelTokenObject.forEach(key => {
+                        uploadCancelToken[key].cancel();
+                        delete uploadCancelToken[key];
+                    })
+                }
+            }
             commit('SET_UPLOAD_STATE', false);
             commit('CHANGE_FILE_UPLOAD_STATE');
         },
         // 파일 제거
-        remove_file: ({ commit, dispatch }, id) => {
+        remove_file: ({ commit }, id) => {
             commit('REMOVE_FILE', id);
-            dispatch('cancel_upload');
         },
+        // 파일 제거 및 취소 토큰 실행
+        removeFileAndCancelToken: ({commit, dispatch}, {id, fileId }) => {
+            commit('REMOVE_FILE', id);
+            dispatch('cancel_upload', fileId);
+        },
+        // 전체 파일 제거
         remove_file_all: ({commit, dispatch}) => {
             commit('REMOVE_FILES_ALL');
             dispatch('cancel_upload');

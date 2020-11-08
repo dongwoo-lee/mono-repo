@@ -170,7 +170,7 @@ export default {
             const media = this.searchItems.media;
             const regDtm = this.searchItems.regDtm;
 
-            this.$http.get(`/api/Products/dl30/${media}/${regDtm}`, { params: this.searchItems })
+            this.$http.get(`/api/products/dl30/${media}/${regDtm}`, { params: this.searchItems })
                 .then(res => {
                 this.setResponseData(res, 'normal');
                 this.isTableLoading = false;

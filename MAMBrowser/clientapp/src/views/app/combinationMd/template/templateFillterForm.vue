@@ -183,7 +183,7 @@ export default {
         this.isTableLoading = this.isScrollLodaing ? false: true;
         const brd_dt = this.searchItems.brd_dt;
 
-        this.$http.get(`/api/Products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
+        this.$http.get(`/api/products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
             .then(res => {
             this.setResponseData(res, 'normal');
             this.addScrollClass();

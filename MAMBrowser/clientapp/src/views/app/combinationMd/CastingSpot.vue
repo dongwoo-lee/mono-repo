@@ -218,7 +218,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
 
-      this.$http.get(`/api/Products/spot/mcr/${media}`, { params: this.searchItems })
+      this.$http.get(`/api/products/spot/mcr/${media}`, { params: this.searchItems })
         .then(res => {
            this.setResponseData(res, 'normal');
            this.addScrollClass();
