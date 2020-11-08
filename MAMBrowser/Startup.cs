@@ -101,7 +101,8 @@ namespace MAMBrowser
             app.UseMiddleware<JwtMiddleware>();
             if (appSettings.Value.RequestLog)
             {
-                app.UseMiddleware<RequestResponseLoggingMiddleware>();
+                
+                //app.UseMiddleware<RequestResponseLoggingMiddleware>();
             }
             app.UseEndpoints(endpoints =>
             {
