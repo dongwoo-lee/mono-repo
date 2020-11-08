@@ -249,7 +249,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
 
-      this.$http.get(`/api/Products/filler/time/${media}`, { params: this.searchItems })
+      this.$http.get(`/api/products/filler/time/${media}`, { params: this.searchItems })
           .then(res => {
           this.setResponseData(res, 'normal');
           this.addScrollClass();

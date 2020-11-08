@@ -1,5 +1,6 @@
 import mixinValidate from './MixinValidate';
 import { mapGetters, mapActions } from 'vuex';
+import { eventBus } from '../eventBus';
 
 let mixinCommon = {
     mixins: [ mixinValidate ],
@@ -39,6 +40,11 @@ let mixinCommon = {
         }
     },
     created() {
+        // 토큰 만료시 재로그인할때, 로직 태움
+        eventBus.$on('loadData', (viewName)=> {
+            console.debug('load-data viewName:', viewName);
+            this.getData();
+        });
         this.$nextTick(() => {
             this.getData();
         });
@@ -141,7 +147,9 @@ let mixinCommon = {
         },
         addScrollClass() {
             setTimeout(() => {
-                this.$refs.scrollPaging.addClassScroll();  
+                if (this.$refs.scrollPaging) {
+                    this.$refs.scrollPaging.addClassScroll();  
+                }
             }, 0);
         },
         initSelectedIds() {

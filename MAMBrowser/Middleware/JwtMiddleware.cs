@@ -56,6 +56,7 @@ namespace MAMBrowser.Middleware
             }
             catch
             {
+                context.Items["UserId"] = "";
             }
         }
     }

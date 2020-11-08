@@ -46,27 +46,31 @@ const routes = [
        */
       {
         // 제작 - 프로그램
+        name: 'program',
         path: "making/program",
         component: () => import("./views/app/making/Program"),
       },
       {
         // 제작 - 부조  SPOT
+        name: 'relief-spot',
         path: "making/relief-spot",
         component: () => import("./views/app/making/ReliefSpot"),
       },
       {
         // 제작 - 공유소재
-        name: 'public',
+        name: 'shared-material',
         path: "making/shared-material",
         component: () => import("./views/app/making/SharedMaterial"),
       },
       {
         // 제작 - 취재물
+        name: 'coverage',
         path: "making/coverage",
         component: () => import("./views/app/making/Coverage"),
       },
       {
         // 제작 - (구)프로소재
+        name: 'pro-materials',
         path: "making/pro-materials",
         component: () => import("./views/app/making/ProMaterials"),
       },
@@ -75,11 +79,13 @@ const routes = [
        */
       {
         // 음원 - 음반기록실
+        name: 'music-record-room',
         path: "soundtrack/music-record-room",
         component: () => import("./views/app/soundtrack/MusicRecordRoom"),
       },
       {
         // 음원 - 효과음
+        name: 'sound-effect',
         path: "soundtrack/sound-effect",
         component: () => import("./views/app/soundtrack/SoundEffect"),
       },
@@ -88,21 +94,25 @@ const routes = [
        */
       {
         // 광고 - 주조SB
+        name: 'casting-sb',
         path: "advertising/casting-sb",
         component: () => import("./views/app/advertising/CastingSb"),
       },
       {
         // 광고 - 부조SB
+        name: 'relief-sb',
         path: "advertising/relief-sb",
         component: () => import("./views/app/advertising/ReliefSb"),
       },
       {
         // 광고 - 프로그램CM
+        name: 'program-cm',
         path: "advertising/program-cm",
         component: () => import("./views/app/advertising/ProgramCm"),
       },
       {
         // 광고 - CM
+        name: 'cm',
         path: "advertising/cm",
         component: () => import("./views/app/advertising/Cm"),
       },
@@ -111,26 +121,31 @@ const routes = [
        */
       {
         // 편성 MD - 주조 SPOT
+        name: 'casting-spot',
         path: "combinationmd/casting-spot",
         component: () => import("./views/app/combinationMd/CastingSpot"),
       },
       {
         // 편성 MD - Filler(PR)
+        name: 'filler-pr',
         path: "combinationmd/filler-pr",
         component: () => import("./views/app/combinationMd/FillerPr"),
       },
       {
         // 편성 MD - Filler(소재)
+        name: 'filler-material',
         path: "combinationmd/filler-material",
         component: () => import("./views/app/combinationMd/FillerMaterial"),
       },
       {
         // 편성 MD - Filler(시간)
+        name: 'filler-time',
         path: "combinationmd/filler-time",
         component: () => import("./views/app/combinationMd/FillerTime"),
       },
       {
         // 편성 MD - Filler(기타)
+        name: 'filler-other',
         path: "combinationmd/filler-other",
         component: () => import("./views/app/combinationMd/FillerOther"),
       },
@@ -139,14 +154,17 @@ const routes = [
        */
       {
         // DL3.0
+        name: 'dl3',
         path: "dl3",
         component: () => import("./views/app/dl3/Index"),
       },
       {
+        name: 'config',
         path: "config", // 설정
         component: () => import("./views/app/config/Index"),
       },
       {
+        name: 'log',
         path: "log", // 사용자 로그보기
         component: () => import("./views/app/workHistory/Index"),
       },

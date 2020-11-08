@@ -251,7 +251,8 @@ export default {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '복원 성공' })
             this.$bvModal.hide('modalRecycle');
-            this.getData();
+            this.selectedIds = [];
+            setTimeout(() => this.getData(), 0);
           } else {
             this.$fn.notify('error', { message: '복원 실패: ' + res.data.errorMsg })
           }
@@ -269,9 +270,9 @@ export default {
       this.$http.delete(`/api/products/workspace/private/recyclebin/${userExtId}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('success', { message: '휴지통 비우기 성공' })
+              this.$fn.notify('success', { message: '휴지통 비우는데 짧은 시간이 소요됩니다. 새로고침 및 재검색을 해주세요.' });
               this.$bvModal.hide('modalRecyclebin');
-              this.getData();
+              setTimeout(() => this.getData(), 0);
             } else {
               this.$fn.notify('error', { message: '휴지통 비우기 실패: ' + res.data.errorMsg })
             }

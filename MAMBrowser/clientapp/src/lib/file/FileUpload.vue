@@ -13,15 +13,18 @@
                 <div class="flex-grow-1">
                     총 {{localFiles.length}}개 파일 중 {{ getSuccessUploadFileLength() }}개 업로드 완료
                 </div>
-                <label v-show="uploadAddState()" for="file" class="btn btn-outline-primary btn-sm default cutom-label mr-2">
+                <!-- <label v-show="uploadAddState()" for="file" class="btn btn-outline-primary btn-sm default cutom-label mr-2">
+                    <i class="iconsminds-add-file"></i>추가
+                </label> -->
+                <label for="file" class="btn btn-outline-primary btn-sm default cutom-label mr-2">
                     <i class="iconsminds-add-file"></i>추가
                 </label>
                 <!-- <label v-show="uploadStopState()" class="btn btn-outline-warning btn-sm default cutom-label"
                     :class="{ 'mr-2': uploadStopState() }"
                     @click="onStopUpload">
                     <i class="iconsminds-add-file"></i>업로드 정지
-                </label> -->
-                <!-- <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default cutom-label"
+                </label>
+                <label v-show="uploadStartState()" class="btn btn-outline-primary btn-sm default cutom-label"
                     @click="onStartUpload">
                     <i class="iconsminds-add-file"></i>업로드 시작
                 </label> -->
@@ -61,13 +64,29 @@
                 </template>
                 <!-- 액션 -->
                 <template slot="actions" scope="props">
-                    <b-button
-                        variant="outline-danger default" size="sm" @click="onRemoveFile(props.rowData)">
-                        삭제
+                    <template v-if="isSave(props.rowData.uploadState)">
+                        <label>저장중</label>
+                    </template>
+                    <template v-else>
+                        <b-button variant="outline-danger default" size="sm" 
+                            @click="confirmDelete(props.rowData)">
+                        {{getDeleteState(props.rowData.uploadState)}}
                     </b-button>
+                    </template>
                 </template>
             </vuetable>
         </div>
+
+        <!-- 진행 중 삭제 -->
+        <common-confirm
+            id="modalStartingDelete"
+            title="파일 업로드 취소"
+            message="파일 업로드가 진행중입니다. 업로드를 취소하시겠습니까?"
+            submitBtn="업로드 취소"
+            :customClose="true"
+            @ok="onRemoveFileAndCancelToken()"
+            @close="onCloseRemoveFile()"
+        />
     </b-container>
 </template>
 
@@ -80,13 +99,14 @@ export default {
     data() {
         return {
             dropActive: true,
+            confirmDeleteData: '',
             fields: [
                 {
                     name: '__sequence',
                     title: 'No',
                     titleClass: 'center aligned text-center',
                     dataClass: 'center aligned text-center',
-                    width: '10%',
+                    width: '5%',
                 },
                 {
                     name: '__slot:name',
@@ -140,21 +160,30 @@ export default {
 
             console.info('localFiles', tmpFiles);
             return tmpFiles;
-        }
+        },
     },
     methods: {
-        ...mapActions('file', ['open_toast', 'remove_file', 'cancel_upload', 'upload']),
+        ...mapActions('file', ['open_toast', 'remove_file', 'removeFileAndCancelToken', 'upload']),
         addFiles() {
             this.open_toast();
         },
         onStartUpload() {
             this.upload();
         },
-        onStopUpload() {
-            this.cancel_upload();
-        },
         onRemoveFile(rowData) {
             this.remove_file(rowData.id);
+            this.$bvModal.hide('modalStartingDelete');
+        },
+        onRemoveFileAndCancelToken() {
+            console.info('confirmDeleteData', this.confirmDeleteData);
+            this.removeFileAndCancelToken(
+                {
+                    id: this.confirmDeleteData.id,
+                    fileId: this.confirmDeleteData.id
+                }
+            );
+            this.confirmDeleteData = '';
+            this.$bvModal.hide('modalStartingDelete');
         },
         getState(state) {
             if (state === 'wait') return '대기중';
@@ -163,6 +192,12 @@ export default {
             if (state === 'success') return '전송완료';
             if (state === 'save') return '저장중';
             return '';
+        },
+        getDeleteState(state) {
+            if (state === 'start' || state === 'stop') return '취소';
+            if (state === 'success') return '목록제거';
+            if (state === 'save') return '저장중';
+            if (state === 'wait') return '삭제';
         },
         getRemark(metaData) {
             const metaDataToJson = JSON.parse(metaData);
@@ -181,7 +216,23 @@ export default {
         },
         uploadStopState() {
             return this.getUploadTransmitState && this.getBeingUploaded;
-        }
+        },
+        isSave(state) {
+            return state === 'save';
+        },
+        confirmDelete(rowData) {
+            const confirmTarget = ['start', 'stop']
+            if (confirmTarget.includes(rowData.uploadState)) {
+                this.confirmDeleteData = rowData;
+                this.$bvModal.show('modalStartingDelete');
+            } else {
+                this.onRemoveFile(rowData);
+            }
+        },
+        onCloseRemoveFile() {
+            this.confirmDeleteData = '';
+            this.$bvModal.hide('modalStartingDelete');
+        },
     }
 }
 </script>

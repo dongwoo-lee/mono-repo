@@ -198,10 +198,11 @@ export default {
   },
   methods: {
     getData() {
+      console.info('this.router', this.$router, this.$router.currentRoute);
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
 
-      this.$http.get(`/api/Products/pgm/${media}`, { params: this.searchItems })
+      this.$http.get(`/api/products/pgm/${media}`, { params: this.searchItems })
         .then(res => {
            this.setResponseData(res, 'normal');
            this.isTableLoading = false;

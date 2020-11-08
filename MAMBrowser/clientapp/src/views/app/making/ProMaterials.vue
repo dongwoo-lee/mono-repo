@@ -207,7 +207,7 @@ export default {
   methods: {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/Products/old_pro`, { params: this.searchItems })
+      this.$http.get(`/api/products/old_pro`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();

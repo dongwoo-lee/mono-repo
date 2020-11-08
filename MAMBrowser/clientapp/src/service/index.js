@@ -20,10 +20,10 @@ export default {
      * Product
      */
     postFileDownload() {
-        return $http.post(`/api/Products/files`);
+        return $http.post(`/api/products/files`);
     },
     postExternalFileDownload() {
-        return $http.post(`/api/Products/external/files`);
+        return $http.post(`/api/products/external/files`);
     },
     /**
      * PublicFile

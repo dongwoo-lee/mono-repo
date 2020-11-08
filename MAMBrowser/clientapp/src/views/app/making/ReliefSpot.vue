@@ -200,7 +200,7 @@ export default {
       }
 
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/Products/spot/scr/${this.searchItems.media}`, { params: this.searchItems })
+      this.$http.get(`/api/products/spot/scr/${this.searchItems.media}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
