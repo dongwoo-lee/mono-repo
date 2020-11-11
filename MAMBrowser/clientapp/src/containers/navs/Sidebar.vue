@@ -8,7 +8,7 @@
                         <i :class="item.icon" />
                         {{ item.name }}
                     </a>
-                    <router-link v-if="item.children === null && item.visible === 'Y'" @click.native="changeSelectedParentHasNoSubmenu(item.id)" :to="getTo(item.to)">
+                    <router-link v-if="item.children.length === 0 && item.visible === 'Y'" @click.native="changeSelectedParentHasNoSubmenu(item.id)" :to="getTo(item.to)">
                         <i :class="item.icon" />
                         {{ item.name }}
                     </router-link>
