@@ -54,6 +54,10 @@ namespace MAMBrowser.Controllers
                 result.ResultObject.Data.Add(new DTO_SONG());
                 totalCount = 1;
 
+                //if (string.IsNullOrEmpty(searchText))
+                //    result.ResultObject.Data = null;
+                //else
+                    //result.ResultObject.Data = _fileService.SearchSong((SearchTypes)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -83,8 +87,12 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
             try
             {
-                long totalCount;
-                result.ResultObject.Data = _fileService.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
+                long totalCount = 0;
+                if (string.IsNullOrEmpty(searchText))
+                    result.ResultObject.Data = null;
+                else
+                    result.ResultObject.Data = _fileService.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
+
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
                 result.ResultObject.TotalRowCount = totalCount;

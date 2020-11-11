@@ -21,6 +21,7 @@ import commonFilters from './utils/CommonFilters';
 import './components/index';
 
 import PlayerPopup from './components/popup/PlayerPopup.vue';
+import MusicPlayerPopup from './components/popup/MusicPlayerPopup.vue';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -42,6 +43,7 @@ Vue.component('b-colxx', Colxx);
 Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
 Vue.component('file-upload', VueUploadComponent)
 Vue.component('PlayerPopup', PlayerPopup)
+Vue.component('MusicPlayerPopup', MusicPlayerPopup)
 
 Vue.prototype.$fn = commonFunctions;
 

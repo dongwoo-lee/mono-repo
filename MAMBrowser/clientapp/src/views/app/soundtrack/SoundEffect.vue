@@ -43,13 +43,24 @@
               :rowData="props.props.rowData"
               :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownloadSound"
+              @download="onDownloadMusic"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+
+     <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.name"
+    :fileKey="soundItem.fileToken"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    requestType="token"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
+
   </div>
 </template>
 
@@ -60,6 +71,9 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
+      streamingUrl : '/api/musicsystem/streaming',
+      waveformUrl : '/api/musicsystem/waveform',
+
       searchItems: {
         searchText: '',
         rowPerPage: 15,

@@ -1,7 +1,6 @@
 <template>
 <div>
     <div>
-      <h1> {{title}} </h1>
       <div class="text-center" v-if="spinnerFlag" >
         <b-spinner style="width: 4rem; height: 4rem;" variant="primary"></b-spinner>
       </div>
@@ -37,12 +36,11 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js
 import axios from 'axios';
 var wavesurfer;
 var httpClient;
- var CancelToken;
+var cancelToken;
 var source;
 
-
 export default {
-    data () {
+  data () {
     return {
       wavesurfer: null,
       CurrentTime : '00:00:00',
@@ -53,8 +51,8 @@ export default {
     }
   },
   mounted() {
-    CancelToken = axios.CancelToken;
-    source = CancelToken.source();
+    cancelToken = axios.CancelToken;
+    source = cancelToken.source();
     this.LoadAudio();
   },
   beforeDestroy(){
@@ -90,7 +88,7 @@ export default {
             'X-Csrf-Token': sessionStorage.getItem('access_token')
             },
             timeout:80000
-        });
+      });
     },
     SetWaveSurfer() {
       let vm = this;
@@ -134,8 +132,7 @@ export default {
         url2 =`${this.waveformUrl}?token=${this.fileKey}`;
       }
 
-      httpClient.get(url2, null).then(res=>
-      {
+      httpClient.get(url2, null).then(res=>{
         wavesurfer.load(url, res.data);
         this.spinnerFlag = false;
         this.isSuccess = true;
@@ -150,6 +147,7 @@ export default {
       wavesurfer.play();
     },
     Stop(){
+      source.cancel('Operation canceled by the user.');
       wavesurfer.stop();
       this.TotalTime = wavesurfer.getDuration().toFixed(2);
       this.CurrentTime = (0).toFixed(2);

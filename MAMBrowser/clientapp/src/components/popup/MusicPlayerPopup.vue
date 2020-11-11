@@ -1,8 +1,8 @@
 <template>
 <!-- 미리듣기 팝업 --> 
-<b-modal id="modal-player" size="xl" v-model="showPlayerPopup" no-close-on-backdrop no-close-on-esc>
+<b-modal id="music-player" size="xl" v-model="showPlayerPopup" no-close-on-backdrop >
     <template slot="modal-title" >
-    <h5>미리듣기</h5>
+    <h5>{{this.music.name}}</h5>
     </template>
     <template slot="default" >
     <b-row>
@@ -15,8 +15,7 @@
     </b-row>
     <Player 
         :requestType="requestType" 
-        :fileKey = "fileKey"
-        :title = "title"
+        :fileKey = "music.fileToken"
         :streamingUrl = "streamingUrl"
         :waveformUrl = "waveformUrl"
         :direct = "direct"
@@ -35,17 +34,26 @@
 </template>
 <script>
 export default {
+    data () {
+        return {
+            imageListUrl : 'albums/images-path',
+            imageUrl : 'albums/images/files',
+            lyricsUrl : 'lyrics',
+            imagePathTokenList : [],
+            
+            ui:{
+                imageList:[],
+                lyrics:''
+            },
+        }
+    },
     props:{
         requestType : {
             type: String,
             default: () => {},
         },
-        fileKey: {
+        music:{
             type: Object,
-            default: () => {},
-        },
-        title: {
-            type: String,
             default: () => {},
         },
         streamingUrl :{
@@ -64,17 +72,42 @@ export default {
             type: String,
             default: () => {},
         },
-
-        imagePathList : {
-            type: String,
-            default: () => {},
-        },
         
     },
+    mounted(){
+        this.GetAlumbImageAndLyrics();
+    },
     methods: {
+        GetAlumbImageAndLyrics(){
+            //작업중. 
+            this.imageList = [];
+            let params ={
+                token : this.music.fileToken,
+                albumToken : this.music.albumToken
+            }
+            // this.$http.get(`/api/musicsystem/${this.imageListUrl}`, { params: params, })
+            // .then(res => {
+
+            //     res.data.forEach(imagePathToken => {
+            //         this.$http.get(`/api/musicsystem/${this.imageUrl}?albumToken=${this.music.albumToken}`, { 
+            //             responseType: 'arraybuffer'
+            //         })
+            //         .then(res => {
+            //             this.ui.imageList.push(Buffer.from(response.data, 'binary'));
+            //         });        
+            //     });
+
+            // });
+
+            // this.$http.get(`/api/musicsystem/${this.lyricsUrl}?seq=${this.music.seq}`, null)
+            //     .then(res => {
+            //     this.ui.lyrics = res.data;
+            // });   
+            console.info('loading music player');
+        },
         closePlayer(){
-            this.$bvModal.hide('modal-player')
-            this.$emit('closePlayer');
+            this.$bvModal.hide('music-player')
+            // this.$emit('closePlayer');
         }
     },
 }

@@ -166,6 +166,7 @@ let mixinCommon = {
         onClosePlayer() {
             this.soundItem = null;
             this.showPlayerPopup = false;
+            console.info('onClosePlayer');
         },
         onDownloadProduct(item) {
             this.downloadProduct(item);

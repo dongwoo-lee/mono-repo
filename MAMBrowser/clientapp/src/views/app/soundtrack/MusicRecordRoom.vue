@@ -29,7 +29,7 @@
         <b-form-group label="소분류" class="has-float-label">
           <b-form-select
             class="width-100"
-            v-model="searchType2"
+            v-model="searchItems.searchType2"
             :options="searchTypes2"
             value-field="code"
             text-field="label" />
@@ -79,24 +79,21 @@
               :rowData="props.props.rowData"
               :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownloadSound"
+              @download="onDownloadMusic"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
-   
-   <PlayerPopup 
+   <MusicPlayerPopup 
     :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.name"
-    :fileKey="soundItem.fileToken"
+    :music="soundItem"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
     requestType="token"
     @closePlayer="onClosePlayer">
-    </PlayerPopup>
-    
+    </MusicPlayerPopup>
   </div>
 </template>
 
@@ -107,8 +104,8 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
-      streamingUrl : '/api/MusicSystem/streaming',
-      waveformUrl : '/api/MusicSystem/waveform',
+      streamingUrl : '/api/musicsystem/streaming',
+      waveformUrl : '/api/musicsystem/waveform',
 
       searchItems: {
         searchType1: 0,
@@ -223,7 +220,6 @@ export default {
   methods: {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
-
       var params = this.searchItems;
       this.selectedSearchType1.forEach(element => {
         params.searchType1 += element;
@@ -233,7 +229,6 @@ export default {
         params.gradeType += element;
       });
 
-      console.info('searchItems',this.searchItems);
       this.$http.get(`/api/MusicSystem/music`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);

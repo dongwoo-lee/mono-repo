@@ -127,7 +127,6 @@ namespace MAMBrowser.Services
             var builder = new UriBuilder("http", SearchDomain, 80, SearchSongUrl);
             string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={50}&query={WebUtility.UrlEncode(GetMusicParam(searchType, gradeType))}";
             builder.Query = param;
-            string queryCompare = $@"?authorKey=%2BsNhiHn%2ByOE%3D&strSearch=%EC%A1%B0%EC%9A%A9%ED%95%84&viewRow={rowPerPage}&pageCnt={selectPage}&fsort=50&query=%26csq%3D%7Bsong_idx%3A*%7D%7Bdisc_sect_idx%3A002*%7D";
 
             HttpClient client = new HttpClient();
             var result = client.GetAsync(builder.ToString()).Result;
@@ -148,7 +147,7 @@ namespace MAMBrowser.Services
         public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)
         {
             var builder = new UriBuilder("http", SearchDomain, 80, SearchEffectUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={text}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort=50";
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort=50";
             builder.Query = param;
 
             HttpClient client = new HttpClient();

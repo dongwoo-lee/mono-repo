@@ -1,24 +1,13 @@
 <template>
 <!-- 미리듣기 팝업 --> 
-<b-modal id="modal-player" size="lg" v-model="showPlayerPopup" no-close-on-backdrop no-close-on-esc>
+<b-modal id="modal-player" size="lg" v-model="showPlayerPopup" no-close-on-backdrop>
     <template slot="modal-title" >
-    <h5>미리듣기</h5>
+    <h5>{{title}}</h5>
     </template>
     <template slot="default" >
-    <b-row>
-    <b-col cols="9"> 
-    <slot name="top">
-    </slot>
-    </b-col>
-    <b-col cols="3">
-        <slot name="right">
-        </slot>
-    </b-col>
-    </b-row>
     <Player 
         :requestType="requestType" 
         :fileKey = "fileKey"
-        :title = "title"
         :streamingUrl = "streamingUrl"
         :waveformUrl = "waveformUrl"
         :direct = "direct"
@@ -69,9 +58,9 @@ export default {
     },
     methods: {
         closePlayer(){
-            this.showPlayerPopup = false;
-            // this.$bvModal.hide('modal-player')
-            this.$emit('closePlayer');
+            // this.showPlayerPopup = false;
+            this.$bvModal.hide('modal-player')
+            // this.$emit('closePlayer');
         }
     },
 }
