@@ -22,7 +22,7 @@ namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [CustomAuthorize]
+    //[CustomAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -463,7 +463,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 string filePath = "";
-                if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
+                if (MAMUtility.ValidateMAMToken(token, ref filePath))
                 {
                     string fileName = Path.GetFileName(filePath);
                     var fileExtProvider = new FileExtensionContentTypeProvider();
@@ -504,7 +504,7 @@ namespace MAMBrowser.Controllers
                 foreach (var token in tokenList)
                 {
                     string filePath = "";
-                    if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
+                    if (MAMUtility.ValidateMAMToken(token, ref filePath))
                     {
                         filePathList.Add(filePath);
                     }
@@ -573,7 +573,7 @@ namespace MAMBrowser.Controllers
         public IActionResult Streaming([FromQuery] string token, [FromQuery] string direct = "N")
         {
             string filePath = "";
-            if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
+            if (MAMUtility.ValidateMAMToken(token, ref filePath))
             {
                 string fileName = Path.GetFileName(filePath);
                 if (direct.ToUpper() == "Y")
@@ -584,7 +584,7 @@ namespace MAMBrowser.Controllers
                 else
                 {
                     string contentType;
-                    var downloadPath = MAMUtility.DownloadFile(_fileService, filePath, fileName, out contentType);
+                    var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, _fileService, filePath, out contentType);
                     return PhysicalFile(downloadPath, contentType, true);
                 }
             }
@@ -597,15 +597,14 @@ namespace MAMBrowser.Controllers
         /// <param name="seq"></param>
         /// <returns></returns>
         [HttpGet("waveform")]
-        [Authorize()]
         public ActionResult<List<float>> GetWaveform([FromQuery] string token)
         {
             string filePath = "";
-            if (MAMUtility.ValidateJwtFileToken(token, ref filePath))
+            if (MAMUtility.ValidateMAMToken(token, ref filePath))
             {
                 string fileName = Path.GetFileName(filePath);
                 //var fileData = _dal.Get(seq);
-                return MAMUtility.GetWaveform(_fileService, filePath);
+                return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, _fileService, filePath);
             }
             else
                 return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
@@ -618,14 +617,16 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <param name="inline">inline 여부</param>
         /// <returns></returns>
-        [HttpGet("dl30/files")]
-        public IActionResult Dl30Download([FromQuery] long seq, [FromQuery] string fileType = "WAV", [FromQuery] string inline = "N")
+        [HttpGet("dl30/files/{seq}")]
+        public IActionResult Dl30Download([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV", [FromQuery] string inline = "N")
         {
+            var fileService = sr("DLArchiveConnection");
             var fileData = _dal.GetDLArchive(seq);
+            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
             string fileName = $"{fileData.SourceID}.{fileType}";
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
-            if (!fileExtProvider.TryGetContentType(fileData.FilePath, out contentType))
+            if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
@@ -635,7 +636,7 @@ namespace MAMBrowser.Controllers
                 Inline = inline == "Y" ? true : false
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
-            var stream = _fileService.GetFileStream(fileData.FilePath, 0);
+            var stream = fileService.GetFileStream(relativePath, 0);
             return File(stream, contentType);
         }
         /// <summary>
@@ -644,22 +645,23 @@ namespace MAMBrowser.Controllers
         /// <param name="seq"></param>
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
-        [HttpGet("dl30/streaming")]
-        public IActionResult Dl30Streaming([FromQuery] long seq, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
+        [HttpGet("dl30/streaming/{seq}")]
+        public IActionResult Dl30Streaming([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
         {
-
+            var fileService = sr("DLArchiveConnection");
             //range 있을떄는 206 반환하도록
             var fileData = _dal.GetDLArchive(seq);
+            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
             string fileName = $"{fileData.SourceID}.{fileType}";
 
             if (direct.ToUpper() == "Y")
             {
-                return new PushStreamResult(fileData.FilePath, fileName, fileData.FileSize, _fileService);
+                return new PushStreamResult(relativePath, fileName, fileData.FileSize, fileService);
             }
             else
             {
                 string contentType;
-                var downloadPath = MAMUtility.DownloadFile(_fileService, fileData.FilePath, fileName, out contentType);
+                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, fileService, relativePath, out contentType);
                 return PhysicalFile(downloadPath, contentType, true);
             }
         }
@@ -668,11 +670,13 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpGet("dl30/waveform")]
-        public List<float> GetDl30Waveform([FromQuery] long seq)
+        [HttpGet("dl30/waveform/{seq}")]
+        public List<float> GetDl30Waveform([FromServices] ServiceResolver sr, long seq)
         {
+            var fileService = sr("DLArchiveConnection");
             var fileData = _dal.GetDLArchive(seq);
-            return MAMUtility.GetWaveform(_fileService, fileData.FilePath);
+            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
+            return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, fileService, relativePath);
         }
     }
 }

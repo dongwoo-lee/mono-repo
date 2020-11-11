@@ -25,10 +25,10 @@ namespace MAMBrowser.Middleware
 
         public async Task Invoke(HttpContext context, IUserService userService)
         {
-            var token = context.Request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
+            //var token = context.Request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
 
-            if (token != null)
-                attachUserToContext(context, userService, token);
+            //if (token != null && token!="null")
+            //    attachUserToContext(context, userService, token);
 
             await _next(context);
         }
@@ -54,9 +54,9 @@ namespace MAMBrowser.Middleware
 
                 context.Items["UserId"] = userId;
             }
-            catch
+            catch(Exception ex)
             {
-                context.Items["UserId"] = "";
+                context.Items["UserId"] = null;
             }
         }
     }

@@ -240,7 +240,16 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                result.ResultObject.Data = _dal.GetMenuByGrpId(grpId);
+                var resultMenuGrpList = _dal.GetMenuByGrpId(grpId);
+                var parentMenuList = resultMenuGrpList.FindAll(menugrp => menugrp.ParentID == "S01G01");
+                resultMenuGrpList.GroupBy(menu => menu.ParentID).ToList().ForEach(data =>
+                {
+                    var pMenu = parentMenuList.Find(pMenu => pMenu.ID == data.Key);
+                    if (pMenu != null)
+                        pMenu.Children.AddRange(data.ToList());
+                });
+
+                result.ResultObject.Data = parentMenuList;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }

@@ -130,6 +130,10 @@ let mixinTablePage = apiType => ({
     
         //     this.download({ids: ids, type: 'private'});
         // },
+       
+        display(value) {
+            return this.behaviorList.some(data => data.id === value && data.visible === 'Y');
+        },
     }
 })
 

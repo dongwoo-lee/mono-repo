@@ -36,16 +36,8 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js
 
 import axios from 'axios';
 var wavesurfer;
-const httpClient = axios.create({
-        baseURL: process.env.VUE_APP_API_BASEURL,
-        withCredentials: false,
-        haaders:{
-            'Content-Type': 'application/json',
-            },
-            timeout:80000
-        });
-
-var CancelToken;
+var httpClient;
+ var CancelToken;
 var source;
 
 
@@ -73,21 +65,32 @@ export default {
   methods : {
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
-                plugins: [
-                 TimelinePlugin.create({
-                      container:"#wave-timeline"
-                  }),
-                ],
-                container: '#waveform',
-                waveColor: 'gray',
-                progressColor: 'skyblue',
-                backend: 'MediaElementWebAudio',
-                // splitChannels: true,
-                xhr:{requestHeaders: [{
-                key: "X-Csrf-Token",
-                value: sessionStorage.getItem('access_token')
-                }]}
-                })
+        plugins: [
+          TimelinePlugin.create({
+              container:"#wave-timeline"
+          }),
+        ],
+        container: '#waveform',
+        waveColor: 'gray',
+        progressColor: 'skyblue',
+        backend: 'MediaElementWebAudio',
+        // splitChannels: true,
+        xhr:{
+          requestHeaders: [{
+            key: "X-Csrf-Token",
+            value: sessionStorage.getItem('access_token')
+          }]
+        }
+      })
+      httpClient = axios.create({
+        baseURL: process.env.VUE_APP_API_BASEURL,
+        withCredentials: false,
+        headers:{
+            'Content-Type': 'application/json',
+            'X-Csrf-Token': sessionStorage.getItem('access_token')
+            },
+            timeout:80000
+        });
     },
     SetWaveSurfer() {
       let vm = this;
@@ -117,45 +120,50 @@ export default {
     LoadAudio(){
       this.InjectWaveSurfer();
       this.SetWaveSurfer();
-      if(this.httpMethod === "post")
+      let url ='';
+      let url2 ='';
+      
+      if(this.requestType === "key")
       {
-        console.info('post');
-        httpClient.post(this.waveformUrl, { params : this.params}).then(res=>
-        {
-          wavesurfer.load(this.streamingUrl, res.data);
-          this.spinnerFlag = false;
-          this.isSuccess = true;
-        });
+        url =`${this.streamingUrl}/${this.fileKey}?direct=${this.direct}`;
+        url2 =`${this.waveformUrl}/${this.fileKey}`;
       }
       else
-      {
-        let url =`${this.streamingUrl}/${this.params}?direct=${this.direct}`;
-        let url2 =`${this.waveformUrl}/${this.params}`;
-        httpClient.get(url2, null).then(res=>
-        {
-          wavesurfer.load(url, res.data);
-          this.spinnerFlag = false;
-          this.isSuccess = true;
-        });
+      { 
+        url =`${this.streamingUrl}?token=${this.fileKey}&direct=${this.direct}`;
+        url2 =`${this.waveformUrl}?token=${this.fileKey}`;
       }
+
+      httpClient.get(url2, null).then(res=>
+      {
+        wavesurfer.load(url, res.data);
+        this.spinnerFlag = false;
+        this.isSuccess = true;
+      }).catch(error=>{
+          this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+                duration: 8000,
+                permanent: false
+            });
+      });;
     },
     Play(){
       wavesurfer.play();
     },
     Stop(){
       wavesurfer.stop();
-       this.TotalTime = wavesurfer.getDuration().toFixed(2);
+      this.TotalTime = wavesurfer.getDuration().toFixed(2);
       this.CurrentTime = (0).toFixed(2);
     },
   },
   props: {
-      httpMethod : {
+      requestType : {
           type: String,
           default: () => {},
       },
-      params: {
-          type: Object,
-      },
+      fileKey: {
+            type: [String, Number],
+            default: () => {},
+        },
       title: {
           type: String,
           default: () => {},

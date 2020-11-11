@@ -4,6 +4,7 @@ using MAMBrowser.Entiies;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -21,17 +23,38 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MAMBrowser.Services
 {
-    public class MusicService : IFileService
+    public class MusicService : IFileDownloadService
     {
-        public string Name { get; set; }
-        public string TmpUploadFolder { get; set; }
-        public string UploadFolder { get; set; }
+        public string Host
+        {
+            get
+            {
+                return MbcDomain;
+            }
+        }
+
         public string MbcDomain { get; set; }
         public string AuthorKey { get; set; }
-        public string Host { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string SearchDomain { get; set; }
+        public string SearchSongUrl { get; set; }
+        public string SearchEffectUrl { get; set; }
+        public string SearchLyricsUrl { get; set; }
+        public string ImageListUrl { get; set; }
+        public string FileUrl { get; set; }
 
-        public MusicService()
+        private readonly IDictionary<string,object> _storageMap;
+
+        public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap)
         {
+            _storageMap = storageMap.Value.Map;
+            MbcDomain = appSesstings.Value.MusicConnection["MbcDomain"].ToString();
+            AuthorKey = appSesstings.Value.MusicConnection["AuthorKey"].ToString();
+            SearchDomain = appSesstings.Value.MusicConnection["SearchDomain"].ToString();
+            SearchSongUrl = appSesstings.Value.MusicConnection["SearchSongUrl"].ToString();
+            SearchEffectUrl = appSesstings.Value.MusicConnection["SearchEffectUrl"].ToString();
+            SearchLyricsUrl = appSesstings.Value.MusicConnection["SearchLyricsUrl"].ToString();
+            ImageListUrl = appSesstings.Value.MusicConnection["ImageListUrl"].ToString();
+            FileUrl = appSesstings.Value.MusicConnection["FileUrl"].ToString();
         }
         private string GetMusicParam(SearchTypes searchType)
         {
@@ -99,96 +122,129 @@ namespace MAMBrowser.Services
             }
             return lastValue;
         }
-        public IList<DTO_SONG> SearchSong(DTO_MUSIC_REQUEST requestInfo, SearchTypes searchType, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
+        public IList<DTO_SONG> SearchSong(SearchTypes searchType, int searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
-            //HttpValueCollection
-            totalCount = 0;
-            string pageParam = $"viewRow={rowPerPage}&pageCnt{selectPage}&fsort={50}";
-            //var query = QueryHelpers.ParseQuery("");
-            Dictionary<string, string> query = new Dictionary<string, string>();
-            query.Add("authorKey", HttpUtility.UrlPathEncode(AuthorKey));
-            query.Add("strSearch", HttpUtility.UrlPathEncode(searchText));
-            query.Add("viewRow", rowPerPage.ToString());
-            query.Add("pageCnt", selectPage.ToString());
-            query.Add("fsort", "50");
-            query.Add("query", HttpUtility.UrlPathEncode(GetMusicParam(searchType, gradeType)));
-            //var queryString = QueryString.Create(query);
-            //var queryString = query.ToString();
-            var queryString = QueryHelpers.AddQueryString("", query);
-            //var encodedQueryString = HttpUtility.UrlEncode(queryString.ToString());
-            HttpClient client = new HttpClient();
-            var builder = new UriBuilder("http", MbcDomain, 80, "MusicService.asmx/MirosGetSongSearchData"); 
-            builder.Query = queryString.ToString();
+            var builder = new UriBuilder("http", SearchDomain, 80, SearchSongUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={50}&query={WebUtility.UrlEncode(GetMusicParam(searchType, gradeType))}";
+            builder.Query = param;
+            string queryCompare = $@"?authorKey=%2BsNhiHn%2ByOE%3D&strSearch=%EC%A1%B0%EC%9A%A9%ED%95%84&viewRow={rowPerPage}&pageCnt={selectPage}&fsort=50&query=%26csq%3D%7Bsong_idx%3A*%7D%7Bdisc_sect_idx%3A002*%7D";
 
-            
-            HttpContent content = new StringContent(JsonSerializer.Serialize(requestInfo));
-            var result = client.PostAsync(builder.Uri, content).Result;
+            HttpClient client = new HttpClient();
+            var result = client.GetAsync(builder.ToString()).Result;
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
                 {
                     XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
                     var mbReturnDto = (EDTO_MB_RETURN<EDTO_SONG>)serializer.Deserialize(stream);
-                    var songList = mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
                     totalCount = mbReturnDto.Section.TOTAL_COUNT;
-                    return songList;
+                    var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
+                    return dtoList;
                 }
             }
             else
                 throw new Exception(result.StatusCode.ToString());
         }
-        public IList<DTO_EFFECT> SearchLyrics(DTO_MUSIC_REQUEST requestInfo, string searchText, int rowPerPage, int selectPage, out long totalCount)
+        public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)
         {
-            //HttpValueCollection
-            totalCount = 0;
-            string pageParam = $"viewRow={rowPerPage}&pageCnt{selectPage}&fsort={50}";
-            var query = QueryHelpers.ParseQuery("");
-            query.Add("authorKey", AuthorKey);
-            query.Add("strSearch", searchText);
-            query.Add("viewRow", rowPerPage.ToString());
-            query.Add("pageCnt", selectPage.ToString());
-            query.Add("fsort", "50");
-            var queryString = QueryString.Create(query);
-            //var encodedQueryString = HttpUtility.UrlEncode(queryString.ToString());
-            HttpClient client = new HttpClient();
-            var builder = new UriBuilder("MusicService.asmx/MirosGetSongSearchData", MbcDomain);
-            builder.Query = queryString.ToString();
+            var builder = new UriBuilder("http", SearchDomain, 80, SearchEffectUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={text}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort=50";
+            builder.Query = param;
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(requestInfo));
-            var result = client.PostAsync(builder.Path, content).Result;
+            HttpClient client = new HttpClient();
+            var result = client.GetAsync(builder.ToString()).Result;
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
                 {
                     XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_EFFECT>));
                     var mbReturnDto = (EDTO_MB_RETURN<EDTO_EFFECT>)serializer.Deserialize(stream);
-                    var songList = mbReturnDto.Section.Data.Select(edto => new DTO_EFFECT(edto)).ToList();
                     totalCount = mbReturnDto.Section.TOTAL_COUNT;
-                    return songList;
+                    var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_EFFECT(edto)).ToList();
+                    return dtoList;
                 }
             }
             else
+                throw new Exception(result.StatusCode.ToString());
+        }
+        public string SearchLyrics(long seq)
+        {
+            var builder = new UriBuilder("http", SearchDomain, 80, SearchLyricsUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strWordSeq={seq}";
+            builder.Query = param;
+
+            HttpClient client = new HttpClient();
+            var result = client.GetAsync(builder.ToString()).Result;
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                using (var stream = result.Content.ReadAsStreamAsync().Result)
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_LYRICS>));
+                    var mbReturnDto = (EDTO_MB_RETURN<EDTO_LYRICS>)serializer.Deserialize(stream);
+                    var lyrics = mbReturnDto.Section.Data.Select(edto => edto.SONG_WORD_SR).First();
+                    return lyrics;
+                }
+            }
+            else
+                throw new Exception(result.StatusCode.ToString());
+        }
+
+        public IList<string> GetImageTokenList(string musicToken, string albumToken)
+        {
+            IList<string> imageTokenList = new List<string>();
+
+            var strAlumbInfo = MAMUtility.ParseMusicToken(albumToken);
+            var musicInfo = MAMUtility.GetMusicInfo(musicToken);
+            
+            var encryptedWavFilePath = musicInfo["filePath"];
+            var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedWavFilePath);
+            var domain = MAMUtility.GetDomainPath(decryptedFilePath);
+            var HostAndPort = _storageMap[domain] as string;
+            
+            var host = HostAndPort.Split(":").First();
+            var port = Convert.ToInt32(HostAndPort.Split(":").Last());
+            StringContent sc = new StringContent(strAlumbInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
+            var builder = new UriBuilder("http", host, port, ImageListUrl);
+            HttpClient client = new HttpClient();
+            var response = client.PostAsync(builder.ToString(), sc).Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var strReturnData = response.Content.ReadAsStringAsync().Result;
+                var imageFilePathList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(strReturnData);
+
+                imageFilePathList.ForEach(path => imageTokenList.Add(GenerateMusicToken(path)));
+                return imageTokenList;
+            }
+            else
+                return new List<string>();
+        }
+        public Stream GetAlbumImage(string musicToken, out string contentType)
+        {
+            var strAlumbInfo = MAMUtility.ParseMusicToken(musicToken);
+            var info = MAMUtility.GetMusicInfo(musicToken);
+            var encryptedFilePath = info["filePath"];
+            var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedFilePath);
+            var fileExtProvider = new FileExtensionContentTypeProvider();
+            if (!fileExtProvider.TryGetContentType(decryptedFilePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            var domain = MAMUtility.GetDomainPath(decryptedFilePath);
+          
+            var host = domain;
+            var port = 90;
+            var relativePath = MAMUtility.GetRelativePath(decryptedFilePath);
+            relativePath = relativePath.Replace(@"\", @"/");
+            StringContent sc = new StringContent(strAlumbInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
+            var builder = new UriBuilder("http", host, port, relativePath);
+            HttpClient client = new HttpClient();
+            var response = client.PostAsync(builder.ToString(), sc).Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return response.Content.ReadAsStreamAsync().Result;
+            }
+            else
                 return null;
-
-        }
-
-        public IList<string> GetImages()
-        {
-            List<string> pathList = new List<string>();
-            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001.jpg");
-            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001-a.jpg");
-            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001-b.jpg");
-            pathList.Add(@"\\192.168.1.203\share\3. 개인자료\이동우\mam storage\Product\PRD001-c.jpg");
-            return pathList;
-        }
-
-
-        private string GetAlbumPath(string filePath)
-        {
-            var wordArray = filePath.Split(Path.DirectorySeparatorChar);
-            var albumDomain = $"http://{wordArray[2] }.{MbcDomain}/";
-            var relativePath = string.Join("/", albumDomain.Skip(2));
-            return albumDomain + relativePath;
         }
 
 

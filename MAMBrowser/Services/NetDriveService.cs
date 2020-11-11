@@ -25,7 +25,7 @@ namespace MAMBrowser.Processor
         }
         public Stream GetFileStream(string sourcePath, long offSet)
         {
-            using (NetworkShareAccessor.Access("test_svr", "administrator", "1234"))
+            using (NetworkShareAccessor.Access(Host, UserId, UserPass))
             {
                 FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 return fs;
@@ -33,12 +33,15 @@ namespace MAMBrowser.Processor
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
-            //확인필요
-            using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using(NetworkShareAccessor.Access(Host, UserId, UserPass))
             {
-                FileStream outStream = new FileStream(toPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                inStream.CopyTo(outStream);
-                return true;
+                //확인필요
+                using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    inStream.CopyTo(outStream);
+                    return true;
+                }
             }
         }
         public void MakeDirectory(string directoryPath)

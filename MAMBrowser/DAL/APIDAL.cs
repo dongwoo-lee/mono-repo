@@ -136,7 +136,7 @@ INNER JOIN M30_CODE ON M30_CODE.CODE = M30_MENU_MAP.CODE /**where**/");
         {
             List<DTO_MENU> returnData = new List<DTO_MENU>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT M30_MENU_MAP.*, M30_CODE.NAME FROM M30_MENU_MAP
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_MENU_MAP.*, M30_CODE.NAME, M30_CODE.PARENT_CODE FROM M30_MENU_MAP
 LEFT JOIN M30_CODE ON M30_CODE.CODE= M30_MENU_MAP.CODE /**where**/");
             DynamicParameters param = new DynamicParameters();
             builder.Where("MAP_CD='S00G01C001'");

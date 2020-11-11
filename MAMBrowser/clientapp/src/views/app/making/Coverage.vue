@@ -90,6 +90,16 @@
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+
+     <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.name"
+    :fileKey="soundItem.fileToken"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    requestType="token"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
   </div>
 </template>
 

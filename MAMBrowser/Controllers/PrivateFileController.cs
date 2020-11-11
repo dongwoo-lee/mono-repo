@@ -174,12 +174,12 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// My공간 - 다운로드
         /// </summary>
-        /// <param name="seq">파일 SEQ</param>
+        /// <param name="key">파일 SEQ</param>
         /// <returns></returns>
-        [HttpGet("files/{seq}")]
-        public IActionResult Download(long seq, [FromQuery] string inline = "N")
+        [HttpGet("files/{key}")]
+        public IActionResult Download(long key, [FromQuery] string inline = "N")
         {
-            var fileData = _dal.Get(seq);
+            var fileData = _dal.Get(key);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
             string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
             var fileExtProvider = new FileExtensionContentTypeProvider();
@@ -200,14 +200,15 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// My공간 - 스트리밍
         /// </summary>
-        /// <param name="seq"></param>
+        /// <param name="key"></param>
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
-        [HttpGet("streaming/{seq}")]
-        public IActionResult Streaming(long seq, [FromQuery] string direct = "N")
+        [HttpGet("streaming/{key}")]
+       
+        public IActionResult Streaming(long key, [FromQuery] string direct = "N")
         {
             //range 있을떄는 206 반환하도록
-            var fileData = _dal.Get(seq);
+            var fileData = _dal.Get(key);
             string fileName = $"{fileData.Title}{fileData.FileExt}";
             string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
             if (direct.ToUpper() == "Y")
@@ -217,21 +218,28 @@ namespace MAMBrowser.Controllers
             else
             {
                 string contentType;
-                var downloadPath = MAMUtility.DownloadFile(_fileService, relativePath, fileName, out contentType);
+                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, _fileService, relativePath, out contentType);
                 return PhysicalFile(downloadPath, contentType, true);
             }
         }
         /// <summary>
         /// My공간 - 파형 요청
         /// </summary>
-        /// <param name="seq"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
-        [HttpGet("waveform/{seq}")]
-        public List<float> GetWaveform(long seq)
+        [HttpGet("waveform/{key}")]
+        public ActionResult<List<float>> GetWaveform(long key)
         {
-            var fileData = _dal.Get(seq);
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            return MAMUtility.GetWaveform(_fileService, relativePath);
+            try
+            {
+                var fileData = _dal.Get(key);
+                string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
+                return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, _fileService, relativePath);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         /// <summary>

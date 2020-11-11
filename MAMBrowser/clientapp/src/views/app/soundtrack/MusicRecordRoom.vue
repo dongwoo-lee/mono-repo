@@ -17,34 +17,32 @@
         <fieldset class="form-group">
           <div class="form-row">
             <span class="bv-no-focus-ring col-form-label">대분류: </span>
-            <b-form-checkbox-group class="custom-checkbox-group" v-model="searchItems.topCategory">
-              <b-form-checkbox value="own">ALL</b-form-checkbox>
-              <b-form-checkbox value="two">국내</b-form-checkbox>
-              <b-form-checkbox value="three">국외</b-form-checkbox>
-              <b-form-checkbox value="four">클래식</b-form-checkbox>
+            <b-form-checkbox-group class="custom-checkbox-group" 
+            v-model="selectedSearchType1" 
+            :options="searchTypes1"
+            value-field="code"
+            text-field="label">
             </b-form-checkbox-group>  
           </div>
         </fieldset>
-        <!-- 소분류 -->
+        <!-- 소분류 (단일 선택)-->
         <b-form-group label="소분류" class="has-float-label">
           <b-form-select
             class="width-100"
-            v-model="searchItems.cate"
-            :options="rePortOptions"
-            value-field="id"
-            text-field="name" 
-          />
+            v-model="searchType2"
+            :options="searchTypes2"
+            value-field="code"
+            text-field="label" />
         </b-form-group>
         <!-- 검색옵션 -->
         <fieldset class="form-group">
           <div class="form-row">
             <span class="bv-no-focus-ring col-form-label">검색옵션: </span>
-            <b-form-checkbox-group class="custom-checkbox-group" v-model="searchItems.searchKeyword">
-              <b-form-checkbox value="own">히트곡</b-form-checkbox>
-              <b-form-checkbox value="two">금지곡</b-form-checkbox>
-              <b-form-checkbox value="three">주의</b-form-checkbox>
-              <b-form-checkbox value="four">청소년유해</b-form-checkbox>
-            </b-form-checkbox-group>
+            <b-form-checkbox-group class="custom-checkbox-group" 
+            v-model="selectedGradeType"
+            :options="gradeTypes"
+            value-field="code"
+            text-field="label" />
           </div>
         </fieldset>
         <!-- 검색어 -->
@@ -89,6 +87,16 @@
       </template>
     </common-form>
    
+   <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.name"
+    :fileKey="soundItem.fileToken"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    requestType="token"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
+    
   </div>
 </template>
 
@@ -99,20 +107,36 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
+      streamingUrl : '/api/MusicSystem/streaming',
+      waveformUrl : '/api/MusicSystem/waveform',
+
       searchItems: {
-        topCategory: [],
-        bottomCategory: '',
+        searchType1: 0,
+        searchType2: 0,
+        gradeType: 0,
         keyword: '',
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: '',
       },
-      topCategoryOptions: [
-        { label: 'ALL', code: 'ALL' },
-        { label: '국내', code: 'DOMESTIC' },
-        { label: '국외', code: 'FOREIGN' },
-        { label: '클래식', code: 'CLASSIC' },
+      selectedSearchType1: [],
+      selectedGradeType: [],
+      searchTypes1: [
+        { label: 'ALL', code:  7},
+        { label: '국내', code: 1 },
+        { label: '국외', code: 2 },
+        { label: '클래식', code: 4 },
+      ],
+      searchTypes2: [
+        { label: 'data1', code: 1 },
+        { label: 'data2', code: 2 },
+      ],
+      gradeTypes: [
+      { label: '히트', code: 1 },
+        { label: '금지', code: 2 },
+        { label: '주의', code: 4},
+        { label: '청소년 유해', code: 8},
       ],
       isTableLoading: false,
       fields: [
@@ -199,7 +223,18 @@ export default {
   methods: {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/music`, { params: this.searchItems })
+
+      var params = this.searchItems;
+      this.selectedSearchType1.forEach(element => {
+        params.searchType1 += element;
+      });
+
+      this.selectedGradeType.forEach(element => {
+        params.gradeType += element;
+      });
+
+      console.info('searchItems',this.searchItems);
+      this.$http.get(`/api/MusicSystem/music`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();

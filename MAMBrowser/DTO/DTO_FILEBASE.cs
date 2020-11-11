@@ -6,8 +6,8 @@ namespace MAMBrowser.DTO
 {
     public class DTO_FILEBASE : DTO_BASE
     {
-        private string filePath;
-        public string FilePath { 
+        protected string filePath;
+        public virtual string FilePath { 
             get=> filePath; 
             set
             {
@@ -15,7 +15,7 @@ namespace MAMBrowser.DTO
                     return;
 
                 filePath = value;
-                FileToken = MAMUtility.GetJwtFileToken(filePath);
+                FileToken = MAMUtility.GenerateMAMToken(filePath);
             }
         }
         public string FileToken { get; set; }

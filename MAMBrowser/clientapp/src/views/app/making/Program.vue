@@ -71,13 +71,14 @@
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+    
     <PlayerPopup 
     :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.title"
-    :params="soundItem.filePath"
+    :title="soundItem.name"
+    :fileKey="soundItem.fileToken"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
-    httpMethod="get"
+    requestType="token"
     @closePlayer="onClosePlayer">
     </PlayerPopup>
   </div>
@@ -90,8 +91,6 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
-      streamingUrl : '/api/products/streaming',
-      waveformUrl : '/api/products/waveform',
       searchItems: {
         media: 'A',
         brd_dt: '',

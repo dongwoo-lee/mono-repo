@@ -122,15 +122,29 @@
               </template>
               <template v-if="screenName" v-slot:cell(actions)="data">
                 <!-- 미리듣기 -->
-                <b-button class="icon-buton">
-                  <b-icon icon="caret-right-square" class="icon"></b-icon>
-                </b-button>
+                <b-button
+                  v-if="display('S01G02C002')"
+                  class="icon-buton"
+                  title="미리듣기"
+                  @click.stop="onPreview(data.item)">
+                <b-icon icon="caret-right-square" class="icon"></b-icon>
+              </b-button>
               </template>
             </b-table>
           </b-colxx>
         </b-row>
       </template>
     </common-form>
+
+    <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.name"
+    :fileKey="soundItem.fileToken"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    requestType="token"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
   </div>
 </template>
 

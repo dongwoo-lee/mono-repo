@@ -14,7 +14,7 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <b-form-group label="검색어" class="has-float-label">
-          <common-input-text v-model="searchItems.name"/>
+          <common-input-text v-model="searchItems.searchText"/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -61,7 +61,7 @@ export default {
   data() {
     return {
       searchItems: {
-        searchWord: '',
+        searchText: '',
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',

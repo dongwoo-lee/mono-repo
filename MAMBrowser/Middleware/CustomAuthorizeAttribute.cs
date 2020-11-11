@@ -10,13 +10,13 @@ namespace MAMBrowser.Helpers
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            
-            var user = context.HttpContext.Items["UserId"];
-            if (user == null)
-            {
-                // not logged in
-                context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
-            }
+
+            //var user = context.HttpContext.Items["UserId"] as string;
+            //if (string.IsNullOrEmpty(user))
+            //{
+            //    // not logged in
+            //    context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            //}
         }
     }
 }

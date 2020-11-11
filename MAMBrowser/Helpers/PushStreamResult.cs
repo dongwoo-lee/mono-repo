@@ -19,9 +19,9 @@ namespace MAMBrowser.Helpers
         private readonly string _filePath;
         private readonly string _newFileName;
         private readonly long _fileSize;
-        private readonly IFileService _fileService;
+        private readonly IFileDownloadService _fileService;
 
-        public PushStreamResult(string filePath, string newFileName, long fileSize, IFileService fileService)
+        public PushStreamResult(string filePath, string newFileName, long fileSize, IFileDownloadService fileService)
         {
             _onStreamAvailabe = OnStreamAvailable;
             var fileExtProvider = new FileExtensionContentTypeProvider();

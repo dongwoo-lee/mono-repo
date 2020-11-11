@@ -14,7 +14,7 @@ namespace MAMBrowser.DTO
         public string Description { get; set; } //설명
         public string Duration { get; set; }    //길이
         public string AudioFormat { get; set; }    //오디오 포맷
-        public DTO_MUSIC_REQUEST FileRequestInfo { get; set; }
+        public string MusicFileToken { get; set; }
 
         public DTO_EFFECT()
         {
@@ -28,7 +28,7 @@ namespace MAMBrowser.DTO
             this.AudioFormat = edto.AudioFormat;
             this.FilePath = Path.Combine(edto.WavFilePath, edto.WavFileName);
 
-            MAMUtility.GetMusicRequest(this.FilePath);
+            MusicFileToken = MAMUtility.GenerateMusicToken(this.FilePath);
         }
     }
 }

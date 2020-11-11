@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Helpers
 {
-    public class Storages
+    public class StorageConnections
     {
         public Dictionary<string, object> PrivateWorkConnection { get; set; } = new Dictionary<string, object>();
         public Dictionary<string, object> PublicWorkConnection { get; set; } = new Dictionary<string, object>();

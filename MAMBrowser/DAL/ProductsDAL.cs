@@ -862,7 +862,7 @@ ORDER BY BRD_DTM) D");
                     RecName = row.REC_NAME,
                     Duration = Convert.ToInt32(row.LENGTH),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{row.FILE_EXT}",
+                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
                     RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
                     DeviceName = row.DEVICE_NAME,
                 };
@@ -886,7 +886,7 @@ ORDER BY BRD_DTM) D");
             var querySource = builder.AddTemplate(@$"SELECT A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
 INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
 LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
-WHERE A.SEQ := SEQ
+WHERE A.SEQ =:SEQ
 ORDER BY BRD_DTM");
 
             Repository repository = new Repository();
@@ -894,7 +894,7 @@ ORDER BY BRD_DTM");
             {
                 return new DTO_DL30
                 {
-                    RowNO = Convert.ToInt32(row.RNO),
+                    //RowNO = Convert.ToInt32(row.RNO),
                     Seq = Convert.ToInt64(row.SEQ),
                     DeviceSeq = Convert.ToInt64(row.DEVICE_SEQ),
                     MediaCD = row.MEDIA_CD,
@@ -906,7 +906,7 @@ ORDER BY BRD_DTM");
                     RecName = row.REC_NAME,
                     Duration = Convert.ToInt32(row.LENGTH),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{row.FILE_EXT}", 
+                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
                     RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
                     DeviceName = row.DEVICE_NAME,
                 };

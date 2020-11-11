@@ -6,6 +6,9 @@ let mixinCommon = {
     mixins: [ mixinValidate ],
     data() {
         return {
+            streamingUrl : '/api/products/streaming',
+            waveformUrl : '/api/products/waveform',
+            
             responseData: {                          // 응답 결과
                 data: null,
                 rowPerPage: 16,

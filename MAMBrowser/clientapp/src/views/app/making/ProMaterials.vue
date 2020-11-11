@@ -93,12 +93,11 @@
 
     <PlayerPopup 
     :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.title"
-    :params="soundItem.seq"
+    :title="soundItem.name"
+    :fileKey="soundItem.fileToken"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
-    httpMethod="get"
-    direct ="Y"
+    requestType="token"
     @closePlayer="onClosePlayer">
     </PlayerPopup>
 
@@ -113,9 +112,6 @@ export default {
   mixins: [ MixinBasicPage ],
   data() {
     return {
-      streamingUrl : '/api/products/streaming',
-      waveformUrl : '/api/products/waveform',
-
       searchItems: {
         media: 'A',             // 매체
         cate: '',              // 분류

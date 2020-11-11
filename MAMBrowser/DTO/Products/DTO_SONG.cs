@@ -45,11 +45,6 @@ namespace MAMBrowser.DTO
         /// 작사가
         /// </summary>
         public string Writer { get; set; }
-        /// <summary>
-        /// 파일경로
-        /// </summary>
-        public string FilePath { get; set; }
-
 
         //------------------------------------------추가정보
         /// <summary>
@@ -60,14 +55,42 @@ namespace MAMBrowser.DTO
         /// 앨범 번호
         /// </summary>
         public string AlbumNO { get; set; } 
-        /// <summary>
-        /// 앨범커버 경로
-        /// </summary>
-        public string AlbumCoverFilePath { get; set; }     
         //public string RegDate { get; set; } //등록일??? 2004.02.14
         public string Lyrics { get; set; }      //가사
 
-        public DTO_MUSIC_REQUEST FileRequestInfo { get; set; }
+
+       
+
+        public override string FilePath
+        {
+            get => filePath;
+            set
+            {
+                if (filePath == value)
+                    return;
+
+                filePath = value;
+                FileToken = MAMUtility.GenerateMusicToken(filePath);
+            }
+        }
+        
+        protected string albumImageFilePath;
+        /// <summary>
+        /// 앨범커버 경로
+        /// </summary>
+        public string AlbumImageFilePath
+        {
+            get => albumImageFilePath;
+            set
+            {
+                if (albumImageFilePath == value)
+                    return;
+
+                albumImageFilePath = value;
+                AlbumToken = MAMUtility.GenerateMusicToken(filePath);
+            }
+        }
+        public string AlbumToken { get; set; } // music 구조체 토큰
 
         public DTO_SONG()
         {
@@ -87,9 +110,10 @@ namespace MAMBrowser.DTO
             this.FilePath = Path.Combine(edto.MB_FILE_PATH_SR, edto.FILE_NAME_SR);
             this.Arranger = edto.ARRANGER;
             this.AlbumNO = edto.ALBUM_NO;
-            this.AlbumCoverFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
+            this.AlbumImageFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
             //this.Lyrics = edto.ly;
-            MAMUtility.GetMusicRequest(this.FilePath);
+            //this.file = MAMUtility.GenerateMusicToken(this.FilePath);
+            //this.AlbumToken = MAMUtility.GenerateMusicToken(this.AlbumImageFilePath);
         }
     }
 }

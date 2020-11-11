@@ -126,6 +126,12 @@ export default {
                       list.forEach(data => {
                           if (data.visible === 'Y') {
                               values.push(data.name);
+                              data.children.forEach(child=>{
+                                if (child.visible === 'Y') {
+                                    values.push('-' + child.name);
+                                }
+                              });
+                              values.push('');
                           }
                       });
                       menu.description = values.join('\n')

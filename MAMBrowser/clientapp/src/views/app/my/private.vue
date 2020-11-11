@@ -106,10 +106,10 @@
     <PlayerPopup 
     :showPlayerPopup="showPlayerPopup"
     :title="soundItem.title"
-    :params="soundItem.seq"
+    :fileKey="soundItem.seq"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
-    httpMethod="get"
+    requestType="key"
     direct ="Y"
     @closePlayer="onClosePlayer">
     </PlayerPopup>

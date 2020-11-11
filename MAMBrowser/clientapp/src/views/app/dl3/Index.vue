@@ -56,13 +56,24 @@
               :rowData="props.props.rowData"
               :behaviorData="behaviorList"
               @preview="onPreview"
-              @download="onDownloadProduct"
+              @download="onDownloadDl30"
             >
             </common-actions>
           </template>
         </common-data-table>
       </template>
     </common-form>
+
+    <PlayerPopup 
+    :showPlayerPopup="showPlayerPopup"
+    :title="soundItem.recName"
+    :fileKey="soundItem.seq"
+    :streamingUrl="streamingUrl"
+    :waveformUrl="waveformUrl"
+    requestType="key"
+    direct = "Y"
+    @closePlayer="onClosePlayer">
+    </PlayerPopup>
   </div>
 </template>
 
@@ -72,89 +83,92 @@ import MixinBasicPage from '../../../mixin/MixinBasicPage';
 export default {
     mixins: [ MixinBasicPage ],
     data() {
-        return {
-            searchItems: {
-                media : 'A',           // 매체
-                regDtm: '',            // 편성일자
-                pgmName: '',             // 녹음명
-                rowPerPage: 15,
-                selectPage: 1,
-                sortKey: '',
-                sortValue: '',
-            },
-            isTableLoading: false,
-            fields: [
-                {
-                    name: 'rowNO',
-                    title: 'No',
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '4%',
-                },
-                {
-                    name: "deviceName",
-                    title: "단말",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '10%',
-                },
-                {
-                    name: "mediaName",
-                    title: "매체",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '5%',
-                },
-                {
-                    name: "brdDate",
-                    title: "송출일시",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '15%',
-                },
-                {
-                    name: "recName",
-                    title: "녹음명",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                },
-                {
-                    name: "sourceID",
-                    title: "Source ID",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '7%',
-                },
-                {
-                    name: "duration",
-                    title: "방송분량",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '10%',
-                },
-                {
-                    name: "fileSize",
-                    title: "파일크기(byte)",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '10%',
-                },
-                {
-                    name: "regDtm",
-                    title: "등록일시",
-                    titleClass: "center aligned text-center",
-                    dataClass: "center aligned text-center",
-                    width: '15%',
-                },
-                {
-                  name: '__slot:actions',
-                  title: 'Actions',
+      return {
+        streamingUrl : '/api/Products/dl30/streaming',
+        waveformUrl : '/api/Products/dl30/waveform',
+
+          searchItems: {
+              media : 'A',           // 매체
+              regDtm: '',            // 편성일자
+              pgmName: '',             // 녹음명
+              rowPerPage: 15,
+              selectPage: 1,
+              sortKey: '',
+              sortValue: '',
+          },
+          isTableLoading: false,
+          fields: [
+              {
+                  name: 'rowNO',
+                  title: 'No',
                   titleClass: "center aligned text-center",
                   dataClass: "center aligned text-center",
-                  width: "6%"
-                }
-            ]
-        }
+                  width: '4%',
+              },
+              {
+                  name: "deviceName",
+                  title: "단말",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '10%',
+              },
+              {
+                  name: "mediaName",
+                  title: "매체",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '5%',
+              },
+              {
+                  name: "brdDate",
+                  title: "송출일시",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '15%',
+              },
+              {
+                  name: "recName",
+                  title: "녹음명",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+              },
+              {
+                  name: "sourceID",
+                  title: "Source ID",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '7%',
+              },
+              {
+                  name: "duration",
+                  title: "방송분량",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '10%',
+              },
+              {
+                  name: "fileSize",
+                  title: "파일크기(byte)",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '10%',
+              },
+              {
+                  name: "regDtm",
+                  title: "등록일시",
+                  titleClass: "center aligned text-center",
+                  dataClass: "center aligned text-center",
+                  width: '15%',
+              },
+              {
+                name: '__slot:actions',
+                title: 'Actions',
+                titleClass: "center aligned text-center",
+                dataClass: "center aligned text-center",
+                width: "6%"
+              }
+          ]
+      }
     },
     created() {
         this.getMediaOptions();

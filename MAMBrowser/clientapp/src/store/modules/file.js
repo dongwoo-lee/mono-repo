@@ -144,15 +144,13 @@ export default {
             link.click();
         },
         downloadMusic({}, item) {       //music 파일 다운로드
-            const encoded = encodeURI(item.filePath);
             const link = document.createElement('a');
-            // link.href =`/api/products/files?token=${item.fileToken}`;
-            // link.click();
+            link.href =`/api/musicsystem/files?token=${item.fileToken}`;
+            link.click();
         },
         downloadDl30({}, item) { //dl30 파일 다운로드
-            const encoded = encodeURI(item.filePath);
             const link = document.createElement('a');
-            link.href =`/api/products/dl30/files?token=${item.fileToken}`;
+            link.href =`/api/products/dl30/files/${item.seq}`;
             link.click();
         },
         downloadConcatenate({}, item){

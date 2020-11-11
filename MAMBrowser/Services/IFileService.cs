@@ -7,15 +7,20 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Processor
 {
-    public interface IFileService
+    public interface IFileService : IFileDownloadService
     {
-        string Host { get; set; }
         string Name { get; set; }
         string TmpUploadFolder { get; set; }
         string UploadFolder { get; set; }
         void MakeDirectory(string directoryPath);
         void Upload(Stream fileStream, string sourcePath, long fileLength);
         void Move(string source, string destination);
+        bool ExistFile(string fromPath);
+    }
+
+    public interface IFileDownloadService
+    {
+        string Host { get;  }
         bool DownloadFile(string fromPath, string toPath);
         Stream GetFileStream(string sourcePath, long offSet);
         bool ExistFile(string fromPath);

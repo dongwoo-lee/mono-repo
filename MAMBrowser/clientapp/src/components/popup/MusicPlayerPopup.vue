@@ -1,18 +1,16 @@
 <template>
 <!-- 미리듣기 팝업 --> 
-<b-modal id="modal-player" size="lg" v-model="showPlayerPopup" no-close-on-backdrop no-close-on-esc>
+<b-modal id="modal-player" size="xl" v-model="showPlayerPopup" no-close-on-backdrop no-close-on-esc>
     <template slot="modal-title" >
     <h5>미리듣기</h5>
     </template>
     <template slot="default" >
     <b-row>
     <b-col cols="9"> 
-    <slot name="top">
-    </slot>
+     image
     </b-col>
     <b-col cols="3">
-        <slot name="right">
-        </slot>
+        lyrics
     </b-col>
     </b-row>
     <Player 
@@ -43,7 +41,7 @@ export default {
             default: () => {},
         },
         fileKey: {
-            type: [String, Number],
+            type: Object,
             default: () => {},
         },
         title: {
@@ -64,13 +62,18 @@ export default {
         },
         direct : {
             type: String,
-            default: () => 'N',
-        }
+            default: () => {},
+        },
+
+        imagePathList : {
+            type: String,
+            default: () => {},
+        },
+        
     },
     methods: {
         closePlayer(){
-            this.showPlayerPopup = false;
-            // this.$bvModal.hide('modal-player')
+            this.$bvModal.hide('modal-player')
             this.$emit('closePlayer');
         }
     },
