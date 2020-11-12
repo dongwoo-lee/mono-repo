@@ -1,36 +1,23 @@
-using log4net.Repository.Hierarchy;
 using MAMBrowser;
 using MAMBrowser.BLL;
 using MAMBrowser.Controllers;
 using MAMBrowser.DAL;
+using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
-using MAMBrowser.Middleware;
 using MAMBrowser.Processor;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Serialization;
 using Xunit;
-
-//[assembly: TestFramework("MAMBrowser.Startup", "MAMBrowser")]
 
 namespace MethodTest
 {
-    //public delegate IFileService ServiceResolver(string key);
-    //public class Startup
-    //{
-    //    public Startup(IConfiguration configuration)
-    //    {
-    //        //Configuration = configuration;
-    //        //var services = new ServiceCollection();
-    //        //ConfigureServices(services);
-    //    }
-    //}
     public class Startup
     {
         //public Startup(IConfiguration configuration)
@@ -177,13 +164,25 @@ namespace MethodTest
             _fileService.GetImageTokenList(musicToken, albumToken);
         }
 
-        [Fact]
+        //[Fact]
         public void GetImage()
         {
             string filePath = @"mibis_011\midas_0302\20170224\99\DDG00205.jpg";
             var alumbImageFilePath = MAMUtility.GenerateMusicToken(filePath);
             string contentType;
             _fileService.GetAlbumImage(alumbImageFilePath, out contentType);
+        }
+
+        [Fact]
+        public void GetSong()
+        {
+            var filePath = @"d:\file5.xml";
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
+                var mbReturnDto = (EDTO_MB_RETURN<EDTO_SONG>)serializer.Deserialize(stream);
+                var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
+            }
         }
     }
 }

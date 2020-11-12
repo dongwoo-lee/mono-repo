@@ -25,7 +25,8 @@ namespace MAMBrowser.Processor
         }
         public Stream GetFileStream(string sourcePath, long offSet)
         {
-            using (NetworkShareAccessor.Access(Host, UserId, UserPass))
+            string hostName = MAMUtility.GetDomain(sourcePath);
+            using (NetworkShareAccessor.Access(hostName, UserId, UserPass))
             {
                 FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 return fs;
@@ -33,14 +34,18 @@ namespace MAMBrowser.Processor
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
-            using(NetworkShareAccessor.Access(Host, UserId, UserPass))
+            string sourceHostName = MAMUtility.GetDomain(fromPath);
+            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
                 //확인필요
                 using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-                    inStream.CopyTo(outStream);
-                    return true;
+                    using (NetworkShareAccessor.Access(Host, UserId, UserPass))
+                    {
+                        FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                        inStream.CopyTo(outStream);
+                        return true;
+                    }
                 }
             }
         }

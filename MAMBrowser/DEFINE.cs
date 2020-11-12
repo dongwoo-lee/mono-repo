@@ -28,7 +28,7 @@ namespace MAMBrowser
 
     }
     [Flags]
-    public enum SearchTypes : int
+    public enum MusicSearchTypes1 : int
     {
         None = 0,
         Internal = 1,
@@ -36,6 +36,16 @@ namespace MAMBrowser
         Classic = 4,
         All = 7,
 
+    }
+    [Flags]
+    public enum MusicSearchTypes2 : int
+    {
+        song_idx,   //전체
+        song_name_idx,  //곡명
+        songname_artist_idx,    // 곡명 + 아티스트
+        song_artist_idx,    //아티스트
+        song_disc_arr_num_idx,  //배열번호
+        song_country_name_idx   //국가명
     }
     [Flags]
     public enum GradeTypes : int
@@ -46,7 +56,6 @@ namespace MAMBrowser
         Caution = 4,    //주의 p8=1
         HarmfulJuveniles = 8,    //청소년 유해 p7=1
         All = 15, //p4=1&p5=2&p8=1&p7=1
-
     }
 
 }

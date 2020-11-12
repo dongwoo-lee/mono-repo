@@ -160,10 +160,10 @@ namespace MAMBrowser.Helpers
         public static string GetRelativePath(string filePath)
         {
             string domainFullPath = "";
-            var domainPath = GetDomainPath(filePath);
+            var domainPath = GetDomain(filePath);
             return filePath.Remove(0, filePath.IndexOf(domainPath) + domainPath.Length);
         }
-        public static string GetDomainPath(string filePath)
+        public static string GetDomain(string filePath)
         {
             string domainPath = "";
             if (filePath.IndexOf("\\\\") == 0)
@@ -180,7 +180,7 @@ namespace MAMBrowser.Helpers
             Dictionary<string, string> info = new Dictionary<string, string>();
             info.Add("filePath", SeedEncrypt(filePath));
             info.Add("ip", LocalIpAddress);
-            info.Add("expire", DateTime.Now.AddDays(1).ToString(DTM19));
+            info.Add("expire", DateTime.Now.AddHours(1).ToString(DTM19));
             var strInfo = System.Text.Json.JsonSerializer.Serialize(info);
             return GenerateMAMToken(strInfo);
         }

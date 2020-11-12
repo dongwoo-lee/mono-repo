@@ -42,22 +42,17 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("music")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromQuery] int searchType1, [FromQuery] int searchType2, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromQuery] int searchType1, [FromQuery] string searchType2, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
             try
             {
-                long totalCount;
-                //result.ResultObject.Data = _fileService.SearchSong((SearchTypes)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
                 result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
-                result.ResultObject.Data = new List<DTO_SONG>();
-                result.ResultObject.Data.Add(new DTO_SONG());
-                totalCount = 1;
-
-                //if (string.IsNullOrEmpty(searchText))
-                //    result.ResultObject.Data = null;
-                //else
-                    //result.ResultObject.Data = _fileService.SearchSong((SearchTypes)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+                long totalCount = 0;
+                if (string.IsNullOrEmpty(searchText))
+                    result.ResultObject.Data = new List<DTO_SONG>();
+                else
+                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -89,7 +84,7 @@ namespace MAMBrowser.Controllers
             {
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(searchText))
-                    result.ResultObject.Data = null;
+                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
                 else
                     result.ResultObject.Data = _fileService.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
 
@@ -201,18 +196,18 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<string>> result = new DTO_RESULT<DTO_RESULT_LIST<string>>();
             try
             {
-                //result.ResultObject.Data = _fileService.GetImageTokenList(musicToken, albumToken);
-                string path1 = @"\\192.168.1.201\detail-small-2";
-                string path2 = @"\\192.168.1.201\detail-small-3";
-                string path3 = @"\\192.168.1.201\profile-pic-6";
-                string path4 = @"\\192.168.1.201\profile-pic-l-9";
-                List<string> pathList = new List<string>();
-                pathList.Add(MAMUtility.GenerateMusicToken(path1));
-                pathList.Add(MAMUtility.GenerateMusicToken(path2));
-                pathList.Add(MAMUtility.GenerateMusicToken(path3));
-                pathList.Add(MAMUtility.GenerateMusicToken(path4));
+                result.ResultObject.Data = _fileService.GetImageTokenList(token, albumToken);
+                //string path1 = @"\\192.168.1.201\detail-small-2";
+                //string path2 = @"\\192.168.1.201\detail-small-3";
+                //string path3 = @"\\192.168.1.201\profile-pic-6";
+                //string path4 = @"\\192.168.1.201\profile-pic-l-9";
+                //List<string> pathList = new List<string>();
+                //pathList.Add(MAMUtility.GenerateMusicToken(path1));
+                //pathList.Add(MAMUtility.GenerateMusicToken(path2));
+                //pathList.Add(MAMUtility.GenerateMusicToken(path3));
+                //pathList.Add(MAMUtility.GenerateMusicToken(path4));
+                //result.ResultObject.Data = pathList;
 
-                result.ResultObject.Data = pathList;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -127,7 +127,7 @@ export default {
   methods: {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/products/effect`, { params: this.searchItems })
+      this.$http.get(`/api/musicsystem/effect`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();

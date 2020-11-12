@@ -1,25 +1,19 @@
-﻿using FluentFTP;
-using MAMBrowser.DTO;
-using MAMBrowser.Entiies;
+﻿using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Web;
+using System.Xml;
 using System.Xml.Serialization;
-using static MAMBrowser.Helpers.MAMUtility;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MAMBrowser.Services
 {
@@ -43,7 +37,16 @@ namespace MAMBrowser.Services
         public string FileUrl { get; set; }
 
         private readonly IDictionary<string,object> _storageMap;
-
+        private string HexEscape(string data)
+        {
+            byte[] btArray = Encoding.UTF8.GetBytes(data);
+            string encodedData = "";
+            foreach (char c in btArray)
+            {
+                encodedData += Uri.HexEscape(c);
+            }
+            return encodedData;
+        }
         public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap)
         {
             _storageMap = storageMap.Value.Map;
@@ -56,24 +59,24 @@ namespace MAMBrowser.Services
             ImageListUrl = appSesstings.Value.MusicConnection["ImageListUrl"].ToString();
             FileUrl = appSesstings.Value.MusicConnection["FileUrl"].ToString();
         }
-        private string GetMusicParam(SearchTypes searchType)
+        private string GetMusicParam(MusicSearchTypes1 searchType, string searchType2)
         {
-            Dictionary<SearchTypes, string> words = new Dictionary<SearchTypes, string>();
-            words.Add(SearchTypes.None, "");
-            words.Add(SearchTypes.Internal, "001*");
-            words.Add(SearchTypes.External, "002*");
-            words.Add(SearchTypes.Classic, "003*");
-            words.Add(SearchTypes.All, "");
-            string defaultString = @"&csq={song_idx:*}";
+            Dictionary<MusicSearchTypes1, string> words = new Dictionary<MusicSearchTypes1, string>();
+            words.Add(MusicSearchTypes1.None, "");
+            words.Add(MusicSearchTypes1.Internal, "001*");
+            words.Add(MusicSearchTypes1.External, "002*");
+            words.Add(MusicSearchTypes1.Classic, "003*");
+            words.Add(MusicSearchTypes1.All, "");
+            string defaultString = @"&csq={"+searchType2+":*}";
 
 
             string lastValue = defaultString;
             List<string> wordValueList = new List<string>();
             if (searchType > 0)
             {
-                foreach (SearchTypes value in Enum.GetValues(searchType.GetType()))
+                foreach (MusicSearchTypes1 value in Enum.GetValues(searchType.GetType()))
                 {
-                    if (value == SearchTypes.None)
+                    if (value == MusicSearchTypes1.None)
                         continue;
 
                     if (searchType.HasFlag(value))
@@ -89,7 +92,7 @@ namespace MAMBrowser.Services
             }
             return lastValue;
         }
-        private string GetMusicParam(SearchTypes searchType, GradeTypes gradeType)
+        private string GetMusicParam(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType)
         {
             Dictionary<GradeTypes, string> words = new Dictionary<GradeTypes, string>();
             words.Add(GradeTypes.None, "");
@@ -99,7 +102,7 @@ namespace MAMBrowser.Services
             words.Add(GradeTypes.HarmfulJuveniles, "p7=1");
             words.Add(GradeTypes.All, "");
 
-            var defaultString = GetMusicParam(searchType);
+            var defaultString = GetMusicParam(searchType, searchType2);
             string lastValue = defaultString;
             List<string> wordValueList = new List<string>();
             if (gradeType > 0)
@@ -122,24 +125,39 @@ namespace MAMBrowser.Services
             }
             return lastValue;
         }
-        public IList<DTO_SONG> SearchSong(SearchTypes searchType, int searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
+        public IList<DTO_SONG> SearchSong(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
             var builder = new UriBuilder("http", SearchDomain, 80, SearchSongUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={50}&query={WebUtility.UrlEncode(GetMusicParam(searchType, gradeType))}";
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={50}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
             builder.Query = param;
+            
+            
 
             HttpClient client = new HttpClient();
+          
+            //File.WriteAllText(@$"{MAMUtility.TempDownloadPath}\qeury.xml", builder.ToString());
+            //string strHeader = JsonSerializer.Serialize(client.DefaultRequestHeaders);
+            //File.WriteAllText(@$"{MAMUtility.TempDownloadPath}\header.xml", strHeader);
             var result = client.GetAsync(builder.ToString()).Result;
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
                 {
+                    //using (FileStream fs = new FileStream(@$"{MAMUtility.TempDownloadPath}\temp.xml", FileMode.Create, FileAccess.ReadWrite))
+                    //{
+                    //    stream.CopyTo(fs);
+                    //    stream.Flush();
+                    //}
                     XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
                     var mbReturnDto = (EDTO_MB_RETURN<EDTO_SONG>)serializer.Deserialize(stream);
                     totalCount = mbReturnDto.Section.TOTAL_COUNT;
                     var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
                     return dtoList;
                 }
+                //using (FileStream fs = new FileStream(@$"{MAMUtility.TempDownloadPath}\temp.xml", FileMode.Open, FileAccess.Read))
+                //{
+                   
+                //}
             }
             else
                 throw new Exception(result.StatusCode.ToString());
@@ -147,7 +165,7 @@ namespace MAMBrowser.Services
         public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)
         {
             var builder = new UriBuilder("http", SearchDomain, 80, SearchEffectUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort=50";
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}";
             builder.Query = param;
 
             HttpClient client = new HttpClient();
@@ -197,7 +215,7 @@ namespace MAMBrowser.Services
             
             var encryptedWavFilePath = musicInfo["filePath"];
             var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedWavFilePath);
-            var domain = MAMUtility.GetDomainPath(decryptedFilePath);
+            var domain = MAMUtility.GetDomain(decryptedFilePath);
             var HostAndPort = _storageMap[domain] as string;
             
             var host = HostAndPort.Split(":").First();
@@ -211,7 +229,7 @@ namespace MAMBrowser.Services
                 var strReturnData = response.Content.ReadAsStringAsync().Result;
                 var imageFilePathList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(strReturnData);
 
-                imageFilePathList.ForEach(path => imageTokenList.Add(GenerateMusicToken(path)));
+                imageFilePathList.ForEach(path => imageTokenList.Add(MAMUtility.GenerateMusicToken(path)));
                 return imageTokenList;
             }
             else
@@ -228,7 +246,7 @@ namespace MAMBrowser.Services
             {
                 contentType = "application/octet-stream";
             }
-            var domain = MAMUtility.GetDomainPath(decryptedFilePath);
+            var domain = MAMUtility.GetDomain(decryptedFilePath);
           
             var host = domain;
             var port = 90;

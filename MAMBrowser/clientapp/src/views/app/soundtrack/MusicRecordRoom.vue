@@ -17,6 +17,18 @@
         <fieldset class="form-group">
           <div class="form-row">
             <span class="bv-no-focus-ring col-form-label">대분류: </span>
+
+             <b-form-checkbox class="custom-checkbox-group"  style="margin-right:10px"
+              v-model="allSelected"
+              :indeterminate="indeterminate"
+              aria-describedby="selectedSearchType1"
+              aria-controls="selectedSearchType1"
+              @change="toggleAll"
+              >
+             All
+            </b-form-checkbox>
+
+
             <b-form-checkbox-group class="custom-checkbox-group" 
             v-model="selectedSearchType1" 
             :options="searchTypes1"
@@ -47,7 +59,7 @@
         </fieldset>
         <!-- 검색어 -->
          <b-form-group label="검색어" class="has-float-label">
-            <common-input-text v-model="searchItems.keyword"/>
+            <common-input-text v-model="searchItems.searchText"/>
           </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -106,12 +118,14 @@ export default {
     return {
       streamingUrl : '/api/musicsystem/streaming',
       waveformUrl : '/api/musicsystem/waveform',
+      allSelected: false,
+      indeterminate: false,
 
       searchItems: {
         searchType1: 0,
-        searchType2: 0,
+        searchType2: 'song_idx',
         gradeType: 0,
-        keyword: '',
+        searchText: '',
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
@@ -120,14 +134,17 @@ export default {
       selectedSearchType1: [],
       selectedGradeType: [],
       searchTypes1: [
-        { label: 'ALL', code:  7},
         { label: '국내', code: 1 },
         { label: '국외', code: 2 },
         { label: '클래식', code: 4 },
       ],
       searchTypes2: [
-        { label: 'data1', code: 1 },
-        { label: 'data2', code: 2 },
+        { label: '전체', code: 'song_idx' },
+        { label: '곡명', code: 'song_name_idx'},
+        { label: '곡명/아티스트', code: 'songname_artist_idx'},
+        { label: '아티스트', code: 'song_artist_idx'},
+        { label: '배열번호', code: 'song_disc_arr_num_idx' },
+        { label: '국가명', code: 'song_country_name_idx' },
       ],
       gradeTypes: [
       { label: '히트', code: 1 },
@@ -221,6 +238,8 @@ export default {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
       var params = this.searchItems;
+      params.searchType1 =0;
+      params.gradeType =0;
       this.selectedSearchType1.forEach(element => {
         params.searchType1 += element;
       });
@@ -237,6 +256,24 @@ export default {
             this.isScrollLodaing = false;
       });
     },
-  }
+    toggleAll(checked) {
+        this.selectedSearchType1 = checked ? [1,2,4] : []
+    },
+  },
+  // watch: {
+  //   selectedSearchType1(newVal, oldVal) {
+  //     // Handle changes in individual flavour checkboxes
+  //     if (newVal.length === 0) {
+  //       this.indeterminate = false
+  //       this.allSelected = false
+  //     } else if (newVal.length === this.searchTypes1.length) {
+  //       this.indeterminate = false
+  //       this.allSelected = true
+  //     } else {
+  //       this.indeterminate = true
+  //       this.allSelected = false
+  //     }
+  //   }
+  // }
 }
 </script>
