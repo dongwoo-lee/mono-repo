@@ -1,14 +1,14 @@
 <template>
     <div>
         <b-button
-            v-if="display('S01G02C002')"
+            v-if="display(PREVIEW_CODE)"
             class="icon-buton"
             title="미리듣기"
             @click.stop="onPreview()">
             <b-icon icon="caret-right-square" class="icon"></b-icon>
         </b-button>
         <b-button
-            v-if="display('S01G02C003')"
+            v-if="display(DOWNLOAD_CODE)"
             :id="`download-${rowData.rowNO}`" class="icon-buton"
             v-b-tooltip.hover.top="{ title: rowData.filePath }"
             @click.stop="onDownload()">
@@ -31,6 +31,8 @@
     </div>
 </template>
 <script>
+import { PREVIEW_CODE, DOWNLOAD_CODE } from "@/constants/config";
+
 export default {
     props:{
         rowData: {
@@ -45,6 +47,12 @@ export default {
             type: Array,
             default: () => []
         },
+    },
+    data() {
+        return {
+            PREVIEW_CODE: PREVIEW_CODE,
+            DOWNLOAD_CODE: DOWNLOAD_CODE
+        }
     },
     methods: {
         display(value) {

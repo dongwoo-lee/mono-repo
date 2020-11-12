@@ -8,6 +8,7 @@ import CommonDataTable from './DataTable/CommonDataTable';
 import CommonDataTableScrollPaging from './DataTable/CommonDataTableScrollPaging';
 import CommonActions from './DataTable/CommonActions';
 import Player from './Common/Player';
+import Timer from './timer';
 
 Vue.component('CommonConfirm', CommonConfirm);
 Vue.component('CommonForm', CommonForm);
@@ -18,5 +19,6 @@ Vue.component('CommonDataTable', CommonDataTable);
 Vue.component('CommonDataTableScrollPaging', CommonDataTableScrollPaging);
 Vue.component('CommonActions', CommonActions);
 Vue.component('Player', Player);
+Vue.component('Timer', Timer);
 
 export default {};

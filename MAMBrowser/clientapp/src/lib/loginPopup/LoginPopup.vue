@@ -105,10 +105,9 @@ export default {
                 this.errorMsg = res.data.errorMsg;
               } else {
                 this.$bvModal.hide('loginPopup');
-                this.$router.replace();
-                //eventBus.$emit('loadData');
-                eventBus.$emit('loadData', this.$router.currentRoute.name);
-                // this.$router.go(this.$router.currentRoute);
+                eventBus.$emit('onResetTimer');
+                eventBus.$emit('onLoadData', this.$router.currentRoute.name);
+
               }
           } else {
             var errMsg = res.response.data.message;

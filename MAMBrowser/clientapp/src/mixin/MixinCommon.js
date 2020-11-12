@@ -44,8 +44,7 @@ let mixinCommon = {
     },
     created() {
         // 토큰 만료시 재로그인할때, 로직 태움
-        eventBus.$on('loadData', (viewName)=> {
-            console.debug('load-data viewName:', viewName);
+        eventBus.$on('onLoadData', (viewName)=> {
             this.getData();
         });
         this.$nextTick(() => {

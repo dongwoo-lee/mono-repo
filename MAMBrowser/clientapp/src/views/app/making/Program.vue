@@ -197,7 +197,6 @@ export default {
   },
   methods: {
     getData() {
-      console.info('this.router', this.$router, this.$router.currentRoute);
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const media = this.searchItems.media;
 

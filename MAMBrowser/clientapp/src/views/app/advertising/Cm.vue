@@ -121,7 +121,7 @@
               <template v-slot:cell(actions)="data">
                 <!-- 미리듣기 -->
                 <b-button
-                  v-if="display('S01G02C002')"
+                  v-if="display(PREVIEW_CODE)"
                   class="icon-buton"
                   title="미리듣기"
                   @click.stop="onPreview(data.item)">
@@ -148,12 +148,14 @@
 
 <script>
 import MixinTablePage from '../../../mixin/MixinTablePage';
+import { PREVIEW_CODE } from "@/constants/config";
 
 export default {
   name: 'templateSBForm',
   mixins: [ MixinTablePage('cm') ],
   data() {
     return {
+      PREVIEW_CODE: PREVIEW_CODE,
       searchItems: {
         media: 'A',
         brd_dt: '20200101',

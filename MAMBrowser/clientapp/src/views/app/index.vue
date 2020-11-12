@@ -23,6 +23,7 @@ import FileMetaDataPopup from '../../lib/file/FileMetaDataPopup';
 import LoginPopup from '../../lib/loginPopup/LoginPopup';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import LoginPopupRefElement from '../../lib/loginPopup/LoginPopupRefElement';
+import { mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -50,7 +51,11 @@ export default {
     this.$nextTick(() => {
       FileUploadRefElement.init(this);
       LoginPopupRefElement.init(this);
+      this.SET_DOWNLOAD_IFRAME();
     });
   },
+  methods: {
+    ...mapMutations('file', ['SET_DOWNLOAD_IFRAME'])
+  }
 };
 </script>

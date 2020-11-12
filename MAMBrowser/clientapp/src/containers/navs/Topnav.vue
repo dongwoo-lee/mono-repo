@@ -24,58 +24,56 @@
     </router-link>
 
     <div class="navbar-right">
-      <b-row style="justify-content: flex-end;">
-        <!-- 타이머 -->
-        <!-- <div class="user">
-          <b-row>
-            <h3>00:00:00</h3>
-            <b-button size="sm">갱신</b-button>
-          </b-row>
-        </div> -->
-
-        <!-- 유저 정보 -->
+      <b-row style="justify-content: flex-end;">     
         <div class="user d-inline-block">
-          <table>
-              <tr>
-                <td>
-                  <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
-                  <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable) }}</span>
-                </td>
-                <td rowspan="2">
-                  <b-dropdown
-                    class="dropdown-menu-right"
-                    right
-                    variant="empty"
-                    toggle-class="p-0"
-                    menu-class="mt-3"
-                    no-caret
-                  >
-                    <template slot="button-content">
-                      <span class="name mr-1">
-                        {{currentUser.name}}({{currentUser.menuGrpName}})
-                        <i class="iconsminds-administrator"></i>
-                        </span>
+          <table class="topnav-right-table">
+            <tr>
+              <!-- 타이머 -->
+              <td rowspan="2">
+                <timer :expires="REFRESH_TOKEN_TIME"></timer>
+              </td>
+              <!-- 디스크 용량 정보 -->
+              <td>
+                <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
+                <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable) }}</span>
+              </td>
+              <!-- 사용자 정보 -->
+              <td rowspan="2">
+                <b-dropdown
+                  class="dropdown-menu-right"
+                  right
+                  variant="empty"
+                  toggle-class="p-0"
+                  menu-class="mt-3"
+                  no-caret
+                >
+                  <template slot="button-content">
+                    <span class="name mr-1">
+                      {{currentUser.name}}({{currentUser.menuGrpName}})
+                      <i class="iconsminds-administrator"></i>
+                      </span>
 
-                    </template>
-                    <div v-if="isDisplaySetting()">
-                      <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
-                      <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
-                      <b-dropdown-divider />
-                    </div>
-                    <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
-                  </b-dropdown>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <b-progress 
-                    class=""
-                    :value="currentUser.diskUsed"
-                    :max="(currentUser.diskMax * 1000000000)"
-                    animated>
-                  </b-progress>
-                </td>
-              </tr>
+                  </template>
+                  <div v-if="isDisplaySetting()">
+                    <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
+                    <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
+                    <b-dropdown-divider />
+                  </div>
+                  <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
+                </b-dropdown>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <!-- 디스크 용량 프로그래스바 -->
+                <b-progress 
+                  class=""
+                  :value="currentUser.diskUsed"
+                  :max="(currentUser.diskMax * 1000000000)"
+                  animated>
+                </b-progress>
+              </td>
+            </tr>
           </table>
         </div>
       </b-row>
@@ -86,14 +84,9 @@
 <script>
 import { mapGetters, mapMutations, mapActions, mapState } from "vuex";
 import { MenuIcon, MobileMenuIcon } from "../../components/Svg";
-import {
-  menuHiddenBreakpoint,
-  localeOptions,
-  buyUrl,
-  defaultColor,
-  themeSelectedColorStorageKey
-} from "../../constants/config";
+import { REFRESH_TOKEN_TIME, SYSTEM_MANAGEMENT_CODE } from "../../constants/config";
 import { getDirection, setDirection } from "../../utils";
+
 export default {
   components: {
     "menu-icon": MenuIcon,
@@ -101,12 +94,9 @@ export default {
   },
   data() {
     return {
-      fullScreen: false,
-      menuHiddenBreakpoint,
-      localeOptions,
-      buyUrl,
-      isDarkActive: false
-    };
+      REFRESH_TOKEN_TIME: REFRESH_TOKEN_TIME,
+      SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE
+    }
   },
   created() {
     this.getUser();
@@ -123,7 +113,7 @@ export default {
       });
     },
     isDisplaySetting() {
-      return this.behaviorList.some(item => item.id === 'S01G02C001' && item.visible === 'Y');
+      return this.behaviorList.some(item => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === 'Y');
     },
     getTo() {
       if (this.roleList) {
@@ -134,7 +124,7 @@ export default {
       }
 
       return '';
-    }
+    },
   },
   computed: {
     ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList']),
@@ -150,15 +140,6 @@ export default {
         this.$router.go(this.$route.path);
       }
     }
-  }
+  },
 };
 </script>
-<style lang="scss" scoped>
-table { border-collapse:collapse; }  
-td {
-  .dropdown {
-     margin-left: 10px;
-  }
-}
-
-</style>

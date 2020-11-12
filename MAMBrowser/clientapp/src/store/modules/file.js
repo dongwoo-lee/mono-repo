@@ -17,6 +17,7 @@ export default {
         uploadTransmitState: false,                    // 업로드 전송 상태
         uploadViewType: '',                            // 업로드 화면 타입: 'private, 'public
         isDragDropState: false,
+        downloadIframe: null,
     },
     mutations: {
         SET_FILES: (state, { files, meta }) => {
@@ -72,6 +73,12 @@ export default {
         },
         SET_DRAG_DROP_STATE: (state, value) => {
             state.isDragDropState = value;
+        },
+        SET_DOWNLOAD_IFRAME: (state) => {
+            state.downloadIframe = document.createElement('iframe');
+            state.downloadIframe.id = 'downloadIframe';
+            state.downloadIframe.style.display = 'none';
+            document.body.appendChild(state.downloadIframe);
         }
     },
     actions: {
@@ -131,27 +138,29 @@ export default {
                 }
             }
         },
-        downloadWorkspace({}, {ids, type}) {     //private, public 파일 다운로드
-            ids.forEach(id => {
-                const link = document.createElement('a');
-                link.href = `/api/products/workspace/${type}/files/${id}`;
-                window.open(link); 
-            })
+        downloadWorkspace({state}, {ids, type}) {     //private, public 파일 다운로드
+            const interval = setInterval(download, 3000, ids);
+            function download(ids) {
+                const id = ids.pop();
+                const src = `/api/products/workspace/${type}/files/${id}`;
+                state.downloadIframe.setAttribute('src', src);
+
+                if (ids.length === 0) {
+                    clearInterval(interval);
+                }
+            }
         },
-        downloadProduct({}, item) { //products 파일 다운로드
-            const link = document.createElement('a');
-            link.href =`/api/products/files?token=${item.fileToken}`;
-            link.click();
+        downloadProduct({state}, item) { //products 파일 다운로드
+            const src = `/api/products/files?token=${item.fileToken}`;
+            state.downloadIframe.setAttribute('src', src);
         },
         downloadMusic({}, item) {       //music 파일 다운로드
-            const link = document.createElement('a');
-            link.href =`/api/musicsystem/files?token=${item.fileToken}`;
-            link.click();
+            const src = `/api/musicsystem/files?token=${item.fileToken}`;
+            state.downloadIframe.setAttribute('src', src);
         },
         downloadDl30({}, item) { //dl30 파일 다운로드
-            const link = document.createElement('a');
-            link.href =`/api/products/dl30/files/${item.seq}`;
-            link.click();
+            const src = `/api/products/dl30/files/${item.seq}`;
+            state.downloadIframe.setAttribute('src', src);
         },
         downloadConcatenate({}, item){
             console.info('item',item);
