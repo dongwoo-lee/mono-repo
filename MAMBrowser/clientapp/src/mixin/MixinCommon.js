@@ -141,6 +141,17 @@ let mixinCommon = {
         getEditorOptions() {
             this.requestCall('/api/Categories/users', 'editorOptions');
         },
+        // 사용처 목록 조회
+        getPgmOptions(brd_dt) {
+            if (!brd_dt) return;
+            this.requestCall('/api/Categories/pgmcodes?brd_dt=' + brd_dt, 'pgmOptions');
+        },
+         // 사용처 분류 선택
+         onPgmSelected(data) {
+            const { id, name } = data;
+            this.searchItems.pgm = id;
+            this.searchItems.pgmName = name;
+        },
         // 제작자 선택
         onEditorSelected(data) {
             const { id, name } = data;

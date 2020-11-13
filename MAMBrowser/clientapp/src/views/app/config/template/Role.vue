@@ -17,8 +17,9 @@
         <template v-slot:cell(authorCode)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{getAuthorName(item.authorCode)}}</div>
              <b-form-select 
-                v-model="item.authorCode"
+                :value="item.authorCode"
                 v-show="rowSelected"
+                size="sm"
                 @change="onChangeAuthority($event, item, index)">
                 <option
                     v-for="(option, idx) in authorityOptions"
@@ -49,10 +50,10 @@ export default {
             rolesList: [],
             isLoading: false,
             fields: [
-                { key: 'no', label: 'No', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
-                { key: 'id', label: 'Id', sortable: false, tdClass: 'text-muted' },
-                { key: 'name', label: '역할', sortable: false, tdClass: 'text-muted' },
-                { key: 'authorCode', label: '권한', sortable: false, tdClass: 'text-muted' },
+                { key: 'no', label: 'No', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'id', label: 'Id', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'name', label: '역할', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'authorCode', label: '권한', sortable: false, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '250px' } },
                 { key: 'actions', label: '', thStyle: { width: '200px' } }
             ],
             authorityOptions: [],       // 권환 목록
@@ -116,7 +117,6 @@ export default {
             } else {
                 selectData.isChangeAuthorCode = true;
             }
-
             selectData.authorCode = findOptionItem[0].code;
         },
         equalOringData(item) {

@@ -37,18 +37,21 @@
         </template>
         <template v-slot:cell(menuGrpID)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{item.menuGrpName}}</div>
-            <b-form-select 
-                :value="item.menuGrpID"
-                v-show="rowSelected"
-                @change="onChangeMenuGrp($event, item, index)">
-                <option
-                    v-for="(option, idx) in menuGrpOptions"
-                    :key="idx"
-                    :value="option.code"
-                    :title="option.description">
-                    {{option.name}}
-                </option>
-            </b-form-select>
+            <div>
+                <b-form-select 
+                    :value="item.menuGrpID"
+                    v-show="rowSelected"
+                    size="sm"
+                    @change="onChangeMenuGrp($event, item, index)">
+                    <option
+                        v-for="(option, idx) in menuGrpOptions"
+                        :key="idx"
+                        :value="option.code"
+                        :title="option.description">
+                        {{option.name}}
+                    </option>
+                </b-form-select>
+            </div>
         </template>
         <template v-slot:cell(actions)="{ item, index }">
             <div v-if="equalOringData(item)">
@@ -71,12 +74,12 @@ export default {
             userList: [],
             isLoading: false,
             fields: [
-                { key: 'no', label: 'No', sortable: false, sortDirection: 'desc', tdClass: 'list-item-heading' },
-                { key: 'name', label: '사용자', sortable: false, tdClass: 'text-center' },
-                { key: 'diskUsed', label: '사용 용량', sortable: false, tdClass: 'text-muted' },
-                { key: 'diskMax', label: '디스크 할당', sortable: false, tdClass: 'text-muted' },
-                { key: 'menuGrpID', label: '메뉴 유형', sortable: false, tdClass: 'text-muted' },
-                { key: 'actions', label: '', thStyle: { width: '200px' } }
+                { key: 'no', label: 'No', sortable: false, sortDirection: 'desc', thClass:'text-center', tdClass: 'text-center' },
+                { key: 'name', label: '사용자', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'diskUsed', label: '사용 용량', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'diskMax', label: '디스크 할당', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'menuGrpID', label: '메뉴 유형', sortable: false, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '250px' } },
+                { key: 'actions', label: '', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '200px' } }
             ],
             menuGrpOptions: [],
             diskScopeOptions: [],

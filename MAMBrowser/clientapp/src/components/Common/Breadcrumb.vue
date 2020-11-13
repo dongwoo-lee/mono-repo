@@ -34,10 +34,21 @@ export default {
       }
     }
     rawPaths.map((sub, index) => {
-      this.items.push({
-        text: this.$t('menu.' + sub),
-        to: this.getUrl(path, sub, index)
-      })
+      if (index === 0) {  // home
+        this.items.push({
+          text: this.$t('menu.' + sub),
+          to: this.$fn.getFirstAccessiblePage(),
+        })
+      } else if (index === 1) {  // 1dept
+        this.items.push({
+          text: this.$t('menu.' + sub),
+        })
+      } else {
+         this.items.push({  // 2dept
+          text: this.$t('menu.' + sub),
+          to: this.getUrl(path, sub, index)
+        })
+      }
     })
   }
 }

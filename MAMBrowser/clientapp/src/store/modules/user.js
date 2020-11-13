@@ -1,7 +1,7 @@
 import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
-import jwt_decode from 'jwt-decode';
+import {SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER} from '@/constants/config';
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
 const getAddUrlAndIconMenuList = (menuList, roleList) => {
@@ -31,6 +31,15 @@ const getAddUrlAndIconMenuList = (menuList, roleList) => {
 
   return menuList;
 };
+
+// 시스템 권한 유무 가져오기
+const getAuthority = (behaviorList) => {
+  const findIndex = behaviorList.findIndex(behavior => behavior.id === SYSTEM_MANAGEMENT_CODE);
+  if (findIndex > -1 && behaviorList[findIndex].visible === 'Y') {
+    return AUTHORITY_ADMIN;
+  }
+  return AUTHORITY_MANAGER;
+}
 
 const getRole = (menu) => {
   return {
@@ -71,10 +80,6 @@ export default {
     },
     isAuth: () => sessionStorage.getItem('access_token') != null && sessionStorage.getItem('user_id') != null,
     getUserId: () => sessionStorage.getItem('user_id'),
-    getDecodeToken: () => {
-      return jwt_decode(sessionStorage.getItem('access_token'));
-    },
-    token: () => sessionStorage.getItem('access_token'),
   },
   mutations: {
     SET_AUTH(state, {token, resultObject }) {
@@ -92,6 +97,7 @@ export default {
       sessionStorage.setItem('user_id', id);
       sessionStorage.setItem('user_ext_id', userExtID);
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
+      sessionStorage.setItem('authority', getAuthority(state.behaviorList));
     },
     SET_LOGOUT(state) {
       state.isAuth = false;
@@ -101,6 +107,7 @@ export default {
       sessionStorage.removeItem('user_id');
       sessionStorage.removeItem('user_ext_id');
       sessionStorage.removeItem('role');
+      sessionStorage.removeItem('authority');
     },
     SET_PROCESSING(state, payload) {
       state.processing = payload

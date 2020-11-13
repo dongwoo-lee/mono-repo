@@ -19,3 +19,7 @@ export const SYSTEM_MANAGEMENT_CODE  = 'S01G02C001';
 export const PREVIEW_CODE  = 'S01G02C002';
 /* behavior download code */
 export const DOWNLOAD_CODE  = 'S01G02C003';
+/* behavior authority*/
+export const AUTHORITY_ADMIN = 'ADMIN';
+/* behavior authority*/
+export const AUTHORITY_MANAGER = 'MANAGER';

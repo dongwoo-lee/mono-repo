@@ -48,10 +48,6 @@ let mixinBasicPage = {
         getReportOptions() {
             this.requestCall('/api/Categories/report', 'rePortOptions');
         },
-        // 사용처 목록 조회
-        getPgmOptions(brd_dt) {
-            this.requestCall('/api/Categories/pgmcodes?brd_dt=' + brd_dt, 'pgmOptions');
-        },
         // 공유 소재 분류 목록 조회
         getPublicCodesOptions(primaryCode = '') {
             this.requestCall(`/api/categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions')
@@ -62,12 +58,6 @@ let mixinBasicPage = {
                     }
                 }
             });
-        },
-        // 사용처 분류 선택
-        onPgmSelected(data) {
-            const { id, name } = data;
-            this.searchItems.pgm = id;
-            this.searchItems.pgmName = name;
         },
         getInnerHtmlSelectdFileNames(title) {
             return `파일명:<text style="color:red;">${title}</text><br><br>`;

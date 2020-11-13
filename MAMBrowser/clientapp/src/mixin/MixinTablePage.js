@@ -110,27 +110,10 @@ let mixinTablePage = apiType => ({
             const { id, brdDT } = items[0];
             this.getDataContents(id, brdDT);
         },
-        // 사용처 목록 조회
-        getPgmOptions(brd_dt) {
-            if (!brd_dt) return;
-            this.requestCall('/api/Categories/pgmcodes/' + brd_dt, 'pgmOptions');
-        },
         // 광고 분류 조회
         getCmOptions() {
             this.requestCall('/api/Categories/cm', 'cmOptions');
         },
-        // 단일 다운로드 -> 혼동소지있어서 삭제.
-        // onDownload(seq) {
-        //     let ids = this.selectedIds;
-    
-        //     if (typeof seq !== 'object' && seq) {
-        //     ids = [];
-        //     ids.push(seq);
-        //     }
-    
-        //     this.download({ids: ids, type: 'private'});
-        // },
-       
         display(value) {
             return this.behaviorList.some(data => data.id === value && data.visible === 'Y');
         },

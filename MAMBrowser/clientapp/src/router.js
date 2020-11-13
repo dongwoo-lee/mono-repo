@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import store from './store';
+import Function from './utils/CommonFunctions';
+import {AUTHORITY_ADMIN} from '@/constants/config';
 
 Vue.use(VueRouter);
 
@@ -194,39 +195,43 @@ router.beforeEach((to, from, next) => {
     if (to.path !== '/user/login') {
       next({ path: '/user/login', replace: true });
       return;
+    } else {
+      next();
+      return;
     }
-  }
+  }  
   
   // 권한체크
   const roles = JSON.parse(sessionStorage.getItem('role'));
-  let isAuth = true;
+  let matchRole = null;
   if (roles) {
-    roles.filter(role => {
-       if (role.children && role.children.length > 0) {
-          role.children.filter(child => {
-            const isMatchPath = child.to === to.path;
-            if (isMatchPath) {
-              isAuth = child.visible === 'Y';
-            }
-          })
-         return isMatchPath;
-       }
-
-       const isMatchPath = role.to === to.path && role.visible === 'Y';
-       if (isMatchPath) {
-        isAuth = role.visible === 'Y';
-      }
-       return isMatchPath;
+    matchRole = roles.filter(role => {
+       return role.to === to.path && role.visible === 'Y';
     })
   }
-
-  if (isAuth) {
+  
+  // 시스템 관리자 접근 페이지
+  const systemPageNames = ['config', 'log']; // 시스템 접근 페이지 route 이름
+  if (systemPageNames.includes(to.name) && sessionStorage.getItem('authority') === AUTHORITY_ADMIN) {
     next();
     return;
   }
 
-  alert("접근 권한이 없습니다.");
-  next(from);
+  // 이동할 페이지에 권한이 있을 경우
+  if (matchRole && matchRole.length > 0) {
+    next();
+    return;
+  } else {
+    // 이동할 페이지에 권한이 없을 경우
+    alert("접근 권한이 없습니다.");
+    if (from.name) {
+      next(from);
+      return;
+    }
+
+    // 전페이지 정보가 없을 경우,
+    next({path: Function.getFirstAccessiblePage })
+  }
 });
 
 export default router;

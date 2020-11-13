@@ -29,7 +29,10 @@
         </b-form-group>
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">
-          <common-dropdown-menu-input :suggestions="pgmOptions" @selected="onPgmSelected" />
+          <common-dropdown-menu-input
+            :isLoadingClass="isLoadingClass"
+            :suggestions="pgmOptions"
+            @selected="onPgmSelected" />
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
@@ -94,7 +97,7 @@ export default {
       searchItems: {
         media: 'A',
         brd_dt: '',
-       rowPerPage: 15,
+        rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
         sortValue: '',
@@ -187,11 +190,15 @@ export default {
       ]
     }
   },
+  watch: {
+    ['searchItems.brd_dt']() {
+      // 사용처 조회
+      this.getPgmOptions(this.searchItems.brd_dt);  
+    }
+  },
   created() {
     // 매체목록 조회
     this.getMediaOptions();
-    // 사용처 조회
-    this.getPgmOptions(this.searchItems.brd_dt);
     // 제작자 조회
     this.getEditorOptions();
   },

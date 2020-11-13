@@ -47,21 +47,26 @@ $http.interceptors.response.use(res =>{
     } = err;
 
     if (status === 401) {
-        // sessionStorage.removeItem('access_token');
         LoginPopupRefElement.loginPopup.show();
-        window.$notify(
-            "error",
-            `세션이 만료되었습니다. 재로그인이 필요합니다.[ERROR:${status}]`,
-            '', {
-                duration: 8000,
-                permanent: false
-            }
-        )
-        // store.dispatch('user/signOut');
-        // router.push({path: '/user/login' });
+        errorNotify(status, '세션이 만료되었습니다. 재로그인이 필요합니다.');
+    }
+
+    if (status === 500) {
+        errorNotify(status, data);
     }
 
     return Promise.reject(err);
 })
+
+const errorNotify=(status, msg)=> {
+    window.$notify(
+        "error",
+        `${msg}[ERROR:${status}]`,
+        '', {
+            duration: 8000,
+            permanent: false
+        }
+    )
+}
 
 export default $http

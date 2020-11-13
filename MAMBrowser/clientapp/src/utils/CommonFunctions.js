@@ -198,6 +198,15 @@ const formatBytes = (bytes, decimals = 2) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
+const getFirstAccessiblePage = () => {
+    const roles = JSON.parse(sessionStorage.getItem('role'));
+    const firstAccessiblePageIndex = roles.findIndex(role => role.visible === 'Y' && role.to);
+    if (firstAccessiblePageIndex > -1) {
+        return roles[firstAccessiblePageIndex].to;
+    }
+    return '/user/login';
+}
+
 const commonFunctions = {
     formatDate,
     dateStringTohaipun,
@@ -208,7 +217,8 @@ const commonFunctions = {
     fileDownload,
     changeSortValue,
     formatMBBytes,
-    formatBytes
+    formatBytes,
+    getFirstAccessiblePage
 }
 
 export default commonFunctions;
