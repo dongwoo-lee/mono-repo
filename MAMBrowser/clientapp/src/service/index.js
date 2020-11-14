@@ -29,7 +29,7 @@ export default {
      * PublicFile
      */
     postPublicFileUpload(userExtId, formData, config) {
-        return $http.post(`/api/products/workspace/public/files${userExtId}`, formData, config);
+        return $http.post(`/api/products/workspace/public/files`, formData, config);
     },
     getPublicFileDownload(seq) {
         return $http.get(`/api/products/workspace/public/files/${seq}`)

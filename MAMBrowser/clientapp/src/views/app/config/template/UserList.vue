@@ -164,7 +164,7 @@ export default {
                 selectData.isChangeDiskMax = true;
             }
 
-            selectData.diskMax = findOptionItem[0].value;
+            selectData.diskMax = parseInt(findOptionItem[0].value);
         },
         onChangeMenuGrp(value, item, index) {
             const findOptionItem = this.menuGrpOptions.filter(option => option.code === value);
