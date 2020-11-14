@@ -1,6 +1,6 @@
 <template>
 <!-- 미리듣기 팝업 --> 
-<b-modal id="music-player" size="xl" v-model="showPlayerPopup" no-close-on-backdrop >
+<b-modal id="music-player" size="xl" v-model="show" no-close-on-backdrop >
     <template slot="modal-title" >
     <h5>{{this.music.name}}</h5>
     </template>
@@ -13,7 +13,8 @@
         lyrics
     </b-col>
     </b-row>
-    <Player 
+    <Player
+        ref="play"
         :requestType="requestType" 
         :fileKey = "music.fileToken"
         :streamingUrl = "streamingUrl"
@@ -26,7 +27,7 @@
         variant="outline-danger default cutom-label-cancel"
         size="sm"
         class="float-right"
-        @click="closePlayer()"
+        @click="show=false"
     >
     닫기</b-button>
     </template>
@@ -72,17 +73,20 @@ export default {
             default: () => {},
         },
     },
-    watch: {
-        showPlayerPopup(isShow) {
-            if (isShow) {
-                // open
-                console.info('showPlayerPopup open');
-                this.GetAlumbImageAndLyrics();
-            } else {
-                // close
-                console.info('showPlayerPopup close');
+    computed: {
+        show: {
+            get() {
+                return this.showPlayerPopup;
+            },
+            set(v) {
+                if (!v) {
+                    this.closePlayer();
+                } else {
+                    console.info('showPlayerPopup open'); 
+                    this.GetAlumbImageAndLyrics();
+                }
             }
-        }
+        },
     },
     methods: {
         GetAlumbImageAndLyrics(){
@@ -113,6 +117,7 @@ export default {
             console.info('loading music player');
         },
         closePlayer(){
+            this.$refs.play.close();
             this.$emit('closePlayer');
         }
     },

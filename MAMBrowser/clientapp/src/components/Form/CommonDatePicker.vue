@@ -99,9 +99,9 @@ export default {
     methods: {
         onInput(event) {
             const targetValue = event.target.value;
-
+            
             // 필수 입력값일 경우
-            if (this.required && !targetValue) {
+            if (this.required && (!targetValue || !/^[\d-]+$/.test(targetValue))) {
                 const convertDate = this.convertDateStringToHaipun(this.validBeforeDate);
                 event.target.value = convertDate;
                 this.date = convertDate;
@@ -134,8 +134,6 @@ export default {
                     this.date = convertBeforeDate;
                 }
             }
-            
-            return;
         },
         validDateType(value) {
             // 유효한 입력값인지 체크
@@ -144,9 +142,10 @@ export default {
             return !dateRegex.test(value);
         },
         convertDateStringToHaipun(value) {
-            const yyyy = value.substring(0, 4);
-            const mm = value.substring(4, 6);
-            const dd = value.substring(6, 8);
+            const replaceVal = value.replace(/-/g, '')
+            const yyyy = replaceVal.substring(0, 4);
+            const mm = replaceVal.substring(4, 6);
+            const dd = replaceVal.substring(6, 8);
             return `${yyyy}-${mm}-${dd}`;
         }, 
         getValidBeforeDate() {

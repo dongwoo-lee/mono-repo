@@ -1,9 +1,8 @@
 <template>
 <!-- 미리듣기 팝업 --> 
 <b-modal id="modal-player" size="lg" 
-    v-model="showPlayerPopup" 
-    no-close-on-backdrop
-    no-close-on-esc>
+    v-model="show" 
+    no-close-on-backdrop>
     <template slot="modal-title" >
     <h5>{{title}}</h5>
     </template>
@@ -22,7 +21,7 @@
         variant="outline-danger default cutom-label-cancel"
         size="sm"
         class="float-right"
-        @click="closePlayer()"
+        @click="show=false"
     >
     닫기</b-button>
     </template>
@@ -59,6 +58,18 @@ export default {
             type: String,
             default: () => 'N',
         }
+    },
+    computed: {
+        show: {
+            get() {
+                return this.showPlayerPopup;
+            },
+            set(v) {
+                if (!v) {
+                    this.closePlayer();
+                }
+            }
+        },
     },
     methods: {
         closePlayer(){

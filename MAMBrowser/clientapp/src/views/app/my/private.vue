@@ -16,12 +16,12 @@
         <!-- 등록일: 시작일 -->
         <b-form-group label="시작일"
           class="has-float-label">
-          <common-date-picker v-model="searchItems.start_dt"/>
+          <common-date-picker v-model="searchItems.start_dt" :isCurrentDate="false"/>
         </b-form-group>
       <!-- 등록일: 종료일 -->
         <b-form-group label="종료일" 
           class="has-float-label">
-          <common-date-picker v-model="searchItems.end_dt"/>
+          <common-date-picker v-model="searchItems.end_dt" :isCurrentDate="false"/>
         </b-form-group>
       <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">

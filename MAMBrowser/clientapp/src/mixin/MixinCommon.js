@@ -53,6 +53,7 @@ let mixinCommon = {
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
+            this.$refs.scrollPaging.init();
             this.initSelectedIds();
             this.getData();
         },

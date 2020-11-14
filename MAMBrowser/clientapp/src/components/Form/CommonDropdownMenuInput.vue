@@ -59,13 +59,22 @@ export default {
             this.getfilteredData();
         },
         onInput(text, oldText) {
-            if (text == null) return;
+            if (!text) {
+                 this.resetInputData();
+            }
             this.getfilteredData(text, oldText);
         },
         getfilteredData(text = '', oldText = '') {
             const filteredData = this.suggestions.filter(option => {
                 return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
             });
+
+            if (filteredData.length === 1) {
+                this.isSelected = true;
+                this.$emit('selected', { id: filteredData[0].id, name: filteredData[0].name });
+            } else {
+                this.isSelected = false;
+            }
 
             this.filteredOptions = [
                 {
@@ -74,7 +83,6 @@ export default {
             ];
         },
         onSelected(item) {
-            console.info('onSelected', item);
             const interalValue = this.$refs.refAutosuggest.internalValue;
             if (item) {
                 // 리스트 클릭 & 방향키 아래로 엔터시 여기로 진입
@@ -102,7 +110,9 @@ export default {
                 return;
             }
 
-            if (e.relatedTarget && e.relatedTarget.localName === 'div') { return; }
+            if (e.relatedTarget && e.relatedTarget.localName === 'div') { 
+                return; 
+            }
             this.resetInputData();
         },
         resetInputData() {

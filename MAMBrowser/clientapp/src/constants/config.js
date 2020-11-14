@@ -26,5 +26,5 @@ export const AUTHORITY_MANAGER = 'MANAGER';
 /* route name */
 export const ROUTE_NAMES = {
   PRIVATE: 'private',
-  SHARED: 'shared-material'
+  SHARED: 'public',
 }
