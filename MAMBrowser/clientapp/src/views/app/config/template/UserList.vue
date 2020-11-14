@@ -18,7 +18,7 @@
             <div class="text-nowrap">{{ $fn.formatBytes(item.diskUsed, 1) }}</div>
         </template>
         <template v-slot:cell(diskMax)="{ item, rowSelected, index }">
-            <template v-if="isDisplayMyDiskMenu">
+            <template>
                 <span v-show="!rowSelected">{{item.diskMax}}GB</span>
                 <b-form-select
                     v-show="rowSelected"
@@ -31,9 +31,9 @@
                 >
                 </b-form-select>
             </template>
-             <template v-else>
+             <!-- <template v-else>
                 <span>디스크할당없음</span>
-            </template>
+            </template> -->
         </template>
         <template v-slot:cell(menuGrpID)="{ item, rowSelected, index }">
             <div v-show="!rowSelected">{{item.menuGrpName}}</div>
@@ -84,9 +84,6 @@ export default {
             menuGrpOptions: [],
             diskScopeOptions: [],
         }
-    },
-    computed: {
-        ...mapGetters('user', ['isDisplayMyDiskMenu']),
     },
     created() {
         this.getUserData();
@@ -152,7 +149,7 @@ export default {
             });
         },
         onChangeDiskMax(value, item, index) {
-            const findOptionItem = this.diskMaxOptions.filter(option => option.value === value);
+            const findOptionItem = this.diskScopeOptions.filter(option => option.value === value);
             const selectData = this.userList[index];
             
             // 변경 횟수 증가 및 원데이터 저장
@@ -190,7 +187,10 @@ export default {
         },
         equalOringData(item) {
             return  item.isChangeDiskMax || item.isChangeMenuGrpID;
-        }, 
+        },
+        displayNoDisk(item) {
+            
+        },
         onUpdate(item, index) {
             item.isChangeDiskMax = false;
             item.isChangeMenuGrpID = false;

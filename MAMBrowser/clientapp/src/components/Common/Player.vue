@@ -55,11 +55,6 @@ export default {
     source = cancelToken.source();
     this.LoadAudio();
   },
-  beforeDestroy(){
-    this.Stop();
-    wavesurfer.cancelAjax();
-    wavesurfer.destroy();
-  },
   methods : {
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
@@ -112,8 +107,13 @@ export default {
       });
     },
     LoadAudioInfo(){
-      this.TotalTime = new Date(wavesurfer.getDuration().toFixed(2) * 1000).toISOString().substr(11, 8);
-      this.CurrentTime = new Date(wavesurfer.getCurrentTime().toFixed(2) * 1000).toISOString().substr(11, 8);
+      if (wavesurfer.getDuration()) {
+        this.TotalTime = new Date(wavesurfer.getDuration().toFixed(2) * 1000).toISOString().substr(11, 8);  
+        this.CurrentTime = new Date(wavesurfer.getCurrentTime().toFixed(2) * 1000).toISOString().substr(11, 8);
+      } else {
+        this.TotalTime = 0;
+        this.CurrentTime = 0;
+      }
     },
     LoadAudio(){
       this.InjectWaveSurfer();
@@ -132,15 +132,22 @@ export default {
         url2 =`${this.waveformUrl}?token=${this.fileKey}`;
       }
 
-      httpClient.get(url2, null).then(res=>{
+      httpClient.get(url2, {
+        cancelToken: source.token,
+      }).then(res=>{
         wavesurfer.load(url, res.data);
         this.spinnerFlag = false;
         this.isSuccess = true;
       }).catch(error=>{
-          this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+        console.debug('httpClient', error)
+          if (error.response){
+            this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
                 duration: 8000,
                 permanent: false
             });
+          } else {
+            console.debug('httpClient.get url:', url2, error);
+          }
       });;
     },
     Play(){
@@ -148,10 +155,15 @@ export default {
     },
     Stop(){
       source.cancel('Operation canceled by the user.');
-      wavesurfer.stop();
       this.TotalTime = wavesurfer.getDuration().toFixed(2);
       this.CurrentTime = (0).toFixed(2);
+      wavesurfer.stop();
     },
+    close() {
+      source.cancel();
+      wavesurfer.cancelAjax();
+      wavesurfer.destroy();
+    }
   },
   props: {
       requestType : {

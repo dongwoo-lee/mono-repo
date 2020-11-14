@@ -23,3 +23,8 @@ export const DOWNLOAD_CODE  = 'S01G02C003';
 export const AUTHORITY_ADMIN = 'ADMIN';
 /* behavior authority*/
 export const AUTHORITY_MANAGER = 'MANAGER';
+/* route name */
+export const ROUTE_NAMES = {
+  PRIVATE: 'private',
+  SHARED: 'shared-material'
+}

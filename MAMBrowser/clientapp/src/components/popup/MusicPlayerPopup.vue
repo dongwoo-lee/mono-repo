@@ -40,7 +40,6 @@ export default {
             imageUrl : 'albums/images/files',
             lyricsUrl : 'lyrics',
             imagePathTokenList : [],
-            
             ui:{
                 imageList:[],
                 lyrics:''
@@ -72,10 +71,18 @@ export default {
             type: String,
             default: () => {},
         },
-        
     },
-    mounted(){
-        this.GetAlumbImageAndLyrics();
+    watch: {
+        showPlayerPopup(isShow) {
+            if (isShow) {
+                // open
+                console.info('showPlayerPopup open');
+                this.GetAlumbImageAndLyrics();
+            } else {
+                // close
+                console.info('showPlayerPopup close');
+            }
+        }
     },
     methods: {
         GetAlumbImageAndLyrics(){
@@ -106,8 +113,7 @@ export default {
             console.info('loading music player');
         },
         closePlayer(){
-            this.$bvModal.hide('music-player')
-            // this.$emit('closePlayer');
+            this.$emit('closePlayer');
         }
     },
 }

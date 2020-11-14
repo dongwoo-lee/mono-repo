@@ -65,7 +65,6 @@ export default {
     behaviorList: [],
     roleList: [],
     processing: false,
-    isDisplayMyDiskMenu: false,
     callLoginAuthTryCnt: 0,
   },
   getters: {
@@ -74,10 +73,11 @@ export default {
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
-    isDisplayMyDiskMenu: state => {
-      const findIndex = state.roleList.findIndex(role => role.id === 'S01G01C007' && role.visible === 'Y');
-      return findIndex > -1;
-    },
+    // isDisplayMyDiskMenu: state => {
+    //   console.info('state.roleList', state.roleList);
+    //   const findIndex = state.roleList.findIndex(role => role.id === 'S01G01C007' && role.visible === 'Y');
+    //   return findIndex > -1;
+    // },
     isAuth: () => sessionStorage.getItem('access_token') != null && sessionStorage.getItem('user_id') != null,
     getUserId: () => sessionStorage.getItem('user_id'),
   },

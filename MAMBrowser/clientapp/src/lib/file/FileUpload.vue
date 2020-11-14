@@ -158,7 +158,7 @@ export default {
                 tmpFiles.push(data.file);
             })
 
-            console.info('localFiles', tmpFiles);
+            console.debug('localFiles', tmpFiles);
             return tmpFiles;
         },
     },
@@ -175,7 +175,7 @@ export default {
             this.$bvModal.hide('modalStartingDelete');
         },
         onRemoveFileAndCancelToken() {
-            console.info('confirmDeleteData', this.confirmDeleteData);
+            console.debug('confirmDeleteData', this.confirmDeleteData);
             this.removeFileAndCancelToken(
                 {
                     id: this.confirmDeleteData.id,

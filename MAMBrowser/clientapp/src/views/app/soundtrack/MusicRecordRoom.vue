@@ -110,10 +110,10 @@
 </template>
 
 <script>
-import MixinBasicPage from '../../../mixin/MixinBasicPage';
+import MixinMusicPage from '../../../mixin/MixinMusicPage';
 
 export default {
-  mixins: [ MixinBasicPage ],
+  mixins: [ MixinMusicPage ],
   data() {
     return {
       streamingUrl : '/api/musicsystem/streaming',
@@ -234,6 +234,7 @@ export default {
       ],
     }
   },
+  
   methods: {
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;

@@ -17,7 +17,7 @@ $http.interceptors.request.use(
     return config;
   },
   error => {
-    console.info('interceptors.request.error', error);
+    console.debug('interceptors.request.error', error);
     Promise.reject(error);
 });
 
@@ -40,7 +40,7 @@ $http.interceptors.response.use(res =>{
         return Promise.reject(err);
     }
 
-    console.info('interceptors.response.error', err.response);
+    console.debug('interceptors.response.error', err.response);
 
     const{
         response: { config, status, data, statusText }
@@ -53,9 +53,10 @@ $http.interceptors.response.use(res =>{
 
     if (status === 500) {
         errorNotify(status, data);
+        return err.response;
     }
 
-    return Promise.reject(err);
+    return err.response;
 })
 
 const errorNotify=(status, msg)=> {

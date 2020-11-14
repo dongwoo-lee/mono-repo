@@ -23,6 +23,7 @@ import FileMetaDataPopup from '../../lib/file/FileMetaDataPopup';
 import LoginPopup from '../../lib/loginPopup/LoginPopup';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import LoginPopupRefElement from '../../lib/loginPopup/LoginPopupRefElement';
+import { ROUTE_NAMES } from '@/constants/config';
 import { mapMutations } from 'vuex';
 
 export default {
@@ -38,7 +39,7 @@ export default {
     '$route': {
       handler(to, from) {
         const routeName = this.$route.name;
-        if (routeName && (routeName === 'private' || routeName === 'public')) {
+        if (routeName && (routeName === ROUTE_NAMES.PRIVATE || routeName === ROUTE_NAMES.SHARED)) {
           this.isActive = true;
         } else {
           this.isActive = false;

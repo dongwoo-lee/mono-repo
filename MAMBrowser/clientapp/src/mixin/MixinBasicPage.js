@@ -17,6 +17,11 @@ let mixinBasicPage = {
             ]
         }
     },
+    created() {
+        this.$nextTick(() => {
+            this.getData();
+        });
+    },
     methods: {
         // 우측메뉴 액션
         onContextMenuAction(v) {

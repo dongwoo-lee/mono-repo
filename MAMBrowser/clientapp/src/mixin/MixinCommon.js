@@ -47,9 +47,6 @@ let mixinCommon = {
         eventBus.$on('onLoadData', (viewName)=> {
             this.getData();
         });
-        this.$nextTick(() => {
-            this.getData();
-        });
     },
     methods: {
         ...mapActions('file', ['downloadWorkspace', 'downloadProduct', 'downloadMusic', 'downloadDl30','downloadConcatenate']),
@@ -174,9 +171,8 @@ let mixinCommon = {
             this.showPlayerPopup = true;
         },
         onClosePlayer() {
-            this.soundItem = null;
+            this.soundItem = {};
             this.showPlayerPopup = false;
-            console.info('onClosePlayer');
         },
         onDownloadProduct(item) {
             this.downloadProduct(item);

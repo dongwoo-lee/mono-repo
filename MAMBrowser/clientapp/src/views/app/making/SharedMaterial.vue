@@ -101,6 +101,7 @@
                 :rowData="props.props.rowData"
                 :behaviorData="behaviorList"
                 :etcData="['delete', 'modify']"
+                :etcTitles="{ delete: '삭제' }"
                 @preview="onPreview"
                 @download="onDownloadSingle"
                 @delete="onDeleteConfirm"
@@ -321,7 +322,10 @@ export default {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify('success', { message: '삭제하였습니다.' })
               this.$bvModal.hide('modalRemove');
-              this.getData();
+              setTimeout(() => {
+                this.initSelectedIds();
+                this.getData();
+            }, 0);
             } else {
               this.$fn.notify('error', { message: '삭제 실패하였습니다.' })
             }

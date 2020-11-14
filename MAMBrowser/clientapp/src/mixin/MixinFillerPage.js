@@ -10,6 +10,11 @@ let mixinFillerPage = {
             reqStatusOptions: [],                    // 방송의뢰 상태 목록
         }
     },
+    created() {
+        this.$nextTick(() => {
+            this.getData();
+        });
+    },
     methods: {
         // 주조 spot 분류 목록 조회
         getSpotOptions(media) {

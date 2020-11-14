@@ -191,7 +191,7 @@ export default {
     // 단일 영구 삭제 확인창
     onDeleteConfirm(rowData) {
       console.info('rowData', rowData);
-      this.singleSelectedId = rowData.id;
+      this.singleSelectedId = rowData.seq;
       this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRemove');
     },
@@ -217,6 +217,7 @@ export default {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '영구 삭제가 되었습니다.' })
             this.$bvModal.hide('modalRemove');
+            this.initSelectedIds();
             this.getData();
           } else {
             this.$fn.notify('error', { message: '삭제 실패: ' + res.data.errorMsg })
@@ -225,7 +226,7 @@ export default {
     },
     // 단일 복원 확인창
     onRecycleConfirm(rowData) {
-      this.recycleId = rowData.id;
+      this.recycleId = rowData.seq;
       this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
       this.$bvModal.show('modalRecycle');
     },
@@ -251,8 +252,8 @@ export default {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '복원 성공' })
             this.$bvModal.hide('modalRecycle');
-            this.selectedIds = [];
-            setTimeout(() => this.getData(), 0);
+            this.initSelectedIds();
+            this.getData();
           } else {
             this.$fn.notify('error', { message: '복원 실패: ' + res.data.errorMsg })
           }
@@ -272,7 +273,7 @@ export default {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify('success', { message: '휴지통 비우는데 짧은 시간이 소요됩니다. 새로고침 및 재검색을 해주세요.' });
               this.$bvModal.hide('modalRecyclebin');
-              setTimeout(() => this.getData(), 0);
+              this.getData();
             } else {
               this.$fn.notify('error', { message: '휴지통 비우기 실패: ' + res.data.errorMsg })
             }

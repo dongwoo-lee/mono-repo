@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Function from './utils/CommonFunctions';
-import {AUTHORITY_ADMIN} from '@/constants/config';
+import {AUTHORITY_ADMIN, ROUTE_NAMES} from '@/constants/config';
 
 Vue.use(VueRouter);
 
@@ -33,7 +33,7 @@ const routes = [
        */
       {
         // My 공간
-        name: 'private',
+        name: ROUTE_NAMES.PRIVATE,
         path: "my/private",
         component: () => import("./views/app/my/private"),
       },
@@ -59,7 +59,7 @@ const routes = [
       },
       {
         // 제작 - 공유소재
-        name: 'shared-material',
+        name: ROUTE_NAMES.SHARED,
         path: "making/shared-material",
         component: () => import("./views/app/making/SharedMaterial"),
       },

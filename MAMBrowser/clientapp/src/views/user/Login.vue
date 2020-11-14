@@ -109,6 +109,9 @@ export default {
                             permanent: false
                         });
                     }
+                })
+                .catch(error => {
+                    Promise.reject(error);
                 });
             }
         }

@@ -30,10 +30,14 @@ let mixinTablePage = apiType => ({
         }
     },
     created() {
-        // 매체목록 조회
-        this.getMediaOptions();
-        // 사용처 조회
-        this.getPgmOptions(this.searchItems.brd_dt);
+        this.$nextTick(() => {
+            // 매체목록 조회
+            this.getMediaOptions();
+            // 사용처 조회
+            this.getPgmOptions(this.searchItems.brd_dt);
+            // 목록 조회
+            this.getData();
+        });
     },
     mounted() {
         this.$nextTick(() => {

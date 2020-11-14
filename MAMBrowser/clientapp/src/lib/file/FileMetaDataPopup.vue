@@ -8,8 +8,8 @@
         v-model="isShow">
         <b-form-group label="저장공간" label-for="input-title">
              <b-form-select v-model="$v.type.$model" disabled>
-                <b-form-select-option value="private">My공간</b-form-select-option>
-                <b-form-select-option value="public">공유소재</b-form-select-option>
+                <b-form-select-option :value="storegeType.private">My공간</b-form-select-option>
+                <b-form-select-option :value="storegeType.shared">공유소재</b-form-select-option>
             </b-form-select>
             <b-form-invalid-feedback :state="!$v.type.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { ROUTE_NAMES } from '@/constants/config';
 import mixinValidate from '../../mixin/MixinValidate';
 import { mapMutations, mapActions, mapState } from 'vuex';
 
@@ -83,15 +84,19 @@ export default {
             mediaCD: 'A',                               // 매체
             primaryCodeOptions: [],                       // 공유소재 분류 목록
             categoryCD: '',                                // 분류
+            storegeType: {
+                private: ROUTE_NAMES.PRIVATE,
+                shared: ROUTE_NAMES.SHARED,
+            }
         }
     },
     computed: {
         ...mapState('file', ['isDragDropState']),
         routeName() {
-            return this.$route.name === undefined ? 'private' : this.$route.name;
+            return this.$route.name === undefined ? this.storegeType.private : this.$route.name;
         },
         isSharedMaterial() {
-            if (this.type === 'public') {
+            if (this.type === this.storegeType.shared) {
                 this.getPrimaryOptions();
                 this.getPrimaryCodeOptions();
                 return true;
@@ -108,7 +113,7 @@ export default {
                 return;
             }
             let data = {};
-            if (this.type === 'private') {
+            if (this.type === this.storegeType.private) {
                 data = {
                     files: this.localFiles,
                     meta: { 

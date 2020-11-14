@@ -1,11 +1,15 @@
 <template>
 <!-- 미리듣기 팝업 --> 
-<b-modal id="modal-player" size="lg" v-model="showPlayerPopup" no-close-on-backdrop>
+<b-modal id="modal-player" size="lg" 
+    v-model="showPlayerPopup" 
+    no-close-on-backdrop
+    no-close-on-esc>
     <template slot="modal-title" >
     <h5>{{title}}</h5>
     </template>
     <template slot="default" >
     <Player 
+        ref="play"
         :requestType="requestType" 
         :fileKey = "fileKey"
         :streamingUrl = "streamingUrl"
@@ -58,9 +62,8 @@ export default {
     },
     methods: {
         closePlayer(){
-            // this.showPlayerPopup = false;
-            this.$bvModal.hide('modal-player')
-            // this.$emit('closePlayer');
+            this.$refs.play.close();
+            this.$emit('closePlayer');
         }
     },
 }

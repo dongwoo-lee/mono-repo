@@ -17,14 +17,14 @@
         <b-button
             v-if="displayEtc('delete')"
             class="icon-buton"
-            title="휴지통"
+            :title="getTitle('delete')"
             @click.stop="onDelete()">
             <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
         </b-button>
         <b-button
             v-if="displayEtc('modify')"
             class="icon-buton"
-            title="정보편집"
+            :title="getTitle('modify')"
             @click.stop="onMetaModify()">
             <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
         </b-button>
@@ -41,8 +41,12 @@ export default {
         },
         etcData: {
             type: Array,
-            default: () => []
-        }, 
+            default: () => []  // ['delete', 'modify']
+        },
+        etcTitles: {
+            type: Object,
+            default: () => {}  // {'delete': '삭제', 'modify': '정보편집'}
+        },
         behaviorData: {
             type: Array,
             default: () => []
@@ -73,6 +77,14 @@ export default {
         onMetaModify() {
             this.$emit('modify', this.rowData);
         },
+        getTitle(type) {
+            if (this.etcTitles && this.etcTitles[type]) {
+                return this.etcTitles[type];
+            }
+            if (type === 'delete') { return '휴지통'; }
+            if (type === 'modify') { return '정보편집';}
+            return '';
+        }
     },
 }
 </script>

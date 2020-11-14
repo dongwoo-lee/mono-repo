@@ -8,7 +8,7 @@
     </b-row>
     <common-form
       :searchItems="searchItems"
-      :isDisplayPageSize="false"
+      :isDisplayPageSize="true"
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
@@ -45,7 +45,7 @@
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
-        {{ getTotalRowCount() }}
+        {{ getPageInfo() }}
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
