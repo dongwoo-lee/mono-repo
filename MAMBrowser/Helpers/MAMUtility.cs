@@ -40,8 +40,27 @@ namespace MAMBrowser.Helpers
                 contentType = "application/octet-stream";
             }
 
-            var targetPath = @$"{TempDownloadPath}\{userId}\{Guid.NewGuid().ToString()}.tmp";
-            fileService.DownloadFile(relativePath, targetPath);
+            if (string.IsNullOrEmpty(userId))
+            {
+                userId = "system";
+            }
+
+            var targetFolder = @$"{TempDownloadPath}\{userId}";
+            if (!Directory.Exists(targetFolder))
+                Directory.CreateDirectory(targetFolder);
+
+            var targetPath = @$"{targetFolder}\{ Guid.NewGuid().ToString()}.tmp";
+            var fileExt = Path.GetExtension(relativePath).ToLower();
+            if (fileExt == ".wav")
+            {
+                fileService.DownloadFile(relativePath, targetPath);
+            }
+            else if(fileExt == ".mp2")
+            {
+                var mp2InputStream = fileService.GetFileStream(relativePath, 0);
+                var outWavStream = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite);
+                AudioEngine.ConvertMp2ToWav(mp2InputStream, outWavStream);
+            }
             return targetPath;
         }
         public static List<float> GetWaveform(string userId, IFileDownloadService fileService, string relativePath)
@@ -57,18 +76,32 @@ namespace MAMBrowser.Helpers
             }
             else
             {
-                var inputStream = fileService.GetFileStream(relativePath, 0);
+                var fileExt = Path.GetExtension(relativePath);
+                Stream inputStream = fileService.GetFileStream(relativePath, 0);
+                if (fileExt == ".mp2")
+                {
+                    var targetFolder = @$"{TempDownloadPath}\{userId}";
+                    if (!Directory.Exists(targetFolder))
+                        Directory.CreateDirectory(targetFolder);
+
+                    var targetPath = @$"{targetFolder}\{ Guid.NewGuid().ToString()}.tmp";
+                    FileStream fs = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite);
+                    AudioEngine.ConvertMp2ToWav(inputStream, fs);
+
+                    inputStream = new FileStream(targetPath, FileMode.Open, FileAccess.Read);
+                }
+
                 //var targetPath = @$"{TempDownloadPath}\{userId}\{Guid.NewGuid().ToString()}.tmp";
                 //using (FileStream fs = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite))
                 // 향후에 수정 필요. ftp는 wavefilereader로 직접 못읽으니..헤더크기만큼 빼고 바로 스트림으로 넘겨주고.
                 // 함수안에서 바로 데이터 뽑아낼수 있도록..
                 MemoryStream ms = new MemoryStream();
                 inputStream.CopyTo(ms);
-                ms.Position = 0;
+                inputStream.Dispose();
 
+                ms.Position = 0;
                 WaveFileReader reader = new WaveFileReader(ms);
                 var data = AudioEngine.GetDecibelFromWav(ms, 2);
-                inputStream.Close();
                 ms.Dispose();
                 return data;
             }

@@ -35,17 +35,19 @@ namespace MAMBrowser.Processor
         public bool DownloadFile(string fromPath, string toPath)
         {
             string sourceHostName = MAMUtility.GetDomain(fromPath);
+            
             using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
                 //확인필요
                 using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (NetworkShareAccessor.Access(Host, UserId, UserPass))
-                    {
-                        FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-                        inStream.CopyTo(outStream);
-                        return true;
-                    }
+                    var accessor = NetworkShareAccessor.Access(Host, UserId, UserPass);
+                    FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    inStream.CopyTo(outStream);
+                    if (sourceHostName != Host)  //업로드 호스트와 다운로드호스트가 같으면 인증 매모리 해제를 1번만.
+                        accessor.Dispose();
+
+                    return true;
                 }
             }
         }
