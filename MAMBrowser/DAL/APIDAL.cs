@@ -297,14 +297,14 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
 
 
 
-        public void AddLog(string logLevel, string clientIp, string userId, string userName, string description, string note)
+        public void AddLog(string logLevel, string category, string userId, string userName, string description, string note)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("INSERT INTO M30_LOG VALUES(M30_LOG_SEQ.NEXTVAL, :SYSTEM_CD, :LOG_LEVEL, :CLIENT_IP, :USER_ID, :USER_NAME, :DESCRIPTION, :NOTE, SYSDATE)");
+            var queryTemplate = builder.AddTemplate("INSERT INTO M30_LOG VALUES(M30_LOG_SEQ.NEXTVAL, :SYSTEM_CD, :LOG_LEVEL, :CATEGORY, :USER_ID, :USER_NAME, :DESCRIPTION, :NOTE, SYSDATE)");
             DynamicParameters param = new DynamicParameters();
             param.Add("SYSTEM_CD", "S01");
             param.Add("LOG_LEVEL", logLevel);
-            param.Add("CLIENT_IP", clientIp);
+            param.Add("CATEGORY", category);
             param.Add("USER_ID", userId);
             param.Add("USER_NAME", userName);
             param.Add("DESCRIPTION", description);
