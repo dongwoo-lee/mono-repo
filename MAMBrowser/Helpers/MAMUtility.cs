@@ -51,11 +51,11 @@ namespace MAMBrowser.Helpers
 
             var targetPath = @$"{targetFolder}\{ Guid.NewGuid().ToString()}.tmp";
             var fileExt = Path.GetExtension(relativePath).ToLower();
-            if (fileExt == ".wav")
+            if (fileExt.ToUpper() == ".WAV")
             {
                 fileService.DownloadFile(relativePath, targetPath);
             }
-            else if(fileExt == ".mp2")
+            else if(fileExt.ToUpper() == ".MP2")
             {
                 var mp2InputStream = fileService.GetFileStream(relativePath, 0);
                 var outWavStream = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite);
@@ -78,7 +78,7 @@ namespace MAMBrowser.Helpers
             {
                 var fileExt = Path.GetExtension(relativePath);
                 Stream inputStream = fileService.GetFileStream(relativePath, 0);
-                if (fileExt == ".mp2")
+                if (fileExt.ToUpper() == ".MP2")
                 {
                     var targetFolder = @$"{TempDownloadPath}\{userId}";
                     if (!Directory.Exists(targetFolder))

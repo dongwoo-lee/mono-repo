@@ -131,33 +131,24 @@ namespace MAMBrowser.Services
             string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={50}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
             builder.Query = param;
             
-            
-
             HttpClient client = new HttpClient();
-          
-            //File.WriteAllText(@$"{MAMUtility.TempDownloadPath}\qeury.xml", builder.ToString());
-            //string strHeader = JsonSerializer.Serialize(client.DefaultRequestHeaders);
-            //File.WriteAllText(@$"{MAMUtility.TempDownloadPath}\header.xml", strHeader);
             var result = client.GetAsync(builder.ToString()).Result;
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
                 {
-                    //using (FileStream fs = new FileStream(@$"{MAMUtility.TempDownloadPath}\temp.xml", FileMode.Create, FileAccess.ReadWrite))
-                    //{
-                    //    stream.CopyTo(fs);
-                    //    stream.Flush();
-                    //}
+                    int rowNo = selectPage == 1 ? 1 : ((selectPage - 1) * rowPerPage) + 1;
                     XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
                     var mbReturnDto = (EDTO_MB_RETURN<EDTO_SONG>)serializer.Deserialize(stream);
                     totalCount = mbReturnDto.Section.TOTAL_COUNT;
                     var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
+                    dtoList.ForEach(dto => 
+                    {
+                        dto.RowNO = rowNo;
+                        rowNo++;
+                    });
                     return dtoList;
                 }
-                //using (FileStream fs = new FileStream(@$"{MAMUtility.TempDownloadPath}\temp.xml", FileMode.Open, FileAccess.Read))
-                //{
-                   
-                //}
             }
             else
                 throw new Exception(result.StatusCode.ToString());
@@ -174,20 +165,26 @@ namespace MAMBrowser.Services
             {
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
                 {
+                    int rowNo = selectPage == 1 ? 1 : ((selectPage - 1) * rowPerPage) + 1;
                     XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_EFFECT>));
                     var mbReturnDto = (EDTO_MB_RETURN<EDTO_EFFECT>)serializer.Deserialize(stream);
                     totalCount = mbReturnDto.Section.TOTAL_COUNT;
                     var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_EFFECT(edto)).ToList();
+                    dtoList.ForEach(dto =>
+                    {
+                        dto.RowNO = rowNo;
+                        rowNo++;
+                    });
                     return dtoList;
                 }
             }
             else
                 throw new Exception(result.StatusCode.ToString());
         }
-        public string SearchLyrics(long seq)
+        public string SearchLyrics(string lyricsSeq)
         {
             var builder = new UriBuilder("http", SearchDomain, 80, SearchLyricsUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strWordSeq={seq}";
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strWordSeq={lyricsSeq}";
             builder.Query = param;
 
             HttpClient client = new HttpClient();
