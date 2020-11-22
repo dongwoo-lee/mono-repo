@@ -1,6 +1,7 @@
 ﻿using MAMBrowser.Helpers;
 using MAMBrowser.Services;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -69,6 +70,31 @@ namespace MAMBrowser.Processor
         public bool ExistFile(string fromPath)
         {
             return File.Exists(fromPath);
+        }
+
+        public string GetAudioFormat(string filePath)
+        {
+            string sourceHostName = MAMUtility.GetDomain(filePath);
+            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
+            {
+                var ext = Path.GetExtension(filePath);
+                if (ext.ToUpper() == ".WAV")
+                {
+                    WaveFileReader reader = new WaveFileReader(filePath);
+                    return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
+                }
+                else if (ext.ToUpper() == ".MP2")
+                {
+                    WaveFileReader reader = new WaveFileReader(filePath);
+                    return $"";
+                }
+                else if (ext.ToUpper() == ".MP3")
+                {
+                    Mp3FileReader reader = new Mp3FileReader(filePath);
+                    return $"";
+                }
+            }
+            return "unknown";
         }
     }
 }

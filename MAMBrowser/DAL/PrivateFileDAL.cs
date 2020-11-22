@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DL_Service.DAL;
 using log4net.Util;
 using MAMBrowser.BLL;
 using MAMBrowser.DAL;
@@ -41,20 +42,41 @@ namespace MAMBrowser.Controllers
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
+            var audioFormat = _fileService.GetAudioFormat(relativeTargetPath);
+
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
             param.Add("USEREXTID", userextid);
             param.Add("TITLE", metaData.TITLE);
             param.Add("MEMO", metaData.MEMO);
-            param.Add("AUDIO_FORMAT", "test format");
+            param.Add("AUDIO_FORMAT", audioFormat);
             param.Add("FILE_SIZE", file.Length);
             param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
             //db에 데이터 등록
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
 VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
-            Repository repository = new Repository();
-            repository.Insert(queryTemplate.RawSql, param);
+
+            var builder2 = new SqlBuilder();
+            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_EXT_ID=:USER_EXT_ID");
+            DynamicParameters param2 = new DynamicParameters();
+            param2.Add("USER_EXT_ID", userextid);
+            param2.Add("FILE_SIZE", file.Length);
+
+            TransactionRepository repository = new TransactionRepository();
+            repository.BeginTransaction();
+            try
+            {
+                repository.Insert(queryTemplate.RawSql, param);
+                repository.Update(queryTemplate2.RawSql, param2);
+                repository.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                repository.RollbackTransaction();
+                throw;
+            }
+
 
             return Get(ID);
         }

@@ -23,6 +23,7 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using DL_Service.DAL;
 
 namespace MAMBrowser
 {
@@ -68,6 +69,7 @@ namespace MAMBrowser
             services.Configure<AppSettings>(optionSection);
             var appSettings = optionSection.Get<AppSettings>();
             Repository.ConnectionString = appSettings.ConnectionString;
+            TransactionRepository.ConnectionString = appSettings.ConnectionString; 
             MAMUtility.TokenIssuer = appSettings.TokenIssuer;
             MAMUtility.TokenSignature = appSettings.TokenSignature;
             MAMUtility.TempDownloadPath = appSettings.TempDownloadPath;

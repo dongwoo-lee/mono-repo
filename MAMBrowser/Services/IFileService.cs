@@ -16,6 +16,7 @@ namespace MAMBrowser.Processor
         void Upload(Stream fileStream, string sourcePath, long fileLength);
         void Move(string source, string destination);
         bool ExistFile(string fromPath);
+        string GetAudioFormat(string filePath);
     }
 
     public interface IFileDownloadService

@@ -45,7 +45,11 @@ namespace MAMBrowser.Controllers
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
-            
+
+
+            var audioFormat = _fileService.GetAudioFormat(relativeTargetPath);
+
+
             //metaData.SEQ = ID;
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
@@ -54,7 +58,7 @@ namespace MAMBrowser.Controllers
             param.Add("MEDIA_CD", metaData.MEDIA_CD);
             param.Add("CATE_CD", metaData.CATE_CD);
             param.Add("MEMO", metaData.MEMO);
-            param.Add("AUDIO_FORMAT", "test format");
+            param.Add("AUDIO_FORMAT", audioFormat);
             param.Add("FILE_SIZE", file.Length);
             param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
 

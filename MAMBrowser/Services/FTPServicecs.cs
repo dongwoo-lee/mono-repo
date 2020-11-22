@@ -1,6 +1,7 @@
 ﻿using FluentFTP;
 using MAMBrowser.Helpers;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -80,6 +81,36 @@ namespace MAMBrowser.Processor
                 else
                     return true;
             }
+        }
+        public string GetAudioFormat(string filePath)
+        {
+            string sourceHostName = MAMUtility.GetDomain(filePath);
+            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            {
+                var ext = Path.GetExtension(filePath);
+                var stream = ftpClient.OpenRead(filePath);
+                MemoryStream ms = new MemoryStream();
+                byte[] buffer = new byte[10240];    //10kb
+                var read = stream.Read(buffer, 0, buffer.Length);
+                ms.Write(buffer, 0, read);
+                ms.Position = 0;
+                if (ext.ToUpper() == ".WAV")
+                {
+                    WaveFileReader reader = new WaveFileReader(ms);
+                    return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
+                }
+                else if (ext.ToUpper() == ".MP2")
+                {
+                    Mp3FileReader reader = new Mp3FileReader(ms);
+                    return $"";
+                }
+                else if (ext.ToUpper() == ".MP3")
+                {
+                    Mp3FileReader reader = new Mp3FileReader(ms);
+                    return $"";
+                }
+            }
+            return "unknown";
         }
     }
 }

@@ -51,24 +51,14 @@ LEFT JOIN M30_CODE B ON B.CODE = M30_USER_EXT.MENU_GRP_CD");
         public int UpdateUserDetail(List<UserExtModel> updateDtoList)
         {
             var builder = new SqlBuilder();
-            //USER_EXT_ID로 업데이트 되게끔... 향후수정.
-            var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_MAX=:DISK_MAX, DISK_USED=:DISK_USED, MENU_GRP_CD=:MENU_GRP_CD,USED=:USED WHERE USER_ID=:USER_ID");
+            // disk_used필드는 사용자설정에서 변경되지 않으니 업데이트 하지 않는다.
+
+            var queryTemplate = builder.AddTemplate("UPDATE M30_USER_EXT SET DISK_MAX=:DISK_MAX, MENU_GRP_CD=:MENU_GRP_CD,USED=:USED WHERE USER_ID=:USER_ID");
             builder.AddParameters(updateDtoList);
             Repository repository = new Repository();
-            //var paramMap = updateDtoList.Select((entity) =>
-            //{
-            //    return new
-            //    {
-            //        USER_ID = entity.USER_ID,
-            //        DISK_MAX = entity.DISK_MAX,
-            //        DISK_USED = entity.DISK_USED,
-
-            //        USED = entity.USED
-            //    };
-            //});
-
             return repository.Update(queryTemplate.RawSql, updateDtoList);
         }
+
         public DTO_USER_DETAIL GetUserSummary(string id)
         {
             var builder = new SqlBuilder();
@@ -368,7 +358,6 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("UPDATE M30_ROLE_EXT SET AUTHOR_CD=:AUTHOR_CD /**where**/");
-            builder.AddParameters(updateDtoList);
             builder.Where("ROLE_ID=:ROLE_ID");
             Repository repository = new Repository();
             var paramMap = updateDtoList.Select((entity) =>
