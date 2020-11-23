@@ -2,6 +2,7 @@
 using MAMBrowser.Helpers;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
+using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -88,29 +89,41 @@ namespace MAMBrowser.Processor
             using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
             {
                 var ext = Path.GetExtension(filePath);
-                var stream = ftpClient.OpenRead(filePath);
-                MemoryStream ms = new MemoryStream();
-                byte[] buffer = new byte[10240];    //10kb
-                var read = stream.Read(buffer, 0, buffer.Length);
-                ms.Write(buffer, 0, read);
-                ms.Position = 0;
-                if (ext.ToUpper() == ".WAV")
+                byte[] buffer = new byte[500000];
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    WaveFileReader reader = new WaveFileReader(ms);
-                    return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-                }
-                else if (ext.ToUpper() == ".MP2")
-                {
-                    Mp3FileReader reader = new Mp3FileReader(ms);
-                    return $"";
-                }
-                else if (ext.ToUpper() == ".MP3")
-                {
-                    Mp3FileReader reader = new Mp3FileReader(ms);
-                    return $"";
+                    using (var fs = ftpClient.OpenRead(filePath))
+                    {
+                        var read = fs.Read(buffer, 0, buffer.Length);
+                        ms.Write(buffer, 0, read);
+                    }
+                    ms.Position = 0;
+
+                    if (ext.ToUpper() == ".WAV")
+                    {
+                        WaveFileReader reader = new WaveFileReader(ms);
+                        return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
+                    }
+                    else if (ext.ToUpper() == ".MP2")
+                    {
+                        Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
+                        var frame = reader.ReadNextFrame();
+                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                    }
+                    else if (ext.ToUpper() == ".MP3")
+                    {
+                        Mp3FileReader reader = new Mp3FileReader(ms);
+                        var frame = reader.ReadNextFrame();
+                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                    }
                 }
             }
             return "unknown";
+        }
+
+        public void Delete(string filePath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

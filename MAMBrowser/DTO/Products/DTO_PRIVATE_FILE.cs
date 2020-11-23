@@ -14,7 +14,7 @@ namespace MAMBrowser.DTO
         public string Memo { get; set; }
         public string AudioFormat { get; set; }
         public string Used { get; set; }
-        public long UserExtID { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; }

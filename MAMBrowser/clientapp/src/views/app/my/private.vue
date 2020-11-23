@@ -193,7 +193,7 @@ export default {
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "9%"
         },
         {
           name: "editedDtm",
@@ -224,9 +224,9 @@ export default {
 
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      const userExtId = sessionStorage.getItem('user_ext_id');
+      const userId = sessionStorage.getItem('user_id');
 
-      this.$http.get(`/api/products/workspace/private/meta/${userExtId}`, { params: this.searchItems })
+      this.$http.get(`/api/products/workspace/private/meta/${userId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
@@ -260,7 +260,7 @@ export default {
     },
     // 휴지통 보내기
     onDelete() {
-      const userExtId = sessionStorage.getItem('user_ext_id');
+      const userId = sessionStorage.getItem('user_id');
       let ids = this.selectedIds;
 
       if (this.singleSelectedId !== null) {
@@ -270,7 +270,7 @@ export default {
         this.selectedIds = [];
       }
       
-      this.$http.delete(`/api/products/workspace/private/meta/${userExtId}/${ids}`)
+      this.$http.delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '휴지통 이동하는데 짧은 시간이 소요됩니다. 새로고침 및 재검색을 해주세요.' })

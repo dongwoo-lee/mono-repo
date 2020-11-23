@@ -229,7 +229,7 @@ export default {
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "9%"
         },
         {
           name: "userName",

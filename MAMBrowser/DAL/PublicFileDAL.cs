@@ -29,7 +29,7 @@ namespace MAMBrowser.Controllers
             _appSettings = appSesstings.Value;
             _fileService = sr("PublicWorkConnection");
         }
-        public DTO_PUBLIC_FILE Insert(IFormFile file, PublicFileModel metaData, string host)
+        public DTO_PUBLIC_FILE Insert(string userId, IFormFile file, PublicFileModel metaData, string host)
         {
             //업로드 권한 처리 필요.
 
@@ -37,7 +37,7 @@ namespace MAMBrowser.Controllers
             string date = DateTime.Now.ToString(MAMUtility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
-            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{metaData.USER_EXT_ID}\{date}";      //공유소재도 유저확장ID 사용?
+            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userId}\{date}";      //공유소재도 유저확장ID 사용?, 분류코드별로...필요해보임.
             var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
             var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
@@ -53,7 +53,7 @@ namespace MAMBrowser.Controllers
             //metaData.SEQ = ID;
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
-            param.Add("USER_EXT_ID", metaData.USER_EXT_ID);
+            param.Add("USER_ID", userId);
             param.Add("TITLE", metaData.TITLE);
             param.Add("MEDIA_CD", metaData.MEDIA_CD);
             param.Add("CATE_CD", metaData.CATE_CD);
@@ -65,7 +65,7 @@ namespace MAMBrowser.Controllers
             //db에 데이터 등록
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PUBLIC_SPACE 
-VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
+VALUES(:SEQ, :USER_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
             Repository repository = new Repository();
             repository.Insert(queryTemplate.RawSql, param);
 
@@ -99,11 +99,13 @@ VALUES(:SEQ, :USER_EXT_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :F
         public DTO_PUBLIC_FILE Get(long id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT M30_PUBLIC_SPACE.*, MEDIA.CODENAME AS MEDIA_NAME, CATE.NAME AS CATE_NAME FROM M30_PUBLIC_SPACE 
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_PUBLIC_SPACE.*, MEDIA.CODENAME AS MEDIA_NAME, CATE.NAME AS CATE_NAME, MIROS_USER.PERSONNAME AS USER_NAME FROM M30_PUBLIC_SPACE 
 LEFT JOIN (select * from m30_code_map
 LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M ON M.CODEID=M30_CODE_MAP.GRP_CD
 where map_cd='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
-LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD WHERE SEQ=:SEQ");
+LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD
+LEFT JOIN MIROS_USER ON MIROS_USER.PERSONID=M30_PUBLIC_SPACE.USER_ID 
+WHERE SEQ=:SEQ");
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_PUBLIC_FILE>((row) =>
             {
@@ -114,8 +116,8 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                     MediaCD = row.MEDIA_CD,
                     MediaName = row.MEDIA_NAME,
                     CategoryCD = row.CATE_CD,
-                    CatetoryName = row.CATE_NAME,
-                    UserExtID = Convert.ToInt64(row.USER_EXT_ID),
+                    CategoryName = row.CATE_NAME,
+                    UserId = row.USER_ID,
                     UserName = row.USER_NAME,
                     Title = row.TITLE,
                     Memo = row.MEMO,
@@ -128,7 +130,7 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
             });
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> FineData(string mediaCd, string cateCd, string start_dt, string end_dt, long? userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> FineData(string mediaCd, string cateCd, string start_dt, string end_dt, string userId, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE> returnData = new DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>();
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
@@ -136,7 +138,7 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
             DynamicParameters param = new DynamicParameters();
             param.Add("MEDIA_CD", mediaCd);
             param.Add("CATE_CD", cateCd);
-            param.Add("USER_EXT_ID", userextid);
+            param.Add("USER_ID", userId);
             param.Add("TITLE", title);
             param.Add("MEMO", memo);
             param.Add("START_NO", startNo);
@@ -146,11 +148,13 @@ LEFT JOIN (select * from m30_code WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
 
 
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT M30_PUBLIC_SPACE.*, MEDIA.CODENAME AS MEDIA_NAME, CATE.NAME AS CATE_NAME FROM M30_PUBLIC_SPACE 
+            var querySource = builder.AddTemplate(@"SELECT M30_PUBLIC_SPACE.*, MEDIA.CODENAME AS MEDIA_NAME, CATE.NAME AS CATE_NAME, MIROS_USER.PERSONNAME AS USER_NAME FROM M30_PUBLIC_SPACE 
 LEFT JOIN (SELECT * FROM M30_CODE_MAP
 LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC' ORDER BY NUM) M ON M.CODEID=M30_CODE_MAP.GRP_CD
 WHERE MAP_CD='S00G01C005') MEDIA ON MEDIA.CODEID=M30_PUBLIC_SPACE.MEDIA_CD
-LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD /**where**/ /**orderby**/");
+LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=M30_PUBLIC_SPACE.CATE_CD
+LEFT JOIN MIROS_USER ON MIROS_USER.PERSONID=M30_PUBLIC_SPACE.USER_ID 
+/**where**/ /**orderby**/");
 
             if (!string.IsNullOrEmpty(mediaCd))
             {
@@ -169,9 +173,9 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                 builder.Where("EDITED_DTM < TO_DATE(:END_DT,'YYYYMMDD')+1");
             }
 
-            if (userextid != null)
+            if (userId != null)
             {
-                builder.Where("USER_EXT_ID=:USER_EXT_ID");
+                builder.Where("USER_ID=:USER_ID");
             }
             if (!string.IsNullOrEmpty(title))
             {
@@ -210,8 +214,8 @@ LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') CATE ON CATE.CODE=
                     MediaCD = row.MEDIA_CD,
                     MediaName = row.MEDIA_NAME,
                     CategoryCD = row.CATE_CD,
-                    CatetoryName = row.CATE_NAME,
-                    UserExtID = Convert.ToInt64(row.USER_EXT_ID),
+                    CategoryName = row.CATE_NAME,
+                    UserId = row.USER_ID,
                     UserName = row.USER_NAME,
                     Title = row.TITLE,
                     Memo = row.MEMO,

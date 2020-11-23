@@ -116,9 +116,9 @@ export default {
                         timeout: 3600000,
                     }
 
-                    let userExtId = state.uploadViewType === 'public' ? '' : `/${sessionStorage.getItem('user_ext_id')}`;
+                    let userId = sessionStorage.getItem('user_id');
                     try {
-                        const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files${userExtId}`, formData, config);
+                        const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files/${userId}`, formData, config);
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';

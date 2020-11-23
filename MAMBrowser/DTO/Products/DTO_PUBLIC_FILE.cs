@@ -12,13 +12,13 @@ namespace MAMBrowser.DTO
         public string MediaCD { get; set; }
         public string MediaName { get; set; }
         public string CategoryCD { get; set; }
-        public string CatetoryName { get; set; }
+        public string CategoryName { get; set; }
         public string Title { get; set; }
         public string Memo { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string AudioFormat { get; set; }
-        public long UserExtID { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public string EditedDtm { get; set; }
     }

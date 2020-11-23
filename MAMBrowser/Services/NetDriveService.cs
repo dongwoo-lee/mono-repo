@@ -2,6 +2,7 @@
 using MAMBrowser.Services;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
+using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -78,23 +79,43 @@ namespace MAMBrowser.Processor
             using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
                 var ext = Path.GetExtension(filePath);
-                if (ext.ToUpper() == ".WAV")
+                //wav 44byte
+                //mp3 4byte
+                byte[] buffer = new byte[500000];
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    WaveFileReader reader = new WaveFileReader(filePath);
-                    return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-                }
-                else if (ext.ToUpper() == ".MP2")
-                {
-                    WaveFileReader reader = new WaveFileReader(filePath);
-                    return $"";
-                }
-                else if (ext.ToUpper() == ".MP3")
-                {
-                    Mp3FileReader reader = new Mp3FileReader(filePath);
-                    return $"";
+                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var read = fs.Read(buffer, 0, buffer.Length);
+                        ms.Write(buffer, 0, read);
+                    }
+                    ms.Position = 0;
+
+                    if (ext.ToUpper() == ".WAV")
+                    {
+                        WaveFileReader reader = new WaveFileReader(ms);
+                        return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
+                    }
+                    else if (ext.ToUpper() == ".MP2")
+                    {
+                        Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
+                        var frame = reader.ReadNextFrame();
+                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                    }
+                    else if (ext.ToUpper() == ".MP3")
+                    {
+                        Mp3FileReader reader = new Mp3FileReader(ms);
+                        var frame = reader.ReadNextFrame();
+                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                    }
                 }
             }
             return "unknown";
+        }
+
+        public void Delete(string filePath)
+        {
+            throw new NotImplementedException();
         }
     }
 }
