@@ -47,6 +47,7 @@ export default {
             this.timer = setInterval(() => this.countdown(), 1000);
 		},
 		resetTimer() {
+            this.$emit('resetTimer');
 			clearInterval(this.timer);
             this.timer = null;
             this.startTimer();

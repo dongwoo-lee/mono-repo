@@ -99,6 +99,11 @@ export default {
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
       sessionStorage.setItem('authority', getAuthority(state.behaviorList));
     },
+    SET_SUMMARY_USER(state, resultObject) {
+      delete resultObject.menuList;
+      delete resultObject.behaviorList;
+      state.currentUser = resultObject;
+    },
     SET_LOGOUT(state) {
       state.isAuth = false;
       state.currentUser = {};
@@ -148,7 +153,7 @@ export default {
       commit('SET_LOGOUT');
       return true;
     },
-    async getUser({ state, commit }) {
+    async getRenewal({ state, commit }) {
       if (state.callLoginAuthTryCnt > 0) { return; }
 
       const params = {
@@ -171,6 +176,14 @@ export default {
       } catch(error) {
         console.error(error);
       }
+    },
+    getSummaryUser({getters, commit}) {
+      $http.get(`/api/users/summary/${getters.getUserId}`).then(response => {
+        const { resultCode, resultObject } = response.data;
+        if (resultObject && resultCode === 0) {
+          commit('SET_SUMMARY_USER', resultObject);
+        }
+      })
     },
     getMenu({commit}, userId) {
       $http.get(`/api/users/${userId}/menu`).then(response => {

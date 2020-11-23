@@ -82,7 +82,7 @@ export default {
         }
     },
     actions: {
-        async upload({ state, commit }) {
+        async upload({ state, commit, dispatch }) {
             // 업로드 상태 변경
             commit('SET_UPLOAD_STATE', true);
             // 파일 업로드
@@ -123,6 +123,8 @@ export default {
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';
                             $fn.notify('success', { message: '파일 업로드 완료' })
+                            // TopNav 디스크 갱신
+                            dispatch('user/getSummaryUser', null, {root:true});
                             // 테이블 새로고침
                             const refScrollPaging = FileUploadRefElement.getScrollPaging();
                             refScrollPaging.tableRefresh();

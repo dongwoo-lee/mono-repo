@@ -81,7 +81,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('user', ['login', 'getUser']),
+        ...mapActions('user', ['login']),
         formSubmit() {
             this.$v.$touch();
            if (!this.$v.$anyError) {

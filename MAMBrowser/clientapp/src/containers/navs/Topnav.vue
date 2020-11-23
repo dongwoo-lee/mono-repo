@@ -30,7 +30,7 @@
             <tr>
               <!-- 타이머 -->
               <td rowspan="2">
-                <timer :expires="REFRESH_TOKEN_TIME"></timer>
+                <timer :expires="REFRESH_TOKEN_TIME" @resetTimer="resetTimer"></timer>
               </td>
               <!-- 디스크 용량 정보 -->
               <td>
@@ -99,14 +99,14 @@ export default {
     }
   },
   created() {
-    this.getUser();
+    this.getRenewal();
   },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["setLang", "signOut", 'getUser']),
+    ...mapActions("user", ["setLang", "signOut", 'getRenewal']),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
@@ -125,6 +125,9 @@ export default {
 
       return '';
     },
+    resetTimer() {
+      this.getRenewal();
+    }
   },
   computed: {
     ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList']),
