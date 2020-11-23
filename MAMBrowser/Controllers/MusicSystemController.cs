@@ -53,7 +53,7 @@ namespace MAMBrowser.Controllers
                     result.ResultObject.Data = new List<DTO_SONG>();
                 else
                     result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
-
+                
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
                 result.ResultObject.TotalRowCount = totalCount;
@@ -82,6 +82,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
             try
             {
+                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
@@ -166,15 +167,15 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 일반 소재 - 파형 요청
         /// </summary>
-        /// <param name="seq"></param>
+        /// <param name="lyricsSeq"></param>
         /// <returns></returns>
         [HttpPost("lyrics")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> SearchLyrics([FromQuery] long seq)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> SearchLyrics([FromQuery] string lyricsSeq)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
-                result.ResultObject.Data = _fileService.SearchLyrics(seq);
+                result.ResultObject.Data = _fileService.SearchLyrics(lyricsSeq);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

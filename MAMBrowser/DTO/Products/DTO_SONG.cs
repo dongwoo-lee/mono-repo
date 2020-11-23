@@ -51,13 +51,9 @@ namespace MAMBrowser.DTO
         /// 편곡가
         /// </summary>
         public string Arranger { get; set; }
-        /// <summary>
-        /// 앨범 번호
-        /// </summary>
-        public string AlbumNO { get; set; } 
         //public string RegDate { get; set; } //등록일??? 2004.02.14
-        public string Lyrics { get; set; }      //가사
-
+        public string LyricsSeq { get; set; }      //가사
+        
 
        
 
@@ -98,7 +94,7 @@ namespace MAMBrowser.DTO
         }
         public DTO_SONG(EDTO_SONG edto)
         {
-            this.SequenceNO = edto.DISC_COMM_SEQ_SR;
+            this.SequenceNO = edto.DISC_ARR_NUM_SR;
             this.Name = string.IsNullOrEmpty(edto.SNAME_PRON_SR) ? edto.SONG_NAME_SR : $"{edto.SONG_NAME_SR} ({edto.SNAME_PRON_SR})";
             this.ArtistName = edto.ARTIST_NAME;
             this.Duration = edto.PLAY_TIME;
@@ -107,11 +103,10 @@ namespace MAMBrowser.DTO
             this.ReleaseDate = edto.ISSUE_YEAR_SR;
             this.Composer = edto.COMPOSER;
             this.Writer = edto.WRITER;
-            this.FilePath = Path.Combine(edto.MB_FILE_PATH_SR, edto.FILE_NAME_SR);
+            this.FilePath = Path.Combine(edto.MR_SONG_WAV_PATH_SR, edto.FILE_NAME_SR+".WAV");
             this.Arranger = edto.ARRANGER;
-            this.AlbumNO = edto.ALBUM_NO;
             this.AlbumImageFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
-            //this.Lyrics = edto.ly;
+            this.LyricsSeq = edto.SONG_WORD_SEQ_SR;
             //this.file = MAMUtility.GenerateMusicToken(this.FilePath);
             //this.AlbumToken = MAMUtility.GenerateMusicToken(this.AlbumImageFilePath);
         }

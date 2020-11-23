@@ -1,6 +1,8 @@
 ﻿using MAMBrowser.Helpers;
 using MAMBrowser.Services;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
+using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -35,17 +37,19 @@ namespace MAMBrowser.Processor
         public bool DownloadFile(string fromPath, string toPath)
         {
             string sourceHostName = MAMUtility.GetDomain(fromPath);
+            
             using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
                 //확인필요
                 using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (NetworkShareAccessor.Access(Host, UserId, UserPass))
-                    {
-                        FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-                        inStream.CopyTo(outStream);
-                        return true;
-                    }
+                    var accessor = NetworkShareAccessor.Access(Host, UserId, UserPass);
+                    FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    inStream.CopyTo(outStream);
+                    if (sourceHostName != Host)  //업로드 호스트와 다운로드호스트가 같으면 인증 매모리 해제를 1번만.
+                        accessor.Dispose();
+
+                    return true;
                 }
             }
         }
@@ -67,6 +71,51 @@ namespace MAMBrowser.Processor
         public bool ExistFile(string fromPath)
         {
             return File.Exists(fromPath);
+        }
+
+        public string GetAudioFormat(string filePath)
+        {
+            string sourceHostName = MAMUtility.GetDomain(filePath);
+            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
+            {
+                var ext = Path.GetExtension(filePath);
+                //wav 44byte
+                //mp3 4byte
+                byte[] buffer = new byte[500000];
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var read = fs.Read(buffer, 0, buffer.Length);
+                        ms.Write(buffer, 0, read);
+                    }
+                    ms.Position = 0;
+
+                    if (ext.ToUpper() == ".WAV")
+                    {
+                        WaveFileReader reader = new WaveFileReader(ms);
+                        return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
+                    }
+                    else if (ext.ToUpper() == ".MP2")
+                    {
+                        Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
+                        var frame = reader.ReadNextFrame();
+                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                    }
+                    else if (ext.ToUpper() == ".MP3")
+                    {
+                        Mp3FileReader reader = new Mp3FileReader(ms);
+                        var frame = reader.ReadNextFrame();
+                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                    }
+                }
+            }
+            return "unknown";
+        }
+
+        public void Delete(string filePath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

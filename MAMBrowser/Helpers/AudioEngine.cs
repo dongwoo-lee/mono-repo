@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualBasic.CompilerServices;
 using NAudio.Utils;
+using NAudio.Wave;
+using NLayer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -229,6 +231,8 @@ namespace MAMBrowser.Helpers
             }
             return peekValues;
         }
+
+
         private static int GetValue(byte[] data, int codingSize, int offset)
         {
             switch (codingSize)
@@ -315,6 +319,121 @@ namespace MAMBrowser.Helpers
             else
                 return 1 - (float)(Math.Abs(decibelValue) / Math.Abs(_silence));
         }
+
+
+
+
+        public static void ConvertMp2ToWav(Stream mp2Stream, Stream outWavStream)
+        {
+            var wf = new WaveFormat(44100, 16, 2);
+            var mpegFile = new MpegFile(mp2Stream);
+            float[] buffer = new float[44100];
+
+            using (WaveFileWriter writer = new WaveFileWriter(outWavStream, wf))
+            {
+                while (true)
+                {
+                    var read = mpegFile.ReadSamples(buffer, 0, buffer.Length);
+
+                    if (read <= 0)
+                        break;
+                    else
+                    {
+                        WriteSamples(buffer, 0, read, writer, wf);
+                    }
+                }
+                writer.Flush();
+            }
+        }
+
+
+        /// <summary>
+        /// Writes 32 bit floating point samples to the Wave file
+        /// They will be converted to the appropriate bit depth depending on the WaveFormat of the WAV file
+        /// </summary>
+        /// <param name="samples">The buffer containing the floating point samples</param>
+        /// <param name="offset">The offset from which to start writing</param>
+        /// <param name="count">The number of floating point samples to write</param>
+        public static void WriteSamples(float[] samples, int offset, int count, Stream writer, WaveFormat wf)
+        {
+            var byteStep = (wf.BitsPerSample / 8);
+            var totalByteLenth = byteStep * count;
+            byte[] totalBuffer = new byte[totalByteLenth]; // keep this around to save us creating it every time
+
+            byte[] value24 = new byte[3]; // keep this around to save us creating it every time
+            byte[] byteData;
+            int currentBytePos = 0;
+            for (int n = 0; n < count; n++)
+            {
+                if (wf.BitsPerSample == 16)
+                {
+                    byteData = BitConverter.GetBytes((Int16)Get16Value(samples[offset + n]));
+                    totalBuffer[currentBytePos] = byteData[0];
+                    totalBuffer[currentBytePos+1] = byteData[1];
+                }
+                else if (wf.BitsPerSample == 24)
+                {
+                    Get24Value(samples[offset + n], ref value24);
+                    byteData = value24;
+                    totalBuffer[currentBytePos] = byteData[0];
+                    totalBuffer[currentBytePos+1] = byteData[1];
+                    totalBuffer[currentBytePos+2] = byteData[2];
+                }
+                else if (wf.BitsPerSample == 32 && wf.Encoding == WaveFormatEncoding.Extensible)
+                {
+                    byteData = BitConverter.GetBytes((Int32)Get32Value(samples[offset + n]));
+                    totalBuffer[currentBytePos] = byteData[0];
+                    totalBuffer[currentBytePos + 1] = byteData[1];
+                    totalBuffer[currentBytePos + 2] = byteData[2];
+                    totalBuffer[currentBytePos + 3] = byteData[3];
+                }
+                else if (wf.Encoding == WaveFormatEncoding.IeeeFloat)
+                {
+                    byteData = BitConverter.GetBytes((float)Get32ValueIeeeFloat(samples[offset + n]));
+                    totalBuffer[currentBytePos] = byteData[0];
+                    totalBuffer[currentBytePos + 1] = byteData[1];
+                    totalBuffer[currentBytePos + 2] = byteData[2];
+                    totalBuffer[currentBytePos + 3] = byteData[3];
+                }
+                else
+                {
+                    throw new InvalidOperationException("Only 16, 24 or 32 bit PCM or IEEE float audio data supported");
+                }
+                currentBytePos += byteStep;
+            }
+            writer.Write(totalBuffer, 0, totalBuffer.Length);
+        }
+
+        /// <summary>
+        /// Writes a single sample to the Wave file
+        /// </summary>
+        /// <param name="sample">the sample to write (assumed floating point with 1.0f as max value)</param>
+        public static Int16 Get16Value(float sample)
+        {
+            return (Int16)(Int16.MaxValue * sample);
+        }
+        public static byte[] Get24Value(float sample, ref byte[] value24)
+        {
+            var value = BitConverter.GetBytes((Int32)(Int32.MaxValue * sample));
+            value24[0] = value[1];
+            value24[1] = value[2];
+            value24[2] = value[3];
+            return value24;
+        }
+        public static Int32 Get32Value(float sample)
+        {
+            return UInt16.MaxValue * (Int32)sample;
+        }
+        public static float Get32ValueIeeeFloat(float sample)
+        {
+            return sample;
+        }
+
+
+
+
+
+
 
         //public static List<float> CreateEgyFile(Stream inStream, Stream outStream, string soundFileName, BitDepths bitDepth, Resolution resolution, Channels channel)
         //{

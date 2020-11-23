@@ -32,19 +32,19 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 공유소재 -  파일+메타데이터 등록
         /// </summary>
-        /// <param name="userextid">유저확장ID</param>
+        /// <param name="userId">유저확장ID</param>
         /// <param name="file">파일</param>
         /// <param name="metaData">메타데이터</param>
         /// <returns></returns>
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        [HttpPost("files")]
-        public DTO_RESULT UploadFile([FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
+        [HttpPost("files/{userId}")]
+        public DTO_RESULT UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var success = _dal.Insert(file, metaData, _fileService.Host);
+                var success = _dal.Insert(userId, file, metaData, _fileService.Host);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 공유소재 -  검색
         /// </summary>
-        /// <param name="userextid">사용자 확장ID</param>
+        /// <param name="userId">사용자 확장ID</param>
         /// <param name="mediaCd">공유소재 매체</param>
         /// <param name="cateCd">공유소재 소분류</param>
         /// <param name="start_dt">검색시작일</param>
@@ -98,12 +98,12 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue">정렬 값(ASC/DESC)</param>
         /// <returns></returns>
         [HttpGet("meta/{mediaCd}/{cateCd}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData(string mediaCd, string cateCd, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] long? userextid, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> FindData(string mediaCd, string cateCd, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string userId, [FromQuery] string title, [FromQuery] string memo, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
-                result.ResultObject = _dal.FineData(mediaCd, cateCd, start_dt, end_dt, userextid, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FineData(mediaCd, cateCd, start_dt, end_dt, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DL_Service.DAL;
 using log4net.Util;
 using MAMBrowser.BLL;
 using MAMBrowser.DAL;
@@ -27,13 +28,13 @@ namespace MAMBrowser.Controllers
             _fileService = sr("PrivateWorkConnection");
         }
 
-        public DTO_PRIVATE_FILE Insert(long userextid, IFormFile file, PrivateFileModel metaData, string host)
+        public DTO_PRIVATE_FILE Insert(string userId, IFormFile file, PrivateFileModel metaData, string host)
         {
             long ID = GetID();
             string date = DateTime.Now.ToString(MAMUtility.DTM8);
             string fileName = $"{ ID.ToString() }_{ file.FileName}";
             var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
-            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userextid}\{date}";
+            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userId}\{date}";
             var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
             var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
@@ -41,25 +42,46 @@ namespace MAMBrowser.Controllers
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
+            var audioFormat = _fileService.GetAudioFormat(relativeTargetPath);
+
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
-            param.Add("USEREXTID", userextid);
+            param.Add("USER_ID", userId);
             param.Add("TITLE", metaData.TITLE);
             param.Add("MEMO", metaData.MEMO);
-            param.Add("AUDIO_FORMAT", "test format");
+            param.Add("AUDIO_FORMAT", audioFormat);
             param.Add("FILE_SIZE", file.Length);
             param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
             //db에 데이터 등록
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
-VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
-            Repository repository = new Repository();
-            repository.Insert(queryTemplate.RawSql, param);
+VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
+
+            var builder2 = new SqlBuilder();
+            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            DynamicParameters param2 = new DynamicParameters();
+            param2.Add("USER_ID", userId);
+            param2.Add("FILE_SIZE", file.Length);
+
+            TransactionRepository repository = new TransactionRepository();
+            repository.BeginTransaction();
+            try
+            {
+                repository.Insert(queryTemplate.RawSql, param);
+                repository.Update(queryTemplate2.RawSql, param2);
+                repository.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                repository.RollbackTransaction();
+                throw;
+            }
+
 
             return Get(ID);
         }
 
-        public bool DeleteDB(long userextid, LongList seqList)
+        public bool DeleteDB(string userId, LongList seqList)
         {
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
@@ -69,7 +91,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             param.Add("SEQ", seqList);
             return repository.Update(queryTemplate.RawSql, param) > 0 ? true : false;
         }
-        public bool DeletePhysical(long userextid, LongList seqList)
+        public bool DeletePhysical(string userId, LongList seqList)
         {
             //파일 실제 삭제 이후
 
@@ -83,7 +105,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             return true;
         }
 
-        public bool DeleteAllPhysical(long userextid)
+        public bool DeleteAllPhysical(string userId)
         {
             //파일 실제 삭제 이후
 
@@ -96,7 +118,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             return true;
         }       //휴지통 비우기
 
-        public bool RecycleAll(long userextid, LongList seqList)    //복원
+        public bool RecycleAll(string userId, LongList seqList)    //복원
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y', DELETED_DTM=NULL WHERE SEQ IN :SEQ");
@@ -127,7 +149,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                 return new DTO_PRIVATE_FILE
                 {
                     Seq = Convert.ToInt64(row.SEQ),
-                    UserExtID = Convert.ToInt64(row.USER_EXT_ID),
+                    UserId = row.USER_ID,
                     UserName = row.USER_NAME,
                     Title = row.TITLE,
                     Memo = row.MEMO,
@@ -142,13 +164,13 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
             });
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FindData(string used, string start_dt, string end_dt, long userextid, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FindData(string used, string start_dt, string end_dt, string userId, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> returnData = new DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>();
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
             DynamicParameters param = new DynamicParameters();
-            param.Add("USER_EXT_ID", userextid);
+            param.Add("USER_ID", userId);
             param.Add("TITLE", title);
             param.Add("MEMO", memo);
             param.Add("START_NO", startNo);
@@ -159,7 +181,7 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
 
             var builder = new SqlBuilder();
             var querySource = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE /**where**/ /**orderby**/");
-            builder.Where("(USER_EXT_ID=:USER_EXT_ID AND USED=:USED)");
+            builder.Where("(USER_ID=:USER_ID AND USED=:USED)");
             if (!string.IsNullOrEmpty(start_dt))
             {
                 builder.Where("TO_DATE(:START_DT,'YYYYMMDD') <= EDITED_DTM");
@@ -204,12 +226,13 @@ VALUES(:SEQ, :USEREXTID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, '
                 {
                     RowNO = Convert.ToInt32(row.RNO),
                     Seq = Convert.ToInt64(row.SEQ),
-                    UserExtID = Convert.ToInt64(row.USER_EXT_ID),
+                    UserId = row.USER_ID,
                     UserName = row.USER_NAME,
                     Title = row.TITLE,
                     Memo = row.MEMO,
                     AudioFormat = row.AUDIO_FORMAT,
                     EditedDtm = ((DateTime)row.EDITED_DTM).ToString(MAMUtility.DTM19),
+                    FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = row.FILE_PATH,
                     DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(MAMUtility.DTM19),
                     Used = row.USED,

@@ -21,26 +21,25 @@ namespace MAMBrowser.Services
         {
             _dal = dal;
         }
-        private void Log(string logLevel, string clientIp, string userId, string userName, string description, string note)
+        private void Log(string logLevel, string category, string userId, string userName, string description, string note)
         {
-            _dal.AddLog(logLevel, clientIp, userId, userName, description, note);
+            _dal.AddLog(logLevel, category, userId, userName, description, note);
         }
-        public async Task DebugAsync(string clientIp, string userId, string userName, string description, string note)
+        public async Task DebugAsync(string category, string userId, string userName, string description, string note)
         {
-            Log(DEBUG, clientIp, userId, userName, description, note);
+            Log(DEBUG, category, userId, userName, description, note);
         }
-        public async Task InfoAsync(string clientIp, string userId, string userName, string description, string note)
+        public async Task InfoAsync(string category, string userId, string userName, string description, string note)
         {
-            Log(INFO, clientIp, userId, userName, description, note);
+            Log(INFO, category, userId, userName, description, note);
         }
-        public async Task WarnAsync(string clientIp, string userId, string userName, string description, string note)
+        public async Task WarnAsync(string category, string userId, string userName, string description, string note)
         {
-            Log(WARN, clientIp, userId, userName, description, note);
+            Log(WARN, category, userId, userName, description, note);
         }
-        public async Task ErrorAsync(string clientIp, string userId, string userName, string description, string note)
+        public async Task ErrorAsync(string category, string userId, string userName, string description, string note)
         {
-            Log(ERROR, clientIp, userId, userName, description, note);
+            Log(ERROR, category, userId, userName, description, note);
         }
-
     }
 }

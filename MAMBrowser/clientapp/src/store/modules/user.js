@@ -83,7 +83,7 @@ export default {
   },
   mutations: {
     SET_AUTH(state, {token, resultObject }) {
-      const { menuList, behaviorList, id, userExtID } = resultObject;
+      const { menuList, behaviorList, id } = resultObject;  //확인필요
       state.isAuth = true;
       state.processing = false;
       state.roleList = [];
@@ -95,7 +95,6 @@ export default {
       
       sessionStorage.setItem('access_token', token);
       sessionStorage.setItem('user_id', id);
-      sessionStorage.setItem('user_ext_id', userExtID);
       sessionStorage.setItem('role', JSON.stringify(state.roleList));
       sessionStorage.setItem('authority', getAuthority(state.behaviorList));
     },
@@ -110,7 +109,6 @@ export default {
       state.processing = false;
       sessionStorage.removeItem('access_token');
       sessionStorage.removeItem('user_id');
-      sessionStorage.removeItem('user_ext_id');
       sessionStorage.removeItem('role');
       sessionStorage.removeItem('authority');
     },

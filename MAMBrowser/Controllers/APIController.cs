@@ -71,14 +71,14 @@ namespace MAMBrowser.Controllers
         /// <param name="account">인증 연장</param>
         /// <returns></returns>
         [HttpPost("Renewal")]
-        public DTO_RESULT<DTO_USER_DETAIL> Renewal([FromBody] AuthenticateModel account)
+        public DTO_RESULT<DTO_USER_DETAIL> Renewal([FromBody] AuthenticateModel account)    //id만 가지고 인증 연장 (새로고침?), 토큰 + 프론트에서 권한메뉴 모두 새로고침.
         {
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
                 //if (HttpContext.Items["User"] as string == account.PERSONID)  //인증작업 완료 이후 주석 풀 예정
                 //{
-                    result = _userService.Renewal(result, account);
+                    result = _userService.Reissue(result, account);
                     result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 //}
@@ -95,7 +95,36 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
+        /// <summary>
+        /// 토큰 재발급
+        /// </summary>
+        /// <param name="account">토큰 재발급</param>
+        /// <returns></returns>
+        [HttpPost("Reissue")]
+        public DTO_RESULT<DTO_USER_DETAIL> Reissue([FromBody] AuthenticateModel account)    //토큰이 유효하다면 신규토큰을 재발급(로그인 연장버튼), 토큰만 갱신처리.
+        {
+            DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
+            try
+            {
+                //if (HttpContext.Items["User"] as string == account.PERSONID)  //인증작업 완료 이후 주석 풀 예정
+                //{
+                result = _userService.Reissue(result, account);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                //}
+                //else
+                //{
+                //    result.ErrorMsg = "잘못된 요청입니다.";
+                //    result.ResultCode = RESUlT_CODES.SUCCESS;
+                //}
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+        
         /// <summary>
         /// 사용자 목록 조회
         /// </summary>

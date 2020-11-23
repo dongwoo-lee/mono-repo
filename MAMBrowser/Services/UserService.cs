@@ -14,7 +14,7 @@ namespace MAMBrowser.Services
     public interface IUserService
     {
         DTO_RESULT<DTO_USER_DETAIL> Authenticate(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
-        DTO_RESULT<DTO_USER_DETAIL>  Renewal(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
+        DTO_RESULT<DTO_USER_DETAIL>  Reissue(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
     }
 
     public class UserService : IUserService
@@ -39,7 +39,7 @@ namespace MAMBrowser.Services
 
             return result;
         }
-        public DTO_RESULT<DTO_USER_DETAIL> Renewal(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model)
+        public DTO_RESULT<DTO_USER_DETAIL> Reissue(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model)
         {
             var jwtToken = GenerateJwtToken(model.PERSONID);
             result.Token = jwtToken;

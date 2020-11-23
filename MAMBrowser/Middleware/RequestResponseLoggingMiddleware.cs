@@ -68,17 +68,19 @@ namespace MAMBrowser.Middleware
             //..and finally, assign the read body back to the request body, which is allowed because of EnableRewind()
             request.Body = body;
 
-            var requestInfo = $"{request.Scheme} {request.Host}{request.Path} {request.QueryString} {bodyAsText}";
-            
-            string clientIp = request.HttpContext.Connection.RemoteIpAddress.ToString();
-            //var token = request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
-            string userId = request.HttpContext.Items["UserId"] as string;
-            string userName = userId;
-            string description = requestInfo;
-            string note = "";
 
+            if (request.Path.ToString().Contains(@"/api/"))
+            {
+                var requestInfo = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString} {bodyAsText}";
 
-            logService.DebugAsync(clientIp, userId, userName, description, note);
+                string clientIp = request.HttpContext.Connection.RemoteIpAddress.ToString();
+                //var token = request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
+                string userId = request.HttpContext.Items["UserId"] as string;
+                string userName = userId;
+                string description = requestInfo;
+                string note = "";
+                logService.DebugAsync(clientIp, userId, userName, description, note);
+            }
         }
         private async Task<string> FormatResponse(HttpResponse response)
         {

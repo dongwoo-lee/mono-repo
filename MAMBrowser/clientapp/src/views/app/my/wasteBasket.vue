@@ -158,6 +158,7 @@ export default {
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+           width: "9%"
         },
         {
           name: "editedDtm",
@@ -179,8 +180,8 @@ export default {
     getData() {
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      const userExtId = sessionStorage.getItem('user_ext_id');
-      this.$http.get(`/api/products/workspace/private/recyclebin/${userExtId}`, { params: this.searchItems })
+      const userId = sessionStorage.getItem('user_id');
+      this.$http.get(`/api/products/workspace/private/recyclebin/${userId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
             this.addScrollClass();
@@ -203,7 +204,7 @@ export default {
     },
     // 영구 삭제
     onDelete() {
-      const userExtId = sessionStorage.getItem('user_ext_id');
+      const userId = sessionStorage.getItem('user_id');
       let ids = this.selectedIds;
 
       if (this.singleSelectedId) {
@@ -212,7 +213,7 @@ export default {
         this.singleSelectedId = null;
       }
 
-      this.$http.delete(`/api/products/workspace/private/recyclebin/${userExtId}/${ids}`)
+      this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '영구 삭제가 되었습니다.' })
@@ -238,7 +239,7 @@ export default {
     },
     // 복원하기
     onRecycle() {
-      const userExtId = sessionStorage.getItem('user_ext_id');
+      const userId = sessionStorage.getItem('user_id');
       let ids = this.selectedIds;
 
       if (this.recycleId) {
@@ -247,7 +248,7 @@ export default {
         this.recycleId = null;
       }
 
-      this.$http.put(`/api/products/workspace/private/recyclebin/${userExtId}/recycle/${ids}`)
+      this.$http.put(`/api/products/workspace/private/recyclebin/${userId}/recycle/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify('success', { message: '복원 성공' })
@@ -266,9 +267,9 @@ export default {
     },
     // 휴지통 비우기(물리적인파일 포함 전체 영구삭제)
     onRecyclebin() {
-      const userExtId = sessionStorage.getItem('user_ext_id');
+      const userId = sessionStorage.getItem('user_id');
 
-      this.$http.delete(`/api/products/workspace/private/recyclebin/${userExtId}`)
+      this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify('success', { message: '휴지통 비우는데 짧은 시간이 소요됩니다. 새로고침 및 재검색을 해주세요.' });
