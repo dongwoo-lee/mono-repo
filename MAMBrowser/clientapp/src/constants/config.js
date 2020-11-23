@@ -29,6 +29,6 @@ export const ROUTE_NAMES = {
   SHARED: 'public',
 }
 /* file upload accept */
-export const FILE_UPLOAD_ACCEPT = 'audio/*,video/*,image/*';
+export const FILE_UPLOAD_ACCEPT = 'audio/*,video/*,image/*,.mp2';
 /* file upload extensions */
 export const FILE_UPLOAD_EXTENSIONS = ['jpg', 'gif', 'png', 'mp2', 'mp3', 'mp4', 'wav', 'mpeg'];
