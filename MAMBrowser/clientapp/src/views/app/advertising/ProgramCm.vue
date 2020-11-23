@@ -148,7 +148,7 @@ export default {
       PREVIEW_CODE: PREVIEW_CODE,
       searchItems: {
         media: 'A',
-        brd_dt: '20200101',
+        brd_dt: '',
         cate: 'P',
         pgm: '',
         pgmName: '',
