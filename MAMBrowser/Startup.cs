@@ -115,6 +115,7 @@ namespace MAMBrowser
             //app.UseAuthentication();
             //app.UseAuthorization();
             app.UseMiddleware<JwtMiddleware>();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

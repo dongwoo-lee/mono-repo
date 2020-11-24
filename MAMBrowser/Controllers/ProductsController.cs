@@ -584,7 +584,7 @@ namespace MAMBrowser.Controllers
                 else
                 {
                     string contentType;
-                    var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, _fileService, filePath, out contentType);
+                    var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, filePath, out contentType);
                     return PhysicalFile(downloadPath, contentType, true);
                 }
             }
@@ -604,7 +604,7 @@ namespace MAMBrowser.Controllers
             {
                 string fileName = Path.GetFileName(filePath);
                 //var fileData = _dal.Get(seq);
-                return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, _fileService, filePath);
+                return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, filePath);
             }
             else
                 return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
@@ -661,7 +661,7 @@ namespace MAMBrowser.Controllers
             else
             {
                 string contentType;
-                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, fileService, relativePath, out contentType);
+                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), fileService, relativePath, out contentType);
                 return PhysicalFile(downloadPath, contentType, true);
             }
         }
@@ -676,7 +676,7 @@ namespace MAMBrowser.Controllers
             var fileService = sr("DLArchiveConnection");
             var fileData = _dal.GetDLArchive(seq);
             string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, fileService, relativePath);
+            return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), fileService, relativePath);
         }
     }
 }

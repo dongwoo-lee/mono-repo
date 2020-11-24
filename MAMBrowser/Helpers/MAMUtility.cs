@@ -32,20 +32,22 @@ namespace MAMBrowser.Helpers
         public static string TokenIssuer { get; set; }
         public static string TokenSignature { get; set; }
 
-        public static string TempDownloadToLocal(string userId, IFileDownloadService fileService, string relativePath, out string contentType)
+        public static string TempDownloadToLocal(string remoteIp, IFileDownloadService fileService, string relativePath, out string contentType)
         {
+            ClearTempDownloadFolder(remoteIp);
+            
             var fileExtProvider = new FileExtensionContentTypeProvider();
             if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
 
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(remoteIp))
             {
-                userId = "system";
+                remoteIp = "system";
             }
 
-            var targetFolder = @$"{TempDownloadPath}\{userId}";
+            var targetFolder = @$"{TempDownloadPath}\{remoteIp}";
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
 
@@ -57,13 +59,36 @@ namespace MAMBrowser.Helpers
             }
             else if(fileExt.ToUpper() == ".MP2")
             {
-                var mp2InputStream = fileService.GetFileStream(relativePath, 0);
-                var outWavStream = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite);
-                AudioEngine.ConvertMp2ToWav(mp2InputStream, outWavStream);
+                using (var mp2InputStream = fileService.GetFileStream(relativePath, 0))
+                {
+                    using (var outWavStream = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        AudioEngine.ConvertMp2ToWav(mp2InputStream, outWavStream);
+                    }
+                }
             }
             return targetPath;
         }
-        public static List<float> GetWaveform(string userId, IFileDownloadService fileService, string relativePath)
+
+        public static void ClearTempDownloadFolder(string ip)
+        {
+            var targetFolder = @$"{TempDownloadPath}\{ip}";
+            if (Directory.Exists(targetFolder))
+            {
+                var fileFullPathList = Directory.GetFiles(targetFolder);
+                foreach (var filePath in fileFullPathList)
+                {
+                    try
+                    {
+                        File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+        }
+        public static List<float> GetWaveform(string ip, IFileDownloadService fileService, string relativePath)
         {
             string waveFileName = Path.GetFileName(relativePath);
             string waveformFileName = $"{Path.GetFileNameWithoutExtension(relativePath)}.egy";
@@ -80,7 +105,7 @@ namespace MAMBrowser.Helpers
                 Stream inputStream = fileService.GetFileStream(relativePath, 0);
                 if (fileExt.ToUpper() == ".MP2")
                 {
-                    var targetFolder = @$"{TempDownloadPath}\{userId}";
+                    var targetFolder = @$"{TempDownloadPath}\{ip}";
                     if (!Directory.Exists(targetFolder))
                         Directory.CreateDirectory(targetFolder);
 

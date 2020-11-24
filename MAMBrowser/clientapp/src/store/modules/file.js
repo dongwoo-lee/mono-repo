@@ -156,11 +156,11 @@ export default {
             const src = `/api/products/files?token=${item.fileToken}`;
             state.downloadIframe.setAttribute('src', src);
         },
-        downloadMusic({}, item) {       //music 파일 다운로드
+        downloadMusic({state}, item) {       //music 파일 다운로드
             const src = `/api/musicsystem/files?token=${item.fileToken}`;
             state.downloadIframe.setAttribute('src', src);
         },
-        downloadDl30({}, item) { //dl30 파일 다운로드
+        downloadDl30({state}, item) { //dl30 파일 다운로드
             const src = `/api/products/dl30/files/${item.seq}`;
             state.downloadIframe.setAttribute('src', src);
         },

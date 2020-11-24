@@ -160,7 +160,7 @@ namespace MAMBrowser.Controllers
             else
             {
                 string contentType;
-                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, _fileService, relativePath, out contentType);
+                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, relativePath, out contentType);
                 return PhysicalFile(downloadPath, contentType, true);
             }
         }
@@ -174,7 +174,7 @@ namespace MAMBrowser.Controllers
         {
             var fileData = _dal.Get(key);
             string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, _fileService, relativePath);
+            return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, relativePath);
         }
 
         /// <summary>

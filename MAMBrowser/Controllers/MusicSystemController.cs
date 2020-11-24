@@ -148,7 +148,7 @@ namespace MAMBrowser.Controllers
             else
             {
                 string contentType;
-                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Items["UserId"] as string, _fileService, token, out contentType);
+                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, token, out contentType);
                 return PhysicalFile(downloadPath, contentType, true);
             }
         }
@@ -161,7 +161,7 @@ namespace MAMBrowser.Controllers
         public List<float> MusicGetWaveform([FromQuery] string token)
         {
             //var fileData = _dal.Get(seq);
-            return MAMUtility.GetWaveform(HttpContext.Items["UserId"] as string, _fileService, token);
+            return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, token);
         }
 
         /// <summary>

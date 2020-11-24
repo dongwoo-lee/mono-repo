@@ -14,16 +14,18 @@ namespace MAMBrowser.Middleware
     public class RequestResponseLoggingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly LogService _logService;
 
-        public RequestResponseLoggingMiddleware(RequestDelegate next)
+        public RequestResponseLoggingMiddleware(RequestDelegate next, LogService logService)
         {
+            _logService = logService;
             _next = next;
         }
 
         public async Task Invoke(HttpContext context)
         {
             //First, get the incoming request
-            await FormatRequest(context.Request, null);
+            await FormatRequest(context.Request);
 
 
             //응답 처리
@@ -49,29 +51,29 @@ namespace MAMBrowser.Middleware
             //}
         }
 
-        private async Task FormatRequest(HttpRequest request, [FromServices] LogService logService)
+        private async Task FormatRequest(HttpRequest request)
         {
-            var body = request.Body;
+            //var body = request.Body;
 
-            //This line allows us to set the reader for the request back at the beginning of its stream.
-            request.EnableBuffering();
+            ////This line allows us to set the reader for the request back at the beginning of its stream.
+            //request.EnableBuffering();
 
-            //We now need to read the request stream.  First, we create a new byte[] with the same length as the request stream...
-            var buffer = new byte[Convert.ToInt32(request.ContentLength)];
+            ////We now need to read the request stream.  First, we create a new byte[] with the same length as the request stream...
+            //var buffer = new byte[Convert.ToInt32(request.ContentLength)];
 
-            //...Then we copy the entire request stream into the new buffer.
-            await request.Body.ReadAsync(buffer, 0, buffer.Length);
+            ////...Then we copy the entire request stream into the new buffer.
+            //await request.Body.ReadAsync(buffer, 0, buffer.Length);
 
-            //We convert the byte[] into a string using UTF8 encoding...
-            var bodyAsText = Encoding.UTF8.GetString(buffer);
-
-            //..and finally, assign the read body back to the request body, which is allowed because of EnableRewind()
-            request.Body = body;
+            ////We convert the byte[] into a string using UTF8 encoding...
+            //var bodyAsText = Encoding.UTF8.GetString(buffer);
+            ////..and finally, assign the read body back to the request body, which is allowed because of EnableRewind()
+            //request.Body = body;
 
 
             if (request.Path.ToString().Contains(@"/api/"))
             {
-                var requestInfo = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString} {bodyAsText}";
+                //var requestInfo = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString} {bodyAsText}";
+                var requestInfo = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}";
 
                 string clientIp = request.HttpContext.Connection.RemoteIpAddress.ToString();
                 //var token = request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
@@ -79,7 +81,7 @@ namespace MAMBrowser.Middleware
                 string userName = userId;
                 string description = requestInfo;
                 string note = "";
-                logService.DebugAsync(clientIp, userId, userName, description, note);
+                _logService.DebugAsync(clientIp, userId, userName, description, note);
             }
         }
         private async Task<string> FormatResponse(HttpResponse response)

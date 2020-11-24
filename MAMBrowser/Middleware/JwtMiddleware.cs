@@ -25,10 +25,10 @@ namespace MAMBrowser.Middleware
 
         public async Task Invoke(HttpContext context, IUserService userService)
         {
-            //var token = context.Request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
+            var token = context.Request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
 
-            //if (token != null && token!="null")
-            //    attachUserToContext(context, userService, token);
+            if (token != null && token != "null")
+                attachUserToContext(context, userService, token);
 
             await _next(context);
         }
@@ -39,6 +39,7 @@ namespace MAMBrowser.Middleware
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var signatureKey = Encoding.UTF8.GetBytes(_appSettings.TokenSignature);
+                
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidIssuer = _appSettings.TokenIssuer,
