@@ -54,7 +54,10 @@ let mixinCommon = {
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
-            this.$refs.scrollPaging.init();
+            // scroll paging table인 경우
+            if (this.$refs.scrollPaging) {
+                this.$refs.scrollPaging.init();
+            }
             this.initSelectedIds();
             this.getData();
         },
