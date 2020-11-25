@@ -140,6 +140,7 @@
     :fileKey="soundItem.fileToken"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
+    :tempDownloadUrl="tempDownloadUrl"
     requestType="token"
     @closePlayer="onClosePlayer">
     </PlayerPopup>

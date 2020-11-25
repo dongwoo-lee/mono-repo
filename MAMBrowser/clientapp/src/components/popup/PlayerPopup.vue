@@ -11,8 +11,9 @@
         ref="play"
         :requestType="requestType" 
         :fileKey = "fileKey"
-        :streamingUrl = "streamingUrl"
+        :tempDownloadUrl = "tempDownloadUrl"
         :waveformUrl = "waveformUrl"
+        :streamingUrl = "streamingUrl"
         :direct = "direct"
     />
     </template>
@@ -39,6 +40,10 @@ export default {
             default: () => {},
         },
         title: {
+            type: String,
+            default: () => {},
+        },
+        tempDownloadUrl :{
             type: String,
             default: () => {},
         },

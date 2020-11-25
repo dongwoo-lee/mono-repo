@@ -43,13 +43,11 @@ namespace MAMBrowser.Processor
                 //확인필요
                 using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    var accessor = NetworkShareAccessor.Access(Host, UserId, UserPass);
-                    FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-                    inStream.CopyTo(outStream);
-                    if (sourceHostName != Host)  //업로드 호스트와 다운로드호스트가 같으면 인증 매모리 해제를 1번만.
-                        accessor.Dispose();
-
-                    return true;
+                    using (FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    {
+                        inStream.CopyTo(outStream);
+                        return true;
+                    }
                 }
             }
         }
@@ -70,7 +68,12 @@ namespace MAMBrowser.Processor
 
         public bool ExistFile(string fromPath)
         {
-            return File.Exists(fromPath);
+            string sourceHostName = MAMUtility.GetDomain(fromPath);
+
+            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
+            {
+                return File.Exists(fromPath);
+            }
         }
 
         public string GetAudioFormat(string filePath)
@@ -91,18 +94,18 @@ namespace MAMBrowser.Processor
                     }
                     ms.Position = 0;
 
-                    if (ext.ToUpper() == ".WAV")
+                    if (ext.ToUpper() == MAMUtility.WAV)
                     {
                         WaveFileReader reader = new WaveFileReader(ms);
                         return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
                     }
-                    else if (ext.ToUpper() == ".MP2")
+                    else if (ext.ToUpper() == MAMUtility.MP2)
                     {
                         Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
                         var frame = reader.ReadNextFrame();
                         return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
                     }
-                    else if (ext.ToUpper() == ".MP3")
+                    else if (ext.ToUpper() == MAMUtility.MP3)
                     {
                         Mp3FileReader reader = new Mp3FileReader(ms);
                         var frame = reader.ReadNextFrame();

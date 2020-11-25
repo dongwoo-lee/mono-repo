@@ -103,6 +103,7 @@
     :music="soundItem"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
+    :tempDownloadUrl="tempDownloadUrl"
     requestType="token"
     @closePlayer="onClosePlayer">
     </MusicPlayerPopup>
@@ -118,6 +119,8 @@ export default {
     return {
       streamingUrl : '/api/musicsystem/streaming',
       waveformUrl : '/api/musicsystem/waveform',
+      tempDownloadUrl : '/api/musicsystem/temp-download',
+
       allSelected: false,
       indeterminate: false,
 

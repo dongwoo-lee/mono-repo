@@ -137,6 +137,7 @@
     :fileKey="soundItem.seq"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
+    :tempDownloadUrl="tempDownloadUrl"
     requestType="key"
     direct ="Y"
     @closePlayer="onClosePlayer">
@@ -157,6 +158,7 @@ export default {
     return {
       streamingUrl : '/api/products/workspace/public/streaming',
       waveformUrl : '/api/products/workspace/public/waveform',
+      tempDownloadUrl : '/api/products/workspace/public/temp-download',
 
       searchItems: {
         media: 'A',                // 매체

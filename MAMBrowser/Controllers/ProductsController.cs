@@ -2,6 +2,7 @@
 using MAMBrowser.BLL;
 using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
+using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
 using MAMBrowser.Services;
@@ -462,27 +463,11 @@ namespace MAMBrowser.Controllers
         {
             try
             {
-                string filePath = "";
-                if (MAMUtility.ValidateMAMToken(token, ref filePath))
-                {
-                    string fileName = Path.GetFileName(filePath);
-                    var fileExtProvider = new FileExtensionContentTypeProvider();
-                    string contentType;
-                    if (!fileExtProvider.TryGetContentType(filePath, out contentType))
-                    {
-                        contentType = "application/octet-stream";
-                    }
-                    var stream = _fileService.GetFileStream(filePath, 0);
-                    System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
-                    {
-                        FileName = fileName,
-                        Inline = inline == "Y" ? true : false
-                    };
-                    Response.Headers.Add("Content-Disposition", cd.ToString());
-                    return File(stream, contentType);
-                }
-                else
-                    return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+                return MAMUtility.Download(token, Response, _fileService, inline);
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
@@ -570,49 +555,65 @@ namespace MAMBrowser.Controllers
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
         [HttpGet("streaming")]
-        public IActionResult Streaming([FromQuery] string token, [FromQuery] string direct = "N")
+        public IActionResult Streaming([FromQuery] string token, [FromQuery] string userId, [FromQuery] string direct = "N")
         {
-            string filePath = "";
-            if (MAMUtility.ValidateMAMToken(token, ref filePath))
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            try
             {
-                string fileName = Path.GetFileName(filePath);
-                if (direct.ToUpper() == "Y")
-                {
-                    int fileSize = 0;
-                    return new PushStreamResult(filePath, fileName, fileSize, _fileService);
-                }
-                else
-                {
-                    string contentType;
-                    var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, filePath, out contentType);
-                    return PhysicalFile(downloadPath, contentType, true);
-                }
+                return MAMUtility.Streaming(token, direct, userId, remoteIp, _fileService);
             }
-            else
-                return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
         }
         /// <summary>
         /// 일반 소재 - 파형 요청
         /// </summary>
-        /// <param name="seq"></param>
+        /// <param name="token"></param>
+        /// /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("waveform")]
-        public ActionResult<List<float>> GetWaveform([FromQuery] string token)
+        public ActionResult<List<float>> GetWaveform([FromQuery] string token, [FromQuery] string userId)
         {
-            string filePath = "";
-            if (MAMUtility.ValidateMAMToken(token, ref filePath))
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            try
             {
-                string fileName = Path.GetFileName(filePath);
-                //var fileData = _dal.Get(seq);
-                return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, filePath);
+                return MAMUtility.GetWaveform(token, userId, remoteIp);
             }
-            else
-                return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 일반 소재 - 임시 다운로드
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpGet("temp-download")]
+        public IActionResult TempDownload([FromQuery] string token)
+        {
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            try
+            {
+                MAMUtility.TempDownload(token, userId, remoteIp, _fileService);
+                return Ok();
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
         }
 
 
+
+
         /// <summary>
-        /// 일반 소재 - 다운로드
+        /// DL30 소재 - 다운로드
         /// </summary>
         /// <param name="seq">파일 SEQ</param>
         /// <param name="inline">inline 여부</param>
@@ -622,61 +623,89 @@ namespace MAMBrowser.Controllers
         {
             var fileService = sr("DLArchiveConnection");
             var fileData = _dal.GetDLArchive(seq);
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            string fileName = $"{fileData.SourceID}.{fileType}";
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
+            try
             {
-                contentType = "application/octet-stream";
+                return MAMUtility.DownloadFromPath(fileData.FilePath, Response, fileService, inline);
             }
-            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            catch (HttpStatusErrorException ex)
             {
-                FileName = fileName,
-                Inline = inline == "Y" ? true : false
-            };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            var stream = fileService.GetFileStream(relativePath, 0);
-            return File(stream, contentType);
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
         /// <summary>
-        /// 일반 소재  - 스트리밍
+        /// DL30 소재  - 스트리밍
         /// </summary>
         /// <param name="seq"></param>
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
         [HttpGet("dl30/streaming/{seq}")]
-        public IActionResult Dl30Streaming([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
+        public IActionResult Dl30Streaming([FromServices] ServiceResolver sr, long seq, string userId, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
         {
             var fileService = sr("DLArchiveConnection");
-            //range 있을떄는 206 반환하도록
             var fileData = _dal.GetDLArchive(seq);
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            string fileName = $"{fileData.SourceID}.{fileType}";
-
-            if (direct.ToUpper() == "Y")
+            try
             {
-                return new PushStreamResult(relativePath, fileName, fileData.FileSize, fileService);
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+                return MAMUtility.StreamingFromPath(fileData.FilePath, direct, userId, remoteIp, fileService);
             }
-            else
+            catch (HttpStatusErrorException ex)
             {
-                string contentType;
-                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), fileService, relativePath, out contentType);
-                return PhysicalFile(downloadPath, contentType, true);
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
         /// <summary>
-        /// 일반 소재 - 파형 요청
+        /// DL30 소재 - 파형 요청
         /// </summary>
         /// <param name="seq"></param>
         /// <returns></returns>
         [HttpGet("dl30/waveform/{seq}")]
-        public List<float> GetDl30Waveform([FromServices] ServiceResolver sr, long seq)
+        public ActionResult<List<float>> GetDl30Waveform([FromServices] ServiceResolver sr, long seq, string userId)
         {
             var fileService = sr("DLArchiveConnection");
             var fileData = _dal.GetDLArchive(seq);
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), fileService, relativePath);
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+                return MAMUtility.GetWaveformFromPath(fileData.FilePath,  userId, remoteIp);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        /// <summary>
+        /// DL30 소재 - 임시 다운로드
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpGet("temp-download/{seq}")]
+        public IActionResult TempDl30Download([FromServices] ServiceResolver sr, long seq)
+        {
+            var fileService = sr("DLArchiveConnection");
+            var fileData = _dal.GetDLArchive(seq);
+
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            try
+            {
+                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
+                return Ok();
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
         }
     }
 }

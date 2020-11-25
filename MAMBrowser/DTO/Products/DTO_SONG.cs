@@ -103,7 +103,7 @@ namespace MAMBrowser.DTO
             this.ReleaseDate = edto.ISSUE_YEAR_SR;
             this.Composer = edto.COMPOSER;
             this.Writer = edto.WRITER;
-            this.FilePath = Path.Combine(edto.MR_SONG_WAV_PATH_SR, edto.FILE_NAME_SR+".WAV");
+            this.FilePath = Path.Combine(edto.MR_SONG_WAV_PATH_SR, edto.FILE_NAME_SR+MAMUtility.WAV);
             this.Arranger = edto.ARRANGER;
             this.AlbumImageFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
             this.LyricsSeq = edto.SONG_WORD_SEQ_SR;

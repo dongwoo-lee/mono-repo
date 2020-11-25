@@ -70,6 +70,7 @@
     :fileKey="soundItem.seq"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
+    :tempDownloadUrl="tempDownloadUrl"
     requestType="key"
     direct = "Y"
     @closePlayer="onClosePlayer">
@@ -86,6 +87,7 @@ export default {
       return {
         streamingUrl : '/api/Products/dl30/streaming',
         waveformUrl : '/api/Products/dl30/waveform',
+        tempDownloadUrl : '/api/Products/dl30/temp-download',
 
           searchItems: {
               media : 'A',           // 매체

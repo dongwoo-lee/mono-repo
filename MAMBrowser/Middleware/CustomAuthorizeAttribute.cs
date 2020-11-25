@@ -11,7 +11,7 @@ namespace MAMBrowser.Helpers
         public void OnAuthorization(AuthorizationFilterContext context)
         {
 
-            //var user = context.HttpContext.Items["UserId"] as string;
+            //var user = context.MAMUtility.USER_ID as string;
             //if (string.IsNullOrEmpty(user))
             //{
             //    // not logged in

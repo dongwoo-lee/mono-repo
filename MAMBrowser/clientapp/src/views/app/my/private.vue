@@ -109,6 +109,7 @@
     :fileKey="soundItem.seq"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
+    :tempDownloadUrl="tempDownloadUrl"
     requestType="key"
     direct ="Y"
     @closePlayer="onClosePlayer">
@@ -129,6 +130,7 @@ export default {
     return {
       streamingUrl : '/api/products/workspace/private/streaming',
       waveformUrl : '/api/products/workspace/private/waveform',
+      tempDownloadUrl : '/api/products/workspace/private/temp-download',
       searchItems: {
         cate: '',              // 분류(cate)
         title: '',             // 제목

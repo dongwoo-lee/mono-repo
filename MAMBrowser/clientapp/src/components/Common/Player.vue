@@ -118,37 +118,79 @@ export default {
     LoadAudio(){
       this.InjectWaveSurfer();
       this.SetWaveSurfer();
-      let url ='';
-      let url2 ='';
-      
+      let fileUrl ='';
+      let waveformUrl ='';
+      let downloadUrl ='';
+      let userId =  sessionStorage.getItem('user_id');
+
       if(this.requestType === "key")
       {
-        url =`${this.streamingUrl}/${this.fileKey}?direct=${this.direct}`;
-        url2 =`${this.waveformUrl}/${this.fileKey}`;
+        fileUrl =`${this.streamingUrl}/${this.fileKey}?userid=${userId}&direct=${this.direct}`;
+        waveformUrl =`${this.waveformUrl}/${this.fileKey}?userid=${userId}`;
+        downloadUrl =`${this.tempDownloadUrl}/${this.fileKey}`; //인증토큰에 user id가 있어서 전달필요 없음.
       }
       else
       { 
-        url =`${this.streamingUrl}?token=${this.fileKey}&direct=${this.direct}`;
-        url2 =`${this.waveformUrl}?token=${this.fileKey}`;
+        fileUrl =`${this.streamingUrl}?token=${this.fileKey}&userid=${userId}&direct=${this.direct}`;
+        waveformUrl =`${this.waveformUrl}?token=${this.fileKey}&userid=${userId}`;
+        downloadUrl =`${this.tempDownloadUrl}?token=${this.fileKey}`; //인증토큰에 user id가 있어서 전달필요 없음.
       }
-
-      httpClient.get(url2, {
+      // if(this.direct =="Y"){
+      //   this.LoadDirect(waveformUrl, fileUrl);     //일단... 다이렉트는 FTP프로토콜(x), MP2(x)
+      // }
+      // else{
+        this.LoadDownloadedFile(downloadUrl, waveformUrl, fileUrl);
+      // }
+     
+    },
+    LoadDownloadedFile(downloadUrl,waveformUrl,fileUrl){
+      
+      httpClient.get(downloadUrl, {
+        cancelToken: source.token,
+        headers:{
+          'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        }
+      }).then(res=>{
+        console.info('tempdownload status', res.status);
+        if(res.status == 200){
+          httpClient.get(waveformUrl, {
+          cancelToken: source.token,
+          }).then(res=>{
+            wavesurfer.load(fileUrl, res.data);
+            this.spinnerFlag = false;
+            this.isSuccess = true;
+          }).catch(error=>{
+              console.debug('httpClient', error)
+              if (error.response){
+                this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+                    duration: 8000,
+                    permanent: false
+                });
+              } else {
+                console.debug('httpClient.get url:', waveformUrl, error);
+              }
+          });;
+        }
+      });
+    },
+    LoadDirect(waveformUrl, fileUrl){
+      httpClient.get(waveformUrl, {
         cancelToken: source.token,
       }).then(res=>{
-        wavesurfer.load(url, res.data);
-        this.spinnerFlag = false;
-        this.isSuccess = true;
-      }).catch(error=>{
-        console.debug('httpClient', error)
-          if (error.response){
-            this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
-                duration: 8000,
-                permanent: false
-            });
-          } else {
-            console.debug('httpClient.get url:', url2, error);
-          }
-      });;
+          wavesurfer.load(fileUrl, res.data);
+          this.spinnerFlag = false;
+          this.isSuccess = true;
+        }).catch(error=>{
+          console.debug('httpClient', error)
+            if (error.response){
+              this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+                  duration: 8000,
+                  permanent: false
+              });
+            } else {
+              console.debug('httpClient.get url:', waveformUrl, error);
+            }
+        });;
     },
     Play(){
       wavesurfer.play();
@@ -175,6 +217,10 @@ export default {
             default: () => {},
         },
       title: {
+          type: String,
+          default: () => {},
+      },
+      tempDownloadUrl :{
           type: String,
           default: () => {},
       },

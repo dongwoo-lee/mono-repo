@@ -19,6 +19,7 @@
         :fileKey = "music.fileToken"
         :streamingUrl = "streamingUrl"
         :waveformUrl = "waveformUrl"
+        :tempDownloadUrl="tempDownloadUrl"
         :direct = "direct"
     />
     </template>
@@ -54,6 +55,10 @@ export default {
         },
         music:{
             type: Object,
+            default: () => {},
+        },
+        tempDownloadUrl :{
+            type: String,
             default: () => {},
         },
         streamingUrl :{

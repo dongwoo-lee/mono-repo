@@ -1,4 +1,5 @@
 ﻿using MAMBrowser.DTO;
+using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Processor;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -114,6 +116,8 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+
+
         /// <summary>
         /// 공유소재 - 다운로드
         /// </summary>
@@ -123,22 +127,18 @@ namespace MAMBrowser.Controllers
         public IActionResult Download(long key, [FromQuery] string inline = "N")
         {
             var fileData = _dal.Get(key);
-            string fileName = $"{fileData.Title}{fileData.FileExt}";
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
+            try
             {
-                contentType = "application/octet-stream";
+                return MAMUtility.DownloadFromPath(fileData.FilePath, Response, _fileService, inline);
             }
-            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            catch (HttpStatusErrorException ex)
             {
-                FileName = fileName,
-                Inline = inline == "Y" ? true : false
-            };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            var stream = _fileService.GetFileStream(relativePath, 0);
-            return File(stream, contentType);
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
         /// <summary>
         /// 공유소재 - 스트리밍
@@ -147,21 +147,24 @@ namespace MAMBrowser.Controllers
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
         [HttpGet("streaming/{key}")]
-        public IActionResult Streaming(long key, [FromQuery] string direct = "N")
+
+        public IActionResult Streaming(long key, string userId, [FromQuery] string direct = "N")
         {
             //range 있을떄는 206 반환하도록
             var fileData = _dal.Get(key);
-            string fileName = $"{fileData.Title}{fileData.FileExt}";
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            if (direct.ToUpper() == "Y")
+            try
             {
-                return new PushStreamResult(relativePath, fileName, fileData.FileSize, _fileService);
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+                return MAMUtility.StreamingFromPath(fileData.FilePath, direct, userId, remoteIp, _fileService);
             }
-            else
+            catch (HttpStatusErrorException ex)
             {
-                string contentType;
-                var downloadPath = MAMUtility.TempDownloadToLocal(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, relativePath, out contentType);
-                return PhysicalFile(downloadPath, contentType, true);
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
         /// <summary>
@@ -170,12 +173,46 @@ namespace MAMBrowser.Controllers
         /// <param name="key"></param>
         /// <returns></returns>
         [HttpGet("waveform/{key}")]
-        public List<float> GetWaveform(long key)
+        public ActionResult<List<float>> GetWaveform(long key, string userId)
         {
             var fileData = _dal.Get(key);
-            string relativePath = MAMUtility.GetRelativePath(fileData.FilePath);
-            return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, relativePath);
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+                return MAMUtility.GetWaveformFromPath(fileData.FilePath, userId, remoteIp);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
+        /// <summary>
+        /// 공유소재- 임시 다운로드
+        /// </summary>
+        /// <param name="seq"></param>
+        /// <returns></returns>
+        [HttpGet("temp-download/{seq}")]
+        public IActionResult TempDownload([FromServices] ServiceResolver sr, long seq)
+        {
+            var fileData = _dal.Get(seq);
+
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            try
+            {
+                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
+                return Ok();
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+        }
+
+
+
 
         /// <summary>
         /// 공유소재 - 삭제

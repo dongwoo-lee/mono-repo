@@ -57,6 +57,7 @@
     :fileKey="soundItem.fileToken"
     :streamingUrl="streamingUrl"
     :waveformUrl="waveformUrl"
+    :tempDownloadUrl="tempDownloadUrl"
     requestType="token"
     @closePlayer="onClosePlayer">
     </PlayerPopup>
@@ -73,6 +74,7 @@ export default {
     return {
       streamingUrl : '/api/musicsystem/streaming',
       waveformUrl : '/api/musicsystem/waveform',
+      tempDownloadUrl : '/api/musicsystem/temp-download',
 
       searchItems: {
         searchText: '',

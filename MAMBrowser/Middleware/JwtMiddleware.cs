@@ -53,11 +53,11 @@ namespace MAMBrowser.Middleware
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
 
-                context.Items["UserId"] = userId;
+                context.Items[MAMUtility.USER_ID] = userId;
             }
             catch(Exception ex)
             {
-                context.Items["UserId"] = null;
+                context.Items[MAMUtility.USER_ID] = null;
             }
         }
     }

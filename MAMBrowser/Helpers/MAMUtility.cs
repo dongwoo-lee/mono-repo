@@ -1,8 +1,10 @@
 ﻿using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
+using MAMBrowser.Foundation;
 using MAMBrowser.Processor;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using NAudio.Wave;
 using Newtonsoft.Json;
@@ -28,46 +30,203 @@ namespace MAMBrowser.Helpers
         public const string DTM19 = "yyyy-MM-dd HH:mm:ss";
         public static string LocalIpAddress;
         public static string TempDownloadPath;
-
+        public const string WAV = ".WAV";
+        public const string MP2 = ".MP2";
+        public const string MP3 = ".MP3";
+        public const string EGY = ".EGY";
+        public const string USER_ID = "UserId";
         public static string TokenIssuer { get; set; }
         public static string TokenSignature { get; set; }
 
-        public static string TempDownloadToLocal(string remoteIp, IFileDownloadService fileService, string relativePath, out string contentType)
+
+        public static FileStreamResult Download(string token, HttpResponse response, IFileService fileService, string inline)
         {
-            ClearTempDownloadFolder(remoteIp);
-            
+            string filePath = "";
+            if (MAMUtility.ValidateMAMToken(token, ref filePath))
+            {
+                string fileName = Path.GetFileName(filePath);
+                var fileExtProvider = new FileExtensionContentTypeProvider();
+                string contentType;
+                if (!fileExtProvider.TryGetContentType(filePath, out contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
+                var stream = fileService.GetFileStream(filePath, 0);
+                System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+                {
+                    FileName = fileName,
+                    Inline = inline == "Y" ? true : false
+                };
+                response.Headers.Add("Content-Disposition", cd.ToString());
+                return new FileStreamResult(stream, contentType);
+            }
+            else
+                throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
+        }
+        public static void TempDownload(string token, string userId, string remoteIp, IFileService fileService)
+        {
+            string filePath = "";
+            if (MAMUtility.ValidateMAMToken(token, ref filePath))
+            {
+                string fileName = Path.GetFileName(filePath);
+
+                var egyFileName = Path.GetFileNameWithoutExtension(filePath) + MAMUtility.EGY;
+                var egyFilePath = filePath.Replace(fileName, egyFileName);
+
+                MAMUtility.TempDownloadToLocal(userId, remoteIp, fileService, filePath);       //임시파일 다운로드
+                MAMUtility.TempDownloadToLocal(userId, remoteIp, fileService, egyFilePath);    //파형임시파일 다운로드
+            }
+            else
+                throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
+        }
+        public static List<float> GetWaveform(string token, string userId, string remoteIp)
+        {
+            string filePath = "";
+            if (MAMUtility.ValidateMAMToken(token, ref filePath))
+            {
+                string fileName = Path.GetFileName(filePath);
+                //파형검색시 mp2파일은 wav로 치환됨.
+                fileName = Path.GetExtension(fileName).ToUpper() == MAMUtility.MP2 ? fileName.ToUpper().Replace(MAMUtility.MP2, MAMUtility.WAV) : fileName;
+                string tempSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+                return MAMUtility.GetWaveformCore(tempSoundPath);
+            }
+            else
+                throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
+        }
+        public static IActionResult Streaming(string token, string direct, string userId, string remoteIp, IFileService fileService)
+        {
+            string filePath = "";
+            if (MAMUtility.ValidateMAMToken(token, ref filePath))
+            {
+                string fileName = Path.GetFileName(filePath);
+                fileName = Path.GetExtension(fileName).ToUpper() == MAMUtility.MP2 ? fileName.ToUpper().Replace(MAMUtility.MP2, MAMUtility.WAV) : fileName;
+                //if (direct.ToUpper() == "Y")
+                //{
+                //    int fileSize = 0;
+                //    return new PushStreamResult(filePath, fileName, fileSize, fileService);
+                //}
+                //else
+                //{
+                    var provider = new FileExtensionContentTypeProvider();
+                    string contentType;
+                    if (!provider.TryGetContentType(fileName, out contentType))
+                    {
+                        contentType = "application/octet-stream";
+                    }
+                    string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+                    var result = new PhysicalFileResult(tempDownloadedPath, contentType);
+                    result.EnableRangeProcessing = true;
+                    return result;
+                //}
+            }
+            else
+                throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
+        }
+
+
+        public static FileStreamResult DownloadFromPath(string filePath, HttpResponse response, IFileService fileService, string inline)
+        {
+            string fileName = Path.GetFileName(filePath);
             var fileExtProvider = new FileExtensionContentTypeProvider();
-            if (!fileExtProvider.TryGetContentType(relativePath, out contentType))
+            string contentType;
+            if (!fileExtProvider.TryGetContentType(filePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-
-            if (string.IsNullOrEmpty(remoteIp))
+            var stream = fileService.GetFileStream(filePath, 0);
+            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                remoteIp = "system";
+                FileName = fileName,
+                Inline = inline == "Y" ? true : false
+            };
+            response.Headers.Add("Content-Disposition", cd.ToString());
+            return new FileStreamResult(stream, contentType);
+        }
+        public static void TempDownloadFromPath(string filePath, string userId, string remoteIp, IFileService fileService)
+        {
+            string fileName = Path.GetFileName(filePath);
+
+            var egyFileName = Path.GetFileNameWithoutExtension(filePath) + MAMUtility.EGY;
+            var egyFilePath = filePath.Replace(fileName, egyFileName);
+
+            MAMUtility.TempDownloadToLocal(userId, remoteIp, fileService, filePath);       //임시파일 다운로드
+            MAMUtility.TempDownloadToLocal(userId, remoteIp, fileService, egyFilePath);    //파형임시파일 다운로드
+        }
+        public static List<float> GetWaveformFromPath(string filePath, string userId, string remoteIp)
+        {
+            string fileName = Path.GetFileName(filePath);
+            //파형검색시 mp2파일은 wav로 치환됨.
+            fileName = Path.GetExtension(fileName).ToUpper() == MAMUtility.MP2 ? fileName.ToUpper().Replace(MAMUtility.MP2, MAMUtility.WAV) : fileName;
+            string tempSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            return MAMUtility.GetWaveformCore(tempSoundPath);
+        }
+        public static IActionResult StreamingFromPath(string filePath, string direct, string userId, string remoteIp, IFileService fileService)
+        {
+            string relativePath = MAMUtility.GetRelativePath(filePath);
+            string fileName = Path.GetFileName(filePath);
+            fileName = Path.GetExtension(fileName).ToUpper() == MAMUtility.MP2 ? fileName.ToUpper().Replace(MAMUtility.MP2, MAMUtility.WAV) : fileName;
+            //if (direct.ToUpper() == "Y")
+            //{
+            //    int fileSize = 0;
+            //    return new PushStreamResult(relativePath, fileName, fileSize, fileService);
+            //}
+            //else
+            //{
+                var provider = new FileExtensionContentTypeProvider();
+                string contentType;
+                if (!provider.TryGetContentType(fileName, out contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
+                string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+                var result = new PhysicalFileResult(tempDownloadedPath, contentType);
+                result.EnableRangeProcessing = true;
+                return result;
+            //}
+        }
+
+
+
+        public static void TempDownloadToLocal(string userId, string remoteIp, IFileDownloadService fileService, string filePath)
+        {
+            //ClearTempDownloadFolder(remoteIp);
+
+            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1")
+            {
+                remoteIp = "localhost";
             }
 
-            var targetFolder = @$"{TempDownloadPath}\{remoteIp}";
+            var targetFolder = GetTempFolder(userId, remoteIp);
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
 
-            var targetPath = @$"{targetFolder}\{ Guid.NewGuid().ToString()}.tmp";
-            var fileExt = Path.GetExtension(relativePath).ToLower();
-            if (fileExt.ToUpper() == ".WAV")
+            var soundFileName = Path.GetFileName(filePath);
+            var ext = Path.GetExtension(filePath).ToUpper();
+            var targetSoundPath = GetTempFilePath(userId, remoteIp, soundFileName);
+            if (fileService.ExistFile(filePath))
             {
-                fileService.DownloadFile(relativePath, targetPath);
-            }
-            else if(fileExt.ToUpper() == ".MP2")
-            {
-                using (var mp2InputStream = fileService.GetFileStream(relativePath, 0))
+                fileService.DownloadFile(filePath, targetSoundPath);
+                //다운로드된 mp2는 wav로 변환함.(mp3는 상관없음)
+                if (ext == MAMUtility.MP2)
                 {
-                    using (var outWavStream = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite))
+                    var convertFilePath = GetTempFilePath(userId, remoteIp, soundFileName.ToUpper().Replace(ext,MAMUtility.WAV));
+                    using (FileStream inStream = new FileStream(targetSoundPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
-                        AudioEngine.ConvertMp2ToWav(mp2InputStream, outWavStream);
+                        using (FileStream outStream = new FileStream(convertFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                        {
+                            AudioEngine.ConvertMp2ToWav(inStream, outStream);
+                        }
                     }
                 }
             }
-            return targetPath;
+        }
+        private static string GetTempFolder(string userId, string remoteIp)
+        {
+            return @$"{TempDownloadPath}\{userId}_{remoteIp}";
+        }
+        public static string GetTempFilePath(string userId, string remoteIp, string fileName)
+        {
+            return @$"{GetTempFolder(userId, remoteIp)}\{fileName}";
         }
 
         public static void ClearTempDownloadFolder(string ip)
@@ -88,50 +247,38 @@ namespace MAMBrowser.Helpers
                 }
             }
         }
-        public static List<float> GetWaveform(string ip, IFileDownloadService fileService, string relativePath)
+        public static List<float> GetWaveformCore(string soundFilePath)
         {
-            string waveFileName = Path.GetFileName(relativePath);
-            string waveformFileName = $"{Path.GetFileNameWithoutExtension(relativePath)}.egy";
-            string waveformFilePath = relativePath.Replace(waveFileName, waveformFileName);
-
-            if (fileService.ExistFile(waveformFilePath))
+            var soundfileName = Path.GetFileName(soundFilePath);
+            var egyFileName = Path.GetFileNameWithoutExtension(soundFilePath) + EGY;
+            var egyFilePath = soundFilePath.Replace(soundfileName, egyFileName);
+            if (File.Exists(egyFilePath))
             {
-                var downloadStream = fileService.GetFileStream(waveformFilePath, 0);
-                return AudioEngine.GetDecibelFromEgy(downloadStream);
+                using (var stream = new FileStream(egyFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    return AudioEngine.GetDecibelFromEgy(stream);
+                }
             }
             else
             {
-                var fileExt = Path.GetExtension(relativePath);
-                Stream inputStream = fileService.GetFileStream(relativePath, 0);
-                if (fileExt.ToUpper() == ".MP2")
+                using (var stream = new FileStream(soundFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
-                    var targetFolder = @$"{TempDownloadPath}\{ip}";
-                    if (!Directory.Exists(targetFolder))
-                        Directory.CreateDirectory(targetFolder);
-
-                    var targetPath = @$"{targetFolder}\{ Guid.NewGuid().ToString()}.tmp";
-                    FileStream fs = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite);
-                    AudioEngine.ConvertMp2ToWav(inputStream, fs);
-
-                    inputStream = new FileStream(targetPath, FileMode.Open, FileAccess.Read);
+                    var ext = Path.GetExtension(soundFilePath).ToUpper();
+                    switch (ext)
+                    {
+                        case WAV:
+                            return AudioEngine.GetDecibelFromWav(stream, 2);
+                        //case MP2:       파형검색시 mp2파일은 wav로 치환됨.
+                        //    break;
+                        case MP3:
+                            return AudioEngine.GetDecibelFromMp3(stream, 2);
+                        default:
+                            return new List<float>();
+                    }
                 }
-
-                //var targetPath = @$"{TempDownloadPath}\{userId}\{Guid.NewGuid().ToString()}.tmp";
-                //using (FileStream fs = new FileStream(targetPath, FileMode.Create, FileAccess.ReadWrite))
-                // 향후에 수정 필요. ftp는 wavefilereader로 직접 못읽으니..헤더크기만큼 빼고 바로 스트림으로 넘겨주고.
-                // 함수안에서 바로 데이터 뽑아낼수 있도록..
-                MemoryStream ms = new MemoryStream();
-                inputStream.CopyTo(ms);
-                inputStream.Dispose();
-
-                ms.Position = 0;
-                WaveFileReader reader = new WaveFileReader(ms);
-                var data = AudioEngine.GetDecibelFromWav(ms, 2);
-                ms.Dispose();
-                return data;
             }
         }
-
+    
        
         public static string SeedEncrypt(string data)
         {

@@ -8,7 +8,8 @@ let mixinCommon = {
         return {
             streamingUrl : '/api/products/streaming',
             waveformUrl : '/api/products/waveform',
-            
+            tempDownloadUrl : '/api/products/temp-download',
+
             responseData: {                          // 응답 결과
                 data: null,
                 rowPerPage: 16,

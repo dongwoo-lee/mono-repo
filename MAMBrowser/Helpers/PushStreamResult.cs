@@ -53,12 +53,12 @@ namespace MAMBrowser.Helpers
         public void OnStreamAvailable(ActionContext context, Stream stream /*, CancellationToken requestAborted*/)
         {
             var rangeData = context.HttpContext.Request.GetTypedHeaders().Range;
-            var fileExt = Path.GetExtension(_filePath);
+            var fileExt = Path.GetExtension(_filePath).ToUpper();
             if (rangeData == null)
             {
                 var inputStream = _fileService.GetFileStream(_filePath, 0);
                 context.HttpContext.Response.ContentLength = _fileSize;
-                if (fileExt != ".mp2")
+                if (fileExt != MAMUtility.MP2)
                 {
                     inputStream.CopyTo(stream);
                 }
@@ -76,7 +76,7 @@ namespace MAMBrowser.Helpers
                 context.HttpContext.Response.GetTypedHeaders().ContentLength = (long)contentSize;
                 context.HttpContext.Response.StatusCode = 206;
 
-                if (fileExt != ".mp2")
+                if (fileExt != MAMUtility.MP2)
                 {
                     downloadStream.CopyTo(stream);
                 }

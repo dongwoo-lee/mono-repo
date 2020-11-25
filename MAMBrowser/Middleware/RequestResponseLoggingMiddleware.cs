@@ -77,7 +77,7 @@ namespace MAMBrowser.Middleware
 
                 string clientIp = request.HttpContext.Connection.RemoteIpAddress.ToString();
                 //var token = request.Headers["X-Csrf-Token"].FirstOrDefault()?.Split(" ").Last();
-                string userId = request.HttpContext.Items["UserId"] as string;
+                string userId = request.HttpContext.Items[MAMUtility.USER_ID] as string;
                 string userName = userId;
                 string description = requestInfo;
                 string note = "";

@@ -1,9 +1,11 @@
 ﻿using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualBasic.CompilerServices;
+using NAudio.Lame;
 using NAudio.Utils;
 using NAudio.Wave;
 using NLayer;
+using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -202,6 +204,7 @@ namespace MAMBrowser.Helpers
         }
         public static List<float> GetDecibelFromWav(Stream stream, int codingSize)
         {
+            WaveFileReader reader = new WaveFileReader(stream);
             int count = 1152 * 2 * 2; //wav일때만...
             List<float> peekValues = new List<float>();
             byte[] buffer = new byte[count];
@@ -209,7 +212,7 @@ namespace MAMBrowser.Helpers
             {
                 int leftMax = 0;
                 int rightMax = 0;
-                var readCount = stream.Read(buffer, 0, buffer.Length);
+                var readCount = reader.Read(buffer, 0, buffer.Length);
                 if (readCount >= count)
                 {
                     for (int i = 0; i < readCount; i += 2 * codingSize)
@@ -231,7 +234,71 @@ namespace MAMBrowser.Helpers
             }
             return peekValues;
         }
+        public static List<float> GetDecibelFromMp2(Stream stream, int codingSize)
+        {
+            Mp3FileReader reader = new Mp3FileReader(stream, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
+            int count = 1152 * 2 * 2; //wav일때만...
+            List<float> peekValues = new List<float>();
+            byte[] buffer = new byte[count];
+            while (true)
+            {
+                int leftMax = 0;
+                int rightMax = 0;
+                var readCount = reader.Read(buffer, 0, buffer.Length);
+                if (readCount >= count)
+                {
+                    for (int i = 0; i < readCount; i += 2 * codingSize)
+                    {
+                        int left = Math.Abs(GetValue(buffer, codingSize, i));
+                        int right = Math.Abs(GetValue(buffer, codingSize, i + codingSize));
+                        if (leftMax < left)
+                            leftMax = left;
+                        if (rightMax < right)
+                            rightMax = right;
 
+                    }
+                    peekValues.Add(GetDecibelPercent(GetDecibel(leftMax, codingSize)));
+                    peekValues.Add(-GetDecibelPercent(GetDecibel(rightMax, codingSize)));
+                    buffer = new byte[count];
+                }
+                else
+                    break;
+            }
+            return peekValues;
+        }
+        public static List<float> GetDecibelFromMp3(Stream stream, int codingSize)
+        {
+            Mp3FileReader reader = new Mp3FileReader(stream);
+
+            int count = 1152 * 2 * 2; //wav일때만...
+            List<float> peekValues = new List<float>();
+            byte[] buffer = new byte[count];
+            while (true)
+            {
+                int leftMax = 0;
+                int rightMax = 0;
+                var readCount = reader.Read(buffer, 0, buffer.Length);
+                if (readCount >= count)
+                {
+                    for (int i = 0; i < readCount; i += 2 * codingSize)
+                    {
+                        int left = Math.Abs(GetValue(buffer, codingSize, i));
+                        int right = Math.Abs(GetValue(buffer, codingSize, i + codingSize));
+                        if (leftMax < left)
+                            leftMax = left;
+                        if (rightMax < right)
+                            rightMax = right;
+
+                    }
+                    peekValues.Add(GetDecibelPercent(GetDecibel(leftMax, codingSize)));
+                    peekValues.Add(-GetDecibelPercent(GetDecibel(rightMax, codingSize)));
+                    buffer = new byte[count];
+                }
+                else
+                    break;
+            }
+            return peekValues;
+        }
 
         private static int GetValue(byte[] data, int codingSize, int offset)
         {
@@ -327,7 +394,7 @@ namespace MAMBrowser.Helpers
         {
             var wf = new WaveFormat(44100, 16, 2);
             var mpegFile = new MpegFile(mp2Stream);
-            float[] buffer = new float[44100];
+            float[] buffer = new float[wf.SampleRate * 100];
 
             using (WaveFileWriter writer = new WaveFileWriter(outWavStream, wf))
             {
@@ -345,7 +412,28 @@ namespace MAMBrowser.Helpers
                 writer.Flush();
             }
         }
+        public static void ConvertMp2ToMp3(Stream mp2Stream, Stream outWavStream)
+        {
+            var wf = new WaveFormat(44100, 16, 2);
+            var mpegFile = new MpegFile(mp2Stream);
+            float[] buffer = new float[wf.SampleRate * 100];
 
+            using (LameMP3FileWriter writer = new LameMP3FileWriter(outWavStream, wf, LAMEPreset.ABR_320))
+            {
+                while (true)
+                {
+                    var read = mpegFile.ReadSamples(buffer, 0, buffer.Length);
+
+                    if (read <= 0)
+                        break;
+                    else
+                    {
+                        WriteSamples(buffer, 0, read, writer, wf);
+                    }
+                }
+                writer.Flush();
+            }
+        }
 
         /// <summary>
         /// Writes 32 bit floating point samples to the Wave file
