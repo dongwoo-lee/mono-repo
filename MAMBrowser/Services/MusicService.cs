@@ -37,16 +37,7 @@ namespace MAMBrowser.Services
         public string FileUrl { get; set; }
 
         private readonly IDictionary<string,object> _storageMap;
-        private string HexEscape(string data)
-        {
-            byte[] btArray = Encoding.UTF8.GetBytes(data);
-            string encodedData = "";
-            foreach (char c in btArray)
-            {
-                encodedData += Uri.HexEscape(c);
-            }
-            return encodedData;
-        }
+        
         public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap)
         {
             _storageMap = storageMap.Value.Map;
@@ -212,13 +203,13 @@ namespace MAMBrowser.Services
             
             var encryptedWavFilePath = musicInfo["filePath"];
             var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedWavFilePath);
-            var domain = MAMUtility.GetDomain(decryptedFilePath);
-            var HostAndPort = _storageMap[domain] as string;
+            var host = MAMUtility.GetHost(decryptedFilePath);
+            var HostAndPort = _storageMap[host] as string;
             
-            var host = HostAndPort.Split(":").First();
+            var domain = HostAndPort.Split(":").First();
             var port = Convert.ToInt32(HostAndPort.Split(":").Last());
             StringContent sc = new StringContent(strAlumbInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
-            var builder = new UriBuilder("http", host, port, ImageListUrl);
+            var builder = new UriBuilder("http", domain, port, ImageListUrl);
             HttpClient client = new HttpClient();
             var response = client.PostAsync(builder.ToString(), sc).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -243,7 +234,7 @@ namespace MAMBrowser.Services
             {
                 contentType = "application/octet-stream";
             }
-            var domain = MAMUtility.GetDomain(decryptedFilePath);
+            var domain = MAMUtility.GetHost(decryptedFilePath);
           
             var host = domain;
             var port = 90;
@@ -279,11 +270,59 @@ namespace MAMBrowser.Services
 
         public Stream GetFileStream(string sourcePath, long offSet)
         {
-            throw new NotImplementedException();
+            return null;
         }
         public bool DownloadFile(string fromRelativePath, string toRelativePath)
         {
+
             return true;
+        }
+        /// <summary>
+        /// wav, egy 파일 임시다운로드
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="remoteIp"></param>
+        /// <param name="musicToken"></param>
+        /// <param name="path"></param>
+        public void TempDownloadToLocal(string userId, string remoteIp, string token,  string path)
+        {
+            var host = MAMUtility.GetHost(path);
+            var domainAndPort = _storageMap[host] as string;
+            var domain = domainAndPort.Split(":").First();
+            var port = Convert.ToInt32(domainAndPort.Split(":").Last());
+
+            MAMUtility.ClearTempFolder(userId, remoteIp);
+
+            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1")
+            {
+                remoteIp = "localhost";
+            }
+
+            var targetFolder = MAMUtility.GetTempFolder(userId, remoteIp);
+            if (!Directory.Exists(targetFolder))
+                Directory.CreateDirectory(targetFolder);
+
+            var soundFileName = Path.GetFileName(path);
+            var ext = Path.GetExtension(path).ToUpper();
+            var targetSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, soundFileName);
+            var builder = new UriBuilder("http", domain, port, ImageListUrl);
+            HttpClient client = new HttpClient();
+            StringContent sc = new StringContent(token, Encoding.UTF8, "application/json");
+            var response = client.PostAsync(builder.ToString(), sc).Result;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (var stream = response.Content.ReadAsStreamAsync().Result)
+                {
+                   using(var outStream = new FileStream(targetSoundPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    {
+                        stream.CopyTo(outStream);
+                    }
+                }
+            }
+            else
+            {
+                //로그처리
+            }
         }
 
         public bool ExistFile(string fromRelativePath)

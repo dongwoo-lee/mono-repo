@@ -94,7 +94,7 @@ namespace MAMBrowser.Processor
         }
         public string GetAudioFormat(string filePath)
         {
-            string sourceHostName = MAMUtility.GetDomain(filePath);
+            string sourceHostName = MAMUtility.GetHost(filePath);
             using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
             {
                 var ext = Path.GetExtension(filePath);

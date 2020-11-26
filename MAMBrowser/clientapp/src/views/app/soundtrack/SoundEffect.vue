@@ -74,7 +74,7 @@ export default {
     return {
       streamingUrl : '/api/musicsystem/streaming',
       waveformUrl : '/api/musicsystem/waveform',
-      tempDownloadUrl : '/api/musicsystem/temp-download',
+     tempDownloadUrl : '/api/musicsystem/temp-download',
 
       searchItems: {
         searchText: '',

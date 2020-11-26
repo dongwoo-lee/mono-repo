@@ -7,10 +7,10 @@
     <template slot="default" >
     <b-row>
     <b-col cols="9"> 
-     image
+     개선중
     </b-col>
     <b-col cols="3">
-        lyrics
+        개선중
     </b-col>
     </b-row>
     <Player
@@ -38,8 +38,7 @@
 export default {
     data () {
         return {
-            imageListUrl : 'albums/images-path',
-            imageUrl : 'albums/images/files',
+            tempImageDownloadUrl : '/api/musicsystem/temp-image-download',
             lyricsUrl : 'lyrics',
             imagePathTokenList : [],
             ui:{

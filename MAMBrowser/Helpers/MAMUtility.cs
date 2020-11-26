@@ -35,6 +35,13 @@ namespace MAMBrowser.Helpers
         public const string MP3 = ".MP3";
         public const string EGY = ".EGY";
         public const string USER_ID = "UserId";
+
+        public const string MUSIC_FILEPATH = "UserId";
+        public const string MUSIC_IP = "UserId";
+        public const string MUSIC_EXPIRE = "UserId";
+
+
+
         public static string TokenIssuer { get; set; }
         public static string TokenSignature { get; set; }
 
@@ -54,7 +61,7 @@ namespace MAMBrowser.Helpers
                 var stream = fileService.GetFileStream(filePath, 0);
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    FileName = fileName,
+                    FileName = WebUtility.UrlEncode(fileName),
                     Inline = inline == "Y" ? true : false
                 };
                 response.Headers.Add("Content-Disposition", cd.ToString());
@@ -136,7 +143,7 @@ namespace MAMBrowser.Helpers
             var stream = fileService.GetFileStream(filePath, 0);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = fileName,
+                FileName = WebUtility.UrlEncode(fileName),
                 Inline = inline == "Y" ? true : false
             };
             response.Headers.Add("Content-Disposition", cd.ToString());
@@ -189,7 +196,7 @@ namespace MAMBrowser.Helpers
 
         public static void TempDownloadToLocal(string userId, string remoteIp, IFileDownloadService fileService, string filePath)
         {
-            //ClearTempDownloadFolder(remoteIp);
+            ClearTempFolder(userId, remoteIp);
 
             if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1")
             {
@@ -220,7 +227,7 @@ namespace MAMBrowser.Helpers
                 }
             }
         }
-        private static string GetTempFolder(string userId, string remoteIp)
+        public static string GetTempFolder(string userId, string remoteIp)
         {
             return @$"{TempDownloadPath}\{userId}_{remoteIp}";
         }
@@ -229,17 +236,24 @@ namespace MAMBrowser.Helpers
             return @$"{GetTempFolder(userId, remoteIp)}\{fileName}";
         }
 
-        public static void ClearTempDownloadFolder(string ip)
+        public static void ClearTempFolder(string userId, string remoteIp)
         {
-            var targetFolder = @$"{TempDownloadPath}\{ip}";
+            var targetFolder = GetTempFolder(userId, remoteIp);
             if (Directory.Exists(targetFolder))
             {
+                DateTime now = DateTime.Now;
                 var fileFullPathList = Directory.GetFiles(targetFolder);
                 foreach (var filePath in fileFullPathList)
                 {
                     try
                     {
-                        File.Delete(filePath);
+                        var createdDtm = File.GetLastAccessTime(filePath);
+                        
+                        if (now.Subtract(createdDtm).TotalSeconds > 300)
+                            File.Delete(filePath);
+                    }
+                    catch (IOException ex)
+                    {
                     }
                     catch (Exception ex)
                     {
@@ -365,10 +379,10 @@ namespace MAMBrowser.Helpers
         public static string GetRelativePath(string filePath)
         {
             string domainFullPath = "";
-            var domainPath = GetDomain(filePath);
+            var domainPath = GetHost(filePath);
             return filePath.Remove(0, filePath.IndexOf(domainPath) + domainPath.Length);
         }
-        public static string GetDomain(string filePath)
+        public static string GetHost(string filePath)
         {
             string domainPath = "";
             if (filePath.IndexOf("\\\\") == 0)

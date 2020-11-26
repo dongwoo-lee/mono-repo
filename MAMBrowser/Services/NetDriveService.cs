@@ -27,7 +27,7 @@ namespace MAMBrowser.Processor
         }
         public Stream GetFileStream(string sourcePath, long offSet)
         {
-            string hostName = MAMUtility.GetDomain(sourcePath);
+            string hostName = MAMUtility.GetHost(sourcePath);
             using (NetworkShareAccessor.Access(hostName, UserId, UserPass))
             {
                 FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -36,7 +36,7 @@ namespace MAMBrowser.Processor
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
-            string sourceHostName = MAMUtility.GetDomain(fromPath);
+            string sourceHostName = MAMUtility.GetHost(fromPath);
             
             using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
@@ -68,7 +68,7 @@ namespace MAMBrowser.Processor
 
         public bool ExistFile(string fromPath)
         {
-            string sourceHostName = MAMUtility.GetDomain(fromPath);
+            string sourceHostName = MAMUtility.GetHost(fromPath);
 
             using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
@@ -78,7 +78,7 @@ namespace MAMBrowser.Processor
 
         public string GetAudioFormat(string filePath)
         {
-            string sourceHostName = MAMUtility.GetDomain(filePath);
+            string sourceHostName = MAMUtility.GetHost(filePath);
             using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
             {
                 var ext = Path.GetExtension(filePath);

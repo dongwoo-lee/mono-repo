@@ -515,7 +515,7 @@ namespace MAMBrowser.Controllers
                     var stream = _fileService.GetFileStream(filePath, 0);
                     System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                     {
-                        FileName = fileName,
+                        FileName = WebUtility.UrlEncode(fileName),
                         Inline = inline == "Y" ? true : false
                     };
                     Response.Headers.Add("Content-Disposition", cd.ToString());
@@ -670,7 +670,6 @@ namespace MAMBrowser.Controllers
         [HttpGet("dl30/waveform/{seq}")]
         public ActionResult<List<float>> GetDl30Waveform([FromServices] ServiceResolver sr, long seq, string userId)
         {
-            var fileService = sr("DLArchiveConnection");
             var fileData = _dal.GetDLArchive(seq);
             try
             {
@@ -688,7 +687,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        [HttpGet("temp-download/{seq}")]
+        [HttpGet("dl30/temp-download/{seq}")]
         public IActionResult TempDl30Download([FromServices] ServiceResolver sr, long seq)
         {
             var fileService = sr("DLArchiveConnection");
@@ -699,7 +698,7 @@ namespace MAMBrowser.Controllers
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
             try
             {
-                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
+                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, fileService);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)

@@ -3,6 +3,7 @@ using MAMBrowser.Entiies;
 using MAMBrowser.Helpers;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
@@ -10,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -123,7 +126,7 @@ namespace MAMBrowser.Controllers
             var stream = _fileService.GetFileStream(token, 0);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = fileName,
+                FileName = WebUtility.UrlEncode(fileName),
                 Inline = inline == "Y" ? true : false
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
@@ -136,7 +139,7 @@ namespace MAMBrowser.Controllers
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
         [HttpPost("streaming")]
-        public IActionResult MusicStreaming([FromQuery] string token, [FromQuery] string direct = "N")
+        public IActionResult MusicStreaming([FromQuery] string token, string userId, [FromQuery] string direct = "N")
         {
             string fileName = Path.GetFileName(token);
 
@@ -158,12 +161,74 @@ namespace MAMBrowser.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost("waveform")]
-        public List<float> MusicGetWaveform([FromQuery] string token)
+        public List<float> MusicGetWaveform([FromQuery] string token, string userId)
         {
             //var fileData = _dal.Get(seq);
             //return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, token);
             return null;
         }
+        /// <summary>
+        /// 음악/효과음 소재 - 임시 다운로드
+        /// </summary>
+        /// <param name="token">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpPost("temp-download/{token}")]
+        public IActionResult MusicTempDownload([FromQuery] string token)
+        {
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            string strFileMusicToken = "";
+            if (MAMUtility.ValidateMAMToken(token, ref strFileMusicToken))
+            {
+                var fileInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
+                var waveformInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
+
+                //waveform 토큰 만들기(파일토큰의 경로에서 확장자만 EGY로변경)
+                string wavPath = fileInfo[MAMUtility.MUSIC_FILEPATH]; //ip, expire
+                waveformInfo[MAMUtility.MUSIC_FILEPATH] = Path.ChangeExtension(wavPath, MAMUtility.EGY);
+                string strWaveformMusicToken = JsonSerializer.Serialize(waveformInfo);
+                string waveformPath = waveformInfo[MAMUtility.MUSIC_FILEPATH];
+
+                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, wavPath);
+                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, waveformPath);
+                return Ok();
+            }
+            else
+                return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
+        }
+
+        /// <summary>
+        /// 음악/효과음 소재 - 앨범 이미지 임시 다운로드
+        /// </summary>
+        /// <param name="token">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpPost("temp-image-download")]
+        public IActionResult AlbumImageTempDownload([FromQuery] string token)
+        {
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
+            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            string strFileMusicToken = "";
+            if (MAMUtility.ValidateMAMToken(token, ref strFileMusicToken))
+            {
+                var fileInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
+                var waveformInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
+
+                //waveform 토큰 만들기(파일토큰의 경로에서 확장자만 EGY로변경)
+                string wavPath = fileInfo[MAMUtility.MUSIC_FILEPATH]; //ip, expire
+                waveformInfo[MAMUtility.MUSIC_FILEPATH] = Path.ChangeExtension(wavPath, MAMUtility.EGY);
+                string strWaveformMusicToken = JsonSerializer.Serialize(waveformInfo);
+                string waveformPath = waveformInfo[MAMUtility.MUSIC_FILEPATH];
+
+                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, wavPath);
+                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, waveformPath);
+                return Ok();
+            }
+            else
+                return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
+        }
+
 
         /// <summary>
         /// 일반 소재 - 파형 요청
@@ -176,6 +241,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
+                result.ResultObject = new DTO_RESULT_OBJECT<string>();
                 result.ResultObject.Data = _fileService.SearchLyrics(lyricsSeq);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -198,18 +264,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<string>> result = new DTO_RESULT<DTO_RESULT_LIST<string>>();
             try
             {
+                result.ResultObject = new DTO_RESULT_LIST<string>();
                 result.ResultObject.Data = _fileService.GetImageTokenList(token, albumToken);
-                //string path1 = @"\\192.168.1.201\detail-small-2";
-                //string path2 = @"\\192.168.1.201\detail-small-3";
-                //string path3 = @"\\192.168.1.201\profile-pic-6";
-                //string path4 = @"\\192.168.1.201\profile-pic-l-9";
-                //List<string> pathList = new List<string>();
-                //pathList.Add(MAMUtility.GenerateMusicToken(path1));
-                //pathList.Add(MAMUtility.GenerateMusicToken(path2));
-                //pathList.Add(MAMUtility.GenerateMusicToken(path3));
-                //pathList.Add(MAMUtility.GenerateMusicToken(path4));
-                //result.ResultObject.Data = pathList;
-
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

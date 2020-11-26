@@ -120,7 +120,6 @@ export default {
       streamingUrl : '/api/musicsystem/streaming',
       waveformUrl : '/api/musicsystem/waveform',
       tempDownloadUrl : '/api/musicsystem/temp-download',
-
       allSelected: false,
       indeterminate: false,
 

@@ -69,7 +69,6 @@ namespace MAMBrowser.DTO
                 FileToken = MAMUtility.GenerateMusicToken(filePath);
             }
         }
-        
         protected string albumImageFilePath;
         /// <summary>
         /// 앨범커버 경로
