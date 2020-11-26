@@ -18,6 +18,7 @@ namespace MAMBrowser.Processor
         bool ExistFile(string fromPath);
         string GetAudioFormat(string filePath);
         void Delete(string filePath);
+        void DeleteDirectory(string userId);
     }
 
     public interface IFileDownloadService

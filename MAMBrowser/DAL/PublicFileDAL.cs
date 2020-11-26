@@ -74,7 +74,9 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_
         }
         public bool DeletePhysical(long seq)
         {
-            //파일 실제 삭제 이후
+            //파일 실제 삭제
+            var fileData = Get(seq);
+            _fileService.Delete(fileData.FilePath);
 
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();

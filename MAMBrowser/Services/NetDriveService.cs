@@ -120,5 +120,10 @@ namespace MAMBrowser.Processor
         {
             throw new NotImplementedException();
         }
+
+        public void DeleteDirectory(string userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

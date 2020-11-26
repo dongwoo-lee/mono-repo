@@ -132,7 +132,22 @@ namespace MAMBrowser.Processor
 
         public void Delete(string filePath)
         {
-            throw new NotImplementedException();
+            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            {
+                string relativePath = MAMUtility.GetRelativePath(filePath);
+                if(ftpClient.FileExists(relativePath))
+                    ftpClient.DeleteFile(relativePath);
+            }
+        }
+
+        public void DeleteDirectory(string userId)
+        {
+            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            {
+                string relativePath = $"{UploadFolder}/{userId}";
+                if(ftpClient.DirectoryExists(relativePath))
+                    ftpClient.DeleteDirectory(relativePath);
+            }
         }
     }
 }

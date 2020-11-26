@@ -93,30 +93,90 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         }
         public bool DeletePhysical(string userId, LongList seqList)
         {
-            //파일 실제 삭제 이후
+            //파일 실제 삭제
+            long totalDeleteSize = 0;
+            foreach (var seq in seqList)
+            {
+                var fileData = Get(seq);
+                totalDeleteSize += fileData.FileSize;
+                _fileService.Delete(fileData.FilePath);
+            }
 
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"DELETE M30_PRIVATE_SPACE WHERE USED='N' AND SEQ IN :SEQ");
-            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
-            repository.Delete(queryTemplate.RawSql, param);
+
+            var builder2 = new SqlBuilder();
+            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            DynamicParameters param2 = new DynamicParameters();
+            param2.Add("USER_ID", userId);
+            param2.Add("FILE_SIZE", -(totalDeleteSize));
+
+            TransactionRepository repository = new TransactionRepository();
+            repository.BeginTransaction();
+            try
+            {
+                repository.Delete(queryTemplate.RawSql, param);
+                repository.Update(queryTemplate2.RawSql, param2);
+                repository.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                repository.RollbackTransaction();
+                throw;
+            }
+
             return true;
         }
 
-        public bool DeleteAllPhysical(string userId)
+        /// <summary>
+        /// 휴지통 비우기
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public bool DeleteAllPhysical(string userId)    
         {
-            //파일 실제 삭제 이후
+            var builder3 = new SqlBuilder();
+            var queryTemplate3 = builder3.AddTemplate(@"SELECT SUM(FILE_SIZE) AS TOTAL FROM M30_PRIVATE_SPACE WHERE USED='N'");
+            Repository repository3 = new Repository();
+            var resultMapping3 = new Func<dynamic, long>((row) =>
+            {
+                return Convert.ToInt64(row.TOTAL);
+            });
+            var totalDeleteSize = repository3.Get<long>(queryTemplate3.RawSql,null, resultMapping3);
 
-            //파일 실제 삭제 이후
+            //파일 실제 삭제 
+            _fileService.DeleteDirectory(userId);
+
+            //파일 실제 삭제 이후 DB처리
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"DELETE M30_PRIVATE_SPACE WHERE USED='N'");
-            Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
-            repository.Delete(queryTemplate.RawSql, null);
+            
+            
+            var builder2 = new SqlBuilder();
+            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            DynamicParameters param2 = new DynamicParameters();
+            param2.Add("USER_ID", userId);
+            param2.Add("FILE_SIZE", -(totalDeleteSize));
+
+            TransactionRepository repository = new TransactionRepository();
+            repository.BeginTransaction();
+            try
+            {
+                repository.Delete(queryTemplate.RawSql, null);
+                repository.Update(queryTemplate2.RawSql, param2);
+                repository.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                repository.RollbackTransaction();
+                throw;
+            }
             return true;
-        }       //휴지통 비우기
+        }     
 
         public bool RecycleAll(string userId, LongList seqList)    //복원
         {
