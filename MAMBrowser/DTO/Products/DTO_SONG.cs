@@ -82,7 +82,7 @@ namespace MAMBrowser.DTO
                     return;
 
                 albumImageFilePath = value;
-                AlbumToken = MAMUtility.GenerateMusicToken(filePath);
+                AlbumToken = MAMUtility.GenerateMusicToken(albumImageFilePath);
             }
         }
         public string AlbumToken { get; set; } // music 구조체 토큰

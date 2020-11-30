@@ -23,7 +23,7 @@ namespace MAMBrowser.Processor
 
     public interface IFileDownloadService
     {
-        string Host { get;  }
+        string UploadHost { get;  }
         bool DownloadFile(string fromPath, string toPath);
         Stream GetFileStream(string sourcePath, long offSet);
         bool ExistFile(string fromPath);

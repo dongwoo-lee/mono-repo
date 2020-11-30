@@ -560,7 +560,7 @@ namespace MAMBrowser.Controllers
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
-                return MAMUtility.Streaming(token, direct, userId, remoteIp, _fileService);
+                return MAMUtility.Streaming(token, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -596,7 +596,6 @@ namespace MAMBrowser.Controllers
         public IActionResult TempDownload([FromQuery] string token)
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
             try
             {
@@ -650,8 +649,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
-                return MAMUtility.StreamingFromPath(fileData.FilePath, direct, userId, remoteIp, fileService);
+                return MAMUtility.StreamingFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -674,7 +672,6 @@ namespace MAMBrowser.Controllers
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
                 return MAMUtility.GetWaveformFromPath(fileData.FilePath,  userId, remoteIp);
             }
             catch (Exception ex)
@@ -694,7 +691,6 @@ namespace MAMBrowser.Controllers
             var fileData = _dal.GetDLArchive(seq);
 
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
             try
             {

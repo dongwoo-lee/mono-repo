@@ -136,15 +136,13 @@ export default {
         downloadUrl =`${this.tempDownloadUrl}?token=${this.fileKey}`; //인증토큰에 user id가 있어서 전달필요 없음.
       }
       // if(this.direct =="Y"){
-      //   this.LoadDirect(waveformUrl, fileUrl);     //일단... 다이렉트는 FTP프로토콜(x), MP2(x)
+        // this.LoadDirect(waveformUrl, fileUrl);     //서버에서 막혀있음.
       // }
       // else{
-        this.LoadDownloadedFile(downloadUrl, waveformUrl, fileUrl);
+      this.LoadDownloadedFile(downloadUrl, waveformUrl, fileUrl);
       // }
-     
     },
     LoadDownloadedFile(downloadUrl,waveformUrl,fileUrl){
-      
       httpClient.get(downloadUrl, {
         cancelToken: source.token,
         headers:{

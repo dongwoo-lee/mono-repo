@@ -272,7 +272,7 @@ export default {
       this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('success', { message: '휴지통 비우는데 짧은 시간이 소요됩니다. 새로고침 및 재검색을 해주세요.' });
+              // this.$fn.notify('success', { message: '휴지통 비우기가 요청되었습니다.' });
               this.$bvModal.hide('modalRecyclebin');
               this.getData();
             } else {

@@ -1,6 +1,11 @@
 ﻿using MAMBrowser.DTO;
+using MAMBrowser.ExternalDTO;
+using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.Processor;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using System;
@@ -17,7 +22,7 @@ using System.Xml.Serialization;
 
 namespace MAMBrowser.Services
 {
-    public class MusicService : IFileDownloadService
+    public class MusicService 
     {
         public string Host
         {
@@ -194,39 +199,76 @@ namespace MAMBrowser.Services
                 throw new Exception(result.StatusCode.ToString());
         }
 
-        public IList<string> GetImageTokenList(string musicToken, string albumToken)
-        {
-            IList<string> imageTokenList = new List<string>();
 
-            var strAlumbInfo = MAMUtility.ParseMusicToken(albumToken);
-            var musicInfo = MAMUtility.GetMusicInfo(musicToken);
-            
-            var encryptedWavFilePath = musicInfo["filePath"];
-            var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedWavFilePath);
-            var host = MAMUtility.GetHost(decryptedFilePath);
-            var HostAndPort = _storageMap[host] as string;
-            
-            var domain = HostAndPort.Split(":").First();
-            var port = Convert.ToInt32(HostAndPort.Split(":").Last());
-            StringContent sc = new StringContent(strAlumbInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
+        public List<string> TempImageDownload(string userId, string remoteIp, string musicToken, string albumToken)
+        {
+            List<string> imgUriList = new List<string>();
+            var jsonWavInfo = MAMUtility.ParseToJsonRequestContent(musicToken);
+            var wavInfo = MAMUtility.ParseToRequestContent(musicToken);
+            var wavEncodedPath = wavInfo[MAMUtility.MUSIC_FILEPATH];
+            var wavPath = MAMUtility.SeedDecrypt(wavEncodedPath);
+
+            var jsonImgInfo = MAMUtility.ParseToJsonRequestContent(albumToken);
+            var imgInfo = MAMUtility.ParseToRequestContent(albumToken);
+            var imgEncodedPath = imgInfo[MAMUtility.MUSIC_FILEPATH];
+            var imgPath = MAMUtility.SeedDecrypt(imgEncodedPath);
+
+            var host = MAMUtility.GetHost(wavPath);
+            var domainAndPort = _storageMap[host] as string;
+            var domain = domainAndPort.Split(":").First();
+            var port = Convert.ToInt32(domainAndPort.Split(":").Last());
+
+            var imgDomain = MAMUtility.GetHost(imgPath);
+            var imgFileName = Path.GetFileName(imgPath);
+            var relativePath = MAMUtility.GetRelativePath(imgPath);
+            string imgRelativeUri = imgPath.Replace(@"\", @"/");
+
+            domain = "localhost";
+            port = 9087;
+            //이미지 목록 검색
+            StringContent sc = new StringContent(jsonImgInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
             var builder = new UriBuilder("http", domain, port, ImageListUrl);
             HttpClient client = new HttpClient();
             var response = client.PostAsync(builder.ToString(), sc).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var strReturnData = response.Content.ReadAsStringAsync().Result;
-                var imageFilePathList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(strReturnData);
+                var edto = System.Text.Json.JsonSerializer.Deserialize<EDTO_RESULT>(strReturnData);
 
-                imageFilePathList.ForEach(path => imageTokenList.Add(MAMUtility.GenerateMusicToken(path)));
-                return imageTokenList;
+                foreach (var fileName in edto.result)
+                {
+                    imgUriList.Add(@$"http:{imgRelativeUri.Replace(imgFileName, fileName)}");
+                }
             }
-            else
-                return new List<string>();
+
+            //이미지 목록 임시 다운로드
+            foreach (var imgUri in imgUriList)
+            {
+                using (HttpClient client2 = new HttpClient())
+                {
+                    var response2 = client2.GetAsync(imgUri).Result;
+                    if (response2.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var filePath = MAMUtility.GetTempFilePath(userId, remoteIp, Path.GetFileName(imgUri));
+                        var folderPath = MAMUtility.GetTempFolder(userId, remoteIp);
+                        if (!Directory.Exists(folderPath))
+                            Directory.CreateDirectory(folderPath);
+                        using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                        {
+                            var stream = response2.Content.ReadAsStreamAsync().Result;
+                            stream.CopyTo(fs);
+                        }
+                    }
+                }
+            }
+            List<string> fileNameList = new List<string>();
+            imgUriList.ForEach(uri => fileNameList.Add(Path.GetFileName(uri)));
+            return fileNameList;
         }
         public Stream GetAlbumImage(string musicToken, out string contentType)
         {
-            var strAlumbInfo = MAMUtility.ParseMusicToken(musicToken);
-            var info = MAMUtility.GetMusicInfo(musicToken);
+            var strAlumbInfo = MAMUtility.ParseToJsonRequestContent(musicToken);
+            var info = MAMUtility.ParseToRequestContent(musicToken);
             var encryptedFilePath = info["filePath"];
             var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedFilePath);
             var fileExtProvider = new FileExtensionContentTypeProvider();
@@ -251,31 +293,49 @@ namespace MAMBrowser.Services
             else
                 return null;
         }
-
-
-        public void MakeDirectory(string relativeDirectoryPath)
+        public Stream GetFileStream(string domain, int port, string jsonRequestContent)
         {
-            throw new NotImplementedException();
+            var builder = new UriBuilder("http", domain, port, FileUrl);
+            HttpClient client = new HttpClient();
+            StringContent sc = new StringContent(jsonRequestContent, Encoding.UTF8, "application/json");
+            var response = client.PostAsync(builder.ToString(), sc).Result;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                //wav파일경로 이므로 wav파일만 받는다.  mp2를 변환할 일이 없음.
+                var stream = response.Content.ReadAsStreamAsync().Result;
+                return stream;
+            }
+            else
+            {
+                return null;
+                //로그처리
+            }
         }
-
-        public void Upload(Stream fileStream, string sourcePath, long fileLength)
+        public void TempDownloadWavAndEgy(string userId, string remoteIp, string token)
         {
-            throw new NotImplementedException();
-        }
+            var jsonWavInfo = MAMUtility.ParseToJsonRequestContent(token);
+            var wavInfo = MAMUtility.ParseToRequestContent(token);
+            var wavEncodedPath = wavInfo[MAMUtility.MUSIC_FILEPATH];
+            
+            var wavPath = MAMUtility.SeedDecrypt(wavEncodedPath);
+            var host = MAMUtility.GetHost(wavPath);
+            var domainAndPort = _storageMap[host] as string;
+            var domain = domainAndPort.Split(":").First();
+            var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
-        public void Move(string source, string destination)
-        {
-            throw new NotImplementedException();
-        }
+            MAMUtility.ClearTempFolder(userId, remoteIp);
 
-        public Stream GetFileStream(string sourcePath, long offSet)
-        {
-            return null;
-        }
-        public bool DownloadFile(string fromRelativePath, string toRelativePath)
-        {
+            var targetFolder = MAMUtility.GetTempFolder(userId, remoteIp);
+            if (!Directory.Exists(targetFolder))
+                Directory.CreateDirectory(targetFolder);
 
-            return true;
+            var waveFileName = Path.GetFileName(wavPath);
+            var wavTargetPath = MAMUtility.GetTempFilePath(userId, remoteIp, waveFileName);
+            var egyTargetPath = Path.ChangeExtension(wavTargetPath, MAMUtility.EGY);
+            var jsonEgyInfo = MAMUtility.GetJsonRequestContentFromPath(egyTargetPath);
+
+            TempDownloadCore(domain, port, jsonWavInfo, wavTargetPath);   //wav
+            TempDownloadCore(domain, port, jsonEgyInfo, egyTargetPath);   //egy
         }
         /// <summary>
         /// wav, egy 파일 임시다운로드
@@ -284,33 +344,15 @@ namespace MAMBrowser.Services
         /// <param name="remoteIp"></param>
         /// <param name="musicToken"></param>
         /// <param name="path"></param>
-        public void TempDownloadToLocal(string userId, string remoteIp, string token,  string path)
+        public void TempDownloadCore(string domain, int port, string jsonRequestContent ,string targetSoundPath)
         {
-            var host = MAMUtility.GetHost(path);
-            var domainAndPort = _storageMap[host] as string;
-            var domain = domainAndPort.Split(":").First();
-            var port = Convert.ToInt32(domainAndPort.Split(":").Last());
-
-            MAMUtility.ClearTempFolder(userId, remoteIp);
-
-            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1")
-            {
-                remoteIp = "localhost";
-            }
-
-            var targetFolder = MAMUtility.GetTempFolder(userId, remoteIp);
-            if (!Directory.Exists(targetFolder))
-                Directory.CreateDirectory(targetFolder);
-
-            var soundFileName = Path.GetFileName(path);
-            var ext = Path.GetExtension(path).ToUpper();
-            var targetSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, soundFileName);
-            var builder = new UriBuilder("http", domain, port, ImageListUrl);
+            var builder = new UriBuilder("http", domain, port, FileUrl);
             HttpClient client = new HttpClient();
-            StringContent sc = new StringContent(token, Encoding.UTF8, "application/json");
+            StringContent sc = new StringContent(jsonRequestContent, Encoding.UTF8, "application/json");
             var response = client.PostAsync(builder.ToString(), sc).Result;
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                //wav파일경로 이므로 wav파일만 받는다.  mp2를 변환할 일이 없음.
                 using (var stream = response.Content.ReadAsStreamAsync().Result)
                 {
                    using(var outStream = new FileStream(targetSoundPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -325,9 +367,22 @@ namespace MAMBrowser.Services
             }
         }
 
-        public bool ExistFile(string fromRelativePath)
+        public object[] GetRequestInfo(Dictionary<string, string> musicInfo)
         {
-            throw new NotImplementedException();
+            var encodedFilePath = musicInfo[MAMUtility.MUSIC_FILEPATH];
+            var filePath = MAMUtility.SeedDecrypt(encodedFilePath);
+            var host = MAMUtility.GetHost(filePath);
+            var domainAndPort = _storageMap[host] as string;        // 뮤직서비스에 구현.
+            var domain = domainAndPort.Split(":").First();
+            var port = Convert.ToInt32(domainAndPort.Split(":").Last());
+            var fileName = Path.GetFileName(filePath);
+
+            object[] returnData = new object[3];
+            returnData[0] = domain;
+            returnData[1] = port;
+            returnData[2] = fileName;
+            return returnData;
         }
+       
     }
 }

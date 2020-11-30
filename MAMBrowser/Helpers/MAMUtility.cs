@@ -36,9 +36,9 @@ namespace MAMBrowser.Helpers
         public const string EGY = ".EGY";
         public const string USER_ID = "UserId";
 
-        public const string MUSIC_FILEPATH = "UserId";
-        public const string MUSIC_IP = "UserId";
-        public const string MUSIC_EXPIRE = "UserId";
+        public const string MUSIC_FILEPATH = "filePath";
+        public const string MUSIC_IP = "ip";
+        public const string MUSIC_EXPIRE = "expire";
 
 
 
@@ -100,7 +100,7 @@ namespace MAMBrowser.Helpers
             else
                 throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
         }
-        public static IActionResult Streaming(string token, string direct, string userId, string remoteIp, IFileService fileService)
+        public static IActionResult Streaming(string token, string userId, string remoteIp)
         {
             string filePath = "";
             if (MAMUtility.ValidateMAMToken(token, ref filePath))
@@ -167,7 +167,7 @@ namespace MAMBrowser.Helpers
             string tempSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
             return MAMUtility.GetWaveformCore(tempSoundPath);
         }
-        public static IActionResult StreamingFromPath(string filePath, string direct, string userId, string remoteIp, IFileService fileService)
+        public static IActionResult StreamingFromPath(string filePath, string userId, string remoteIp)
         {
             string relativePath = MAMUtility.GetRelativePath(filePath);
             string fileName = Path.GetFileName(filePath);
@@ -191,18 +191,24 @@ namespace MAMBrowser.Helpers
                 return result;
             //}
         }
-
-
+        public static IActionResult StreamingFromFileName(string fileName, string userId, string remoteIp)
+        {
+            fileName = Path.GetExtension(fileName).ToUpper() == MAMUtility.MP2 ? fileName.ToUpper().Replace(MAMUtility.MP2, MAMUtility.WAV) : fileName;
+            var provider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!provider.TryGetContentType(fileName, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            var result = new PhysicalFileResult(tempDownloadedPath, contentType);
+            result.EnableRangeProcessing = true;
+            return result;
+        }
 
         public static void TempDownloadToLocal(string userId, string remoteIp, IFileDownloadService fileService, string filePath)
         {
             ClearTempFolder(userId, remoteIp);
-
-            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1")
-            {
-                remoteIp = "localhost";
-            }
-
             var targetFolder = GetTempFolder(userId, remoteIp);
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
@@ -229,6 +235,10 @@ namespace MAMBrowser.Helpers
         }
         public static string GetTempFolder(string userId, string remoteIp)
         {
+            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1" || remoteIp== "127.0.0.1")
+            {
+                remoteIp = "localhost";
+            }
             return @$"{TempDownloadPath}\{userId}_{remoteIp}";
         }
         public static string GetTempFilePath(string userId, string remoteIp, string fileName)
@@ -396,38 +406,47 @@ namespace MAMBrowser.Helpers
         }
         public static string GenerateMusicToken(string filePath)
         {
+            var strInfo = GetJsonRequestContentFromPath(filePath);
+            return GenerateMAMToken(strInfo);
+        }
+        public static string GetJsonRequestContentFromPath(string filePath)
+        {
             Dictionary<string, string> info = new Dictionary<string, string>();
             info.Add("filePath", SeedEncrypt(filePath));
             info.Add("ip", LocalIpAddress);
             info.Add("expire", DateTime.Now.AddHours(1).ToString(DTM19));
             var strInfo = System.Text.Json.JsonSerializer.Serialize(info);
-            return GenerateMAMToken(strInfo);
+            return strInfo;
         }
-        public static string ParseMusicToken(string musicFileToken)
+        public static string ParseToJsonRequestContent(string musicToken)
         {
-            string musicFileInfo = "";
-            if (ValidateMAMToken(musicFileToken, ref musicFileInfo))
+            string strMusicToken = "";
+            if (ValidateMAMToken(musicToken, ref strMusicToken))
             {
-                return musicFileInfo;
+                return strMusicToken;
             }
             else
                 throw new Exception("invalid token");
             
         }
-        public static Dictionary<string, string> GetMusicInfo(string musicFileToken)
+        public static Dictionary<string, string> ParseToRequestContent(string musicToken)
         {
-            string strMusicInfo = "";
-            if (ValidateMAMToken(musicFileToken, ref strMusicInfo))
-            {
-                return ParseMusicInfo(strMusicInfo);
-            }
-            else
-                return null;
+            var strToken = ParseToJsonRequestContent(musicToken);
+            return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(strToken);
         }
-        private static Dictionary<string, string> ParseMusicInfo(string strMusicInfo)
+        public static string GetFilePathFromMusicToken(string musicToken)
         {
-            return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(strMusicInfo);
+            var requestContent = MAMUtility.ParseToRequestContent(musicToken);
+            var decodedFilePath = MAMUtility.SeedDecrypt(requestContent[MAMUtility.MUSIC_FILEPATH]);
+            return decodedFilePath;
         }
 
+        public static void InitTempFoler(string userId, string remoteIp)
+        {
+            MAMUtility.ClearTempFolder(userId, remoteIp);
+            var targetFolder = MAMUtility.GetTempFolder(userId, remoteIp);
+            if (!Directory.Exists(targetFolder))
+                Directory.CreateDirectory(targetFolder);
+        }
     }
 }

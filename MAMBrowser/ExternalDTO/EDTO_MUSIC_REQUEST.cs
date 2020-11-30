@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_MUSIC_REQUEST
+    public class EDTO_MUSIC_REQUEST
     {
         /// <summary>
         /// Seed 암호화된 경로

@@ -1,5 +1,6 @@
 ﻿using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
+using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Hosting;
@@ -55,8 +56,14 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject.Data = new List<DTO_SONG>();
                 else
-                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
-                
+                {
+                    result.ResultObject.Data = new List<DTO_SONG>();
+                    result.ResultObject.Data.Add(new DTO_SONG { Name = "DDG00205.wav", FilePath = @"\\mibis-wave1\abcdefg\FIESTAR - Vista.wav", AlbumImageFilePath = @"\\192.168.1.201:90\abcdefg\detail-small-2.jpg", LyricsSeq= "abdsc0001" });
+                }
+                //else
+                //    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+
+
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
                 result.ResultObject.TotalRowCount = totalCount;
@@ -113,20 +120,17 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="token">파일 SEQ</param>
         /// <returns></returns>
-        [HttpPost("files")]
+        [HttpGet("files")]
         public IActionResult MusicDownload([FromQuery] string token, [FromQuery] string inline = "N")
         {
-            string fileName = Path.GetFileName(token);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!fileExtProvider.TryGetContentType(token, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-            var stream = _fileService.GetFileStream(token, 0);
+            var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
+            var musicInfo = MAMUtility.ParseToRequestContent(token);
+            var requestInfo = _fileService.GetRequestInfo(musicInfo);
+            string contentType = "audio/wav";
+            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = WebUtility.UrlEncode(fileName),
+                FileName = WebUtility.UrlEncode(requestInfo[2] as string),
                 Inline = inline == "Y" ? true : false
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
@@ -138,21 +142,18 @@ namespace MAMBrowser.Controllers
         /// <param name="token"></param>
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
-        [HttpPost("streaming")]
-        public IActionResult MusicStreaming([FromQuery] string token, string userId, [FromQuery] string direct = "N")
+        [HttpGet("streaming")]
+        public IActionResult MusicStreaming([FromQuery] string token, [FromQuery] string userId, [FromQuery] string direct = "N")
         {
-            string fileName = Path.GetFileName(token);
-
-            if (direct.ToUpper() == "Y")
+            var decodedFilePath = MAMUtility.GetFilePathFromMusicToken(token);
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            try
             {
-                int fileSize = 0;
-                return new PushStreamResult(token, fileName, fileSize, _fileService);
+                return MAMUtility.StreamingFromPath(decodedFilePath, userId, remoteIp);
             }
-            else
+            catch (HttpStatusErrorException ex)
             {
-                string contentType;
-                MAMUtility.TempDownloadToLocal("1", "2", _fileService, token);
-                return PhysicalFile("1", "2", true);
+                return StatusCode((int)ex.StatusCode, ex.Message);
             }
         }
         /// <summary>
@@ -160,42 +161,32 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        [HttpPost("waveform")]
-        public List<float> MusicGetWaveform([FromQuery] string token, string userId)
+        [HttpGet("waveform")]
+        public ActionResult<List<float>> MusicGetWaveform([FromQuery] string token, [FromQuery] string userId)
         {
-            //var fileData = _dal.Get(seq);
-            //return MAMUtility.GetWaveform(HttpContext.Connection.RemoteIpAddress.ToString(), _fileService, token);
-            return null;
+            var decodedFilePath = MAMUtility.GetFilePathFromMusicToken(token);
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            try
+            {
+                return MAMUtility.GetWaveformFromPath(decodedFilePath, userId, remoteIp);
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
         }
         /// <summary>
         /// 음악/효과음 소재 - 임시 다운로드
         /// </summary>
         /// <param name="token">파일 SEQ</param>
         /// <returns></returns>
-        [HttpPost("temp-download/{token}")]
+        [HttpGet("temp-download")]
         public IActionResult MusicTempDownload([FromQuery] string token)
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-            string strFileMusicToken = "";
-            if (MAMUtility.ValidateMAMToken(token, ref strFileMusicToken))
-            {
-                var fileInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
-                var waveformInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
-
-                //waveform 토큰 만들기(파일토큰의 경로에서 확장자만 EGY로변경)
-                string wavPath = fileInfo[MAMUtility.MUSIC_FILEPATH]; //ip, expire
-                waveformInfo[MAMUtility.MUSIC_FILEPATH] = Path.ChangeExtension(wavPath, MAMUtility.EGY);
-                string strWaveformMusicToken = JsonSerializer.Serialize(waveformInfo);
-                string waveformPath = waveformInfo[MAMUtility.MUSIC_FILEPATH];
-
-                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, wavPath);
-                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, waveformPath);
-                return Ok();
-            }
-            else
-                return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
+            _fileService.TempDownloadWavAndEgy(userId, remoteIp, token);
+            return Ok();
         }
 
         /// <summary>
@@ -203,40 +194,41 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="token">파일 SEQ</param>
         /// <returns></returns>
-        [HttpPost("temp-image-download")]
-        public IActionResult AlbumImageTempDownload([FromQuery] string token)
+        [HttpGet("images/temp-download")]
+        public ActionResult<List<string>> AlbumImageTempDownload([FromQuery] string token, [FromQuery] string albumToken)
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-            string strFileMusicToken = "";
-            if (MAMUtility.ValidateMAMToken(token, ref strFileMusicToken))
-            {
-                var fileInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
-                var waveformInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(strFileMusicToken);
-
-                //waveform 토큰 만들기(파일토큰의 경로에서 확장자만 EGY로변경)
-                string wavPath = fileInfo[MAMUtility.MUSIC_FILEPATH]; //ip, expire
-                waveformInfo[MAMUtility.MUSIC_FILEPATH] = Path.ChangeExtension(wavPath, MAMUtility.EGY);
-                string strWaveformMusicToken = JsonSerializer.Serialize(waveformInfo);
-                string waveformPath = waveformInfo[MAMUtility.MUSIC_FILEPATH];
-
-                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, wavPath);
-                _fileService.TempDownloadToLocal(userId, remoteIp, strFileMusicToken, waveformPath);
-                return Ok();
-            }
-            else
-                return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
+            return _fileService.TempImageDownload(userId, remoteIp, token, albumToken);
         }
 
+        /// <summary>
+        /// 음악/효과음 소재 - 앨범 이미지 스트리밍
+        /// </summary>
+        /// <param name="token">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpGet("images/streaming")]
+        public IActionResult ImageStreaming([FromQuery] string fileName, [FromQuery] string userId)
+        {
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            try
+            {
+                //string userId = HttpContext.Items[MAMUtility.USER_ID] as string;  확인필요..
+                return MAMUtility.StreamingFromFileName(fileName, userId, remoteIp);
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+        }
 
         /// <summary>
-        /// 일반 소재 - 파형 요청
+        /// 음악 - 가사요청
         /// </summary>
         /// <param name="lyricsSeq"></param>
         /// <returns></returns>
-        [HttpPost("lyrics")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> SearchLyrics([FromQuery] string lyricsSeq)
+        [HttpGet("lyrics/{lyricsSeq}")]
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> SearchLyrics(string lyricsSeq)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
@@ -252,41 +244,5 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
-        /// <summary>
-        /// 앨범 이미지 목록 반환
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        [HttpPost("albums/images-path")]
-        public DTO_RESULT<DTO_RESULT_LIST<string>> GetAlbumImagePathList([FromQuery] string token, [FromQuery] string albumToken)
-        {
-            DTO_RESULT<DTO_RESULT_LIST<string>> result = new DTO_RESULT<DTO_RESULT_LIST<string>>();
-            try
-            {
-                result.ResultObject = new DTO_RESULT_LIST<string>();
-                result.ResultObject.Data = _fileService.GetImageTokenList(token, albumToken);
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
-                result.ErrorMsg = ex.Message;
-            }
-            return result;
-        }
-        /// <summary>
-        /// 앨범 이미지 반환
-        /// </summary>
-        /// <param name="mamToken"></param>
-        /// <returns></returns>
-        [HttpPost("albums/images/files")]
-        public IActionResult GetAlbumImage([FromQuery] string albumToken, [FromQuery] string inline = "Y")
-        {
-            string contentType;
-            var result = _fileService.GetAlbumImage(albumToken, out contentType);
-            return File(result, contentType);
-        }
-       
     }
 }

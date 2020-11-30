@@ -16,7 +16,7 @@ namespace MAMBrowser.Processor
     //path : 호스트명이 포함됨 풀경로
     public class NetDriveService : IFileService
     {
-        public string Host { get; set; }
+        public string UploadHost { get; set; }
         public string Name { get; set; }
         public string TmpUploadFolder { get; set; }
         public string UploadFolder { get; set; }
@@ -27,8 +27,8 @@ namespace MAMBrowser.Processor
         }
         public Stream GetFileStream(string sourcePath, long offSet)
         {
-            string hostName = MAMUtility.GetHost(sourcePath);
-            using (NetworkShareAccessor.Access(hostName, UserId, UserPass))
+            string sourceHost = MAMUtility.GetHost(sourcePath);
+            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
             {
                 FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 return fs;
@@ -36,9 +36,9 @@ namespace MAMBrowser.Processor
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
-            string sourceHostName = MAMUtility.GetHost(fromPath);
+            string sourceHost = MAMUtility.GetHost(fromPath);
             
-            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
+            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
             {
                 //확인필요
                 using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -68,9 +68,9 @@ namespace MAMBrowser.Processor
 
         public bool ExistFile(string fromPath)
         {
-            string sourceHostName = MAMUtility.GetHost(fromPath);
+            string sourceHost = MAMUtility.GetHost(fromPath);
 
-            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
+            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
             {
                 return File.Exists(fromPath);
             }
@@ -78,13 +78,13 @@ namespace MAMBrowser.Processor
 
         public string GetAudioFormat(string filePath)
         {
-            string sourceHostName = MAMUtility.GetHost(filePath);
-            using (NetworkShareAccessor.Access(sourceHostName, UserId, UserPass))
+            string sourceHost = MAMUtility.GetHost(filePath);
+            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
             {
                 var ext = Path.GetExtension(filePath);
                 //wav 44byte
                 //mp3 4byte
-                byte[] buffer = new byte[500000];
+                byte[] buffer = new byte[1500000];
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))

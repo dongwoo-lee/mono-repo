@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Processor
@@ -22,13 +23,13 @@ namespace MAMBrowser.Processor
         public string Name { get; set; }
         public string TmpUploadFolder { get; set; }
         public string UploadFolder { get; set; }
-        public string Host { get; set; }
+        public string UploadHost { get; set; }
         public string UserId { get; set; }
         public string UserPass { get; set; }
 
         public void MakeDirectory(string directoryPath)
         {
-            using (FtpClient ftpClient = new FtpClient(Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
                 ftpClient.CreateDirectory(directoryPath);
             }
@@ -36,27 +37,28 @@ namespace MAMBrowser.Processor
 
         public void Upload(Stream fileStream, string sourcePath, long fileLength)  //나중에 경로를 여기서 지정할수 있게끔...(지금은 상대경로 셋팅해서 들어옴)
         {
-            using (FtpClient ftpClient = new FtpClient(FTP+Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
-                ftpClient.Upload(fileStream, sourcePath);
+                var status = ftpClient.Upload(fileStream, sourcePath);
             }
         }
 
         public void Move(string source, string destination)
         {
-            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
-                ftpClient.MoveFile(source, destination);
+                var result = ftpClient.MoveFile(source, destination);
             }
         }
 
         public bool DownloadFile(string fromPath, string toPath)
         {
             string relativePath = MAMUtility.GetRelativePath(fromPath);
+            var sourceHost = MAMUtility.GetHost(fromPath);
             using (Stream toStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite))
             {
                 bool result = false;
-                using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+                using (FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass))
                 {
                     if (!ftpClient.FileExists(relativePath))
                         throw new FileNotFoundException();
@@ -71,7 +73,9 @@ namespace MAMBrowser.Processor
             //using ()
             //{
             string relativePath = MAMUtility.GetRelativePath(path);
-            FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass);
+            var sourceHost = MAMUtility.GetHost(path);
+
+            FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass);
             if (!ftpClient.FileExists(relativePath))
                 throw new FileNotFoundException();
             var stream = ftpClient.OpenRead(relativePath, offSet);
@@ -82,7 +86,8 @@ namespace MAMBrowser.Processor
         public bool ExistFile(string fromPath)
         {
             bool result = false;
-            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            var sourceHost = MAMUtility.GetHost(fromPath);
+            using (FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass))
             {
                 string relativePath = MAMUtility.GetRelativePath(fromPath);
                 if (!ftpClient.FileExists(relativePath))
@@ -94,11 +99,12 @@ namespace MAMBrowser.Processor
         }
         public string GetAudioFormat(string filePath)
         {
-            string sourceHostName = MAMUtility.GetHost(filePath);
-            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            //var sourceHost = MAMUtility.GetHost(filePath);
+            //업로드된후 포맷을 확인하므로...일단 업로드 호스트를 사용하도록.
+            using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
                 var ext = Path.GetExtension(filePath);
-                byte[] buffer = new byte[500000];
+                byte[] buffer = new byte[1000000];
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (var fs = ftpClient.OpenRead(filePath))
@@ -106,8 +112,10 @@ namespace MAMBrowser.Processor
                         var read = fs.Read(buffer, 0, buffer.Length);
                         ms.Write(buffer, 0, read);
                     }
+                    ms.Flush();
                     ms.Position = 0;
 
+                    
                     if (ext.ToUpper() == MAMUtility.WAV)
                     {
                         WaveFileReader reader = new WaveFileReader(ms);
@@ -132,7 +140,7 @@ namespace MAMBrowser.Processor
 
         public void Delete(string filePath)
         {
-            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(FTP + UploadHost, UserId, UserPass))
             {
                 string relativePath = MAMUtility.GetRelativePath(filePath);
                 if(ftpClient.FileExists(relativePath))
@@ -142,7 +150,7 @@ namespace MAMBrowser.Processor
 
         public void DeleteDirectory(string userId)
         {
-            using (FtpClient ftpClient = new FtpClient(FTP + Host, UserId, UserPass))
+            using (FtpClient ftpClient = new FtpClient(FTP + UploadHost, UserId, UserPass))
             {
                 string relativePath = $"{UploadFolder}/{userId}";
                 if(ftpClient.DirectoryExists(relativePath))

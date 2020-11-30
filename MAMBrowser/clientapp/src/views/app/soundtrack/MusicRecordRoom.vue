@@ -107,6 +107,7 @@
     requestType="token"
     @closePlayer="onClosePlayer">
     </MusicPlayerPopup>
+    
   </div>
 </template>
 

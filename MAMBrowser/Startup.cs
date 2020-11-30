@@ -164,7 +164,7 @@ namespace MAMBrowser
                 return new NetDriveService
                 {
                     Name = "MirosConnection",
-                    Host = storage.MirosConnection["Host"].ToString(),
+                    UploadHost = storage.MirosConnection["UploadHost"].ToString(),
                     UserId = storage.MirosConnection["UserId"].ToString(),
                     UserPass = storage.MirosConnection["UserPass"].ToString(),
                 };
@@ -175,7 +175,7 @@ namespace MAMBrowser
                 return new FtpService
                 {
                     Name = "PrivateWorkConnection",
-                    Host = storage.PrivateWorkConnection["Host"].ToString(),
+                    UploadHost = storage.PrivateWorkConnection["UploadHost"].ToString(),
                     UserId = storage.PrivateWorkConnection["UserId"].ToString(),
                     UserPass = storage.PrivateWorkConnection["UserPass"].ToString(),
                     TmpUploadFolder = storage.PrivateWorkConnection["TmpUploadFolder"].ToString(),
@@ -187,7 +187,7 @@ namespace MAMBrowser
                 return new FtpService
                 {
                     Name = "PublicWorkConnection",
-                    Host = storage.PublicWorkConnection["Host"].ToString(),
+                    UploadHost = storage.PublicWorkConnection["UploadHost"].ToString(),
                     UserId = storage.PublicWorkConnection["UserId"].ToString(),
                     UserPass = storage.PublicWorkConnection["UserPass"].ToString(),
                     TmpUploadFolder = storage.PublicWorkConnection["TmpUploadFolder"].ToString(),
@@ -199,7 +199,7 @@ namespace MAMBrowser
                 return new FtpService
                 {
                     Name = "DLArchiveConnection",
-                    Host = storage.DLArchiveConnection["Host"].ToString(),
+                    UploadHost = storage.DLArchiveConnection["UploadHost"].ToString(),
                     UserId = storage.DLArchiveConnection["UserId"].ToString(),
                     UserPass = storage.DLArchiveConnection["UserPass"].ToString()
                 };

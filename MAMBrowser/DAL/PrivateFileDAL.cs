@@ -91,8 +91,11 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             param.Add("SEQ", seqList);
             return repository.Update(queryTemplate.RawSql, param) > 0 ? true : false;
         }
-        public bool DeletePhysical(string userId, LongList seqList)
+        public bool DeleteRecycleBin(string userId, List<long> seqList)
         {
+            if (seqList.Count < 1)
+                return true;
+
             //파일 실제 삭제
             long totalDeleteSize = 0;
             foreach (var seq in seqList)
@@ -136,46 +139,14 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public bool DeleteAllPhysical(string userId)    
+        public bool DeleteAllRecycleBin(string userId)    
         {
-            var builder3 = new SqlBuilder();
-            var queryTemplate3 = builder3.AddTemplate(@"SELECT SUM(FILE_SIZE) AS TOTAL FROM M30_PRIVATE_SPACE WHERE USED='N'");
-            Repository repository3 = new Repository();
-            var resultMapping3 = new Func<dynamic, long>((row) =>
-            {
-                return Convert.ToInt64(row.TOTAL);
-            });
-            var totalDeleteSize = repository3.Get<long>(queryTemplate3.RawSql,null, resultMapping3);
-
-            //파일 실제 삭제 
-            _fileService.DeleteDirectory(userId);
-
-            //파일 실제 삭제 이후 DB처리
-            var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"DELETE M30_PRIVATE_SPACE WHERE USED='N'");
-            DynamicParameters param = new DynamicParameters();
-            
-            
-            var builder2 = new SqlBuilder();
-            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
-            DynamicParameters param2 = new DynamicParameters();
-            param2.Add("USER_ID", userId);
-            param2.Add("FILE_SIZE", -(totalDeleteSize));
-
-            TransactionRepository repository = new TransactionRepository();
-            repository.BeginTransaction();
-            try
-            {
-                repository.Delete(queryTemplate.RawSql, null);
-                repository.Update(queryTemplate2.RawSql, param2);
-                repository.CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                repository.RollbackTransaction();
-                throw;
-            }
-            return true;
+            string getRecycleBin = @"SELECT * FROM M30_PRIVATE_SPACE WHERE USED='N'";
+            Repository sRepository = new Repository();
+            var dtoList = sRepository.Select<DTO_PRIVATE_FILE>(getRecycleBin, null, DTO_PRIVATE_FILE.ResultMapping());
+            List<long> seqList = new List<long>();
+            dtoList.ToList().ForEach(dto => seqList.Add(dto.Seq));
+            return DeleteRecycleBin(userId, seqList);
         }     
 
         public bool RecycleAll(string userId, LongList seqList)    //복원
@@ -204,24 +175,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE WHERE SEQ=:SEQ");
             Repository repository = new Repository();
-            var resultMapping = new Func<dynamic, DTO_PRIVATE_FILE>((row) =>
-            {
-                return new DTO_PRIVATE_FILE
-                {
-                    Seq = Convert.ToInt64(row.SEQ),
-                    UserId = row.USER_ID,
-                    UserName = row.USER_NAME,
-                    Title = row.TITLE,
-                    Memo = row.MEMO,
-                    AudioFormat = row.AUDIO_FORMAT,
-                    EditedDtm = ((DateTime)row.EDITED_DTM).ToString(MAMUtility.DTM19),
-                    FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    FilePath = row.FILE_PATH,
-                    DeletedDtm = row.DELETED_DTM == null ? "" : ((DateTime)row.DELETED_DTM).ToString(MAMUtility.DTM19),
-                    Used = row.USED,
-                    FileExt = Path.GetExtension(row.FILE_PATH)
-                };
-            });
+            var resultMapping = DTO_PRIVATE_FILE.ResultMapping();
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
         }
         public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FindData(string used, string start_dt, string end_dt, string userId, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)

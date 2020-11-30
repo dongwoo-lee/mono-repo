@@ -59,7 +59,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var success = _dal.Insert(userId, file, metaData, _fileService.Host);
+                var success = _dal.Insert(userId, file, metaData, _fileService.UploadHost);
                 result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
             }
             catch (Exception ex)
@@ -212,8 +212,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
-                return MAMUtility.StreamingFromPath(fileData.FilePath, direct, userId, remoteIp, _fileService);
+                return MAMUtility.StreamingFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -236,7 +235,6 @@ namespace MAMBrowser.Controllers
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
                 return MAMUtility.GetWaveformFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (Exception ex)
@@ -255,7 +253,6 @@ namespace MAMBrowser.Controllers
             var fileData = _dal.Get(seq);
 
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            remoteIp = remoteIp == "::1" ? "localhost" : remoteIp;
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
             try
             {
@@ -308,7 +305,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.DeletePhysical(userId, seqlist))
+                if (_dal.DeleteRecycleBin(userId, seqlist))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
@@ -333,7 +330,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.DeleteAllPhysical(userId))
+                if (_dal.DeleteAllRecycleBin(userId))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
