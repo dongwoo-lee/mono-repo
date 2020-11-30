@@ -41,14 +41,14 @@ namespace MAMBrowser.Controllers
             var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
             var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
+            var stream = file.OpenReadStream();
+            var audioFormat = AudioEngine.GetAudioFormat(stream, relativeTargetPath);
+            stream.Position = 0;
+
             _fileService.MakeDirectory(relativeSourceFolder);
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
-
-
-            var audioFormat = _fileService.GetAudioFormat(relativeTargetPath);
-
 
             //metaData.SEQ = ID;
             DynamicParameters param = new DynamicParameters();

@@ -1,20 +1,16 @@
 ﻿using Dapper;
 using DL_Service.DAL;
-using log4net.Util;
-using MAMBrowser.BLL;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
@@ -37,12 +33,15 @@ namespace MAMBrowser.Controllers
             var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userId}\{date}";
             var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
             var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
-
+            
             _fileService.MakeDirectory(relativeSourceFolder);
+            var stream = file.OpenReadStream();
+            var audioFormat = AudioEngine.GetAudioFormat(stream, relativeTargetPath);
+            stream.Position = 0;
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
-            var audioFormat = _fileService.GetAudioFormat(relativeTargetPath);
+            
 
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
@@ -80,7 +79,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
 
             return Get(ID);
         }
-
+        
         public bool DeleteDB(string userId, LongList seqList)
         {
             //파일 실제 삭제 이후

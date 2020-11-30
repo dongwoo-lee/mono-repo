@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.DTO
 {
-    public class DTO_LOG
+    public class DTO_LOG : DTO_BASE
     {
         public long Seq { get; set; }
         public string SystemCode { get; set; }
         public string LogLevel { get; set; }
-        public string ClientIp { get; set; }
+        public string Category { get; set; }
         public string UserID { get; set; }
         public string UserName { get; set; }
         public string Description { get; set; }

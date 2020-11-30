@@ -64,7 +64,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                result.ErrorMsg = ex.Message;
+                result.ErrorMsg = ex.ToString();
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;

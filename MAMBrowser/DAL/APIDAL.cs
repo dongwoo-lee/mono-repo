@@ -303,17 +303,23 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
             Repository repository = new Repository();
             repository.Insert(queryTemplate.RawSql, param);
         }
-        public DTO_RESULT_LIST<DTO_LOG> SearchLog(string start_dt, string end_dt, string logLevel, string userName, string description)
+        public DTO_RESULT_PAGE_LIST<DTO_LOG> SearchLog(string start_dt, string end_dt, string logLevel, string userName, string description, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
-            DTO_RESULT_LIST<DTO_LOG> returnData = new DTO_RESULT_LIST<DTO_LOG>();
+            int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
+            int lastNo = startNo + rowPerPage;
+
+            DTO_RESULT_PAGE_LIST<DTO_LOG> returnData = new DTO_RESULT_PAGE_LIST<DTO_LOG>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT * FROM M30_LOG /**where**/");
+            var querySource = builder.AddTemplate("SELECT * FROM M30_LOG /**where**/ ORDER BY REG_DTM DESC");
             DynamicParameters param = new DynamicParameters();
             param.Add("START_DT", start_dt);
             param.Add("END_DT", end_dt);
             param.Add("LOG_LEVEL", logLevel);
             param.Add("USER_NAME", userName);
             param.Add("DESCRIPTION", description);
+            param.Add("START_NO", startNo);
+            param.Add("LAST_NO", lastNo);
+            builder.Where("SYSTEM_CD='S01'");
             builder.Where("(TO_DATE(:START_DT,'YYYYMMDD') <= REG_DTM AND REG_DTM < TO_DATE(:END_DT,'YYYYMMDD')+1)");
             if (!string.IsNullOrEmpty(logLevel))
             {
@@ -335,15 +341,28 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
                     builder.Where($"LOWER(DESCRIPTION) LIKE LOWER('%{word}%')");
                 }
             }
+
+
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
+            var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
+
+
+
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_LOG>((row) =>
             {
+                if (returnData.TotalRowCount == 0)
+                {
+                    returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
+                }
                 return new DTO_LOG
                 {
+                    RowNO = Convert.ToInt32(row.RNO),
                     Seq = Convert.ToInt64(row.SEQ),
                     SystemCode= row.SYSTEM_CD,
                     LogLevel = row.LOG_LEVEL,
-                    ClientIp = row.CLIENT_IP,
+                    Category = row.CATEGORY,
                     UserID = row.USER_ID,
                     UserName = row.USER_NAME,
                     Description = row.DESCRIPTION,
@@ -351,7 +370,10 @@ LEFT JOIN(SELECT * FROM M30_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AUTHOR.
                     RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
                 };
             });
-            returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
+
+            returnData.Data = repository.Select(queryMaxMinPaging.RawSql, param, resultMapping);
+            returnData.RowPerPage = rowPerPage;
+            returnData.SelectPage = selectPage;
             return returnData;
         }
         public int UpdateRole(List<RoleExtModel> updateDtoList)
