@@ -1,5 +1,8 @@
 ﻿using FluentFTP;
 using MAMBrowser.Helpers;
+using MAMBrowser.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
 using NLayer.NAudioSupport;
@@ -8,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,6 +23,7 @@ namespace MAMBrowser.Processor
         private const string FTP = @"ftp://";
         public FtpService()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
         public string Name { get; set; }
         public string TmpUploadFolder { get; set; }
@@ -26,11 +31,13 @@ namespace MAMBrowser.Processor
         public string UploadHost { get; set; }
         public string UserId { get; set; }
         public string UserPass { get; set; }
+        public int EncodingType { get; set; }
 
         public void MakeDirectory(string directoryPath)
         {
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
+                ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
                 ftpClient.CreateDirectory(directoryPath);
             }
         }
@@ -39,7 +46,8 @@ namespace MAMBrowser.Processor
         {
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
-                var status = ftpClient.Upload(fileStream, sourcePath);
+                ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
+                ftpClient.Upload(fileStream, sourcePath);
             }
         }
 
@@ -47,6 +55,7 @@ namespace MAMBrowser.Processor
         {
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
+                ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
                 var result = ftpClient.MoveFile(source, destination);
             }
         }
@@ -54,12 +63,15 @@ namespace MAMBrowser.Processor
         public bool DownloadFile(string fromPath, string toPath)
         {
             string relativePath = MAMUtility.GetRelativePath(fromPath);
+            relativePath = relativePath.Replace(@"\", @"/");
             var sourceHost = MAMUtility.GetHost(fromPath);
             using (Stream toStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite))
             {
                 bool result = false;
                 using (FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass))
                 {
+                    ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
+
                     if (!ftpClient.FileExists(relativePath))
                         throw new FileNotFoundException();
 
@@ -68,28 +80,35 @@ namespace MAMBrowser.Processor
                 return result;
             }
         }
-        public Stream GetFileStream(string path, long offSet)
+        public Stream GetFileStream( string path, long offSet)
         {
             //using ()
             //{
+       
             string relativePath = MAMUtility.GetRelativePath(path);
             var sourceHost = MAMUtility.GetHost(path);
+            relativePath = relativePath.Replace(@"\", @"/");
 
-            FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass);
+            FtpClient ftpClient = new FtpClient(sourceHost, UserId, UserPass);
+            ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
+
             if (!ftpClient.FileExists(relativePath))
                 throw new FileNotFoundException();
             var stream = ftpClient.OpenRead(relativePath, offSet);
             return stream;
             //}
         }
-
         public bool ExistFile(string fromPath)
         {
             bool result = false;
             var sourceHost = MAMUtility.GetHost(fromPath);
             using (FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass))
             {
+                ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
+
                 string relativePath = MAMUtility.GetRelativePath(fromPath);
+                relativePath = relativePath.Replace(@"\", @"/");
+
                 if (!ftpClient.FileExists(relativePath))
                     result = false;
                 else
@@ -97,65 +116,17 @@ namespace MAMBrowser.Processor
             }
             return result;
         }
-        public string GetAudioFormat(string filePath)
-        {
-            //var sourceHost = MAMUtility.GetHost(filePath);
-            //업로드된후 포맷을 확인하므로...일단 업로드 호스트를 사용하도록.
-            using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
-            {
-                var ext = Path.GetExtension(filePath);
-                byte[] buffer = new byte[1000000];
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (var fs = ftpClient.OpenRead(filePath))
-                    {
-                        var read = fs.Read(buffer, 0, buffer.Length);
-                        ms.Write(buffer, 0, read);
-                    }
-                    ms.Flush();
-                    ms.Position = 0;
-
-                    
-                    if (ext.ToUpper() == MAMUtility.WAV)
-                    {
-                        WaveFileReader reader = new WaveFileReader(ms);
-                        return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-                    }
-                    else if (ext.ToUpper() == MAMUtility.MP2)
-                    {
-                        Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
-                        var frame = reader.ReadNextFrame();
-                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                    }
-                    else if (ext.ToUpper() == MAMUtility.MP3)
-                    {
-                        Mp3FileReader reader = new Mp3FileReader(ms);
-                        var frame = reader.ReadNextFrame();
-                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                    }
-                }
-            }
-            return "unknown";
-        }
-
 
         public void Delete(string filePath)
         {
             using (FtpClient ftpClient = new FtpClient(FTP + UploadHost, UserId, UserPass))
             {
+                ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
                 string relativePath = MAMUtility.GetRelativePath(filePath);
-                if(ftpClient.FileExists(relativePath))
-                    ftpClient.DeleteFile(relativePath);
-            }
-        }
+                relativePath = relativePath.Replace(@"\", @"/");
 
-        public void DeleteDirectory(string userId)
-        {
-            using (FtpClient ftpClient = new FtpClient(FTP + UploadHost, UserId, UserPass))
-            {
-                string relativePath = $"{UploadFolder}/{userId}";
-                if(ftpClient.DirectoryExists(relativePath))
-                    ftpClient.DeleteDirectory(relativePath);
+                if (ftpClient.FileExists(relativePath))
+                    ftpClient.DeleteFile(relativePath);
             }
         }
     }

@@ -180,6 +180,7 @@ namespace MAMBrowser
                     UserPass = storage.PrivateWorkConnection["UserPass"].ToString(),
                     TmpUploadFolder = storage.PrivateWorkConnection["TmpUploadFolder"].ToString(),
                     UploadFolder = storage.PrivateWorkConnection["UploadFolder"].ToString(),
+                    EncodingType = Convert.ToInt32(storage.PrivateWorkConnection["EncodingType"]),
                 };
             });
             services.AddTransient<IFileService, FtpService>(serviceProvider =>
@@ -192,6 +193,7 @@ namespace MAMBrowser
                     UserPass = storage.PublicWorkConnection["UserPass"].ToString(),
                     TmpUploadFolder = storage.PublicWorkConnection["TmpUploadFolder"].ToString(),
                     UploadFolder = storage.PublicWorkConnection["UploadFolder"].ToString(),
+                    EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
                 };
             });
             services.AddTransient<IFileService, FtpService>(serviceProvider =>

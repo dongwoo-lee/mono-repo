@@ -35,7 +35,7 @@ namespace MAMBrowser.Controllers
 
             long ID = GetID();
             string date = DateTime.Now.ToString(MAMUtility.DTM8);
-            string fileName = $"{ ID.ToString() }_{ file.FileName}";
+            string fileName = $"{ ID.ToString() }_{file.FileName}";
             var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
             var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userId}\{date}";      //공유소재도 유저확장ID 사용?, 분류코드별로...필요해보임.
             var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";

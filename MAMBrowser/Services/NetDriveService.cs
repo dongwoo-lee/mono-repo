@@ -75,53 +75,7 @@ namespace MAMBrowser.Processor
                 return File.Exists(fromPath);
             }
         }
-
-        public string GetAudioFormat(string filePath)
-        {
-            string sourceHost = MAMUtility.GetHost(filePath);
-            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
-            {
-                var ext = Path.GetExtension(filePath);
-                //wav 44byte
-                //mp3 4byte
-                byte[] buffer = new byte[1500000];
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        var read = fs.Read(buffer, 0, buffer.Length);
-                        ms.Write(buffer, 0, read);
-                    }
-                    ms.Position = 0;
-
-                    if (ext.ToUpper() == MAMUtility.WAV)
-                    {
-                        WaveFileReader reader = new WaveFileReader(ms);
-                        return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-                    }
-                    else if (ext.ToUpper() == MAMUtility.MP2)
-                    {
-                        Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
-                        var frame = reader.ReadNextFrame();
-                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                    }
-                    else if (ext.ToUpper() == MAMUtility.MP3)
-                    {
-                        Mp3FileReader reader = new Mp3FileReader(ms);
-                        var frame = reader.ReadNextFrame();
-                        return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                    }
-                }
-            }
-            return "unknown";
-        }
-
         public void Delete(string filePath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteDirectory(string userId)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
-﻿using MAMBrowser.DTO;
+﻿using MAMBrowser.Controllers;
+using MAMBrowser.DTO;
 using MAMBrowser.ExternalDTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
@@ -42,8 +43,10 @@ namespace MAMBrowser.Services
         public string FileUrl { get; set; }
 
         private readonly IDictionary<string,object> _storageMap;
-        
-        public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap)
+        private readonly APIDAL _logger;
+
+
+        public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap, APIDAL logger)
         {
             _storageMap = storageMap.Value.Map;
             MbcDomain = appSesstings.Value.MusicConnection["MbcDomain"].ToString();
@@ -54,6 +57,7 @@ namespace MAMBrowser.Services
             SearchLyricsUrl = appSesstings.Value.MusicConnection["SearchLyricsUrl"].ToString();
             ImageListUrl = appSesstings.Value.MusicConnection["ImageListUrl"].ToString();
             FileUrl = appSesstings.Value.MusicConnection["FileUrl"].ToString();
+            _logger = logger;
         }
         private string GetMusicParam(MusicSearchTypes1 searchType, string searchType2)
         {
@@ -213,18 +217,18 @@ namespace MAMBrowser.Services
             var imgEncodedPath = imgInfo[MAMUtility.MUSIC_FILEPATH];
             var imgPath = MAMUtility.SeedDecrypt(imgEncodedPath);
 
-            var host = MAMUtility.GetHost(wavPath);
+            var host = MAMUtility.GetHost(wavPath).ToUpper();
             var domainAndPort = _storageMap[host] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
             var imgDomain = MAMUtility.GetHost(imgPath);
             var imgFileName = Path.GetFileName(imgPath);
-            var relativePath = MAMUtility.GetRelativePath(imgPath);
-            string imgRelativeUri = imgPath.Replace(@"\", @"/");
+            var imgRelativePath = MAMUtility.GetRelativePath(imgPath);
+            string imgFullUri = imgRelativePath.Replace(@"\", @"/");
 
-            domain = "localhost";
-            port = 9087;
+            string downloadImageUri = $"http://{imgDomain}.{MbcDomain}/{imgFullUri}";
+
             //이미지 목록 검색
             StringContent sc = new StringContent(jsonImgInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
             var builder = new UriBuilder("http", domain, port, ImageListUrl);
@@ -237,7 +241,9 @@ namespace MAMBrowser.Services
 
                 foreach (var fileName in edto.result)
                 {
-                    imgUriList.Add(@$"http:{imgRelativeUri.Replace(imgFileName, fileName)}");
+                    var requestUri = downloadImageUri.Replace(imgFileName, fileName);
+                    imgUriList.Add(requestUri);
+                    _logger.AddLog("DEBUG", "", "", "system", "image request uri", requestUri);
                 }
             }
 
@@ -277,13 +283,11 @@ namespace MAMBrowser.Services
                 contentType = "application/octet-stream";
             }
             var domain = MAMUtility.GetHost(decryptedFilePath);
-          
             var host = domain;
-            var port = 90;
             var relativePath = MAMUtility.GetRelativePath(decryptedFilePath);
             relativePath = relativePath.Replace(@"\", @"/");
             StringContent sc = new StringContent(strAlumbInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
-            var builder = new UriBuilder("http", host, port, relativePath);
+            var builder = new UriBuilder("http", host, 80, relativePath);
             HttpClient client = new HttpClient();
             var response = client.PostAsync(builder.ToString(), sc).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -316,8 +320,11 @@ namespace MAMBrowser.Services
             var jsonWavInfo = MAMUtility.ParseToJsonRequestContent(token);
             var wavInfo = MAMUtility.ParseToRequestContent(token);
             var wavEncodedPath = wavInfo[MAMUtility.MUSIC_FILEPATH];
-            
+
             var wavPath = MAMUtility.SeedDecrypt(wavEncodedPath);
+            var egyPath = Path.ChangeExtension(wavPath, MAMUtility.EGY);
+            var jsonEgyInfo = MAMUtility.GetJsonRequestContentFromPath(egyPath);
+
             var host = MAMUtility.GetHost(wavPath);
             var domainAndPort = _storageMap[host] as string;
             var domain = domainAndPort.Split(":").First();
@@ -332,7 +339,6 @@ namespace MAMBrowser.Services
             var waveFileName = Path.GetFileName(wavPath);
             var wavTargetPath = MAMUtility.GetTempFilePath(userId, remoteIp, waveFileName);
             var egyTargetPath = Path.ChangeExtension(wavTargetPath, MAMUtility.EGY);
-            var jsonEgyInfo = MAMUtility.GetJsonRequestContentFromPath(egyTargetPath);
 
             TempDownloadCore(domain, port, jsonWavInfo, wavTargetPath);   //wav
             TempDownloadCore(domain, port, jsonEgyInfo, egyTargetPath);   //egy

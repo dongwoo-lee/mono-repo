@@ -2,6 +2,7 @@
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
 using MAMBrowser.Processor;
+using MAMBrowser.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -45,6 +46,7 @@ namespace MAMBrowser.Helpers
         public static string TokenIssuer { get; set; }
         public static string TokenSignature { get; set; }
 
+        public static LogService Logger { get; set; }
 
         public static FileStreamResult Download(string token, HttpResponse response, IFileService fileService, string inline)
         {
@@ -390,7 +392,12 @@ namespace MAMBrowser.Helpers
         {
             string domainFullPath = "";
             var domainPath = GetHost(filePath);
-            return filePath.Remove(0, filePath.IndexOf(domainPath) + domainPath.Length);
+            var relativePath = filePath.Remove(0, filePath.IndexOf(domainPath) + domainPath.Length);
+            
+            if (relativePath[0] == '/' || relativePath[0] == '\\')
+                relativePath = relativePath.Remove(0, 1);
+
+            return relativePath;
         }
         public static string GetHost(string filePath)
         {

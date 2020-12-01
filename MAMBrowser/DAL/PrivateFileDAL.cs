@@ -5,6 +5,7 @@ using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Processor;
+using MAMBrowser.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
@@ -28,7 +29,7 @@ namespace MAMBrowser.Controllers
         {
             long ID = GetID();
             string date = DateTime.Now.ToString(MAMUtility.DTM8);
-            string fileName = $"{ ID.ToString() }_{ file.FileName}";
+            string fileName = $"{ ID.ToString() }_{file.FileName}";
             var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
             var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userId}\{date}";
             var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
@@ -41,8 +42,8 @@ namespace MAMBrowser.Controllers
             _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
-            
 
+            
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", ID);
             param.Add("USER_ID", userId);

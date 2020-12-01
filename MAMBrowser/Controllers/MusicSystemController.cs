@@ -56,13 +56,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject.Data = new List<DTO_SONG>();
                 else
-                {
-                    result.ResultObject.Data = new List<DTO_SONG>();
-                    result.ResultObject.Data.Add(new DTO_SONG { Name = "DDG00205.wav", FilePath = @"\\mibis-wave1\abcdefg\FIESTAR - Vista.wav", AlbumImageFilePath = @"\\192.168.1.201:90\abcdefg\detail-small-2.jpg", LyricsSeq= "abdsc0001" });
-                }
-                //else
-                //    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
-
+                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
