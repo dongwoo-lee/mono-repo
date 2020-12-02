@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Xml.Serialization;
 using Xunit;
@@ -56,13 +58,17 @@ namespace MethodTest
 
             StorageFactorySetting(services);
             DISetting(services);
-            //±Û·Î¹ú ¼ÂÆÃ
-            var optionSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(optionSection);
-            var appSettings = optionSection.Get<AppSettings>();
-            Repository.ConnectionString = appSettings.ConnectionString;
-            MAMUtility.TokenIssuer = appSettings.TokenIssuer;
-            MAMUtility.TokenSignature = appSettings.TokenSignature;
+         
+
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    MAMUtility.LocalIpAddress = ip.ToString();
+                    break;
+                }
+            }
         }
         private void DISetting(IServiceCollection services)
         {
@@ -91,7 +97,7 @@ namespace MethodTest
                 return new NetDriveService
                 {
                     Name = "MirosConnection",
-                    Host = storage.PrivateWorkConnection["Host"].ToString(),
+                    UploadHost = storage.PrivateWorkConnection["Host"].ToString(),
                 };
             });
             services.AddTransient<MusicService>();
@@ -100,7 +106,7 @@ namespace MethodTest
                 return new FtpService
                 {
                     Name = "PrivateWorkConnection",
-                    Host = storage.PrivateWorkConnection["Host"].ToString(),
+                    UploadHost = storage.PrivateWorkConnection["Host"].ToString(),
                     UserId = storage.PrivateWorkConnection["UserId"].ToString(),
                     UserPass = storage.PrivateWorkConnection["UserPass"].ToString(),
                     TmpUploadFolder = storage.PrivateWorkConnection["TmpUploadFolder"].ToString(),
@@ -112,7 +118,7 @@ namespace MethodTest
                 return new FtpService
                 {
                     Name = "PublicWorkConnection",
-                    Host = storage.PublicWorkConnection["Host"].ToString(),
+                    UploadHost = storage.PublicWorkConnection["Host"].ToString(),
                     UserId = storage.PublicWorkConnection["UserId"].ToString(),
                     UserPass = storage.PublicWorkConnection["UserPass"].ToString(),
                     TmpUploadFolder = storage.PublicWorkConnection["TmpUploadFolder"].ToString(),
@@ -124,7 +130,7 @@ namespace MethodTest
                 return new FtpService
                 {
                     Name = "DLArchiveConnection",
-                    Host = storage.DLArchiveConnection["Host"].ToString(),
+                    UploadHost = storage.DLArchiveConnection["Host"].ToString(),
                     UserId = storage.DLArchiveConnection["UserId"].ToString(),
                     UserPass = storage.DLArchiveConnection["UserPass"].ToString()
                 };
@@ -154,35 +160,36 @@ namespace MethodTest
         public MusicTest(MusicService fileService) => _fileService = fileService;
 
         //[Fact]
+        //public void TempDownload()
+        //{
+        //    string imagefilePath = @"\\192.168.1.201\detail-small-2.jpg";
+        //    string wavfilePath = @"\\mibis-wave1\midas_0302\20170224\99\DDG00205.wav";
+
+        //    var wavToken = MAMUtility.GenerateMusicToken(wavfilePath);
+        //    var albumToken = MAMUtility.GenerateMusicToken(wavfilePath);
+
+
+        //    _fileService.TempDownloadWavAndEgy("raduieng", "192.168.1.231", wavToken);
+        //}
+
+        [Fact]
         public void GetImagePathList()
         {
-            string imagefilePath = @"\\mibis_011\midas_0302\20170224\99\DDG00205.jpg";
-            string wavfilePath = @"\\mibis-wave1\midas_0302\20170224\99\DDG00205.wav";
+            //string imagefilePath = @"\\192.168.1.201:90\imagedata\detail-small-2.jpg";
+            //string wavfilePath = @"\\mibis-wave1\midas_0302\20170224\99\DDG00205.wav";
+            //var wavToken = MAMUtility.GenerateMusicToken(wavfilePath);
+            //var albumToken = MAMUtility.GenerateMusicToken(imagefilePath);
 
-            var musicToken = MAMUtility.GenerateMusicToken(wavfilePath);
-            var albumToken = MAMUtility.GenerateMusicToken(wavfilePath);
-            _fileService.GetImageTokenList(musicToken, albumToken);
-        }
-
-        //[Fact]
-        public void GetImage()
-        {
-            string filePath = @"mibis_011\midas_0302\20170224\99\DDG00205.jpg";
-            var alumbImageFilePath = MAMUtility.GenerateMusicToken(filePath);
-            string contentType;
-            _fileService.GetAlbumImage(alumbImageFilePath, out contentType);
+            //var fileNameList = _fileService.TempImageDownload("radioeng","localhost",wavToken, albumToken);
         }
 
         [Fact]
-        public void GetSong()
+        public void GetImage()
         {
-            var filePath = @"d:\file5.xml";
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
-                var mbReturnDto = (EDTO_MB_RETURN<EDTO_SONG>)serializer.Deserialize(stream);
-                var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
-            }
+            //string filePath = @"mibis_011\midas_0302\20170224\99\DDG00205.jpg";
+            //var alumbImageFilePath = MAMUtility.GenerateMusicToken(filePath);
+            //string contentType;
+            //_fileService.GetAlbumImage(alumbImageFilePath, out contentType);
         }
     }
 }

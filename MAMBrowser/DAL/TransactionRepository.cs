@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MAMBrowser;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
 
@@ -6,7 +7,7 @@ namespace DL_Service.DAL
 {
     public class TransactionRepository
     {
-        public static string ConnectionString { get; set; }
+        public string ConnectionString { get => Startup.AppSetting.ConnectionString; }
         private OracleConnection _con;
         private OracleTransaction _transaction;
         public TransactionRepository()

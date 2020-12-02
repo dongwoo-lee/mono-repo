@@ -87,7 +87,12 @@
                 <b-button
                   v-if="data.item.id==selectedItem.id"
                   :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadConcatenate(reponseContentsData.data)">
+                  @click.stop="onDownloadConcatenate({
+                    grpType : 'sb',
+                    brd_Dt : searchItems.brd_dt,
+                    grpId : data.item.id,
+                    downloadName : data.item.name,
+                    })">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>   
               </template>

@@ -72,6 +72,10 @@ namespace MAMBrowser.Middleware
 
             if (request.Path.ToString().Contains(@"/api/"))
             {
+                string host = request.Host.ToString();
+                if (host == "127.0.0.1" || host == "::1")
+                    host = "localhost";
+
                 //var requestInfo = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString} {bodyAsText}";
                 var requestInfo = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}";
 

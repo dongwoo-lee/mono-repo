@@ -164,15 +164,25 @@ export default {
             const src = `/api/products/dl30/files/${item.seq}`;
             state.downloadIframe.setAttribute('src', src);
         },
-        downloadConcatenate({}, item){
-            console.info('item',item);
-            var tokenList =[];
-            item.forEach(dt => {
-                tokenList.push(dt.fileToken);
-            })
-             $http.get(`/api/products/concatenate-files?tokenList=${tokenList}`).then(res=>{
-                console.info('res.data',res.data);
-             })
+        downloadConcatenate({state}, item){
+            let params = {
+                grpType : item.grpType,
+                brd_Dt : item.brd_Dt,
+                grpId : item.grpId,
+                downloadName : item.downloadName,
+                userId : sessionStorage.getItem('user_id'),
+                inline : 'N',
+            }
+
+            const src = `/api/products/concatenate-files?grpType=${params.grpType}&brd_Dt=${params.brd_Dt}&grpId=${params.grpId}&downloadName=${params.downloadName}&userId=${params.userId}&inline=${params.inline}`;
+            state.downloadIframe.setAttribute('src', src);
+
+            //  $http.get(`/api/products/concatenate-files`,{
+            //      params:params,
+            //      timeout: 120000
+            //     }).then(res=>{
+            //     console.info('res.data',res.data);
+            //  })
         },
         // 파일 제거(취소 토근)
         cancel_upload: ({ commit }, fileId) => {

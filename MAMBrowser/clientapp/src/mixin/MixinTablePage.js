@@ -5,7 +5,7 @@ let mixinTablePage = apiType => ({
     mixins: [ MixinCommon ],
     data() {
         return {
-            selectedItem : {},
+            selectedItem : {},      //CM, SB에서 선택된 아이템만 다운로드 보이게끔하기 위해.
             responseData: {
                 data: [],
                 totalRowCount: 0,

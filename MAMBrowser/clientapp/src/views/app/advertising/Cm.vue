@@ -79,8 +79,14 @@
               </template>
               <template v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
-                <b-button :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadProduct(data.item.id)">
+                <b-button v-if="data.item.id==selectedItem.id"
+                :id="`download-${data.index}`" class="icon-buton"
+                  @click.stop="onDownloadConcatenate({
+                    grpType : 'cm',
+                    brd_Dt : searchItems.brd_dt,
+                    grpId : data.item.id,
+                    downloadName : data.item.name,
+                    })">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
               </template>

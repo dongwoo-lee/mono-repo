@@ -29,8 +29,6 @@ namespace MAMBrowser.Helpers
         public const string DTM8 = "yyyyMMdd";
         public const string DTM10 = "yyyy-MM-dd";
         public const string DTM19 = "yyyy-MM-dd HH:mm:ss";
-        public static string LocalIpAddress;
-        public static string TempDownloadPath;
         public const string WAV = ".WAV";
         public const string MP2 = ".MP2";
         public const string MP3 = ".MP3";
@@ -42,11 +40,11 @@ namespace MAMBrowser.Helpers
         public const string MUSIC_EXPIRE = "expire";
 
 
+        public static string LocalIpAddress { get; set; }
+        public static string TempDownloadPath { get => Startup.AppSetting.TempDownloadPath; }
+        public static string TokenIssuer { get => Startup.AppSetting.TokenIssuer; }
+        public static string TokenSignature { get => Startup.AppSetting.TokenSignature; }
 
-        public static string TokenIssuer { get; set; }
-        public static string TokenSignature { get; set; }
-
-        public static LogService Logger { get; set; }
 
         public static FileStreamResult Download(string token, HttpResponse response, IFileService fileService, string inline)
         {
@@ -154,9 +152,7 @@ namespace MAMBrowser.Helpers
         public static void TempDownloadFromPath(string filePath, string userId, string remoteIp, IFileService fileService)
         {
             string fileName = Path.GetFileName(filePath);
-
-            var egyFileName = Path.GetFileNameWithoutExtension(filePath) + MAMUtility.EGY;
-            var egyFilePath = filePath.Replace(fileName, egyFileName);
+            var egyFilePath = Path.ChangeExtension(filePath, MAMUtility.EGY);
 
             MAMUtility.TempDownloadToLocal(userId, remoteIp, fileService, filePath);       //임시파일 다운로드
             MAMUtility.TempDownloadToLocal(userId, remoteIp, fileService, egyFilePath);    //파형임시파일 다운로드
@@ -364,10 +360,10 @@ namespace MAMBrowser.Helpers
         }
         public static bool ValidateMAMToken(string token, ref string decodingData)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(TokenSignature);
             try
             {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(TokenSignature);
                 var result = tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidAudience = TokenIssuer,

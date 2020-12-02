@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -43,10 +44,10 @@ namespace MAMBrowser.Services
         public string FileUrl { get; set; }
 
         private readonly IDictionary<string,object> _storageMap;
-        private readonly APIDAL _logger;
+        private readonly ILogger<MusicService> _logger;
 
 
-        public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap, APIDAL logger)
+        public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap, ILogger<MusicService> logger)
         {
             _storageMap = storageMap.Value.Map;
             MbcDomain = appSesstings.Value.MusicConnection["MbcDomain"].ToString();
@@ -206,16 +207,19 @@ namespace MAMBrowser.Services
 
         public List<string> TempImageDownload(string userId, string remoteIp, string musicToken, string albumToken)
         {
+            _logger.LogDebug($"{userId} {remoteIp} {musicToken} {albumToken}");
             List<string> imgUriList = new List<string>();
             var jsonWavInfo = MAMUtility.ParseToJsonRequestContent(musicToken);
             var wavInfo = MAMUtility.ParseToRequestContent(musicToken);
             var wavEncodedPath = wavInfo[MAMUtility.MUSIC_FILEPATH];
             var wavPath = MAMUtility.SeedDecrypt(wavEncodedPath);
+            _logger.LogDebug($"wav path : {wavPath}");
 
             var jsonImgInfo = MAMUtility.ParseToJsonRequestContent(albumToken);
             var imgInfo = MAMUtility.ParseToRequestContent(albumToken);
             var imgEncodedPath = imgInfo[MAMUtility.MUSIC_FILEPATH];
             var imgPath = MAMUtility.SeedDecrypt(imgEncodedPath);
+            _logger.LogDebug($"img path : {imgPath}");
 
             var host = MAMUtility.GetHost(wavPath).ToUpper();
             var domainAndPort = _storageMap[host] as string;
@@ -228,22 +232,26 @@ namespace MAMBrowser.Services
             string imgFullUri = imgRelativePath.Replace(@"\", @"/");
 
             string downloadImageUri = $"http://{imgDomain}.{MbcDomain}/{imgFullUri}";
+            _logger.LogDebug($"image streaming uri : {downloadImageUri}");
 
             //이미지 목록 검색
             StringContent sc = new StringContent(jsonImgInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
             var builder = new UriBuilder("http", domain, port, ImageListUrl);
+            _logger.LogDebug($"Image file name list uri : {builder.ToString()}");
+
             HttpClient client = new HttpClient();
             var response = client.PostAsync(builder.ToString(), sc).Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
+                _logger.LogDebug($"received image file list");
                 var strReturnData = response.Content.ReadAsStringAsync().Result;
                 var edto = System.Text.Json.JsonSerializer.Deserialize<EDTO_RESULT>(strReturnData);
 
                 foreach (var fileName in edto.result)
                 {
+                    _logger.LogDebug($"image file name : {fileName}");
                     var requestUri = downloadImageUri.Replace(imgFileName, fileName);
                     imgUriList.Add(requestUri);
-                    _logger.AddLog("DEBUG", "", "", "system", "image request uri", requestUri);
                 }
             }
 
@@ -255,13 +263,16 @@ namespace MAMBrowser.Services
                     var response2 = client2.GetAsync(imgUri).Result;
                     if (response2.StatusCode == System.Net.HttpStatusCode.OK)
                     {
+                        _logger.LogDebug($"received image file");
                         var filePath = MAMUtility.GetTempFilePath(userId, remoteIp, Path.GetFileName(imgUri));
                         var folderPath = MAMUtility.GetTempFolder(userId, remoteIp);
                         if (!Directory.Exists(folderPath))
                             Directory.CreateDirectory(folderPath);
+
                         using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                         {
                             var stream = response2.Content.ReadAsStreamAsync().Result;
+                            _logger.LogDebug($"response stream length : {stream.Length}");
                             stream.CopyTo(fs);
                         }
                     }
@@ -271,32 +282,7 @@ namespace MAMBrowser.Services
             imgUriList.ForEach(uri => fileNameList.Add(Path.GetFileName(uri)));
             return fileNameList;
         }
-        public Stream GetAlbumImage(string musicToken, out string contentType)
-        {
-            var strAlumbInfo = MAMUtility.ParseToJsonRequestContent(musicToken);
-            var info = MAMUtility.ParseToRequestContent(musicToken);
-            var encryptedFilePath = info["filePath"];
-            var decryptedFilePath = MAMUtility.SeedDecrypt(encryptedFilePath);
-            var fileExtProvider = new FileExtensionContentTypeProvider();
-            if (!fileExtProvider.TryGetContentType(decryptedFilePath, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-            var domain = MAMUtility.GetHost(decryptedFilePath);
-            var host = domain;
-            var relativePath = MAMUtility.GetRelativePath(decryptedFilePath);
-            relativePath = relativePath.Replace(@"\", @"/");
-            StringContent sc = new StringContent(strAlumbInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
-            var builder = new UriBuilder("http", host, 80, relativePath);
-            HttpClient client = new HttpClient();
-            var response = client.PostAsync(builder.ToString(), sc).Result;
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return response.Content.ReadAsStreamAsync().Result;
-            }
-            else
-                return null;
-        }
+      
         public Stream GetFileStream(string domain, int port, string jsonRequestContent)
         {
             var builder = new UriBuilder("http", domain, port, FileUrl);
@@ -311,8 +297,9 @@ namespace MAMBrowser.Services
             }
             else
             {
+                _logger.LogError($"response status : {response.StatusCode}");
+                _logger.LogError($"response status : {response.Content.ReadAsStringAsync().Result}");
                 return null;
-                //로그처리
             }
         }
         public void TempDownloadWavAndEgy(string userId, string remoteIp, string token)
@@ -369,6 +356,8 @@ namespace MAMBrowser.Services
             }
             else
             {
+                _logger.LogError($"response status : {response.StatusCode}");
+                _logger.LogError($"response status : {response.Content.ReadAsStringAsync().Result}");
                 //로그처리
             }
         }

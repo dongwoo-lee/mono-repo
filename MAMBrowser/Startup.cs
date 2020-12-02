@@ -35,7 +35,8 @@ namespace MAMBrowser
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public  IConfiguration Configuration { get; }
+        public static AppSettings AppSetting { get; set; }
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -64,15 +65,6 @@ namespace MAMBrowser
 
             StorageFactorySetting(services);
             DISetting(services);
-            //글로벌 셋팅
-            var optionSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(optionSection);
-            var appSettings = optionSection.Get<AppSettings>();
-            Repository.ConnectionString = appSettings.ConnectionString;
-            TransactionRepository.ConnectionString = appSettings.ConnectionString; 
-            MAMUtility.TokenIssuer = appSettings.TokenIssuer;
-            MAMUtility.TokenSignature = appSettings.TokenSignature;
-            MAMUtility.TempDownloadPath = appSettings.TempDownloadPath;
 
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ip in host.AddressList)
@@ -137,7 +129,14 @@ namespace MAMBrowser
         }
        
         private void DISetting(IServiceCollection services)
-        {
+        { 
+            //옵션 DI
+            var optionSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(optionSection);
+            //글로벌 셋팅
+            AppSetting = optionSection.Get<AppSettings>(); 
+
+
             //DAL 등록
             services.AddTransient<APIDAL>();
             services.AddTransient<CategoriesDAL>();
@@ -203,7 +202,8 @@ namespace MAMBrowser
                     Name = "DLArchiveConnection",
                     UploadHost = storage.DLArchiveConnection["UploadHost"].ToString(),
                     UserId = storage.DLArchiveConnection["UserId"].ToString(),
-                    UserPass = storage.DLArchiveConnection["UserPass"].ToString()
+                    UserPass = storage.DLArchiveConnection["UserPass"].ToString(),
+                    EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
                 };
             });
             services.AddTransient<ServiceResolver>(serviceProvider => key =>

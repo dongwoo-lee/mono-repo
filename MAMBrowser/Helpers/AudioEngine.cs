@@ -412,6 +412,27 @@ namespace MAMBrowser.Helpers
                 writer.Flush();
             }
         }
+        public static void ConvertMp2ToWav(Stream mp2Stream, WaveFileWriter outWavStream)   //dispose없이...연결해서 씀..
+        {
+            var wf = new WaveFormat(44100, 16, 2);
+            var mpegFile = new MpegFile(mp2Stream);
+            float[] buffer = new float[wf.SampleRate * 100];
+
+            while (true)
+            {
+                var read = mpegFile.ReadSamples(buffer, 0, buffer.Length);
+
+                if (read <= 0)
+                    break;
+                else
+                {
+                    WriteSamples(buffer, 0, read, outWavStream, wf);
+                }
+            }
+            outWavStream.Flush();
+        }
+        
+
         public static void ConvertMp2ToMp3(Stream mp2Stream, Stream outWavStream)
         {
             var wf = new WaveFormat(44100, 16, 2);

@@ -8,6 +8,7 @@ using MAMBrowser.Processor;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Logging;
@@ -30,13 +31,15 @@ namespace MAMBrowser.Controllers
         private readonly AppSettings _appSesstings;
         private readonly ProductsDAL _dal;
         private readonly IFileService _fileService;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsDAL dal, ServiceResolver sr)
+        public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsDAL dal, ServiceResolver sr, ILogger<ProductsController> logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
             _dal = dal;
             _fileService = sr("MirosConnection");
+            _logger = logger;
         }
 
         /// <summary>
@@ -481,71 +484,152 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("concatenate-files")]
-        public IActionResult ConcatenateDownload([FromQuery] StringList tokenList, [FromQuery] string inline = "N")
+        public IActionResult ConcatenateDownload([FromQuery] string grpType, [FromQuery] string brd_Dt, [FromQuery] string grpId, [FromQuery] string downloadName, [FromQuery] string userId, [FromQuery] string inline = "N")
         {
+            //grpType : sb or cm
             try
             {
+                if (string.IsNullOrEmpty(grpType))
+                    return BadRequest("grpType is empty");
+
                 List<string> filePathList = new List<string>();
-                foreach (var token in tokenList)
+                string decodedFilePath = "";
+                if (grpType.ToUpper() == "SB")
                 {
-                    string filePath = "";
-                    if (MAMUtility.ValidateMAMToken(token, ref filePath))
+                    var sbfiles = FindSBContents(brd_Dt, grpId);
+                    foreach (var sbFile in sbfiles.ResultObject.Data)
                     {
-                        filePathList.Add(filePath);
+                        if (MAMUtility.ValidateMAMToken(sbFile.FileToken, ref decodedFilePath))
+                        {
+                            filePathList.Add(decodedFilePath);
+                            decodedFilePath = "";
+                        }
+                        else
+                            return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
                     }
-                    else
-                        return StatusCode((int)HttpStatusCode.Forbidden, "invalid token");
+
                 }
-                var firstFilePath = filePathList.First();
-                string fileName = Path.GetFileName(firstFilePath);
+                else if (grpType.ToUpper() == "CM")
+                {
+                    var sbfiles = FindCMContents(brd_Dt, grpId);
+                    foreach (var sbFile in sbfiles.ResultObject.Data)
+                    {
+                        if (MAMUtility.ValidateMAMToken(sbFile.FileToken, ref decodedFilePath))
+                        {
+                            filePathList.Add(decodedFilePath);
+                            decodedFilePath = "";
+                        }
+                        else
+                            return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
+                    }
+                }
+                else
+                    return BadRequest($"invalid value(grpType : {grpType})");
+
+
+                if (filePathList.Count <= 0)
+                    return StatusCode(StatusCodes.Status400BadRequest, "소재가 없습니다.");
+
+
+                
+                
+                string mergeType = MAMUtility.WAV;
+                //var firstFileName = Path.GetFileName(filePathList.First()).ToUpper();
+                var firstFileExt = Path.GetExtension(filePathList.First()).ToUpper();
+                mergeType = filePathList.All(filePath => Path.GetExtension(filePath).ToUpper() == firstFileExt) ? firstFileExt : mergeType;
+                _logger.LogDebug($"mergeType : {mergeType}");
+                string downloadFileName = downloadName + mergeType;
+
                 var fileExtProvider = new FileExtensionContentTypeProvider();
                 string contentType;
-                if (!fileExtProvider.TryGetContentType(firstFilePath, out contentType))
+                if (!fileExtProvider.TryGetContentType(firstFileExt, out contentType))
                 {
                     contentType = "application/octet-stream";
                 }
-
-
-                byte[] buffer = new byte[1024];
-                MemoryStream outStream = new MemoryStream();
-                WaveFileWriter waveFileWriter = new WaveFileWriter(outStream, new WaveFormat(44100, 16, 2));
-
-                foreach (var filePath in filePathList)
+                System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    var stream = _fileService.GetFileStream(filePath, 0);
-                    System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+                    FileName = WebUtility.UrlEncode(downloadFileName),
+                    Inline = inline == "Y" ? true : false
+                };
+                Response.Headers.Add("Content-Disposition", cd.ToString());
+
+
+
+                // 
+                //if (mergeType == MAMUtility.WAV)
+                //{
+                //}
+                //else if (mergeType == MAMUtility.MP2)
+                //{
+                //}
+                //else
+                //    return BadRequest($"invalid value(mergeType : {mergeType})");
+
+                // 일단 메모리 스트림. 
+                // 
+                byte[] buffer = new byte[10240];
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                //string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, downloadFileName);
+
+                using (FileStream outFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    WaveFileWriter waveFileWriter = null;
+                    foreach (var filePath in filePathList)
                     {
-                        FileName = WebUtility.UrlEncode(fileName),
-                        Inline = inline == "Y" ? true : false
-                    };
-                    Response.Headers.Add("Content-Disposition", cd.ToString());
-
-
-                    MemoryStream inStream = new MemoryStream();
-                    stream.CopyTo(inStream);
-                    using (WaveFileReader reader = new WaveFileReader(inStream))
-                    {
-                        if (!reader.WaveFormat.Equals(waveFileWriter.WaveFormat))
+                        var ext = Path.GetExtension(filePath).ToUpper();
+                        using (var inStream = _fileService.GetFileStream(filePath, 0))
                         {
-                            waveFileWriter.Dispose();
-                            throw new InvalidOperationException("Can't concatenate WAV Files that don't share the same format");
-                        }
+                            if (mergeType == MAMUtility.WAV)    //wav 또는 mp2포함된 혼합 일경우 wav로 출력
+                            {
+                                if (waveFileWriter == null) //향후확인 출력파일 한번만...생성자..통과하면 헤더가 자동으로 쓰여짐.
+                                {
+                                    waveFileWriter = new WaveFileWriter(outFileStream, new WaveFormat(44100, 16, 2));   
+                                }
 
-                        int read;
-                        while ((read = reader.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            waveFileWriter.Write(buffer, 0, read);
+                                using (MemoryStream tempMemoryStream = new MemoryStream())
+                                {
+                                    //in이 FTP면 library(naudio)로 읽을수 없어서 메모리 스트림에 담음.(향후확인)
+                                    inStream.CopyTo(tempMemoryStream);
+                                    tempMemoryStream.Position = 0;
+
+                                    if (ext == MAMUtility.WAV)//일단 wav포맷은 신경안써도될듯. 
+                                    {
+
+                                        using (WaveFileReader reader = new WaveFileReader(tempMemoryStream))
+                                        {
+                                            //if (!reader.WaveFormat.Equals(waveFileWriter.WaveFormat))
+                                            //{
+                                            //    throw new InvalidOperationException("Can't concatenate WAV Files that don't share the same format");
+                                            //}
+                                            int read;
+                                            while ((read = reader.Read(buffer, 0, buffer.Length)) > 0)
+                                            {
+                                                waveFileWriter.Write(buffer, 0, read);
+                                            }
+                                            waveFileWriter.Flush();
+                                        }
+                                    }
+                                    else if (ext == MAMUtility.MP2)
+                                    {
+                                        
+                                        AudioEngine.ConvertMp2ToWav(tempMemoryStream, waveFileWriter);
+                                    }
+                                }
+                            }
+                            else if (mergeType == MAMUtility.MP2)   //모두  mp2인경우
+                            {
+                                inStream.CopyTo(outFileStream);
+                            }
                         }
                     }
-
                 }
-                return File(outStream, contentType);
+                return PhysicalFile(tempFilePath, contentType);
             }
             catch (Exception ex)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
-
         }
 
         /// <summary>
@@ -655,10 +739,6 @@ namespace MAMBrowser.Controllers
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
         }
         /// <summary>
         /// DL30 소재 - 파형 요청
@@ -666,18 +746,11 @@ namespace MAMBrowser.Controllers
         /// <param name="seq"></param>
         /// <returns></returns>
         [HttpGet("dl30/waveform/{seq}")]
-        public ActionResult<List<float>> GetDl30Waveform([FromServices] ServiceResolver sr, long seq, string userId)
+        public ActionResult<List<float>> GetDl30Waveform([FromServices] ServiceResolver sr, long seq, [FromQuery] string userId)
         {
             var fileData = _dal.GetDLArchive(seq);
-            try
-            {
-                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                return MAMUtility.GetWaveformFromPath(fileData.FilePath,  userId, remoteIp);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
+            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            return MAMUtility.GetWaveformFromPath(fileData.FilePath,  userId, remoteIp);
         }
         /// <summary>
         /// DL30 소재 - 임시 다운로드
