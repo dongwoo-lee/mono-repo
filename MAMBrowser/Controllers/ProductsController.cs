@@ -701,7 +701,7 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <param name="inline">inline 여부</param>
         /// <returns></returns>
-        [HttpGet("dl30/files/{seq}")]
+        [HttpGet("dl30-files/{seq}")]
         public IActionResult Dl30Download([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV", [FromQuery] string inline = "N")
         {
             var fileService = sr("DLArchiveConnection");
@@ -725,7 +725,7 @@ namespace MAMBrowser.Controllers
         /// <param name="seq"></param>
         /// <param name="direct">Y, N</param>
         /// <returns></returns>
-        [HttpGet("dl30/streaming/{seq}")]
+        [HttpGet("dl30-streaming/{seq}")]
         public IActionResult Dl30Streaming([FromServices] ServiceResolver sr, long seq, string userId, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
         {
             var fileService = sr("DLArchiveConnection");
@@ -745,7 +745,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="seq"></param>
         /// <returns></returns>
-        [HttpGet("dl30/waveform/{seq}")]
+        [HttpGet("dl30-waveform/{seq}")]
         public ActionResult<List<float>> GetDl30Waveform([FromServices] ServiceResolver sr, long seq, [FromQuery] string userId)
         {
             var fileData = _dal.GetDLArchive(seq);
@@ -757,7 +757,7 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        [HttpGet("dl30/temp-download/{seq}")]
+        [HttpGet("dl30-temp-download/{seq}")]
         public IActionResult TempDl30Download([FromServices] ServiceResolver sr, long seq)
         {
             var fileService = sr("DLArchiveConnection");

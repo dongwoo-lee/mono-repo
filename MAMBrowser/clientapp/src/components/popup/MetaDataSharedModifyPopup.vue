@@ -117,9 +117,8 @@ export default {
         submit() {
             this.$bvModal.hide('modalModify')
             const userId = sessionStorage.getItem('user_id');
-            const formData = new FormData();
-            formData.append('metaData', JSON.stringify(this.metaData));
-            this.$http.put(`/api/products/workspace/public/meta/${userId}`, formData,
+           
+            this.$http.put(`/api/products/workspace/public/meta/${userId}`, this.metaData,
                 {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

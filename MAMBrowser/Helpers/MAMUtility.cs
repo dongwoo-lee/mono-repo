@@ -33,6 +33,8 @@ namespace MAMBrowser.Helpers
         public const string MP2 = ".MP2";
         public const string MP3 = ".MP3";
         public const string EGY = ".EGY";
+        //public const string TIF = ".TIF";
+        public const string JPG = ".JPG";
         public const string USER_ID = "UserId";
 
         public const string MUSIC_FILEPATH = "filePath";

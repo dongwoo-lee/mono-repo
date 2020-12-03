@@ -85,9 +85,9 @@ export default {
     mixins: [ MixinBasicPage ],
     data() {
       return {
-        streamingUrl : '/api/Products/dl30/streaming',
-        waveformUrl : '/api/Products/dl30/waveform',
-        tempDownloadUrl : '/api/Products/dl30/temp-download',
+        streamingUrl : '/api/Products/dl30-streaming',
+        waveformUrl : '/api/Products/dl30-waveform',
+        tempDownloadUrl : '/api/Products/dl30-temp-download',
 
           searchItems: {
               media : 'A',           // 매체

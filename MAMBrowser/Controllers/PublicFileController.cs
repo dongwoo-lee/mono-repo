@@ -62,13 +62,13 @@ namespace MAMBrowser.Controllers
         /// <param name="seq"></param>
         /// <param name="metaData"></param>
         /// <returns></returns>
-        [HttpPut("meta/{seq}")]
-        public DTO_RESULT UpdateData(long seq, [FromBody] PublicFileModel metaData)
+        [HttpPut("meta/{userId}")]
+        public DTO_RESULT UpdateData(string userId, [FromBody] PublicFileModel metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                if (_dal.UpdateData(seq, metaData) > 0)
+                if (_dal.UpdateData(metaData.SEQ, metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }

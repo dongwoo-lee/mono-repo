@@ -161,7 +161,7 @@ export default {
             state.downloadIframe.setAttribute('src', src);
         },
         downloadDl30({state}, item) { //dl30 파일 다운로드
-            const src = `/api/products/dl30/files/${item.seq}`;
+            const src = `/api/products/dl30-files/${item.seq}`;
             state.downloadIframe.setAttribute('src', src);
         },
         downloadConcatenate({state}, item){

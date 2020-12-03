@@ -250,8 +250,15 @@ namespace MAMBrowser.Services
                 foreach (var fileName in edto.result)
                 {
                     _logger.LogDebug($"image file name : {fileName}");
-                    var requestUri = downloadImageUri.Replace(imgFileName, fileName);
-                    imgUriList.Add(requestUri);
+                    if (!string.IsNullOrEmpty(fileName) && Path.GetExtension(fileName).ToUpper() == MAMUtility.JPG)
+                    {
+                        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName).ToUpper();
+                        if (fileNameWithoutExt[fileNameWithoutExt.Length - 1] == 'T')    //썸네일 제외
+                            continue;
+
+                        var requestUri = downloadImageUri.Replace(imgFileName, fileName);
+                        imgUriList.Add(requestUri);
+                    }
                 }
             }
 
@@ -260,6 +267,7 @@ namespace MAMBrowser.Services
             {
                 using (HttpClient client2 = new HttpClient())
                 {
+                    _logger.LogDebug($"request image file : {imgUri}");
                     var response2 = client2.GetAsync(imgUri).Result;
                     if (response2.StatusCode == System.Net.HttpStatusCode.OK)
                     {
