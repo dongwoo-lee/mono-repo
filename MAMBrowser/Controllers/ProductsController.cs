@@ -489,7 +489,9 @@ namespace MAMBrowser.Controllers
             try
             {
                 DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-                
+                result.ResultObject = new DTO_RESULT_OBJECT<string>();
+
+
                 if (string.IsNullOrEmpty(grpType))
                     return BadRequest("grpType is empty");
 
@@ -559,7 +561,9 @@ namespace MAMBrowser.Controllers
                 byte[] buffer = new byte[10240];
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
                 string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                MAMUtility.InitTempFoler(userId, remoteIp);
                 var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, downloadFileName);
+                
 
                 using (FileStream outFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
