@@ -65,6 +65,7 @@
 <script>
 import mixinValidate from '../../mixin/MixinValidate';
 import { mapMutations, mapActions } from 'vuex';
+import { USER_ID } from '@/constants/config';
 
 export default {
     mixins: [ mixinValidate ],
@@ -72,6 +73,7 @@ export default {
         show: {
             type: Boolean,
             default: false,
+            USER_ID,
         }
     },
     data() {
@@ -116,7 +118,7 @@ export default {
         },
         submit() {
             this.$bvModal.hide('modalModify')
-            const userId = sessionStorage.getItem('user_id');
+            const userId = sessionStorage.getItem(USER_ID);
            
             this.$http.put(`/api/products/workspace/public/meta/${userId}`, this.metaData,
                 {

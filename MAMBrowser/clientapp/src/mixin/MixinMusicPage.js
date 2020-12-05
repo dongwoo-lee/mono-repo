@@ -7,6 +7,9 @@ let mixinBasicPage = {
             selectedIds: null,
         }
     },
+    created() {
+        this.getData();
+    },
     methods: {
         onRefresh() {
             console.debug('onRefresh');

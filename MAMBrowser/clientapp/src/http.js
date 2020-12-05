@@ -25,14 +25,11 @@ $http.interceptors.response.use(res =>{
     const { config, status, data } = res;
     if (status === 200 && data.resultObject === null && data.errorMsg) {
         if (config && config['Content-Type'] === 'multipart/form-data') { return res; }
-        window.$notify(
-            "error",
-            '',
-            data.errorMsg, {
-                duration: 8000,
-                permanent: false
-            }
-        )
+        errorNotify(status, data.errorMsg);
+    }
+
+    if (status === 500) {
+        errorNotify(status, data.errorMsg);
     }
     return res;
 }, async err => {

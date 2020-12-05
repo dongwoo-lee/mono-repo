@@ -101,6 +101,8 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
+import { USER_ID } from '@/constants/config';
+import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinBasicPage ],
@@ -173,14 +175,16 @@ export default {
           dataClass: "center aligned text-center",
           width: "10%"
         }
-      ]
+      ],
+      USER_ID
     }
   },
   methods: {
+    ...mapActions('user', ['getSummaryUser']),
     getData() {
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      const userId = sessionStorage.getItem('user_id');
+      const userId = sessionStorage.getItem(USER_ID);
       this.$http.get(`/api/products/workspace/private/recyclebin/${userId}`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
@@ -204,7 +208,7 @@ export default {
     },
     // 영구 삭제
     onDelete() {
-      const userId = sessionStorage.getItem('user_id');
+      const userId = sessionStorage.getItem(USER_ID);
       let ids = this.selectedIds;
 
       if (this.singleSelectedId) {
@@ -219,6 +223,7 @@ export default {
             this.$fn.notify('success', { message: '영구 삭제가 되었습니다.' })
             this.$bvModal.hide('modalRemove');
             this.initSelectedIds();
+            this.getSummaryUser();
             this.getData();
           } else {
             this.$fn.notify('error', { message: '삭제 실패: ' + res.data.errorMsg })
@@ -239,7 +244,7 @@ export default {
     },
     // 복원하기
     onRecycle() {
-      const userId = sessionStorage.getItem('user_id');
+      const userId = sessionStorage.getItem(USER_ID);
       let ids = this.selectedIds;
 
       if (this.recycleId) {
@@ -267,13 +272,14 @@ export default {
     },
     // 휴지통 비우기(물리적인파일 포함 전체 영구삭제)
     onRecyclebin() {
-      const userId = sessionStorage.getItem('user_id');
+      const userId = sessionStorage.getItem(USER_ID);
 
       this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
               // this.$fn.notify('success', { message: '휴지통 비우기가 요청되었습니다.' });
               this.$bvModal.hide('modalRecyclebin');
+              this.getSummaryUser();
               this.getData();
             } else {
               this.$fn.notify('error', { message: '휴지통 비우기 실패: ' + res.data.errorMsg })

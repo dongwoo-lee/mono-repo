@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Function from './utils/CommonFunctions';
-import {AUTHORITY_ADMIN, ROUTE_NAMES} from '@/constants/config';
+import {AUTHORITY, ROLE, AUTHORITY_ADMIN, ROUTE_NAMES, SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE} from '@/constants/config';
 
 Vue.use(VueRouter);
 
@@ -48,67 +48,67 @@ const routes = [
       {
         // 제작 - 프로그램
         name: 'program',
-        path: "making/program",
-        component: () => import("./views/app/making/Program"),
+        path: "products/program",
+        component: () => import("./views/app/products/Program"),
       },
       {
         // 제작 - 부조  SPOT
-        name: 'relief-spot',
-        path: "making/relief-spot",
-        component: () => import("./views/app/making/ReliefSpot"),
+        name: 'scr-spot',
+        path: "products/scr-spot",
+        component: () => import("./views/app/products/ScrSpot"),
       },
       {
         // 제작 - 공유소재
         name: ROUTE_NAMES.SHARED,
-        path: "making/shared-material",
-        component: () => import("./views/app/making/SharedMaterial"),
+        path: "products/public",
+        component: () => import("./views/app/products/Public"),
       },
       {
         // 제작 - 취재물
         name: 'coverage',
-        path: "making/coverage",
-        component: () => import("./views/app/making/Coverage"),
+        path: "products/coverage",
+        component: () => import("./views/app/products/Coverage"),
       },
       {
         // 제작 - (구)프로소재
-        name: 'pro-materials',
-        path: "making/pro-materials",
-        component: () => import("./views/app/making/ProMaterials"),
+        name: 'pro-mt',
+        path: "products/pro-mt",
+        component: () => import("./views/app/products/ProMaterials"),
       },
       /**
        * 음원
        */
       {
         // 음원 - 음반기록실
-        name: 'music-record-room',
-        path: "soundtrack/music-record-room",
-        component: () => import("./views/app/soundtrack/MusicRecordRoom"),
+        name: 'song',
+        path: "music/song",
+        component: () => import("./views/app/music/Song"),
       },
       {
         // 음원 - 효과음
-        name: 'sound-effect',
-        path: "soundtrack/sound-effect",
-        component: () => import("./views/app/soundtrack/SoundEffect"),
+        name: 'effect',
+        path: "music/effect",
+        component: () => import("./views/app/music/Effect"),
       },
       /**
        * 광고
        */
       {
         // 광고 - 주조SB
-        name: 'casting-sb',
-        path: "advertising/casting-sb",
-        component: () => import("./views/app/advertising/CastingSb"),
+        name: 'mcr-sb',
+        path: "advertising/mcr-sb",
+        component: () => import("./views/app/advertising/McrSb"),
       },
       {
         // 광고 - 부조SB
-        name: 'relief-sb',
-        path: "advertising/relief-sb",
-        component: () => import("./views/app/advertising/ReliefSb"),
+        name: 'scr-sb',
+        path: "advertising/scr-sb",
+        component: () => import("./views/app/advertising/ScrSb"),
       },
       {
         // 광고 - 프로그램CM
-        name: 'program-cm',
-        path: "advertising/program-cm",
+        name: 'pgm-cm',
+        path: "advertising/pgm-cm",
         component: () => import("./views/app/advertising/ProgramCm"),
       },
       {
@@ -122,20 +122,20 @@ const routes = [
        */
       {
         // 편성 MD - 주조 SPOT
-        name: 'casting-spot',
-        path: "combinationmd/casting-spot",
-        component: () => import("./views/app/combinationMd/CastingSpot"),
+        name: 'mcr-spot',
+        path: "combinationmd/mcr-spot",
+        component: () => import("./views/app/combinationMd/McrSpot"),
       },
       {
         // 편성 MD - Filler(PR)
         name: 'filler-pr',
-        path: "combinationmd/filler-pr",
-        component: () => import("./views/app/combinationMd/FillerPr"),
+        path: "combinationmd/filler",
+        component: () => import("./views/app/combinationMd/Filler"),
       },
       {
         // 편성 MD - Filler(소재)
-        name: 'filler-material',
-        path: "combinationmd/filler-material",
+        name: 'filler-mt',
+        path: "combinationmd/filler-mt",
         component: () => import("./views/app/combinationMd/FillerMaterial"),
       },
       {
@@ -146,18 +146,18 @@ const routes = [
       },
       {
         // 편성 MD - Filler(기타)
-        name: 'filler-other',
-        path: "combinationmd/filler-other",
-        component: () => import("./views/app/combinationMd/FillerOther"),
+        name: 'filler-etcr',
+        path: "combinationmd/filler-etc",
+        component: () => import("./views/app/combinationMd/FillerEtc"),
       },
       /**
        * DL3.0
        */
       {
         // DL3.0
-        name: 'dl3',
-        path: "dl3",
-        component: () => import("./views/app/dl3/Index"),
+        name: 'dl30',
+        path: "dl30",
+        component: () => import("./views/app/dl30/Index"),
       },
       {
         name: 'config',
@@ -211,8 +211,7 @@ router.beforeEach((to, from, next) => {
   }
   
   // 시스템 관리자 접근 페이지
-  const systemPageNames = ['config', 'log']; // 시스템 접근 페이지 route 이름
-  if (systemPageNames.includes(to.name) && sessionStorage.getItem('authority') === AUTHORITY_ADMIN) {
+  if (SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE.includes(to.name) && sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN) {
     next();
     return;
   }

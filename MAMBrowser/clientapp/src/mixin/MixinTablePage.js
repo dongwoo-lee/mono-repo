@@ -1,10 +1,13 @@
 import MixinCommon from './MixinCommon';
 import { mapActions } from 'vuex';
+import { PREVIEW_CODE, AUTHORITY, AUTHORITY_ADMIN } from "@/constants/config";
 
 let mixinTablePage = apiType => ({
     mixins: [ MixinCommon ],
     data() {
         return {
+            PREVIEW_CODE: PREVIEW_CODE,
+            IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
             selectedItem : {},      //CM, SB에서 선택된 아이템만 다운로드 보이게끔하기 위해.
             responseData: {
                 data: [],

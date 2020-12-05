@@ -1,6 +1,7 @@
 import { defaultMenuType } from '../../constants/config'
 import $http from '../../http';
 import $fn from '../../utils/CommonFunctions';
+import { USER_ID } from '@/constants/config';
 
 const state = {
   menus: [],
@@ -120,7 +121,7 @@ const mutations = {
 
 const actions = {
   getMenus({commit}) {
-    const userId = sessionStorage.getItem('user_id');
+    const userId = sessionStorage.getItem(USER_ID);
     $http.get(`/api/users/${userId}/menu`).then(response => {
       const {status, data } = response;
       if (status === 200 && data.resultCode === 0) {

@@ -9,6 +9,7 @@
     <common-form
       :searchItems="searchItems"
       :isDisplayBtnArea="true"
+      :isDisplayPageSize="false"
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
@@ -23,20 +24,15 @@
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
-        {{ getPageInfo() }}
+        {{ getTotalRowCount() }}
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <common-data-table-scroll-paging
-          ref="scrollPaging"
-          :table-height="'500px'"
+        <common-data-table
           :fields="fields"
           :rows="responseData.data"
-          :per-page="responseData.rowPerPage"
-          is-actions-slot
-          :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
-          @scrollPerPage="onScrollPerPage"
+          is-actions-slot
         >
           <template slot="actions" scope="props">
             <common-actions
@@ -47,7 +43,7 @@
             >
             </common-actions>
           </template>
-        </common-data-table-scroll-paging>
+        </common-data-table>
       </template>
     </common-form>
 
@@ -132,9 +128,7 @@ export default {
       this.$http.get(`/api/musicsystem/effect`, { params: this.searchItems })
         .then(res => {
             this.setResponseData(res);
-            this.addScrollClass();
             this.isTableLoading = false;
-            this.isScrollLodaing = false;
       });
     }
   }

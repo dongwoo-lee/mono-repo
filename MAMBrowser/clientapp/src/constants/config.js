@@ -11,8 +11,6 @@ export const localeOptions = [
 ]
 export const defaultColor = 'light.blueolympic'
 
-/* refresh token timer */
-export const REFRESH_TOKEN_TIME = 60 * 60;
 /* behavior system management code */
 export const SYSTEM_MANAGEMENT_CODE  = 'S01G02C001';
 /* behavior preview listening code */
@@ -29,6 +27,16 @@ export const ROUTE_NAMES = {
   SHARED: 'public',
 }
 /* file upload accept */
-export const FILE_UPLOAD_ACCEPT = 'audio/*,video/*,image/*,.mp2';
+export const FILE_UPLOAD_ACCEPT = '.mp2,.mp3,.wav';
 /* file upload extensions */
-export const FILE_UPLOAD_EXTENSIONS = ['jpg', 'gif', 'png', 'mp2', 'mp3', 'mp4', 'wav', 'mpeg'];
+export const FILE_UPLOAD_EXTENSIONS = ['mp2', 'mp3', 'wav'];
+/* system management access */
+export const SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE = ['config', 'log'];
+/* AUTHORITY*/
+export const AUTHORITY = 'authority';
+/* ROLE */
+export const ROLE = 'role';
+/* USER ID */
+export const USER_ID = 'user_id';
+/* ACCESS_TOKEN */
+export const ACCESS_TOKEN = 'access_token';

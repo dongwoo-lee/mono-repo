@@ -66,6 +66,7 @@
 </b-modal>
 </template>
 <script>
+import { USER_ID } from '@/constants/config';
 export default {
     data () {
         return {
@@ -76,7 +77,7 @@ export default {
             lyrics :'가사 테스트 입니다.',
             slide : 0,
             sliding : null,
-            
+            USER_ID
         }
     },
     props:{
@@ -138,7 +139,7 @@ export default {
             this.getLyrics();
         },
         tempDownloadedImageUrl(){
-            let userId =sessionStorage.getItem('user_id');
+            let userId =sessionStorage.getItem(USER_ID);
             var tempList = [];
             this.imagePathList = [];
             this.$http.get(`${this.tempImageDownloadUrl}?token=${this.music.fileToken}&albumtoken=${this.music.albumToken}`, null).then(res=>{

@@ -119,7 +119,7 @@
                 <b-button
                   v-if="display(PREVIEW_CODE)"
                   class="icon-buton"
-                  title="미리듣기"
+                  v-b-tooltip.hover.top="{ title: IS_ADMIN ? data.item.filePath : '미리듣기' }"
                   @click.stop="onPreview(data.item)">
                 <b-icon icon="caret-right-square" class="icon"></b-icon>
               </b-button>

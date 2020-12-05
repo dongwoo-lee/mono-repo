@@ -78,6 +78,7 @@ export default {
     },
     mounted() {
         this.$nextTick(() => {
+            if (!this.$refs.vuetable) return ;
             const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
             [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
             if (!rowElem || !this.sortable) return;

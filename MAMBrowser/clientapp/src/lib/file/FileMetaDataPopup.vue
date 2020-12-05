@@ -20,12 +20,11 @@
             </b-form-input>
             <b-form-invalid-feedback :state="!$v.title.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
-        <template v-if="isSharedMaterial">
+        <template v-if="isPublicPage">
             <b-form-group label="매체" label-for="input-title">
                     <b-form-select 
                     v-model="$v.mediaCD.$model"
                     :options="primaryOptions"
-                    @change="onChangePrimary"
                     value-field="id"
                     text-field="name" 
                 />
@@ -67,7 +66,7 @@
 </template>
 
 <script>
-import { ROUTE_NAMES } from '@/constants/config';
+import { ROUTE_NAMES, USER_ID } from '@/constants/config';
 import mixinValidate from '../../mixin/MixinValidate';
 import { mapMutations, mapActions, mapState } from 'vuex';
 
@@ -87,7 +86,8 @@ export default {
             storegeType: {
                 private: ROUTE_NAMES.PRIVATE,
                 shared: ROUTE_NAMES.SHARED,
-            }
+            },
+            USER_ID
         }
     },
     computed: {
@@ -95,14 +95,14 @@ export default {
         routeName() {
             return this.$route.name === undefined ? this.storegeType.private : this.$route.name;
         },
-        isSharedMaterial() {
+        isPublicPage() {
             if (this.type === this.storegeType.shared) {
                 this.getPrimaryOptions();
                 this.getPrimaryCodeOptions();
                 return true;
             };
             return false;
-        }
+        },
     },
     methods: {
         ...mapMutations('file', ['SET_FILES', 'REMOVE_FILES', 'SET_UPLOAD_VIEW_TYPE', 'SET_DRAG_DROP_STATE']),
@@ -156,14 +156,11 @@ export default {
         },
         show(files) {
             this.localFiles = files;
-            this.isShow = true;
             this.type = this.routeName;
+            this.isShow = true;
         },
         close() {
             this.reset()
-        },
-        onChangePrimary() {
-            this.getPrimaryCodeOptions();
         },
         // 매체목록 조회
         getPrimaryOptions() {
@@ -178,11 +175,12 @@ export default {
         },
         // 공유 소재 분류 목록 조회
         getPrimaryCodeOptions() {
-            this.categoryCD = '';
-            this.$http.get('/api/Categories/public-codes/primary/' + this.mediaCD)
+            const userId = sessionStorage.getItem(USER_ID);
+            this.$http.get('/api/Categories/public-codes/primary/' + this.mediaCD + '?userId=' + userId)
               .then(res => {
                   if (res.status === 200) {
                       this.primaryCodeOptions = res.data.resultObject.data;
+                      this.categoryCD = '';
                   } else {
                       this.$fn.notify('server-error', { message: '조회 에러' });
                   }

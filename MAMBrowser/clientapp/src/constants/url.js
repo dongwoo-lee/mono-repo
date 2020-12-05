@@ -24,31 +24,31 @@ const url = [
     {
         // 프로그램
         id: "S01G01C009",
-        to: "/app/making/program",
+        to: "/app/products/program",
         icon: "iconsminds-blackboard",
     },
     {
         // 부조 SPOT
         id: "S01G01C010",
-        to: "/app/making/relief-spot",
+        to: "/app/products/scr-spot",
         icon: "",
     },
     {
         // 공유소재
         id: "S01G01C011",
-        to: "/app/making/shared-material",
+        to: "/app/products/public",
         icon: "iconsminds-blackboard",
     },
     {
         // 취재물
         id: "S01G01C012",
-        to: "/app/making/coverage",
+        to: "/app/products/coverage",
         icon: "iconsminds-blackboard",
     },
     {
         // (구)프로소재
         id: "S01G01C013",
-        to: "/app/making/pro-materials",
+        to: "/app/products/pro-mt",
         icon: "iconsminds-blackboard",
     },
     {
@@ -59,13 +59,13 @@ const url = [
     {
         // 음반기록실
         id: "S01G01C014",
-        to: "/app/soundtrack/music-record-room",
+        to: "/app/music/song",
         icon: "iconsminds-clef",
     },
     {
         // 효과음
         id: "S01G01C015",
-        to: "/app/soundtrack/sound-effect",
+        to: "/app/music/effect",
         icon: "iconsminds-clef",
     },
     {
@@ -76,19 +76,19 @@ const url = [
     {
         // 주조SB
         id: "S01G01C016",
-        to: "/app/advertising/casting-sb",
+        to: "/app/advertising/mcr-sb",
         icon: "iconsminds-optimization",
     },
     {
         // 부조SB
         id: "S01G01C017",
-        to: "/app/advertising/relief-sb",
+        to: "/app/advertising/scr-sb",
         icon: "iconsminds-optimization",
     },
     {
         // 프로그램CM
         id: "S01G01C018",
-        to: "/app/advertising/program-cm",
+        to: "/app/advertising/pgm-cm",
         icon: "iconsminds-optimization",
     },
     {
@@ -105,19 +105,19 @@ const url = [
     {
         // 주조SPOT
         id: "S01G01C020",
-        to: "/app/combinationmd/casting-spot",
+        to: "/app/combinationmd/mcr-spot",
         icon: "iconsminds-notepad",
     },
     {
        // Filler(PR)
         id: "S01G01C021",
-        to: "/app/combinationmd/filler-pr",
+        to: "/app/combinationmd/filler",
         icon: "iconsminds-notepad",
     },
     {
         // Filler(소재)
         id: "S01G01C022",
-        to: "/app/combinationmd/filler-material",
+        to: "/app/combinationmd/filler-mt",
         icon: "iconsminds-notepad",
     },
     {
@@ -129,13 +129,13 @@ const url = [
     {
         // Filler(기타)
         id: "S01G01C024",
-        to: "/app/combinationmd/filler-other",
+        to: "/app/combinationmd/filler-etc",
         icon: "iconsminds-notepad",
     },
     {
         // DL3.0
         id: "S01G01C006",
-        to: "/app/dl3",
+        to: "/app/dl30",
         icon: "iconsminds-three-arrow-fork",
     },
 ]

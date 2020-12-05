@@ -1,7 +1,8 @@
 import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
-import {SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER} from '@/constants/config';
+import jwt_decode from "jwt-decode";
+import {USER_ID, ROLE, ACCESS_TOKEN, AUTHORITY, SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER} from '@/constants/config';
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
 const getAddUrlAndIconMenuList = (menuList, roleList) => {
@@ -66,6 +67,8 @@ export default {
     roleList: [],
     processing: false,
     callLoginAuthTryCnt: 0,
+    tokenExpires: 0,
+    timerProcessing: false,
   },
   getters: {
     menuList: state => state.menuList,
@@ -73,17 +76,22 @@ export default {
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
-    // isDisplayMyDiskMenu: state => {
-    //   console.info('state.roleList', state.roleList);
-    //   const findIndex = state.roleList.findIndex(role => role.id === 'S01G01C007' && role.visible === 'Y');
-    //   return findIndex > -1;
-    // },
-    isAuth: () => sessionStorage.getItem('access_token') != null && sessionStorage.getItem('user_id') != null,
-    getUserId: () => sessionStorage.getItem('user_id'),
+    isAuth: () => sessionStorage.getItem(ACCESS_TOKEN) != null && sessionStorage.getItem(USER_ID) != null,
+    getUserId: () => sessionStorage.getItem(USER_ID),
+    tokenExpires: state => state.tokenExpires,
+    timerProcessing: state => state.timerProcessing,
   },
   mutations: {
     SET_AUTH(state, {token, resultObject }) {
-      const { menuList, behaviorList, id } = resultObject;  //확인필요
+      // token 시간 만료(초) 설정
+      const { exp } = jwt_decode(token);
+      const now = Date.now() / 1000;
+      const timeDiff = exp - now;
+      state.tokenExpires = timeDiff;
+      state.timerProcessing = true;
+
+      // 유저 정보 설정
+      const { menuList, behaviorList, id } = resultObject;
       state.isAuth = true;
       state.processing = false;
       state.roleList = [];
@@ -93,10 +101,10 @@ export default {
       delete resultObject.behaviorList;
       state.currentUser = resultObject;
       
-      sessionStorage.setItem('access_token', token);
-      sessionStorage.setItem('user_id', id);
-      sessionStorage.setItem('role', JSON.stringify(state.roleList));
-      sessionStorage.setItem('authority', getAuthority(state.behaviorList));
+      sessionStorage.setItem(ACCESS_TOKEN, token);
+      sessionStorage.setItem(USER_ID, id);
+      sessionStorage.setItem(ROLE, JSON.stringify(state.roleList));
+      sessionStorage.setItem(AUTHORITY, getAuthority(state.behaviorList));
     },
     SET_SUMMARY_USER(state, resultObject) {
       delete resultObject.menuList;
@@ -107,10 +115,11 @@ export default {
       state.isAuth = false;
       state.currentUser = {};
       state.processing = false;
-      sessionStorage.removeItem('access_token');
-      sessionStorage.removeItem('user_id');
-      sessionStorage.removeItem('role');
-      sessionStorage.removeItem('authority');
+      state.timerProcessing = false;
+      sessionStorage.removeItem(ACCESS_TOKEN);
+      sessionStorage.removeItem(USER_ID);
+      sessionStorage.removeItem(ROLE);
+      sessionStorage.removeItem(AUTHORITY);
     },
     SET_PROCESSING(state, payload) {
       state.processing = payload
@@ -120,6 +129,13 @@ export default {
     },
     SET_CALL_LOGIN_AUTH_TRY_CNT(state) {
       state.callLoginAuthTryCnt += 1;
+    },
+    SET_INIT_CALL_LOGIN_AUTH_TRY_CNT(state) {
+      state.callLoginAuthTryCnt = 0;
+    },
+    SET_INIT_TOKEN_TIMER(state, payload) {
+      state.timerProcessing = payload;
+      state.tokenExpires = 0;
     }
   },
   actions: {
@@ -153,9 +169,10 @@ export default {
     },
     async getRenewal({ state, commit }) {
       if (state.callLoginAuthTryCnt > 0) { return; }
+      commit('SET_INIT_TOKEN_TIMER', false);
 
       const params = {
-        UserID: sessionStorage.getItem('user_id'),
+        UserID: sessionStorage.getItem(USER_ID),
         Pass: 'undefined',
       };
 
@@ -171,8 +188,10 @@ export default {
         } else {
           $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })
         }
+        return response;
       } catch(error) {
         console.error(error);
+        return error;
       }
     },
     getSummaryUser({getters, commit}) {

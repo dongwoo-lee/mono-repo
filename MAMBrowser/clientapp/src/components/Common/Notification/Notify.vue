@@ -19,7 +19,7 @@ export default {
       title: null,
       options: {
         type: 'success',
-        duration: 2000,
+        duration: 4000,
         permanent: false
       },
       items: [],

@@ -2,6 +2,7 @@ import axios from 'axios'
 import $http from '../../http';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
+import { USER_ID } from '@/constants/config';
 
 let uploadCancelToken = {};
 
@@ -116,7 +117,7 @@ export default {
                         timeout: 3600000,
                     }
 
-                    let userId = sessionStorage.getItem('user_id');
+                    let userId = sessionStorage.getItem(USER_ID);
                     try {
                         const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files/${userId}`, formData, config);
 
@@ -170,19 +171,19 @@ export default {
                 brd_Dt : item.brd_Dt,
                 grpId : item.grpId,
                 downloadName : item.downloadName,
-                userId : sessionStorage.getItem('user_id'),
                 inline : 'N',
             }
 
-            const src = `/api/products/concatenate-files?grpType=${params.grpType}&brd_Dt=${params.brd_Dt}&grpId=${params.grpId}&downloadName=${params.downloadName}&userId=${params.userId}&inline=${params.inline}`;
-            state.downloadIframe.setAttribute('src', src);
-
-            //  $http.get(`/api/products/concatenate-files`,{
-            //      params:params,
-            //      timeout: 120000
-            //     }).then(res=>{
-            //     console.info('res.data',res.data);
-            //  })
+            $http.get(`/api/Products/request-concatenate-files`,{
+                    params:params,
+                    timeout: 120000
+                }).then(res=>{
+                    if (res.data && res.data.resultCode === 0) {
+                        const userId = encodeURIComponent(sessionStorage.getItem(USER_ID));
+                        const src = `/api/products/concatenate-files?userId=${userId}&downloadName=${res.data.resultObject.data}`;
+                        state.downloadIframe.setAttribute('src', src);
+                    }
+             })
         },
         // 파일 제거(취소 토근)
         cancel_upload: ({ commit }, fileId) => {

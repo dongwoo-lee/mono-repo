@@ -25,6 +25,10 @@ export default {
             type: Number,
             default: 0
         },
+        timerProcessing: {
+            type: Boolean,
+            default: false,
+        }
     },
     data() {
         return {
@@ -32,11 +36,25 @@ export default {
             totalTime: 0,
         }
     },
+    computed: {
+        title() {
+            return this.toHHmmss(this.totalTime);
+        },
+    },
+    watch: {
+        timerProcessing: {
+            handler(value) {
+                if (value) {
+                    this.startTimer();        
+                }
+            },
+            immediate: true
+        }
+    },
     created() {
         eventBus.$on('onResetTimer', () => {
             this.resetTimer();
         })
-        this.startTimer();
     },
     methods: {
         getExpireTime() {
@@ -50,20 +68,12 @@ export default {
             this.$emit('resetTimer');
 			clearInterval(this.timer);
             this.timer = null;
-            this.startTimer();
         },
         clearTimer() {
             clearInterval(this.timer);
             this.timer = null;
         },
 		countdown() {
-            // const { state, commit, dispatch } = context;
-            // const { accessToken } = state;
-            // const { exp } = jwt_decode(accessToken);
-            // const now = Date.now() / 1000;
-            // let timeUntilRefresh = exp - now;
-            // timeUntilRefresh -= (15 * 60);
-
 			if(this.totalTime >= 1) {
 				this.totalTime--;
 			} else {
@@ -85,10 +95,5 @@ export default {
             return hours + ':' + minutes + ':' + seconds;
 		}
 	},
-	computed: {
-        title() {
-            return this.toHHmmss(this.totalTime);
-        }
-	}
 }
 </script>

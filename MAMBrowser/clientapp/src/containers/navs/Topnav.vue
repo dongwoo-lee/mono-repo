@@ -30,7 +30,11 @@
             <tr>
               <!-- 타이머 -->
               <td rowspan="2">
-                <timer :expires="REFRESH_TOKEN_TIME" @resetTimer="resetTimer"></timer>
+                <timer 
+                  :timerProcessing="timerProcessing" 
+                  :expires="tokenExpires" 
+                  @resetTimer="resetTimer">
+                </timer>
               </td>
               <!-- 디스크 용량 정보 -->
               <td>
@@ -84,7 +88,7 @@
 <script>
 import { mapGetters, mapMutations, mapActions, mapState } from "vuex";
 import { MenuIcon, MobileMenuIcon } from "../../components/Svg";
-import { REFRESH_TOKEN_TIME, SYSTEM_MANAGEMENT_CODE } from "../../constants/config";
+import { SYSTEM_MANAGEMENT_CODE } from "../../constants/config";
 import { getDirection, setDirection } from "../../utils";
 
 export default {
@@ -94,8 +98,7 @@ export default {
   },
   data() {
     return {
-      REFRESH_TOKEN_TIME: REFRESH_TOKEN_TIME,
-      SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE
+      SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE,
     }
   },
   created() {
@@ -107,6 +110,7 @@ export default {
       "changeSideMenuForMobile"
     ]),
     ...mapActions("user", ["setLang", "signOut", 'getRenewal']),
+    ...mapMutations('user', ['SET_INIT_CALL_LOGIN_AUTH_TRY_CNT']),
     logout() {
       this.signOut().then(() => {
         this.$router.push("/user/login");
@@ -126,16 +130,27 @@ export default {
       return '';
     },
     resetTimer() {
-      this.getRenewal();
-    }
+      this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
+      this.getRenewal().then(res => {
+        if (res && res.data && res.data.resultCode === 0) {
+            this.$notify('success', '로그인 연장되었습니다.');
+        }
+      });
+    },
   },
   computed: {
-    ...mapGetters("user", ["currentUser", 'behaviorList', 'roleList']),
     ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",
       selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
-    })
+    }),
+    ...mapGetters("user", 
+      ['currentUser'
+        , 'behaviorList'
+        , 'roleList'
+        , 'timerProcessing'
+        , 'tokenExpires'
+    ]),
   },
   watch: {
     "$i18n.locale"(to, from) {

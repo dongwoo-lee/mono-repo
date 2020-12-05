@@ -122,6 +122,7 @@
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import MetaDataPrivateModifyPopup from '../../../components/popup/MetaDataPrivateModifyPopup';
 import { mapActions } from 'vuex';
+import { USER_ID } from '@/constants/config';
 
 export default {
   mixins: [ MixinBasicPage ],
@@ -213,6 +214,7 @@ export default {
           width: "10%"
         }
       ],
+      USER_ID
     }
   },
   methods: {
@@ -226,7 +228,7 @@ export default {
 
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
-      const userId = sessionStorage.getItem('user_id');
+      const userId = sessionStorage.getItem(USER_ID);
 
       this.$http.get(`/api/products/workspace/private/meta/${userId}`, { params: this.searchItems })
         .then(res => {
@@ -262,7 +264,7 @@ export default {
     },
     // 휴지통 보내기
     onDelete() {
-      const userId = sessionStorage.getItem('user_id');
+      const userId = sessionStorage.getItem(USER_ID);
       let ids = this.selectedIds;
 
       if (this.singleSelectedId !== null) {

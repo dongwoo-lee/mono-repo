@@ -3,14 +3,15 @@
         <b-button
             v-if="display(PREVIEW_CODE)"
             class="icon-buton"
-            title="미리듣기"
+            v-b-tooltip.hover.top="{ title: (isFilePathPreviewTitle && IS_ADMIN) ? rowData.filePath : '미리듣기' }"
             @click.stop="onPreview()">
             <b-icon icon="caret-right-square" class="icon"></b-icon>
         </b-button>
         <b-button
             v-if="display(DOWNLOAD_CODE)"
-            :id="`download-${rowData.rowNO}`" class="icon-buton"
-            v-b-tooltip.hover.top="{ title: rowData.filePath }"
+            :id="`download-${rowData.rowNO}`" 
+            class="icon-buton"
+            v-b-tooltip.hover.top="{ title: IS_ADMIN ? rowData.filePath : '' }"
             @click.stop="onDownload()">
             <b-icon icon="download" class="icon"></b-icon>
         </b-button>           
@@ -18,6 +19,8 @@
             v-if="displayEtc('delete')"
             class="icon-buton"
             :title="getTitle('delete')"
+            :disabled="!isPossibleDelete"
+            :style="getDeleteStyle()"
             @click.stop="onDelete()">
             <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
         </b-button>
@@ -31,7 +34,7 @@
     </div>
 </template>
 <script>
-import { PREVIEW_CODE, DOWNLOAD_CODE } from "@/constants/config";
+import { PREVIEW_CODE, DOWNLOAD_CODE, AUTHORITY, AUTHORITY_ADMIN, USER_ID } from "@/constants/config";
 
 export default {
     props:{
@@ -51,12 +54,24 @@ export default {
             type: Array,
             default: () => []
         },
+        isPossibleDelete: {
+            type: Boolean,
+            default: true,
+        },
+        isFilePathPreviewTitle: {
+            type:Boolean,
+            default: false,
+        }
     },
     data() {
         return {
             PREVIEW_CODE: PREVIEW_CODE,
-            DOWNLOAD_CODE: DOWNLOAD_CODE
+            DOWNLOAD_CODE: DOWNLOAD_CODE,
+            IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
         }
+    },
+    computed: {
+        
     },
     methods: {
         display(value) {
@@ -84,6 +99,11 @@ export default {
             if (type === 'delete') { return '휴지통'; }
             if (type === 'modify') { return '정보편집';}
             return '';
+        },
+        getDeleteStyle() {
+             return {
+                 'opacity': this.isPossibleDelete ? 1 : 0.2,
+             }
         }
     },
 }

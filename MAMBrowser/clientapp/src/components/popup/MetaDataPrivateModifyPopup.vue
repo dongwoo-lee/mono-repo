@@ -46,6 +46,7 @@
 <script>
 import mixinValidate from '../../mixin/MixinValidate';
 import { mapMutations, mapActions } from 'vuex';
+import { USER_ID } from '@/constants/config';
 
 export default {
     mixins: [ mixinValidate ],
@@ -61,6 +62,7 @@ export default {
                 seq: 0,
                 title: '',
                 memo: '',
+                USER_ID
             }
         }
     },
@@ -88,7 +90,7 @@ export default {
         },
         submit() {
             this.$bvModal.hide('modalModify')
-            const userId = sessionStorage.getItem('user_id');
+            const userId = sessionStorage.getItem(USER_ID);
             const formData = new FormData();
 
             this.$http.put(`/api/products/workspace/private/meta/${userId}`, this.metaData)

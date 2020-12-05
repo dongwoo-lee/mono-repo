@@ -32,6 +32,7 @@
 <script>
 import WaveSurfer from 'wavesurfer.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
+import { USER_ID, ACCESS_TOKEN } from '@/constants/config';
 
 import axios from 'axios';
 var wavesurfer;
@@ -47,7 +48,9 @@ export default {
       TotalTime : '00:00:00',
       loadComplete:false,
       isSuccess : false,
-      spinnerFlag : true
+      spinnerFlag : true,
+      ACCESS_TOKEN,
+      USER_ID
     }
   },
   mounted() {
@@ -71,7 +74,7 @@ export default {
         xhr:{
           requestHeaders: [{
             key: "X-Csrf-Token",
-            value: sessionStorage.getItem('access_token')
+            value: sessionStorage.getItem(ACCESS_TOKEN)
           }]
         }
       })
@@ -80,7 +83,7 @@ export default {
         withCredentials: false,
         headers:{
             'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token')
+            'X-Csrf-Token': sessionStorage.getItem(ACCESS_TOKEN)
             },
             timeout:80000
       });
@@ -121,7 +124,7 @@ export default {
       let fileUrl ='';
       let waveformUrl ='';
       let downloadUrl ='';
-      let userId =  sessionStorage.getItem('user_id');
+      let userId =  sessionStorage.getItem(USER_ID);
 
       if(this.requestType === "key")
       {
@@ -146,7 +149,7 @@ export default {
       httpClient.get(downloadUrl, {
         cancelToken: source.token,
         headers:{
-          'X-Csrf-Token': sessionStorage.getItem('access_token'),
+          'X-Csrf-Token': sessionStorage.getItem(ACCESS_TOKEN),
         }
       }).then(res=>{
         console.info('tempdownload status', res.status);

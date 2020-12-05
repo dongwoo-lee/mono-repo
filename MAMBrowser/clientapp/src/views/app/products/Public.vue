@@ -102,6 +102,7 @@
                 :behaviorData="behaviorList"
                 :etcData="['delete', 'modify']"
                 :etcTitles="{ delete: '삭제' }"
+                :isPossibleDelete="isPossibleDelete(props.props.rowData.userId)"
                 @preview="onPreview"
                 @download="onDownloadSingle"
                 @delete="onDeleteConfirm"
@@ -150,6 +151,7 @@
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import MetaDataSharedModifyPopup from '../../../components/popup/MetaDataSharedModifyPopup';
 import { mapActions } from 'vuex';
+import { USER_ID } from "@/constants/config";
 
 export default {
   mixins: [ MixinBasicPage ],
@@ -254,7 +256,8 @@ export default {
           dataClass: "center aligned text-center",
           width: "10%"
         }
-      ]
+      ],
+      USER_ID
     }
   },
   watch: {
@@ -347,6 +350,9 @@ export default {
     getDeleteMsg() {
       return this.innerHtmlSelectedFileNames + "다시 복원할 수 없습니다. 정말 삭제하시겠습니까?";
     },
+    isPossibleDelete(userId) {
+      return sessionStorage.getItem(USER_ID) === userId;
+    }
   }
 }
 </script>
