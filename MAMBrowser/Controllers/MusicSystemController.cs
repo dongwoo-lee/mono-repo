@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MAMBrowser.Controllers
 {
@@ -84,27 +85,31 @@ namespace MAMBrowser.Controllers
         public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> FindEffect([FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_EFFECT>>();
-            try
+            
+            result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
+            long totalCount = 0;
+            string filePath = @"./effect.xml";
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
-                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
-                long totalCount = 0;
-                if (string.IsNullOrEmpty(searchText))
-                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
-                else
-                    result.ResultObject.Data = _fileService.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
+                int rowNo = selectPage == 1 ? 1 : ((selectPage - 1) * rowPerPage) + 1;
+                XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_EFFECT>));
+                var mbReturnDto = (EDTO_MB_RETURN<EDTO_EFFECT>)serializer.Deserialize(stream);
+                totalCount = mbReturnDto.Section.TOTAL_COUNT;
+                var dtoList = mbReturnDto.Section.Data.Select(edto => new DTO_EFFECT(edto)).ToList();
+                dtoList.ForEach(dto =>
+                {
+                    dto.RowNO = rowNo;
+                    rowNo++;
+                });
+                result.ResultObject.Data = dtoList;
+            }
 
-                result.ResultObject.RowPerPage = rowPerPage;
-                result.ResultObject.SelectPage = selectPage;
-                result.ResultObject.TotalRowCount = totalCount;
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
+            result.ResultObject.RowPerPage = rowPerPage;
+            result.ResultObject.SelectPage = selectPage;
+            result.ResultObject.TotalRowCount = totalCount;
+            result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
+     
         }
 
 
