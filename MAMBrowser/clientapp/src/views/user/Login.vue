@@ -3,16 +3,13 @@
     <b-colxx xxs="12" md="10" class="mx-auto my-auto">
         <b-card class="auth-card" no-body>
             <div class="position-relative image-side">
-                <p class="text-white h2">MAMBrowser</p>
-                <!-- <p class="white mb-0">
-                    Please use your credentials to login.
-                    <br />If you are not a member, please
-                    <router-link tag="a" to="/user/register" class="white">register</router-link>.
-                </p> -->
             </div>
             <div class="form-side">
                 <router-link tag="a" to="/">
-                    <span class="logo-single" />
+                    <!-- <span class="logo-single" /> -->
+                    <p class="text h4"><b>MAM BROWSER</b></p>
+                    <br>
+                    <br>
                 </router-link>
                 <h6 class="mb-4">Login</h6>
 
