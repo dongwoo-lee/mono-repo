@@ -251,17 +251,23 @@ ORDER BY NUM");
         }
 
 
-        public DTO_RESULT_LIST<DTO_CATEGORY> GetPublicSecond(string primaryCode)
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetPublicSecond(string primaryCode, string userId)
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
+            DynamicParameters param = new DynamicParameters();
+            param.Add("GRP_CD", primaryCode);
+            param.Add("USER_ID", userId);
+
             var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.CODE, M30_CODE.NAME NAME FROM M30_CODE_MAP
 LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
             builder.Where("(SYSTEM_CD = 'S01' AND MAP_CD = 'S00G01C005')");
             builder.Where("GRP_CD = :GRP_CD");
-            DynamicParameters param = new DynamicParameters();
-            param.Add("GRP_CD", primaryCode);
-
+            if (!string.IsNullOrEmpty(userId))
+            {
+                builder.Where("M30_CODE.CODE IN (SELECT CODE FROM M30_CODE_MAP WHERE MAP_CD = 'S00G01C003' AND GRP_CD = :USER_ID)");
+            }
+           
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {

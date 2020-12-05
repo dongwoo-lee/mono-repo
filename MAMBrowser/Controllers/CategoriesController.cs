@@ -281,12 +281,12 @@ namespace MAMBrowser.Controllers
         /// <param name="primaryCode">공유소재 매체코드</param>
         /// <returns></returns>
         [HttpGet("public-codes/primary/{primaryCode}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicSecond(string primaryCode)
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPublicSecond(string primaryCode, [FromQuery] string userId)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                result.ResultObject = _dal.GetPublicSecond(primaryCode);
+                result.ResultObject = _dal.GetPublicSecond(primaryCode, userId);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
