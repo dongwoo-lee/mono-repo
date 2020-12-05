@@ -57,18 +57,18 @@ namespace MAMBrowser.Controllers
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
 VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
 
-            var builder2 = new SqlBuilder();
-            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
-            DynamicParameters param2 = new DynamicParameters();
-            param2.Add("USER_ID", userId);
-            param2.Add("FILE_SIZE", file.Length);
+            //var builder2 = new SqlBuilder();
+            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            //DynamicParameters param2 = new DynamicParameters();
+            //param2.Add("USER_ID", userId);
+            //param2.Add("FILE_SIZE", file.Length);
 
             TransactionRepository repository = new TransactionRepository();
             repository.BeginTransaction();
             try
             {
                 repository.Insert(queryTemplate.RawSql, param);
-                repository.Update(queryTemplate2.RawSql, param2);
+                //repository.Update(queryTemplate2.RawSql, param2);
                 repository.CommitTransaction();
             }
             catch (Exception ex)
@@ -111,18 +111,18 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
 
-            var builder2 = new SqlBuilder();
-            var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
-            DynamicParameters param2 = new DynamicParameters();
-            param2.Add("USER_ID", userId);
-            param2.Add("FILE_SIZE", -(totalDeleteSize));
+            //var builder2 = new SqlBuilder();
+            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            //DynamicParameters param2 = new DynamicParameters();
+            //param2.Add("USER_ID", userId);
+            //param2.Add("FILE_SIZE", -(totalDeleteSize));
 
             TransactionRepository repository = new TransactionRepository();
             repository.BeginTransaction();
             try
             {
                 repository.Delete(queryTemplate.RawSql, param);
-                repository.Update(queryTemplate2.RawSql, param2);
+                //repository.Update(queryTemplate2.RawSql, param2);
                 repository.CommitTransaction();
             }
             catch (Exception ex)
