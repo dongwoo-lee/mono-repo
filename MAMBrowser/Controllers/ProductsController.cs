@@ -479,16 +479,17 @@ namespace MAMBrowser.Controllers
 
         }
         /// <summary>
-        /// 일반소재 - 병합 다운로드
+        /// 일반소재 - 병합 다운로드 요청
         /// </summary>
-        /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
-        [HttpGet("concatenate-files")]
-        public IActionResult ConcatenateDownload([FromQuery] string grpType, [FromQuery] string brd_Dt, [FromQuery] string grpId, [FromQuery] string downloadName, [FromQuery] string userId, [FromQuery] string inline = "N")
+        [HttpGet("request-concatenate-files")]
+        public ActionResult<DTO_RESULT<DTO_RESULT_OBJECT<string>>> ConcatenateDownload([FromQuery] string grpType, [FromQuery] string brd_Dt, [FromQuery] string grpId, [FromQuery] string downloadName, [FromQuery] string inline = "N")
         {
             //grpType : sb or cm
             try
             {
+                DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
+                
                 if (string.IsNullOrEmpty(grpType))
                     return BadRequest("grpType is empty");
 
@@ -530,11 +531,9 @@ namespace MAMBrowser.Controllers
                 if (filePathList.Count <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, "소재가 없습니다.");
 
-
                 
                 
                 string mergeType = MAMUtility.WAV;
-                //var firstFileName = Path.GetFileName(filePathList.First()).ToUpper();
                 var firstFileExt = Path.GetExtension(filePathList.First()).ToUpper();
                 mergeType = filePathList.All(filePath => Path.GetExtension(filePath).ToUpper() == firstFileExt) ? firstFileExt : mergeType;
                 _logger.LogDebug($"mergeType : {mergeType}");
@@ -554,22 +553,12 @@ namespace MAMBrowser.Controllers
                 Response.Headers.Add("Content-Disposition", cd.ToString());
 
 
-
-                // 
-                //if (mergeType == MAMUtility.WAV)
-                //{
-                //}
-                //else if (mergeType == MAMUtility.MP2)
-                //{
-                //}
-                //else
-                //    return BadRequest($"invalid value(mergeType : {mergeType})");
-
+          
                 // 일단 메모리 스트림. 
                 // 
                 byte[] buffer = new byte[10240];
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                //string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
                 var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, downloadFileName);
 
                 using (FileStream outFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -624,6 +613,42 @@ namespace MAMBrowser.Controllers
                         }
                     }
                 }
+                result.ResultObject.Data = downloadFileName;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 일반소재 - 병합 다운로드
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="downloadName"> </param>
+        /// /// <param name="inline"> </param>
+        /// <returns></returns>
+        [HttpGet("concatenate-files")]
+        public IActionResult ConcatenateDownload([FromQuery] string userId, [FromQuery] string downloadName, [FromQuery] string inline = "N")
+        {
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, downloadName);
+                var fileExtProvider = new FileExtensionContentTypeProvider();
+                string contentType;
+                if (!fileExtProvider.TryGetContentType(downloadName, out contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
+                System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+                {
+                    FileName = WebUtility.UrlEncode(downloadName),
+                    Inline = inline == "Y" ? true : false
+                };
+                Response.Headers.Add("Content-Disposition", cd.ToString());
+
                 return PhysicalFile(tempFilePath, contentType);
             }
             catch (Exception ex)
