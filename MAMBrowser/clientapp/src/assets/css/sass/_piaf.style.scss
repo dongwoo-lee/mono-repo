@@ -165,7 +165,7 @@ body {
 }
 
 .fixed-background {
-    background: url("/assets/img/login-backgound.jpg") no-repeat center center fixed;
+    background: url("/assets/img/login-backgound1.jpg") no-repeat center center fixed;
     background-size: cover;
     width: 100%;
     height: 100%;
@@ -5078,12 +5078,13 @@ input:-webkit-autofill {
 .auth-card {
     display: flex;
     flex-direction: row;
+    width: 1000px;
     @include depth(1);
 
     .image-side {
-        width: 40%;
-        background: url("/assets/img/login-left.png") no-repeat center top;
-        background-size: cover;
+        width: 600px;
+        background: url("/assets/img/login-left2.png") no-repeat center top;
+        background-size: contain;
         padding: 80px 40px;
 
         .h3 {
@@ -5092,8 +5093,10 @@ input:-webkit-autofill {
     }
 
     .form-side {
-        width: 60%;
+        width: 80%;
         padding: 80px;
+        padding-left:0px;
+        
     }
 
     @include respond-below(md) {
