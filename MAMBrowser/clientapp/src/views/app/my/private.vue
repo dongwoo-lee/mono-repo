@@ -156,7 +156,7 @@ export default {
         },
         {
           name: 'rowNO',
-          title: 'No',
+          title: '순서',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
@@ -208,7 +208,7 @@ export default {
         },
         {
           name: '__slot:actions',
-          title: 'Actions',
+          title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%"

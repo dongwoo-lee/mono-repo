@@ -494,7 +494,7 @@ p {
 }
 
 .text-muted {
-    color: $muted-color !important;
+    color: $dark-color !important;
 }
 
 .text-semi-muted {
@@ -3444,6 +3444,10 @@ div[data-notify="container"] {
     top: -10px;
 }
 
+.valid-feedback {
+    font-size: 0.76rem;
+    color: #3195a5;
+}
 .invalid-feedback {
     // border-radius: $border-radius;
     // padding: 0.5rem 1rem;

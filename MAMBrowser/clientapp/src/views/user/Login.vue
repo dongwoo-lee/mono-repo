@@ -3,12 +3,8 @@
     <b-colxx xxs="12" md="10" class="mx-auto my-auto">
         <b-card class="auth-card" no-body>
             <div class="position-relative image-side">
-                <p class="text-white h2">MAMBrowser</p>
-                <!-- <p class="white mb-0">
-                    Please use your credentials to login.
-                    <br />If you are not a member, please
-                    <router-link tag="a" to="/user/register" class="white">register</router-link>.
-                </p> -->
+                <p class="text-white h2">MIROS 소재 검색 시스템(MIROS MAM Browser)</p>
+                <p class="white mb-0" style="position:absolute; bottom:10px;">로그인 문제시 라디오기술부(2973)으로 문의 바랍니다.</p>
             </div>
             <div class="form-side">
                 <router-link tag="a" to="/">

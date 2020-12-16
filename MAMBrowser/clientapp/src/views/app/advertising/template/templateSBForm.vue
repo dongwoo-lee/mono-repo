@@ -23,7 +23,7 @@
           />
         </b-form-group>
         <!-- 방송일 -->
-        <b-form-group label="시작일"
+        <b-form-group label="방송일"
           class="has-float-label"
           :class="{ 'hasError': $v.searchItems.brd_dt.required }">
           <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
@@ -183,25 +183,23 @@ export default {
         { value: 'scr', text: '부조SB' },
       ],
       fields: [
-        { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
-        { key: 'brdDT', label: '방송일', tdClass: 'text-muted' },
-        { key: 'id', label: 'ID', tdClass: 'text-muted' },
+        { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
+        { key: 'id', label: 'SB ID', tdClass: 'text-muted' },
         { key: 'name', label: 'SB명', tdClass: 'text-muted' },
-        { key: 'length', label: '길이', tdClass: 'text-muted' },
-        { key: 'capacity', label: '분량', tdClass: 'text-muted'},
+        { key: 'length', label: '길이(초)', tdClass: 'text-muted' },
+        { key: 'capacity', label: '용량(초)', tdClass: 'text-muted'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
-        { key: 'actions', label: 'Actions', tdClass: 'text-muted'},
+        { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
       ],
       fieldsContents: [
-        { key: 'rowNO', label: 'No', tdClass: 'list-item-heading' },
+        { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
         { key: 'categoryID', label: '구분', tdClass: 'text-muted', thStyle: { width: '10%' } },
         { key: 'categoryName', label: '광고주명/분류명', tdClass: 'text-muted', thStyle: { width: '20%' } },
         { key: 'id', label: '소재ID', tdClass: 'text-muted' },
         { key: 'name', label: '소재명', tdClass: 'text-muted' },
-        { key: 'length', label: '길이', tdClass: 'text-muted' },
-        { key: 'format', label: '포맷', tdClass: 'text-muted', thStyle: { width: '10%' } },
-        { key: 'actions', label: 'Actions', tdClass: 'text-muted'},
+        { key: 'length', label: '길이(초)', tdClass: 'text-muted' },
+        { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
       ]
     }
   },

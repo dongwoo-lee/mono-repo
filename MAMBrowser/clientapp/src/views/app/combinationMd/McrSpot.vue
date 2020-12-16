@@ -136,7 +136,7 @@ export default {
       fields: [
         {
           name: 'rowNO',
-          title: 'No',
+          title: '순서',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
@@ -173,7 +173,7 @@ export default {
         },
         {
           name: "duration",
-          title: "길이",
+          title: "길이(초)",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
@@ -187,7 +187,7 @@ export default {
         },
         {
           name: "editDtm",
-          title: "편집일시",
+          title: "최종편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '12%'
@@ -201,7 +201,7 @@ export default {
         },
         {
           name: '__slot:actions',
-          title: 'Actions',
+          title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"

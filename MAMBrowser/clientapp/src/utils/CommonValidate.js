@@ -1,4 +1,6 @@
 import { helpers } from 'vuelidate/lib/validators';
+import { INPUT_MAX_LENGTH } from '@/constants/config';
+import $fn from '@/utils/CommonFunctions';
 
 const required = (value) => {
     if (value === undefined) return true;
@@ -7,14 +9,18 @@ const required = (value) => {
 
 const date = (value) => {
     if (!value || value === undefined) return true;
-    // 2599년까지 가능
-    const fullDateRegex = /^(19|20|21|22|23|24|25)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
-    return fullDateRegex.test(value);
+    return $fn.validDate(value);
+}
+
+const maxLength = (value) => {
+    if (!value || value === undefined) return false;
+    return value.length >= INPUT_MAX_LENGTH;
 }
 
 const commonValidate = {
     required,
-    date
+    date,
+    maxLength
 }
 
 export default commonValidate;

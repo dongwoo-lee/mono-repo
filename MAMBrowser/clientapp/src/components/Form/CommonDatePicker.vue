@@ -68,10 +68,19 @@ export default {
         }
     },
     data() {
+        //TODO: 시작일 min값 2020/12/01 , 종료일 max값 검색 당일 + 1일 (D+1)
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const minDate = new Date(2020, 11, 1); // 범위: 0~11(11 값이->12월달)
+        const maxDate = new Date(today);
+        maxDate.setDate(maxDate.getDate() + 1);
+
         return {
             date: '',
             inputValue: '',
             validBeforeDate: this.getValidBeforeDate(),
+            minDate: minDate,
+            maxDate: maxDate
         }
     },
     created() {

@@ -40,3 +40,5 @@ export const ROLE = 'role';
 export const USER_ID = 'user_id';
 /* ACCESS_TOKEN */
 export const ACCESS_TOKEN = 'access_token';
+/* input maxlength */
+export const INPUT_MAX_LENGTH = 200;
