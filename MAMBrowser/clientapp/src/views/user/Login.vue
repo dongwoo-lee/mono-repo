@@ -8,7 +8,10 @@
             </div>
             <div class="form-side">
                 <router-link tag="a" to="/">
-                    <span class="logo-single" />
+                    <!-- <span class="logo-single" /> -->
+                    <p class="text h4"><b>MAM BROWSER</b></p>
+                    <br>
+                    <br>
                 </router-link>
                 <h6 class="mb-4">Login</h6>
 
