@@ -21,6 +21,8 @@
                     today-variant
                     :hide-header="hideHeader"
                     :size="size"
+                    :min="minDate"
+                    :max="maxDate"
                 />
             </b-input-group-append>
         </b-input-group>
@@ -28,6 +30,8 @@
 </template>
 
 <script>
+import { MINIMUM_DATE } from '@/constants/config';
+
 export default {
     props: {
         value: {
@@ -65,22 +69,19 @@ export default {
         required: {
             type: Boolean,
             default: false,
+        },
+        maximumType: {
+            type: String,
+            default: '',
         }
     },
     data() {
-        //TODO: 시작일 min값 2020/12/01 , 종료일 max값 검색 당일 + 1일 (D+1)
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const minDate = new Date(2020, 11, 1); // 범위: 0~11(11 값이->12월달)
-        const maxDate = new Date(today);
-        maxDate.setDate(maxDate.getDate() + 1);
-
         return {
             date: '',
             inputValue: '',
             validBeforeDate: this.getValidBeforeDate(),
-            minDate: minDate,
-            maxDate: maxDate
+            minDate: MINIMUM_DATE,
+            maxDate: this.$fn.getMaxDate()
         }
     },
     created() {
@@ -133,7 +134,7 @@ export default {
             if (replaceAllTargetValue.length === 8) {
                 const convertDate = this.convertDateStringToHaipun(replaceAllTargetValue);
                  // 유효한 날짜인지 체크
-                if (this.$fn.validDate(convertDate)) {
+                if (this.$fn.validDate(convertDate) && this.$fn.checkBetweenDate(convertDate)) {
                     event.target.value = convertDate;
                     this.validBeforeDate = convertDate;
                     this.date = convertDate;

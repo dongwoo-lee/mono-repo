@@ -25,7 +25,7 @@
         </b-form-group>
         <!-- 방송일 -->
         <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker v-model="searchItems.brd_dt" :isCurrentDate="true"/>
+          <common-date-picker v-model="searchItems.brd_dt"/>
         </b-form-group>
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">

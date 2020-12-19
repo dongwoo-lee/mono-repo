@@ -35,7 +35,7 @@
         <b-form-group label="종료일" 
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.end_dt" isCurrentDate required/>
+          <common-date-picker v-model="searchItems.end_dt" required/>
             <!-- <b-form-invalid-feedback
             :state="!$v.searchItems.end_dt.required"
           >날짜는 필수 입력입니다.</b-form-invalid-feedback> -->

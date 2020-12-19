@@ -42,3 +42,9 @@ export const USER_ID = 'user_id';
 export const ACCESS_TOKEN = 'access_token';
 /* input maxlength */
 export const INPUT_MAX_LENGTH = 200;
+/* minimum date */
+export const MINIMUM_DATE = '2019-12-01';
+/* max date: 현재날짜 기준 + 몇일 */
+export const MAXIMUM_DATE_NUM = 1;
+/* 최대 검색 일수 현재날짜 기준 */
+export const MAXIMUM_SEARCH_DATE = 30;

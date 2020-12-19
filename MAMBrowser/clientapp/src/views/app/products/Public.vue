@@ -36,14 +36,14 @@
         </b-form-group>
         <!-- 시작일 -->
         <b-form-group label="시작일" class="has-float-label">
-          <common-date-picker v-model="searchItems.start_dt" :isCurrentDate="false"/>
+          <common-date-picker v-model="searchItems.start_dt"/>
           <!-- <b-form-invalid-feedback
             :state="$v.searchItems.start_dt.check_date"
           >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
         </b-form-group>
         <!-- 종료일 -->
         <b-form-group label="종료일" class="has-float-label">
-          <common-date-picker v-model="searchItems.end_dt" :isCurrentDate="false"/>
+          <common-date-picker v-model="searchItems.end_dt"/>
           <!-- <b-form-invalid-feedback
             :state="$v.searchItems.end_dt.check_date"
           >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
