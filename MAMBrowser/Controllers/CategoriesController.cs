@@ -68,6 +68,66 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
+        /// 프로그램 제작자 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("users/pd")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> GetPDUserList()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
+            try
+            {
+                result.ResultObject = _dal.GetPDUserList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 취재물 제작자 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("users/reporter")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> GetReportUserList()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
+            try
+            {
+                result.ResultObject = _dal.GetReportUserList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// MD 제작자 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("users/md")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> GetMDUserList()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_USER>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_USER>>();
+            try
+            {
+                result.ResultObject = _dal.GetMDUserList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
         /// 취재물 분류 조회
         /// </summary>
         /// <returns></returns>

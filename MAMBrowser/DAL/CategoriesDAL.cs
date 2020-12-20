@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
+using MAMBrowser.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,6 +30,69 @@ namespace MAMBrowser.BLL
             returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
+        public DTO_RESULT_LIST<DTO_USER> GetPDUserList()
+        {
+            DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME FROM MIROS_USER 
+                                                      WHERE ROLE IN('R_PD_PD', 'R_PD_ADMIN') OR ROLE LIKE 'R_SYS_%'
+                                                      ORDER BY CONVERT(PERSONNAME, 'US8ICL'), PERSONNAME ASC");
+            Repository repository = new Repository();
+            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
+            {
+                return new DTO_USER
+                {
+                    ID = row.PERSONID,
+                    Name = row.PERSONNAME
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            return returnData;
+        }
+        public DTO_RESULT_LIST<DTO_USER> GetReportUserList()
+        {
+            DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME FROM MIROS_USER 
+                                                      WHERE ROLE IN('R_PD_PD', 'R_PD_ADMIN', 'R_PD_JOURNALIST') OR ROLE LIKE 'R_SYS_%'
+                                                      ORDER BY CONVERT(PERSONNAME, 'US8ICL'), PERSONNAME ASC");
+            Repository repository = new Repository();
+            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
+            {
+                return new DTO_USER
+                {
+                    ID = row.PERSONID,
+                    Name = row.PERSONNAME
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            return returnData;
+        }
+        public DTO_RESULT_LIST<DTO_USER> GetMDUserList()
+        {
+            DTO_RESULT_LIST<DTO_USER> returnData = new DTO_RESULT_LIST<DTO_USER>();
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT PERSONID, PERSONNAME FROM MIROS_USER 
+                                                      WHERE ROLE IN('R_PD_ADMIN', 'R_MD_ADMIN', 'R_MD_MD') OR ROLE LIKE 'R_SYS_%'
+                                                      ORDER BY CONVERT(PERSONNAME, 'US8ICL'), PERSONNAME ASC");
+            Repository repository = new Repository();
+            var resultMapping = new Func<dynamic, DTO_USER>((row) =>
+            {
+                return new DTO_USER
+                {
+                    ID = row.PERSONID,
+                    Name = row.PERSONNAME
+                };
+            });
+
+            returnData.Data = repository.Select(queryTemplate.RawSql, null, resultMapping);
+            return returnData;
+        }
+
+        
+
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMedia()
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
@@ -280,6 +344,38 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
 
             returnData.Data = repository.Select(queryTemplate.RawSql, param, resultMapping);
             return returnData;
+        }
+
+
+
+        public void InsertPublicCategory(M30_CODE model)
+        {
+            string query = @"INSERT INTO M30_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";
+            Repository repository = new Repository();
+            repository.Insert(query, model);
+        }
+        public void UpdatePublicCategory(M30_CODE model)
+        {
+            string query = @"UPDATE M30_CODE SET 
+                             NAME=:NAME
+                             WHERE CODE=:CODE)";
+
+            Repository repository = new Repository();
+            repository.Update(query, model);
+        }
+        public void DeletePublicCategory(string key)
+        {
+            string query = @"DELETE M30_CODE 
+                           WHERE CODE=:CODE)";
+
+            Repository repository = new Repository();
+            repository.Delete(query, key);
+        }
+        public void InsertUserToPublicCategory()
+        {
+            string query = @"INSERT INTO M30_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";
+            Repository repository = new Repository();
+            //repository.Insert(query, model);
         }
 
     }
