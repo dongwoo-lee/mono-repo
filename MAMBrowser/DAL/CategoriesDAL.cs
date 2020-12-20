@@ -327,10 +327,10 @@ ORDER BY NUM");
 LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
             builder.Where("(SYSTEM_CD = 'S01' AND MAP_CD = 'S00G01C005')");
             builder.Where("GRP_CD = :GRP_CD");
-            if (!string.IsNullOrEmpty(userId))
-            {
-                builder.Where("M30_CODE.CODE IN (SELECT CODE FROM M30_CODE_MAP WHERE MAP_CD = 'S00G01C003' AND GRP_CD = :USER_ID)");
-            }
+            //if (!string.IsNullOrEmpty(userId))
+            //{
+            //    builder.Where("M30_CODE.CODE IN (SELECT CODE FROM M30_CODE_MAP WHERE MAP_CD = 'S00G01C003' AND GRP_CD = :USER_ID)");
+            //}
            
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
