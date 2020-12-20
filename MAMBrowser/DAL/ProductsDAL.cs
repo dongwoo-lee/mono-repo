@@ -28,7 +28,7 @@ namespace MAMBrowser.BLL
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
 
-            DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
+            DTO_RESULT_PAGE_LIST <DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
             var builder = new SqlBuilder();
             var querySource = builder.AddTemplate(@"SELECT MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
                      FROM
@@ -54,9 +54,18 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("EDITOR = :EDITOR");
             }
-            builder.OrderBy("ONAIRDATE, ONAIRTIME");
 
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY ONAIRDATE, ONAIRTIME ASC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_PGM_INFO), sortKey, sortValue);
+            }
+
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -108,8 +117,6 @@ namespace MAMBrowser.BLL
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_SUB_VIEW /**where**/");
             builder.Select("MEDIA, MEDIANAME, SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
@@ -123,15 +130,22 @@ namespace MAMBrowser.BLL
                     builder.Where($"LOWER(SPOTNAME) LIKE LOWER('%{word}%')");
                 }
             }
-
             if (!string.IsNullOrEmpty(editor))
             {
                 builder.Where("EDITOR = :EDITOR", param);
             }
-            builder.OrderBy("EDITTIME DESC");
 
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY EDITTIME DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_SCR_SPOT), sortKey, sortValue);
+            }
 
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -184,8 +198,6 @@ namespace MAMBrowser.BLL
                 REPORTER = reporterName,
                 START_NO = startNo,
                 LAST_NO = lastNo,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_REPORT_VIEW /**where**/");
@@ -211,10 +223,18 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("EDITOR = :EDITOR");
             }
-            builder.OrderBy("EDITTIME DESC");
 
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY EDITTIME DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_REPORT), sortKey, sortValue);
+            }
 
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -265,8 +285,6 @@ namespace MAMBrowser.BLL
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_PROAUDIOFILE_VIEW /**where**/");
@@ -303,10 +321,17 @@ namespace MAMBrowser.BLL
                 }
             }
 
-            builder.OrderBy("EDITTIME DESC");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY EDITTIME DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_PRO), sortKey, sortValue);
+            }
 
-
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -339,31 +364,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        //public DTO_RESULT_LIST<DTO_SONG> FindMusic(int rowPerPage, int selectPage, string sortKey, string sortValue) 
-        //{
-        //    //var data = netDrivePath.Split(Path.DirectorySeparatorChar);
-        //    //var hostName = data[2];
-        //    //var albumDomain = $@"http://{hostName}.{mbcDomain}";
-        //}
-        //public DTO_RESULT_LIST<DTO_SONG> GetAlbumImage(string directory, string fileName)
-        //{
-        //    var scraps = directory.Split(Path.DirectorySeparatorChar);
-        //    var hostName = scraps[2];
-        //    var albumUrl = $@"http://{hostName}.{_appSesstings.Value.MbcDomain}/{string.Join("/", scraps.Skip(3).ToList())}";
-        //    HttpClient client = new HttpClient();
-
-        //}
-        //public DTO_RESULT_LIST<DTO_SONG> GetAlbumImagePathList(string directory, string fileName)
-        //{
-        //    var filePath = $@"{directory}\{fileName}";
-        //    var hostName = scraps[2];
-        //    var albumUrl = $@"http://{hostName}.{_appSesstings.Value.MbcDomain}/{string.Join("/", scraps.Skip(3).ToList())}";
-        //    HttpClient client = new HttpClient();
-        //    //client.
-        //    return null;
-        //}
-
-        //public DTO_RESULT_LIST<DTO_EFFECT> FindEffect(string searchWord, int rowPerPage, int selectPage, string sortKey, string sortValue) { }
+        
         public DTO_RESULT_PAGE_LIST<DTO_SB> FindSB(string viewName, string media, string brd_dt, string pgm)
         {
             DTO_RESULT_PAGE_LIST<DTO_SB> returnData = new DTO_RESULT_PAGE_LIST<DTO_SB>();
@@ -376,7 +377,9 @@ namespace MAMBrowser.BLL
                 PGM = pgm,
             });
 
-            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_SB_{viewName}_VIEW /**where**/");
+            string orderBy = "ORDER BY SBID ASC";
+
+            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_SB_{viewName}_VIEW /**where**/ {orderBy}");
             builder.Select("ROWNUM AS RNO, ONAIRDATE,SBID,SBNAME,DURSEC,CAPACITY,STATENAME,EVENTNAME ,EDITOR,EDITORNAME");
             if (!string.IsNullOrEmpty(media))
             {
@@ -390,7 +393,7 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("PRODUCTID = :PGM");
             }
-            builder.OrderBy("SBID ASC");
+
 
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_SB>((row) =>
@@ -427,7 +430,8 @@ namespace MAMBrowser.BLL
                 SBID = sbID,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT * FROM MEM_SB_CLIP_VIEW /**where**/ /**orderby**/");
+            string orderBy = "ORDER BY NUM, CMSEQNUM ASC";
+            var querySource = builder.AddTemplate($@"SELECT * FROM MEM_SB_CLIP_VIEW /**where**/ {orderBy}");
             if (!string.IsNullOrEmpty(brd_dt))
             {
                 builder.Where("ONAIRDATE = :BRD_DT");
@@ -436,7 +440,6 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("SBGROUPID = :SBID");
             }
-            builder.OrderBy("NUM, CMSEQNUM");
 
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_SB_CONTENT>((row) =>
@@ -473,7 +476,8 @@ namespace MAMBrowser.BLL
                 CATE = cate,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT ROWNUM AS RNO, A.* FROM (SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ /**orderby**/) A");
+            string orderBy = "ORDER BY MEDIA, ONAIRTIME, CMGROUPNAME ASC";
+            var querySource = builder.AddTemplate($@"SELECT ROWNUM AS RNO, A.* FROM (SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ {orderBy}) A");
             builder.Select("MEDIA, ONAIRDATE, CMGROUPNAME, CMGROUPID, PROID, DURSEC, CMCAPACITY, STATENAME, EDITOR, EDITORNAME, EDITTIME");
             if (!string.IsNullOrEmpty(media))
             {
@@ -495,8 +499,6 @@ namespace MAMBrowser.BLL
                     builder.Where($"LOWER(CMGROUPNAME) LIKE LOWER('%{word}%')");
                 }
             }
-
-            builder.OrderBy("MEDIA, ONAIRTIME, CMGROUPNAME");
 
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CM>((row) =>
@@ -534,7 +536,8 @@ namespace MAMBrowser.BLL
                 CM_GRP_ID = cmGrpID,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT * FROM MEM_CM_CLIP_VIEW /**where**/ /**orderby**/");
+            string orderBy = "ORDER BY NUM ASC";
+            var querySource = builder.AddTemplate($@"SELECT * FROM MEM_CM_CLIP_VIEW /**where**/ {orderBy}");
             if (!string.IsNullOrEmpty(brd_dt))
             {
                 builder.Where("ONAIRDATE = :BRD_DT");
@@ -588,8 +591,6 @@ namespace MAMBrowser.BLL
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_MAIN_VIEW /**where**/");
@@ -608,10 +609,17 @@ namespace MAMBrowser.BLL
                 builder.Where("EDITOR = :EDITOR");
             }
 
-            builder.OrderBy("EDITTIME DESC");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY EDITTIME DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_MCR_SPOT), sortKey, sortValue);
+            }
 
-
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -661,11 +669,9 @@ namespace MAMBrowser.BLL
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
 
-            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM {viewName} /**where**/ /**orderby**/");
+            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM {viewName} /**where**/");
             builder.Select(@"FILLERID, FILLERNAME, CODEID, CODENAME, ENDDATE, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE");
             builder.Where("ENDDATE >= :BRD_DT");
             if (!string.IsNullOrEmpty(cate))
@@ -685,10 +691,18 @@ namespace MAMBrowser.BLL
                 }
             }
 
-            builder.OrderBy("MASTERTIME DESC");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY MASTERTIME DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_FILLER), sortKey, sortValue);
+            }
 
 
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -740,11 +754,9 @@ namespace MAMBrowser.BLL
                 EDITOR = editor,
                 START_NO = startNo,
                 LAST_NO = lastNo,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
 
-            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_FILLER_TIME_VIEW /**where**/ /**orderby**/");
+            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_FILLER_TIME_VIEW /**where**/");
             builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
             builder.Where("MEDIA=:MEDIA");
             builder.Where("(STARTDATE >= :START_DT AND ENDDATE <= :END_DT)");
@@ -769,10 +781,17 @@ namespace MAMBrowser.BLL
                 }
             }
 
-            builder.OrderBy("EDITTIME DESC");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY EDITTIME DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_FILLER_TIME), sortKey, sortValue);
+            }
 
-
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
@@ -819,15 +838,22 @@ namespace MAMBrowser.BLL
                 MEDIA_CD = media,
                 SCH_DATE = brd_dt,
                 REC_NAME = name,
-                SORTKEY = sortKey,
-                SORTVALUE = sortValue
             });
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "ORDER BY BRD_DTM ASC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_DL30), sortKey, sortValue);
+            }
 
             var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, D.* FROM (SELECT ROWNUM AS RNO, A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
-INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
-LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
-/**where**/
-ORDER BY BRD_DTM) D");
+                                                    INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
+                                                    LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
+                                                    /**where**/
+                                                    {orderBy}) D");
             if (!string.IsNullOrEmpty(media))
             {
                 builder.Where("MEDIA_CD=:MEDIA_CD");
@@ -862,7 +888,7 @@ ORDER BY BRD_DTM) D");
                     RecName = row.REC_NAME,
                     Duration = Convert.ToInt32(row.LENGTH),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    FilePath = $"{row.FILE_PATH}/{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
+                    FilePath = string.IsNullOrEmpty(((string)row.FILE_PATH)) ? string.Empty : $"{row.FILE_PATH}\\{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
                     RegDtm = ((DateTime)row.REG_DTM).ToString(MAMUtility.DTM19),
                     DeviceName = row.DEVICE_NAME,
                 };
@@ -884,10 +910,10 @@ ORDER BY BRD_DTM) D");
             });
 
             var querySource = builder.AddTemplate(@$"SELECT A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
-INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
-LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
-WHERE A.SEQ =:SEQ
-ORDER BY BRD_DTM");
+                                                    INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
+                                                    LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
+                                                    WHERE A.SEQ =:SEQ
+                                                    ORDER BY BRD_DTM");
 
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_DL30>((row) =>

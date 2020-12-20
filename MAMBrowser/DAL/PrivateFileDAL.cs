@@ -194,7 +194,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             param.Add("END_DT", end_dt);
 
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE /**where**/ /**orderby**/");
+            var querySource = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE /**where**/");
             builder.Where("(USER_ID=:USER_ID AND USED=:USED)");
             if (!string.IsNullOrEmpty(start_dt))
             {
@@ -222,9 +222,17 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
                 }
             }
 
-            builder.OrderBy("EDITED_DTM DESC");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "EDITED_DTM DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_PRIVATE_FILE), sortKey, sortValue);
+            }
 
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 

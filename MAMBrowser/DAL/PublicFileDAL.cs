@@ -152,7 +152,7 @@ WHERE SEQ=:SEQ");
 LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC') B ON B.CODEID=A.MEDIA_CD
 LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') C ON C.CODE=A.CATE_CD
 LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID 
-/**where**/ /**orderby**/");
+/**where**/");
 
             if (!string.IsNullOrEmpty(mediaCd))
             {
@@ -191,9 +191,19 @@ LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID
                     builder.Where($"LOWER(MEMO) LIKE LOWER('%{word}%')");
                 }
             }
-            builder.OrderBy("EDITED_DTM DESC");
 
-            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql}) A");
+            string orderBy = "";
+            if (string.IsNullOrEmpty(sortKey))
+            {
+                orderBy = "EDITED_DTM DESC";
+            }
+            else
+            {
+                orderBy = MAMUtility.GetSortString(typeof(DTO_PUBLIC_FILE), sortKey, sortValue);
+            }
+
+
+            var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
             var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
             var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
 
