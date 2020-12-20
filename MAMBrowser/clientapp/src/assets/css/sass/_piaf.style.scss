@@ -481,10 +481,6 @@ p {
     line-height: 0.9rem;
 }
 
-.text-white {
-    color: $button-text-color !important;
-}
-
 .text-extra-small {
     font-size: 0.6rem;
 }
@@ -494,7 +490,7 @@ p {
 }
 
 .text-muted {
-    color: $muted-color !important;
+    color: $dark-color !important;
 }
 
 .text-semi-muted {
@@ -712,10 +708,6 @@ p {
             height: 50px;
         }
     }
-}
-
-.white {
-    color: $button-text-color !important;
 }
 
 .opacity-25 {
@@ -3446,6 +3438,10 @@ div[data-notify="container"] {
     top: -10px;
 }
 
+.valid-feedback {
+    font-size: 0.76rem;
+    color: #3195a5;
+}
 .invalid-feedback {
     // border-radius: $border-radius;
     // padding: 0.5rem 1rem;
@@ -5089,8 +5085,10 @@ input:-webkit-autofill {
         background-size: contain;
         padding: 80px 40px;
 
-        .h3 {
-            line-height: 0.8rem;
+        .title {
+            font-size: 1.5rem;
+            margin-top:15px;
+            margin-bottom: 5px;
         }
     }
 

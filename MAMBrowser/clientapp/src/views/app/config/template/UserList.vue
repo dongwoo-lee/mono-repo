@@ -74,7 +74,7 @@ export default {
             userList: [],
             isLoading: false,
             fields: [
-                { key: 'no', label: 'No', sortable: false, sortDirection: 'desc', thClass:'text-center', tdClass: 'text-center' },
+                { key: 'no', label: '순서', sortable: false, sortDirection: 'desc', thClass:'text-center', tdClass: 'text-center' },
                 { key: 'name', label: '사용자', sortable: false, thClass:'text-center', tdClass: 'text-center' },
                 { key: 'diskUsed', label: '사용 용량', sortable: false, thClass:'text-center', tdClass: 'text-center' },
                 { key: 'diskMax', label: '디스크 할당', sortable: false, thClass:'text-center', tdClass: 'text-center' },

@@ -159,7 +159,7 @@ export default {
       fields: [
         {
           name: 'rowNO',
-          title: 'No',
+          title: '순서',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '5%',
@@ -187,7 +187,7 @@ export default {
         },
         {
           name: "albumName",
-          title: "음반",
+          title: "음반명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '15%',
@@ -221,15 +221,8 @@ export default {
           width: "10%"
         },
         {
-          name: "lyrics",
-          title: "마스터링",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '8%',
-        },
-        {
           name: '__slot:actions',
-          title: 'Actions',
+          title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"

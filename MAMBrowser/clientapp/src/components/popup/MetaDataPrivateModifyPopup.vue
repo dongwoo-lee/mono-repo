@@ -18,9 +18,11 @@
             <b-form-textarea
                 id="input-memo"
                 v-model="$v.metaData.memo.$model"
+                :maxlength="INPUT_MAX_LENGTH"
                 size="sm">
             </b-form-textarea>
             <b-form-invalid-feedback :state="!$v.metaData.memo.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-valid-feedback :state="$v.metaData.memo.max_length">최대 입력 글자 수는 {{INPUT_MAX_LENGTH}}입니다.</b-form-valid-feedback>
         </b-form-group>
          <!--  FOOTER: 액션 -->
         <template slot="modal-footer">
@@ -46,7 +48,7 @@
 <script>
 import mixinValidate from '../../mixin/MixinValidate';
 import { mapMutations, mapActions } from 'vuex';
-import { USER_ID } from '@/constants/config';
+import { USER_ID, INPUT_MAX_LENGTH } from '@/constants/config';
 
 export default {
     mixins: [ mixinValidate ],
@@ -62,8 +64,9 @@ export default {
                 seq: 0,
                 title: '',
                 memo: '',
-                USER_ID
-            }
+                USER_ID,
+            },
+            INPUT_MAX_LENGTH
         }
     },
     computed: {

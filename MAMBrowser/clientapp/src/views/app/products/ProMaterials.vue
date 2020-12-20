@@ -116,7 +116,7 @@ export default {
       searchItems: {
         media: 'A',             // 매체
         cate: '',              // 분류
-        type: '',              // 타입
+        type: 'Y',              // 타입
         editor: '',            // 제작자
         name: '',              // 소재명
         rowPerPage: 15,
@@ -128,7 +128,7 @@ export default {
       fields: [
         {
           name: 'rowNO',
-          title: 'No',
+          title: '순서',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
@@ -147,7 +147,7 @@ export default {
         },
         {
           name: "duration",
-          title: "길이",
+          title: "길이(초)",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '6%',
@@ -164,7 +164,7 @@ export default {
         },
         {
           name: "editDtm",
-          title: "편집일시",
+          title: "최종편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '12%',
@@ -185,7 +185,7 @@ export default {
         },
         {
           name: '__slot:actions',
-          title: 'Actions',
+          title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"

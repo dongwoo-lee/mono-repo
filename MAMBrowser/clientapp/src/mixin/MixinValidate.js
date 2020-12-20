@@ -26,6 +26,7 @@ let mixinValidate = {
           },
           memo: {
             required: commonValidate.required,
+            max_length: commonValidate.maxLength
           },
           mediaCD: {
             required: commonValidate.required,
@@ -39,6 +40,7 @@ let mixinValidate = {
         },
         memo: {
           required: commonValidate.required,
+          max_length: commonValidate.maxLength
         },
         type: {
           required: commonValidate.required,

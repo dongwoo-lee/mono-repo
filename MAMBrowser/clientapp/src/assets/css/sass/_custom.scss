@@ -127,12 +127,27 @@
     }
 }
 
-.vuetable thead {
-    color: #fff;
-    background-color: #2a4878;
+.table {
+    width: 100%;
+    margin-bottom: 0;
+}
 
-    tr {
-        height: 33px;
+.vuetable {
+    thead {
+        color: #fff;
+        background-color: #2a4878;
+    
+        tr {
+            height: 33px;
+        }
+    }
+    .vuetable-body {
+        tr:nth-child(even) {
+            background:rgba(128,128,128,0.1);
+        }
+        tr:nth-child(odd) {
+            background-color: white;
+        }
     }
 }
 
@@ -220,6 +235,15 @@
         th {
             color: #fff !important;
             background-color: #2a4878 !important;
+        }
+    }
+
+    tbody {
+        tr:nth-child(even) {
+            background:rgba(128,128,128,0.1);
+        }
+        tr:nth-child(odd) {
+            background-color: white;
         }
     }
 }
@@ -485,5 +509,12 @@
                 background-color: #fff;
             }
         }
+    }
+}
+
+.b-calendar {
+    .btn-outline-primary {
+        color: #008ecc !important;
+        border-color: #008ecc !important;
     }
 }

@@ -49,9 +49,11 @@
             <b-form-textarea
                 id="input-memo"
                 v-model="$v.memo.$model"
+                :maxlength="INPUT_MAX_LENGTH"
                 size="sm">
             </b-form-textarea>
             <b-form-invalid-feedback :state="!$v.memo.required">필수 입력입니다.</b-form-invalid-feedback>
+            <b-form-valid-feedback :state="$v.memo.max_length">최대 입력 글자 수는 {{INPUT_MAX_LENGTH}}입니다.</b-form-valid-feedback>
         </b-form-group>
          <!--  FOOTER: 액션 -->
         <template slot="modal-footer">
@@ -66,7 +68,7 @@
 </template>
 
 <script>
-import { ROUTE_NAMES, USER_ID } from '@/constants/config';
+import { ROUTE_NAMES, USER_ID, INPUT_MAX_LENGTH } from '@/constants/config';
 import mixinValidate from '../../mixin/MixinValidate';
 import { mapMutations, mapActions, mapState } from 'vuex';
 
@@ -87,7 +89,7 @@ export default {
                 private: ROUTE_NAMES.PRIVATE,
                 shared: ROUTE_NAMES.SHARED,
             },
-            USER_ID
+            INPUT_MAX_LENGTH
         }
     },
     computed: {

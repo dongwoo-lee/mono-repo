@@ -1,0 +1,80 @@
+<template>
+    <div class="row" style="margin-right:0;">
+        <!-- 등록일: 시작일 -->
+        <b-form-group :label="startDateLabel"
+          class="has-float-label">
+          <common-date-picker v-model="sDate"/>
+        </b-form-group>
+      <!-- 등록일: 종료일 -->
+        <b-form-group :label="endDateLabel" 
+          class="has-float-label">
+          <common-date-picker v-model="eDate"/>{{ eDate }}
+        </b-form-group>
+    </div>
+</template>
+<script>
+import { MAXIMUM_SEARCH_DATE } from '@/constants/config';
+export default {
+    props: {
+        startDate: {
+            type: String,
+            default: '',
+        },
+        endDate: {
+            type: String,
+            default: '',
+        },
+        startDateLabel: {
+            type: String,
+            default: '시작일'
+        },
+        endDateLabel: {
+            type: String,
+            default: '종료일'
+        },
+        checkMaxSearchDay: {
+            type: Boolean,
+            default: true,
+        }
+    },
+    data() {
+        return {
+            sDate: '',
+            eDate: '',
+        }
+    },
+    watch: {
+        sDate(date) {
+            this.$emit('update:startDate', date);
+            if (date) {
+                const result = this.checkMiximumEndDate(date);
+            }
+        },
+        eDate(date) {
+            this.$emit('update:endDate', date);
+            if (date) {
+                const result = this.checkMiximumStartDate(date);
+                // TODO: 체크
+            }
+        }
+    },
+    mounted() {
+        this.sDate = this.startDate;
+        this.eDate = this.endDate;
+    },
+    methods: {
+        checkMiximumStartDate(date) {
+            const selectedDate = Date.parse(this.$fn.formatDate(date, 'yyyy-MM-dd'));
+            const maxSearchDate = new Date(selectedDate);
+            maxSearchDate.setDate(maxSearchDate.getDate() - MAXIMUM_SEARCH_DATE);
+            return selectedDate >= maxSearchDate;
+        },
+        checkMiximumEndDate(date) {
+            const selectedDate = Date.parse(this.$fn.formatDate(date, 'yyyy-MM-dd'));
+            const maxSearchDate = new Date(selectedDate);
+            maxSearchDate.setDate(maxSearchDate.getDate() + MAXIMUM_SEARCH_DATE);
+            return selectedDate <= maxSearchDate;
+        }
+    }
+}
+</script>

@@ -21,6 +21,8 @@
                     today-variant
                     :hide-header="hideHeader"
                     :size="size"
+                    :min="minDate"
+                    :max="maxDate"
                 />
             </b-input-group-append>
         </b-input-group>
@@ -28,6 +30,8 @@
 </template>
 
 <script>
+import { MINIMUM_DATE } from '@/constants/config';
+
 export default {
     props: {
         value: {
@@ -65,6 +69,10 @@ export default {
         required: {
             type: Boolean,
             default: false,
+        },
+        maximumType: {
+            type: String,
+            default: '',
         }
     },
     data() {
@@ -72,6 +80,8 @@ export default {
             date: '',
             inputValue: '',
             validBeforeDate: this.getValidBeforeDate(),
+            minDate: MINIMUM_DATE,
+            maxDate: this.$fn.getMaxDate()
         }
     },
     created() {
@@ -124,7 +134,7 @@ export default {
             if (replaceAllTargetValue.length === 8) {
                 const convertDate = this.convertDateStringToHaipun(replaceAllTargetValue);
                  // 유효한 날짜인지 체크
-                if (this.$fn.validDate(convertDate)) {
+                if (this.$fn.validDate(convertDate) && this.$fn.checkBetweenDate(convertDate)) {
                     event.target.value = convertDate;
                     this.validBeforeDate = convertDate;
                     this.date = convertDate;

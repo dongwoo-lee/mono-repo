@@ -93,7 +93,7 @@ export default {
             fields: [
                   {
                     name: '__sequence',
-                    title: 'No',
+                    title: '순서',
                     titleClass: 'center aligned text-center',
                     dataClass: 'center aligned text-center',
                     width: '5%',

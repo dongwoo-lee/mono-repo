@@ -35,7 +35,7 @@
         <b-form-group label="종료일" 
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.end_dt" isCurrentDate required/>
+          <common-date-picker v-model="searchItems.end_dt" required/>
             <!-- <b-form-invalid-feedback
             :state="!$v.searchItems.end_dt.required"
           >날짜는 필수 입력입니다.</b-form-invalid-feedback> -->
@@ -120,17 +120,10 @@ export default {
       fields: [
         {
           name: 'rowNO',
-          title: 'No',
+          title: '순서',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '4%',
-        },
-        {
-          name: "mediaName",
-          title: "매체",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '5%',
         },
         {
           name: "name",
@@ -147,7 +140,7 @@ export default {
         },
         {
           name: "duration",
-          title: "길이",
+          title: "길이(초)",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '6%',
@@ -188,7 +181,7 @@ export default {
         },
         {
           name: '__slot:actions',
-          title: 'Actions',
+          title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"

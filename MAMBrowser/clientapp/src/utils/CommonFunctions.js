@@ -1,3 +1,5 @@
+import { MINIMUM_DATE, MAXIMUM_DATE_NUM, MAXIMUM_SEARCH_DATE } from '@/constants/config';
+
 /**
  * 날짜 포메터
  * @param {*} d 
@@ -67,8 +69,8 @@ const dateStringTohaipun = (d) => {
  */
 const checkGreaterStartDate = function(sDate, eDate, emptyAllow = true) {
     if (!sDate || !eDate) return !emptyAllow;
-    const parseStartDate = Date.parse(this.formatDate(sDate, 'yyyy-MM-dd'));
-    const parseEndDate = Date.parse(this.formatDate(eDate, 'yyyy-MM-dd'));
+    const parseStartDate = Date.parse(formatDate(sDate, 'yyyy-MM-dd'));
+    const parseEndDate = Date.parse(formatDate(eDate, 'yyyy-MM-dd'));
     return parseStartDate > parseEndDate;
 };
 
@@ -79,8 +81,46 @@ const checkGreaterStartDate = function(sDate, eDate, emptyAllow = true) {
 const validDate = (value) => {
     if (!value || value === undefined) return true;
     // 2599년까지 가능
-    const fullDateRegex = /^(19|20|21|22|23|24|25)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
+    // const fullDateRegex = /^(19|20|21|22|23|24|25)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
+    // TODO: 2020년부터~ 
+    const fullDateRegex = /^(2019|2020|2021|2022|2023|2024|2025)(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
     return fullDateRegex.test(value);
+}
+
+const getMaxDate = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + MAXIMUM_DATE_NUM);
+    return maxDate;
+}
+
+const checkMaximumSearchDate = (date, maximumType) => {
+    const currentDate = Date.parse(formatDate(date, 'yyyy-MM-dd'));
+    const maxSearchDate = new Date(currentDate);
+    if (maximumType === 's') {
+        maxSearchDate.setDate(maxSearchDate.getDate() + MAXIMUM_SEARCH_DATE);
+        return currentDate >= maxSearchDate;
+    } 
+    
+    if (maximumType === 'e') {
+        maxSearchDate.setDate(maxSearchDate.getDate() - MAXIMUM_SEARCH_DATE);
+        return currentDate <= maxSearchDate;
+    }
+    
+    return true;
+}
+
+/**
+ * 시작일과 종료일 사이 확인 및 최대 검색일 수 확인
+ * @param {*} date 
+ */
+const checkBetweenDate = (date) => {
+    if (!date) return false;
+    const currentDate = Date.parse(formatDate(date, 'yyyy-MM-dd'));
+    const parseStartDate = Date.parse(formatDate(MINIMUM_DATE, 'yyyy-MM-dd'));
+    const parseEndDate = Date.parse(formatDate(getMaxDate(), 'yyyy-MM-dd'));
+    return currentDate >= parseStartDate  && currentDate <= parseEndDate;
 }
 
 /**
@@ -218,7 +258,10 @@ const commonFunctions = {
     changeSortValue,
     formatMBBytes,
     formatBytes,
-    getFirstAccessiblePage
+    getFirstAccessiblePage,
+    getMaxDate,
+    checkBetweenDate,
+    checkMaximumSearchDate,
 }
 
 export default commonFunctions;
