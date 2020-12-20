@@ -195,7 +195,7 @@ LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
             {
-                orderBy = "EDITED_DTM DESC";
+                orderBy = "ORDER BY EDITED_DTM DESC";
             }
             else
             {

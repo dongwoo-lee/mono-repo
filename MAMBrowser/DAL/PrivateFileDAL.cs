@@ -225,7 +225,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
             {
-                orderBy = "EDITED_DTM DESC";
+                orderBy = "ORDER BY EDITED_DTM DESC";
             }
             else
             {
