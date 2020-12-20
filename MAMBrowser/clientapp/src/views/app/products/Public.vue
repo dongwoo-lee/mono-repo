@@ -223,7 +223,6 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: 'fileExt'
         },
         {
           name: "audioFormat",

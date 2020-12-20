@@ -154,7 +154,6 @@ export default {
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: 'fileExt',
         },
         {
           name: "audioFormat",
