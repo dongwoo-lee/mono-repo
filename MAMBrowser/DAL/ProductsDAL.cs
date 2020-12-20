@@ -32,7 +32,7 @@ namespace MAMBrowser.BLL
             var builder = new SqlBuilder();
             var querySource = builder.AddTemplate(@"SELECT MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
                      FROM
-                     MEM_PROGRAM_VIEW /**where**/");
+                     M30_VW_PROGRAM /**where**/");
             var param = new {
                 MEDIA = media, 
                 ONAIRDATE = brd_dt, 
@@ -118,7 +118,7 @@ namespace MAMBrowser.BLL
                 START_NO = startNo,
                 LAST_NO = lastNo,
             });
-            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_SUB_VIEW /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_SPOT_SUB /**where**/");
             builder.Select("MEDIA, MEDIANAME, SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
             builder.Where("MEDIA=:MEDIA");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
@@ -200,7 +200,7 @@ namespace MAMBrowser.BLL
                 LAST_NO = lastNo,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_REPORT_VIEW /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_REPORT /**where**/");
             builder.Select("REPORTNAME, CODENAME, REPORTER, PRODUCTID, EVENTNAME, ONAIRDATE, MILLISEC, EDITFORMAT, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(cate))
@@ -287,7 +287,7 @@ namespace MAMBrowser.BLL
                 LAST_NO = lastNo,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_PROAUDIOFILE_VIEW /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_PROAUDIOFILE /**where**/");
             builder.Select("AUDIOID, AUDIONAME, CODENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, TYPENAME, MASTERFILE");
             //if (!string.IsNullOrEmpty(media))  //DB단 매체 필드가 없어서 조건으로 넣을 수 없음.
             //{
@@ -379,7 +379,7 @@ namespace MAMBrowser.BLL
 
             string orderBy = "ORDER BY SBID ASC";
 
-            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_SB_{viewName}_VIEW /**where**/ {orderBy}");
+            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM M30_VW_SB_{viewName} /**where**/ {orderBy}");
             builder.Select("ROWNUM AS RNO, ONAIRDATE,SBID,SBNAME,DURSEC,CAPACITY,STATENAME,EVENTNAME ,EDITOR,EDITORNAME");
             if (!string.IsNullOrEmpty(media))
             {
@@ -431,7 +431,7 @@ namespace MAMBrowser.BLL
             });
 
             string orderBy = "ORDER BY NUM, CMSEQNUM ASC";
-            var querySource = builder.AddTemplate($@"SELECT * FROM MEM_SB_CLIP_VIEW /**where**/ {orderBy}");
+            var querySource = builder.AddTemplate($@"SELECT * FROM M30_VW_SB_CLIP /**where**/ {orderBy}");
             if (!string.IsNullOrEmpty(brd_dt))
             {
                 builder.Where("ONAIRDATE = :BRD_DT");
@@ -477,7 +477,7 @@ namespace MAMBrowser.BLL
             });
 
             string orderBy = "ORDER BY MEDIA, ONAIRTIME, CMGROUPNAME ASC";
-            var querySource = builder.AddTemplate($@"SELECT ROWNUM AS RNO, A.* FROM (SELECT /**select**/ FROM MEM_CM_GROUP_VIEW /**where**/ {orderBy}) A");
+            var querySource = builder.AddTemplate($@"SELECT ROWNUM AS RNO, A.* FROM (SELECT /**select**/ FROM M30_VW_CM_GROUP /**where**/ {orderBy}) A");
             builder.Select("MEDIA, ONAIRDATE, CMGROUPNAME, CMGROUPID, PROID, DURSEC, CMCAPACITY, STATENAME, EDITOR, EDITORNAME, EDITTIME");
             if (!string.IsNullOrEmpty(media))
             {
@@ -537,7 +537,7 @@ namespace MAMBrowser.BLL
             });
 
             string orderBy = "ORDER BY NUM ASC";
-            var querySource = builder.AddTemplate($@"SELECT * FROM MEM_CM_CLIP_VIEW /**where**/ {orderBy}");
+            var querySource = builder.AddTemplate($@"SELECT * FROM M30_VW_CM_CLIP /**where**/ {orderBy}");
             if (!string.IsNullOrEmpty(brd_dt))
             {
                 builder.Where("ONAIRDATE = :BRD_DT");
@@ -593,7 +593,7 @@ namespace MAMBrowser.BLL
                 LAST_NO = lastNo,
             });
 
-            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM MEM_SPOT_MAIN_VIEW /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_SPOT_MAIN /**where**/");
             builder.Select(@"MEDIANAME, SPOTID, SPOTNAME, ONAIRDATE, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(media))
@@ -756,7 +756,7 @@ namespace MAMBrowser.BLL
                 LAST_NO = lastNo,
             });
 
-            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM MEM_FILLER_TIME_VIEW /**where**/");
+            var querySource = builder.AddTemplate($"SELECT /**select**/ FROM M30_VW_FILLER_TIME /**where**/");
             builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
             builder.Where("MEDIA=:MEDIA");
             builder.Where("(STARTDATE >= :START_DT AND ENDDATE <= :END_DT)");

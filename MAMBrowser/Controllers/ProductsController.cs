@@ -331,7 +331,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindFiller("MEM_FILLER_PR_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindFiller("M30_VW_FILLER_PR", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -360,7 +360,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindFiller("M30_VW_FILLER_MATERIAL", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -421,7 +421,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 //
-                //result.ResultObject = _dal.FindFiller("MEM_FILLER_MATERIAL_VIEW", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                //result.ResultObject = _dal.FindFiller("M30_VW_FILLER_MATERIAL", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
