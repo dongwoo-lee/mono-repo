@@ -7,15 +7,25 @@ namespace MAMBrowser.DTO
     public class DTO_PRIVATE_FILE : DTO_FILEBASE
     {
         public long Seq { get; set; }
+        [SortName("title")]
         public string Title { get; set; }
+        [SortName("memo")]
         public string Memo { get; set; }
+        [SortName("audioFormat")]
         public string AudioFormat { get; set; }
+        [SortName("used")]
         public string Used { get; set; }
+        [SortName("userId")]
         public string UserId { get; set; }
+        [SortName("userName")]
         public string UserName { get; set; }
+        [SortName("fileSize")]
         public long FileSize { get; set; }
+        [SortName("fileExt")]
         public string FileExt { get; set; }
+        [SortName("editedDtm")]
         public string EditedDtm { get; set; }
+        [SortName("deletedDtm")]
         public string DeletedDtm { get; set; }
 
         public static Func<dynamic, DTO_PRIVATE_FILE> ResultMapping()
