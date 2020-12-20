@@ -3,15 +3,19 @@
         <b-button
             v-if="display(PREVIEW_CODE)"
             class="icon-buton"
+            :disabled="!existFile()"
+            :style="getDownloadStyle()"
             v-b-tooltip.hover.top="{ title: (isFilePathPreviewTitle && IS_ADMIN) ? rowData.filePath : '미리듣기' }"
             @click.stop="onPreview()">
             <b-icon icon="caret-right-square" class="icon"></b-icon>
         </b-button>
         <b-button
             v-if="display(DOWNLOAD_CODE)"
-            :id="`download-${rowData.rowNO}`" 
+            :id="`download-${rowData.rowNO}`"
+            :disabled="!existFile()"
+            :style="getDownloadStyle()"
             class="icon-buton"
-            v-b-tooltip.hover.top="{ title: IS_ADMIN ? rowData.filePath : '' }"
+            v-b-tooltip.hover.top="{ title: IS_ADMIN ? rowData.filePath : '다운로드' }"
             @click.stop="onDownload()">
             <b-icon icon="download" class="icon"></b-icon>
         </b-button>           
@@ -101,9 +105,17 @@ export default {
             return '';
         },
         getDeleteStyle() {
-             return {
-                 'opacity': this.isPossibleDelete ? 1 : 0.2,
-             }
+            return {
+                'opacity': this.isPossibleDelete ? 1 : 0.2,
+            }
+        },
+        existFile() {
+            return this.rowData.existFile;
+        },
+        getDownloadStyle() {
+            return {
+                'opacity': this.rowData.existFile ? 1 : 0.2,
+            }
         }
     },
 }

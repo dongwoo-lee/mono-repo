@@ -31,7 +31,7 @@
             :state="!$v.searchItems.start_dt.required"
           >날짜는 필수 입력입니다.</b-form-invalid-feedback> -->
         </b-form-group>
-      <!-- 등록일: 종료일 -->
+        <!-- 등록일: 종료일 -->
         <b-form-group label="종료일" 
           class="has-float-label"
           :class="{ 'hasError': hasErrorClass }">
@@ -40,11 +40,15 @@
             :state="!$v.searchItems.end_dt.required"
           >날짜는 필수 입력입니다.</b-form-invalid-feedback> -->
         </b-form-group>
-      <!-- 제작자 -->
+        <!-- 사용처명 -->
+        <b-form-group label="사용처명" class="has-float-label">
+          <common-input-text v-model="searchItems.pgmName"/>
+        </b-form-group>
+        <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
         </b-form-group>
-      <!-- 소재명 -->
+        <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
           <common-input-text v-model="searchItems.name"/>
         </b-form-group>
@@ -105,12 +109,13 @@ export default {
   data() {
     return {
       searchItems: {
-        start_dt: '',       // 시작일
+        start_dt: '',               // 시작일
         end_dt: '',                 // 종료일
         editor: '',                 // 제작자ID
         editorName: '',             // 제작자이름
         name: '',                   // 소재명
-        media: 'A',
+        media: 'A',                 // 매체
+        pgmName: '',                // 사용처명
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
@@ -129,7 +134,8 @@ export default {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: 'name'
         },
         {
           name: "categoryName",
@@ -137,6 +143,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '13%',
+          sortField: 'categoryName'
         },
         {
           name: "duration",
@@ -144,6 +151,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '6%',
+          sortField: 'duration',
           callback: (v) => {
             return this.$fn.splitFirst(v);
           }
@@ -152,8 +160,9 @@ export default {
           name: "brdDT",
           title: "방송일",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '8%',
+          sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
           }
@@ -164,13 +173,15 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '5%',
+          sortField: 'editorName',
         },
         {
           name: "pgmName",
           title: "사용처명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '15%',
+          sortField: 'pgmName',
         },
         {
           name: "masteringDtm",
@@ -178,6 +189,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '12%',
+          sortField: 'masteringDtm',
         },
         {
           name: '__slot:actions',

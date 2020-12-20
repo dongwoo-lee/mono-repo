@@ -1,3 +1,14 @@
+// TOPNAV
+.navbar-left {
+    .system {
+        padding: 4px;
+        margin-right: 7px;
+        font-size:0.93rem;
+        font-weight: 400;
+        color: #3a3a3a;
+    }
+}
+
 .word-break-all {
     word-break: break-all;
 }
@@ -151,15 +162,36 @@
     }
 }
 
-.vuetable-body-wrapper tr {
-    &:hover {
-        background-color: #ffeeba;
+// VueTable Scroll type Body
+.vuetable-body-wrapper {
+    tr {
+        &:hover {
+            background-color: #ffeeba;
+        }
+
+        td {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            border: initial;
+        }
     }
 
-    td {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        border: initial;
+    .bold {
+        font-size: 0.96rem;
+        font-weight: 600;
+    }
+
+    .color-bold {
+        color: red;
+        font-weight: 600;
+    }
+}
+
+// VueTable Body
+.vuetable-body {
+    .bold {
+        font-size: 0.96rem;
+        font-weight: 600;
     }
 }
 
@@ -217,14 +249,22 @@
     }
 }
 
+// Table Top
 .table-page-info-group {
     display: flex;
+    justify-content: space-between;
 
+    .title {
+        font-size: 1rem;
+        font-weight: 600;
+    }
     .page-info {
-        margin-left: auto;
+        margin-top: auto;
+        padding-right: 10px;
     }
 }
 
+// Table
 .custom-table {
     // width: calc(100% + 18px);
     width: calc(100%);
@@ -244,6 +284,11 @@
         }
         tr:nth-child(odd) {
             background-color: white;
+        }
+
+        .bold {
+            font-size: 0.96rem;
+            font-weight: 600;
         }
     }
 }
@@ -336,6 +381,11 @@
 
         select.width-220 {
             width: 220px;
+        }
+
+        input {
+            margin: 0;
+            font-family: 'MBC NEW M';
         }
     }
     
@@ -500,8 +550,8 @@
             margin-top: 4px;
             padding:3px 7px;
             background-color: #fff;
-            color: #bbb;
-            border: 1px solid rgba(187, 187, 187, .5);
+            color:#3a3a3a;
+            border: 1px solid rgba(58, 58, 58, .5);
 
             &:hover {
                 color: #000;

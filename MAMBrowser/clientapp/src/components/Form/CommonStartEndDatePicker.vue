@@ -3,12 +3,12 @@
         <!-- 등록일: 시작일 -->
         <b-form-group :label="startDateLabel"
           class="has-float-label">
-          <common-date-picker v-model="sDate"/>
+          <common-date-picker v-model="sDate" :dayAgo="startDayAgo"/>
         </b-form-group>
       <!-- 등록일: 종료일 -->
         <b-form-group :label="endDateLabel" 
           class="has-float-label">
-          <common-date-picker v-model="eDate"/>{{ eDate }}
+          <common-date-picker v-model="eDate"/>
         </b-form-group>
     </div>
 </template>
@@ -34,7 +34,11 @@ export default {
         },
         checkMaxSearchDay: {
             type: Boolean,
-            default: true,
+            default: false,
+        },
+        startDayAgo: {
+            type: Number,
+            defaut: 0,
         }
     },
     data() {
@@ -46,13 +50,15 @@ export default {
     watch: {
         sDate(date) {
             this.$emit('update:startDate', date);
-            if (date) {
+            if (date && this.checkMaxSearchDay) {
+                console.info('checkMaxSearchDay')
                 const result = this.checkMiximumEndDate(date);
             }
         },
         eDate(date) {
             this.$emit('update:endDate', date);
-            if (date) {
+            if (date && this.checkMaxSearchDay) {
+                console.info('checkMaxSearchDay')
                 const result = this.checkMiximumStartDate(date);
                 // TODO: 체크
             }
@@ -66,8 +72,9 @@ export default {
         checkMiximumStartDate(date) {
             const selectedDate = Date.parse(this.$fn.formatDate(date, 'yyyy-MM-dd'));
             const maxSearchDate = new Date(selectedDate);
+            const endDate = Date.parse(this.$fn.formatDate(this.eDate, 'yyyy-MM-dd'));
             maxSearchDate.setDate(maxSearchDate.getDate() - MAXIMUM_SEARCH_DATE);
-            return selectedDate >= maxSearchDate;
+            return selectedDate <= maxSearchDate;
         },
         checkMiximumEndDate(date) {
             const selectedDate = Date.parse(this.$fn.formatDate(date, 'yyyy-MM-dd'));

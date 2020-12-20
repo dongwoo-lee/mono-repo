@@ -7,13 +7,13 @@
         modal-class="my-modal-file"
         no-close-on-backdrop
         v-model="showDialog">
-        <b-form-group label="제목" label-for="input-title">
-            <b-form-input
-                id="input-title"
-                v-model="$v.metaData.title.$model">
-            </b-form-input>
-            <b-form-invalid-feedback :state="!$v.metaData.title.required">필수 입력입니다.</b-form-invalid-feedback>
-        </b-form-group>
+        <!-- 제목 -->
+        <common-input-text-max-length 
+            label="제목" 
+            labelfor="input-title" 
+            v-model="$v.metaData.title.$model" 
+            :state="!$v.metaData.title.required">
+        </common-input-text-max-length>
         <b-form-group label="매체" label-for="input-title">
                 <b-form-select 
                 v-model="$v.metaData.mediaCD.$model"
@@ -33,16 +33,13 @@
             />
             <b-form-invalid-feedback :state="!$v.metaData.categoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group label="내용" label-for="input-memo">
-            <b-form-textarea
-                id="input-memo"
-                v-model="$v.metaData.memo.$model"
-                :maxlength="INPUT_MAX_LENGTH"
-                size="sm">
-            </b-form-textarea>
-            <b-form-invalid-feedback :state="!$v.metaData.memo.required">필수 입력입니다.</b-form-invalid-feedback>
-            <b-form-valid-feedback :state="$v.metaData.memo.max_length">최대 입력 글자 수는 {{INPUT_MAX_LENGTH}}입니다.</b-form-valid-feedback>
-        </b-form-group>
+        <!-- 내용 -->
+        <common-text-area-max-length
+            label="내용"
+            label-for="input-memo"
+            v-model="$v.metaData.memo.$model"
+            :state="!$v.metaData.memo.required">
+        </common-text-area-max-length>
          <!--  FOOTER: 액션 -->
         <template slot="modal-footer">
             <div class="flex-grow-1">

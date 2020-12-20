@@ -40,6 +40,10 @@ let mixinFillerPage = {
         getEtcOptions() {
             this.requestCall('/api/Categories/filler/etc', 'categoryOptions');
         },
+        // 제작자(MD) 조회
+        getEditorForMd() {
+            this.requestCall('/api/Categories/users/md', 'editorOptions');
+        },
         onSpotSelected(data) {
             const { id, name } = data;
             this.searchItems.spotId = id;

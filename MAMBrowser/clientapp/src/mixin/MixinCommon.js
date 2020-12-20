@@ -118,7 +118,7 @@ let mixinCommon = {
             this.searchItems.selectPage = 1;
             this.searchItems.sortKey = sortKey;
             this.searchItems.sortValue = this.sortItems[sortKey];
-            console.info('sorkKey', this.searchItems.sortKey, this.searchItems.sortValue);
+            console.debug('sorkKey', this.searchItems.sortKey, this.searchItems.sortValue);
             this.getData();
         },
         // 카테고리 API 요청

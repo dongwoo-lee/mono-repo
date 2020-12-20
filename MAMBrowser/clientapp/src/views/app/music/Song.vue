@@ -168,14 +168,14 @@ export default {
           name: "name",
           title: "곡명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: "10%"
         },
         {
           name: "artistName",
           title: "아티스트",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: "8%"
         },
         {
@@ -189,7 +189,7 @@ export default {
           name: "albumName",
           title: "음반명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '15%',
         },
         {

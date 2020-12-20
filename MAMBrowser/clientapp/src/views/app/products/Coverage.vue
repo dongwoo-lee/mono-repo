@@ -137,7 +137,8 @@ export default {
           name: "name",
           title: "소재명",
           titleClass: 'center aligned text-center',
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: 'name',
           
         },
         {
@@ -145,21 +146,24 @@ export default {
           title: "취재인",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
-          width: '6%'
+          width: '6%',
+          sortField: 'reporter',
         },
         {
           name: "pgmName",
           title: "사용처명",
           titleClass: 'center aligned text-center',
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '8%',
+          sortField: 'pgmName',
         },
         {
           name: "brdDT",
           title: "방송일",
           titleClass: 'center aligned text-center',
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '8%',
+          sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
           }
@@ -170,6 +174,7 @@ export default {
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
           width: '6%',
+          sortField: 'duration',
           callback: (v) => {
             return this.$fn.splitFirst(v);
           }
@@ -179,21 +184,24 @@ export default {
           title: "제작자",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
-          width: '5%',
+          width: '8%',
+          sortField: 'editorName',
         },
         {
           name: "editDtm",
           title: "최종편집일시",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
-          width: '9%',
+          width: '11%',
+          sortField: 'editDtm',
         },
         {
           name: "masteringDtm",
           title: "마스터링일시",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center",
-          width: '9%',
+          width: '11%',
+          sortField: 'masteringDtm',
         },
         {
           name: '__slot:actions',
@@ -209,7 +217,7 @@ export default {
     // 취재물 분류 목록 조회
     this.getReportOptions();
     // 사용자 목록 조회
-    this.getEditorOptions();
+    this.getEditorForReporter();
   },
   methods: {
     getData() {

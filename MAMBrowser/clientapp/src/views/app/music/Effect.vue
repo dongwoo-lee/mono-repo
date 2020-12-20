@@ -92,7 +92,7 @@ export default {
           name: "name",
           title: "효과음명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
         },
         {
           name: "description",
@@ -104,7 +104,7 @@ export default {
           name: "duration",
           title: "길이(초)",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
         },
         {
           name: "audioFormat",

@@ -125,19 +125,22 @@ export default {
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
               width: '10%',
+              sortField: 'categoryName',
             },
             {
               name: "name",
               title: "소재명",
               titleClass: "center aligned text-center",
-              dataClass: "center aligned text-center",
+              dataClass: "center aligned text-center bold",
+              sortField: 'name',
             },
             {
               name: "brdDT",
               title: "방송유효일",
               titleClass: "center aligned text-center",
-              dataClass: "center aligned text-center",
+              dataClass: "center aligned text-center bold",
               width: '8%',
+              sortField: 'brdDT',
               callback: (v) => {
                   return this.$fn.dateStringTohaipun(v)
               }
@@ -148,20 +151,23 @@ export default {
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
               width: '8%',
+              sortField: 'duration',
             },
             {
               name: "editorName",
               title: "편집자",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
-              width: '8%'
+              width: '8%',
+              sortField: 'editorName',
             },
             {
               name: "editDtm",
               title: "편집일자",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
-              width: '12%'
+              width: '12%',
+              sortField: 'editDtm',
             },
             {
               name: "masteringDtm",
@@ -169,7 +175,8 @@ export default {
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
               sortField: 'masteringDtm',
-              width: '12%'
+              width: '12%',
+              sortField: 'masteringDtm',
             },
             {
               name: '__slot:actions',
@@ -207,7 +214,7 @@ export default {
       },
       getOptions() {
           this.getMediaOptions();
-          this.getEditorOptions();
+          this.getEditorForMd();
 
           // 필러(pr)
           if (this.screenName === 'pr') this.getProOptions();

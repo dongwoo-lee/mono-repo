@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import LoginPopupRefElement from '../lib/loginPopup/LoginPopupRefElement';
-import { eventBus } from '../eventBus';
+import LoginPopupRefElement from '@/lib/loginPopup/LoginPopupRefElement';
+import { eventBus } from '@/eventBus';
 import jwt_decode from 'jwt-decode';
 
 export default {

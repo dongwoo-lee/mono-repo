@@ -52,6 +52,7 @@
         <b-row>
           <b-colxx xs="12" md="6" class="no-r-p">
             <div class="table-page-info-group pb-1">
+              <div class="title">CM 리스트</div>
               <div class="page-info">전체 {{responseData.totalRowCount}}개</div>
             </div>
             <b-table
@@ -79,8 +80,10 @@
               </template>
               <template v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
-                <b-button v-if="data.item.id==selectedItem.id"
-                :id="`download-${data.index}`" class="icon-buton"
+                <b-button v-if="data.item.id==selectedItem.id && data.item.length !== '00:00'"
+                  :id="`download-${data.index}`" 
+                  class="icon-buton"
+                  v-b-tooltip.hover.top="{ title: '통합다운로드' }"
                   @click.stop="onDownloadConcatenate({
                     grpType : 'cm',
                     brd_Dt : searchItems.brd_dt,
@@ -100,6 +103,7 @@
           <!-- sub -->
           <b-colxx xs="12" md="6">
             <div class="table-page-info-group pb-1">
+              <div class="title">상세 내역</div>
               <div class="page-info">전체 {{reponseContentsData.totalRowCount}}개</div>
             </div>
             <b-table
@@ -178,10 +182,9 @@ export default {
       ],
       fields: [
         { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
-        { key: 'brdDT', label: '방송일', tdClass: 'text-muted' },
-        { key: 'name', label: 'CM명', tdClass: 'text-muted' },
-        { key: 'length', label: '길이(초)', tdClass: 'text-muted' },
-        { key: 'capacity', label: '분량', tdClass: 'text-muted'},
+        { key: 'name', label: 'CM명', tdClass: 'text-muted bold' },
+        { key: 'length', label: '길이(초)', tdClass: 'text-muted bold' },
+        { key: 'capacity', label: '용량(초)', tdClass: 'text-muted bold'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
         { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
@@ -191,9 +194,8 @@ export default {
         { key: 'advertiser', label: '광고주', tdClass: 'text-muted', thStyle: { width: '20%' } },
         { key: 'name', label: '소재명', tdClass: 'text-muted' },
         { key: 'length', label: '길이(초)', tdClass: 'text-muted' },
-        { key: 'format', label: '포맷', tdClass: 'text-muted', thStyle: { width: '10%' } },
-        { key: 'codingUserID', label: '코딩인', tdClass: 'text-muted' },
-        { key: 'codingDT', label: '코딩일', tdClass: 'text-muted' },
+        { key: 'codingUserID', label: '제작자', tdClass: 'text-muted' },
+        { key: 'codingDT', label: '제작일', tdClass: 'text-muted' },
         { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
       ]
     }

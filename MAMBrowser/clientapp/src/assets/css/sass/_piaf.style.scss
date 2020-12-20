@@ -140,7 +140,7 @@ html {
 }
 
 body {
-    font-family: "MBC NEW L", sans-serif;
+    font-family: "MBC NEW M" !important;
     font-size: 0.8rem;
     font-weight: 400;
     color: $primary-color;
@@ -2038,11 +2038,12 @@ button {
     }
 
     .user {
-        color: lighten($primary-color, 30%) !important;
+        // color: lighten($primary-color, 30%) !important;
+        color: $primary-color !important;
         position: relative;
 
         .name {
-            color: $secondary-color;
+            color: $primary-color;
         }
         .dropdown-toggle:after {
             border: initial;
@@ -5076,7 +5077,8 @@ input:-webkit-autofill {
 .auth-card {
     display: flex;
     flex-direction: row;
-    width: 1000px;
+    width: 80%;
+    margin:auto;
     @include depth(1);
 
     .image-side {
@@ -5084,19 +5086,18 @@ input:-webkit-autofill {
         background: url("/assets/img/login-left2.png") no-repeat center top;
         background-size: contain;
         padding: 80px 40px;
-
-        .title {
-            font-size: 1.5rem;
-            margin-top:15px;
-            margin-bottom: 5px;
-        }
     }
 
     .form-side {
         width: 80%;
         padding: 80px;
         padding-left:0px;
-        
+
+        .title {
+            font-size: 1.5rem;
+            margin-top:15px;
+            margin-bottom: 5px;
+        }
     }
 
     @include respond-below(md) {

@@ -106,7 +106,7 @@ export default {
                     title: '순서',
                     titleClass: 'center aligned text-center',
                     dataClass: 'center aligned text-center',
-                    width: '5%',
+                    width: '7%',
                 },
                 {
                     name: '__slot:name',

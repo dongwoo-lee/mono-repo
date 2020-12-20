@@ -13,16 +13,11 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
-        <!-- 매체 -->
-        <!-- <b-form-group label="매체" class="has-float-label">
-          <b-form-select
-          class="width-100"
-          v-model="searchItems.media"
-          :options="mediaPrimaryOptions"
-          value-field="id"
-          text-field="name" 
-        /> 
-        </b-form-group>-->
+        <!-- 시작-종료일 -->
+        <common-start-end-date-picker
+          :startDate.sync="searchItems.start_dt"
+          :startDayAgo="7"
+          :endDate.sync="searchItems.end_dt"/>
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">
           <b-form-select
@@ -38,13 +33,6 @@
             :suggestions="proOptions" 
             @selected="onProSelected"
           />
-          <!-- <b-form-select
-            class="width-120"
-            v-model="searchItems.cate"
-            :options="proOptions"
-            value-field="id"
-            text-field="name"
-          /> -->
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
@@ -119,6 +107,8 @@ export default {
         type: 'Y',              // 타입
         editor: '',            // 제작자
         name: '',              // 소재명
+        start_dt: '',          // 시작일
+        end_dt: '',            // 종료일
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
@@ -137,13 +127,15 @@ export default {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: 'name',
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'categoryName',
         },
         {
           name: "duration",
@@ -151,6 +143,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '6%',
+          sortField: 'duration',
           callback: (v) => {
             return this.$fn.splitFirst(v);
           }
@@ -159,8 +152,9 @@ export default {
           name: "editorName",
           title: "제작자",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '8%',
+          sortField: 'editorName',
         },
         {
           name: "editDtm",
@@ -168,13 +162,15 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '12%',
+          sortField: 'editDtm',
         },
         {
           name: "masteringDtm",
           title: "마스터링 일시",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '12%',
+          sortField: 'masteringDtm',
         },
         {
           name: "proType",
@@ -182,6 +178,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
+          sortField: 'proType',
         },
         {
           name: '__slot:actions',
@@ -203,6 +200,12 @@ export default {
   },
   methods: {
     getData() {
+       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+        return;
+      }
+
       this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/products/old_pro`, { params: this.searchItems })
         .then(res => {

@@ -118,12 +118,14 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '5%',
+          sortField: 'mediaName',
         },
         {
           name: "name",
           title: "프로그램명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: 'name',
         },
         {
           name: "brdDT",
@@ -131,6 +133,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
+          sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v)
           }
@@ -141,6 +144,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '7%',
+          sortField: 'brdTime',
         },
         {
           name: "status",
@@ -148,6 +152,13 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
+          sortField: 'status',
+          callback: (v) => {
+            if (v === '제작중') {
+              return `<span style="color:red; font-weight:600;">${v}</span>`;
+            }
+            return v;
+          }
         },
         {
           name: "duration",
@@ -155,20 +166,23 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
+          sortField: 'duration',
         },
         {
           name: "editorName",
           title: "제작자",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '8%'
+          dataClass: "center aligned text-center bold",
+          width: '8%',
+          sortField: 'editorName',
         },
         {
           name: "editDtm",
           title: "최종편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '12%'
+          width: '12%',
+          sortField: 'editDtm',
         },
         {
           name: "reqCompleteDtm",
@@ -176,6 +190,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '15%',
+          sortField: 'reqCompleteDtm',
         },
         {
           name: '__slot:actions',
@@ -192,16 +207,26 @@ export default {
     }
   },
   watch: {
-    ['searchItems.brd_dt']() {
-      // 사용처 조회
-      this.getPgmOptions(this.searchItems.brd_dt);  
+    ['searchItems.brd_dt'](v) {
+      if (v) {
+        // 사용처 조회
+        this.getPgmOptions(this.searchItems.brd_dt);
+        setTimeout(() => {
+          this.onSearch();
+        },500);
+      }
+    },
+    ['searchItems.media'](v) {
+      if (v) {
+        this.onSearch();
+      }
     }
   },
   created() {
     // 매체목록 조회
     this.getMediaOptions();
-    // 제작자 조회
-    this.getEditorOptions();
+    // 제작자(PD용) 조회
+    this.getEditorForPd();
   },
   methods: {
     getData() {

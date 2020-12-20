@@ -113,26 +113,22 @@ export default {
                   titleClass: "center aligned text-center",
                   dataClass: "center aligned text-center",
                   width: '10%',
-              },
-              {
-                  name: "mediaName",
-                  title: "매체",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '5%',
+                  sortField: 'deviceName',
               },
               {
                   name: "brdDate",
                   title: "송출일시",
                   titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
+                  dataClass: "center aligned text-center bold",
                   width: '15%',
+                  sortField: 'brdDate',
               },
               {
                   name: "recName",
-                  title: "녹음명",
+                  title: "녹음소재명",
                   titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
+                  dataClass: "center aligned text-center bold",
+                  sortField: 'recName',
               },
               {
                   name: "sourceID",
@@ -140,20 +136,26 @@ export default {
                   titleClass: "center aligned text-center",
                   dataClass: "center aligned text-center",
                   width: '7%',
+                  sortField: 'sourceID',
               },
               {
                   name: "duration",
-                  title: "방송분량",
+                  title: "녹음분량",
                   titleClass: "center aligned text-center",
                   dataClass: "center aligned text-center",
                   width: '10%',
+                  sortField: 'duration',
               },
               {
                   name: "fileSize",
-                  title: "파일크기(byte)",
+                  title: "파일사이즈(byte)",
                   titleClass: "center aligned text-center",
                   dataClass: "center aligned text-center",
                   width: '10%',
+                  sortField: 'fileSize',
+                   callback: (v) => {
+                    return this.$fn.formatBytes(v)
+                  }
               },
               {
                   name: "regDtm",
@@ -161,6 +163,7 @@ export default {
                   titleClass: "center aligned text-center",
                   dataClass: "center aligned text-center",
                   width: '15%',
+                  sortField: 'regDtm',
               },
               {
                 name: '__slot:actions',

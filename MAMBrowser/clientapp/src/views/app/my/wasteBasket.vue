@@ -112,8 +112,6 @@ export default {
         // cate: '',           // 분류
         title: '',             // 제목
         memo: '',              // 메모
-        // start_dt: '',       // 삭제기간-시작일
-        // end_dt: '',         // 삭제기간-종료일
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',
@@ -142,31 +140,36 @@ export default {
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'title',
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'memo',
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'fileExt',
         },
         {
           name: "audioFormat",
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-           width: "9%"
+           width: "9%",
+           sortField: 'audioFormat',
         },
         {
           name: "editedDtm",
           title: "삭제일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'editedDtm',
         },
         {
           name: '__slot:actions',

@@ -7,13 +7,11 @@
         @input="onInput"
         :pattern="pattern"
         @keydown.enter.prevent
-        :maxlength="maxLength"
     >
     </b-form-input>
 </template>
 
 <script>
-import { INPUT_MAX_LENGTH } from '@/constants/config';
 export default {
     props: {
         value: {
@@ -36,24 +34,10 @@ export default {
             type: String,
             default: '',
         },
-        maxLength: {
-            type: Number,
-            default: INPUT_MAX_LENGTH,
-        }
-    },
-    data() {
-        return {
-            INPUT_MAX_LENGTH
-        }
     },
     methods: {
         onInput(input) {
-            if (input.length >= this.maxLength) {
-                var msg = '최대 입력 글자 수는 ' + this.maxLength + '입니다.'
-                this.$notify('info', msg);
-            } else {
-                this.$emit('input', input);
-            }
+            this.$emit('input', input);
         },
     }
 }

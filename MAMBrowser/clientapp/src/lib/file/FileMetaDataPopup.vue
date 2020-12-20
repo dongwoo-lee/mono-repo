@@ -13,14 +13,15 @@
             </b-form-select>
             <b-form-invalid-feedback :state="!$v.type.required">필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group label="제목" label-for="input-title">
-            <b-form-input
-                id="input-title"
-                v-model="$v.title.$model">
-            </b-form-input>
-            <b-form-invalid-feedback :state="!$v.title.required">필수 입력입니다.</b-form-invalid-feedback>
-        </b-form-group>
+        <!-- 제목 -->
+        <common-input-text-max-length 
+            label="제목" 
+            labelfor="input-title" 
+            v-model="$v.title.$model" 
+            :state="!$v.title.required">
+        </common-input-text-max-length>
         <template v-if="isPublicPage">
+            <!-- 매체 -->
             <b-form-group label="매체" label-for="input-title">
                     <b-form-select 
                     v-model="$v.mediaCD.$model"
@@ -30,6 +31,7 @@
                 />
                 <b-form-invalid-feedback :state="!$v.mediaCD.required">필수 입력입니다.</b-form-invalid-feedback>
             </b-form-group>
+            <!-- 분류 -->
             <b-form-group label="분류" label-for="input-title">
                 <b-form-select 
                     v-model="$v.categoryCD.$model"
@@ -45,16 +47,13 @@
             <b-form-invalid-feedback :state="!$v.categoryCD.required">필수 입력입니다.</b-form-invalid-feedback>
             </b-form-group>
         </template>
-        <b-form-group label="내용" label-for="input-memo">
-            <b-form-textarea
-                id="input-memo"
-                v-model="$v.memo.$model"
-                :maxlength="INPUT_MAX_LENGTH"
-                size="sm">
-            </b-form-textarea>
-            <b-form-invalid-feedback :state="!$v.memo.required">필수 입력입니다.</b-form-invalid-feedback>
-            <b-form-valid-feedback :state="$v.memo.max_length">최대 입력 글자 수는 {{INPUT_MAX_LENGTH}}입니다.</b-form-valid-feedback>
-        </b-form-group>
+        <!-- 내용 -->
+        <common-text-area-max-length
+            label="내용"
+            label-for="input-memo"
+            v-model="$v.memo.$model"
+            :state="!$v.memo.required">
+        </common-text-area-max-length>
          <!--  FOOTER: 액션 -->
         <template slot="modal-footer">
             <div class="flex-grow-1">

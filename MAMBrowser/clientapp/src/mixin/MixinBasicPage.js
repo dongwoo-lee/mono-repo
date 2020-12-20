@@ -64,6 +64,14 @@ let mixinBasicPage = {
                 }
             });
         },
+        // 제작자(PD용) 조회
+        getEditorForPd() {
+            this.requestCall('/api/Categories/users/pd', 'editorOptions');
+        },
+        // 제작자(Repoter) 조회
+        getEditorForReporter() {
+            this.requestCall('/api/Categories/users/reporter', 'editorOptions');
+        },
         getInnerHtmlSelectdFileNames(title) {
             return `파일명:<text style="color:red;">${title}</text><br><br>`;
         },

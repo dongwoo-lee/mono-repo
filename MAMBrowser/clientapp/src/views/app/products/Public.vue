@@ -36,7 +36,7 @@
         </b-form-group>
         <!-- 시작일 -->
         <b-form-group label="시작일" class="has-float-label">
-          <common-date-picker v-model="searchItems.start_dt"/>
+          <common-date-picker v-model="searchItems.start_dt" :dayAgo="7"/>
           <!-- <b-form-invalid-feedback
             :state="$v.searchItems.start_dt.check_date"
           >날짜 형식이 맞지 않습니다.</b-form-invalid-feedback> -->
@@ -200,47 +200,54 @@ export default {
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "10%",
+          sortField: 'categoryName'
         },
         {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: 'title'
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'memo'
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "8%",
+          sortField: 'fileExt'
         },
         {
           name: "audioFormat",
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "9%"
+          width: "9%",
+          sortField: 'audioFormat'
         },
         {
           name: "userName",
           title: "제작자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "10%",
+          sortField: 'userName'
         },
         {
           name: "editedDtm",
           title: "등록일시",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "12%"
+          dataClass: "center aligned text-center bold",
+          width: "12%",
+          sortField: 'editedDtm'
         },
         {
           name: '__slot:actions',

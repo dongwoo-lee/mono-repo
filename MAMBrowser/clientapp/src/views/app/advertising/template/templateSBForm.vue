@@ -57,6 +57,7 @@
         <b-row>
           <b-colxx xs="12" md="6" class="no-r-p">
             <div class="table-page-info-group pb-1">
+              <div class="title">{{heading}} 리스트</div>
               <div class="page-info">전체 {{responseData.totalRowCount}}개</div>
             </div>
             <b-table
@@ -84,10 +85,11 @@
               </template>
               <template v-if="screenName" v-slot:cell(actions)="data">
                 <!-- 다운로드 -->
-                <b-button
-                  v-if="data.item.id==selectedItem.id"
-                  :id="`download-${data.index}`" class="icon-buton"
-                  @click.stop="onDownloadConcatenate({
+                <b-button v-if="data.item.id==selectedItem.id && data.item.length !== '00:00'"
+                    :id="`download-${data.index}`"
+                    class="icon-buton"
+                    v-b-tooltip.hover.top="{ title: '통합다운로드' }"
+                    @click.stop="onDownloadConcatenate({
                     grpType : 'sb',
                     brd_Dt : searchItems.brd_dt,
                     grpId : data.item.id,
@@ -101,6 +103,7 @@
           <!-- sub -->
           <b-colxx xs="12" md="6">
             <div class="table-page-info-group pb-1">
+              <div class="title">상세 내역</div>
               <div class="page-info">전체 {{reponseContentsData.totalRowCount}}개</div>
             </div>
             <b-table
@@ -185,9 +188,9 @@ export default {
       fields: [
         { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
         { key: 'id', label: 'SB ID', tdClass: 'text-muted' },
-        { key: 'name', label: 'SB명', tdClass: 'text-muted' },
-        { key: 'length', label: '길이(초)', tdClass: 'text-muted' },
-        { key: 'capacity', label: '용량(초)', tdClass: 'text-muted'},
+        { key: 'name', label: 'SB명', tdClass: 'text-muted bold' },
+        { key: 'length', label: '길이(초)', tdClass: 'text-muted bold' },
+        { key: 'capacity', label: '용량(초)', tdClass: 'text-muted bold'},
         { key: 'status', label: '상태', tdClass: 'text-muted'},
         { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
         { key: 'actions', label: '추가작업', tdClass: 'text-muted'},

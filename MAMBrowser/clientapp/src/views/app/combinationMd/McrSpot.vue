@@ -142,24 +142,19 @@ export default {
           width: '4%',
         },
         {
-          name: "mediaName",
-          title: "매체",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: '5%',
-        },
-        {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: 'name',
         },
         {
           name: "brdDT",
           title: "방송일",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '8%',
+          sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v)
           }
@@ -168,8 +163,9 @@ export default {
           name: "status",
           title: "상태",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: '6%',
+          sortField: 'status',
         },
         {
           name: "duration",
@@ -177,20 +173,23 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '8%',
+          sortField: 'duration',
         },
         {
           name: "editorName",
           title: "제작자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%'
+          width: '8%',
+          sortField: 'editorName',
         },
         {
           name: "editDtm",
           title: "최종편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '12%'
+          width: '12%',
+          sortField: 'editDtm',
         },
         {
           name: "reqCompleteDtm",
@@ -198,6 +197,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: '14%',
+          sortField: 'reqCompleteDtm',
         },
         {
           name: '__slot:actions',
@@ -212,12 +212,10 @@ export default {
   created() {
     // 매체목록 조회
     this.getMediaOptions();
-    // 사용자 목록 조회
-    this.getEditorOptions();
+    // 제작자(Md) 목록 조회
+    this.getEditorForMd();
     // 주조 spot 분류 목록 조회
     this.getSpotOptions(this.searchItems.media);
-    // 방송의뢰 상태 목록 조회
-    // this.getReqStatusOptions();
   },
   methods: {
     getData() {

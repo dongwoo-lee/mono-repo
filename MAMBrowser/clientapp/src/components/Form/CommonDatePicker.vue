@@ -21,8 +21,6 @@
                     today-variant
                     :hide-header="hideHeader"
                     :size="size"
-                    :min="minDate"
-                    :max="maxDate"
                 />
             </b-input-group-append>
         </b-input-group>
@@ -70,9 +68,9 @@ export default {
             type: Boolean,
             default: false,
         },
-        maximumType: {
-            type: String,
-            default: '',
+        checkMinValue: {
+            type: Boolean,
+            default: false,
         }
     },
     data() {
@@ -133,16 +131,19 @@ export default {
             const replaceAllTargetValue = targetValue.replace(/-/g, '')
             if (replaceAllTargetValue.length === 8) {
                 const convertDate = this.convertDateStringToHaipun(replaceAllTargetValue);
-                 // 유효한 날짜인지 체크
-                if (this.$fn.validDate(convertDate) && this.$fn.checkBetweenDate(convertDate)) {
-                    event.target.value = convertDate;
-                    this.validBeforeDate = convertDate;
-                    this.date = convertDate;
-                } else {
-                    const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);
-                    event.target.value = convertBeforeDate;
-                    this.date = convertBeforeDate;
+                // 유효한 날짜인지 확인
+                if (!this.$fn.validDate(convertDate)) {
+                    return this.revertDate(event);
                 }
+                // 검색 가능 최소일 확인
+                if (this.checkMinValue && !this.$fn.checkBetweenDate(convertDate)) {
+                    return this.revertDate(event);
+                }
+
+                // 값 업데이트
+                event.target.value = convertDate;
+                this.validBeforeDate = convertDate;
+                this.date = convertDate;
             }
         },
         validDateType(value) {
@@ -169,6 +170,11 @@ export default {
             }
 
             return new Date().toISOString().substring(0, 10);
+        },
+        revertDate(event) {
+             const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);
+            event.target.value = convertBeforeDate;
+            this.date = convertBeforeDate;
         }
     },
 }

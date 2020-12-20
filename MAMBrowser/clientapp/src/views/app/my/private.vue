@@ -23,14 +23,15 @@
           class="has-float-label">
           <common-date-picker v-model="searchItems.end_dt"/>
         </b-form-group> -->
+        <!-- 시작-종료일 -->
         <common-start-end-date-picker 
           :startDate.sync="searchItems.start_dt"
-          :endDate.sync="searchItems.end_dt"/> / {{ searchItems.end_dt }}
-      <!-- 제목 -->
+          :endDate.sync="searchItems.end_dt"/>
+        <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
           <common-input-text v-model="searchItems.title" />
         </b-form-group>
-      <!-- 메모 -->
+        <!-- 메모 -->
         <b-form-group label="메모" class="has-float-label">
           <common-input-text class-string="memo" v-model="searchItems.memo" />
         </b-form-group>
@@ -169,6 +170,7 @@ export default {
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'title',
           width: "25%"
         },
         {
@@ -176,12 +178,14 @@ export default {
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'memo',
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'fileExt',
           width: "8%"
         },
          {
@@ -189,6 +193,7 @@ export default {
           title: "파일사이즈",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'fileSize',
           width: "8%",
           callback: (v) => {
             return this.$fn.formatBytes(v)
@@ -199,6 +204,7 @@ export default {
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          sortField: 'audioFormat',
           width: "9%"
         },
         {
