@@ -67,6 +67,10 @@ namespace MAMBrowser.DTO
 
                 filePath = value;
                 FileToken = MAMUtility.GenerateMusicToken(filePath);
+                if (string.IsNullOrEmpty(filePath))
+                    ExistFile = false;
+                else
+                    ExistFile = true;
             }
         }
         protected string albumImageFilePath;

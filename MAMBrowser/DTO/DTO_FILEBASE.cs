@@ -16,8 +16,14 @@ namespace MAMBrowser.DTO
 
                 filePath = value;
                 FileToken = MAMUtility.GenerateMAMToken(filePath);
+                if (string.IsNullOrEmpty(filePath))
+                    ExistFile = false;
+                else
+                    ExistFile = true;
             }
         }
         public string FileToken { get; set; }
+
+        public bool ExistFile { get; set; }
     }
 }
