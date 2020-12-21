@@ -54,11 +54,11 @@ namespace MAMBrowser.Controllers
             param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
             //db에 데이터 등록
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PRIVATE_SPACE 
+            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_MAM_PRIVATE_SPACE 
 VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
 
             //var builder2 = new SqlBuilder();
-            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_COMM_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
             //DynamicParameters param2 = new DynamicParameters();
             //param2.Add("USER_ID", userId);
             //param2.Add("FILE_SIZE", file.Length);
@@ -85,7 +85,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         {
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='N', DELETED_DTM=SYSDATE WHERE SEQ IN :SEQ");
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_MAM_PRIVATE_SPACE SET USED='N', DELETED_DTM=SYSDATE WHERE SEQ IN :SEQ");
             Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
@@ -107,12 +107,12 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
 
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"DELETE M30_PRIVATE_SPACE WHERE USED='N' AND SEQ IN :SEQ");
+            var queryTemplate = builder.AddTemplate(@"DELETE M30_MAM_PRIVATE_SPACE WHERE USED='N' AND SEQ IN :SEQ");
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
 
             //var builder2 = new SqlBuilder();
-            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
+            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_COMM_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
             //DynamicParameters param2 = new DynamicParameters();
             //param2.Add("USER_ID", userId);
             //param2.Add("FILE_SIZE", -(totalDeleteSize));
@@ -141,7 +141,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         /// <returns></returns>
         public bool DeleteAllRecycleBin(string userId)    
         {
-            string getRecycleBin = @"SELECT * FROM M30_PRIVATE_SPACE WHERE USED='N'";
+            string getRecycleBin = @"SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE USED='N'";
             Repository sRepository = new Repository();
             var dtoList = sRepository.Select<DTO_PRIVATE_FILE>(getRecycleBin, null, DTO_PRIVATE_FILE.ResultMapping());
             List<long> seqList = new List<long>();
@@ -152,7 +152,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         public bool RecycleAll(string userId, LongList seqList)    //복원
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET USED='Y', DELETED_DTM=NULL WHERE SEQ IN :SEQ");
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_MAM_PRIVATE_SPACE SET USED='Y', DELETED_DTM=NULL WHERE SEQ IN :SEQ");
             Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", seqList);
@@ -162,7 +162,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         public int UpdateData(PrivateFileModel metaData)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PRIVATE_SPACE SET TITLE=:TITLE, MEMO=:MEMO, EDITED_DTM = SYSDATE /**where**/");
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_MAM_PRIVATE_SPACE SET TITLE=:TITLE, MEMO=:MEMO, EDITED_DTM = SYSDATE /**where**/");
             builder.Where("SEQ=:SEQ");
             Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
@@ -173,7 +173,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         public DTO_PRIVATE_FILE Get(long id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE WHERE SEQ=:SEQ");
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE SEQ=:SEQ");
             Repository repository = new Repository();
             var resultMapping = DTO_PRIVATE_FILE.ResultMapping();
             return repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
@@ -194,7 +194,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             param.Add("END_DT", end_dt);
 
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT * FROM M30_PRIVATE_SPACE /**where**/");
+            var querySource = builder.AddTemplate(@"SELECT * FROM M30_MAM_PRIVATE_SPACE /**where**/");
             builder.Where("(USER_ID=:USER_ID AND USED=:USED)");
             if (!string.IsNullOrEmpty(start_dt))
             {
@@ -270,7 +270,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
         private long GetID()
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT M30_PRIVATE_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");
+            var queryTemplate = builder.AddTemplate("SELECT M30_MAM_PRIVATE_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");
             Repository repository = new Repository();
 
             var resultMapping = new Func<dynamic, long>((row) =>

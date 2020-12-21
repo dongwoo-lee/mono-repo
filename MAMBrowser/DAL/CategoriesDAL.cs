@@ -323,13 +323,13 @@ ORDER BY NUM");
             param.Add("GRP_CD", primaryCode);
             param.Add("USER_ID", userId);
 
-            var queryTemplate = builder.AddTemplate(@"SELECT M30_CODE.CODE, M30_CODE.NAME NAME FROM M30_CODE_MAP
-LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
+            var queryTemplate = builder.AddTemplate(@"SELECT M30_COMM_CODE.CODE, M30_COMM_CODE.NAME NAME FROM M30_COMM_CODE_MAP
+LEFT JOIN M30_COMM_CODE ON M30_COMM_CODE.CODE = M30_COMM_CODE_MAP.CODE /**where**/");
             builder.Where("(SYSTEM_CD = 'S01' AND MAP_CD = 'S00G01C005')");
             builder.Where("GRP_CD = :GRP_CD");
             //if (!string.IsNullOrEmpty(userId))
             //{
-            //    builder.Where("M30_CODE.CODE IN (SELECT CODE FROM M30_CODE_MAP WHERE MAP_CD = 'S00G01C003' AND GRP_CD = :USER_ID)");
+            //    builder.Where("M30_COMM_CODE.CODE IN (SELECT CODE FROM M30_COMM_CODE_MAP WHERE MAP_CD = 'S00G01C003' AND GRP_CD = :USER_ID)");
             //}
            
             Repository repository = new Repository();
@@ -350,13 +350,13 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
 
         public void InsertPublicCategory(M30_CODE model)
         {
-            string query = @"INSERT INTO M30_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";
+            string query = @"INSERT INTO M30_COMM_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";
             Repository repository = new Repository();
             repository.Insert(query, model);
         }
         public void UpdatePublicCategory(M30_CODE model)
         {
-            string query = @"UPDATE M30_CODE SET 
+            string query = @"UPDATE M30_COMM_CODE SET 
                              NAME=:NAME
                              WHERE CODE=:CODE)";
 
@@ -365,7 +365,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
         }
         public void DeletePublicCategory(string key)
         {
-            string query = @"DELETE M30_CODE 
+            string query = @"DELETE M30_COMM_CODE 
                            WHERE CODE=:CODE)";
 
             Repository repository = new Repository();
@@ -373,7 +373,7 @@ LEFT JOIN M30_CODE ON M30_CODE.CODE = M30_CODE_MAP.CODE /**where**/");
         }
         public void InsertUserToPublicCategory()
         {
-            string query = @"INSERT INTO M30_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";
+            string query = @"INSERT INTO M30_COMM_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";
             Repository repository = new Repository();
             //repository.Insert(query, model);
         }
