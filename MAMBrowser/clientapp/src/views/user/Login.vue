@@ -19,12 +19,12 @@
                 <h6 class="mb-4">Login</h6>
 
                 <b-form @submit.prevent="formSubmit" class="av-tooltip tooltip-label-bottom">
-                    <b-form-group label="아이디" class="has-float-label mb-4">
+                    <b-form-group label="아이디" class="has-float-label mb-4 h-45">
                         <b-form-input type="text" v-model="$v.userId.$model" :state="!$v.userId.$error"/>
                         <b-form-invalid-feedback v-if="!$v.userId.required">아이디를 입력해주세요.</b-form-invalid-feedback>
                     </b-form-group>
 
-                    <b-form-group label="패스워드" class="has-float-label mb-4">
+                    <b-form-group label="패스워드" class="has-float-label mb-4 h-45">
                         <b-form-input type="password" v-model="$v.password.$model" :state="!$v.password.$error" />
                         <b-form-invalid-feedback v-if="!$v.password.required">패스워드를 입력해주세요.</b-form-invalid-feedback>
                     </b-form-group>
