@@ -64,7 +64,7 @@ namespace MAMBrowser.Controllers
 
             //db에 데이터 등록
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_PUBLIC_SPACE 
+            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_MAM_PUBLIC_SPACE 
 VALUES(:SEQ, :USER_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, SYSDATE)");
             Repository repository = new Repository();
             repository.Insert(queryTemplate.RawSql, param);
@@ -80,7 +80,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_
 
             //파일 실제 삭제 이후
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"DELETE M30_PUBLIC_SPACE WHERE SEQ=:SEQ");
+            var queryTemplate = builder.AddTemplate(@"DELETE M30_MAM_PUBLIC_SPACE WHERE SEQ=:SEQ");
             builder.Where("SEQ=:SEQ");
             Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
@@ -91,7 +91,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_
         public int UpdateData(long seq, PublicFileModel metaData)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"UPDATE M30_PUBLIC_SPACE SET TITLE=:TITLE, MEMO=:MEMO,MEDIA_CD=:MEDIA_CD, CATE_CD=:CATE_CD, EDITED_DTM = SYSDATE /**where**/");
+            var queryTemplate = builder.AddTemplate(@"UPDATE M30_MAM_PUBLIC_SPACE SET TITLE=:TITLE, MEMO=:MEMO,MEDIA_CD=:MEDIA_CD, CATE_CD=:CATE_CD, EDITED_DTM = SYSDATE /**where**/");
             builder.Where("SEQ=:SEQ");
             Repository repository = new Repository();
             DynamicParameters param = new DynamicParameters();
@@ -101,9 +101,9 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEDIA_CD, :CATE_CD, :MEMO, :AUDIO_FORMAT, :FILE_
         public DTO_PUBLIC_FILE Get(long id)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate(@"SELECT A.*, B.CODENAME AS MEDIA_NAME, C.NAME AS CATE_NAME, D.PERSONNAME AS USER_NAME FROM M30_PUBLIC_SPACE A
-LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC') B ON B.CODEID=A.MEDIA_CD
-LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') C ON C.CODE=A.CATE_CD
+            var queryTemplate = builder.AddTemplate(@"SELECT A.*, B.CODENAME AS MEDIA_NAME, C.NAME AS CATE_NAME, D.PERSONNAME AS USER_NAME FROM M30_MAM_PUBLIC_SPACE A
+LEFT JOIN (SELECT * FROM M30_VW_CATEGORY WHERE CODETYPE = 'PC') B ON B.CODEID=A.MEDIA_CD
+LEFT JOIN (SELECT * FROM M30_COMM_CODE WHERE PARENT_CODE='S01G05') C ON C.CODE=A.CATE_CD
 LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID 
 WHERE SEQ=:SEQ");
             Repository repository = new Repository();
@@ -148,9 +148,9 @@ WHERE SEQ=:SEQ");
 
 
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT A.*, B.CODENAME AS MEDIA_NAME, C.NAME AS CATE_NAME, D.PERSONNAME AS USER_NAME FROM M30_PUBLIC_SPACE A
-LEFT JOIN (SELECT * FROM MEM_CATEGORY_VIEW WHERE CODETYPE = 'PC') B ON B.CODEID=A.MEDIA_CD
-LEFT JOIN (SELECT * FROM M30_CODE WHERE PARENT_CODE='S01G05') C ON C.CODE=A.CATE_CD
+            var querySource = builder.AddTemplate(@"SELECT A.*, B.CODENAME AS MEDIA_NAME, C.NAME AS CATE_NAME, D.PERSONNAME AS USER_NAME FROM M30_MAM_PUBLIC_SPACE A
+LEFT JOIN (SELECT * FROM M30_VW_CATEGORY WHERE CODETYPE = 'PC') B ON B.CODEID=A.MEDIA_CD
+LEFT JOIN (SELECT * FROM M30_COMM_CODE WHERE PARENT_CODE='S01G05') C ON C.CODE=A.CATE_CD
 LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID 
 /**where**/");
 
@@ -243,7 +243,7 @@ LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID
         private long GetID()
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT M30_PUBLIC_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");
+            var queryTemplate = builder.AddTemplate("SELECT M30_MAM_PUBLIC_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");
             Repository repository = new Repository();
 
             var resultMapping = new Func<dynamic, long>((row) =>

@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
-      <div class="system ml-4" style="color:darkblue">사내망</div>
-      <div class="system" style="color:darkred;">개발DB</div>
-      <clock className="system" style="font-weight:600;"></clock>
+      <!-- <div class="system ml-4" style="color:darkblue">사내망</div>
+      <div class="system" style="color:darkred;">개발DB</div> -->
+      <clock className="system" style="font-weight:600; margin-left:10px"></clock>
       <!-- <div class="system">2020-12-07(월) 오후 05:47:46</div> -->
       <!-- 메뉴 네비 -->
       <!-- <a
