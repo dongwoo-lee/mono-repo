@@ -84,6 +84,28 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        /// <summary>
+        /// VerifyModel
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="metaData"></param>
+        /// <returns></returns>
+        [HttpPost("verify/{userId}")]
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] PublicFileModel metaData)
+        {
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
+            
+            //var user = apiDal.GetUserSummary(userId);
+            //if (user.DiskAvailable < metaData.FILE_SIZE)
+            //{
+            //    result.ResultCode = RESUlT_CODES.INVALID_DATA;
+            //    result.ErrorMsg = "사용가능한 디스크보다 파일용량이 더 커서 업로드 할 수 없습니다.";
+            //}
+            return result;
+        }
+
+
         /// <summary>
         /// 공유소재 -  검색
         /// </summary>

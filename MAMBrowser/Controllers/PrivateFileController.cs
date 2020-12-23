@@ -104,17 +104,18 @@ namespace MAMBrowser.Controllers
         /// <param name="userId"></param>
         /// <param name="metaData"></param>
         /// <returns></returns>
-        [HttpPost("meta/verify/{userId}")]
-        public DTO_RESULT VerifyModel(string userId, [FromBody] PrivateFileModel metaData)
+        [HttpPost("verify/{userId}")]
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] PrivateFileModel metaData)
         {
-            return new DTO_RESULT();
-            //return true;
-            //if (!_userService.VerifyEmail(email))
-            //{
-            //    return Json($"Email {email} is already in use.");
-            //}
-
-            //return Json(true);
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
+            APIDAL apiDal = new APIDAL();
+            var user = apiDal.GetUserSummary(userId);
+            if (user.DiskAvailable < metaData.FILE_SIZE)
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "사용가능한 디스크보다 파일용량이 더 커서 업로드 할 수 없습니다.";
+            }
+            return result;
         }
 
 
@@ -397,3 +398,4 @@ namespace MAMBrowser.Controllers
         }
     }
 }
+ 
