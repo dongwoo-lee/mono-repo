@@ -96,12 +96,35 @@ namespace MAMBrowser.Controllers
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             
-            //var user = apiDal.GetUserSummary(userId);
-            //if (user.DiskAvailable < metaData.FILE_SIZE)
-            //{
-            //    result.ResultCode = RESUlT_CODES.INVALID_DATA;
-            //    result.ErrorMsg = "사용가능한 디스크보다 파일용량이 더 커서 업로드 할 수 없습니다.";
-            //}
+            if (_dal.CountPublicCategory(metaData.CATE_CD) >= 200)
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "공유소재 최대 등록한도가 초과되었습니다.(200개 초과)";
+                return result;
+            }
+            if (int.MaxValue < metaData.FILE_SIZE)
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
+                return result;
+            }
+            if (Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".WAV" && Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".MP3")
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";
+                return result;
+            }
+            
+            if (_dal.IsExistTitle(metaData.TITLE))
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "동일한 제목이 이미 있습니다. 제목을 수정해주세요.";
+                return result;
+            }
+
+
+
+            result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
 

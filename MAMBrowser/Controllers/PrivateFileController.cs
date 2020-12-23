@@ -113,8 +113,29 @@ namespace MAMBrowser.Controllers
             if (user.DiskAvailable < metaData.FILE_SIZE)
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "사용가능한 디스크보다 파일용량이 더 커서 업로드 할 수 없습니다.";
+                result.ErrorMsg = "디스크 여유 공간이 부족해서 파일을 업로드 할 수 없습니다.";
+                return result;
             }
+            if (int.MaxValue < metaData.FILE_SIZE)
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
+                return result;
+            }
+            if (Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".WAV" && Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".MP3")
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";
+                return result;
+            }
+            if (_dal.IsExistTitle(metaData.TITLE))
+            {
+                result.ResultCode = RESUlT_CODES.INVALID_DATA;
+                result.ErrorMsg = "동일한 제목이 이미 있습니다. 제목을 수정해주세요.";
+                return result;
+            }
+
+            result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
 

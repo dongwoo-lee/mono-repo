@@ -280,5 +280,14 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
 
             return repository.Get(queryTemplate.RawSql, null, resultMapping);
         }
+        public bool IsExistTitle (string title)
+        {
+            Repository repository = new Repository();
+            var dto = repository.Get<DTO_PRIVATE_FILE>("SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE LOWER(TITLE) =LOWER(:TITLE)", new { TITLE = title }, DTO_PRIVATE_FILE.ResultMapping());
+            if (dto == null)
+                return false;
+            else
+                return true;
+        }
     }
 }

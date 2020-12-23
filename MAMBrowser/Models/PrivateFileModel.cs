@@ -14,7 +14,7 @@ namespace MAMBrowser.Models
         [JsonPropertyName("seq")]
         public long SEQ { get; set; }
         [JsonPropertyName("userId")]
-        public long USER_ID { get; set; }
+        public string USER_ID { get; set; }
         //[Remote(action: "VerifyModel", controller: "PrivateFileController")]
         //[Required]
         [JsonPropertyName("title")]

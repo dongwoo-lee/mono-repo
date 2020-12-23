@@ -253,5 +253,27 @@ LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID
 
             return repository.Get(queryTemplate.RawSql, null, resultMapping);
         }
+        public bool IsExistTitle(string title)
+        {
+            Repository repository = new Repository();
+            var dto = repository.Get<DTO_PRIVATE_FILE>("SELECT * FROM M30_MAM_PUBLIC_SPACE WHERE LOWER(TITLE) =LOWER(:TITLE)", new { TITLE = title }, DTO_PRIVATE_FILE.ResultMapping());
+            if (dto == null)
+                return false;
+            else
+                return true;
+        }
+        public long CountPublicCategory(string cateCd)
+        {
+            Repository repository = new Repository();
+            var data = repository.Get<dynamic>("SELECT COUNT(SEQ) AS RCOUNT FROM M30_MAM_PUBLIC_SPACE WHERE CATE_CD = :CATE_CD", new { CATE_CD = cateCd },
+            new Func<dynamic, dynamic>((row) =>
+            {
+                return new
+                {
+                    count = Convert.ToInt64(row.RCOUNT)
+                };
+            }));
+            return data.count;
+        }
     }
 }
