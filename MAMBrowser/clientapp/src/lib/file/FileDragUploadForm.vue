@@ -91,8 +91,9 @@ export default {
         },
         '$route': {
             handler(to, from) {
-                const routeName = this.$route.name;
-                if (routeName && (routeName === ROUTE_NAMES.PRIVATE || routeName === ROUTE_NAMES.SHARED)) {
+                // drag 기능 초기화
+                const dropActive = this.$refs.refFileUpload.dropActive;
+                if (dropActive) {
                     this.$refs.refFileUpload.dropActive = false;
                 }
             },
