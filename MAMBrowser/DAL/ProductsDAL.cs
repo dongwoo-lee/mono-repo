@@ -759,7 +759,7 @@ namespace MAMBrowser.BLL
             var querySource = builder.AddTemplate($"SELECT /**select**/ FROM M30_VW_FILLER_TIME /**where**/");
             builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
             builder.Where("MEDIA=:MEDIA");
-            builder.Where("(STARTDATE >= :START_DT AND ENDDATE <= :END_DT)");
+            builder.Where("(STARTDATE <= :END_DT AND :START_DT <= ENDDATE)");
             if (!string.IsNullOrEmpty(cate))
             {
                 builder.Where("SPOTTYPE=:CATE");
