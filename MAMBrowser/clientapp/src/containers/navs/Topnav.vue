@@ -35,7 +35,7 @@
               <!-- 타이머 -->
               <td rowspan="2">
                 <timer 
-                  :timerProcessing="timerProcessing" 
+                  :timerProccessing="timerProccessing" 
                   :expires="tokenExpires" 
                   @resetTimer="resetTimer">
                 </timer>
@@ -106,14 +106,14 @@ export default {
     }
   },
   created() {
-    this.getRenewal();
+    this.renewal();
   },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["setLang", "signOut", 'getRenewal']),
+    ...mapActions("user", ["setLang", "signOut", 'renewal']),
     ...mapMutations('user', ['SET_INIT_CALL_LOGIN_AUTH_TRY_CNT']),
     logout() {
       this.signOut().then(() => {
@@ -135,7 +135,7 @@ export default {
     },
     resetTimer() {
       this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
-      this.getRenewal().then(res => {
+      this.renewal().then(res => {
         if (res && res.data && res.data.resultCode === 0) {
             this.$notify('success', '로그인 연장되었습니다.');
         }
@@ -152,7 +152,7 @@ export default {
       ['currentUser'
         , 'behaviorList'
         , 'roleList'
-        , 'timerProcessing'
+        , 'timerProccessing'
         , 'tokenExpires'
     ]),
   },

@@ -40,7 +40,7 @@ $http.interceptors.response.use(res =>{
     console.debug('interceptors.response.error', err.response);
 
     const{
-        response: { config, status, data, statusText }
+        response: { config, status, data }
     } = err;
 
     if (status === 401) {
@@ -59,7 +59,8 @@ $http.interceptors.response.use(res =>{
 const errorNotify=(status, msg)=> {
     window.$notify(
         "error",
-        `${msg}[ERROR:${status}]`,
+        // `${msg}[ERROR:${status}]`,
+        `${msg}`,
         '', {
             duration: 8000,
             permanent: false

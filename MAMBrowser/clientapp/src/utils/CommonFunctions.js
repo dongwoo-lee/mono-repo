@@ -227,15 +227,24 @@ const formatMBBytes = (bytes, decimals = 1) => {
     return parseFloat((bytes / (baseBytes * Math.pow(1000, i))).toFixed(dm)) + ' ' + sizes[i];
 }
 
-const formatBytes = (bytes, decimals = 2) => {
-    if (bytes === 0) return '0 B';
+const formatBytes = (size, decimals = 2) => {
+    if (size === 0) return '0 B';
+    let bytes = size;
+    const isMinusSign = size < 0;
+    if (isMinusSign) {
+        bytes = size * -1;
+    }
 
     const k = 1000;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    const formatData = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+    if (isMinusSign) {
+        return formatData * -1 + sizes[i];
+    }
+    return formatData + sizes[i];
 }
 
 const getFirstAccessiblePage = () => {

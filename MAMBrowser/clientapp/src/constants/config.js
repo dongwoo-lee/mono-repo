@@ -6,8 +6,6 @@ export const defaultLocale = 'ko'
 export const defaultDirection = 'ltr'
 export const localeOptions = [
   { id: 'en', name: 'English LTR', direction: 'ltr' },
-  { id: 'es', name: 'Español', direction: 'ltr' },
-  { id: 'enrtl', name: 'English RTL', direction: 'rtl' }
 ]
 export const defaultColor = 'light.blueolympic'
 
@@ -26,6 +24,8 @@ export const ROUTE_NAMES = {
   PRIVATE: 'private',
   SHARED: 'public',
 }
+/* file upload maximum size */
+export const MAXIMUM_FILE_SIZE = (1000 * 1000 * 1000) * 2;  //  KB -> MB -> GB * 2 = 2GB;
 /* file upload accept */
 export const FILE_UPLOAD_ACCEPT = '.mp2,.mp3,.wav';
 /* file upload extensions */

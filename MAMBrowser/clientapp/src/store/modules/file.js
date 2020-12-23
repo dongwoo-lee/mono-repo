@@ -2,7 +2,7 @@ import axios from 'axios'
 import $http from '../../http';
 import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
-import { USER_ID } from '@/constants/config';
+import { USER_ID, ROUTE_NAMES } from '@/constants/config';
 
 let uploadCancelToken = {};
 
@@ -83,13 +83,40 @@ export default {
         }
     },
     actions: {
+        verifyMeta({}, {type, title, files, categoryCD}) {
+            let url = '';
+            let params = {
+                title: title,
+                filePath: files[0].name,
+                fileSize: files[0].size
+            };
+            const userId = sessionStorage.getItem(USER_ID);
+            if (type === ROUTE_NAMES.PRIVATE) {
+                url = `/api/products/workspace/private/verify/${userId}`;
+            } 
+
+            if (type === ROUTE_NAMES.SHARED) {
+                url = `/api/products/workspace/public/verify/${userId}`;
+                params.categoryCD = categoryCD;
+            }
+
+            $http.post(url, params).then(res => {
+                const { resultCode, resultObject, errorMsg} = res.data;
+                if (resultCode === 0 && resultObject) {
+                    return true;
+                }
+
+                return false;
+            })
+        },
         async upload({ state, commit, dispatch }) {
             // 업로드 상태 변경
             commit('SET_UPLOAD_STATE', true);
             // 파일 업로드
             for (const data of state.fileData) {
                 if (data.uploadState !== 'success') {
-                    console.info('cancelToken-fileId', data.file.id);
+                    console.debug('cancelToken-fileId', data.file.id);
+
                     if (!uploadCancelToken[data.file.id]) {
                         // 취소 토큰 생성
                         uploadCancelToken[data.file.id] = new axios.CancelToken.source();
@@ -119,7 +146,7 @@ export default {
 
                     let userId = sessionStorage.getItem(USER_ID);
                     try {
-                        const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files/${userId}`, formData, config);
+                        const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files1/${userId}`, formData, config);
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';

@@ -68,7 +68,7 @@ export default {
     processing: false,
     callLoginAuthTryCnt: 0,
     tokenExpires: 0,
-    timerProcessing: false,
+    timerProccessing: false,
   },
   getters: {
     menuList: state => state.menuList,
@@ -76,21 +76,23 @@ export default {
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
+    diskAvailable: state => state.currentUser.diskAvailable,
     isAuth: () => sessionStorage.getItem(ACCESS_TOKEN) != null && sessionStorage.getItem(USER_ID) != null,
     getUserId: () => sessionStorage.getItem(USER_ID),
     tokenExpires: state => state.tokenExpires,
-    timerProcessing: state => state.timerProcessing,
+    timerProccessing: state => state.timerProccessing,
   },
   mutations: {
-    SET_AUTH(state, {token, resultObject }) {
+    SET_TOKEN(state, token) {
       // token 시간 만료(초) 설정
       const { exp } = jwt_decode(token);
       const now = Date.now() / 1000;
       const timeDiff = exp - now;
       state.tokenExpires = timeDiff;
-      state.timerProcessing = true;
-
-      // 유저 정보 설정
+      state.timerProccessing = true;
+      sessionStorage.setItem(ACCESS_TOKEN, token);
+    },
+    SET_AUTH(state, resultObject) {
       const { menuList, behaviorList, id } = resultObject;
       state.isAuth = true;
       state.processing = false;
@@ -101,7 +103,6 @@ export default {
       delete resultObject.behaviorList;
       state.currentUser = resultObject;
       
-      sessionStorage.setItem(ACCESS_TOKEN, token);
       sessionStorage.setItem(USER_ID, id);
       sessionStorage.setItem(ROLE, JSON.stringify(state.roleList));
       sessionStorage.setItem(AUTHORITY, getAuthority(state.behaviorList));
@@ -115,7 +116,7 @@ export default {
       state.isAuth = false;
       state.currentUser = {};
       state.processing = false;
-      state.timerProcessing = false;
+      state.timerProccessing = false;
       sessionStorage.removeItem(ACCESS_TOKEN);
       sessionStorage.removeItem(USER_ID);
       sessionStorage.removeItem(ROLE);
@@ -134,7 +135,7 @@ export default {
       state.callLoginAuthTryCnt = 0;
     },
     SET_INIT_TOKEN_TIMER(state, payload) {
-      state.timerProcessing = payload;
+      state.timerProccessing = payload;
       state.tokenExpires = 0;
     }
   },
@@ -152,10 +153,8 @@ export default {
         const response = await $http.post('/api/Authenticate', params);
         const { resultCode, resultObject, token } = response.data;
         if (resultObject && resultCode === 0) {
-          commit('SET_AUTH', {
-            token: token, 
-            resultObject: resultObject
-          });
+          commit('SET_TOKEN', token);
+          commit('SET_AUTH', resultObject);
         }
         commit('SET_PROCESSING', false);
         return response;
@@ -167,7 +166,7 @@ export default {
       commit('SET_LOGOUT');
       return true;
     },
-    async getRenewal({ state, commit }) {
+    async renewal({ state, commit }) {
       if (state.callLoginAuthTryCnt > 0) { return; }
       commit('SET_INIT_TOKEN_TIMER', false);
 
@@ -181,14 +180,38 @@ export default {
         const { resultCode, resultObject, token } = response.data;
 
         if (resultObject && resultCode === 0) {
-          commit('SET_AUTH', {
-            token: token, 
-            resultObject: resultObject
-          });
+          commit('SET_TOKEN', token);
+          commit('SET_AUTH', resultObject);
         } else {
           $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })
         }
         return response;
+      } catch(error) {
+        console.error(error);
+        return error;
+      }
+    },
+    async reissue({commit}, from) {
+      // 페이지 이동 조건
+      if (!from.name || from.path == '/') { return; }
+      commit('SET_INIT_TOKEN_TIMER', false);
+      
+      const params = {
+        UserID: sessionStorage.getItem(USER_ID),
+        Pass: 'undefined',
+      };
+
+      try {
+        const response = await $http.post('/api/Reissue', params);
+        const { resultCode, token } = response.data;
+
+        if (resultCode === 0) {
+          commit('SET_TOKEN', token);
+        } else {
+          $fn.notify('error', { message: '사용자 인증에 실패: ' + data.errorMsg })
+        }
+
+        return response.data.resultCode;
       } catch(error) {
         console.error(error);
         return error;

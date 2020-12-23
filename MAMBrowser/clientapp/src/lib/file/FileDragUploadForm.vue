@@ -23,12 +23,17 @@
         title="유효하지 않은 파일입니다."
         :message="`이 파일은 유효한 파일이 아닙니다. <br>확장자가 ${FILE_UPLOAD_EXTENSIONS}인 파일을 업로드해주세요.`"
     />
+    <common-confirm
+        id="modalNotDiskAvailable"
+        title="디스크 공간이 부족합니다."
+        :message="`디스크 용량이 부족합니다. <br>업로드 가능 사이즈는 ${$fn.formatBytes(diskAvailable)}입니다.`"
+    />
 </div>
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex';
-import {FILE_UPLOAD_ACCEPT, FILE_UPLOAD_EXTENSIONS} from '@/constants/config';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
+import {FILE_UPLOAD_ACCEPT, FILE_UPLOAD_EXTENSIONS, MAXIMUM_FILE_SIZE} from '@/constants/config';
 
 export default {
     data() {
@@ -36,8 +41,11 @@ export default {
             FILE_UPLOAD_ACCEPT: FILE_UPLOAD_ACCEPT,
             FILE_UPLOAD_EXTENSIONS: FILE_UPLOAD_EXTENSIONS,
             localFiles: [],
-            maxSize: (1000 * 1000 * 1000) * 2,  //  KB -> MB -> GB * 2 = 2GB
+            maxSize: MAXIMUM_FILE_SIZE,
         }
+    },
+    computed: {
+        ...mapGetters('user', ['diskAvailable']),
     },
     watch: {
         localFiles(files, oldFiles) {
@@ -49,8 +57,14 @@ export default {
             }
 
             // 확장자 체크
-            if (this.inValidExtension(files))  {
+            if (this.invalidExtension(files))  {
                 this.$bvModal.show('modalFileNotExtension');
+                return;
+            }
+
+            // 업로드 가능 용량 체크
+            if (this.notDiskAvailable(files)) {
+                this.$bvModal.show('modalNotDiskAvailable');
                 return;
             }
 
@@ -81,20 +95,29 @@ export default {
         ...mapMutations('file', ['SET_DRAG_DROP_STATE']),
         inputFilter(file) {},
         inputFile(data) {},
-        inValidExtension(files) {
+        invalidExtension(files) {
             if (files.length > 0) {
                 return files.some(file => {
                     const extension = file.name.substr(file.name.lastIndexOf('.') + 1).toLowerCase();
                     return FILE_UPLOAD_EXTENSIONS.indexOf(extension) === -1;
                 })
             }
+            return true;
+        },
+        notDiskAvailable(files) {
+            if (files.length > 0) {
+                const result = this.diskAvailable - files[0].size;
+                console.info("notDiskAvailable", this.diskAvailable, files[0].size);
+                return result < 0;
+            }
+            return true;
         },
         closePopup() {
             this.SET_DRAG_DROP_STATE(false);
             // 메타 데이터 입력창 닫기
             this.close_meta_data_popup();
             this.localFiles = [];
-        }
+        },
     }
 }
 </script>
