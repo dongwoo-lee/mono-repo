@@ -146,7 +146,7 @@ export default {
 
                     let userId = sessionStorage.getItem(USER_ID);
                     try {
-                        const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files1/${userId}`, formData, config);
+                        const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files/${userId}`, formData, config);
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';
