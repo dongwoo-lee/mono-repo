@@ -25,7 +25,7 @@ export default {
             type: Number,
             default: 0
         },
-        timerProcessing: {
+        timerProccessing: {
             type: Boolean,
             default: false,
         }
@@ -42,7 +42,7 @@ export default {
         },
     },
     watch: {
-        timerProcessing: {
+        timerProccessing: {
             handler(value) {
                 if (value) {
                     this.startTimer();        
@@ -61,6 +61,7 @@ export default {
             return this.expires;
         },
 		startTimer() {
+            this.clearTimer();
             this.totalTime = this.getExpireTime();
             this.timer = setInterval(() => this.countdown(), 1000);
 		},

@@ -33,7 +33,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters } from 'vuex';
-import {FILE_UPLOAD_ACCEPT, FILE_UPLOAD_EXTENSIONS, MAXIMUM_FILE_SIZE} from '@/constants/config';
+import {FILE_UPLOAD_ACCEPT, FILE_UPLOAD_EXTENSIONS, MAXIMUM_FILE_SIZE, ROUTE_NAMES} from '@/constants/config';
 
 export default {
     data() {
@@ -88,6 +88,14 @@ export default {
                 this.open_meta_data_popup(newFileData);
                 this.SET_DRAG_DROP_STATE(true);
             }
+        },
+        '$route': {
+            handler(to, from) {
+                const routeName = this.$route.name;
+                if (routeName && (routeName === ROUTE_NAMES.PRIVATE || routeName === ROUTE_NAMES.SHARED)) {
+                    this.$refs.refFileUpload.dropActive = false;
+                }
+            },
         }
     },
     methods: {
@@ -107,7 +115,6 @@ export default {
         notDiskAvailable(files) {
             if (files.length > 0) {
                 const result = this.diskAvailable - files[0].size;
-                console.info("notDiskAvailable", this.diskAvailable, files[0].size);
                 return result < 0;
             }
             return true;
