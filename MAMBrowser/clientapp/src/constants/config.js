@@ -27,9 +27,9 @@ export const ROUTE_NAMES = {
 /* file upload maximum size */
 export const MAXIMUM_FILE_SIZE = (1000 * 1000 * 1000) * 2;  //  KB -> MB -> GB * 2 = 2GB;
 /* file upload accept */
-export const FILE_UPLOAD_ACCEPT = '.mp2,.mp3,.wav';
+export const FILE_UPLOAD_ACCEPT = '.mp3,.wav';
 /* file upload extensions */
-export const FILE_UPLOAD_EXTENSIONS = ['mp2', 'mp3', 'wav'];
+export const FILE_UPLOAD_EXTENSIONS = ['mp3', 'wav'];
 /* system management access */
 export const SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE = ['config', 'log'];
 /* AUTHORITY*/

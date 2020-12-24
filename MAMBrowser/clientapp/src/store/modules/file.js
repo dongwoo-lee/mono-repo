@@ -83,7 +83,7 @@ export default {
         }
     },
     actions: {
-        verifyMeta({}, {type, title, files, categoryCD}) {
+        async verifyMeta({}, {type, title, files, categoryCD}) {
             let url = '';
             let params = {
                 title: title,
@@ -100,14 +100,17 @@ export default {
                 params.categoryCD = categoryCD;
             }
 
-            $http.post(url, params).then(res => {
+            try {
+                const res = await $http.post(url, params);
                 const { resultCode, resultObject, errorMsg} = res.data;
-                if (resultCode === 0 && resultObject) {
+                if (resultCode === 0) {
                     return true;
                 }
 
                 return false;
-            })
+            } catch (e) {
+                console.log(e);
+            }
         },
         async upload({ state, commit, dispatch }) {
             // 업로드 상태 변경
