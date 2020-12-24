@@ -1,7 +1,7 @@
 <template>
 <div>
     <div class="drop-active" v-show="$refs.refFileUpload && $refs.refFileUpload.dropActive">
-        <h4>드래그 파일 업로드</h4>
+        <h4>음원 파일 업로드</h4>
         <file-upload 
             ref="refFileUpload" 
             v-model="localFiles"

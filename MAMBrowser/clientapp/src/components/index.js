@@ -1,4 +1,11 @@
 import Vue from 'vue'
+
+import Breadcrumb from './Common/Breadcrumb'
+import Colxx from './Common/Colxx'
+import vuePerfectScrollbar from 'vue-perfect-scrollbar'
+import VueUploadComponent from 'vue-upload-component';
+import PlayerPopup from './popup/PlayerPopup.vue';
+import MusicPlayerPopup from './popup/MusicPlayerPopup.vue';
 import CommonConfirm from './popup/CommonConfirm';
 import CommonForm from './Form/CommonForm';
 import CommonDatePicker from './Form/CommonDatePicker';
@@ -14,6 +21,12 @@ import Player from './Common/Player';
 import Clock from './CommonCustom/clock';
 import Timer from './CommonCustom/timer';
 
+Vue.component('piaf-breadcrumb', Breadcrumb);
+Vue.component('b-colxx', Colxx);
+Vue.component('vue-perfect-scrollbar', vuePerfectScrollbar);
+Vue.component('file-upload', VueUploadComponent)
+Vue.component('PlayerPopup', PlayerPopup)
+Vue.component('MusicPlayerPopup', MusicPlayerPopup)
 Vue.component('CommonConfirm', CommonConfirm);
 Vue.component('CommonForm', CommonForm);
 Vue.component('CommonDatePicker', CommonDatePicker);

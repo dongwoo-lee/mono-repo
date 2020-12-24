@@ -6,6 +6,9 @@
         modal-class="my-modal-file"
         no-close-on-backdrop
         v-model="isShow">
+        <!-- 파일명 -->
+        <div style="margin-bottom: 1rem;font-size: 0.88rem;font-weight:500;">{{getFileName()}}</div>
+        <!-- 저장공간 -->
         <b-form-group label="저장공간" label-for="input-title">
              <b-form-select v-model="$v.type.$model" disabled>
                 <b-form-select-option :value="storegeType.private">My공간</b-form-select-option>
@@ -59,7 +62,7 @@
             <div class="flex-grow-1">
             </div>
             <div>
-                <b-button variant="outline-primary default cutom-label" @click="submit">업로드</b-button>
+                <b-button variant="outline-primary default cutom-label" @click="submit" :disabled="invalid()">업로드</b-button>
                 <b-button variant="outline-danger default cutom-label-cancel" @click="close">취소</b-button>
             </div>
         </template>
@@ -109,10 +112,11 @@ export default {
         ...mapMutations('file', ['SET_FILES', 'REMOVE_FILES', 'SET_UPLOAD_VIEW_TYPE', 'SET_DRAG_DROP_STATE']),
         ...mapActions('file', ['verifyMeta', 'upload', 'open_popup']),
         submit() {
-            if (!this.$v.title.$invalid || !this.$v.memo.$invalid) {
+            if (this.invalid()) {
                 this.$fn.notify('inputError', {});
                 return;
             }
+            return; 
             let data = {};
             if (this.type === this.storegeType.private) {
                 data = {
@@ -170,6 +174,20 @@ export default {
         },
         close() {
             this.reset()
+        },
+        getFileName() {
+            let text = '';
+            if (this.localFiles.length > 0) {
+                text = '파일명: ' + this.localFiles[0].name;
+            }
+
+            return text;
+        },
+        invalid() {
+            if (this.type === this.storegeType.private) {
+                return !this.$v.title.$invalid || !this.$v.memo.$invalid;
+            }
+            return !this.$v.title.$invalid || !this.$v.memo.$invalid || !this.$v.categoryCD.$invalid;
         },
         // 매체목록 조회
         getPrimaryOptions() {

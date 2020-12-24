@@ -1,6 +1,6 @@
 import axios from 'axios'
 import $http from '../../http';
-import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
+import FileUploadRefElement from '../../components/File/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
 import { USER_ID, ROUTE_NAMES } from '@/constants/config';
 

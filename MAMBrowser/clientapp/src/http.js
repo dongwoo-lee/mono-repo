@@ -1,5 +1,5 @@
 import axios from 'axios'
-import LoginPopupRefElement from './lib/loginPopup/LoginPopupRefElement';
+import LoginPopupRefElement from './components/loginPopup/LoginPopupRefElement';
 
 const $http = axios.create({
     baseURL: process.env.baseURL,
@@ -33,11 +33,10 @@ $http.interceptors.response.use(res =>{
     }
     return res;
 }, async err => {
+    console.debug('interceptors.response.error', err);
     if (!err.response) {
         return Promise.reject(err);
     }
-
-    console.debug('interceptors.response.error', err.response);
 
     const{
         response: { config, status, data }

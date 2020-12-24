@@ -3,14 +3,9 @@
     <b-colxx xxs="12" md="10" class="mx-auto my-auto">
         <b-card class="auth-card" no-body>
             <div class="position-relative image-side">
-                <!-- <p class="title">MIROS 소재 검색 시스템</p>
-                <p class="h5">(MIROS MAM Browser)</p> -->
-                <!-- <p class="mb-0" style="position:absolute; bottom:10px;">로그인 문제시 라디오기술부(2973)으로 문의 바랍니다.</p> -->
             </div>
             <div class="form-side">
                 <router-link tag="a" to="/">
-                    <!-- <span class="logo-single" /> -->
-                    <!-- <p class="text h4"><b>MAM BROWSER</b></p> -->
                     <p class="title">MIROS 소재 검색 시스템</p>
                     <p class="h5">(MIROS MAM Browser)</p>
                     <br>
@@ -29,7 +24,7 @@
                         <b-form-invalid-feedback v-if="!$v.password.required">패스워드를 입력해주세요.</b-form-invalid-feedback>
                     </b-form-group>
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
+                        <div style="width:240px;">
                             <div v-if="errorMsg" style="color: #dc3545">{{ errorMsg }}</div>
                             <!-- <b-form-checkbox
                                 value="accepted"
@@ -106,6 +101,7 @@ export default {
                             }
                         }
                     } else {
+                        console.debug('login Error: ', res);
                         var errMsg = res.response.data.message;
                         this.$notify("error", "Login Error", errMsg, {
                             duration: 3000,

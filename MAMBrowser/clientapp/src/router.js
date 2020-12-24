@@ -9,7 +9,6 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    component: () => import("./views/home"),
     redirect: "/app/my/private",
   },
   {

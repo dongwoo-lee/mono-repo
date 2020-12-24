@@ -26,7 +26,7 @@
             <div class="flex-grow-1">
             </div>
             <div>
-                <b-button variant="outline-primary default cutom-label" @click="submitConfirm">수정</b-button>
+                <b-button variant="outline-primary default cutom-label" @click="submitConfirm" :disabled="invalid()">수정</b-button>
                 <b-button variant="outline-danger default cutom-label-cancel" @click="close">취소</b-button>
             </div>
         </template>
@@ -81,7 +81,7 @@ export default {
     },
     methods: {
         submitConfirm() {
-            if (!this.$v.metaData.title.$invalid || !this.$v.metaData.memo.$invalid) {
+            if (this.invalid()) {
                 this.$fn.notify('inputError', {});
                 return;
             }
@@ -108,6 +108,9 @@ export default {
             this.metaData.seq = seq;
             this.metaData.title = title;
             this.metaData.memo = memo;
+        },
+        invalid() {
+            return !this.$v.metaData.title.$invalid || !this.$v.metaData.memo.$invalid;
         },
         reset() {
             this.metaData = {

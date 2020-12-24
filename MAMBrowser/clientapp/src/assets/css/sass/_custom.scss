@@ -55,7 +55,7 @@
             h4 {
                 margin: -.5em 0 0;
                 position: absolute;
-                top: 45%;
+                top: 40%;
                 left: 0;
                 right: 0;
                 -webkit-transform: translateY(-50%);
@@ -64,6 +64,13 @@
                 font-size: 20px;
                 color: #000;
                 padding: 0;
+            }
+
+            div {
+                position: inherit;
+                top: 70%;
+                font-size: 1rem;
+                font-weight: 500;
             }
         }
     }
@@ -485,6 +492,11 @@
         border-color: #008ecc;
         background-color: #fff;
     }
+
+    &:disabled {
+        color: #000;
+        border-color: #bbb;
+    }
 }
 
 .cutom-label-cancel {
@@ -572,4 +584,8 @@
 // login form-group use
 .h-45 {
     height: 45px;
+}
+// file upload popup label
+.t-50 {
+    top: 50%;
 }

@@ -162,10 +162,6 @@ export default {
         return error;
       }
     },
-    signOut({ commit }) {
-      commit('SET_LOGOUT');
-      return true;
-    },
     async renewal({ state, commit }) {
       if (state.callLoginAuthTryCnt > 0) { return; }
       commit('SET_INIT_TOKEN_TIMER', false);

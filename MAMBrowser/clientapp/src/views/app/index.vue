@@ -15,14 +15,14 @@
 </template>
 
 <script>
-import AppLayout from "../../layouts/AppLayout";
-import FileDragUploadForm from '../../lib/file/FileDragUploadForm';
-import fileUploadingToast from '../../lib/file/FileUploadingToast';
-import fileUploadPopup from '../../lib/file/FileUploadPopup';
-import FileMetaDataPopup from '../../lib/file/FileMetaDataPopup';
-import LoginPopup from '../../lib/loginPopup/LoginPopup';
-import FileUploadRefElement from '../../lib/file/FileUploadRefElement';
-import LoginPopupRefElement from '../../lib/loginPopup/LoginPopupRefElement';
+import AppLayout from "@/layouts/AppLayout";
+import FileDragUploadForm from '@/components/File/FileDragUploadForm';
+import fileUploadingToast from '@/components/File/FileUploadingToast';
+import fileUploadPopup from '@/components/File/FileUploadPopup';
+import FileMetaDataPopup from '@/components/File/FileMetaDataPopup';
+import FileUploadRefElement from '@/components/File/FileUploadRefElement';
+import LoginPopup from '@/components/loginPopup/LoginPopup';
+import LoginPopupRefElement from '@/components/loginPopup/LoginPopupRefElement';
 import { ROUTE_NAMES } from '@/constants/config';
 import { mapMutations } from 'vuex';
 

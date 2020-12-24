@@ -2,10 +2,11 @@
     <b-container class="my-container">
         <!-- 파일이 없을 경우, 버튼 및 드롭 -->
         <div class="drop-active" v-show="localFiles.length === 0">
-            <h4>드래그 또는 클릭으로 파일을 업로드하세요.</h4>
-            <label for="file" class="btn btn-outline-primary default cutom-label w-50">
-                파일 선택
-            </label>
+            <h4>업로드할 파일을 여기에 드래그 하여 올려 놓거나 <br>선택 버튼을 눌러 탐색기에서 선택하세요.</h4>
+            <label for="file" class="btn btn-outline-primary default cutom-label w-50 t-50">파일 선택</label>
+            <div>라디오 방송 업무를 위한 음원 소재 
+                <span style="font-weight:700;">파일(WAV,MP3)</span>만 업로드 할 수 있으며, <br>개별 파일당 용량은 
+            <span style="font-weight:700;">최대 2GB</span>를 넘을수 없습니다.</div>
         </div>
         <!-- 파일이 존재할 경우, 테이블 -->
         <div v-show="localFiles.length > 0">

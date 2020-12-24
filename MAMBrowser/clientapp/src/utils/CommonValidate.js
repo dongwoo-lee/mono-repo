@@ -13,7 +13,7 @@ const date = (value) => {
 }
 
 const maxLength = (value) => {
-    if (!value || value === undefined) return false;
+    if (!value || value === undefined) return true;
     return value.length >= INPUT_MAX_LENGTH;
 }
 

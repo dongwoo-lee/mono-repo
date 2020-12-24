@@ -2,11 +2,7 @@
 export const defaultMenuType = 'menu-sub-hidden' // 'menu-default', 'menu-sub-hidden', 'menu-hidden';
 export const subHiddenBreakpoint = 1440
 export const menuHiddenBreakpoint = 768
-export const defaultLocale = 'ko'
 export const defaultDirection = 'ltr'
-export const localeOptions = [
-  { id: 'en', name: 'English LTR', direction: 'ltr' },
-]
 export const defaultColor = 'light.blueolympic'
 
 /* behavior system management code */
