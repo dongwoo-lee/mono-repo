@@ -14,10 +14,10 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 시작-종료일 -->
-        <!-- <common-start-end-date-picker
+        <common-start-end-date-picker
           :startDate.sync="searchItems.start_dt"
-          :startDayAgo="7"
-          :endDate.sync="searchItems.end_dt"/> -->
+          :startMonthAgo="1"
+          :endDate.sync="searchItems.end_dt"/>
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">
           <b-form-select

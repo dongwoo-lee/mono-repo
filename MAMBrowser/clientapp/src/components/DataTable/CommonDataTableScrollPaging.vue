@@ -117,24 +117,8 @@ export default {
             this.rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
             [this.tBodyWrapper] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
             if (!this.rowElem || !this.tBodyWrapper) return;
-
-            this.rowElemHeight = this.rowElem.clientHeight || 43;
-            // scroll event linstener
-            this.tBodyWrapper.addEventListener('scroll', e => {
-                clearTimeout(this.scrollTimeout);
-                this.scrollTimeout = setTimeout(() => {
-                    this.handlerScroll(e);
-                }, 150)
-            });
-
-            // sortable click event linstener
-            this.sortable = this.$refs.vuetable.$el.querySelectorAll('th.sortable');
-            if (!this.sortable) return;
-            this.sortable.forEach(element => {
-                element.addEventListener('click', e => {
-                    this.onSortable(e);
-                }); 
-            });
+            this.createDivDataLoding();
+            this.addListener();
         });
     },
     destroyed() {
@@ -181,9 +165,7 @@ export default {
             }
             const { clientHeight, scrollTop, scrollHeight } = target;
             if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
-                // const tBodyDom = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body');
-                // console.info('this.tBodyDom', tBodyDom);
-                // this.rowElem.appendChild(`<tr>testadfasdfsadf</tr>`);
+                this.loading(true);
                 this.lastClientHeight = scrollTop;
                 this.$emit('scrollPerPage', this.currentPage * 10)
             }
@@ -213,6 +195,40 @@ export default {
         onSortable(e) {
             const targetId = e.target.id.replace('_', '');
             this.$emit('sortableclick', targetId);
+        },
+        createDivDataLoding() {
+            const node = document.createElement('div');
+            node.classList.add('data-loading-item');
+            const dom = '<div class="data-loading"></div><strong>Loading...</strong>';
+            node.innerHTML = dom;
+            this.tBodyWrapper.appendChild(node);
+        },
+        addListener() {
+            this.rowElemHeight = this.rowElem.clientHeight || 43;
+            // scroll event linstener
+            this.tBodyWrapper.addEventListener('scroll', e => {
+                clearTimeout(this.scrollTimeout);
+                this.scrollTimeout = setTimeout(() => {
+                    this.handlerScroll(e);
+                }, 150)
+            });
+
+            // sortable click event linstener
+            this.sortable = this.$refs.vuetable.$el.querySelectorAll('th.sortable');
+            if (!this.sortable) return;
+            this.sortable.forEach(element => {
+                element.addEventListener('click', e => {
+                    this.onSortable(e);
+                }); 
+            });
+        },
+        loading(isLoading = false) {
+            const dataLoading = this.tBodyWrapper.querySelector('div.data-loading-item');
+            if (isLoading) {
+                dataLoading.classList.add('active');
+            } else {
+                dataLoading.classList.remove('active');
+            }
         },
         tableRefresh() {
             this.$emit('refresh');

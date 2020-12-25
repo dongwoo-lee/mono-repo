@@ -60,6 +60,14 @@ export default {
             type: Boolean,
             default: true,
         },
+        yearAgo: {
+            type: Number,
+            defaut: 0,
+        },
+        monthAgo: {
+            type: Number,
+            defaut: 0,
+        },
         dayAgo: {
             type: Number,
             defaut: 0,
@@ -87,8 +95,19 @@ export default {
             const newDate = new Date();
             newDate.setDate(newDate.getDate() - this.dayAgo);
             this.date = newDate;
-        } else if (!this.value && this.isCurrentDate) {
-            const currentDate = new Date().toISOString().substring(0, 10);
+        } 
+        else if(this.monthAgo > 0) {
+            const newDate = new Date();
+            newDate.setMonth(newDate.getMonth() - this.monthAgo);
+            this.date = newDate;
+        }
+        else if(this.yearAgo > 0) {
+            const newDate = new Date();
+            newDate.setFullYear(newDate.getFullYear() - this.yearAgo);
+            this.date = newDate;
+        }
+        else if (!this.value && this.isCurrentDate) {
+            const currentDate = this.$fn.formatDate(new Date(), 'yyyy-MM-dd');
             this.date = currentDate;
         } else {
             this.date = this.value;
@@ -169,7 +188,7 @@ export default {
                 return newDate.setDate(newDate.getDate() - this.dayAgo);
             }
 
-            return new Date().toISOString().substring(0, 10);
+            return this.$fn.formatDate(new Date(), 'yyyy-MM-dd');
         },
         revertDate(event) {
              const convertBeforeDate = this.convertDateStringToHaipun(this.validBeforeDate);

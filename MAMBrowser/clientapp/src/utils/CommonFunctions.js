@@ -8,24 +8,28 @@ import { MINIMUM_DATE, MAXIMUM_DATE_NUM, MAXIMUM_SEARCH_DATE } from '@/constants
 const formatDate = (d, p = 'yyyyMMdd', haipunToString = true) => {
     if (!d) { return d; }
 
-    let parseDate = d;
-    if (d.length === 8) {
-        const sY = d.substring(0, 4);
-        const sM = d.substring(4, 6);
-        const sD = d.substring(6, 8);
-        
-        parseDate = `${sY}-${sM}-${sD}`;
+    let date = null;
+    if (d instanceof Date) {
+        date = d;        
+    } else {
+        let convertDate = d;
+        if (d.length === 8) {
+            const sY = d.substring(0, 4);
+            const sM = d.substring(4, 6);
+            const sD = d.substring(6, 8);
+            convertDate = `${sY}-${sM}-${sD}`;
+        }
+        date = new Date(convertDate);
+        if (date.toString() === 'Invalid Date') { return d; }
     }
-
-    const dateTime = new Date(parseDate);
-    if (dateTime.toString() === 'Invalid Date') { return d; }
+    
     const sepDate = {
-        y: dateTime.getFullYear(),
-        M: ('0' + (dateTime.getMonth() + 1)).slice(-2),
-        d: ('0' + dateTime.getDate()).slice(-2),
-        h: ('0' + dateTime.getHours()).slice(-2),
-        m: ('0' + dateTime.getMinutes()).slice(-2),
-        s: ('0' + dateTime.getSeconds()).slice(-2),
+        y: date.getFullYear(),
+        M: ('0' + (date.getMonth() + 1)).slice(-2),
+        d: ('0' + date.getDate()).slice(-2),
+        h: ('0' + date.getHours()).slice(-2),
+        m: ('0' + date.getMinutes()).slice(-2),
+        s: ('0' + date.getSeconds()).slice(-2),
     };
 
     const format = p.replace(/(y+|M+|d+|h+|m+|s+)/g, $v => {

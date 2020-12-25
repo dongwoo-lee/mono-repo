@@ -3,12 +3,18 @@
         <!-- 등록일: 시작일 -->
         <b-form-group :label="startDateLabel"
           class="has-float-label">
-          <common-date-picker v-model="sDate" :dayAgo="startDayAgo"/>
+          <common-date-picker v-model="sDate" 
+            :dayAgo="startDayAgo"
+            :monthAgo="startMonthAgo"
+            :yearAgo="startYearAgo"
+            :isCurrentDate="false" 
+            :required="true" />
         </b-form-group>
       <!-- 등록일: 종료일 -->
         <b-form-group :label="endDateLabel" 
           class="has-float-label">
-          <common-date-picker v-model="eDate"/>
+          <common-date-picker v-model="eDate" 
+          :required="true" />
         </b-form-group>
     </div>
 </template>
@@ -37,6 +43,14 @@ export default {
             default: false,
         },
         startDayAgo: {
+            type: Number,
+            defaut: 0,
+        },
+        startMonthAgo: {
+            type: Number,
+            defaut: 0,
+        },
+        startYearAgo: {
             type: Number,
             defaut: 0,
         }

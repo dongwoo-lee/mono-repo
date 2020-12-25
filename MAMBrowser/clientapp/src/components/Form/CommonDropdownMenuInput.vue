@@ -9,6 +9,7 @@
         @selected="onSelected"
         @input="onInput"
         @blur="onBlur"
+        @keyup.enter="onEnter"
     >
         <template slot-scope="{suggestion}">
             <span class="my-suggestion-item">{{suggestion.item.name}}</span>
@@ -92,6 +93,9 @@ export default {
         onBlur(e) {
             const targetValue = e.target.value;
             this.validData(targetValue);
+        },
+        onEnter(e) {
+            e.target.blur();
         },
         validData(inputValue) {
             const suggestions = this.$refs.refAutosuggest.suggestions;

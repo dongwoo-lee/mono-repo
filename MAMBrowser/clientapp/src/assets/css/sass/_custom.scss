@@ -168,6 +168,11 @@
         tr:nth-child(odd) {
             background-color: white;
         }
+
+        .bold {
+            font-size: 0.96rem;
+            font-weight: 600;
+        }
     }
 }
 
@@ -194,13 +199,33 @@
         color: red;
         font-weight: 600;
     }
-}
 
-// VueTable Body
-.vuetable-body {
-    .bold {
-        font-size: 0.96rem;
-        font-weight: 600;
+    .data-loading-item {
+        display: none;
+        &.active {
+            display:inline-block;
+        }
+        .data-loading {
+            width: 2rem;
+            height: 2rem;
+            border: 0.25em solid #008ecc;
+            border-radius: 50%;
+            border-right-color: transparent;
+            -webkit-animation:spin 0.75s ease-in-out infinite;
+            animation:spin 0.75s ease-in-out infinite;
+            left:calc(50% - 15px);top:calc(50% - 15px);
+            position:fixed;
+            z-index:1
+        }
+
+        strong {
+            color: #008ecc;
+            font-weight: 600;
+            display:inline-block;
+            left:calc(50% + 20px);top:calc(50% - 10px);
+            position:fixed;
+            z-index:1
+        }
     }
 }
 
@@ -615,4 +640,32 @@
 // file upload popup label
 .t-50 {
     top: 50%;
+}
+
+
+.drop-active {
+    width:100%;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    position: fixed;
+    z-index: 9999;
+    opacity: .6;
+    text-align: center;
+    background: #000;
+
+    h4 {
+        margin: -.5em 0 0;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        font-size: 40px;
+        color: #fff;
+        padding: 0;
+    }
 }

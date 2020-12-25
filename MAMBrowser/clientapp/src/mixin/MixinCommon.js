@@ -80,6 +80,7 @@ let mixinCommon = {
                         data.forEach(row => {
                             this.responseData.data.push(row);
                         })
+                        this.$refs.scrollPaging.loading();
                     } else {
                         this.responseData.data = data;
                         this.responseData.rowPerPage = rowPerPage;
