@@ -42,6 +42,8 @@ export default {
             FILE_UPLOAD_EXTENSIONS: FILE_UPLOAD_EXTENSIONS,
             localFiles: [],
             maxSize: MAXIMUM_FILE_SIZE,
+            currentPageName: '',
+            availableDiskPage: ROUTE_NAMES.PRIVATE
         }
     },
     computed: {
@@ -62,8 +64,8 @@ export default {
                 return;
             }
 
-            // 업로드 가능 용량 체크
-            if (this.notDiskAvailable(files)) {
+            // [MY디스크]업로드 가능 용량 체크
+            if (this.currentPageName === this.availableDiskPage && this.notDiskAvailable(files)) {
                 this.$bvModal.show('modalNotDiskAvailable');
                 return;
             }
@@ -91,12 +93,16 @@ export default {
         },
         '$route': {
             handler(to, from) {
-                // drag 기능 초기화
-                const dropActive = this.$refs.refFileUpload.dropActive;
-                if (dropActive) {
-                    this.$refs.refFileUpload.dropActive = false;
+                this.currentPageName = to.name;
+                if (this.$refs.refFileUpload) {
+                    // drag 기능 초기화
+                    const dropActive = this.$refs.refFileUpload.dropActive;
+                    if (dropActive) {
+                        this.$refs.refFileUpload.dropActive = false;
+                    }
                 }
             },
+            immediate: true,
         }
     },
     methods: {

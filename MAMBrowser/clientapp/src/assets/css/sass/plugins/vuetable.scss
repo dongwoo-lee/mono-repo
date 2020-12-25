@@ -202,7 +202,7 @@
         .sorted-desc:before,
         .sorted-asc_disabled:before,
         .sorted-desc_disabled:before {
-            right:  1em;
+            right:  10%;
             content: "\2191";
         }
         .sortable:after,
@@ -210,7 +210,7 @@
         .sorted-desc:after,
         .sorted-asc_disabled:after,
         .sorted-desc_disabled:after {
-            right:  0.5em;
+            right:  10%;
             content: "\2193";
         }
     }

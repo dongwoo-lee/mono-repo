@@ -5,7 +5,7 @@ const $http = axios.create({
     baseURL: process.env.baseURL,
     // 인증헤더 추가해야 함
     withCredentials: false,
-    timeout: 10000,
+    timeout: 30000,
 });
 
 $http.interceptors.request.use(

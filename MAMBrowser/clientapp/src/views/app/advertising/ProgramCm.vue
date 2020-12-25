@@ -42,7 +42,7 @@
         <b-row>
           <b-colxx xs="12" md="6" class="no-r-p">
             <div class="table-page-info-group pb-1">
-              <div class="title">프로그램CM 리스트</div>
+              <div class="title">{{ getSelectDate() }}</div>
               <div class="page-info">전체 {{responseData.totalRowCount}}개</div>
             </div>
             <b-table
@@ -93,7 +93,7 @@
           <!-- sub -->
           <b-colxx xs="12" md="6">
             <div class="table-page-info-group pb-1">
-              <div class="title">상세 내역</div>
+              <div class="title">{{ getSelectName() }}</div>
               <div class="page-info">전체 {{reponseContentsData.totalRowCount}}개</div>
             </div>
             <b-table
@@ -171,12 +171,12 @@ export default {
         { value: 'scr', text: '부조SB' },
       ],
       fields: [
-        { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
-        { key: 'name', label: 'CM명', tdClass: 'text-muted bold' },
-        { key: 'length', label: '길이(초)', tdClass: 'text-muted bold' },
-        { key: 'capacity', label: '용량(초)', tdClass: 'text-muted bold'},
-        { key: 'status', label: '상태', tdClass: 'text-muted'},
-        { key: 'editorName', label: '담당자', tdClass: 'text-muted'},
+        { key: 'rowNO', label: '순서', sortable: true, tdClass: 'list-item-heading' },
+        { key: 'name', label: 'CM명', sortable: true, tdClass: 'text-muted bold' },
+        { key: 'length', label: '길이(초)', sortable: true, tdClass: 'text-muted bold' },
+        { key: 'capacity', label: '용량(초)', sortable: true, tdClass: 'text-muted bold'},
+        { key: 'status', label: '상태', sortable: true, tdClass: 'text-muted'},
+        { key: 'editorName', label: '담당자', sortable: true, tdClass: 'text-muted'},
         { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
       ],
       fieldsContents: [
@@ -190,5 +190,19 @@ export default {
       ]
     }
   },
+  methods: {
+    getSelectDate() {
+      if (this.selectBrdDate) {
+        return `${this.$fn.formatDate(this.selectBrdDate, 'yyyy-MM-dd')} 프로그램CM 리스트`;  
+      }
+      return `프로그램CM 리스트`;
+    },
+    getSelectName() {
+      if (this.selectName) {
+        return `${this.selectName} 상세 내역`;
+      }
+      return '상세 내역';
+    }
+  }
 }
 </script>

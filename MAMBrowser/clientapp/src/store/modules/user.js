@@ -122,6 +122,10 @@ export default {
       sessionStorage.removeItem(ROLE);
       sessionStorage.removeItem(AUTHORITY);
     },
+    SET_REMOVE_TOKEN(state) {
+      state.isAuth = false;
+      sessionStorage.removeItem(ACCESS_TOKEN);
+    },
     SET_PROCESSING(state, payload) {
       state.processing = payload
     },

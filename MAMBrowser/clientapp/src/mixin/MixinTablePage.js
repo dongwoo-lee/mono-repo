@@ -9,6 +9,8 @@ let mixinTablePage = apiType => ({
             PREVIEW_CODE: PREVIEW_CODE,
             IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
             selectedItem : {},      //CM, SB에서 선택된 아이템만 다운로드 보이게끔하기 위해.
+            selectBrdDate: '',
+            selectName: '',
             responseData: {
                 data: [],
                 totalRowCount: 0,
@@ -56,6 +58,7 @@ let mixinTablePage = apiType => ({
         // 검색
         onSearch() {
             this.reponseContentsData.data = [];
+            this.selectBrdDate = this.searchItems.brd_dt;
             this.getData();
         },
         // 메인 데이터 조회
@@ -114,7 +117,8 @@ let mixinTablePage = apiType => ({
         rowSelected(items) {
             if (items.length === 0) return;
             this.selectedItem = items[0];
-            const { id, brdDT } = items[0];
+            const { id, name, brdDT } = items[0];
+            this.selectName = name;
             this.getDataContents(id, brdDT);
         },
         // 광고 분류 조회

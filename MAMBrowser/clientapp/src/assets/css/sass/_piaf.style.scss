@@ -5852,16 +5852,16 @@ i.large-icon {
     }
 }
 
-.table thead th[aria-sort] {
-    cursor: pointer;
-}
-.table thead th[aria-sort][aria-sort="ascending"] {
-    box-shadow: inset 0 3px 0 0 $theme-color-1;
-}
+// .table thead th[aria-sort] {
+//     cursor: pointer;
+// }
+// .table thead th[aria-sort][aria-sort="ascending"] {
+//     box-shadow: inset 0 3px 0 0 $theme-color-1;
+// }
 
-.table thead th[aria-sort][aria-sort="descending"] {
-    box-shadow: inset 0 -3px 0 0 $theme-color-1;
-}
+// .table thead th[aria-sort][aria-sort="descending"] {
+//     box-shadow: inset 0 -3px 0 0 $theme-color-1;
+// }
 
 .table.b-table.b-table-selectable > tbody > tr {
     cursor: pointer;

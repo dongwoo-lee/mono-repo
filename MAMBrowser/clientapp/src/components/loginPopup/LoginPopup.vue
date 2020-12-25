@@ -48,7 +48,7 @@
     </b-modal>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import { validationMixin } from "vuelidate";
 const { required } = require("vuelidate/lib/validators");
 import { eventBus } from '../../eventBus';
@@ -84,7 +84,9 @@ export default {
   },
   methods: {
     ...mapActions('user', ['login', 'signOut']),
+    ...mapMutations('user', ['SET_LOGOUT', 'SET_REMOVE_TOKEN']),
     show() {
+      this.SET_REMOVE_TOKEN();
       this.isShow = true;
       this.userId = this.getUserId;
     },
@@ -121,7 +123,7 @@ export default {
       }
     },
     close() {
-      this.signOut();
+      this.SET_LOGOUT();
       this.$router.push({path: '/user/login' });
       this.hide();
     }
