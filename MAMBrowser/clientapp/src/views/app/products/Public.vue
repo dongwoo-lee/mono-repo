@@ -149,7 +149,7 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import MetaDataSharedModifyPopup from '../../../components/popup/MetaDataSharedModifyPopup';
+import MetaDataSharedModifyPopup from '../../../components/Popup/MetaDataSharedModifyPopup';
 import { mapActions } from 'vuex';
 import { USER_ID } from "@/constants/config";
 

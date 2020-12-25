@@ -25,7 +25,7 @@ function RandomPick(data) {
       .fill()
       .map((item, idx) => ({
         rowNO: idx + 1,
-        name: `이동우 ${idx}`,
+        name: `TEST ${idx}`,
         diskAllocation: RandomPick(disk),
         menuType: RandomPick(menuType),
       })),

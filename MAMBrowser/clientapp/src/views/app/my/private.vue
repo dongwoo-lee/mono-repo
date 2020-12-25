@@ -124,7 +124,7 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import MetaDataPrivateModifyPopup from '../../../components/popup/MetaDataPrivateModifyPopup';
+import MetaDataPrivateModifyPopup from '../../../components/Popup/MetaDataPrivateModifyPopup';
 import { mapActions } from 'vuex';
 import { USER_ID } from '@/constants/config';
 

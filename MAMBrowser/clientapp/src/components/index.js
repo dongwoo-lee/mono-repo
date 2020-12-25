@@ -4,9 +4,9 @@ import Breadcrumb from './Common/Breadcrumb'
 import Colxx from './Common/Colxx'
 import vuePerfectScrollbar from 'vue-perfect-scrollbar'
 import VueUploadComponent from 'vue-upload-component';
-import PlayerPopup from './popup/PlayerPopup.vue';
-import MusicPlayerPopup from './popup/MusicPlayerPopup.vue';
-import CommonConfirm from './popup/CommonConfirm';
+import PlayerPopup from './Popup/PlayerPopup.vue';
+import MusicPlayerPopup from './Popup/MusicPlayerPopup.vue';
+import CommonConfirm from './Popup/CommonConfirm';
 import CommonForm from './Form/CommonForm';
 import CommonDatePicker from './Form/CommonDatePicker';
 import CommonStartEndDatePicker from './Form/CommonStartEndDatePicker';
@@ -18,8 +18,8 @@ import CommonDataTable from './DataTable/CommonDataTable';
 import CommonDataTableScrollPaging from './DataTable/CommonDataTableScrollPaging';
 import CommonActions from './DataTable/CommonActions';
 import Player from './Common/Player';
-import Clock from './CommonCustom/clock';
-import Timer from './CommonCustom/timer';
+import Clock from './Common/Clock';
+import Timer from './Common/Timer';
 
 Vue.component('piaf-breadcrumb', Breadcrumb);
 Vue.component('b-colxx', Colxx);

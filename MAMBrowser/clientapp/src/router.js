@@ -18,7 +18,7 @@ const routes = [
     children: [
       {
         path: "login",
-        component: () => import("./views/user/Login"),
+        component: () => import("./views/user/login"),
         meta: { requiresAuth: true }
       },
     ]

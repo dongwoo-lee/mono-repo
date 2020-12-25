@@ -21,8 +21,8 @@ import fileUploadingToast from '@/components/File/FileUploadingToast';
 import fileUploadPopup from '@/components/File/FileUploadPopup';
 import FileMetaDataPopup from '@/components/File/FileMetaDataPopup';
 import FileUploadRefElement from '@/components/File/FileUploadRefElement';
-import LoginPopup from '@/components/loginPopup/LoginPopup';
-import LoginPopupRefElement from '@/components/loginPopup/LoginPopupRefElement';
+import LoginPopup from '@/components/Popup/Login/LoginPopup';
+import LoginPopupRefElement from '@/components/Popup/Login/LoginPopupRefElement';
 import { ROUTE_NAMES } from '@/constants/config';
 import { mapMutations } from 'vuex';
 

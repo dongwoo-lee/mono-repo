@@ -78,7 +78,7 @@ export default {
     processing: state => state.processing,
     diskAvailable: state => state.currentUser.diskAvailable,
     isAuth: () => sessionStorage.getItem(ACCESS_TOKEN) != null && sessionStorage.getItem(USER_ID) != null,
-    getUserId: () => sessionStorage.getItem(USER_ID),
+    userId: () => sessionStorage.getItem(USER_ID),
     tokenExpires: state => state.tokenExpires,
     timerProccessing: state => state.timerProccessing,
   },
@@ -218,7 +218,7 @@ export default {
       }
     },
     getSummaryUser({getters, commit}) {
-      $http.get(`/api/users/summary/${getters.getUserId}`).then(response => {
+      $http.get(`/api/users/summary/${getters.userId}`).then(response => {
         const { resultCode, resultObject } = response.data;
         if (resultObject && resultCode === 0) {
           commit('SET_SUMMARY_USER', resultObject);
