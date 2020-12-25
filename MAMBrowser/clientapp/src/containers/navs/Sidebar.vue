@@ -24,7 +24,7 @@
                 :data-parent="item.id" 
                 :key="`sub_${item.id}`">
 
-                <li v-for="(sub,subIndex) in item.children" :key="subIndex" :class="{'active' : $route.path.indexOf(sub.to)>-1}">
+                <li v-for="(sub,subIndex) in item.children" :key="subIndex" :class="{'active' : $route.path === sub.to}">
                     <template v-if="sub.visible === 'Y' && sub.to">
                         <router-link :to="getTo(sub.to)">
                             <span>{{ sub.name }}</span>

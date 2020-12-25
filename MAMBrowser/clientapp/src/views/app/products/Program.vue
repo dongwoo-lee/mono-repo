@@ -30,6 +30,7 @@
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">
           <common-dropdown-menu-input
+            classString="width-220"
             :isLoadingClass="isLoadingClass"
             :suggestions="pgmOptions"
             @selected="onPgmSelected" />
@@ -98,6 +99,7 @@ export default {
       searchItems: {
         media: 'A',
         brd_dt: '',
+        pgm: '',
         rowPerPage: 15,
         selectPage: 1,
         sortKey: '',

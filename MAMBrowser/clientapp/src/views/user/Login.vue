@@ -100,13 +100,6 @@ export default {
                                 this.$router.push("/");
                             }
                         }
-                    } else {
-                        console.debug('login Error: ', res);
-                        var errMsg = res.response.data.message;
-                        this.$notify("error", "Login Error", errMsg, {
-                            duration: 3000,
-                            permanent: false
-                        });
                     }
                 })
                 .catch(error => {

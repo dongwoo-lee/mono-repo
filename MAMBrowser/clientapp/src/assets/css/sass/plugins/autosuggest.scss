@@ -36,6 +36,11 @@
     }
 }
 
+.autosuggest__results-item--highlighted {
+    background: lighten($theme-color-1, 10%) !important;
+    color: $foreground-color !important;
+}
+
 .autosuggest__input-open {
     border: 1px solid rgba($theme-color-1, 0.6) !important;
 }

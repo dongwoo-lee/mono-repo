@@ -104,13 +104,8 @@ export default {
                 eventBus.$emit('onResetTimer');
                 eventBus.$emit('onLoadData', this.$router.currentRoute.name);
               }
-          } else {
-            var errMsg = res.response.data.message;
-              this.$notify("error", "Login Error", errMsg, {
-                  duration: 3000,
-                  permanent: false
-              });
           }
+
           this.password = '';
         })
       }

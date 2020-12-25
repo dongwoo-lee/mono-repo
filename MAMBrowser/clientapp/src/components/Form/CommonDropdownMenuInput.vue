@@ -49,7 +49,6 @@ export default {
     data() {
         return {
             filteredOptions: [], // filtered
-            isSelected: false,
         }
     },
     methods: {
@@ -70,10 +69,7 @@ export default {
             });
 
             if (filteredData.length === 1) {
-                this.isSelected = true;
                 this.$emit('selected', { id: filteredData[0].id, name: filteredData[0].name });
-            } else {
-                this.isSelected = false;
             }
 
             this.filteredOptions = [
@@ -88,32 +84,30 @@ export default {
                 // 리스트 클릭 & 방향키 아래로 엔터시 여기로 진입
                 this.$emit('selected', { id: item.item.id, name: item.item.name });
                 this.getfilteredData(interalValue);
-                this.isSelected = true;
                 return;
-            }
-
-            // input text 입력 후 엔터시 여기로 진입 -> onBlur 시점에 다시 체크
-            const suggestions = this.$refs.refAutosuggest.suggestions;
-            const { data } = suggestions[0];
-            if (data.length === 1) {
-                const obj = data[0];
-                if (obj.name === interalValue) {
-                    this.isSelected = true;
-                    this.$emit('selected', { id: obj.id, name: obj.name });
-                    this.getfilteredData(interalValue);
-                }
+            } else {
+                this.$refs.refAutosuggest.$el.children[0].blur();
             }
         },
         onBlur(e) {
-            if (this.isSelected) {
-                this.isSelected = false;
-                return;
-            }
+            const targetValue = e.target.value;
+            this.validData(targetValue);
+        },
+        validData(inputValue) {
+            const suggestions = this.$refs.refAutosuggest.suggestions;
+            const { data } = suggestions[0];
 
-            if (e.relatedTarget && e.relatedTarget.localName === 'div') { 
-                return; 
+            if (data.length > 0) {
+                const index = data.findIndex(d => d.name === inputValue);
+                if (index !== -1) {
+                    this.$emit('selected', { id: data[index].id, name: data[index].name });
+                    this.getfilteredData(inputValue);
+                } else {
+                    this.resetInputData();    
+                }
+            } else {
+                this.resetInputData();
             }
-            this.resetInputData();
         },
         resetInputData() {
             this.$refs.refAutosuggest.internalValue = null;
