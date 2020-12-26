@@ -16,6 +16,9 @@ namespace MAMBrowser.Helpers
         public Dictionary<string, string> RolExt { get; set; } = new Dictionary<string, string>();
         public string TempDownloadPath { get; set; }
         public int SessionTimeout { get; set; }
-        
+
+        public string DBName { get; set; }
+        public string BroadcastStartNetwork { get; set; }
+        public string BroadcastEndNetwork { get; set; }
     }
 }

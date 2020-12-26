@@ -100,7 +100,7 @@ namespace MAMBrowser.BLL
             return returnData;
         }
 
-        public DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT> FindSCRSpot(string media, string start_dt, string end_dt, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_SCR_SPOT> FindSCRSpot(string media, string start_dt, string end_dt, string pgmName, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -128,6 +128,14 @@ namespace MAMBrowser.BLL
                 foreach (var word in nameArray)
                 {
                     builder.Where($"LOWER(SPOTNAME) LIKE LOWER('%{word}%')");
+                }
+            }
+            if (!string.IsNullOrEmpty(pgmName))
+            {
+                string[] nameArray = pgmName.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(EVENTNAME) LIKE LOWER('%{word}%')");
                 }
             }
             if (!string.IsNullOrEmpty(editor))
