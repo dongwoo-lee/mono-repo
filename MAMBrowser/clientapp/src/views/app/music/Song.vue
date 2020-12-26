@@ -91,6 +91,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadMusic"
+              @mydiskCopy="onMyDiskCopyFromMusic"
             >
             </common-actions>
           </template>
@@ -128,7 +129,7 @@ export default {
         searchType2: 'song_idx',
         gradeType: 0,
         searchText: '',
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

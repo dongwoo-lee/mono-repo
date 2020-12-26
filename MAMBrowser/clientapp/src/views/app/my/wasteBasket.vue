@@ -111,7 +111,7 @@ export default {
         // cate: '',           // 분류
         title: '',             // 제목
         memo: '',              // 메모
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

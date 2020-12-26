@@ -11,6 +11,8 @@ export const SYSTEM_MANAGEMENT_CODE  = 'S01G02C001';
 export const PREVIEW_CODE  = 'S01G02C002';
 /* behavior download code */
 export const DOWNLOAD_CODE  = 'S01G02C003';
+/* role my disk page id */
+export const MY_DISK_PAGE_ID = 'S01G01C007';
 /* behavior authority*/
 export const AUTHORITY_ADMIN = 'ADMIN';
 /* behavior authority*/
@@ -19,6 +21,7 @@ export const AUTHORITY_MANAGER = 'MANAGER';
 export const ROUTE_NAMES = {
   PRIVATE: 'private',
   SHARED: 'public',
+  WASTE_BASKET: 'waste-basket',
 }
 /* file upload maximum size */
 export const MAXIMUM_FILE_SIZE = (1000 * 1000 * 1000) * 2;  //  KB -> MB -> GB * 2 = 2GB;

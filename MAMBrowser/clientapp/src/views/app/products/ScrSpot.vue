@@ -12,6 +12,14 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
+          :startDate.sync="searchItems.start_dt"
+          :startDayAgo="7"
+          :maxPeriodMonth="3"
+          :endDate.sync="searchItems.end_dt"
+          :required="true"
+        />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -22,14 +30,6 @@
             text-field="name" 
           />
         </b-form-group>
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
-          :startDate.sync="searchItems.start_dt"
-          :startDayAgo="7"
-          :maxPeriodMonth="3"
-          :endDate.sync="searchItems.end_dt"
-          :required="true"
-        />
         <!-- 사용처명 -->
         <b-form-group label="사용처명" class="has-float-label">
           <common-input-text v-model="searchItems.pgmName"/>
@@ -70,6 +70,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
+              @mydiskCopy="onMyDiskCopyFromProduct"
             >
             </common-actions>
           </template>
@@ -105,7 +106,7 @@ export default {
         name: '',                   // 소재명
         media: 'A',                 // 매체
         pgmName: '',                // 사용처명
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: 'DESC',

@@ -40,6 +40,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadMusic"
+              @mydiskCopy="onMyDiskCopyFromMusic"
             >
             </common-actions>
           </template>
@@ -74,7 +75,7 @@ export default {
 
       searchItems: {
         searchText: '',
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: 'DESC',

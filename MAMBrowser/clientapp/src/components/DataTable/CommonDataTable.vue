@@ -13,6 +13,7 @@
             :data="rows"
             :row-class="onRowClass"
             :noDataTemplate="noDataTemplate"
+            :multi-sort="true"
             @vuetable:row-clicked="rowClicked"
             @vuetable:cell-rightclicked="rightClicked"
           >
@@ -80,18 +81,24 @@ export default {
         this.$nextTick(() => {
             if (!this.$refs.vuetable) return ;
             const rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
-            [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
-            if (!rowElem || !this.sortable) return;
+            // [this.sortable] = this.$refs.vuetable.$el.getElementsByClassName('sortable');
+            if (!rowElem) return;
 
             // sortable click event linstener
-            this.sortable.addEventListener('click', e => {
-                this.onSortable(e);
+            this.sortable = this.$refs.vuetable.$el.querySelectorAll('th.sortable');
+            if (!this.sortable) return;
+            this.sortable.forEach(element => {
+                element.addEventListener('click', e => {
+                    this.onSortable(e);
+                }); 
             });
         });
     },
     destroyed() {
       if (this.sortable != null) {
-        this.sortable.removeEventListener('click', this.onSortable);
+          this.sortable.forEach(element => {
+            element.removeEventListener('click', this.onSortable);    
+          })
       }
     },
     methods: {
@@ -124,6 +131,7 @@ export default {
             this.$emit('contextMenuAction', data);
         },
         onSortable(e) {
+            console.info('onSortTable');
             const targetId = e.target.id.replace('_', '');
             this.$emit('sortableclick', targetId);
         }

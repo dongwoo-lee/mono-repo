@@ -42,6 +42,16 @@
         <b-form-group label="소재명" class="has-float-label">
           <common-input-text v-model="searchItems.name"/>
         </b-form-group>
+        <!-- 방송 유효일이 남은 소재만 보기 -->
+        <!-- <b-form-checkbox v-if="screenName === 'pr'"
+          class="custom-checkbox-group-non-align"
+          v-model="searchItems.isAvailable"
+          value="Y"
+          unchecked-value="N"
+          aria-describedby="selectedSearchType1"
+          aria-controls="selectedSearchType1">
+          방송 유효일이 남은 소재만 보기
+        </b-form-checkbox> -->
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
@@ -70,6 +80,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
+              @mydiskCopy="onMyDiskCopyFromProduct"
             >
             </common-actions>
           </template>
@@ -104,7 +115,8 @@ export default {
             editor: '',                // 사용자
             editorName: '',            // 사용자 이름
             name: '',                  // 소재명
-            rowPerPage: 15,
+            // isAvailable: this.screenName === 'pr' ? 'Y': 'N',
+            rowPerPage: 30,
             selectPage: 1,
             sortKey: '',
             sortValue: '',

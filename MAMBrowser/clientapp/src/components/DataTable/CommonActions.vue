@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="common-actions">
         <b-button
             v-if="display(PREVIEW_CODE)"
             class="icon-buton"
@@ -35,10 +35,19 @@
             @click.stop="onMetaModify()">
             <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
         </b-button>
+        <b-button
+            v-if="displayMyDiskCopy()"
+            class="icon-buton"
+            :title="getTitle('mydisk-copy')"
+            @click.stop="onMyDiskCopy()">
+            <i class="iconsminds-shop i-custom-actions-shop" />
+        </b-button>
     </div>
 </template>
 <script>
-import { PREVIEW_CODE, DOWNLOAD_CODE, AUTHORITY, AUTHORITY_ADMIN, USER_ID } from "@/constants/config";
+import { PREVIEW_CODE, DOWNLOAD_CODE, AUTHORITY, AUTHORITY_ADMIN
+    , USER_ID, ROLE, MY_DISK_PAGE_ID, ROUTE_NAMES } from "@/constants/config";
+import { mapGetters } from 'vuex';
 
 export default {
     props:{
@@ -69,17 +78,33 @@ export default {
     },
     data() {
         return {
-            PREVIEW_CODE: PREVIEW_CODE,
-            DOWNLOAD_CODE: DOWNLOAD_CODE,
+            PREVIEW_CODE,
+            DOWNLOAD_CODE,
+            MY_DISK_PAGE_ID,
+            ROUTE_NAMES,
+            currentPageName: '',
             IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
         }
     },
     computed: {
-        
+        ...mapGetters('user', ['roleList'])
+    },
+    watch: {
+        '$route': {
+            handler(to, from) {
+                this.currentPageName = this.$route.name;
+            },
+            immediate: true,
+        }
     },
     methods: {
         display(value) {
             return this.behaviorData.some(data => data.id === value && data.visible === 'Y');
+        },
+        displayMyDiskCopy() {
+            const exceptPageNames = [this.ROUTE_NAMES.PRIVATE, this.ROUTE_NAMES.WASTE_BASKET];
+            if (exceptPageNames.includes(this.currentPageName)) { return false; }
+            return this.roleList.some(data => data.id === this.MY_DISK_PAGE_ID && data.visible === 'Y');
         },
         displayEtc(value) {
             return this.etcData.some(data => data === value);
@@ -96,12 +121,16 @@ export default {
         onMetaModify() {
             this.$emit('modify', this.rowData);
         },
+        onMyDiskCopy() {
+            this.$emit('mydiskCopy', this.rowData);
+        },
         getTitle(type) {
             if (this.etcTitles && this.etcTitles[type]) {
                 return this.etcTitles[type];
             }
             if (type === 'delete') { return '휴지통'; }
             if (type === 'modify') { return '정보편집';}
+            if (type === 'mydisk-copy') { return 'My 공간으로 복사'; }
             return '';
         },
         getDeleteStyle() {

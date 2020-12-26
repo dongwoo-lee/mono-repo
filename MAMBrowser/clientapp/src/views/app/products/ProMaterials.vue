@@ -14,7 +14,9 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
+        <common-start-end-date-picker
+          startDateLabel="시작일(마스터링)"
+          endDateLabel="종료일(마스터링)"
           :startDate.sync="searchItems.start_dt"
           :startMonthAgo="3"
           :maxPeriodMonth="3"
@@ -74,6 +76,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
+              @mydiskCopy="onMyDiskCopyFromProduct"
             >
             </common-actions>
           </template>
@@ -111,7 +114,7 @@ export default {
         name: '',              // 소재명
         start_dt: '',          // 시작일
         end_dt: '',            // 종료일
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

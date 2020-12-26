@@ -11,7 +11,15 @@
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
-      <template slot="form-search-area">
+      <template slot="form-search-area">        
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
+          :startDate.sync="searchItems.start_dt"
+          :startDayAgo="7"
+          :maxPeriodMonth="3"
+          :endDate.sync="searchItems.end_dt"
+          :required="true"
+        />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -22,14 +30,6 @@
             text-field="name"
           />
         </b-form-group>
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
-          :startDate.sync="searchItems.start_dt"
-          :startDayAgo="7"
-          :maxPeriodMonth="3"
-          :endDate.sync="searchItems.end_dt"
-          :required="true"
-        />
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
@@ -64,6 +64,15 @@
         <b-form-group label="제작자" class="has-float-label">
           <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
         </b-form-group>
+        <!-- 방송 종료일이 남은 소재만 보기 -->
+         <!-- <b-form-checkbox class="custom-checkbox-group-non-align"
+          v-model="searchItems.isAvailable"
+          value="Y"
+          unchecked-value="N"
+          aria-describedby="selectedSearchType1"
+          aria-controls="selectedSearchType1">
+          방송 종료일이 남은 소재만 보기
+          </b-form-checkbox> -->
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
@@ -84,6 +93,7 @@
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
+          @sortableclick="onSortable"
         >
           <template slot="actions" scope="props">
             <common-actions
@@ -91,6 +101,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
+              @mydiskCopy="onMyDiskCopyFromProduct"
             >
             </common-actions>
           </template>
@@ -126,7 +137,8 @@ export default {
           status: '',                // 상태
           editor: '',                // 사용자
           editorName: '',            // 사용자 이름
-          rowPerPage: 15,
+          // isAvailable: 'Y',
+          rowPerPage: 30,
           selectPage: 1,
           sortKey: '',
           sortValue: '',
@@ -150,7 +162,7 @@ export default {
         },
         {
           name: "startDT",
-          title: "방송게시일",
+          title: "방송개시일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: '8%',

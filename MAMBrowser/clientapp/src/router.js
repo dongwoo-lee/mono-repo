@@ -39,7 +39,7 @@ const routes = [
       },
       {
         // 휴지통
-        name: 'waste-basket',
+        name: ROUTE_NAMES.WASTE_BASKET,
         path: "my/waste-basket",
         component: () => import("./views/app/my/wasteBasket"),
       },

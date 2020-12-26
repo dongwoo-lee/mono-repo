@@ -1,7 +1,7 @@
 // Common
 input, button, select, optgroup, textarea {
     margin: 0;
-    font-family: unset;
+    font-family: 'MBC 새로움 L';
 }
 
 // TOPNAV
@@ -176,6 +176,12 @@ input, button, select, optgroup, textarea {
             background-color: white;
         }
 
+        tr {
+            td {
+                vertical-align: middle;
+            }
+        }
+        
         .bold {
             font-size: 0.96rem;
             font-weight: 600;
@@ -367,7 +373,7 @@ input, button, select, optgroup, textarea {
         
         .form-group {
             margin-bottom: 0rem;
-            padding-right: 20px;
+            padding-right: 15px;
 
             .memo {
                 width: 180px;
@@ -375,6 +381,10 @@ input, button, select, optgroup, textarea {
 
             legend {
                 z-index: 4;
+            }
+
+            button:not(.dropdown-toggle) {
+                margin-left: 5px;
             }
         }
 
@@ -390,6 +400,7 @@ input, button, select, optgroup, textarea {
 
             .input-picker {
                 max-width: 120px;
+                padding-bottom: 1px;
             }
         }
 
@@ -411,6 +422,12 @@ input, button, select, optgroup, textarea {
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .custom-checkbox-group-non-align {
+            display: flex;
+            margin-top: 5px;
+            margin-right: 20px;
         }
 
         div.width-110 {
@@ -521,6 +538,25 @@ input, button, select, optgroup, textarea {
     padding: 0.5rem 1rem;
     font-size: 0.74rem;
     line-height: 0;
+}
+
+// 테이블 추가작업 영역
+.common-actions {
+    button {
+        margin-right: 1px;
+    }
+    button:last-child {
+        margin-right: 0;
+    }
+
+    .i-custom-actions-shop {
+        font-size: 1.1rem;
+        line-height: 1.2;
+        margin-left: -4px;
+        &:before {
+            font-weight: bolder;
+        }
+    }
 }
 
 .table th {

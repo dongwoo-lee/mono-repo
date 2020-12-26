@@ -30,7 +30,6 @@
                 </div>
                 <div v-if="isDisplayPageSize" class="page-size">
                   <b-form-select :value="searchItems.rowPerPage" @change="onChagne">
-                    <b-form-select-option value="15">15개</b-form-select-option>
                     <b-form-select-option value="30">30개</b-form-select-option>
                     <b-form-select-option value="50">50개</b-form-select-option>
                     <b-form-select-option value="100">100개</b-form-select-option>

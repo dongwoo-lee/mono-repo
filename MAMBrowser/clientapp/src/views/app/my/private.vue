@@ -134,7 +134,7 @@ export default {
         memo: '',              // 메모(memo)
         start_dt: '',          // 등록일 시작일
         end_dt: '',            // 등록일 종료일
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

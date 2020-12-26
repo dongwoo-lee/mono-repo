@@ -86,6 +86,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
+              @mydiskCopy="onMyDiskCopyFromProduct"
             >
             </common-actions>
           </template>
@@ -122,7 +123,7 @@ export default {
         editor: '',                // 사용자
         editorName: '',            // 사용자 이름
         spotId: '',                // spotId
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

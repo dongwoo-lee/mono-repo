@@ -81,6 +81,8 @@ export default {
     userId: () => sessionStorage.getItem(USER_ID),
     tokenExpires: state => state.tokenExpires,
     timerProccessing: state => state.timerProccessing,
+    conDBName: state => state.currentUser.conDBName,
+    conNetworkName: state => state.currentUser.conNetworkName,
   },
   mutations: {
     SET_TOKEN(state, token) {

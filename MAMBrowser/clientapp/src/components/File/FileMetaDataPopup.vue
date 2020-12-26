@@ -116,7 +116,7 @@ export default {
                 this.$fn.notify('inputError', {});
                 return;
             }
-            return; 
+
             let data = {};
             if (this.type === this.storegeType.private) {
                 data = {

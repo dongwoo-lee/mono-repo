@@ -99,6 +99,7 @@
                 @download="onDownloadSingle"
                 @delete="onDeleteConfirm"
                 @modify="onMetaModifyPopup"
+                @mydiskCopy="onMyDiskCopyFromPublic"
               >
             </common-actions>
           </template>
@@ -164,7 +165,7 @@ export default {
         editor: '',                // 제작자
         title: '',                 // 제목
         memo: '',                  // 메모
-        rowPerPage: 15,
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

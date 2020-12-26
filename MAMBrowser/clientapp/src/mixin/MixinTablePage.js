@@ -59,6 +59,7 @@ let mixinTablePage = apiType => ({
         onSearch() {
             this.reponseContentsData.data = [];
             this.selectBrdDate = this.searchItems.brd_dt;
+            this.selectName = '';
             this.getData();
         },
         // 메인 데이터 조회

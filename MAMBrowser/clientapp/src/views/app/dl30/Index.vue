@@ -50,6 +50,7 @@
             :rows="responseData.data"
             :isTableLoading="isTableLoading"
             is-actions-slot
+            @sortableclick="onSortable"
         >
           <template slot="actions" scope="props">
             <common-actions
@@ -57,6 +58,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadDl30"
+              @mydiskCopy="onMyDiskCopyFromDl30"
             >
             </common-actions>
           </template>
@@ -93,7 +95,7 @@ export default {
               media : 'A',           // 매체
               regDtm: '',            // 편성일자
               pgmName: '',             // 녹음명
-              rowPerPage: 15,
+              rowPerPage: 30,
               selectPage: 1,
               sortKey: '',
               sortValue: '',
@@ -194,6 +196,17 @@ export default {
                 this.setResponseData(res, 'normal');
                 this.isTableLoading = false;
             });
+        },
+        onSortable(sortKey) {
+            if (!this.sortItems[sortKey]) {
+                this.sortItems[sortKey] = 'ASC';
+            } else {
+                this.sortItems[sortKey] = this.$fn.changeSortValue(this.sortItems, sortKey);
+            }
+            this.searchItems.sortKey = sortKey;
+            this.searchItems.sortValue = this.sortItems[sortKey];
+            console.debug('sorkKey', this.searchItems.sortKey, this.searchItems.sortValue);
+            this.getData();
         },
     }
 }

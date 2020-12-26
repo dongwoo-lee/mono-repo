@@ -13,6 +13,14 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
+          :startDate.sync="searchItems.start_dt"
+          :startDayAgo="7"
+          :maxPeriodMonth="3"
+          :endDate.sync="searchItems.end_dt"
+          :required="true"
+        />
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
@@ -23,14 +31,6 @@
             text-field="name" 
           />
         </b-form-group>
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
-          :startDate.sync="searchItems.start_dt"
-          :startDayAgo="7"
-          :maxPeriodMonth="3"
-          :endDate.sync="searchItems.end_dt"
-          :required="true"
-        />
         <!-- 사용처 -->
         <b-form-group label="사용처명" class="has-float-label">
           <common-input-text v-model="searchItems.pgmName"/>
@@ -47,6 +47,15 @@
         <b-form-group label="소재명" class="has-float-label">
           <common-input-text v-model="searchItems.name"/>
         </b-form-group>
+        <!-- 마스터링 완료한 소재만 보기 -->
+         <b-form-checkbox class="custom-checkbox-group-non-align"
+            v-model="searchItems.isMastering"
+            value="Y"
+            unchecked-value="N"
+            aria-describedby="selectedSearchType1"
+            aria-controls="selectedSearchType1">
+            마스터링 완료한 소재만 보기
+          </b-form-checkbox>
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
@@ -77,6 +86,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
+              @mydiskCopy="onMyDiskCopyFromProduct"
             >
             </common-actions>
           </template>
@@ -114,7 +124,8 @@ export default {
         reporterName: '',      // 취재인 이름
         editor: '',            // 제작자
         name: '',              // 소재명
-        rowPerPage: 15,
+        isMastering: 'Y',
+        rowPerPage: 30,
         selectPage: 1,
         sortKey: '',
         sortValue: '',

@@ -50,7 +50,8 @@ let mixinCommon = {
         });
     },
     methods: {
-        ...mapActions('file', ['downloadWorkspace', 'downloadProduct', 'downloadMusic', 'downloadDl30','downloadConcatenate']),
+        ...mapActions('file', ['downloadWorkspace', 'downloadProduct'
+            , 'downloadMusic', 'downloadDl30','downloadConcatenate']),
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
@@ -196,6 +197,27 @@ let mixinCommon = {
         onDownloadConcatenate(item) {
             this.downloadConcatenate(item);
         },
+        onMyDiskCopyFromPublic(item) { 
+            this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item.name);
+        },
+        onMyDiskCopyFromMusic(item) { 
+            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/${item.seq}`, item.name);
+        },
+        onMyDiskCopyFromProduct(item) {
+            this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item.name);
+        },
+        onMyDiskCopyFromDl30(item) {
+            this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item.name);
+        },
+        onMyDisCopy(url, name) {
+            this.$refs.scrollPaging.loading(true);
+            this.$http.get(url).then(res => {
+                if (res.data && res.data.resultCode === 0) {
+                    this.$refs.scrollPaging.loading();
+                    this.$fn.notify('success', { message: `"${name}"소재가 My 공간으로 복사되었습니다.` });
+                }
+            })
+        }
     }
 }
 
