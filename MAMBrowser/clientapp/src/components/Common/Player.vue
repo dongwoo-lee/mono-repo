@@ -13,10 +13,14 @@
       <b-container class="bv-example-row" v-if="isSuccess">
         <b-row>
           <b-col>
+             <vue-slider width="170px" :min="min" :max="max" :interval="interval" 
+             v-model="sliderValue" @change="changedVolume" :drag-on-click="true" 
+             :tooltipFormatter="tooltipFormatter"
+             />
           </b-col>
           <b-col>
             <div align="center" >
-             <b-btn variant="outline-primary" size="sm" @click.prevent="Play" >▶</b-btn>
+            <b-btn variant="outline-primary" size="sm" @click.prevent="Play" >▶/||</b-btn>
             <b-btn variant="outline-primary"  size="sm" @click.prevent="Stop">■</b-btn>
             </div>
           </b-col>
@@ -33,7 +37,8 @@
 import WaveSurfer from 'wavesurfer.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 import { USER_ID, ACCESS_TOKEN } from '@/constants/config';
-
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/default.css'
 import axios from 'axios';
 var wavesurfer;
 var httpClient;
@@ -41,6 +46,9 @@ var cancelToken;
 var source;
 
 export default {
+  components:{
+    VueSlider
+  },
   data () {
     return {
       wavesurfer: null,
@@ -50,13 +58,19 @@ export default {
       isSuccess : false,
       spinnerFlag : true,
       ACCESS_TOKEN,
-      USER_ID
+      USER_ID,
+      min:0,
+      max:1,
+      interval:0.01,
+      sliderValue:1,
     }
   },
   mounted() {
     cancelToken = axios.CancelToken;
     source = cancelToken.source();
     this.LoadAudio();
+  },
+  computed :{
   },
   methods : {
     InjectWaveSurfer() {
@@ -194,7 +208,11 @@ export default {
         });;
     },
     Play(){
-      wavesurfer.play();
+       if(wavesurfer.isPlaying()){
+        wavesurfer.pause();
+       }else{
+        wavesurfer.play();
+       }
     },
     Stop(){
       source.cancel('Operation canceled by the user.');
@@ -206,7 +224,13 @@ export default {
       source.cancel();
       wavesurfer.cancelAjax();
       wavesurfer.destroy();
-    }
+    },
+    changedVolume(v){
+      wavesurfer.setVolume(v);
+    },
+    tooltipFormatter(v){
+      return (v*100).toFixed(0);
+    },
   },
   props: {
       requestType : {
