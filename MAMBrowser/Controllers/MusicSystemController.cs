@@ -185,10 +185,12 @@ namespace MAMBrowser.Controllers
             return Ok();
         }
         [HttpGet("music-to-myspace")]
-        public IActionResult MusicToMyspace([FromQuery] string token)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> MusicToMyspace([FromQuery] string token)
         {
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             Thread.Sleep(5000);
-            return Ok();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
         }
 
         /// <summary>

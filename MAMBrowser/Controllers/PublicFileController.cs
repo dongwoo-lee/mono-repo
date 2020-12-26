@@ -254,10 +254,12 @@ namespace MAMBrowser.Controllers
             }
         }
         [HttpGet("public-to-myspace/{key}")]
-        public IActionResult PublicFileToMyspace(long key)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key)
         {
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             Thread.Sleep(5000);
-            return Ok();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
         }
 
 

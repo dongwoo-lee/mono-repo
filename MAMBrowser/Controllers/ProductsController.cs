@@ -734,10 +734,12 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("product-to-myspace")]
-        public IActionResult FileToMySpace([FromQuery] string token)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token)
         {
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             Thread.Sleep(5000);
-            return Ok();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
         }
 
 
@@ -828,10 +830,12 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("dl30-to-myspace/{seq}")]
-        public IActionResult Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV")
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV")
         {
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             Thread.Sleep(5000);
-            return Ok();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
         }
 
     }
