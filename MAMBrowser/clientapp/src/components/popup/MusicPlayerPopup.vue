@@ -74,7 +74,7 @@ export default {
             tempImageStreamingUrl : '/api/musicsystem/images/streaming',
             lyricsUrl : '/api/musicsystem/lyrics',
             imagePathList : [],
-            lyrics :'가사 테스트 입니다.',
+            lyrics :'',
             slide : 0,
             sliding : null,
             USER_ID
@@ -124,7 +124,7 @@ export default {
             }
         },
     },
-     watch: {
+    watch: {
         showPlayerPopup: {
             handler: function(val, oldVal) {
                 if(val){
@@ -157,6 +157,7 @@ export default {
             });
         },
         closePlayer(){
+            this.lyrics='';
             this.$refs.play.close();
             this.$emit('closePlayer');
         },
