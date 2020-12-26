@@ -37,8 +37,10 @@
         <!-- 시작일 ~ 종료일 -->
         <common-start-end-date-picker 
           :startDate.sync="searchItems.start_dt"
-          :startYearAgo="1"
-          :endDate.sync="searchItems.end_dt"/>
+          :endDate.sync="searchItems.end_dt"
+          :required="false"
+          :isCurrentDate="false"
+        />
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
@@ -265,6 +267,12 @@ export default {
   methods: {
     ...mapActions('file', ['open_popup', 'downloadWorkspace']),
     getData() {
+       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+        return;
+      }
+      
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false: true;
       const {media, cate} = this.searchItems;

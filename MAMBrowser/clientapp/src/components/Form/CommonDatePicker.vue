@@ -21,6 +21,7 @@
                     today-variant
                     :hide-header="hideHeader"
                     :size="size"
+                    :max="maxDate"
                 />
             </b-input-group-append>
         </b-input-group>
@@ -79,15 +80,16 @@ export default {
         checkMinValue: {
             type: Boolean,
             default: false,
-        }
+        },
+        maxDate: null
     },
     data() {
         return {
             date: '',
             inputValue: '',
             validBeforeDate: this.getValidBeforeDate(),
-            minDate: MINIMUM_DATE,
-            maxDate: this.$fn.getMaxDate()
+            // minDate: MINIMUM_DATE,
+            // maxDate: this.$fn.getMaxDate()
         }
     },
     created() {
@@ -121,13 +123,16 @@ export default {
                 if (v) this.validBeforeDate = formatValue;
                 this.inputValue = formatValue;
             }
+        },
+        value(v) {
+            if (v) this.validBeforeDate = v;
+            this.inputValue = v;
         }
     },
     methods: {
         onInput(event) {
             const targetValue = event.target.value;
-            
-            // 필수 입력값일 경우
+            // 필수 입력값 & 데이터가 없을 경우 체크
             if (this.required && (!targetValue || !/^[\d-]+$/.test(targetValue))) {
                 const convertDate = this.convertDateStringToHaipun(this.validBeforeDate);
                 event.target.value = convertDate;
@@ -154,8 +159,15 @@ export default {
                 if (!this.$fn.validDate(convertDate)) {
                     return this.revertDate(event);
                 }
+
                 // 검색 가능 최소일 확인
                 if (this.checkMinValue && !this.$fn.checkBetweenDate(convertDate)) {
+                    return this.revertDate(event);
+                }
+
+                // 검색 가능 최대일 확인
+                const inputDate = new Date(Date.parse(convertDate));
+                if (inputDate > this.maxDate) {
                     return this.revertDate(event);
                 }
 
