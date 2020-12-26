@@ -13,6 +13,13 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 송출일시 -->
+        <b-form-group label="송출일시"
+          class="has-float-label"
+          :class="{ 'hasError': $v.searchItems.regDtm.required }">
+          <common-date-picker v-model="$v.searchItems.regDtm.$model" required/>
+          <b-form-invalid-feedback :state="!$v.searchItems.regDtm.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
+        </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -23,15 +30,8 @@
             text-field="name"
           />
         </b-form-group>
-        <!-- 편성일자: 시작일자 -->
-        <b-form-group label="방송일"
-          class="has-float-label"
-          :class="{ 'hasError': $v.searchItems.regDtm.required }">
-          <common-date-picker v-model="$v.searchItems.regDtm.$model" required/>
-          <b-form-invalid-feedback :state="!$v.searchItems.regDtm.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
-        </b-form-group>
-        <!-- 녹음명 -->
-        <b-form-group label="녹음명" class="has-float-label c-zindex">
+        <!-- 녹음소재명 -->
+        <b-form-group label="녹음소재명" class="has-float-label c-zindex">
             <common-input-text v-model="searchItems.pgmName" />
         </b-form-group>
         <!-- 검색 버튼 -->
@@ -45,24 +45,46 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <common-data-table
-            :fields="fields"
-            :rows="responseData.data"
-            :isTableLoading="isTableLoading"
-            is-actions-slot
-            @sortableclick="onSortable"
-        >
-          <template slot="actions" scope="props">
-            <common-actions
-              :rowData="props.props.rowData"
-              :behaviorData="behaviorList"
-              @preview="onPreview"
-              @download="onDownloadDl30"
-              @mydiskCopy="onMyDiskCopyFromDl30"
+        <b-row>
+          <b-colxx xs="12" md="12" class="no-r-p">
+            <b-table
+              class="custom-table non-h"
+              ref="custom-table"
+              thead-class="custom-table-color"
+              sort-by="title"
+              sort-desc.sync="false"
+              selectable
+              sticky-header
+              responsive
+              show-empty
+              empty-text="데이터가 없습니다."
+              :busy="isTableLoading"
+              select-mode="single"
+              selectedVariant="primary"
+              :fields="fields"
+              :items="responseData.data"
             >
-            </common-actions>
-          </template>
-        </common-data-table>
+              <template v-slot:cell(index)="data">
+                {{ data.index + 1 }}
+              </template>
+
+              <template v-slot:table-busy>
+                <div class="text-center text-primary my-2">
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <common-actions
+                    :rowData="data.item"
+                    :behaviorData="behaviorList"
+                    @preview="onPreview"
+                    @download="onDownloadDl30"
+                    @mydiskCopy="onMyDiskCopyFromDl30"/>
+              </template>
+            </b-table>
+          </b-colxx>
+        </b-row>
       </template>
     </common-form>
 
@@ -90,91 +112,27 @@ export default {
         streamingUrl : '/api/Products/dl30-streaming',
         waveformUrl : '/api/Products/dl30-waveform',
         tempDownloadUrl : '/api/Products/dl30-temp-download',
-
-          searchItems: {
-              media : 'A',           // 매체
-              regDtm: '',            // 편성일자
-              pgmName: '',             // 녹음명
-              rowPerPage: 30,
-              selectPage: 1,
-              sortKey: '',
-              sortValue: '',
-          },
-          isTableLoading: false,
-          fields: [
-              {
-                  name: 'rowNO',
-                  title: '순서',
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '4%',
-              },
-              {
-                  name: "deviceName",
-                  title: "단말",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '10%',
-                  sortField: 'deviceName',
-              },
-              {
-                  name: "brdDate",
-                  title: "송출일시",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center bold",
-                  width: '15%',
-                  sortField: 'brdDate',
-              },
-              {
-                  name: "recName",
-                  title: "녹음소재명",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center bold",
-                  sortField: 'recName',
-              },
-              {
-                  name: "sourceID",
-                  title: "Source ID",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '7%',
-                  sortField: 'sourceID',
-              },
-              {
-                  name: "duration",
-                  title: "녹음분량",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '10%',
-                  sortField: 'duration',
-              },
-              {
-                  name: "fileSize",
-                  title: "파일사이즈(byte)",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '10%',
-                  sortField: 'fileSize',
-                   callback: (v) => {
-                    return this.$fn.formatBytes(v)
-                  }
-              },
-              {
-                  name: "regDtm",
-                  title: "등록일시",
-                  titleClass: "center aligned text-center",
-                  dataClass: "center aligned text-center",
-                  width: '15%',
-                  sortField: 'regDtm',
-              },
-              {
-                name: '__slot:actions',
-                title: '추가작업',
-                titleClass: "center aligned text-center",
-                dataClass: "center aligned text-center",
-                width: "6%"
-              }
-          ]
+        searchItems: {
+            media : 'A',           // 매체
+            regDtm: '20201118',            // 편성일자
+            pgmName: '',             // 녹음명
+            rowPerPage: 30,
+            selectPage: 1,
+            sortKey: '',
+            sortValue: '',
+        },
+        isTableLoading: false,
+        fields: [
+          { key: 'index', label: '순서', tdClass: 'list-item-heading', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '4%'} },
+          { key: 'deviceName', label: '단말', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'} },
+          { key: 'brdDate', label: '송출일시', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '15%'} },
+          { key: 'recName', label: '녹음소재명', sortable: true, thClass:'text-center', tdClass: 'text-center' },
+          { key: 'sourceID', label: 'Source ID', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '7%'}},
+          { key: 'duration', label: '녹음분량', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'}},
+          { key: 'fileSize', label: '파일사이즈(byte)', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'}},
+          { key: 'regDtm', label: '등록일시', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '15%'}},
+          { key: 'actions', label: '추가작업', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '6%'}},
+        ],
       }
     },
     created() {
@@ -196,17 +154,6 @@ export default {
                 this.setResponseData(res, 'normal');
                 this.isTableLoading = false;
             });
-        },
-        onSortable(sortKey) {
-            if (!this.sortItems[sortKey]) {
-                this.sortItems[sortKey] = 'ASC';
-            } else {
-                this.sortItems[sortKey] = this.$fn.changeSortValue(this.sortItems, sortKey);
-            }
-            this.searchItems.sortKey = sortKey;
-            this.searchItems.sortValue = this.sortItems[sortKey];
-            console.debug('sorkKey', this.searchItems.sortKey, this.searchItems.sortValue);
-            this.getData();
         },
     }
 }

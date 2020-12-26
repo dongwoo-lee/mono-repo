@@ -12,6 +12,12 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 방송일 -->
+        <b-form-group label="방송일"
+          class="has-float-label"
+          :class="{ 'hasError': $v.searchItems.brd_dt.required }">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
+        </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -21,12 +27,6 @@
             value-field="id"
             text-field="name"
           />
-        </b-form-group>
-        <!-- 방송일 -->
-        <b-form-group label="방송일"
-          class="has-float-label"
-          :class="{ 'hasError': $v.searchItems.brd_dt.required }">
-          <common-date-picker v-model="$v.searchItems.brd_dt.$model" required/>
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
@@ -62,6 +62,9 @@
               :items="responseData.data"
               @row-selected="rowSelected"
             >
+              <template v-slot:cell(index)="data">
+                {{ data.index + 1 }}
+              </template>
               <template v-slot:table-busy>
                 <div class="text-center text-primary my-2">
                   <b-spinner class="align-middle"></b-spinner>
@@ -171,7 +174,7 @@ export default {
         { value: 'scr', text: '부조SB' },
       ],
       fields: [
-        { key: 'rowNO', label: '순서', sortable: true, tdClass: 'list-item-heading' },
+        { key: 'index', label: '순서', tdClass: 'list-item-heading' },
         { key: 'name', label: 'CM명', sortable: true, tdClass: 'text-muted bold' },
         { key: 'length', label: '길이(초)', sortable: true, tdClass: 'text-muted bold' },
         { key: 'capacity', label: '용량(초)', sortable: true, tdClass: 'text-muted bold'},

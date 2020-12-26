@@ -60,6 +60,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
+          tableHeight='611px'
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
@@ -190,7 +191,7 @@ export default {
           title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "7%"
         }
       ]
     }

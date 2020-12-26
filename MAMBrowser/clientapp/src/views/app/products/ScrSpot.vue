@@ -54,6 +54,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
+          tableHeight='611px'
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
@@ -125,7 +126,8 @@ export default {
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: 'name'
+          sortField: 'name',
+          width: '20%',
         },
         {
           name: "categoryName",
@@ -151,7 +153,7 @@ export default {
           title: "방송일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '8%',
+          width: '10%',
           sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
@@ -170,7 +172,6 @@ export default {
           title: "사용처명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '15%',
           sortField: 'pgmName',
         },
         {
@@ -186,7 +187,7 @@ export default {
           title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "7%"
         }
       ]
     }

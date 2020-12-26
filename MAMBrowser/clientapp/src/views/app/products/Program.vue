@@ -13,6 +13,10 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 방송일 -->
+        <b-form-group label="방송일" class="has-float-label">
+          <common-date-picker v-model="searchItems.brd_dt"/>
+        </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -22,10 +26,6 @@
             value-field="id"
             text-field="name" 
           />
-        </b-form-group>
-        <!-- 방송일 -->
-        <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker v-model="searchItems.brd_dt"/>
         </b-form-group>
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">

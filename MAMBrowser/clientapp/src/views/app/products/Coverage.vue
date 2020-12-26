@@ -32,11 +32,11 @@
           />
         </b-form-group>
         <!-- 사용처 -->
-        <b-form-group label="사용처명" class="has-float-label">
+        <b-form-group label="사용처명" class="has-float-label w-10">
           <common-input-text v-model="searchItems.pgmName"/>
         </b-form-group>
         <!-- 취재인 -->
-        <b-form-group label="취재인" class="has-float-label">
+        <b-form-group label="취재인" class="has-float-label w-10">
           <common-input-text v-model="searchItems.reporterName"/>
         </b-form-group>
         <!-- 제작자 -->
@@ -69,6 +69,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
+          tableHeight='611px'
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
@@ -168,7 +169,7 @@ export default {
           title: "방송일",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center bold",
-          width: '8%',
+          width: '10%',
           sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
@@ -214,7 +215,7 @@ export default {
           title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "7%"
         }
       ]
     }

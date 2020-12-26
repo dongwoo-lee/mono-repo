@@ -13,6 +13,18 @@
     >
       <!-- 검색 -->
     <template slot="form-search-area">
+        <!-- 시작일 -->
+        <b-form-group label="시작일"
+          class="has-float-label"
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.start_dt" :dayAgo="7" required/>
+        </b-form-group>
+        <!-- 종료일 -->
+        <b-form-group label="종료일"
+          class="has-float-label"
+          :class="{ 'hasError': hasErrorClass }">
+          <common-date-picker v-model="searchItems.end_dt" required/>
+        </b-form-group>
         <!-- 로그레벨 -->
         <b-form-group label="로그레벨" class="has-float-label c-zindex">
             <b-form-select
@@ -31,18 +43,6 @@
         <!-- 작업자 -->
         <b-form-group label="작업자" class="has-float-label c-zindex">
             <common-input-text v-model="searchItems.userName" />
-        </b-form-group>
-        <!-- 시작일 -->
-        <b-form-group label="시작일"
-          class="has-float-label"
-          :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.start_dt" :dayAgo="7" required/>
-        </b-form-group>
-        <!-- 종료일 -->
-        <b-form-group label="종료일"
-          class="has-float-label"
-          :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.end_dt" required/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -64,6 +64,7 @@
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
+          @sortableclick="onSortable"
         >
         </common-data-table-scroll-paging>
       </template>
@@ -102,6 +103,7 @@ export default {
                     title: "로그레벨",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    sortField: 'logLevel',
                     width: '7%',
                 },
                 {
@@ -109,6 +111,7 @@ export default {
                     title: "일시",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    sortField: 'regDtm',
                     width: '10%',
                 },
                 {
@@ -123,6 +126,7 @@ export default {
                     title: "접속단말",
                     titleClass: "center aligned text-center",
                     dataClass: "center aligned text-center",
+                    sortField: 'category',
                     width: '10%',
                 },
                 {
@@ -166,23 +170,10 @@ export default {
           this.isTableLoading = this.isScrollLodaing ? false: true;
           this.$http.get('/api/Logs', { params: this.searchItems })
             .then(res => {
-                if (res.status === 200) {
-                    const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
-                    if (selectPage > 1) {
-                        data.forEach(row => {
-                            this.responseData.data.push(row);
-                        })
-                    } else {
-                        this.responseData.data = data;
-                        this.responseData.rowPerPage = rowPerPage;
-                        this.responseData.selectPage = selectPage;
-                        this.responseData.totalRowCount = totalRowCount;
-                    }
-                } else {
-                    this.$fn.notify('server-error', { message: '조회 에러' });
-                }
-                this.isTableLoading = false;
-                this.isScrollLodaing = false;
+              this.setResponseData(res);
+              this.addScrollClass();
+              this.isTableLoading = false;
+              this.isScrollLodaing = false;
         });
       },
     }

@@ -84,10 +84,8 @@ const checkGreaterStartDate = function(sDate, eDate, emptyAllow = true) {
  */
 const validDate = (value) => {
     if (!value || value === undefined) return true;
-    // 2599년까지 가능
-    // const fullDateRegex = /^(19|20|21|22|23|24|25)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
-    // TODO: 2020년부터~ 
-    const fullDateRegex = /^(2019|2020|2021|2022|2023|2024|2025)(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
+    // 1900~2199년까지 가능
+    const fullDateRegex = /^(19|20|21)\d{2}(-)?(0[1-9]|1[012])(-)?(0[1-9]|[12][0-9]|3[0-1])$/;
     return fullDateRegex.test(value);
 }
 

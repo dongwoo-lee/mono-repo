@@ -110,7 +110,7 @@ export default {
     data() {
         return {
         searchItems: {
-            brd_dt: '20200620',        // 방송일
+            brd_dt: '',        // 방송일
             cate: '',                  // 분류
             editor: '',                // 사용자
             editorName: '',            // 사용자 이름
@@ -150,7 +150,7 @@ export default {
               title: "방송유효일",
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center bold",
-              width: '8%',
+              width: '10%',
               sortField: 'brdDT',
               callback: (v) => {
                   return this.$fn.dateStringTohaipun(v)
@@ -194,7 +194,7 @@ export default {
               title: '추가작업',
               titleClass: "center aligned text-center",
               dataClass: "center aligned text-center",
-              width: "6%"
+              width: "7%"
             }
           ],
         }

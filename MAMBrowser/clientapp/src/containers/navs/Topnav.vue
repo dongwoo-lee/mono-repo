@@ -2,7 +2,7 @@
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
       <div class="system ml-4" style="color:darkblue;opacity: .8;">{{conNetworkName}}</div>
-      <div class="system" style="color:darkred;opacity: .8;">{{conDBName}}</div>
+      <div class="system" :style="getConDBNameStyle()">{{conDBName}}</div>
       <clock className="system" style="font-weight:600;"></clock>
       <!-- 메뉴 네비 -->
       <!-- <a
@@ -139,6 +139,14 @@ export default {
         }
       });
     },
+    getConDBNameStyle() {
+      if(!this.conDBName) return {};
+      if (this.conDBName.indexOf('운영') > -1) { 
+        return { color: 'darkblue', opacity: .8 }
+      }
+
+      return { color: 'darkred', opacity: .8 };
+    }
   },
   computed: {
     ...mapGetters("menu", {

@@ -11,29 +11,33 @@
     <file-drag-upload-form v-show="isActive"></file-drag-upload-form>
     <!-- 로그인 팝업 -->
     <login-popup ref="refLoginPopup"></login-popup>
+    <!-- MY디스크 복사 팝업-->
+    <my-disk-copy-looading-overlay></my-disk-copy-looading-overlay>
   </app-layout>
 </template>
 
 <script>
 import AppLayout from "@/layouts/AppLayout";
 import FileDragUploadForm from '@/components/File/FileDragUploadForm';
-import fileUploadingToast from '@/components/File/FileUploadingToast';
-import fileUploadPopup from '@/components/File/FileUploadPopup';
+import FileUploadingToast from '@/components/File/FileUploadingToast';
+import FileUploadPopup from '@/components/File/FileUploadPopup';
 import FileMetaDataPopup from '@/components/File/FileMetaDataPopup';
 import FileUploadRefElement from '@/components/File/FileUploadRefElement';
 import LoginPopup from '@/components/Popup/Login/LoginPopup';
 import LoginPopupRefElement from '@/components/Popup/Login/LoginPopupRefElement';
+import MyDiskCopyLooadingOverlay from '@/components/MyDiskCopyLooadingOverlay';
 import { ROUTE_NAMES } from '@/constants/config';
 import { mapMutations } from 'vuex';
 
 export default {
   components: {
     "app-layout": AppLayout,
-    "FileDragUploadForm": FileDragUploadForm,
-    "fileUploadingToast": fileUploadingToast,
-    "fileUploadPopup": fileUploadPopup,
-    "FileMetaDataPopup": FileMetaDataPopup,
-    "LoginPopup": LoginPopup,
+    FileDragUploadForm,
+    FileUploadingToast,
+    FileUploadPopup,
+    FileMetaDataPopup,
+    LoginPopup,
+    MyDiskCopyLooadingOverlay
   },
   watch: {
     '$route': {

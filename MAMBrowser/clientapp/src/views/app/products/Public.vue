@@ -13,6 +13,13 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
+          :startDate.sync="searchItems.start_dt"
+          :endDate.sync="searchItems.end_dt"
+          :required="false"
+          :isCurrentDate="false"
+        />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -34,13 +41,6 @@
             :disabled="publicCodesOptions.length === 0"
           />
         </b-form-group>
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
-          :startDate.sync="searchItems.start_dt"
-          :endDate.sync="searchItems.end_dt"
-          :required="false"
-          :isCurrentDate="false"
-        />
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
@@ -179,7 +179,7 @@ export default {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "3%"
         },
         {
           name: 'rowNO',
@@ -222,7 +222,7 @@ export default {
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "9%",
+          width: "12%",
           sortField: 'audioFormat'
         },
         {

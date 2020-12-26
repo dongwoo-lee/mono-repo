@@ -12,6 +12,14 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
+          :startDate.sync="searchItems.start_dt"
+          :startDayAgo="7"
+          :maxPeriodMonth="3"
+          :endDate.sync="searchItems.end_dt"
+          :required="true"
+        />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -23,14 +31,6 @@
             @change="onChangeMedia()"
           />
         </b-form-group>
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
-          :startDate.sync="searchItems.start_dt"
-          :startDayAgo="7"
-          :maxPeriodMonth="3"
-          :endDate.sync="searchItems.end_dt"
-          :required="true"
-        />
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
           <common-dropdown-menu-input 
@@ -71,6 +71,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
+          tableHeight='611px'
           :fields="fields"
           :rows="responseData.data"
           is-actions-slot
@@ -149,7 +150,7 @@ export default {
           title: "방송일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '8%',
+          width: '10%',
           sortField: 'brdDT',
           callback: (v) => {
             return this.$fn.dateStringTohaipun(v)
@@ -200,7 +201,7 @@ export default {
           title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "7%"
         }
       ],
     }
