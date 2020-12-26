@@ -3,7 +3,7 @@
     <div class="d-flex align-items-center navbar-left">
       <div class="system ml-4" style="color:darkblue;opacity: .8;">{{conNetworkName}}</div>
       <div class="system" :style="getConDBNameStyle()">{{conDBName}}</div>
-      <clock className="system" style="font-weight:600;"></clock>
+      <clock className="system" style="font-weight:500;"></clock>
       <!-- 메뉴 네비 -->
       <!-- <a
         href="#"
