@@ -34,7 +34,7 @@
             box-shadow: initial;
             border: initial;
             text-align: left;
-            font-weight: 700;
+            font-weight: normal;
 
             &.sorted-asc {
                 box-shadow: inset 0 3px 0 0 $theme-color-1;
@@ -299,7 +299,7 @@
             padding-right: 10px; 
             white-space: nowrap;
             text-align:left;
-            font-weight: bold;
+            // font-weight: bold;
         }
      
         /*

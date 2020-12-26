@@ -49,7 +49,7 @@ export default {
         },
         tableHeight: {          // 테이블 높이
             type: String,
-            default: '500px',
+            default: '630px',
         },
         fields: {               // header 데이터
             type: Array,
@@ -210,7 +210,7 @@ export default {
                 clearTimeout(this.scrollTimeout);
                 this.scrollTimeout = setTimeout(() => {
                     this.handlerScroll(e);
-                }, 150)
+                }, 500)
             });
 
             // sortable click event linstener

@@ -1,3 +1,9 @@
+// Common
+input, button, select, optgroup, textarea {
+    margin: 0;
+    font-family: unset;
+}
+
 // TOPNAV
 .navbar-left {
     .system {
@@ -150,6 +156,7 @@
 .table {
     width: 100%;
     margin-bottom: 0;
+    border-collapse: inherit;
 }
 
 .vuetable {
@@ -290,7 +297,7 @@
 
     .title {
         font-size: 1rem;
-        font-weight: 600;
+        font-weight: normal;
     }
     .page-info {
         margin-top: auto;
@@ -302,7 +309,7 @@
 .custom-table {
     // width: calc(100% + 18px);
     width: calc(100%);
-    max-height: 540px;
+    max-height: 630px;
     white-space: nowrap;
 
     .custom-table-color {
@@ -389,7 +396,7 @@
         .btn {
             height: 31px;
             background-color: #fff;
-            color: #000;
+            color: #3a3a3a;
             border: 1px solid #bbb;
             padding: 0.5rem 1rem;
             font-size: 0.74rem;
@@ -444,7 +451,7 @@
 
         input {
             margin: 0;
-            font-family: 'MBC NEW M';
+            // font-family: 'MBC NEW M';
         }
     }
     
@@ -464,7 +471,7 @@
         height: 32px;
         background-color: #fff;
         border-color: #bbb;
-        color: #000;
+        color: #3a3a3a;
 
         &:hover {
             border: 1px solid #008ecc;

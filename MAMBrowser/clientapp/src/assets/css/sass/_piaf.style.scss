@@ -36,7 +36,7 @@ Table of Contents
 // @import url("https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700");
 
 @font-face {
-    font-family: 'MBC NEW B';
+    font-family: 'MBC 새로움 L';
     src: url('/assets/fonts/mbc-font/MBC NEW B.ttf') format('truetype'),
          url('/assets/fonts/mbc-font/MBC NEW L.ttf') format('truetype'),
          url('/assets/fonts/mbc-font/MBC NEW M.ttf') format('truetype');
@@ -91,6 +91,7 @@ $info-color: #3195a5;
 $success-color: #3e884f;
 $warning-color: #b69329;
 $error-color: #c43d4b;
+$primary-color: #3a3a3a;
 
 /* 01.Base */
 html {
@@ -127,9 +128,9 @@ html {
 }
 
 body {
-    font-family: "MBC NEW M";
+    font-family: "MBC 새로움 L";
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: normal;
     color: $primary-color;
     background: $background-color;
 

@@ -77,9 +77,13 @@ let mixinCommon = {
                 } else {
                     const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
                     if (selectPage > 1) {
+                        const resData = [];
                         data.forEach(row => {
-                            this.responseData.data.push(row);
+                            // this.responseData.data.push(row);
+                            resData.push(row);
                         })
+                        const newArr = [...this.responseData.data, ...resData];
+                        this.responseData.data = newArr;
                         this.$refs.scrollPaging.loading();
                     } else {
                         this.responseData.data = data;
