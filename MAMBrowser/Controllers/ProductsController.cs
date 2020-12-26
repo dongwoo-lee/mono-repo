@@ -351,14 +351,14 @@ namespace MAMBrowser.Controllers
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="name"></param>
-        /// <param name="isExpired"> 방송 유효일이 지난것 포함 보기 : Y </param>
+        /// <param name="isAvailable"> 방송 유효일이 오늘기준으로 유효한거만 보기 : Y </param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/general/{brd_dt}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] string isExpired, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> FindFeneralFiller(string brd_dt, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] string isAvailable, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER>>();
             try
@@ -384,14 +384,14 @@ namespace MAMBrowser.Controllers
         /// <param name="cate"></param>
         /// <param name="editor"></param>
         /// <param name="name"></param>
-        /// <param name="isExpired"> 방송 종료일이 지난것 포함 보기 : Y </param>
+        /// <param name="isAvailable"> 방송 종료일이 오늘기준으로 유효한거만 보기 : Y </param>
         /// <param name="rowPerPage"></param>
         /// <param name="selectPage"></param>
         /// <param name="sortKey"></param>
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("filler/time/{media}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] string isExpired, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> FindTimetoneFiller(string media, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string status, [FromQuery] string cate, [FromQuery] string editor, [FromQuery] string name, [FromQuery] string isAvailable, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_FILLER_TIME>>();
             try
