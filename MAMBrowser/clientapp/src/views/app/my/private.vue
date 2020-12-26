@@ -16,8 +16,10 @@
         <!-- 시작일 ~ 종료일 -->
         <common-start-end-date-picker 
           :startDate.sync="searchItems.start_dt"
-          :startYearAgo="1"
-          :endDate.sync="searchItems.end_dt"/>
+          :endDate.sync="searchItems.end_dt"
+          :required="false"
+          :isCurrentDate="false"
+        />
         <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
           <common-input-text v-model="searchItems.title" />

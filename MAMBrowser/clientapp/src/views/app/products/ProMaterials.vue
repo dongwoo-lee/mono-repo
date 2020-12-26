@@ -13,11 +13,14 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
-        <!-- 시작-종료일 -->
-        <common-start-end-date-picker
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
           :startDate.sync="searchItems.start_dt"
-          :startMonthAgo="1"
-          :endDate.sync="searchItems.end_dt"/>
+          :startMonthAgo="3"
+          :maxPeriodMonth="3"
+          :endDate.sync="searchItems.end_dt"
+          :required="true"
+        />
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">
           <b-form-select
@@ -199,11 +202,11 @@ export default {
   },
   methods: {
     getData() {
-      //  if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
-      //   this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
-      //   this.hasErrorClass = true;
-      //   return;
-      //  }
+       if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
+        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+        this.hasErrorClass = true;
+        return;
+       }
 
       this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/products/old_pro`, { params: this.searchItems })

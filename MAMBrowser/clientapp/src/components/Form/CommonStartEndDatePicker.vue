@@ -1,21 +1,30 @@
 <template>
-    <div class="row" style="margin-right:0;">
-        <!-- 등록일: 시작일 -->
-        <b-form-group :label="startDateLabel"
-          class="has-float-label">
-          <common-date-picker v-model="sDate" 
-            :dayAgo="startDayAgo"
-            :monthAgo="startMonthAgo"
-            :yearAgo="startYearAgo"
-            :isCurrentDate="false" 
-            :required="true" />
-        </b-form-group>
-      <!-- 등록일: 종료일 -->
-        <b-form-group :label="endDateLabel" 
-          class="has-float-label">
-          <common-date-picker v-model="eDate" 
-          :required="true" />
-        </b-form-group>
+    <div style="margin-left:20px">
+        <div class="row" style="margin-right:0;">
+            <b-form-group :label="startDateLabel" class="has-float-label">
+            <!-- 등록일: 시작일 -->
+            <common-date-picker 
+                :value="sDate" 
+                :dayAgo="startDayAgo"
+                :monthAgo="startMonthAgo"
+                :yearAgo="startYearAgo"
+                :isCurrentDate="isCurrentDate"
+                :required="required"
+                @input="onSInput" />
+            </b-form-group>
+            <!-- 등록일: 종료일 -->
+            <b-form-group :label="endDateLabel" class="has-float-label">
+                <common-date-picker 
+                :value="eDate"
+                :isCurrentDate="isCurrentDate"
+                :maxDate="maxDate"
+                :required="required"
+                @input="onEInput" />
+            </b-form-group>
+        </div>
+        <div v-if="isPeriodDate()" style="position: relative; margin: 5px 0 0 5px;">
+            {{getPeriodDescription()}}
+        </div>
     </div>
 </template>
 <script>
@@ -38,13 +47,9 @@ export default {
             type: String,
             default: '종료일'
         },
-        checkMaxSearchDay: {
-            type: Boolean,
-            default: false,
-        },
         startDayAgo: {
             type: Number,
-            defaut: 0,
+            defaut: 0
         },
         startMonthAgo: {
             type: Number,
@@ -52,49 +57,101 @@ export default {
         },
         startYearAgo: {
             type: Number,
-            defaut: 0,
+            defaut: 0
+        },
+        maxPeriodDay: {
+            type: Number,
+            default: 0
+        },
+        maxPeriodMonth: {
+            type: Number,
+            default: 0
+        },
+        maxPeriodYear: {
+            type: Number,
+            default: 0
+        },
+        isCurrentDate: {
+            type: Boolean,
+            default: true,
+        },
+        required: {
+            type: Boolean,
+            default: true,
         }
     },
     data() {
         return {
             sDate: '',
             eDate: '',
+            maxDate: '',
         }
     },
     watch: {
-        sDate(date) {
-            this.$emit('update:startDate', date);
-            if (date && this.checkMaxSearchDay) {
-                console.info('checkMaxSearchDay')
-                const result = this.checkMiximumEndDate(date);
-            }
+        startDate: {
+            handler(date) {
+                this.sDate = date;
+                this.checkMaxPeriodDate(date);
+            },
+            immediate:true
         },
-        eDate(date) {
-            this.$emit('update:endDate', date);
-            if (date && this.checkMaxSearchDay) {
-                console.info('checkMaxSearchDay')
-                const result = this.checkMiximumStartDate(date);
-                // TODO: 체크
-            }
+        endDate: {
+            handler(date) {
+                this.eDate = date;
+            },
+            immediate: true
         }
     },
-    mounted() {
-        this.sDate = this.startDate;
-        this.eDate = this.endDate;
-    },
     methods: {
-        checkMiximumStartDate(date) {
-            const selectedDate = Date.parse(this.$fn.formatDate(date, 'yyyy-MM-dd'));
-            const maxSearchDate = new Date(selectedDate);
-            const endDate = Date.parse(this.$fn.formatDate(this.eDate, 'yyyy-MM-dd'));
-            maxSearchDate.setDate(maxSearchDate.getDate() - MAXIMUM_SEARCH_DATE);
-            return selectedDate <= maxSearchDate;
+        onSInput(v){
+            this.$emit('update:startDate', v);
         },
-        checkMiximumEndDate(date) {
-            const selectedDate = Date.parse(this.$fn.formatDate(date, 'yyyy-MM-dd'));
-            const maxSearchDate = new Date(selectedDate);
-            maxSearchDate.setDate(maxSearchDate.getDate() + MAXIMUM_SEARCH_DATE);
-            return selectedDate <= maxSearchDate;
+        onEInput(v) {
+            this.$emit('update:endDate', v);
+        },
+        checkMaxPeriodDate(selectDate) {
+            if (!selectDate) { return; }
+
+            // 선택된 날짜 + periodDate
+            const formatStartDate = this.$fn.dateStringTohaipun(selectDate);
+            const periodDate = new Date(Date.parse(formatStartDate));
+
+            if (this.maxPeriodDay > 0) {
+                periodDate.setDate(periodDate.getDate() + this.maxPeriodDay);
+            } else if (this.maxPeriodMonth > 0) {
+                periodDate.setMonth(periodDate.getMonth() + this.maxPeriodMonth);
+            } else if (this.maxPeriodYear > 0) {
+                periodDate.setFullYear(periodDate.getFullYear() + this.maxPeriodYear);
+            } else {
+                return;
+            }
+            
+            // 종료일 확인
+            const formatEndDate = this.$fn.dateStringTohaipun(this.endDate);
+            const endDate = new Date(Date.parse(formatEndDate));
+
+            // 날짜 비교
+            if (endDate > periodDate) {
+                this.$emit('update:endDate', this.$fn.formatDate(periodDate));
+            }
+            this.maxDate = periodDate;
+        },
+        isPeriodDate() {
+            return this.maxPeriodYear > 0 || this.maxPeriodMonth > 0 || this.maxPeriodDay > 0;
+        },
+        getPeriodDescription() {
+            if (!this.isPeriodDate()) return '';
+            
+            let dateString = '';
+            if (this.maxPeriodYear > 0) {
+                dateString = `${this.maxPeriodYear}년`;
+            } else if (this.maxPeriodMonth > 0) {
+                dateString = `${this.maxPeriodMonth}개월`;
+            } else if (this.maxPeriodDay > 0) {
+                dateString = `${this.maxPeriodDay}일`;   
+            }
+            return `※시작일로부터 최대 ${dateString}이내 선택 가능합니다.`;
+
         }
     }
 }

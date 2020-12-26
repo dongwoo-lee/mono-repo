@@ -23,18 +23,14 @@
             text-field="name" 
           />
         </b-form-group>
-        <!-- 방송 시작일 -->
-        <b-form-group label="시작일" 
-          class="has-float-label"
-          :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.start_dt" required/>
-        </b-form-group>
-        <!-- 방송 종료일 -->
-        <b-form-group label="종료일"
-          class="has-float-label"
-          :class="{ 'hasError': hasErrorClass }">
-          <common-date-picker v-model="searchItems.end_dt" required/>
-        </b-form-group>
+        <!-- 시작일 ~ 종료일 -->
+        <common-start-end-date-picker 
+          :startDate.sync="searchItems.start_dt"
+          :startDayAgo="7"
+          :maxPeriodMonth="3"
+          :endDate.sync="searchItems.end_dt"
+          :required="true"
+        />
         <!-- 사용처 -->
         <b-form-group label="사용처명" class="has-float-label">
           <common-input-text v-model="searchItems.pgmName"/>
