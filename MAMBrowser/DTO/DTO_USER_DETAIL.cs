@@ -24,5 +24,8 @@ namespace MAMBrowser.DTO
         public List<DTO_MENU> MenuList { get; set; } = new List<DTO_MENU>();
         public List<DTO_MENU> BehaviorList { get; set; } = new List<DTO_MENU>();
 
+        public string ConNetworkName { get; set; }
+        public string ConDBName { get; set; }
+
     }
 }

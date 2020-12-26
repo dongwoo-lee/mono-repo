@@ -489,5 +489,10 @@ namespace MAMBrowser.Helpers
             }
             return $"ORDER BY {sortFiled} {sortDirection}";
         }
+
+        public static string NetworkName()
+        {
+            return "사내망";
+        }
     }
 }

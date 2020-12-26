@@ -221,7 +221,8 @@ namespace MAMBrowser.Controllers
                 });
 
                 user.BehaviorList = _dal.GetBehavior(user.AuthorCD);
-
+                user.ConDBName = _appSesstings.DBName;
+                user.ConNetworkName = MAMUtility.NetworkName();
                 result.ResultObject = user;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
