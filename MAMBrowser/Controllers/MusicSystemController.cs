@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -181,6 +182,12 @@ namespace MAMBrowser.Controllers
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
             _fileService.TempDownloadWavAndEgy(userId, remoteIp, token);
+            return Ok();
+        }
+        [HttpGet("music-to-myspace")]
+        public IActionResult MusicToMyspace([FromQuery] string token)
+        {
+            Thread.Sleep(5000);
             return Ok();
         }
 

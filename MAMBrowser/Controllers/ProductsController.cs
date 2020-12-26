@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 
 namespace MAMBrowser.Controllers
 {
@@ -727,6 +728,18 @@ namespace MAMBrowser.Controllers
         }
 
 
+        /// <summary>
+        /// 일반 소재 - My공간으로 복사
+        /// </summary>
+        /// <param name="seq">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpGet("product-to-myspace")]
+        public IActionResult FileToMySpace([FromQuery] string token)
+        {
+            Thread.Sleep(5000);
+            return Ok();
+        }
+
 
 
         /// <summary>
@@ -809,5 +822,17 @@ namespace MAMBrowser.Controllers
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
         }
+        /// <summary>
+        /// DL30 소재 - My공간으로 복사
+        /// </summary>
+        /// <param name="seq">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpGet("dl30-to-myspace/{seq}")]
+        public IActionResult Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV")
+        {
+            Thread.Sleep(5000);
+            return Ok();
+        }
+
     }
 }

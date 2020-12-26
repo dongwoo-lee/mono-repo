@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
@@ -251,6 +252,12 @@ namespace MAMBrowser.Controllers
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
+        }
+        [HttpGet("public-to-myspace/{key}")]
+        public IActionResult PublicFileToMyspace(long key)
+        {
+            Thread.Sleep(5000);
+            return Ok();
         }
 
 
