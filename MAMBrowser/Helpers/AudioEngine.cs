@@ -539,36 +539,38 @@ namespace MAMBrowser.Helpers
         }
 
 
-        public static string GetAudioFormat(Stream stream, string fileName)
+        public static string GetAudioFormat(MemoryStream memoryStream, string fileName)
         {
             var ext = Path.GetExtension(fileName);
-            byte[] buffer = new byte[500000];
-            using (MemoryStream ms = new MemoryStream())
+           
+            if (ext.ToUpper() == MAMUtility.WAV)
             {
-                var read = stream.Read(buffer, 0, buffer.Length);
-                ms.Write(buffer, 0, read);
-                ms.Flush();
-                ms.Position = 0;
-
-                if (ext.ToUpper() == MAMUtility.WAV)
-                {
-                    WaveFileReader reader = new WaveFileReader(ms);
-                    return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-                }
-                else if (ext.ToUpper() == MAMUtility.MP2)
-                {
-                    Mp3FileReader reader = new Mp3FileReader(ms, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
-                    var frame = reader.ReadNextFrame();
-                    return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                }
-                else if (ext.ToUpper() == MAMUtility.MP3)
-                {
-                    Mp3FileReader reader = new Mp3FileReader(ms);
-                    var frame = reader.ReadNextFrame();
-                    return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                }
+                WaveFileReader reader = new WaveFileReader(memoryStream);
+                return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
             }
+            else if (ext.ToUpper() == MAMUtility.MP2)
+            {
+                Mp3FileReader reader = new Mp3FileReader(memoryStream, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
+                var frame = reader.ReadNextFrame();
+                return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+            }
+            else if (ext.ToUpper() == MAMUtility.MP3)
+            {
+                Mp3FileReader reader = new Mp3FileReader(memoryStream);
+                var frame = reader.ReadNextFrame();
+                return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+            }
+           
             return "unknown";
+        }
+        public static MemoryStream GetHeaderStream(Stream stream)
+        {
+            byte[] buffer = new byte[500000];
+            MemoryStream ms = new MemoryStream();
+            var read = stream.Read(buffer, 0, buffer.Length);
+            ms.Write(buffer, 0, read);
+            ms.Flush();
+            return ms;
         }
 
 

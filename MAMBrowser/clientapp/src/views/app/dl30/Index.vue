@@ -45,9 +45,10 @@
       </template>
       <template slot="form-table-area">
         <!-- 테이블 -->
-        <b-row>
+        <b-row >
           <b-colxx xs="12" md="12" class="no-r-p">
             <b-table
+              style="height:550px"
               class="custom-table non-h"
               ref="custom-table"
               thead-class="custom-table-color"
@@ -114,7 +115,7 @@ export default {
         tempDownloadUrl : '/api/Products/dl30-temp-download',
         searchItems: {
             media : 'A',           // 매체
-            regDtm: '20201118',            // 편성일자
+            regDtm: new Date().toISOString().substring(0, 10),            // 편성일자
             pgmName: '',             // 녹음명
             rowPerPage: 30,
             selectPage: 1,

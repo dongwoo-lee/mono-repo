@@ -85,6 +85,7 @@
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
+           @sortableclick="onSortable"
           @selectedIds="onSelectedIds"
           @refresh="onRefresh"
         >
@@ -186,15 +187,15 @@ export default {
           title: '순서',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '5%',
+          width: '4%',
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%",
-          sortField: 'categoryName'
+          width: "12%",
+          // sortField: 'categoryName'
         },
         {
           name: "title",
@@ -215,7 +216,7 @@ export default {
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%",
+          width: "5%",
         },
         {
           name: "audioFormat",
@@ -238,7 +239,7 @@ export default {
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "12%",
+          width: "14%",
           sortField: 'editedDtm'
         },
         {

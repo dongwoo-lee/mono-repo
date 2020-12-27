@@ -61,7 +61,7 @@ namespace MAMBrowser.Processor
             File.Move(source, destination, true);
         }
 
-        public void Upload(Stream fileStream, string sourcePath, long fileLength)
+        public void Upload(Stream headerStream, Stream fileStream, string sourcePath, long fileLength)
         {
             throw new NotImplementedException();
         }

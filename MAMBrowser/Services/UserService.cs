@@ -1,4 +1,5 @@
 ﻿using MAMBrowser.Controllers;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
@@ -13,7 +14,7 @@ namespace MAMBrowser.Services
 {
     public interface IUserService
     {
-        DTO_RESULT<DTO_USER_DETAIL> Authenticate(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
+        string Authenticate(string id);
         DTO_RESULT<DTO_USER_DETAIL>  Reissue(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model);
     }
 
@@ -28,16 +29,17 @@ namespace MAMBrowser.Services
             _dal = dal;
         }
 
-        public DTO_RESULT<DTO_USER_DETAIL> Authenticate(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model)
+        public string Authenticate(string id)
         {
-            DTO_USER_TOKEN userToken = _dal.Authenticate(model);
+            //DTO_USER_TOKEN userToken = _dal.Authenticate(model);
 
-            if (userToken == null) return result;
-            var jwtToken = GenerateJwtToken(userToken.ID);
+            //if (userToken == null) return result;
+            //var jwtToken = GenerateJwtToken(userToken.ID);
 
-            result.Token = jwtToken;
+            //result.Token = jwtToken;
 
-            return result;
+            //return result;
+            return GenerateJwtToken(id);
         }
         public DTO_RESULT<DTO_USER_DETAIL> Reissue(DTO_RESULT<DTO_USER_DETAIL> result, AuthenticateModel model)
         {

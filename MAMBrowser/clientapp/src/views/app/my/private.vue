@@ -148,7 +148,7 @@ export default {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "3%"
         },
         {
           name: 'rowNO',
@@ -163,7 +163,6 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: 'title',
-          width: "25%"
         },
         {
           name: "memo",
@@ -177,7 +176,7 @@ export default {
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "5%"
         },
          {
           name: "fileSize",
@@ -196,7 +195,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: 'audioFormat',
-          width: "9%"
+          width: "10%"
         },
         {
           name: "editedDtm",
@@ -204,14 +203,14 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: 'editedDtm',
-          width: "15%"
+          width: "12%"
         },
         {
           name: '__slot:actions',
           title: '추가작업',
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
         }
       ],
       USER_ID

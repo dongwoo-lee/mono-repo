@@ -1,4 +1,5 @@
 ﻿using MAMBrowser.BLL;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Authorization;

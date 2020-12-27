@@ -1,4 +1,5 @@
-﻿using MAMBrowser.DTO;
+﻿using MAMBrowser.DAL;
+using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Services;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace MAMBrowser.Controllers
 {
@@ -37,6 +39,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
+                var clientIp = HttpContext.Connection.RemoteIpAddress;
                 if (!_dal.ExistUser(account))
                 {
                     result.ErrorMsg = "ID 를 찾을 수 없습니다.";
@@ -44,16 +47,16 @@ namespace MAMBrowser.Controllers
                 }
                 else
                 {
-                    DTO_USER_TOKEN userToken = _dal.Authenticate(account);
-                    if (userToken == null)
+                    
+                    if (!_dal.Authenticate(account))
                     {
                         result.ErrorMsg = "비밀번호가 틀립니다.";
                         result.ResultCode = RESUlT_CODES.DENY_ACCESS;
                     }
                     else
                     {
-                        result = _userService.Authenticate(result, account);
-                        result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
+                        result.Token = _userService.Authenticate(account.PERSONID);
+                        result.ResultObject = GetUserDetail(account.PERSONID, clientIp).ResultObject;
                         result.ResultCode = RESUlT_CODES.SUCCESS;
                     }
                 }
@@ -78,9 +81,11 @@ namespace MAMBrowser.Controllers
             {
                 //if (HttpContext.Items["User"] as string == account.PERSONID)  //인증작업 완료 이후 주석 풀 예정
                 //{
-                    result = _userService.Reissue(result, account);
-                    result.ResultObject = GetUserDetail(account.PERSONID).ResultObject;
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
+
+                var clientIp = HttpContext.Connection.RemoteIpAddress;
+                result = _userService.Reissue(result, account);
+                result.ResultObject = GetUserDetail(account.PERSONID, clientIp).ResultObject;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
                 //}
                 //else
                 //{
@@ -200,6 +205,11 @@ namespace MAMBrowser.Controllers
         [HttpGet("users/{id}")]
         public DTO_RESULT<DTO_USER_DETAIL> GetUserDetail(string id)
         {
+            var clientIp = HttpContext.Connection.RemoteIpAddress;
+            return GetUserDetail(id, clientIp);
+        }
+        private DTO_RESULT<DTO_USER_DETAIL> GetUserDetail(string id, IPAddress clientIp)
+        {
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
@@ -222,7 +232,7 @@ namespace MAMBrowser.Controllers
 
                 user.BehaviorList = _dal.GetBehavior(user.AuthorCD);
                 user.ConDBName = _appSesstings.DBName;
-                user.ConNetworkName = MAMUtility.NetworkName();
+                user.ConNetworkName = MAMUtility.NetworkName(clientIp);
                 result.ResultObject = user;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }

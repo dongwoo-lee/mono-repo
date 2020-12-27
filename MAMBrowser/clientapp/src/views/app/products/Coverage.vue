@@ -69,7 +69,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
-          tableHeight='611px'
+          tableHeight='520px'
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
@@ -161,7 +161,6 @@ export default {
           title: "사용처명",
           titleClass: 'center aligned text-center',
           dataClass: "center aligned text-center bold",
-          width: '8%',
           sortField: 'pgmName',
         },
         {

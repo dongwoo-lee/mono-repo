@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MAMBrowser.BLL
+namespace MAMBrowser.DAL
 {
     public class ProductsDAL
     {
@@ -146,7 +146,7 @@ namespace MAMBrowser.BLL
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
             {
-                orderBy = "ORDER BY EDITTIME DESC";
+                orderBy = "ORDER BY SPOTNAME, ONAIRDATE ASC";
             }
             else
             {
@@ -188,7 +188,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string isMastering, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -231,11 +231,15 @@ namespace MAMBrowser.BLL
             {
                 builder.Where("EDITOR = :EDITOR");
             }
+            if (isMastering == "Y")
+            {
+                builder.Where("MASTERFILE IS NOT NULL");
+            }
 
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
             {
-                orderBy = "ORDER BY EDITTIME DESC";
+                orderBy = "ORDER BY EVENTNAME ASC, ONAIRDATE DESC, REPORTNAME ASC";
             }
             else
             {
@@ -277,7 +281,7 @@ namespace MAMBrowser.BLL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_PRO> FindOldPro(string media, string cate, string type, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_PRO> FindOldPro(string media, string cate, string start_dt, string end_dt, string type, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
             int lastNo = startNo + rowPerPage;
@@ -289,6 +293,8 @@ namespace MAMBrowser.BLL
             {
                 MEDIA = media,
                 CATE = cate,
+                START_DT = start_dt,
+                END_DT = end_dt,
                 TYPE = type,
                 EDITOR = editor,
                 START_NO = startNo,
@@ -297,6 +303,7 @@ namespace MAMBrowser.BLL
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_PROAUDIOFILE /**where**/");
             builder.Select("AUDIOID, AUDIONAME, CODENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, TYPENAME, MASTERFILE");
+            builder.Where("(MASTERTIME >= :START_DT AND MASTERTIME <= :END_DT)");
             //if (!string.IsNullOrEmpty(media))  //DB단 매체 필드가 없어서 조건으로 넣을 수 없음.
             //{
             //    builder.Where("MEDIA=:MEDIA");      
@@ -332,7 +339,7 @@ namespace MAMBrowser.BLL
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
             {
-                orderBy = "ORDER BY EDITTIME DESC";
+                orderBy = "ORDER BY MASTERTIME DESC, AUDIONAME ASC";
             }
             else
             {

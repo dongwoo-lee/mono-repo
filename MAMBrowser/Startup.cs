@@ -143,6 +143,8 @@ namespace MAMBrowser
             services.AddTransient<PrivateFileDAL>();
             services.AddTransient<ProductsDAL>();
             services.AddTransient<PublicFileDAL>();
+            //BLL 등록
+            services.AddTransient<PrivateFileBLL>();
 
             //서비스 등록
             services.AddScoped<IUserService, UserService>();

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MAMBrowser.Controllers
+namespace MAMBrowser.DAL
 {
     public class APIDAL 
     {
@@ -244,7 +244,7 @@ LEFT JOIN M30_COMM_CODE ON M30_COMM_CODE.CODE = A.CODE");
                 return false;
 
         }
-        public DTO_USER_TOKEN Authenticate(AuthenticateModel user)
+        public bool Authenticate(AuthenticateModel user)
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT PERSONID, PASSWD FROM MIROS_USER /**where**/");
@@ -261,9 +261,13 @@ LEFT JOIN M30_COMM_CODE ON M30_COMM_CODE.CODE = A.CODE");
 
             var result = repository.Select(queryTemplate.RawSql, user, resultMapping);
             if (result.Count() > 0)
-                return GetToken(user.PERSONID);
+                return true;
             else
-                return null;
+                return false;
+            //if (result.Count() > 0)
+            //    return GetToken(user.PERSONID);
+            //else
+            //    return null;
         }
         private DTO_USER_TOKEN GetToken(string id)
         {

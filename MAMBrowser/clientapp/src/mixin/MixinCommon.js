@@ -201,7 +201,7 @@ let mixinCommon = {
             this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item.title);
         },
         onMyDiskCopyFromMusic(item) { 
-            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/${item.seq}`, item.name);
+            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/token=${item.fileToken}`, item.name);
         },
         onMyDiskCopyFromProduct(item) {
             this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item.name);

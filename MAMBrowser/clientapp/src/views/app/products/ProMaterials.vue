@@ -60,7 +60,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
-          tableHeight='611px'
+          tableHeight='520px'
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"

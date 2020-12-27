@@ -490,9 +490,39 @@ namespace MAMBrowser.Helpers
             return $"ORDER BY {sortFiled} {sortDirection}";
         }
 
-        public static string NetworkName()
+        public static string NetworkName(IPAddress clientIp)
         {
-            return "사내망";
+            var stNetwork = IPAddress.Parse(Startup.AppSetting.BroadcastStartNetwork);
+            var edNetwork = IPAddress.Parse(Startup.AppSetting.BroadcastEndNetwork);
+            if (IsInRange(stNetwork, edNetwork, clientIp))
+                return "방송망";
+            else
+                return "사내망";
+        }
+        public static bool IsInRange(IPAddress stIp, IPAddress edIp, IPAddress checkIp)
+        {
+            if (stIp.AddressFamily != checkIp.AddressFamily)
+                return false;
+
+            var lowerBytes = stIp.GetAddressBytes();
+            var upperBytes = edIp.GetAddressBytes();
+
+            byte[] checkBytes = checkIp.GetAddressBytes();
+            bool lowerBoundary = true, upperBoundary = true;
+
+            for (int i = 0; i < lowerBytes.Length && (lowerBoundary || upperBoundary); i++)
+            {
+                if ((lowerBoundary && checkBytes[i] < lowerBytes[i]) ||
+                    (upperBoundary && checkBytes[i] > upperBytes[i]))
+                {
+                    return false;
+                }
+
+                lowerBoundary &= (checkBytes[i] == lowerBytes[i]);
+                upperBoundary &= (checkBytes[i] == upperBytes[i]);
+            }
+
+            return true;
         }
     }
 }

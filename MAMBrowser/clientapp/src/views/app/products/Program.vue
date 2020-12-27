@@ -191,7 +191,7 @@ export default {
           title: "방송의뢰일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '15%',
+          width: '12%',
           sortField: 'reqCompleteDtm',
         },
         {

@@ -71,7 +71,6 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
-          tableHeight='611px'
           :fields="fields"
           :rows="responseData.data"
           is-actions-slot

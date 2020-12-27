@@ -49,7 +49,7 @@ export default {
         },
         tableHeight: {          // 테이블 높이
             type: String,
-            default: '630px',
+            default: '520px',
         },
         fields: {               // header 데이터
             type: Array,

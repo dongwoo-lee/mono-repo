@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
+using MAMBrowser.Models;
 using MAMBrowser.Processor;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -126,7 +128,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindReport(cate, start_dt, end_dt, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindReport(cate, start_dt, end_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -158,7 +160,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindOldPro(media, cate, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindOldPro(media, cate, start_dt, end_dt, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -427,7 +429,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 //
-                //result.ResultObject = _dal.FindFiller("M30_VW_FILLER_MATERIAL", brd_dt, cate, editor, editorName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _dal.FindFiller("M30_VW_FILLER_ETC", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -734,11 +736,36 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("product-to-myspace")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token, [FromServices] PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            Thread.Sleep(5000);
-            result.ResultCode = RESUlT_CODES.SUCCESS;
+            try
+            {
+                string filePath = "";
+                if (MAMUtility.ValidateMAMToken(token, ref filePath))
+                {
+                    var fileName = Path.GetFileName(filePath);
+                    string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                    using (var stream = _fileService.GetFileStream(filePath, 0))
+                    {
+                        PrivateFileModel model = new PrivateFileModel();
+                        model.TITLE = Path.GetFileNameWithoutExtension(fileName);
+                        model.MEMO = model.TITLE;
+                        model.FILE_SIZE = stream.Length;
+
+                        privateBll.UploadFile(userId, stream, fileName, model);
+                        result.ResultCode = RESUlT_CODES.SUCCESS;
+                    }
+                }
+                else
+                    throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+
             return result;
         }
 
@@ -830,11 +857,32 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("dl30-to-myspace/{seq}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV")
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromServices] PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            Thread.Sleep(5000);
-            result.ResultCode = RESUlT_CODES.SUCCESS;
+            try
+            {
+                var fileService = sr("DLArchiveConnection");
+                var fileData = _dal.GetDLArchive(seq);
+                var fileName = Path.GetFileName(fileData.FilePath);
+                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
+                {
+                    PrivateFileModel model = new PrivateFileModel();
+                    model.TITLE = fileData.RecName;
+                    model.MEMO = fileData.RecName;
+                    model.FILE_SIZE = fileData.FileSize;
+
+                    privateBll.UploadFile(userId, stream, fileName, model);
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+
             return result;
         }
 

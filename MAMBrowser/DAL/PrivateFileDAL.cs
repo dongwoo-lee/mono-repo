@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace MAMBrowser.Controllers
+namespace MAMBrowser.DAL
 {
     public class PrivateFileDAL
     {
@@ -25,50 +25,26 @@ namespace MAMBrowser.Controllers
             _fileService = sr("PrivateWorkConnection");
         }
 
-        public DTO_PRIVATE_FILE Insert(string userId, IFormFile file, PrivateFileModel metaData, string host)
+        public void Insert(string userId, PrivateFileModel metaData)
         {
-            long ID = GetID();
-            string date = DateTime.Now.ToString(MAMUtility.DTM8);
-            string fileName = $"{ ID.ToString() }_{file.FileName}";
-            var relativeSourceFolder = $"{_fileService.TmpUploadFolder}";
-            var relativeTargetFolder = @$"{_fileService.UploadFolder}\{userId}\{date}";
-            var relativeSourcePath = @$"{relativeSourceFolder}\{fileName}";
-            var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
-            
-            _fileService.MakeDirectory(relativeSourceFolder);
-            var stream = file.OpenReadStream();
-            var audioFormat = AudioEngine.GetAudioFormat(stream, relativeTargetPath);
-            stream.Position = 0;
-            _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
-            _fileService.MakeDirectory(relativeTargetFolder);
-            _fileService.Move(relativeSourcePath, relativeTargetPath);
-
-            
             DynamicParameters param = new DynamicParameters();
-            param.Add("SEQ", ID);
+            param.Add("SEQ", metaData.SEQ);
             param.Add("USER_ID", userId);
             param.Add("TITLE", metaData.TITLE);
             param.Add("MEMO", metaData.MEMO);
-            param.Add("AUDIO_FORMAT", audioFormat);
-            param.Add("FILE_SIZE", file.Length);
-            param.Add("FILE_PATH", @$"\\{host}\{relativeTargetPath}");
-            //db에 데이터 등록
+            param.Add("AUDIO_FORMAT", metaData.AUDIO_FORMAT);
+            param.Add("FILE_SIZE", metaData.FILE_SIZE);
+            param.Add("FILE_PATH", metaData.FILE_PATH);
+            
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_MAM_PRIVATE_SPACE 
 VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y', SYSDATE, NULL)");
-
-            //var builder2 = new SqlBuilder();
-            //var queryTemplate2 = builder2.AddTemplate("UPDATE M30_COMM_USER_EXT SET DISK_USED=(DISK_USED+:FILE_SIZE) WHERE USER_ID=:USER_ID");
-            //DynamicParameters param2 = new DynamicParameters();
-            //param2.Add("USER_ID", userId);
-            //param2.Add("FILE_SIZE", file.Length);
 
             TransactionRepository repository = new TransactionRepository();
             repository.BeginTransaction();
             try
             {
                 repository.Insert(queryTemplate.RawSql, param);
-                //repository.Update(queryTemplate2.RawSql, param2);
                 repository.CommitTransaction();
             }
             catch (Exception ex)
@@ -76,9 +52,6 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
                 repository.RollbackTransaction();
                 throw;
             }
-
-
-            return Get(ID);
         }
         
         public bool DeleteDB(string userId, LongList seqList)
@@ -267,7 +240,7 @@ VALUES(:SEQ, :USER_ID, :TITLE, :MEMO, :AUDIO_FORMAT, :FILE_SIZE, :FILE_PATH, 'Y'
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        private long GetID()
+        public long GetID()
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate("SELECT M30_MAM_PRIVATE_SPACE_SEQ.NEXTVAL AS SEQ FROM DUAL");

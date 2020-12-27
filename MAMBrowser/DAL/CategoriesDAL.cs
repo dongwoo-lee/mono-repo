@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MAMBrowser.BLL
+namespace MAMBrowser.DAL
 {
     public class CategoriesDAL
     {
@@ -133,7 +133,7 @@ namespace MAMBrowser.BLL
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("SELECT * FROM M30_VW_CATEGORY WHERE CODETYPE = 'PA' AND SUBCODEID='Y'");
+            var queryTemplate = builder.AddTemplate("SELECT * FROM M30_VW_CATEGORY WHERE CODETYPE = 'PA' AND SUBCODEID='Y' ORDER BY CODENAME ASC");
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
@@ -263,7 +263,7 @@ namespace MAMBrowser.BLL
 WHERE CODETYPE = 'UP'
 AND SUBCODEID = (SELECT MAX(SUBCODEID) FROM M30_VW_CATEGORY /**where**/)
 ORDER BY NUM");
-            builder.Where("SUBCODEID <= 'BRD_DT'");
+            builder.Where("SUBCODEID <= :BRD_DT");
             Repository repository = new Repository();
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
@@ -324,7 +324,7 @@ ORDER BY NUM");
             param.Add("USER_ID", userId);
 
             var queryTemplate = builder.AddTemplate(@"SELECT M30_COMM_CODE.CODE, M30_COMM_CODE.NAME NAME FROM M30_COMM_CODE_MAP
-LEFT JOIN M30_COMM_CODE ON M30_COMM_CODE.CODE = M30_COMM_CODE_MAP.CODE /**where**/");
+LEFT JOIN M30_COMM_CODE ON M30_COMM_CODE.CODE = M30_COMM_CODE_MAP.CODE /**where**/ ORDER BY NAME ASC");
             builder.Where("(SYSTEM_CD = 'S01' AND MAP_CD = 'S00G01C005')");
             builder.Where("GRP_CD = :GRP_CD");
             //if (!string.IsNullOrEmpty(userId))

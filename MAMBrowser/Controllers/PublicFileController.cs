@@ -1,4 +1,5 @@
-﻿using MAMBrowser.DTO;
+﻿using MAMBrowser.BLL;
+using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
@@ -254,14 +255,34 @@ namespace MAMBrowser.Controllers
             }
         }
         [HttpGet("public-to-myspace/{key}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key, [FromServices]PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            Thread.Sleep(5000);
-            result.ResultCode = RESUlT_CODES.SUCCESS;
+            
+            try
+            {
+                var fileData = _dal.Get(key);
+                var fileName = Path.GetFileName(fileData.FilePath);
+                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
+                {
+                    PrivateFileModel model = new PrivateFileModel();
+                    model.TITLE = fileData.Title;
+                    model.MEMO = fileData.Memo;
+                    model.FILE_SIZE = fileData.FileSize;
+
+                    privateBll.UploadFile(userId, stream, fileName, model);
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+
             return result;
         }
-
 
 
 

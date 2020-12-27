@@ -42,13 +42,16 @@ namespace MAMBrowser.Controllers
             var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
             var stream = file.OpenReadStream();
-            var audioFormat = AudioEngine.GetAudioFormat(stream, relativeTargetPath);
-            stream.Position = 0;
+            var headerStream = AudioEngine.GetHeaderStream(stream);
+            var audioFormat = AudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
+            headerStream.Position = 0;
 
             _fileService.MakeDirectory(relativeSourceFolder);
-            _fileService.Upload(file.OpenReadStream(), relativeSourcePath, file.Length);
+            _fileService.Upload(headerStream, stream, relativeSourcePath, file.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
+            stream.Dispose();
+            headerStream.Dispose();
 
             //metaData.SEQ = ID;
             DynamicParameters param = new DynamicParameters();
@@ -195,7 +198,7 @@ LEFT JOIN MIROS_USER D ON D.PERSONID=A.USER_ID
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
             {
-                orderBy = "ORDER BY EDITED_DTM DESC";
+                orderBy = "ORDER BY EDITED_DTM, TITLE ASC";
             }
             else
             {

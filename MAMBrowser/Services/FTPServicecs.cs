@@ -42,12 +42,18 @@ namespace MAMBrowser.Processor
             }
         }
 
-        public void Upload(Stream fileStream, string sourcePath, long fileLength)  //나중에 경로를 여기서 지정할수 있게끔...(지금은 상대경로 셋팅해서 들어옴)
+        public void Upload(Stream headerStream, Stream fileStream, string sourcePath, long fileLength)  //나중에 경로를 여기서 지정할수 있게끔...(지금은 상대경로 셋팅해서 들어옴)
         {
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
-                ftpClient.Upload(fileStream, sourcePath);
+                ftpClient.Upload(headerStream, sourcePath);
+            }
+            using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
+            {
+                ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
+                var stream = ftpClient.OpenWrite(sourcePath);
+                fileStream.CopyTo(stream);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using log4net.Appender;
 using log4net.Util;
 using MAMBrowser.BLL;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
@@ -36,10 +37,12 @@ namespace MAMBrowser.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
         private readonly PrivateFileDAL _dal;
+        private readonly PrivateFileBLL _bll;
         private readonly IFileService _fileService;
-        public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, PrivateFileDAL dal, ServiceResolver sr)
+        public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings,  ServiceResolver sr, PrivateFileBLL bll, PrivateFileDAL dal)
         {
             _dal = dal;
+            _bll = bll;
             _appSesstings = appSesstings.Value;
             _fileService = sr("PrivateWorkConnection");
             _hostingEnvironment = hostingEnvironment;
@@ -59,8 +62,12 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var success = _dal.Insert(userId, file, metaData, _fileService.UploadHost);
-                result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                metaData.FILE_SIZE = file.Length;
+                using (var stream = file.OpenReadStream())
+                {
+                    var seq = _bll.UploadFile(userId, stream, file.FileName, metaData);
+                    result.ResultCode = seq >= 0 ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                }
             }
             catch (Exception ex)
             {
