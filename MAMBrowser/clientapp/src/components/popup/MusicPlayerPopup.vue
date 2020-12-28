@@ -142,14 +142,16 @@ export default {
             let userId =sessionStorage.getItem(USER_ID);
             var tempList = [];
             this.imagePathList = [];
-            this.$http.get(`${this.tempImageDownloadUrl}?token=${this.music.fileToken}&albumtoken=${this.music.albumToken}`, null).then(res=>{
-                tempList = res.data;
-                tempList.forEach(fileName => {
-                    let newPath = `${this.tempImageStreamingUrl}?filename=${fileName}&userId=${userId}`;
-                    this.imagePathList.push(newPath);
-                    console.info('newPath', newPath);
+            if(this.music.albumToken){
+                this.$http.get(`${this.tempImageDownloadUrl}?token=${this.music.fileToken}&albumtoken=${this.music.albumToken}`, null).then(res=>{
+                    tempList = res.data;
+                    tempList.forEach(fileName => {
+                        let newPath = `${this.tempImageStreamingUrl}?filename=${fileName}&userId=${userId}`;
+                        this.imagePathList.push(newPath);
+                        console.info('newPath', newPath);
+                    });
                 });
-            });
+            }
         },
         getLyrics(){
             this.$http.get(`${this.lyricsUrl}/${this.music.lyricsSeq}`, null).then(res=>{

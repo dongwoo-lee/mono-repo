@@ -129,7 +129,7 @@ namespace MAMBrowser.Services
         public IList<DTO_SONG> SearchSong(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
             var builder = new UriBuilder("http", SearchDomain, 80, SearchSongUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={50}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
+            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={10}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
             builder.Query = param;
             
             HttpClient client = new HttpClient();

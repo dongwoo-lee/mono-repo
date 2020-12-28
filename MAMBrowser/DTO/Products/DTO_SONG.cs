@@ -86,7 +86,8 @@ namespace MAMBrowser.DTO
                     return;
 
                 albumImageFilePath = value;
-                AlbumToken = MAMUtility.GenerateMusicToken(albumImageFilePath);
+                if(!string.IsNullOrEmpty(albumImageFilePath))
+                    AlbumToken = MAMUtility.GenerateMusicToken(albumImageFilePath);
             }
         }
         public string AlbumToken { get; set; } // music 구조체 토큰
@@ -108,7 +109,10 @@ namespace MAMBrowser.DTO
             this.Writer = edto.WRITER;
             this.FilePath = Path.Combine(edto.MR_SONG_WAV_PATH_SR, edto.FILE_NAME_SR+MAMUtility.WAV);
             this.Arranger = edto.ARRANGER;
-            this.AlbumImageFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
+            if (!string.IsNullOrEmpty(edto.JPG_FILE_PATH_SR))
+            {
+                this.AlbumImageFilePath = Path.Combine(edto.JPG_FILE_PATH_SR, edto.JPG_FILE_NAME_SR);
+            }
             this.LyricsSeq = edto.SONG_WORD_SEQ_SR;
             //this.file = MAMUtility.GenerateMusicToken(this.FilePath);
             //this.AlbumToken = MAMUtility.GenerateMusicToken(this.AlbumImageFilePath);
