@@ -92,11 +92,18 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadMusic"
-              @mydiskCopy="onMyDiskCopyFromMusic"
+              @mydiskCopy="onCopyToMySpacePopup"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
+
+         <CopyToMySpacePopup
+          ref="refCopyToMySpacePopup"
+          :show="copyToMySpacePopup"
+          @ok="onMyDiskCopyFromMusic"
+          @close="copyToMySpacePopup = false">
+        </CopyToMySpacePopup>
       </template>
     </common-form>
    <MusicPlayerPopup 
@@ -114,8 +121,9 @@
 
 <script>
 import MixinMusicPage from '../../../mixin/MixinMusicPage';
-
+import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 export default {
+  components:{CopyToMySpacePopup},
   mixins: [ MixinMusicPage ],
   data() {
     return {

@@ -81,11 +81,18 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
-              @mydiskCopy="onMyDiskCopyFromProduct"
+              @mydiskCopy="onCopyToMySpacePopup"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
+
+         <CopyToMySpacePopup
+          ref="refCopyToMySpacePopup"
+          :show="copyToMySpacePopup"
+          @ok="onMyDiskCopyFromProduct"
+          @close="copyToMySpacePopup = false">
+        </CopyToMySpacePopup>
       </template>
     </common-form>
 
@@ -104,9 +111,10 @@
 
 <script>
 import MixinFillerPage from '../../../../mixin/MixinFillerPage';
-
+import CopyToMySpacePopup from "../../../../components/Popup/CopyToMySpacePopup";
 export default {
-    mixins: [ MixinFillerPage ],
+    components:{CopyToMySpacePopup},
+    mixins: [ MixinFillerPage],
     props: ['heading', 'screenName'],
     data() {
         return {

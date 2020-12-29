@@ -102,7 +102,7 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
-              @mydiskCopy="onMyDiskCopyFromProduct"
+              @mydiskCopy="onCopyToMySpacePopup"
             >
             </common-actions>
           </template>

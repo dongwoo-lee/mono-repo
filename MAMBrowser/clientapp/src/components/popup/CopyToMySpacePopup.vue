@@ -104,15 +104,15 @@ export default {
                     this.status = false;
                 })
         },
-        setData(title, memo, rowData) {
-            this.metaData.title = title;
-            this.metaData.memo = memo;
+        setData(rowData) {
+            this.metaData.title = '';
+            this.metaData.memo = '';
             this.rowData = rowData;
         },
         getRowData(){
             return this.rowData;
         },
-        getmetaData(){
+        getMetaData(){
             return this.metaData;
         },
         invalid() {
