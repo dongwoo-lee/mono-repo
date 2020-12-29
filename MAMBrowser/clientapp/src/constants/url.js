@@ -19,7 +19,7 @@ const url = [
     {
         // 제작
         id: "S01G01C002",
-        icon: "iconsminds-blackboard",
+        icon: "iconsminds-film",
     },
     {
         // 프로그램
@@ -54,13 +54,13 @@ const url = [
     {
         // 음원
         id: "S01G01C003",
-        icon: "iconsminds-clef",
+        icon: "iconsminds-cd-2",
     },
     {
         // 음반기록실
         id: "S01G01C014",
         to: "/app/music/song",
-        icon: "iconsminds-clef",
+        icon: "iconsminds-cd-2",
     },
     {
         // 효과음
@@ -71,7 +71,7 @@ const url = [
     {
         // 광고
         id: "S01G01C004",
-        icon: "iconsminds-optimization",
+        icon: "iconsminds-coins",
     },
     {
         // 주조SB
@@ -100,7 +100,7 @@ const url = [
     {
         // 편성 MD
         id: "S01G01C005",
-        icon: "iconsminds-notepad",
+        icon: "iconsminds-engineering",
     },
     {
         // 주조SPOT
@@ -136,7 +136,7 @@ const url = [
         // DL3.0
         id: "S01G01C006",
         to: "/app/dl30",
-        icon: "iconsminds-three-arrow-fork",
+        icon: "iconsminds-big-data",
     },
 ]
 

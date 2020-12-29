@@ -20,20 +20,20 @@
             <b-icon icon="download" class="icon"></b-icon>
         </b-button>           
         <b-button
+            v-if="displayEtc('modify')"
+            class="icon-buton"
+            :title="getTitle('modify')"
+            @click.stop="onMetaModify()">
+            <b-icon icon="pencil-square" class="icon" variant="info"></b-icon>
+        </b-button>
+        <b-button
             v-if="displayEtc('delete')"
             class="icon-buton"
             :title="getTitle('delete')"
             :disabled="!isPossibleDelete"
             :style="getDeleteStyle()"
             @click.stop="onDelete()">
-            <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
-        </b-button>
-        <b-button
-            v-if="displayEtc('modify')"
-            class="icon-buton"
-            :title="getTitle('modify')"
-            @click.stop="onMetaModify()">
-            <b-icon icon="exclamation-square" class="icon" variant="info"></b-icon>
+            <b-icon icon="trash" class="icon" variant="danger"></b-icon>
         </b-button>
         <b-button
             v-if="displayMyDiskCopy()"
