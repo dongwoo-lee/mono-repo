@@ -49,7 +49,7 @@ namespace MAMBrowser.Controllers
             headerStream.Position = 0;
 
             _fileService.MakeDirectory(relativeSourceFolder);
-            _fileService.Upload(headerStream, stream, relativeSourcePath, file.Length);
+            _fileService.Upload(headerStream, stream, relativeSourcePath);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
             stream.Dispose();

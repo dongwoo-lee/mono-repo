@@ -61,7 +61,7 @@ namespace MAMBrowser.Processor
             File.Move(source, destination, true);
         }
 
-        public void Upload(Stream headerStream, Stream fileStream, string sourcePath, long fileLength)
+        public void Upload(Stream headerStream, Stream fileStream, string sourcePath)
         {
             throw new NotImplementedException();
         }
@@ -76,6 +76,11 @@ namespace MAMBrowser.Processor
             }
         }
         public void Delete(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long GetFileSize(string sourcePath)
         {
             throw new NotImplementedException();
         }

@@ -13,7 +13,8 @@ namespace MAMBrowser.Processor
         string TmpUploadFolder { get; set; }
         string UploadFolder { get; set; }
         void MakeDirectory(string directoryPath);
-        void Upload(Stream headerStream, Stream fileStream, string sourcePath, long fileLength);
+        void Upload(Stream headerStream, Stream fileStream, string sourcePath);
+        long GetFileSize(string sourcePath);
         void Move(string source, string destination);
         bool ExistFile(string fromPath);
         void Delete(string filePath);

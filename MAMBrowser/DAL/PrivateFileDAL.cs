@@ -25,11 +25,11 @@ namespace MAMBrowser.DAL
             _fileService = sr("PrivateWorkConnection");
         }
 
-        public void Insert(string userId, PrivateFileModel metaData)
+        public void Insert(PrivateFileModel metaData)
         {
             DynamicParameters param = new DynamicParameters();
             param.Add("SEQ", metaData.SEQ);
-            param.Add("USER_ID", userId);
+            param.Add("USER_ID", metaData.USER_ID);
             param.Add("TITLE", metaData.TITLE);
             param.Add("MEMO", metaData.MEMO);
             param.Add("AUDIO_FORMAT", metaData.AUDIO_FORMAT);

@@ -205,7 +205,6 @@ namespace MAMBrowser.Controllers
                     //model.TITLE = Path.GetFileNameWithoutExtension(fileName);
                     //model.MEMO = model.TITLE;
                     //model.FILE_SIZE = stream.Length;
-
                     privateBll.UploadFile(userId, stream, fileName, model);
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }

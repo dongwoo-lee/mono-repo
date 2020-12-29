@@ -62,7 +62,6 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                metaData.FILE_SIZE = file.Length;
                 using (var stream = file.OpenReadStream())
                 {
                     var seq = _bll.UploadFile(userId, stream, file.FileName, metaData);
@@ -371,34 +370,6 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
-
-        /// <summary>
-        /// 휴지통 - 복원
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="seq"></param>
-        /// <returns></returns>
-        //[HttpPut("recyclebin/{userextid}/single-recycle/{seq}")]
-        //public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> Recycle(long userextid, long seq)
-        //{
-        //    DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
-        //    try
-        //    {
-        //        PrivateFileBLL bll = new PrivateFileBLL();
-        //        if (bll.Recycle(userextid, seq))
-        //            result.ResultCode = RESUlT_CODES.SUCCESS;
-        //        else
-        //            result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.ErrorMsg = ex.Message;
-        //        MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-        //    }
-        //    return result;
-        //}
-
 
         /// <summary>
         /// 휴지통 - 선택 목록 복원
