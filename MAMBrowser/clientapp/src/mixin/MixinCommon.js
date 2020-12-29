@@ -70,13 +70,14 @@ let mixinCommon = {
         },
         // 결과값 설정
         setResponseData(res, type = '') {
-            this.$refs.scrollPaging.displayLastPage(false);
             if (res.status === 200 && !res.data.errorMsg) {
                 if (!res.data.resultObject) return;
-                if (type === 'nomal') {
-                    const { data } = data.resultObject;
-                    this.responseData.data = row;
+                if (type === 'normal') {
+                    const { data, totalRowCount } = res.data.resultObject;
+                    this.responseData.data = data;
+                    this.responseData.totalRowCount = totalRowCount;
                 } else {
+                    this.$refs.scrollPaging.displayLastPage(false);
                     const { data, rowPerPage, selectPage, totalRowCount } = res.data.resultObject;
                     if (selectPage > 1) {
                         const resData = [];

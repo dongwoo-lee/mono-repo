@@ -109,14 +109,18 @@
     @closePlayer="onClosePlayer">
     </MusicPlayerPopup>
     
+    <sound-copyright-popup :show="soundCopyrightPopup" @close="soundCopyrightPopup = false" @agree="onAgree"/>
   </div>
 </template>
 
 <script>
 import MixinMusicPage from '../../../mixin/MixinMusicPage';
+import SoundCopyrightPopup from '@/components/Popup/SoundCopyrightPopup';
+import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinMusicPage ],
+  components: { SoundCopyrightPopup },
   data() {
     return {
       streamingUrl : '/api/musicsystem/streaming',
@@ -137,6 +141,8 @@ export default {
       },
       selectedSearchType1: [],
       selectedGradeType: [],
+      soundCopyrightPopup: false,
+      copyrightItem: null,
       searchTypes1: [
         { label: '국내', code: 1 },
         { label: '국외', code: 2 },
@@ -233,6 +239,7 @@ export default {
   },
   
   methods: {
+    ...mapActions('file', ['downloadMusic']),
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false: true;
       var params = this.searchItems;
@@ -256,6 +263,14 @@ export default {
     },
     toggleAll(checked) {
         this.selectedSearchType1 = checked ? [1,2,4] : []
+    },
+    onDownloadMusic(item) {
+        this.soundCopyrightPopup = true;
+        this.copyrightItem = item;
+    },
+    onAgree() {
+        this.downloadMusic(item);
+        this.soundCopyrightPopup = false;
     },
   },
   // watch: {

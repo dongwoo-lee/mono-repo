@@ -238,7 +238,7 @@ export default {
 
       this.$http.get(`/api/products/pgm/${media}`, { params: this.searchItems })
         .then(res => {
-           this.setResponseData(res, 'normal');
+           this.setResponseData(res);
            this.isTableLoading = false;
            this.isScrollLodaing = false;
       });

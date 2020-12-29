@@ -215,7 +215,7 @@ export default {
 
         this.$http.get(`/api/products/filler/${this.screenName}/${brd_dt}`, { params: this.searchItems })
             .then(res => {
-            this.setResponseData(res, 'normal');
+            this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
             this.isScrollLodaing = false;
