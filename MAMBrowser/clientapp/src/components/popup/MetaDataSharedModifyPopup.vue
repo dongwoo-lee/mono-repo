@@ -123,7 +123,7 @@ export default {
                 })
                 .then(res => {
                     if (res.status === 200 && !res.data.errorMsg) {
-                        this.$fn.notify('success', { message: '메타 데이터가 수정되었습니다.' })
+                        this.$fn.notify('primary', { message: '메타 데이터가 수정되었습니다.' })
                         this.$emit('editSuccess');
                         this.showDialog = false;
                     } else {

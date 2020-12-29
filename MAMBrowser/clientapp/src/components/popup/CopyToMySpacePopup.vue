@@ -2,7 +2,7 @@
 <div>
     <b-modal
         id="upload-modal-closing"
-        title="메타데이터 수정"
+        title="메타데이터 입력"
         size="md"
         modal-class="my-modal-file"
         no-close-on-backdrop
@@ -26,19 +26,14 @@
             <div class="flex-grow-1">
             </div>
             <div>
-                <b-button variant="outline-primary default cutom-label" @click="submitConfirm" :disabled="invalid()">수정</b-button>
+                <b-button variant="outline-primary default cutom-label" @click="submit()" :disabled="invalid() || status">MY공간으로 복사
+                     <span v-if="status" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                </b-button>
                 <b-button variant="outline-danger default cutom-label-cancel" @click="close">취소</b-button>
             </div>
         </template>
     </b-modal>
-    <!-- 수정 확인 창 -->
-    <common-confirm
-        id="modalModify"
-        title="메타 데이터 수정 확인"
-        message="메타 데이터를 수정하시겠습니까?"
-        submitBtn="수정"
-        @ok="submit()"
-    />
+   
 </div>
 </template>
 
@@ -58,12 +53,14 @@ export default {
     data() {
         return {
             metaData: {
-                seq: 0,
                 title: '',
                 memo: '',
-                USER_ID,
+                fileSize:0,
+                filePath:'copy.wav',
             },
-            INPUT_MAX_LENGTH
+            INPUT_MAX_LENGTH,
+            rowData : {},
+            status:false,
         }
     },
     computed: {
@@ -91,23 +88,29 @@ export default {
         submit() {
             this.$bvModal.hide('modalModify')
             const userId = sessionStorage.getItem(USER_ID);
-            const formData = new FormData();
-
-            this.$http.put(`/api/products/workspace/private/meta/${userId}`, this.metaData)
+            this.status = true;
+            this.$http.post(`/api/products/workspace/private/verify/${userId}`, this.metaData)
                 .then(res => {
                     if (res.status === 200 && !res.data.errorMsg) {
-                        this.$fn.notify('primary', { message: '메타 데이터가 수정되었습니다.' })
-                        this.$emit('editSuccess');
+                        this.$emit('ok');
                         this.showDialog = false;
+                        this.status = false;
                     } else {
-                        this.$fn.notify('error', { message: '메타 데이터가 수정 실패: ' + res.data.errorMsg })
+                        // this.$fn.notify('error', { message: res.data.errorMsg })
+                        this.status = false;
                     }
                 })
+                .catch(error=>{
+                    this.status = false;
+                })
         },
-        setData({seq, title, memo}) {
-            this.metaData.seq = seq;
+        setData(title, memo, rowData) {
             this.metaData.title = title;
             this.metaData.memo = memo;
+            this.rowData = rowData;
+        },
+        getRowData(){
+            return this.rowData;
         },
         invalid() {
             return !this.$v.metaData.title.$invalid || !this.$v.metaData.memo.$invalid;
@@ -116,6 +119,8 @@ export default {
             this.metaData = {
                 title: '',
                 memo: '',
+                fileSize:0,
+                filePath:'copy.wav',
             };
         },
         close() {

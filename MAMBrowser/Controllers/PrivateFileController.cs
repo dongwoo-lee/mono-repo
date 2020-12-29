@@ -120,7 +120,7 @@ namespace MAMBrowser.Controllers
             if (user.DiskAvailable < metaData.FILE_SIZE)
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "디스크 여유 공간이 부족해서 파일을 업로드 할 수 없습니다.";
+                result.ErrorMsg = "디스크 여유 공간이 부족합니다.";
                 return result;
             }
             if (int.MaxValue < metaData.FILE_SIZE)

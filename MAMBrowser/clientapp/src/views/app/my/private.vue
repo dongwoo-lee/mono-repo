@@ -276,7 +276,7 @@ export default {
       this.$http.delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify('success', { message: '휴지통으로 이동되었습니다.' })
+            this.$fn.notify('primary', { message: '휴지통으로 이동되었습니다.' })
             this.$bvModal.hide('modalRemove');
             setTimeout(() => {
               this.initSelectedIds();

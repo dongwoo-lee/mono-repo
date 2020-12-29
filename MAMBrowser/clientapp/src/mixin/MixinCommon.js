@@ -210,14 +210,15 @@ let mixinCommon = {
             this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item.recName);
         },
         onMyDisCopy(url, name) {
-            eventBus.$emit('common-loading-overlay-show');
+            // eventBus.$emit('common-loading-overlay-show');
+            this.$fn.notify('primary', { message: `My 공간으로 복사가 요청되었습니다.` });
             this.$http.get(url).then(res => {
                 if (res.data && res.data.resultCode === 0) {
-                    this.$fn.notify('success', { message: `"${name}"소재가 My 공간으로 복사되었습니다.` });
+                    this.$fn.notify('primary', { message: `"${name}"소재 복사가 완료 되었습니다.` });
                 }
             })
             .finally(() => {
-                eventBus.$emit('common-loading-overlay-hide');
+                // eventBus.$emit('common-loading-overlay-hide');
             })
         }
     }

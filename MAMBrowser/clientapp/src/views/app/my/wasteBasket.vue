@@ -221,7 +221,7 @@ export default {
       this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify('success', { message: '영구 삭제가 되었습니다.' })
+            this.$fn.notify('primary', { message: '영구 삭제가 되었습니다.' })
             this.$bvModal.hide('modalRemove');
             this.initSelectedIds();
             this.getSummaryUser();
@@ -257,7 +257,7 @@ export default {
       this.$http.put(`/api/products/workspace/private/recyclebin/${userId}/recycle/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify('success', { message: '복원 성공' })
+            this.$fn.notify('primary', { message: '복원 성공' })
             this.$bvModal.hide('modalRecycle');
             this.initSelectedIds();
             this.getData();
@@ -278,7 +278,7 @@ export default {
       this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
-              // this.$fn.notify('success', { message: '휴지통 비우기가 요청되었습니다.' });
+              // this.$fn.notify('primary', { message: '휴지통 비우기가 요청되었습니다.' });
               this.$bvModal.hide('modalRecyclebin');
               this.getSummaryUser();
               this.getData();

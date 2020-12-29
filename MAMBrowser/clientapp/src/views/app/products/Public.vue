@@ -100,7 +100,7 @@
                 @download="onDownloadSingle"
                 @delete="onDeleteConfirm"
                 @modify="onMetaModifyPopup"
-                @mydiskCopy="onMyDiskCopyFromPublic"
+                @mydiskCopy="onCopyToMySpacePopup"
               >
             </common-actions>
           </template>
@@ -123,6 +123,13 @@
           @editSuccess="onEditSuccess"
           @close="metaDataModifyPopup = false">
         </meta-data-shared-modify-popup>
+
+         <CopyToMySpacePopup
+          ref="refCopyToMySpacePopup"
+          :show="copyToMySpacePopup"
+          @ok="onCopyOk()"
+          @close="copyToMySpacePopup = false">
+        </CopyToMySpacePopup>
       </template>
     </common-form>
 
@@ -146,10 +153,11 @@ import MixinBasicPage from '../../../mixin/MixinBasicPage';
 import MetaDataSharedModifyPopup from '../../../components/Popup/MetaDataSharedModifyPopup';
 import { mapActions } from 'vuex';
 import { USER_ID } from "@/constants/config";
+import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 
 export default {
   mixins: [ MixinBasicPage ],
-  components: { MetaDataSharedModifyPopup },
+  components: { MetaDataSharedModifyPopup, CopyToMySpacePopup},
   data() {
     return {
       streamingUrl : '/api/products/workspace/public/streaming',
@@ -172,6 +180,7 @@ export default {
         sortValue: '',
       },
       metaDataModifyPopup: false,
+      copyToMySpacePopup : false,
       singleSelectedId: null,
       isTableLoading: false,
       innerHtmlSelectedFileNames: '',
@@ -324,7 +333,7 @@ export default {
         this.$http.delete(`/api/products/workspace/public/meta/${seq}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('success', { message: '삭제하였습니다.' })
+              this.$fn.notify('primary', { message: '삭제하였습니다.' })
               this.$bvModal.hide('modalRemove');
               setTimeout(() => {
                 this.initSelectedIds();
@@ -340,8 +349,16 @@ export default {
       this.$refs.refMetaDataModifyPopup.setData(rowData);
       this.metaDataModifyPopup = true;
     },
+    onCopyToMySpacePopup(rowData) {
+      this.$refs.refCopyToMySpacePopup.setData(rowData.title, rowData.memo, rowData);
+      this.copyToMySpacePopup = true;
+    },
     onEditSuccess() {
       this.getData();
+    },
+    onCopyOk(){
+      var rowData =this.$refs.refCopyToMySpacePopup.getRowData();
+      this.onMyDiskCopyFromPublic(rowData);  
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;

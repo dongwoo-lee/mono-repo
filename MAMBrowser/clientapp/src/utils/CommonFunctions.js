@@ -146,7 +146,7 @@ const splitFirst = (d, g = '.') => {
  */
 const notify = (type, options = { title, message, duration, permanent }) => {
     const optionInOptions = {
-        duration: options.duration ? options.duration : 5000,
+        duration: options.duration ? options.duration : 8000,
         permanent: options.permanent ? options.permanent : false,
     }
     if (type === 'server-error') {

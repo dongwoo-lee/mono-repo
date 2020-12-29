@@ -153,7 +153,7 @@ export default {
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
                             data.uploadState = 'success';
-                            $fn.notify('success', { message: '파일 업로드 완료' })
+                            $fn.notify('primary', { message: '파일 업로드 완료' })
                             // TopNav 디스크 갱신
                             dispatch('user/getSummaryUser', null, {root:true});
                             // 테이블 새로고침

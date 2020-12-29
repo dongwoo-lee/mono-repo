@@ -10,6 +10,7 @@
         :busy="isLoading"
         :fields="fields"
         :items="userList"
+        sticky-header="600px"
     >
         <template v-slot:cell(no)="{ index }">
             <div class="text-nowrap">{{ index + 1 }}</div>
@@ -202,7 +203,7 @@ export default {
               .then(res => {
                   const { status, data } = res;
                   if (status === 200 && !data.errorMsg) {
-                      this.$fn.notify('success', { message: `${item.name} 사용자 정보 업데이트 성공` });
+                      this.$fn.notify('primary', { message: `${item.name} 사용자 정보 업데이트 성공` });
                   } else {
                       this.$fn.notify('server-error', { message: '조회 에러:' + data.errorMsg });
                   }

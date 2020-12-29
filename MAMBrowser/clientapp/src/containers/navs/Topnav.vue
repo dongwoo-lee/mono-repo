@@ -135,7 +135,7 @@ export default {
       this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
       this.renewal().then(res => {
         if (res && res.data && res.data.resultCode === 0) {
-            this.$notify('success', '로그인 연장되었습니다.');
+            this.$notify('primary', '로그인 연장되었습니다.');
         }
       });
     },
