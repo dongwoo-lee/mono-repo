@@ -213,6 +213,20 @@ input, button, select, optgroup, textarea {
         font-weight: 600;
     }
 
+    .table-last-page-word {
+        position:absolute;
+        display:none;
+        margin-top:10px;
+        height:25px;
+        left:50%;
+        font-size: 0.9rem;
+        font-weight: 600;
+
+        &.last-page-active{
+            display: block;
+        }
+    }
+    
     .data-loading-item {
         display: none;
         &.active {

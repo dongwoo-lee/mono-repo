@@ -75,6 +75,7 @@
           :rows="responseData.data"
           is-actions-slot
           :per-page="responseData.rowPerPage"
+          :totalCount="responseData.totalRowCount"
           :num-rows-to-bottom="numRowsToBottom"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"

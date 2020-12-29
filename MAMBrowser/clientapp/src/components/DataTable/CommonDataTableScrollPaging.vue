@@ -59,6 +59,10 @@ export default {
             type: Array,
             default: () => [],
         },
+        totalCount: {
+            type: Number,
+            default: 0,
+        },
         numRowsToBottom: {       // 맨 아래 행수
             type: Number,
             default: 4,
@@ -117,6 +121,7 @@ export default {
             this.rowElem = this.$refs.vuetable.$el.querySelectorAll('tbody.vuetable-body tr')[0];
             [this.tBodyWrapper] = this.$refs.vuetable.$el.getElementsByClassName('vuetable-body-wrapper');
             if (!this.rowElem || !this.tBodyWrapper) return;
+            this.createDivLastPage();
             this.createDivDataLoding();
             this.addListener();
         });
@@ -164,6 +169,13 @@ export default {
                 return;
             }
             const { clientHeight, scrollTop, scrollHeight } = target;
+            if(this.perPage > this.totalCount || this.totalCount === this.rows.length) {
+                this.displayLastPage(true);
+                return;
+            } else {
+                this.displayLastPage(false);
+            }
+
             if (clientHeight + scrollTop > scrollHeight - (this.numRowsToBottom * this.rowElemHeight)) {
                 this.loading(true);
                 this.lastClientHeight = scrollTop;
@@ -196,6 +208,13 @@ export default {
             const targetId = e.target.id.replace('_', '');
             this.$emit('sortableclick', targetId);
         },
+        createDivLastPage() {
+            const node = document.createElement('div');
+            node.classList.add('table-last-page-word');
+            const dom = '마지막 페이지입니다.';
+            node.innerHTML = dom;
+            this.tBodyWrapper.appendChild(node);
+        },
         createDivDataLoding() {
             const node = document.createElement('div');
             node.classList.add('data-loading-item');
@@ -221,6 +240,14 @@ export default {
                     this.onSortable(e);
                 }); 
             });
+        },
+        displayLastPage(isActive) {
+            const divLastPage = this.tBodyWrapper.querySelector('div.table-last-page-word');
+            if (isActive) {
+                divLastPage.classList.add('last-page-active');
+            } else {
+                divLastPage.classList.remove('last-page-active');
+            }
         },
         loading(isLoading = false) {
             const dataLoading = this.tBodyWrapper.querySelector('div.data-loading-item');

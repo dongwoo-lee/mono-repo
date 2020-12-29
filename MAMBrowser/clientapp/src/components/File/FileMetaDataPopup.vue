@@ -62,7 +62,15 @@
             <div class="flex-grow-1">
             </div>
             <div>
-                <b-button variant="outline-primary default cutom-label" @click="submit" :disabled="invalid()">업로드</b-button>
+                <b-button variant="outline-primary default cutom-label"
+                    :disabled="invalid()"
+                    @click="submit">
+                    <b-spinner v-show="processing" small type="grow"></b-spinner>
+                    <span v-show="processing">메타 데이터 확인중...</span>
+                    <span v-show="!processing" class="label">업로드</span>
+                </b-button>
+
+                <!-- <b-button variant="outline-primary default cutom-label" @click="submit" :disabled="invalid()">업로드</b-button> -->
                 <b-button variant="outline-danger default cutom-label-cancel" @click="close">취소</b-button>
             </div>
         </template>
@@ -91,6 +99,7 @@ export default {
                 private: ROUTE_NAMES.PRIVATE,
                 shared: ROUTE_NAMES.SHARED,
             },
+            processing: false,
             INPUT_MAX_LENGTH
         }
     },
@@ -144,22 +153,23 @@ export default {
             }
             
             // 메타데이터 검증
+            this.processing = true;
             this.verifyMeta({ type: this.type, title: this.title, files: this.localFiles, categoryCD: this.categoryCD})
             .then(res => {
                 if (res) {
+                    this.processing = false;
                     // 파일 업로드
                     this.SET_FILES(data);
                     this.SET_UPLOAD_VIEW_TYPE(this.type);
                     this.upload();
                     this.reset();
                 }
-            })
-            
 
-            if (this.isDragDropState) {
-                this.open_popup();
-                this.SET_DRAG_DROP_STATE(false);
-            }
+                if (this.isDragDropState) {
+                    this.open_popup();
+                    this.SET_DRAG_DROP_STATE(false);
+                }
+            })
         },
         reset() {
             this.isShow = false;
@@ -185,9 +195,9 @@ export default {
         },
         invalid() {
             if (this.type === this.storegeType.private) {
-                return !this.$v.title.$invalid || !this.$v.memo.$invalid;
+                return !this.$v.title.$invalid || !this.$v.memo.$invalid || this.processing;
             }
-            return !this.$v.title.$invalid || !this.$v.memo.$invalid || !this.$v.categoryCD.$invalid;
+            return !this.$v.title.$invalid || !this.$v.memo.$invalid || !this.$v.categoryCD.$invalid || this.processing;
         },
         // 매체목록 조회
         getPrimaryOptions() {

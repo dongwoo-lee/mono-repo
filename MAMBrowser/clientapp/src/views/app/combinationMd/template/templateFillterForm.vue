@@ -68,6 +68,7 @@
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
+          :totalCount="responseData.totalRowCount"
           is-actions-slot
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"

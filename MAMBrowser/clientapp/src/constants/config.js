@@ -29,6 +29,15 @@ export const MAXIMUM_FILE_SIZE = (1000 * 1000 * 1000) * 2;  //  KB -> MB -> GB *
 export const FILE_UPLOAD_ACCEPT = '.mp3,.wav';
 /* file upload extensions */
 export const FILE_UPLOAD_EXTENSIONS = ['mp3', 'wav'];
+/* file upload status */
+export const FILE_UPLOAD_STATUS = {
+  WAIT: 'wait',
+  STOP: 'stop',
+  START: 'start',
+  SUCCESS: 'success',
+  SAVE: 'save',
+  ERROR: 'error'
+}
 /* system management access */
 export const SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE = ['config', 'log'];
 /* AUTHORITY*/

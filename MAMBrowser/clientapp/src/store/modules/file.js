@@ -2,7 +2,7 @@ import axios from 'axios'
 import $http from '../../http';
 import FileUploadRefElement from '../../components/File/FileUploadRefElement';
 import $fn from '../../utils/CommonFunctions';
-import { USER_ID, ROUTE_NAMES } from '@/constants/config';
+import { USER_ID, ROUTE_NAMES, FILE_UPLOAD_STATUS } from '@/constants/config';
 
 let uploadCancelToken = {};
 
@@ -11,7 +11,7 @@ export default {
     getters:{
         getFileData: state => state.fileData,
         getUploadTransmitState: state => state.uploadTransmitState,
-        getBeingUploaded: state => state.fileData.length > 0 && state.fileData.some(file => file.uploadState !== 'success'),
+        getBeingUploaded: state => state.fileData.length > 0 && state.fileData.some(file => file.uploadState !== FILE_UPLOAD_STATUS.SUCCESS),
     },
     state: {
         fileData: [],
@@ -45,7 +45,7 @@ export default {
                     { 
                         metaData: JSON.stringify(meta), // 메타데이터
                         file: file,                     // 파일
-                       uploadState: 'wait'             // 업로드 상태(wait:대기중, stop:정지, start:전송중, success:전송완료, save:저장중)
+                       uploadState: FILE_UPLOAD_STATUS.WAIT             // 업로드 상태(wait:대기중, stop:정지, start:전송중, success:전송완료, save:저장중, error: 에러)
                     }
                 );
             })
@@ -60,7 +60,7 @@ export default {
         CHANGE_FILE_UPLOAD_STATE: (state) => {
             state.fileData.some(data => {
                 if (!data.file.success) {
-                    data.uploadState = 'stop';
+                    data.uploadState = FILE_UPLOAD_STATUS.STOP;
                     return true;
                 }
                 return false;
@@ -117,7 +117,7 @@ export default {
             commit('SET_UPLOAD_STATE', true);
             // 파일 업로드
             for (const data of state.fileData) {
-                if (data.uploadState !== 'success') {
+                if (data.uploadState !== FILE_UPLOAD_STATUS.SUCCESS) {
                     console.debug('cancelToken-fileId', data.file.id);
 
                     if (!uploadCancelToken[data.file.id]) {
@@ -134,12 +134,12 @@ export default {
                         onUploadProgress: progressEvent => 
                         {
                             data.file.active = true;
-                            data.uploadState = 'start';
+                            data.uploadState = FILE_UPLOAD_STATUS.START;
                             data.file.progress = Math.round((progressEvent.loaded / data.file.size) * 100);
 
                             if (data.file.progress === 100) {
                                 data.file.success = true;
-                                data.uploadState = 'save';
+                                data.uploadState = FILE_UPLOAD_STATUS.SAVE;
                             }
                         },
                         cancelToken: uploadCancelToken[data.file.id].token,
@@ -152,7 +152,7 @@ export default {
                         const res = await $http.post(`/api/products/workspace/${state.uploadViewType}/files/${userId}`, formData, config);
 
                         if (res && res.status === 200 && !res.data.errorMsg) {
-                            data.uploadState = 'success';
+                            data.uploadState = FILE_UPLOAD_STATUS.SUCCESS;
                             $fn.notify('primary', { message: '파일 업로드 완료' })
                             // TopNav 디스크 갱신
                             dispatch('user/getSummaryUser', null, {root:true});
@@ -160,6 +160,7 @@ export default {
                             const refScrollPaging = FileUploadRefElement.getScrollPaging();
                             refScrollPaging.tableRefresh();
                         } else {
+                            data.uploadState = FILE_UPLOAD_STATUS.ERROR;
                             $fn.notify('error', { message: '파일 업로드 실패: ' + res.data.errorMsg })
                         }
                     } catch (e) {

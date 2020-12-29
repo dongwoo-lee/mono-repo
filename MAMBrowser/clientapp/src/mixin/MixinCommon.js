@@ -70,6 +70,7 @@ let mixinCommon = {
         },
         // 결과값 설정
         setResponseData(res, type = '') {
+            this.$refs.scrollPaging.displayLastPage(false);
             if (res.status === 200 && !res.data.errorMsg) {
                 if (!res.data.resultObject) return;
                 if (type === 'nomal') {
@@ -80,11 +81,10 @@ let mixinCommon = {
                     if (selectPage > 1) {
                         const resData = [];
                         data.forEach(row => {
-                            // this.responseData.data.push(row);
                             resData.push(row);
                         })
-                        const newArr = [...this.responseData.data, ...resData];
-                        this.responseData.data = newArr;
+                        const totalArr = [...this.responseData.data, ...resData];
+                        this.responseData.data = totalArr;
                         this.$refs.scrollPaging.loading();
                     } else {
                         this.responseData.data = data;

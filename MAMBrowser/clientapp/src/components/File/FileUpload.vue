@@ -94,6 +94,7 @@
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import { mapGetters, mapActions } from 'vuex';
+import { FILE_UPLOAD_STATUS } from '@/constants/config';
 
 export default {
     components: { Vuetable },
@@ -187,18 +188,19 @@ export default {
             this.$bvModal.hide('modalStartingDelete');
         },
         getState(state) {
-            if (state === 'wait') return '대기중';
-            if (state === 'stop') return '정지';
-            if (state === 'start') return '전송중';
-            if (state === 'success') return '전송완료';
-            if (state === 'save') return '저장중';
-            return '';
+            if (state === FILE_UPLOAD_STATUS.WAIT) return '대기중';
+            if (state === FILE_UPLOAD_STATUS.STOP) return '정지';
+            if (state === FILE_UPLOAD_STATUS.START) return '전송중';
+            if (state === FILE_UPLOAD_STATUS.SUCCESS) return '전송완료';
+            if (state === FILE_UPLOAD_STATUS.SAVE) return '저장중';
+            if (state === FILE_UPLOAD_STATUS.ERROR) return '에러';
+            return state;
         },
         getDeleteState(state) {
-            if (state === 'start' || state === 'stop') return '취소';
-            if (state === 'success') return '목록제거';
-            if (state === 'save') return '저장중';
-            if (state === 'wait') return '삭제';
+            if (state === FILE_UPLOAD_STATUS.START || state === FILE_UPLOAD_STATUS.STOP) return '취소';
+            if (state === FILE_UPLOAD_STATUS.SUCCESS || FILE_UPLOAD_STATUS.ERROR) return '목록제거';
+            if (state === FILE_UPLOAD_STATUS.SAVE) return '저장중';
+            if (state === FILE_UPLOAD_STATUS.WAIT) return '삭제';
         },
         getRemark(metaData) {
             const metaDataToJson = JSON.parse(metaData);
@@ -222,7 +224,7 @@ export default {
             return state === 'save';
         },
         confirmDelete(rowData) {
-            const confirmTarget = ['start', 'stop']
+            const confirmTarget = [FILE_UPLOAD_STATUS.START, FILE_UPLOAD_STATUS.STOP]
             if (confirmTarget.includes(rowData.uploadState)) {
                 this.confirmDeleteData = rowData;
                 this.$bvModal.show('modalStartingDelete');
