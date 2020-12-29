@@ -61,7 +61,7 @@ const errorNotify=(status, msg)=> {
         // `${msg}[ERROR:${status}]`,
         `${msg}`,
         '', {
-            duration: 8000,
+            duration: 10000,
             permanent: false
         }
     )

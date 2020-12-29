@@ -99,7 +99,7 @@ export default {
             'Content-Type': 'application/json',
             'X-Csrf-Token': sessionStorage.getItem(ACCESS_TOKEN)
             },
-            timeout:80000
+            timeout:90000
       });
     },
     SetWaveSurfer() {
@@ -178,7 +178,7 @@ export default {
               console.debug('httpClient', error)
               if (error.response){
                 this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
-                    duration: 8000,
+                    duration: 10000,
                     permanent: false
                 });
               } else {
@@ -199,7 +199,7 @@ export default {
           console.debug('httpClient', error)
             if (error.response){
               this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
-                  duration: 8000,
+                  duration: 10000,
                   permanent: false
               });
             } else {

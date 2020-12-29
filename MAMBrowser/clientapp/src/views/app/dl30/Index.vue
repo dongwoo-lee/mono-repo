@@ -81,7 +81,7 @@
                     :behaviorData="behaviorList"
                     @preview="onPreview"
                     @download="onDownloadDl30"
-                    @mydiskCopy="onMyDiskCopyFromDl30"/>
+                    @mydiskCopy="onCopyToMySpacePopup"/>
               </template>
             </b-table>
           </b-colxx>
@@ -89,6 +89,12 @@
       </template>
     </common-form>
 
+     <CopyToMySpacePopup
+          ref="refCopyToMySpacePopup"
+          :show="copyToMySpacePopup"
+          @ok="onMyDiskCopyFromDl30"
+          @close="copyToMySpacePopup = false">
+        </CopyToMySpacePopup>
     <PlayerPopup 
     :showPlayerPopup="showPlayerPopup"
     :title="soundItem.recName"
@@ -105,9 +111,10 @@
 
 <script>
 import MixinBasicPage from '../../../mixin/MixinBasicPage';
-
+import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 export default {
-    mixins: [ MixinBasicPage ],
+    components:{CopyToMySpacePopup},
+    mixins: [ MixinBasicPage],
     data() {
       return {
         streamingUrl : '/api/Products/dl30-streaming',

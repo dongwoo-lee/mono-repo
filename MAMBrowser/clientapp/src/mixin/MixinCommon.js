@@ -26,6 +26,7 @@ let mixinCommon = {
             hasErrorClass: false,
             isTableLoading: false,
             isScrollLodaing: false,
+            copyToMySpacePopup : false,
         }
     },
     computed: {
@@ -198,21 +199,29 @@ let mixinCommon = {
         onDownloadConcatenate(item) {
             this.downloadConcatenate(item);
         },
-        onMyDiskCopyFromPublic(item, metaData) { 
-            this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item, metaData);
+        onMyDiskCopyFromPublic() { 
+            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+            var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
+            this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item.title, metaData);
         },
         onMyDiskCopyFromMusic(item, metaData) { 
-            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/token=${item.fileToken}`, item, metaData);
+            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+            var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
+            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/token=${item.fileToken}`, item.name, metaData);
         },
         onMyDiskCopyFromProduct(item, metaData) {
-            this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item, metaData);
+            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+            var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
+            this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item.name, metaData);
         },
         onMyDiskCopyFromDl30(item, metaData) {
-            this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item, metaData);
+            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+            var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
+            this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item.recName, metaData);
         },
-        onMyDisCopy(url, item, metaData) {
+        onMyDisCopy(url, oldName, metaData) {
             // eventBus.$emit('common-loading-overlay-show');
-            this.$fn.notify('primary', { message: `My 공간으로 '${item.title}-> ${metaData.title}' 복사가 요청되었습니다.` });
+            this.$fn.notify('primary', { message: `My 공간으로 '${oldName} -> ${metaData.title}' 복사시작` });
             this.$http.post(url, metaData, {timeout: 3600000}).then(res => {
                 if (res.data && res.data.resultCode === 0) {
                     this.$fn.notify('primary', { message: `MY공간으로 '${metaData.title}' 복사가 완료 되었습니다.` });
@@ -221,7 +230,12 @@ let mixinCommon = {
             .finally(() => {
                 // eventBus.$emit('common-loading-overlay-hide');
             })
-        }
+        },
+        onCopyToMySpacePopup(rowData) {
+            this.$refs.refCopyToMySpacePopup.setData(rowData);
+            this.copyToMySpacePopup = true;
+        },
+        
     }
 }
 

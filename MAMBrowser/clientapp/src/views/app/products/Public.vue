@@ -128,7 +128,7 @@
          <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
-          @ok="onCopyOk()"
+          @ok="onMyDiskCopyFromPublic"
           @close="copyToMySpacePopup = false">
         </CopyToMySpacePopup>
       </template>
@@ -181,7 +181,6 @@ export default {
         sortValue: '',
       },
       metaDataModifyPopup: false,
-      copyToMySpacePopup : false,
       singleSelectedId: null,
       isTableLoading: false,
       innerHtmlSelectedFileNames: '',
@@ -350,17 +349,8 @@ export default {
       this.$refs.refMetaDataModifyPopup.setData(rowData);
       this.metaDataModifyPopup = true;
     },
-    onCopyToMySpacePopup(rowData) {
-      this.$refs.refCopyToMySpacePopup.setData(rowData.title, rowData.memo, rowData);
-      this.copyToMySpacePopup = true;
-    },
     onEditSuccess() {
       this.getData();
-    },
-    onCopyOk(){
-      var rowData =this.$refs.refCopyToMySpacePopup.getRowData();
-      var metaData = this.$refs.refCopyToMySpacePopup.getmetaData();
-      this.onMyDiskCopyFromPublic(rowData,metaData);  
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
