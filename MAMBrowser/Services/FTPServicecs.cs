@@ -52,8 +52,7 @@ namespace MAMBrowser.Processor
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
-                var stream = ftpClient.OpenWrite(sourcePath);
-                fileStream.CopyTo(stream);
+                ftpClient.Upload(fileStream, sourcePath, FtpRemoteExists.Append);
             }
         }
 

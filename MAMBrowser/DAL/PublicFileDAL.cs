@@ -42,7 +42,9 @@ namespace MAMBrowser.Controllers
             var relativeTargetPath = @$"{relativeTargetFolder}\{fileName}";
 
             var stream = file.OpenReadStream();
+            
             var headerStream = AudioEngine.GetHeaderStream(stream);
+            headerStream.Position = 0;
             var audioFormat = AudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
             headerStream.Position = 0;
 

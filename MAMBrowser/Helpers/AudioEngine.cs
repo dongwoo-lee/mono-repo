@@ -565,10 +565,21 @@ namespace MAMBrowser.Helpers
         }
         public static MemoryStream GetHeaderStream(Stream stream)
         {
-            byte[] buffer = new byte[500000];
+            int stepLength = 100000;
+            int totalHeadLength = stepLength * 5;
+            int totalRead = 0;
+            
+            byte[] buffer = new byte[stepLength];
             MemoryStream ms = new MemoryStream();
-            var read = stream.Read(buffer, 0, buffer.Length);
-            ms.Write(buffer, 0, read);
+            while (true)
+            {
+                if (totalRead >= totalHeadLength)
+                    break;
+
+                var read = stream.Read(buffer, 0, buffer.Length);
+                ms.Write(buffer, 0, read);
+                totalRead += read;
+            }
             ms.Flush();
             return ms;
         }

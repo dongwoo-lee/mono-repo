@@ -40,7 +40,7 @@ namespace MAMBrowser.BLL
             var audioFormat = AudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
             headerStream.Position = 0;
             _fileService.MakeDirectory(relativeSourceFolder);
-            _fileService.Upload(headerStream, stream, relativeSourcePath, metaData.FILE_SIZE);
+            _fileService.Upload(headerStream, stream, relativeSourcePath, stream.Length);
             _fileService.MakeDirectory(relativeTargetFolder);
             _fileService.Move(relativeSourcePath, relativeTargetPath);
             stream.Dispose();

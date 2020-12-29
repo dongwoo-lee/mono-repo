@@ -112,6 +112,9 @@ export default {
         getRowData(){
             return this.rowData;
         },
+        getmetaData(){
+            return this.metaData;
+        },
         invalid() {
             return !this.$v.metaData.title.$invalid || !this.$v.metaData.memo.$invalid;
         },

@@ -197,24 +197,24 @@ let mixinCommon = {
         onDownloadConcatenate(item) {
             this.downloadConcatenate(item);
         },
-        onMyDiskCopyFromPublic(item) { 
-            this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item.title);
+        onMyDiskCopyFromPublic(item, metaData) { 
+            this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item, metaData);
         },
-        onMyDiskCopyFromMusic(item) { 
-            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/token=${item.fileToken}`, item.name);
+        onMyDiskCopyFromMusic(item, metaData) { 
+            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/token=${item.fileToken}`, item, metaData);
         },
-        onMyDiskCopyFromProduct(item) {
-            this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item.name);
+        onMyDiskCopyFromProduct(item, metaData) {
+            this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item, metaData);
         },
-        onMyDiskCopyFromDl30(item) {
-            this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item.recName);
+        onMyDiskCopyFromDl30(item, metaData) {
+            this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item, metaData);
         },
-        onMyDisCopy(url, name) {
+        onMyDisCopy(url, item, metaData) {
             // eventBus.$emit('common-loading-overlay-show');
-            this.$fn.notify('primary', { message: `My 공간으로 복사가 요청되었습니다.` });
-            this.$http.get(url).then(res => {
+            this.$fn.notify('primary', { message: `My 공간으로 '${item.title}-> ${metaData.title}' 복사가 요청되었습니다.` });
+            this.$http.post(url, metaData, {timeout: 3600000}).then(res => {
                 if (res.data && res.data.resultCode === 0) {
-                    this.$fn.notify('primary', { message: `"${name}"소재 복사가 완료 되었습니다.` });
+                    this.$fn.notify('primary', { message: `MY공간으로 '${metaData.title}' 복사가 완료 되었습니다.` });
                 }
             })
             .finally(() => {

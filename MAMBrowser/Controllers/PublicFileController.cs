@@ -254,8 +254,8 @@ namespace MAMBrowser.Controllers
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
         }
-        [HttpGet("public-to-myspace/{key}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key, [FromServices]PrivateFileBLL privateBll)
+        [HttpPost("public-to-myspace/{key}")]
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key, [FromBody] PrivateFileModel model, [FromServices]PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             
@@ -266,10 +266,10 @@ namespace MAMBrowser.Controllers
                 string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
                 using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
                 {
-                    PrivateFileModel model = new PrivateFileModel();
-                    model.TITLE = fileData.Title;
-                    model.MEMO = fileData.Memo;
-                    model.FILE_SIZE = fileData.FileSize;
+                    //PrivateFileModel model = new PrivateFileModel();
+                    //model.TITLE = fileData.Title;
+                    //model.MEMO = fileData.Memo;
+                    //model.FILE_SIZE = fileData.FileSize;
 
                     privateBll.UploadFile(userId, stream, fileName, model);
                     result.ResultCode = RESUlT_CODES.SUCCESS;

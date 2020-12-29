@@ -358,7 +358,8 @@ export default {
     },
     onCopyOk(){
       var rowData =this.$refs.refCopyToMySpacePopup.getRowData();
-      this.onMyDiskCopyFromPublic(rowData);  
+      var metaData = this.$refs.refCopyToMySpacePopup.getmetaData();
+      this.onMyDiskCopyFromPublic(rowData,metaData);  
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
