@@ -291,7 +291,7 @@ namespace MAMBrowser.Services
             return fileNameList;
         }
       
-        public Stream GetFileStream(string domain, int port, string jsonRequestContent)
+        public Stream GetFileStream(string domain, int port, string jsonRequestContent, out long fileSize)
         {
             var builder = new UriBuilder("http", domain, port, FileUrl);
             HttpClient client = new HttpClient();
@@ -300,11 +300,14 @@ namespace MAMBrowser.Services
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 //wav파일경로 이므로 wav파일만 받는다.  mp2를 변환할 일이 없음.
-                var stream = response.Content.ReadAsStreamAsync().Result;
+                var content = response.Content;
+                fileSize = content.Headers.ContentLength ?? 0;
+                var stream = content.ReadAsStreamAsync().Result;
                 return stream;
             }
             else
             {
+                fileSize = 0;
                 _logger.LogError($"response status : {response.StatusCode}");
                 _logger.LogError($"response status : {response.Content.ReadAsStringAsync().Result}");
                 return null;

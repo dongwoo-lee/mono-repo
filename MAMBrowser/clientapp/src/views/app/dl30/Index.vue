@@ -137,9 +137,14 @@ export default {
           { key: 'recName', label: '녹음소재명', sortable: true, thClass:'text-center', tdClass: 'text-center' },
           { key: 'sourceID', label: 'Source ID', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '7%'}},
           { key: 'duration', label: '녹음분량', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'}},
-          { key: 'fileSize', label: '파일사이즈(byte)', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'}},
+          { key: 'fileSize', label: '파일사이즈', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%' },
+            formatter : (v) => {
+              return this.$fn.formatBytes(v)
+            }
+          },
           { key: 'regDtm', label: '등록일시', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '15%'}},
           { key: 'actions', label: '추가작업', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '6%'}},
+         
         ],
       }
     },

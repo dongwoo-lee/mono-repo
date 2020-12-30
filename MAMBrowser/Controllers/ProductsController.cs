@@ -736,7 +736,7 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpPost("product-to-myspace")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token, [FromBody] PrivateFileModel model, [FromServices] PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token, [FromBody] PrivateFileModel metaData, [FromServices] PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
@@ -748,13 +748,8 @@ namespace MAMBrowser.Controllers
                     string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
                     using (var stream = _fileService.GetFileStream(filePath, 0))
                     {
-                        //PrivateFileModel model = new PrivateFileModel();
-                        //model.TITLE = Path.GetFileNameWithoutExtension(fileName);
-                        //model.MEMO = model.TITLE;
-                        //model.FILE_SIZE = stream.Length;
-
-                        privateBll.UploadFile(userId, stream, fileName, model);
-                        result.ResultCode = RESUlT_CODES.SUCCESS;
+                        metaData.FILE_SIZE = stream.Length;
+                        result = privateBll.UploadFile(userId, stream, fileName, metaData);
                     }
                 }
                 else
@@ -857,7 +852,7 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpPost("dl30-to-myspace/{seq}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromBody] PrivateFileModel model, [FromServices] PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromBody] PrivateFileModel metaData, [FromServices] PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
@@ -868,13 +863,8 @@ namespace MAMBrowser.Controllers
                 string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
                 using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
                 {
-                    //PrivateFileModel model = new PrivateFileModel();
-                    //model.TITLE = fileData.RecName;
-                    //model.MEMO = fileData.RecName;
-                    //model.FILE_SIZE = fileData.FileSize;
-
-                    privateBll.UploadFile(userId, stream, fileName, model);
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                    metaData.FILE_SIZE = fileData.FileSize;
+                    result = privateBll.UploadFile(userId, stream, fileName, metaData);
                 }
             }
             catch (Exception ex)

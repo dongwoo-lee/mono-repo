@@ -227,6 +227,17 @@ export default {
           dataClass: "center aligned text-center",
           width: "5%",
         },
+         {
+          name: "fileSize",
+          title: "파일사이즈",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          sortField: 'fileSize',
+          width: "8%",
+          callback: (v) => {
+            return this.$fn.formatBytes(v)
+          }
+        },
         {
           name: "audioFormat",
           title: "오디오포맷",
@@ -333,14 +344,14 @@ export default {
         this.$http.delete(`/api/products/workspace/public/meta/${seq}`)
           .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
-              this.$fn.notify('primary', { message: '삭제하였습니다.' })
+              this.$fn.notify('primary', { message: '파일을 삭제 하였습니다.' })
               this.$bvModal.hide('modalRemove');
               setTimeout(() => {
                 this.initSelectedIds();
                 this.getData();
             }, 0);
             } else {
-              this.$fn.notify('error', { message: '삭제 실패하였습니다.' })
+              this.$fn.notify('error', { message: '삭제가 실패 하였습니다.' })
             }
         });  
       });

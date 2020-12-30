@@ -53,6 +53,7 @@ let mixinCommon = {
     methods: {
         ...mapActions('file', ['downloadWorkspace', 'downloadProduct'
             , 'downloadMusic', 'downloadDl30','downloadConcatenate']),
+        ...mapActions('user', ['getSummaryUser']),
         // 검색
         onSearch() {
             this.searchItems.selectPage = 1;
@@ -221,10 +222,11 @@ let mixinCommon = {
         },
         onMyDisCopy(url, oldName, metaData) {
             // eventBus.$emit('common-loading-overlay-show');
-            this.$fn.notify('primary', { message: `My 공간으로 '${oldName} -> ${metaData.title}' 복사시작` });
+            this.$fn.notify('primary', { message: `'${metaData.title}' My 공간으로 복사가 요청되었습니다.(용량에 따라 다소 시간이 소요 될 수 있습니다.)` });
             this.$http.post(url, metaData, {timeout: 3600000}).then(res => {
                 if (res.data && res.data.resultCode === 0) {
-                    this.$fn.notify('primary', { message: `MY공간으로 '${metaData.title}' 복사가 완료 되었습니다.` });
+                    this.$fn.notify('primary', { message: `MY공간으로 '${metaData.title}' 가 등록 되었습니다.` });
+                    this.getSummaryUser();
                 }
             })
             .finally(() => {

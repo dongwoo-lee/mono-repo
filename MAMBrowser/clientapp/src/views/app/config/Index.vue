@@ -13,7 +13,7 @@
                     <b-tabs content-class="mt-3" fill>
                         <b-tab title="사용자 목록" @click="onTab('userList')" active />
                         <b-tab title="역할 목록" @click="onTab('role')" />
-                        <b-tab title="시스템" @click="onTab('system')" />
+                        <!-- <b-tab title="시스템" @click="onTab('system')" /> -->
                         <component :is="tabName"></component>
                     </b-tabs>
                 </b-container>

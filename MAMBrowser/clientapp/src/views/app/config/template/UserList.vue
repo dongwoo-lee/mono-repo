@@ -76,9 +76,11 @@ export default {
             isLoading: false,
             fields: [
                 { key: 'no', label: '순서', sortable: false, sortDirection: 'desc', thClass:'text-center', tdClass: 'text-center' },
-                { key: 'name', label: '사용자', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'id', label: 'ID', sortable: true, sortDirection: 'desc', thClass:'text-center', tdClass: 'text-center' },
+                { key: 'name', label: '사용자', sortable: true, thClass:'text-center', tdClass: 'text-center' },
                 { key: 'diskUsed', label: '사용 용량', sortable: false, thClass:'text-center', tdClass: 'text-center' },
                 { key: 'diskMax', label: '디스크 할당', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'roleID', label: '역할', sortable: true, thClass:'text-center', tdClass: 'text-center' },
                 { key: 'menuGrpID', label: '메뉴 유형', sortable: false, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '250px' } },
                 { key: 'actions', label: '', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '200px' } }
             ],

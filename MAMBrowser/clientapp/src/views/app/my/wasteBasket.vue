@@ -59,10 +59,10 @@
           <template slot="actions" scope="props">
             <b-colxx>
               <b-button class="icon-buton" title="복원" @click.stop="onRecycleConfirm(props.props.rowData)">
-                <b-icon icon="shift-fill" class="icon"></b-icon>
+                <b-icon icon="arrow-counterclockwise" class="icon"></b-icon>
               </b-button>
               <b-button class="icon-buton" title="영구삭제" @click.stop="onDeleteConfirm(props.props.rowData)">
-                <b-icon icon="dash-square" class="icon" variant="danger"></b-icon>
+                <b-icon icon="x-octagon" class="icon" variant="danger"></b-icon>
               </b-button>
             </b-colxx>
           </template>
@@ -222,7 +222,7 @@ export default {
       this.$http.delete(`/api/products/workspace/private/recyclebin/${userId}/${ids}`)
         .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify('primary', { message: '영구 삭제가 되었습니다.' })
+            this.$fn.notify('primary', { message: '파일이 삭제 되었습니다.' })
             this.$bvModal.hide('modalRemove');
             this.initSelectedIds();
             this.getSummaryUser();

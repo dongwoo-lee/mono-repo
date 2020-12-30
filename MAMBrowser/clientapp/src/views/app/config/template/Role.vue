@@ -52,8 +52,8 @@ export default {
             isLoading: false,
             fields: [
                 { key: 'no', label: '순서', sortable: false, thClass:'text-center', tdClass: 'text-center' },
-                { key: 'id', label: 'Id', sortable: false, thClass:'text-center', tdClass: 'text-center' },
-                { key: 'name', label: '역할', sortable: false, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'id', label: '역할 ID', sortable: true, thClass:'text-center', tdClass: 'text-center' },
+                { key: 'name', label: '역할 이름', sortable: true, thClass:'text-center', tdClass: 'text-center' },
                 { key: 'authorCode', label: '권한', sortable: false, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '250px' } },
                 { key: 'actions', label: '', thStyle: { width: '200px' } }
             ],

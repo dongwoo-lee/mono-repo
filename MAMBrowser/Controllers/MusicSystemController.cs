@@ -125,7 +125,8 @@ namespace MAMBrowser.Controllers
             var musicInfo = MAMUtility.ParseToRequestContent(token);
             var requestInfo = _fileService.GetRequestInfo(musicInfo);
             string contentType = "audio/wav";
-            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo);
+            long fileSize;
+            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
                 FileName = WebUtility.UrlEncode(requestInfo[2] as string),
@@ -187,7 +188,7 @@ namespace MAMBrowser.Controllers
             return Ok();
         }
         [HttpPost("music-to-myspace")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> MusicToMyspace([FromQuery] string token, [FromBody] PrivateFileModel model, [FromServices] PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> MusicToMyspace([FromQuery] string token, [FromBody] PrivateFileModel metaData, [FromServices] PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
@@ -198,15 +199,11 @@ namespace MAMBrowser.Controllers
                 var fileName = requestInfo[2] as string;
 
                 string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-                using (var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo))
+                long fileSize;
+                using (var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize))
                 {
-                    
-                    //PrivateFileModel model = new PrivateFileModel();
-                    //model.TITLE = Path.GetFileNameWithoutExtension(fileName);
-                    //model.MEMO = model.TITLE;
-                    //model.FILE_SIZE = stream.Length;
-                    privateBll.UploadFile(userId, stream, fileName, model);
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                    metaData.FILE_SIZE = fileSize;
+                    result = privateBll.UploadFile(userId, stream, fileName, metaData);
                 }
             }
             catch (Exception ex)

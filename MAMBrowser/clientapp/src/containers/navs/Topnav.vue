@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
-      <div class="system ml-4" style="color:darkblue;opacity: .8;">{{conNetworkName}}</div>
+      <clock className="system ml-2" style="font-weight:500;"></clock>
+      <div class="system " style="color:darkblue;opacity: .8;">{{conNetworkName}}</div>
       <div class="system" :style="getConDBNameStyle()">{{conDBName}}</div>
-      <clock className="system" style="font-weight:500;"></clock>
       <!-- 메뉴 네비 -->
       <!-- <a
         href="#"
@@ -173,3 +173,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+.free-space{
+  color: darkblue;
+  font-weight: 600;
+  margin-left:20px;
+}
+</style>

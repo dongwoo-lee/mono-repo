@@ -57,15 +57,15 @@ namespace MAMBrowser.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("files/{userId}")]
-        public DTO_RESULT UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PrivateFileModel metaData)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PrivateFileModel metaData)
         {
-            DTO_RESULT result = new DTO_RESULT();
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
                 using (var stream = file.OpenReadStream())
                 {
-                    var seq = _bll.UploadFile(userId, stream, file.FileName, metaData);
-                    result.ResultCode = seq >= 0 ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                    metaData.FILE_SIZE = file.Length;
+                    result =  _bll.UploadFile(userId, stream, file.FileName, metaData);
                 }
             }
             catch (Exception ex)
@@ -113,36 +113,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("verify/{userId}")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] PrivateFileModel metaData)
         {
-            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            APIDAL apiDal = new APIDAL();
-            var user = apiDal.GetUserSummary(userId);
-            if (user.DiskAvailable < metaData.FILE_SIZE)
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "디스크 여유 공간이 부족합니다.";
-                return result;
-            }
-            if (int.MaxValue < metaData.FILE_SIZE)
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
-                return result;
-            }
-            if (Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".WAV" && Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".MP3")
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";
-                return result;
-            }
-            if (_dal.IsExistTitle(metaData.TITLE))
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "동일한 제목이 이미 있습니다. 제목을 수정해주세요.";
-                return result;
-            }
-
-            result.ResultCode = RESUlT_CODES.SUCCESS;
-            return result;
+            return _bll.VerifyModel(userId, metaData);
         }
 
 
