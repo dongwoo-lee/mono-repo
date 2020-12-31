@@ -47,12 +47,17 @@ namespace MAMBrowser.Processor
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
-                ftpClient.Upload(headerStream, sourcePath);
+                var result = ftpClient.Upload(headerStream, sourcePath);
+                
+                if (result != FtpStatus.Success)
+                    new Exception($"{result.ToString()}, {headerStream.Length}, {fileStream.Length}, {sourcePath}, {EncodingType}");
             }
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
-                ftpClient.Upload(fileStream, sourcePath, FtpRemoteExists.Append);
+                var result = ftpClient.Upload(fileStream, sourcePath, FtpRemoteExists.Append);
+                if (result != FtpStatus.Success)
+                    new Exception($"{result.ToString()}, {headerStream.Length}, {fileStream.Length}, {sourcePath}, {EncodingType}");
             }
         }
 
@@ -89,12 +94,11 @@ namespace MAMBrowser.Processor
         {
             //using ()
             //{
-       
             string relativePath = MAMUtility.GetRelativePath(path);
             var sourceHost = MAMUtility.GetHost(path);
             relativePath = relativePath.Replace(@"\", @"/");
 
-            FtpClient ftpClient = new FtpClient(sourceHost, UserId, UserPass);
+            FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass);
             ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
 
             if (!ftpClient.FileExists(relativePath))

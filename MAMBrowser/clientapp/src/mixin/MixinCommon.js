@@ -208,7 +208,7 @@ let mixinCommon = {
         onMyDiskCopyFromMusic(item, metaData) { 
             var item =this.$refs.refCopyToMySpacePopup.getRowData();
             var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
-            this.onMyDisCopy(`/api/musicsystem/music-to-myspace/token=${item.fileToken}`, item.name, metaData);
+            this.onMyDisCopy(`/api/musicsystem/music-to-myspace?token=${item.fileToken}`, item.name, metaData);
         },
         onMyDiskCopyFromProduct(item, metaData) {
             var item =this.$refs.refCopyToMySpacePopup.getRowData();

@@ -92,11 +92,18 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadMusic"
-              @mydiskCopy="onMyDiskCopyFromMusic"
+             @mydiskCopy="onCopyToMySpacePopup"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
+
+         <CopyToMySpacePopup
+          ref="refCopyToMySpacePopup"
+          :show="copyToMySpacePopup"
+          @ok="onMyDiskCopyFromMusic"
+          @close="copyToMySpacePopup = false">
+        </CopyToMySpacePopup>
       </template>
     </common-form>
    <MusicPlayerPopup 
@@ -116,11 +123,12 @@
 <script>
 import MixinMusicPage from '../../../mixin/MixinMusicPage';
 import SoundCopyrightPopup from '@/components/Popup/SoundCopyrightPopup';
+import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import { mapActions } from 'vuex';
 
 export default {
   mixins: [ MixinMusicPage ],
-  components: { SoundCopyrightPopup },
+  components: { SoundCopyrightPopup,CopyToMySpacePopup},
   data() {
     return {
       streamingUrl : '/api/musicsystem/streaming',
@@ -269,7 +277,7 @@ export default {
         this.copyrightItem = item;
     },
     onAgree() {
-        this.downloadMusic(item);
+        this.downloadMusic(this.copyrightItem);
         this.soundCopyrightPopup = false;
     },
   },

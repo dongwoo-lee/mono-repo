@@ -1,9 +1,11 @@
-﻿using MAMBrowser.DAL;
+﻿using MAMBrowser.Controllers;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,12 +20,13 @@ namespace MAMBrowser.BLL
         private readonly AppSettings _appSettings;
         private readonly IFileService _fileService;
         private readonly PrivateFileDAL _dal;
-
-        public PrivateFileBLL(IOptions<AppSettings> appSesstings, ServiceResolver sr, PrivateFileDAL dal)
+        private readonly ILogger<ProductsController> _logger;
+        public PrivateFileBLL(IOptions<AppSettings> appSesstings, ServiceResolver sr, PrivateFileDAL dal, ILogger<ProductsController> logger)
         {
             _appSettings = appSesstings.Value;
             _fileService = sr("PrivateWorkConnection");
             _dal = dal;
+            _logger = logger;
         }
 
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, PrivateFileModel metaData)
@@ -37,10 +40,13 @@ namespace MAMBrowser.BLL
             // MUSIC MY공간 복사 : HTTP로 content의 content-length
 
             //유효성검사
-            var validateResult = VerifyModel(userId, metaData);
+            var validateResult = VerifyModel(userId, metaData, fileName);
 
             if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
+            {
+                _logger.LogDebug($"VerifyModel - fail");
                 return validateResult;
+            }
             else
             {
                 long ID = _dal.GetID();
@@ -72,8 +78,9 @@ namespace MAMBrowser.BLL
             }
         }
         
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId,  PrivateFileModel metaData)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId,  PrivateFileModel metaData, string fileName)
         {
+            _logger.LogDebug($"VerifyModel - fileName{fileName}");
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             APIDAL apiDal = new APIDAL();
             var user = apiDal.GetUserSummary(userId);
@@ -89,7 +96,7 @@ namespace MAMBrowser.BLL
                 result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
                 return result;
             }
-            if (Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".WAV" && Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".MP3")
+            if (Path.GetExtension(fileName).ToUpper() != ".WAV" && Path.GetExtension(fileName).ToUpper() != ".MP3")
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
                 result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";

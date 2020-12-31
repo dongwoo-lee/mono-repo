@@ -258,16 +258,26 @@ namespace MAMBrowser.Controllers
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key, [FromBody] PrivateFileModel metaData, [FromServices]PrivateFileBLL privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            
             try
             {
                 var fileData = _dal.Get(key);
                 var fileName = Path.GetFileName(fileData.FilePath);
                 string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-                using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
+                //using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
+                //{
+                //    metaData.FILE_SIZE = fileData.FileSize;
+                //    result = privateBll.UploadFile(userId, stream, fileName, metaData);
+                //}
+
+                using (MemoryStream ms = new MemoryStream())
                 {
+                    using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
+                    {
+                        stream.CopyTo(ms);
+                    }
+                    ms.Position = 0;
                     metaData.FILE_SIZE = fileData.FileSize;
-                    result = privateBll.UploadFile(userId, stream, fileName, metaData);
+                    result = privateBll.UploadFile(userId, ms, fileName, metaData);
                 }
             }
             catch (Exception ex)

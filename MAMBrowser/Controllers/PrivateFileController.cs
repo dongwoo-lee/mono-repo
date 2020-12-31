@@ -113,7 +113,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("verify/{userId}")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] PrivateFileModel metaData)
         {
-            return _bll.VerifyModel(userId, metaData);
+            return _bll.VerifyModel(userId, metaData, metaData.FILE_PATH);
         }
 
 

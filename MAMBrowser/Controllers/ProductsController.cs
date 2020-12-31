@@ -861,10 +861,20 @@ namespace MAMBrowser.Controllers
                 var fileData = _dal.GetDLArchive(seq);
                 var fileName = Path.GetFileName(fileData.FilePath);
                 string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-                using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
+                //using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
+                //{
+                //    metaData.FILE_SIZE = fileData.FileSize;
+                //    result = privateBll.UploadFile(userId, stream, fileName, metaData);
+                //}
+                using (MemoryStream ms = new MemoryStream())
                 {
+                    using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
+                    {
+                        stream.CopyTo(ms);
+                    }
+                    ms.Position = 0;
                     metaData.FILE_SIZE = fileData.FileSize;
-                    result = privateBll.UploadFile(userId, stream, fileName, metaData);
+                    result = privateBll.UploadFile(userId, ms, fileName, metaData);
                 }
             }
             catch (Exception ex)

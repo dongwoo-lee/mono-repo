@@ -1,4 +1,5 @@
-﻿using MAMBrowser.DTO;
+﻿using MAMBrowser.Controllers;
+using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
 using MAMBrowser.Processor;
@@ -6,6 +7,7 @@ using MAMBrowser.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NAudio.Wave;
 using Newtonsoft.Json;
@@ -40,7 +42,6 @@ namespace MAMBrowser.Helpers
         public const string MUSIC_FILEPATH = "filePath";
         public const string MUSIC_IP = "ip";
         public const string MUSIC_EXPIRE = "expire";
-
 
         public static string LocalIpAddress { get; set; }
         public static string TempDownloadPath { get => Startup.AppSetting.TempDownloadPath; }

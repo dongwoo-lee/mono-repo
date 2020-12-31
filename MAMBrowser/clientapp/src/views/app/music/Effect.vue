@@ -136,7 +136,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false: true;
       this.$http.get(`/api/musicsystem/effect`, { params: this.searchItems })
         .then(res => {
-            this.setResponseData(res);
+            this.setResponseData(res, 'normal');
             this.isTableLoading = false;
       });
     }
