@@ -12,6 +12,8 @@ namespace MAMBrowser.DTO
         public string Name { get; set; }    //소재명
         [SortName("STARTDATE")]
         public string StartDT { get; set; }   //방송 시작일
+        [SortName("ONAIRDATE")]
+        public string BrdDate { get; set; }   //방송 개시일
         [SortName("ENDDATE")]
         public string EndDT { get; set; }   //방송 종료일
         [SortName("STATENAME")]

@@ -170,12 +170,12 @@ export default {
           sortField: 'name',
         },
         {
-          name: "startDT",
+          name: "brdDate",
           title: "방송개시일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: '8%',
-          sortField: 'startDT',
+          sortField: 'brdDate',
           callback: (v) => {
               return this.$fn.dateStringTohaipun(v)
           }

@@ -64,7 +64,7 @@ namespace MAMBrowser.Helpers
                 var stream = fileService.GetFileStream(filePath, 0);
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    FileName = WebUtility.UrlEncode(fileName),
+                    FileName = Uri.EscapeDataString(fileName),
                     Inline = inline == "Y" ? true : false
                 };
                 response.Headers.Add("Content-Disposition", cd.ToString());
@@ -146,7 +146,8 @@ namespace MAMBrowser.Helpers
             var stream = fileService.GetFileStream(filePath, 0);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = WebUtility.UrlEncode(fileName),
+                //FileName = WebUtility.UrlEncode(fileName),
+                FileName = Uri.EscapeDataString(fileName),
                 Inline = inline == "Y" ? true : false
             };
             response.Headers.Add("Content-Disposition", cd.ToString());

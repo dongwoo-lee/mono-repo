@@ -772,9 +772,9 @@ namespace MAMBrowser.DAL
             });
 
             var querySource = builder.AddTemplate($"SELECT /**select**/ FROM M30_VW_FILLER_TIME /**where**/");
-            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
+            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, ONAIRDATE, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
             builder.Where("MEDIA=:MEDIA");
-            builder.Where("(STARTDATE <= :END_DT AND :START_DT <= ENDDATE)");
+            builder.Where(":START_DT <= ONAIRDATE AND ONAIRDATE <= :END_DT");
             if (!string.IsNullOrEmpty(cate))
             {
                 builder.Where("SPOTTYPE=:CATE");
@@ -824,6 +824,7 @@ namespace MAMBrowser.DAL
                     ID = row.SPOTID,
                     Name = row.SPOTNAME,
                     CategoryID = row.SPOTTYPE,
+                    BrdDate = row.ONAIRDATE,
                     StartDT = row.STARTDATE,
                     EndDT = row.ENDDATE,
                     Status = row.STATENAME,

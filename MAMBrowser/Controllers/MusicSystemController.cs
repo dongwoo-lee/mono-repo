@@ -129,7 +129,8 @@ namespace MAMBrowser.Controllers
             var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = WebUtility.UrlEncode(requestInfo[2] as string),
+                //FileName = WebUtility.UrlEncode(requestInfo[2] as string),
+                FileName = Uri.EscapeDataString(requestInfo[2] as string),
                 Inline = inline == "Y" ? true : false
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());

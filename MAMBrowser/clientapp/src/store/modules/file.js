@@ -211,7 +211,8 @@ export default {
                 }).then(res=>{
                     if (res.data && res.data.resultCode === 0) {
                         const userId = encodeURIComponent(sessionStorage.getItem(USER_ID));
-                        const src = `/api/products/concatenate-files?userId=${userId}&downloadName=${res.data.resultObject.data}`;
+                        const fileName = encodeURIComponent(res.data.resultObject.data);
+                        const src = `/api/products/concatenate-files?userId=${userId}&downloadName=${fileName}`;
                         state.downloadIframe.setAttribute('src', src);
                     }
              })

@@ -42,7 +42,7 @@ namespace MAMBrowser.Helpers
             context.HttpContext.Response.ContentType = _contentType;
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = WebUtility.UrlEncode(_newFileName),
+                FileName = Uri.EscapeDataString(_newFileName),
                 Inline = true  // false = prompt the user for downloading;  true = browser to try to show the file inline
             };
             context.HttpContext.Response.Headers.Add("Accept-Ranges", "bytes");

@@ -49,7 +49,10 @@ namespace MAMBrowser.DTO
                 this.Duration = edto.Duration2;
             }
             this.AudioFormat = edto.AudioFormat;
-            this.FilePath = Path.Combine(edto.WavFilePath, edto.WavFileName);
+            if (!string.IsNullOrEmpty(edto.WavFilePath))
+            {
+                this.FilePath = Path.Combine(edto.WavFilePath, edto.WavFileName.Trim());
+            }
 
             //MusicFileToken = MAMUtility.GenerateMusicToken(this.FilePath);
         }

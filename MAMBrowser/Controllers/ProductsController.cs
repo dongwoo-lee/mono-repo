@@ -557,7 +557,7 @@ namespace MAMBrowser.Controllers
                 }
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    FileName = WebUtility.UrlEncode(downloadFileName),
+                    FileName = Uri.EscapeDataString(downloadFileName),
                     Inline = inline == "Y" ? true : false
                 };
                 Response.Headers.Add("Content-Disposition", cd.ToString());
@@ -656,7 +656,7 @@ namespace MAMBrowser.Controllers
                 }
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    FileName = WebUtility.UrlEncode(downloadName),
+                    FileName = Uri.EscapeDataString(downloadName),
                     Inline = inline == "Y" ? true : false
                 };
                 Response.Headers.Add("Content-Disposition", cd.ToString());
