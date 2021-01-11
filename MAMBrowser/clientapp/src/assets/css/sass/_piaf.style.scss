@@ -3532,6 +3532,14 @@ input:-webkit-autofill {
     @include respond-below(sm) {
         top: -85px !important;
     }
+
+    &.single {
+        top: -35px !important;
+    }
+
+    &.two {
+        top: -80px !important;
+    }
 }
 
 .popover {

@@ -156,18 +156,18 @@ export default {
             this.processing = true;
             this.verifyMeta({ type: this.type, title: this.title, files: this.localFiles, categoryCD: this.categoryCD})
             .then(res => {
+                this.processing = false;
                 if (res) {
-                    this.processing = false;
                     // 파일 업로드
                     this.SET_FILES(data);
                     this.SET_UPLOAD_VIEW_TYPE(this.type);
                     this.upload();
                     this.reset();
-                }
 
-                if (this.isDragDropState) {
-                    this.open_popup();
-                    this.SET_DRAG_DROP_STATE(false);
+                    if (this.isDragDropState) {
+                        this.open_popup();
+                        this.SET_DRAG_DROP_STATE(false);
+                    }
                 }
             })
         },

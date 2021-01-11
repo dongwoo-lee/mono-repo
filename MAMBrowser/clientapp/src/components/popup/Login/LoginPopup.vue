@@ -112,7 +112,7 @@ export default {
     },
     close() {
       this.SET_LOGOUT();
-      this.$router.push({path: '/user/login' });
+      this.$router.push({path: '/user/Login' });
       this.hide();
     }
   }

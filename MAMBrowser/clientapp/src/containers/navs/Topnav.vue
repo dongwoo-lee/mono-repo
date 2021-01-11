@@ -116,7 +116,7 @@ export default {
     ...mapMutations('user', ['SET_INIT_CALL_LOGIN_AUTH_TRY_CNT', 'SET_LOGOUT']),
     logout() {
       this.SET_LOGOUT();
-      this.$router.push("/user/login");
+      this.$router.push("/user/Login");
     },
     isDisplaySetting() {
       return this.behaviorList.some(item => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === 'Y');

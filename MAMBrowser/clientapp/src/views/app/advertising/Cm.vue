@@ -137,7 +137,7 @@
                 <b-button
                   v-if="display(PREVIEW_CODE)"
                   class="icon-buton"
-                  v-b-tooltip.hover.top="{ title: IS_ADMIN ? data.item.filePath : '미리듣기' }"
+                  v-b-tooltip.hover.top="{ title: IS_ADMIN ? data.item.filePath : '미리듣기', customClass : rowCustomClass }"
                   @click.stop="onPreview(data.item)">
                 <b-icon icon="caret-right-square" class="icon"></b-icon>
               </b-button>
@@ -202,6 +202,12 @@ export default {
         { key: 'codingDT', label: '제작일', tdClass: 'text-muted' },
         { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
       ]
+    }
+  },
+  computed: {
+    rowCustomClass() {
+      if (this.reponseContentsData.data.length === 1) { return 'single'; };
+      return '';
     }
   },
   methods: {

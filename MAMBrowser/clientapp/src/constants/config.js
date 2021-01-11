@@ -5,6 +5,8 @@ export const menuHiddenBreakpoint = 768
 export const defaultDirection = 'ltr'
 export const defaultColor = 'light.blueolympic'
 
+/* role system top management */
+export const SYSTEM_TOP_ADMIN_CODE = 'S01G03C001';
 /* behavior system management code */
 export const SYSTEM_MANAGEMENT_CODE  = 'S01G02C001';
 /* behavior preview listening code */

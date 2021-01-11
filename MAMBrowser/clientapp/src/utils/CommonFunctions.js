@@ -255,7 +255,7 @@ const getFirstAccessiblePage = () => {
     if (firstAccessiblePageIndex > -1) {
         return roles[firstAccessiblePageIndex].to;
     }
-    return '/user/login';
+    return '/user/Login';
 }
 
 const isBrowserCheck = () => { 

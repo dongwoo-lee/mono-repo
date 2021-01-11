@@ -14,11 +14,11 @@ const routes = [
   {
     path: "/user",
     component: () => import("./views/user"),
-    redirect: "/user/login",
+    redirect: "/user/Login",
     children: [
       {
         path: "login",
-        component: () => import("./views/user/login"),
+        component: () => import("./views/user/Login"),
         meta: { requiresAuth: true }
       },
     ]
@@ -193,8 +193,8 @@ router.beforeEach((to, from, next) => {
   // 토큰 유무 체크
   const tokenString = sessionStorage.getItem('access_token');
   if (!tokenString || !from) {
-    if (to.path !== '/user/login') {
-      next({ path: '/user/login', replace: true });
+    if (to.path !== '/user/Login') {
+      next({ path: '/user/Login', replace: true });
       return;
     } else {
       next();
