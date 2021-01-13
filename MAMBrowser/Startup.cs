@@ -12,8 +12,6 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
-using MAMBrowser.Processor;
-using MAMBrowser.Controllers;
 using MAMBrowser.Services;
 using System.Linq;
 using MAMBrowser.DAL;
@@ -23,11 +21,13 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using DL_Service.DAL;
+using MAMBrowser.Foundation;
+using MAMBrowser.Common.Foundation;
+using MAMBrowser.Helper;
 
 namespace MAMBrowser
 {
-    public delegate IFileService ServiceResolver(string key);
+    public delegate IFileProtocol ServiceResolver(string key);
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -71,7 +71,7 @@ namespace MAMBrowser
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    MAMUtility.LocalIpAddress = ip.ToString();
+                    TokenGenerator.IPAddress = ip.ToString();
                     break;
                 }
             }
@@ -104,10 +104,7 @@ namespace MAMBrowser
                 .AllowCredentials());
 
             app.UseSpaStaticFiles();
-            //app.UseAuthentication();
-            //app.UseAuthorization();
             app.UseMiddleware<JwtMiddleware>();
-            app.UseMiddleware<RequestResponseLoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -133,22 +130,35 @@ namespace MAMBrowser
             //옵션 DI
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
+            
             //글로벌 셋팅
-            AppSetting = optionSection.Get<AppSettings>(); 
-
+            AppSetting = optionSection.Get<AppSettings>();
+            Repository.ConnectionString = AppSetting.ConnectionString;
+            TokenGenerator.ExpireHour = AppSetting.ExpireMusicTokenHour;
+            TokenGenerator.TokenIssuer = AppSetting.TokenIssuer;
+            TokenGenerator.TokenSignature = AppSetting.TokenSignature;
+            //
+            services.AddTransient<WebServerFileHelper>();
+            services.AddTransient<TransactionRepository>();
+            services.AddTransient<Repository>();
 
             //DAL 등록
-            services.AddTransient<APIDAL>();
-            services.AddTransient<CategoriesDAL>();
-            services.AddTransient<PrivateFileDAL>();
-            services.AddTransient<ProductsDAL>();
-            services.AddTransient<PublicFileDAL>();
+            services.AddTransient<APIDao>();
+            services.AddTransient<CategoriesDao>();
+            services.AddTransient<PrivateFileDao>();
+            services.AddTransient<ProductsDao>();
+            services.AddTransient<PublicFileDao>();
+            services.AddTransient<LogDao>();
             //BLL 등록
-            services.AddTransient<PrivateFileBLL>();
+            services.AddTransient<APIBll>();
+            services.AddTransient<CategoriesBll>();
+            services.AddTransient<PrivateFileBll>();
+            services.AddTransient<ProductsBll>();
+            services.AddTransient<PublicFileBll>();
+            services.AddTransient<LogBll>();
 
             //서비스 등록
             services.AddScoped<IUserService, UserService>();
-            services.AddTransient<LogService>();
 
             //기타 등록
             services.Configure<StorageMaps>(Configuration.GetSection("StorageMaps"));
@@ -160,9 +170,9 @@ namespace MAMBrowser
             var storage = storagesSection.Get<StorageConnections>();
             services.Configure<StorageConnections>(storagesSection);
 
-            services.AddTransient<IFileService, NetDriveService>(serviceProvider =>
+            services.AddTransient<IFileProtocol, NetDriveProtocol>(serviceProvider =>
             {
-                return new NetDriveService
+                return new NetDriveProtocol
                 {
                     Name = "MirosConnection",
                     UploadHost = storage.MirosConnection["UploadHost"].ToString(),
@@ -171,9 +181,9 @@ namespace MAMBrowser
                 };
             });
             services.AddTransient<MusicService>();
-            services.AddTransient<IFileService, FtpService>(serviceProvider =>
+            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
             {
-                return new FtpService
+                return new FTPProtocol
                 {
                     Name = "PrivateWorkConnection",
                     UploadHost = storage.PrivateWorkConnection["UploadHost"].ToString(),
@@ -184,9 +194,9 @@ namespace MAMBrowser
                     EncodingType = Convert.ToInt32(storage.PrivateWorkConnection["EncodingType"]),
                 };
             });
-            services.AddTransient<IFileService, FtpService>(serviceProvider =>
+            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
             {
-                return new FtpService
+                return new FTPProtocol
                 {
                     Name = "PublicWorkConnection",
                     UploadHost = storage.PublicWorkConnection["UploadHost"].ToString(),
@@ -197,9 +207,9 @@ namespace MAMBrowser
                     EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
                 };
             });
-            services.AddTransient<IFileService, FtpService>(serviceProvider =>
+            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
             {
-                return new FtpService
+                return new FTPProtocol
                 {
                     Name = "DLArchiveConnection",
                     UploadHost = storage.DLArchiveConnection["UploadHost"].ToString(),
@@ -213,13 +223,13 @@ namespace MAMBrowser
                 switch (key)
                 {
                     case "PrivateWorkConnection":
-                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
                     case "PublicWorkConnection":
-                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
                     case "MirosConnection":
-                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
                     case "DLArchiveConnection":
-                        return serviceProvider.GetServices<IFileService>().First(impl => impl.Name == key);
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
                     default:
                         throw new Exception("KeyNotFoundException"); // or maybe return null, up to you
                 }

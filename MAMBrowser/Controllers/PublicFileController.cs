@@ -1,9 +1,10 @@
 ﻿using MAMBrowser.BLL;
+using MAMBrowser.Common;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
+using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
-using MAMBrowser.Processor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -24,14 +25,16 @@ namespace MAMBrowser.Controllers
     [Route("api/products/workspace/public")]
     public class PublicFileController : ControllerBase
     {
-        private readonly IFileService _fileService;
+        private readonly IFileProtocol _fileService;
         private readonly IOptions<AppSettings> _appSesstings;
-        private readonly PublicFileDAL _dal;
-        public PublicFileController(IOptions<AppSettings> appSesstings, PublicFileDAL dal, ServiceResolver sr)
+        private readonly PublicFileBll _bll;
+        private readonly WebServerFileHelper _fileHelper;
+        public PublicFileController(IOptions<AppSettings> appSesstings, PublicFileBll bll, ServiceResolver sr, WebServerFileHelper fileHelper)
         {
             _appSesstings = appSesstings;
-            _dal = dal;
+            _bll = bll;
             _fileService = sr("PublicWorkConnection");
+            _fileHelper = fileHelper;
         }
         /// <summary>
         /// 공유소재 -  파일+메타데이터 등록
@@ -43,13 +46,17 @@ namespace MAMBrowser.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("files/{userId}")]
-        public DTO_RESULT UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PublicFileModel metaData)
+        public DTO_RESULT UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] M30_MAM_PUBLIC_SPACE metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var success = _dal.Insert(userId, file, metaData, _fileService.UploadHost);
-                result.ResultCode = success != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                using (var stream = file.OpenReadStream())
+                {
+                    metaData.FILE_SIZE = file.Length;
+                    var dto = _bll.UploadFile(userId, stream, file.FileName, metaData);
+                    result.ResultCode = dto != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                }
             }
             catch (Exception ex)
             {
@@ -65,12 +72,12 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{userId}")]
-        public DTO_RESULT UpdateData(string userId, [FromBody] PublicFileModel metaData)
+        public DTO_RESULT UpdateData(string userId, [FromBody] M30_MAM_PUBLIC_SPACE metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                if (_dal.UpdateData(metaData.SEQ, metaData) > 0)
+                if (_bll.UpdateData(metaData.SEQ, metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
@@ -94,40 +101,9 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPost("verify/{userId}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] PublicFileModel metaData)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] M30_MAM_PUBLIC_SPACE metaData)
         {
-            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            
-            if (_dal.CountPublicCategory(metaData.CATE_CD) >= 200)
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "공유소재 최대 등록한도가 초과되었습니다.(200개 초과)";
-                return result;
-            }
-            if (int.MaxValue < metaData.FILE_SIZE)
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
-                return result;
-            }
-            if (Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".WAV" && Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".MP3")
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";
-                return result;
-            }
-            
-            if (_dal.IsExistTitle(metaData.TITLE))
-            {
-                result.ResultCode = RESUlT_CODES.INVALID_DATA;
-                result.ErrorMsg = "동일한 제목이 이미 있습니다. 제목을 수정해주세요.";
-                return result;
-            }
-
-
-
-            result.ResultCode = RESUlT_CODES.SUCCESS;
-            return result;
+            return _bll.VerifyModel(userId, metaData, metaData.FILE_PATH);
         }
 
 
@@ -152,7 +128,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PUBLIC_FILE>>();
             try
             {
-                result.ResultObject = _dal.FineData(mediaCd, cateCd, start_dt, end_dt, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FineData(mediaCd, cateCd, start_dt, end_dt, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -173,10 +149,10 @@ namespace MAMBrowser.Controllers
         [HttpGet("files/{key}")]
         public IActionResult Download(long key, [FromQuery] string inline = "N")
         {
-            var fileData = _dal.Get(key);
+            var fileData = _bll.Get(key);
             try
             {
-                return MAMUtility.DownloadFromPath(fileData.FilePath, Response, _fileService, inline);
+                return _fileHelper.DownloadFromPath(fileData.FilePath, Response, _fileService, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -198,11 +174,11 @@ namespace MAMBrowser.Controllers
         public IActionResult Streaming(long key, string userId, [FromQuery] string direct = "N")
         {
             //range 있을떄는 206 반환하도록
-            var fileData = _dal.Get(key);
+            var fileData = _bll.Get(key);
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                return MAMUtility.StreamingFromPath(fileData.FilePath, userId, remoteIp);
+                return _fileHelper.StreamingFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -221,11 +197,11 @@ namespace MAMBrowser.Controllers
         [HttpGet("waveform/{key}")]
         public ActionResult<List<float>> GetWaveform(long key, string userId)
         {
-            var fileData = _dal.Get(key);
+            var fileData = _bll.Get(key);
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                return MAMUtility.GetWaveformFromPath(fileData.FilePath, userId, remoteIp);
+                return _fileHelper.GetWaveformFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (Exception ex)
             {
@@ -240,13 +216,13 @@ namespace MAMBrowser.Controllers
         [HttpGet("temp-download/{seq}")]
         public IActionResult TempDownload([FromServices] ServiceResolver sr, long seq)
         {
-            var fileData = _dal.Get(seq);
+            var fileData = _bll.Get(seq);
 
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -255,14 +231,14 @@ namespace MAMBrowser.Controllers
             }
         }
         [HttpPost("public-to-myspace/{key}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key, [FromBody] PrivateFileModel metaData, [FromServices]PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> PublicFileToMyspace(long key, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices]PrivateFileBll privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
-                var fileData = _dal.Get(key);
+                var fileData = _bll.Get(key);
                 var fileName = Path.GetFileName(fileData.FilePath);
-                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                string userId = HttpContext.Items[Define.USER_ID] as string;
                 //using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
                 //{
                 //    metaData.FILE_SIZE = fileData.FileSize;
@@ -302,7 +278,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.DeletePhysical(seq))
+                if (_bll.Delete(seq))
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;

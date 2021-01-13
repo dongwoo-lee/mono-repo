@@ -1,0 +1,26 @@
+﻿using MAMBrowser.DTO;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace MAMBrowser.Helpers
+{
+    public class AppSettings
+    {
+        public string TokenIssuer { get; set; }
+        public string TokenSignature { get; set; }
+        public string ConnectionString { get; set; }
+        public List<DTO_NAMEVALUE> DiskScope { get; set; } = new List<DTO_NAMEVALUE>();
+        public Dictionary<string, string> RolExt { get; set; } = new Dictionary<string, string>();
+        public string TempDownloadPath { get; set; }
+        public int SessionTimeout { get; set; }
+
+        public string DBName { get; set; }
+        public string BroadcastStartNetwork { get; set; }
+        public string BroadcastEndNetwork { get; set; }
+        public int ExpireMusicTokenHour { get; set; }
+        
+    }
+}

@@ -1,26 +1,20 @@
-﻿using MAMBrowser.Controllers;
+﻿using MAMBrowser.Helper;
+using MAMBrowser.Common;
 using MAMBrowser.DTO;
 using MAMBrowser.ExternalDTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
-using MAMBrowser.Processor;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
-using System.Xml;
 using System.Xml.Serialization;
+using MAMBrowser.Common.Foundation;
 
 namespace MAMBrowser.Services
 {
@@ -43,22 +37,29 @@ namespace MAMBrowser.Services
         public string ImageListUrl { get; set; }
         public string FileUrl { get; set; }
 
+        public int ExpireMusicTokenHour { get; set; }
+
         private readonly IDictionary<string,object> _storageMap;
         private readonly ILogger<MusicService> _logger;
+        private readonly WebServerFileHelper _fileHelper;
 
 
-        public MusicService(IOptions<StorageConnections> appSesstings, IOptions<StorageMaps> storageMap, ILogger<MusicService> logger)
+
+        public MusicService(IOptions<AppSettings> appSesstings, IOptions<StorageConnections> connection, IOptions<StorageMaps> storageMap, ILogger<MusicService> logger, WebServerFileHelper fileHelper)
         {
             _storageMap = storageMap.Value.Map;
-            MbcDomain = appSesstings.Value.MusicConnection["MbcDomain"].ToString();
-            AuthorKey = appSesstings.Value.MusicConnection["AuthorKey"].ToString();
-            SearchDomain = appSesstings.Value.MusicConnection["SearchDomain"].ToString();
-            SearchSongUrl = appSesstings.Value.MusicConnection["SearchSongUrl"].ToString();
-            SearchEffectUrl = appSesstings.Value.MusicConnection["SearchEffectUrl"].ToString();
-            SearchLyricsUrl = appSesstings.Value.MusicConnection["SearchLyricsUrl"].ToString();
-            ImageListUrl = appSesstings.Value.MusicConnection["ImageListUrl"].ToString();
-            FileUrl = appSesstings.Value.MusicConnection["FileUrl"].ToString();
+            MbcDomain = connection.Value.MusicConnection["MbcDomain"].ToString();
+            AuthorKey = connection.Value.MusicConnection["AuthorKey"].ToString();
+            SearchDomain = connection.Value.MusicConnection["SearchDomain"].ToString();
+            SearchSongUrl = connection.Value.MusicConnection["SearchSongUrl"].ToString();
+            SearchEffectUrl = connection.Value.MusicConnection["SearchEffectUrl"].ToString();
+            SearchLyricsUrl = connection.Value.MusicConnection["SearchLyricsUrl"].ToString();
+            ImageListUrl = connection.Value.MusicConnection["ImageListUrl"].ToString();
+            FileUrl = connection.Value.MusicConnection["FileUrl"].ToString();
+
+            ExpireMusicTokenHour = appSesstings.Value.ExpireMusicTokenHour;
             _logger = logger;
+            _fileHelper = fileHelper;
         }
         private string GetMusicParam(MusicSearchTypes1 searchType, string searchType2)
         {
@@ -211,14 +212,14 @@ namespace MAMBrowser.Services
             List<string> imgUriList = new List<string>();
             var jsonWavInfo = MAMUtility.ParseToJsonRequestContent(musicToken);
             var wavInfo = MAMUtility.ParseToRequestContent(musicToken);
-            var wavEncodedPath = wavInfo[MAMUtility.MUSIC_FILEPATH];
-            var wavPath = MAMUtility.SeedDecrypt(wavEncodedPath);
+            var wavEncodedPath = wavInfo[Define.MUSIC_FILEPATH];
+            var wavPath = MusicSeedWrapper.SeedDecrypt(wavEncodedPath);
             _logger.LogDebug($"wav path : {wavPath}");
 
             var jsonImgInfo = MAMUtility.ParseToJsonRequestContent(albumToken);
             var imgInfo = MAMUtility.ParseToRequestContent(albumToken);
-            var imgEncodedPath = imgInfo[MAMUtility.MUSIC_FILEPATH];
-            var imgPath = MAMUtility.SeedDecrypt(imgEncodedPath);
+            var imgEncodedPath = imgInfo[Define.MUSIC_FILEPATH];
+            var imgPath = MusicSeedWrapper.SeedDecrypt(imgEncodedPath);
             _logger.LogDebug($"img path : {imgPath}");
 
             var host = MAMUtility.GetHost(wavPath).ToUpper();
@@ -250,7 +251,7 @@ namespace MAMBrowser.Services
                 foreach (var fileName in edto.result)
                 {
                     _logger.LogDebug($"image file name : {fileName}");
-                    if (!string.IsNullOrEmpty(fileName) && Path.GetExtension(fileName).ToUpper() == MAMUtility.JPG)
+                    if (!string.IsNullOrEmpty(fileName) && Path.GetExtension(fileName).ToUpper() == Define.JPG)
                     {
                         var fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName).ToUpper();
                         if (fileNameWithoutExt[fileNameWithoutExt.Length - 1] == 'T')    //썸네일 제외
@@ -317,12 +318,12 @@ namespace MAMBrowser.Services
         {
             var jsonWavInfo = MAMUtility.ParseToJsonRequestContent(token);
             var wavInfo = MAMUtility.ParseToRequestContent(token);
-            var wavEncodedPath = wavInfo[MAMUtility.MUSIC_FILEPATH];
+            var wavEncodedPath = wavInfo[Define.MUSIC_FILEPATH];
 
-            var wavPath = MAMUtility.SeedDecrypt(wavEncodedPath);
-            var egyPath = Path.ChangeExtension(wavPath, MAMUtility.EGY);
-            var jsonEgyInfo = MAMUtility.GetJsonRequestContentFromPath(egyPath);
-
+            var wavPath = MusicSeedWrapper.SeedDecrypt(wavEncodedPath);
+            var egyPath = Path.ChangeExtension(wavPath, Define.EGY);
+            var jsonEgyInfo = TokenGenerator.GetJsonRequestContentFromPath(egyPath, DateTime.Now.AddHours(ExpireMusicTokenHour));
+            
             var host = MAMUtility.GetHost(wavPath);
             var domainAndPort = _storageMap[host] as string;
             var domain = domainAndPort.Split(":").First();
@@ -336,7 +337,7 @@ namespace MAMBrowser.Services
 
             var waveFileName = Path.GetFileName(wavPath);
             var wavTargetPath = MAMUtility.GetTempFilePath(userId, remoteIp, waveFileName);
-            var egyTargetPath = Path.ChangeExtension(wavTargetPath, MAMUtility.EGY);
+            var egyTargetPath = Path.ChangeExtension(wavTargetPath, Define.EGY);
 
             TempDownloadCore(domain, port, jsonWavInfo, wavTargetPath);   //wav
             TempDownloadCore(domain, port, jsonEgyInfo, egyTargetPath);   //egy
@@ -375,8 +376,8 @@ namespace MAMBrowser.Services
 
         public object[] GetRequestInfo(Dictionary<string, string> musicInfo)
         {
-            var encodedFilePath = musicInfo[MAMUtility.MUSIC_FILEPATH];
-            var filePath = MAMUtility.SeedDecrypt(encodedFilePath);
+            var encodedFilePath = musicInfo[Define.MUSIC_FILEPATH];
+            var filePath =  MusicSeedWrapper.SeedDecrypt(encodedFilePath);
             var host = MAMUtility.GetHost(filePath);
             var domainAndPort = _storageMap[host] as string;        // 뮤직서비스에 구현.
             var domain = domainAndPort.Split(":").First();

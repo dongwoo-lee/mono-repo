@@ -1,0 +1,45 @@
+﻿using MAMBrowser.DTO;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace MAMBrowser.Models
+{
+    public class M30_MAM_PRIVATE_SPACE : IValidatableObject
+    {
+        [JsonPropertyName("seq")]
+        public long SEQ { get; set; }
+        [JsonPropertyName("userId")]
+        public string USER_ID { get; set; }
+        //[Remote(action: "VerifyModel", controller: "PrivateFileController")]
+        //[Required]
+        [JsonPropertyName("title")]
+        public string TITLE { get; set; }
+        [JsonPropertyName("memo")]
+        public string MEMO { get; set; }
+        [JsonPropertyName("audioFormat")]
+        public string AUDIO_FORMAT { get; set; }
+        [JsonPropertyName("fileSize")]
+        public long FILE_SIZE { get; set; }
+        [JsonPropertyName("storageHost")]
+        public string STORAGE_HOST { get; set; }
+        [JsonPropertyName("filePath")]
+        public string FILE_PATH { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            List<ValidationResult> resultList = new List<ValidationResult>();
+            if (string.IsNullOrEmpty(TITLE))
+            {
+                yield return new ValidationResult(
+                    $" invaliate data",
+                    new[] { nameof(TITLE) });
+            }
+            //return resultList;
+            //return null;
+        }
+    }
+}
