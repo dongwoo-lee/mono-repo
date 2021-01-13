@@ -127,7 +127,7 @@
                 <b-button
                   v-if="display(PREVIEW_CODE)"
                   class="icon-buton"
-                  v-b-tooltip.hover.top="{ title: IS_ADMIN ? data.item.filePath : '미리듣기' }"
+                  v-b-tooltip.hover.top="{ title: IS_ADMIN ? data.item.filePath : '미리듣기', customClass : rowCustomClass(data) }"
                   @click.stop="onPreview(data.item)">
                 <b-icon icon="caret-right-square" class="icon"></b-icon>
               </b-button>
@@ -195,6 +195,12 @@ export default {
     }
   },
   methods: {
+    rowCustomClass(data) {
+      if (this.reponseContentsData.data.length === 2 && data.index === 0)  {
+        return 'two';
+      }
+      return '';
+    },
     getSelectDate() {
       if (this.selectBrdDate) {
         return `${this.$fn.formatDate(this.selectBrdDate, 'yyyy-MM-dd')} 프로그램CM 리스트`;  

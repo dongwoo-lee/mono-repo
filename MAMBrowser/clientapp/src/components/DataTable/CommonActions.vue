@@ -15,7 +15,7 @@
             :disabled="!existFile()"
             :style="getDownloadStyle()"
             class="icon-buton"
-            v-b-tooltip.hover.top="{ title: IS_ADMIN ? rowData.filePath : '다운로드' }"
+            v-b-tooltip.hover.top="{ title: IS_ADMIN ? rowData.filePath : '다운로드'}"
             @click.stop="onDownload()">
             <b-icon icon="download" class="icon"></b-icon>
         </b-button>           
@@ -30,7 +30,7 @@
             v-if="displayEtc('delete')"
             class="icon-buton"
             :title="getTitle('delete')"
-            :disabled="!isPossibleDelete"
+            :disabled="!isPossibleDelete || !isSystemTopAdmin"
             :style="getDeleteStyle()"
             @click.stop="onDelete()">
             <b-icon icon="trash" class="icon" variant="danger"></b-icon>
@@ -87,7 +87,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('user', ['roleList'])
+        ...mapGetters('user', ['roleList', 'isSystemTopAdmin'])
     },
     watch: {
         '$route': {
@@ -116,6 +116,7 @@ export default {
             this.$emit('download', this.rowData);
         },
         onDelete() {
+            if (!this.isPossibleDelete || !this.isSystemTopAdmin) { return; }
             this.$emit('delete', this.rowData);
         },
         onMetaModify() {
@@ -145,7 +146,7 @@ export default {
             return {
                 'opacity': this.rowData.existFile ? 1 : 0.2,
             }
-        }
+        },
     },
 }
 </script>

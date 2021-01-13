@@ -2,7 +2,7 @@ import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
 import jwt_decode from "jwt-decode";
-import {USER_ID, ROLE, ACCESS_TOKEN, AUTHORITY, SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER} from '@/constants/config';
+import {USER_ID, ROLE, ACCESS_TOKEN, AUTHORITY, SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER, SYSTEM_TOP_ADMIN_CODE} from '@/constants/config';
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
 const getAddUrlAndIconMenuList = (menuList, roleList) => {
@@ -69,6 +69,7 @@ export default {
     callLoginAuthTryCnt: 0,
     tokenExpires: 0,
     timerProccessing: false,
+    authority: AUTHORITY_MANAGER,
   },
   getters: {
     menuList: state => state.menuList,
@@ -83,6 +84,7 @@ export default {
     timerProccessing: state => state.timerProccessing,
     conDBName: state => state.currentUser.conDBName,
     conNetworkName: state => state.currentUser.conNetworkName,
+    isSystemTopAdmin: state => state.currentUser.authorCD === SYSTEM_TOP_ADMIN_CODE,
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -104,10 +106,11 @@ export default {
       delete resultObject.menuList;
       delete resultObject.behaviorList;
       state.currentUser = resultObject;
+      state.authority = getAuthority(state.behaviorList);
       
       sessionStorage.setItem(USER_ID, id);
       sessionStorage.setItem(ROLE, JSON.stringify(state.roleList));
-      sessionStorage.setItem(AUTHORITY, getAuthority(state.behaviorList));
+      sessionStorage.setItem(AUTHORITY, state.authority);
     },
     SET_SUMMARY_USER(state, resultObject) {
       delete resultObject.menuList;
