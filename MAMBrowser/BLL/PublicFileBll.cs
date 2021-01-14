@@ -48,6 +48,11 @@ namespace MAMBrowser.BLL
                 _fileProtocol.Move(relativeSourcePath, relativeTargetPath);
                 stream.Dispose();
                 headerStream.Dispose();
+
+                metaData.SEQ = ID;
+                metaData.USER_ID = userId;
+                metaData.AUDIO_FORMAT = audioFormat;
+                metaData.FILE_PATH = @$"\\{_fileProtocol.UploadHost}\{relativeTargetPath}";
                 _dao.Insert(metaData);
 
                 return validateResult;
@@ -97,7 +102,7 @@ namespace MAMBrowser.BLL
                 result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
                 return result;
             }
-            if (Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".WAV" && Path.GetExtension(metaData.FILE_PATH).ToUpper() != ".MP3")
+            if (Path.GetExtension(fileName).ToUpper() != ".WAV" && Path.GetExtension(fileName).ToUpper() != ".MP3")
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
                 result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";

@@ -112,6 +112,9 @@ namespace MAMBrowser.BLL
         }
         public void DeleteRecycleBin(string userId, List<long> seqList)
         {
+            if (seqList.Count <= 0)
+                return;
+
             //파일 실제 삭제
             foreach (var seq in seqList)
             {
