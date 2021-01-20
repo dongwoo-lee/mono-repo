@@ -28,6 +28,10 @@ Object.keys(commonFilters).forEach((key) => { Vue.filter(key, commonFilters[key]
 const i18n = new VueI18n({ locale: 'ko', fallbackLocale: 'en', messages});
 
 Vue.config.productionTip = false
+Vue.config.errorHandler = function(err, vm, info) {
+  console.log(`Error: ${err.toString()}\nInfo: ${info}`);
+}
+
 export default new Vue({
   i18n,
   router,

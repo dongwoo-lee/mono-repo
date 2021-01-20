@@ -209,27 +209,30 @@ const fileDownload = (res, fileNm = '') => {
     }
 }
 
-const formatMBBytes = (bytes, decimals = 1) => {    
+/**
+ * 1000000 / 1048576 두가지 사용
+ * @param {*} bytes 
+ * @param {*} decimals 
+ * @param {*} unit 
+ */
+const formatMBBytes = (bytes, unit = 1048576, decimals = 1) => {
     if (bytes === 0) return '0 MB';
-    // 1 000 = 1kb
-    // 1 000 000 = 1mb
-    // 1 000 000 000 = 1gb
-    const baseBytes = 1000000; // 기본 MB단위입니다.
+    const baseBytes = unit; // 기본 MB단위입니다.
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     let i = 0;
     let k = Math.floor(bytes / baseBytes);
 
-    while(k >= 1000) {
+    while(k >= 1024) {
         i = i + 1;
-        k = Math.floor(k / 1000);
+        k = Math.floor(k / 1024);
     }
 
-    return parseFloat((bytes / (baseBytes * Math.pow(1000, i))).toFixed(dm)) + ' ' + sizes[i];
+    return parseFloat((bytes / (baseBytes * Math.pow(1024, i))).toFixed(dm)) + ' ' + sizes[i];
 }
 
-const formatBytes = (size, decimals = 2) => {
+const formatBytes = (size, decimals = 2, unit = 1024) => {
     if (size === 0) return '0 B';
     let bytes = size;
     const isMinusSign = size < 0;
@@ -237,7 +240,7 @@ const formatBytes = (size, decimals = 2) => {
         bytes = size * -1;
     }
 
-    const k = 1000;
+    const k = unit;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 

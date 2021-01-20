@@ -42,7 +42,7 @@
               <!-- 디스크 용량 정보 -->
               <td>
                 <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
-                <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable) }}</span>
+                <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable, 1000000) }}</span>
               </td>
               <!-- 사용자 정보 -->
               <td rowspan="2">

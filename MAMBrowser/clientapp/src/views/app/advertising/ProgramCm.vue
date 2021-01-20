@@ -199,6 +199,9 @@ export default {
       if (this.reponseContentsData.data.length === 2 && data.index === 0)  {
         return 'two';
       }
+      if (this.reponseContentsData.data.length === 1)  {
+        return 'single';
+      }
       return '';
     },
     getSelectDate() {

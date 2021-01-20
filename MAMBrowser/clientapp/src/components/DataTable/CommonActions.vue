@@ -38,6 +38,7 @@
         <b-button
             v-if="displayMyDiskCopy()"
             class="icon-buton"
+            :disabled="!existFile()"
             :title="getTitle('mydisk-copy')"
             @click.stop="onMyDiskCopy()">
             <i class="iconsminds-shop i-custom-actions-shop" />
@@ -123,6 +124,7 @@ export default {
             this.$emit('modify', this.rowData);
         },
         onMyDiskCopy() {
+            if (!this.existFile()) { return; }
             this.$emit('mydiskCopy', this.rowData);
         },
         getTitle(type) {
