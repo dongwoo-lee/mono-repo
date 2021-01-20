@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -32,11 +33,14 @@ namespace MAMBrowser.Controllers
         private readonly AppSettings _appSesstings;
         private readonly MusicService _fileProtocol;
         private readonly WebServerFileHelper _fileHelper;
-        public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicService fileService, WebServerFileHelper fileHelper)
+        private readonly ILogger<MusicService> _logger;
+        public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicService fileService, WebServerFileHelper fileHelper, ILogger<MusicService> logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
             _fileProtocol = fileService;
+            _fileHelper = fileHelper;
+            _logger = logger;
         }
 
 
@@ -175,6 +179,7 @@ namespace MAMBrowser.Controllers
             }
             catch (HttpStatusErrorException ex)
             {
+                _logger.LogError(ex.ToString());
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
         }
