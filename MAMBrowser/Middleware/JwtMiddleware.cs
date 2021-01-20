@@ -1,4 +1,5 @@
-﻿using MAMBrowser.Helpers;
+﻿using MAMBrowser.Common;
+using MAMBrowser.Helpers;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -53,11 +54,11 @@ namespace MAMBrowser.Middleware
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
 
-                context.Items[MAMUtility.USER_ID] = userId;
+                context.Items[Define.USER_ID] = userId;
             }
             catch(Exception ex)
             {
-                context.Items[MAMUtility.USER_ID] = null;
+                context.Items[Define.USER_ID] = null;
             }
         }
     }

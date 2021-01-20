@@ -14,11 +14,11 @@ const routes = [
   {
     path: "/user",
     component: () => import("./views/user"),
-    redirect: "/user/Login",
+    redirect: "/user/login",
     children: [
       {
         path: "login",
-        component: () => import("./views/user/Login"),
+        component: () => import("./views/user/login"),
         meta: { requiresAuth: true }
       },
     ]

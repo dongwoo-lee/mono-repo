@@ -1,5 +1,8 @@
-﻿using MAMBrowser.DAL;
+﻿using MAMBrowser.BLL;
+using MAMBrowser.Common;
+using MAMBrowser.DAL;
 using MAMBrowser.DTO;
+using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Services;
@@ -18,13 +21,13 @@ namespace MAMBrowser.Controllers
     public class APIController : ControllerBase
     {
         private readonly AppSettings _appSesstings;
-        private readonly APIDAL _dal;
+        private readonly APIBll _bll;
         private IUserService _userService;
 
-        public APIController(IOptions<AppSettings> appSesstings, APIDAL dal, IUserService userService)
+        public APIController(IOptions<AppSettings> appSesstings, APIBll bll, IUserService userService)
         {
             _appSesstings = appSesstings.Value;
-            _dal = dal;
+            _bll = bll;
             _userService = userService;
         }
 
@@ -40,7 +43,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 var clientIp = HttpContext.Connection.RemoteIpAddress;
-                if (!_dal.ExistUser(account))
+                if (!_bll.ExistUser(account))
                 {
                     result.ErrorMsg = "ID 를 찾을 수 없습니다.";
                     result.ResultCode = RESUlT_CODES.DENY_ACCESS;
@@ -48,7 +51,7 @@ namespace MAMBrowser.Controllers
                 else
                 {
                     
-                    if (!_dal.Authenticate(account))
+                    if (!_bll.Authenticate(account))
                     {
                         result.ErrorMsg = "비밀번호가 틀립니다.";
                         result.ResultCode = RESUlT_CODES.DENY_ACCESS;
@@ -140,7 +143,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>>();
             try
             {
-                result.ResultObject = _dal.GetUserDetailList();
+                result.ResultObject = _bll.GetUserDetailList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -157,12 +160,12 @@ namespace MAMBrowser.Controllers
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("users")]
-        public DTO_RESULT UpdateUserDetail([FromBody] List<UserExtModel> dtoList)
+        public DTO_RESULT UpdateUserDetail([FromBody] List<M30_COMM_USER_EXT> dtoList)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var updateCount = _dal.UpdateUserDetail(dtoList);
+                var updateCount = _bll.UpdateUserDetail(dtoList);
                 if (updateCount > 0)
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 else
@@ -187,7 +190,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                result.ResultObject = _dal.GetUserSummary(id);
+                result.ResultObject = _bll.GetUserSummary(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -213,8 +216,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                var user = _dal.GetUserSummary(id);
-                var menuList = _dal.GetMenu(id);
+                var user = _bll.GetUserSummary(id);
+                var menuList = _bll.GetMenu(id);
                 var lookup = menuList.ToLookup(menu => menu.ParentID);
                 menuList.ForEach(menu =>
                 {
@@ -230,9 +233,9 @@ namespace MAMBrowser.Controllers
                     }
                 });
 
-                user.BehaviorList = _dal.GetBehavior(user.AuthorCD);
+                user.BehaviorList = _bll.GetBehavior(user.AuthorCD);
                 user.ConDBName = _appSesstings.DBName;
-                user.ConNetworkName = MAMUtility.NetworkName(clientIp);
+                user.ConNetworkName = MAMUtility.NetworkName(_appSesstings.BroadcastStartNetwork, _appSesstings.BroadcastEndNetwork, clientIp);
                 result.ResultObject = user;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -257,7 +260,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                result.ResultObject.Data = _dal.GetMenu(id);
+                result.ResultObject.Data = _bll.GetMenu(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -280,7 +283,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                var resultMenuGrpList = _dal.GetMenuByGrpId(grpId);
+                var resultMenuGrpList = _bll.GetMenuByGrpId(grpId);
                 var parentMenuList = resultMenuGrpList.FindAll(menugrp => menugrp.ParentID == "S01G01");
                 resultMenuGrpList.GroupBy(menu => menu.ParentID).ToList().ForEach(data =>
                 {
@@ -311,7 +314,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
             try
             {
-                result.ResultObject = _dal.GetMenuGrpList();
+                result.ResultObject = _bll.GetMenuGrpList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -335,7 +338,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = new DTO_RESULT_LIST<DTO_MENU>();
-                result.ResultObject.Data = _dal.GetBehavior(authorCd);
+                result.ResultObject.Data = _bll.GetBehavior(authorCd);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -357,7 +360,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_COMMON_CODE>>();
             try
             {
-                result.ResultObject = _dal.GetAuthorList();
+                result.ResultObject = _bll.GetAuthorList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
 
             }
@@ -381,7 +384,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_ROLE_DETAIL>>();
             try
             {
-                result.ResultObject = _dal.GetRoleDetailList();
+                result.ResultObject = _bll.GetRoleDetailList();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -397,13 +400,13 @@ namespace MAMBrowser.Controllers
         /// <param name="dtoList"></param>
         /// <returns></returns>
         [HttpPut("roles")]
-        public DTO_RESULT UpdateRole([FromBody] List<RoleExtModel> dtoList)
+        public DTO_RESULT UpdateRole([FromBody] List<M30_COMM_ROLE_EXT> dtoList)
         {
 
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                var updateCount = _dal.UpdateRole(dtoList);
+                var updateCount = _bll.UpdateRole(dtoList);
                 if (updateCount > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -467,12 +470,12 @@ namespace MAMBrowser.Controllers
         /// <param name="description">내용</param>
         /// <returns></returns>
         [HttpGet("Logs")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices]LogBll logBll )
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>>();
             try
             {
-                result.ResultObject = _dal.SearchLog(start_dt, end_dt, logLevel, userName, description, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = logBll.SearchLog(start_dt, end_dt, logLevel, userName, description, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

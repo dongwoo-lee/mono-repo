@@ -1,7 +1,9 @@
 ﻿using MAMBrowser.BLL;
+using MAMBrowser.Common;
 using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
+using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
 using MAMBrowser.Services;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -28,12 +31,16 @@ namespace MAMBrowser.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
-        private readonly MusicService _fileService;
-        public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicService fileService)
+        private readonly MusicService _fileProtocol;
+        private readonly WebServerFileHelper _fileHelper;
+        private readonly ILogger<MusicService> _logger;
+        public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicService fileService, WebServerFileHelper fileHelper, ILogger<MusicService> logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
-            _fileService = fileService;
+            _fileProtocol = fileService;
+            _fileHelper = fileHelper;
+            _logger = logger;
         }
 
 
@@ -60,7 +67,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject.Data = new List<DTO_SONG>();
                 else
-                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+                    result.ResultObject.Data = _fileProtocol.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -95,7 +102,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
                 else
-                    result.ResultObject.Data = _fileService.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
+                    result.ResultObject.Data = _fileProtocol.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -123,10 +130,10 @@ namespace MAMBrowser.Controllers
         {
             var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
             var musicInfo = MAMUtility.ParseToRequestContent(token);
-            var requestInfo = _fileService.GetRequestInfo(musicInfo);
+            var requestInfo = _fileProtocol.GetRequestInfo(musicInfo);
             string contentType = "audio/wav";
             long fileSize;
-            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
+            var stream = _fileProtocol.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
                 //FileName = WebUtility.UrlEncode(requestInfo[2] as string),
@@ -149,7 +156,7 @@ namespace MAMBrowser.Controllers
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
-                return MAMUtility.StreamingFromPath(decodedFilePath, userId, remoteIp);
+                return _fileHelper.StreamingFromPath(decodedFilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -168,10 +175,11 @@ namespace MAMBrowser.Controllers
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
-                return MAMUtility.GetWaveformFromPath(decodedFilePath, userId, remoteIp);
+                return _fileHelper.GetWaveformFromPath(decodedFilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
+                _logger.LogError(ex.ToString());
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
         }
@@ -184,24 +192,24 @@ namespace MAMBrowser.Controllers
         public IActionResult MusicTempDownload([FromQuery] string token)
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-            _fileService.TempDownloadWavAndEgy(userId, remoteIp, token);
+            string userId = HttpContext.Items[Define.USER_ID] as string;
+            _fileProtocol.TempDownloadWavAndEgy(userId, remoteIp, token);
             return Ok();
         }
         [HttpPost("music-to-myspace")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> MusicToMyspace([FromQuery] string token, [FromBody] PrivateFileModel metaData, [FromServices] PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> MusicToMyspace([FromQuery] string token, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices] PrivateFileBll privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
                 var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
                 var musicInfo = MAMUtility.ParseToRequestContent(token);
-                var requestInfo = _fileService.GetRequestInfo(musicInfo);
+                var requestInfo = _fileProtocol.GetRequestInfo(musicInfo);
                 var fileName = requestInfo[2] as string;
 
-                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                string userId = HttpContext.Items[Define.USER_ID] as string;
                 long fileSize;
-                using (var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize))
+                using (var stream = _fileProtocol.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize))
                 {
                     metaData.FILE_SIZE = fileSize;
                     result = privateBll.UploadFile(userId, stream, fileName, metaData);
@@ -225,8 +233,8 @@ namespace MAMBrowser.Controllers
         public ActionResult<List<string>> AlbumImageTempDownload([FromQuery] string token, [FromQuery] string albumToken)
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
-            return _fileService.TempImageDownload(userId, remoteIp, token, albumToken);
+            string userId = HttpContext.Items[Define.USER_ID] as string;
+            return _fileProtocol.TempImageDownload(userId, remoteIp, token, albumToken);
         }
 
         /// <summary>
@@ -241,7 +249,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 //string userId = HttpContext.Items[MAMUtility.USER_ID] as string;  확인필요..
-                return MAMUtility.StreamingFromFileName(fileName, userId, remoteIp);
+                return _fileHelper.StreamingFromFileName(fileName, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -261,7 +269,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = new DTO_RESULT_OBJECT<string>();
-                result.ResultObject.Data = _fileService.SearchLyrics(lyricsSeq);
+                result.ResultObject.Data = _fileProtocol.SearchLyrics(lyricsSeq);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -1,32 +1,18 @@
-﻿using log4net.Appender;
-using log4net.Util;
-using MAMBrowser.BLL;
-using MAMBrowser.DAL;
+﻿using MAMBrowser.BLL;
+using MAMBrowser.Common;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
+using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
-using MAMBrowser.Processor;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NAudio.Wave;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
@@ -35,18 +21,18 @@ namespace MAMBrowser.Controllers
     public class PrivateFileController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly AppSettings _appSesstings;
-        private readonly PrivateFileDAL _dal;
-        private readonly PrivateFileBLL _bll;
-        private readonly IFileService _fileService;
-        public PrivateFileController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings,  ServiceResolver sr, PrivateFileBLL bll, PrivateFileDAL dal)
+        private readonly PrivateFileBll _bll;
+        private readonly WebServerFileHelper _fileHelper;
+        private readonly IFileProtocol _fileProtocol;
+
+        public PrivateFileController(IHostingEnvironment hostingEnvironment, PrivateFileBll bll, ServiceResolver sr, WebServerFileHelper fileHelper)
         {
-            _dal = dal;
             _bll = bll;
-            _appSesstings = appSesstings.Value;
-            _fileService = sr("PrivateWorkConnection");
             _hostingEnvironment = hostingEnvironment;
+            _fileHelper = fileHelper;
+            _fileProtocol = sr("PrivateWorkConnection");
         }
+
         /// <summary>
         /// My 공간- 파일+메타데이터 등록
         /// </summary>
@@ -57,7 +43,7 @@ namespace MAMBrowser.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("files/{userId}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] PrivateFileModel metaData)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] M30_MAM_PRIVATE_SPACE metaData)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
@@ -82,12 +68,12 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPut("meta/{userId}")]
-        public DTO_RESULT UpdateData(string userId, [FromBody] PrivateFileModel metaData)
+        public DTO_RESULT UpdateData(string userId, [FromBody] M30_MAM_PRIVATE_SPACE metaData)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
-                if (_dal.UpdateData(metaData) > 0)
+                if (_bll.UpdateData(metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
                 }
@@ -111,7 +97,7 @@ namespace MAMBrowser.Controllers
         /// <param name="metaData"></param>
         /// <returns></returns>
         [HttpPost("verify/{userId}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] PrivateFileModel metaData)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] M30_MAM_PRIVATE_SPACE metaData)
         {
             return _bll.VerifyModel(userId, metaData, metaData.FILE_PATH);
         }
@@ -134,7 +120,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                result.ResultObject = _dal.FindData("Y", start_dt, end_dt, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindData("Y", start_dt, end_dt, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -161,7 +147,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                result.ResultObject = _dal.FindData("N", null, null, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindData("N", null, null, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -182,10 +168,10 @@ namespace MAMBrowser.Controllers
         [HttpGet("files/{key}")]
         public IActionResult Download(long key, [FromQuery] string inline = "N")
         {
-            var fileData = _dal.Get(key);
+            var fileData = _bll.Get(key);
             try
             {
-                return MAMUtility.DownloadFromPath(fileData.FilePath, Response, _fileService, inline);
+                return _fileHelper.DownloadFromPath(fileData.FilePath, Response, _fileProtocol, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -207,11 +193,11 @@ namespace MAMBrowser.Controllers
         public IActionResult Streaming(long key, string userId, [FromQuery] string direct = "N")
         {
             //range 있을떄는 206 반환하도록
-            var fileData = _dal.Get(key);
+            var fileData = _bll.Get(key);
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                return MAMUtility.StreamingFromPath(fileData.FilePath, userId, remoteIp);
+                return _fileHelper.StreamingFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -230,11 +216,11 @@ namespace MAMBrowser.Controllers
         [HttpGet("waveform/{key}")]
         public ActionResult<List<float>> GetWaveform(long key, string userId)
         {
-            var fileData = _dal.Get(key);
+            var fileData = _bll.Get(key);
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                return MAMUtility.GetWaveformFromPath(fileData.FilePath, userId, remoteIp);
+                return _fileHelper.GetWaveformFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (Exception ex)
             {
@@ -249,13 +235,13 @@ namespace MAMBrowser.Controllers
         [HttpGet("temp-download/{seq}")]
         public IActionResult TempDownload([FromServices] ServiceResolver sr, long seq)
         {
-            var fileData = _dal.Get(seq);
+            var fileData = _bll.Get(seq);
 
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileProtocol);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -279,13 +265,12 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.DeleteDB(userId, seqlist))
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                else
-                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+                _bll.MoveRecycleBin(userId, seqlist.ToList<long>());
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
@@ -304,13 +289,12 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.DeleteRecycleBin(userId, seqlist))
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                else
-                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+                _bll.DeleteRecycleBin(userId, seqlist.ToList<long>());
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
@@ -329,13 +313,12 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.DeleteAllRecycleBin(userId))
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                else
-                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+                _bll.DeleteAllRecycleBin(userId);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
@@ -354,13 +337,13 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
-                if (_dal.RecycleAll(userId, seqlist))
-                    result.ResultCode = RESUlT_CODES.SUCCESS;
-                else
-                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+                _bll.RecycleAll(userId, seqlist);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                
             }
             catch (Exception ex)
             {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
                 MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }

@@ -21,12 +21,12 @@ namespace MAMBrowser.Services
     public class UserService : IUserService
     {
         private readonly AppSettings _appSettings;
-        private readonly APIDAL _dal;
+        private readonly APIDao _dao;
 
-        public UserService(IOptions<AppSettings> appSettings, APIDAL dal)
+        public UserService(IOptions<AppSettings> appSettings, APIDao dao)
         {
             _appSettings = appSettings.Value;
-            _dal = dal;
+            _dao = dao;
         }
 
         public string Authenticate(string id)

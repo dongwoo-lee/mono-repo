@@ -1,12 +1,14 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
+using MAMBrowser.Common;
+using MAMBrowser.Common.Foundation;
 using MAMBrowser.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
+using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
 using MAMBrowser.Models;
-using MAMBrowser.Processor;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -32,17 +34,21 @@ namespace MAMBrowser.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
-        private readonly ProductsDAL _dal;
-        private readonly IFileService _fileService;
+        private readonly ProductsBll _bll;
+        private readonly IFileProtocol _fileService;
         private readonly ILogger<ProductsController> _logger;
+        private readonly WebServerFileHelper _fileHelper;
 
-        public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsDAL dal, ServiceResolver sr, ILogger<ProductsController> logger)
+
+
+        public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsBll bll, ServiceResolver sr, ILogger<ProductsController> logger, WebServerFileHelper fileHelper)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
-            _dal = dal;
+            _bll = bll;
             _fileService = sr("MirosConnection");
             _logger = logger;
+            _fileHelper = fileHelper;
         }
 
         /// <summary>
@@ -64,7 +70,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindPGM(media, brd_dt, pgm, editor, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindPGM(media, brd_dt, pgm, editor, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -95,7 +101,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindSCRSpot(media, start_dt, end_dt, pgmName, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindSCRSpot(media, start_dt, end_dt, pgmName, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -128,7 +134,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindReport(cate, start_dt, end_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindReport(cate, start_dt, end_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -160,7 +166,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindOldPro(media, cate, start_dt, end_dt, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindOldPro(media, cate, start_dt, end_dt, type, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -184,7 +190,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindSB("MAIN", media, brd_dt, pgm);
+                result.ResultObject = _bll.FindSB("MAIN", media, brd_dt, pgm);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -208,7 +214,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindSB("SUB", media, brd_dt, pgm);
+                result.ResultObject = _bll.FindSB("SUB", media, brd_dt, pgm);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -231,7 +237,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindSBContents(brd_dt, sbID);
+                result.ResultObject = _bll.FindSBContents(brd_dt, sbID);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -257,7 +263,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindCM(media, brd_dt, cate, pgmName);
+                result.ResultObject = _bll.FindCM(media, brd_dt, cate, pgmName);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -281,7 +287,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindCMContents(brd_dt, cmgrpid);
+                result.ResultObject = _bll.FindCMContents(brd_dt, cmgrpid);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -308,7 +314,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindMcrSpot(media, start_dt, end_dt, spotId, editor, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindMcrSpot(media, start_dt, end_dt, spotId, editor, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -337,7 +343,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindFiller("M30_VW_FILLER_PR", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindFiller("M30_VW_FILLER_PR", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -367,7 +373,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindFiller("M30_VW_FILLER_MATERIAL", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindFiller("M30_VW_FILLER_MATERIAL", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -400,7 +406,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FindFillerTime(media, start_dt, end_dt, cate, status, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindFillerTime(media, start_dt, end_dt, cate, status, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -429,7 +435,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 //
-                result.ResultObject = _dal.FindFiller("M30_VW_FILLER_ETC", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindFiller("M30_VW_FILLER_ETC", brd_dt, cate, editor, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -453,7 +459,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _dal.FineDLArchive(media, schDate, pgmName, sortKey, sortValue);
+                result.ResultObject = _bll.FineDLArchive(media, schDate, pgmName, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -474,7 +480,7 @@ namespace MAMBrowser.Controllers
         {
             try
             {
-                return MAMUtility.Download(token, Response, _fileService, inline);
+                return _fileHelper.Download(token, Response, _fileService, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -510,7 +516,7 @@ namespace MAMBrowser.Controllers
                     var sbfiles = FindSBContents(brd_Dt, grpId);
                     foreach (var sbFile in sbfiles.ResultObject.Data)
                     {
-                        if (MAMUtility.ValidateMAMToken(sbFile.FileToken, ref decodedFilePath))
+                        if (TokenGenerator.ValidateFileToken(sbFile.FileToken, ref decodedFilePath))
                         {
                             filePathList.Add(decodedFilePath);
                             decodedFilePath = "";
@@ -525,7 +531,7 @@ namespace MAMBrowser.Controllers
                     var sbfiles = FindCMContents(brd_Dt, grpId);
                     foreach (var sbFile in sbfiles.ResultObject.Data)
                     {
-                        if (MAMUtility.ValidateMAMToken(sbFile.FileToken, ref decodedFilePath))
+                        if (TokenGenerator.ValidateFileToken(sbFile.FileToken, ref decodedFilePath))
                         {
                             filePathList.Add(decodedFilePath);
                             decodedFilePath = "";
@@ -543,7 +549,7 @@ namespace MAMBrowser.Controllers
 
                 
                 
-                string mergeType = MAMUtility.WAV;
+                string mergeType = Define.WAV;
                 var firstFileExt = Path.GetExtension(filePathList.First()).ToUpper();
                 mergeType = filePathList.All(filePath => Path.GetExtension(filePath).ToUpper() == firstFileExt) ? firstFileExt : mergeType;
                 _logger.LogDebug($"mergeType : {mergeType}");
@@ -568,7 +574,7 @@ namespace MAMBrowser.Controllers
                 // 
                 byte[] buffer = new byte[10240];
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                string userId = HttpContext.Items[Define.USER_ID] as string;
                 MAMUtility.InitTempFoler(userId, remoteIp);
                 var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, downloadFileName);
                 
@@ -581,7 +587,7 @@ namespace MAMBrowser.Controllers
                         var ext = Path.GetExtension(filePath).ToUpper();
                         using (var inStream = _fileService.GetFileStream(filePath, 0))
                         {
-                            if (mergeType == MAMUtility.WAV)    //wav 또는 mp2포함된 혼합 일경우 wav로 출력
+                            if (mergeType == Define.WAV)    //wav 또는 mp2포함된 혼합 일경우 wav로 출력
                             {
                                 if (waveFileWriter == null) //향후확인 출력파일 한번만...생성자..통과하면 헤더가 자동으로 쓰여짐.
                                 {
@@ -594,7 +600,7 @@ namespace MAMBrowser.Controllers
                                     inStream.CopyTo(tempMemoryStream);
                                     tempMemoryStream.Position = 0;
 
-                                    if (ext == MAMUtility.WAV)//일단 wav포맷은 신경안써도될듯. 
+                                    if (ext == Define.WAV)//일단 wav포맷은 신경안써도될듯. 
                                     {
 
                                         using (WaveFileReader reader = new WaveFileReader(tempMemoryStream))
@@ -611,14 +617,14 @@ namespace MAMBrowser.Controllers
                                             waveFileWriter.Flush();
                                         }
                                     }
-                                    else if (ext == MAMUtility.MP2)
+                                    else if (ext == Define.MP2)
                                     {
                                         
                                         AudioEngine.ConvertMp2ToWav(tempMemoryStream, waveFileWriter);
                                     }
                                 }
                             }
-                            else if (mergeType == MAMUtility.MP2)   //모두  mp2인경우
+                            else if (mergeType == Define.MP2)   //모두  mp2인경우
                             {
                                 inStream.CopyTo(outFileStream);
                             }
@@ -681,7 +687,7 @@ namespace MAMBrowser.Controllers
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
-                return MAMUtility.Streaming(token, userId, remoteIp);
+                return _fileHelper.Streaming(token, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -700,7 +706,7 @@ namespace MAMBrowser.Controllers
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
-                return MAMUtility.GetWaveform(token, userId, remoteIp);
+                return _fileHelper.GetWaveform(token, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -717,10 +723,10 @@ namespace MAMBrowser.Controllers
         public IActionResult TempDownload([FromQuery] string token)
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                MAMUtility.TempDownload(token, userId, remoteIp, _fileService);
+                _fileHelper.TempDownload(token, userId, remoteIp, _fileService);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -736,16 +742,16 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpPost("product-to-myspace")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token, [FromBody] PrivateFileModel metaData, [FromServices] PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> FileToMySpace([FromQuery] string token, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices] PrivateFileBll privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
                 string filePath = "";
-                if (MAMUtility.ValidateMAMToken(token, ref filePath))
+                if (TokenGenerator.ValidateFileToken(token, ref filePath))
                 {
                     var fileName = Path.GetFileName(filePath);
-                    string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                    string userId = HttpContext.Items[Define.USER_ID] as string;
                     using (var stream = _fileService.GetFileStream(filePath, 0))
                     {
                         metaData.FILE_SIZE = stream.Length;
@@ -776,10 +782,10 @@ namespace MAMBrowser.Controllers
         public IActionResult Dl30Download([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV", [FromQuery] string inline = "N")
         {
             var fileService = sr("DLArchiveConnection");
-            var fileData = _dal.GetDLArchive(seq);
+            var fileData = _bll.GetDLArchive(seq);
             try
             {
-                return MAMUtility.DownloadFromPath(fileData.FilePath, Response, fileService, inline);
+                return _fileHelper.DownloadFromPath(fileData.FilePath, Response, fileService, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -800,11 +806,11 @@ namespace MAMBrowser.Controllers
         public IActionResult Dl30Streaming([FromServices] ServiceResolver sr, long seq, string userId, [FromQuery] string fileType = "WAV", [FromQuery] string direct = "N")
         {
             var fileService = sr("DLArchiveConnection");
-            var fileData = _dal.GetDLArchive(seq);
+            var fileData = _bll.GetDLArchive(seq);
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                return MAMUtility.StreamingFromPath(fileData.FilePath, userId, remoteIp);
+                return _fileHelper.StreamingFromPath(fileData.FilePath, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -819,9 +825,9 @@ namespace MAMBrowser.Controllers
         [HttpGet("dl30-waveform/{seq}")]
         public ActionResult<List<float>> GetDl30Waveform([FromServices] ServiceResolver sr, long seq, [FromQuery] string userId)
         {
-            var fileData = _dal.GetDLArchive(seq);
+            var fileData = _bll.GetDLArchive(seq);
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            return MAMUtility.GetWaveformFromPath(fileData.FilePath,  userId, remoteIp);
+            return _fileHelper.GetWaveformFromPath(fileData.FilePath,  userId, remoteIp);
         }
         /// <summary>
         /// DL30 소재 - 임시 다운로드
@@ -832,13 +838,13 @@ namespace MAMBrowser.Controllers
         public IActionResult TempDl30Download([FromServices] ServiceResolver sr, long seq)
         {
             var fileService = sr("DLArchiveConnection");
-            var fileData = _dal.GetDLArchive(seq);
+            var fileData = _bll.GetDLArchive(seq);
 
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+            string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                MAMUtility.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, fileService);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, fileService);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -852,15 +858,15 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpPost("dl30-to-myspace/{seq}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromBody] PrivateFileModel metaData, [FromServices] PrivateFileBLL privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices] PrivateFileBll privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
                 var fileService = sr("DLArchiveConnection");
-                var fileData = _dal.GetDLArchive(seq);
+                var fileData = _bll.GetDLArchive(seq);
                 var fileName = Path.GetFileName(fileData.FilePath);
-                string userId = HttpContext.Items[MAMUtility.USER_ID] as string;
+                string userId = HttpContext.Items[Define.USER_ID] as string;
                 //using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
                 //{
                 //    metaData.FILE_SIZE = fileData.FileSize;
