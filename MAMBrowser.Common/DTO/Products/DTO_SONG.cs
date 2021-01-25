@@ -106,7 +106,10 @@ namespace MAMBrowser.DTO
             this.ReleaseDate = edto.ISSUE_YEAR_SR;
             this.Composer = edto.COMPOSER;
             this.Writer = edto.WRITER;
-            this.FilePath = Path.Combine(edto.MR_SONG_WAV_PATH_SR, edto.FILE_NAME_SR+ Define.WAV);
+            if (!string.IsNullOrEmpty(edto.FILE_NAME_SR))
+            {
+                this.FilePath = Path.Combine(edto.MR_SONG_WAV_PATH_SR, edto.FILE_NAME_SR + Define.WAV);
+            }
             this.Arranger = edto.ARRANGER;
             if (!string.IsNullOrEmpty(edto.JPG_FILE_PATH_SR))
             {
