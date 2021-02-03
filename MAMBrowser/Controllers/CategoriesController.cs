@@ -358,6 +358,26 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        /// <summary>
+        /// DL Device 목록
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("dldevice-list")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetDLDeviceList()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                result.ResultObject = _bll.GetDLDeviceList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
 
         /// <summary>
         /// 방송의뢰 상태 목록 조회

@@ -41,8 +41,8 @@
               </td>
               <!-- 디스크 용량 정보 -->
               <td>
-                <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{currentUser.diskMax}} GB</span>
-                <span class="free-space">여유 {{ $fn.formatMBBytes(currentUser.diskAvailable, 1000000) }}</span>
+                <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{(currentUser.diskMax)}} GB</span>
+                <span :class="currentUser.diskAvailable<=(1000*1000*100) ? 'free-space-red' : 'free-space-blue'" >여유 {{ $fn.formatMBBytes(currentUser.diskAvailable, 1048000) }}</span>
               </td>
               <!-- 사용자 정보 -->
               <td rowspan="2">
@@ -76,7 +76,7 @@
                 <b-progress 
                   class=""
                   :value="currentUser.diskUsed"
-                  :max="(currentUser.diskMax * 1000000000)"
+                  :max="(currentUser.diskMax * (1024*1024*1024))"
                   animated>
                 </b-progress>
               </td>
@@ -174,8 +174,13 @@ export default {
 };
 </script>
 <style scoped>
-.free-space{
+.free-space-blue{
   color: darkblue;
+  font-weight: 600;
+  margin-left:20px;
+}
+.free-space-red{
+  color: red;
   font-weight: 600;
   margin-left:20px;
 }

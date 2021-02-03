@@ -36,7 +36,7 @@ namespace MAMBrowser.DTO
         [SortName("REC_NAME")]
         public string RecName { get; set; }
         [SortName("LENGTH")]
-        public int Duration { get; set; }
+        public string Duration { get; set; }
         [SortName("FILE_SIZE")]
         public long FileSize { get; set; }
         [SortName("REG_DTM")]

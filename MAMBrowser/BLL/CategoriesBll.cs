@@ -83,6 +83,10 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetPublicSecond(primaryCode, userId);
         }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetDLDeviceList()
+        {
+            return _dao.GetDLDeviceList();
+        }
 
         public void InsertPublicCategory(M30_COMM_CODE model)
         {

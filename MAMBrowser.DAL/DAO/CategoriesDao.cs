@@ -345,9 +345,27 @@ LEFT JOIN M30_COMM_CODE ON M30_COMM_CODE.CODE = M30_COMM_CODE_MAP.CODE /**where*
             returnData.Data = _repository.Select(queryTemplate.RawSql, param, resultMapping);
             return returnData;
         }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetDLDeviceList()
+        {
+            DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
+            var builder = new SqlBuilder();
 
+            var queryTemplate = builder.AddTemplate(@"SELECT SEQ, DEVICE_NAME FROM M30_DL_DEVICE");
 
+            var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
+            {
+                return new DTO_CATEGORY
+                {
+                    ID = Convert.ToInt64(row.SEQ).ToString(),
+                    Name = row.DEVICE_NAME
+                };
+            });
 
+            returnData.Data = _repository.Select(queryTemplate.RawSql, null, resultMapping);
+            return returnData;
+        }
+
+        
         public void InsertPublicCategory(M30_COMM_CODE model)
         {
             string query = @"INSERT INTO M30_COMM_CODE VALUES(CODE=:CODE, PARENT_CODE=:PARENT_CODE, NAME=:NAME)";

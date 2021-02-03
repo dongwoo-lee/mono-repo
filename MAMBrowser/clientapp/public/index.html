@@ -33,8 +33,25 @@
 </head>
 
 <body>
+
+<script type="text/javascript">
+function checkBrowser() {
+var isIE = /*@cc_on!@*/false || !!document.documentMode;
+    if (isIE) {
+        alert('본 시스템은 마이크로소프트 Edge, 구글 Chrome, 애플 Safari 브라우저에 최적화 되어 있습니다.');
+    }
+}
+checkBrowser();
+</script>
+
     <noscript>
-        You need to enable JavaScript to run this app.
+        
+        <b>
+            - 본 시스템은 마이크로소프트 Edge, 구글 Chrome, 애플 Safari 브라우저에 최적화 되어 있습니다.
+        <br>
+        <br>
+            - 자바스크립트 기능 활성화가 필요합니다.
+        </b>
     </noscript>
     <div id="app">
         <div class="loading"></div>

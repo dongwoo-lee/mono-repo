@@ -90,7 +90,7 @@
         <common-confirm
           id="modalRecyclebin"
           title="휴지통 비우기"
-          message= "휴지통을 비우시겠습니까?"
+          message= "휴지통을 비우시겠습니까?<br>(파일은 영구삭제되며 되돌릴 수 없습니다.)"
           submitBtn="휴지통 비우기"
           @ok="onRecyclebin()"
         />
@@ -295,7 +295,7 @@ export default {
       return this.innerHtmlSelectedFileNames + "복원하시겠습니까?";
     },
     getDeleteMsg() {
-      return this.innerHtmlSelectedFileNames + "영구적으로 삭제하시겠습니까?";
+      return this.innerHtmlSelectedFileNames + "파일을 삭제하시겠습니까?<br>(파일은 영구삭제되며 되돌릴 수 없습니다.)";
     }
   }
 }

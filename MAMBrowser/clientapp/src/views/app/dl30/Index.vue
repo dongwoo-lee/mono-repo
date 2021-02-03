@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="DL 3.0" />
+        <piaf-breadcrumb heading="아카이브(DL)" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -20,7 +20,17 @@
           <common-date-picker v-model="$v.searchItems.regDtm.$model" required/>
           <b-form-invalid-feedback :state="!$v.searchItems.regDtm.required">날짜는 필수 입력입니다.</b-form-invalid-feedback>
         </b-form-group>
-        <!-- 매체 -->
+        <!-- 단말 -->
+        <b-form-group label="단말" class="has-float-label">
+          <b-form-select
+            class="width-120"
+            v-model="searchItems.dlDeviceSeq"
+            :options="dlDeviceOptions"
+            value-field="id"
+            text-field="name"
+          />
+        </b-form-group>
+          <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
             class="width-120"
@@ -48,7 +58,7 @@
         <b-row >
           <b-colxx xs="12" md="12" class="no-r-p">
             <b-table
-              style="height:550px"
+              style="height:580px"
               class="custom-table non-h"
               ref="custom-table"
               thead-class="custom-table-color"
@@ -123,6 +133,7 @@ export default {
         searchItems: {
             media : 'A',           // 매체
             regDtm: new Date().toISOString().substring(0, 10),            // 편성일자
+            dlDeviceSeq: 0,
             pgmName: '',             // 녹음명
             rowPerPage: 30,
             selectPage: 1,
@@ -132,8 +143,7 @@ export default {
         isTableLoading: false,
         fields: [
           { key: 'index', label: '순서', tdClass: 'list-item-heading', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '4%'} },
-          { key: 'deviceName', label: '단말', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'} },
-          { key: 'brdDate', label: '송출일시', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '15%'} },
+          { key: 'brdDate', label: '송출일시', sortable: true, thClass:'text-center', tdClass: 'text-center bold', thStyle: { width: '15%'} },
           { key: 'recName', label: '녹음소재명', sortable: true, thClass:'text-center', tdClass: 'text-center' },
           { key: 'sourceID', label: 'Source ID', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '7%'}},
           { key: 'duration', label: '녹음분량', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'}},
@@ -146,10 +156,12 @@ export default {
           { key: 'actions', label: '추가작업', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '6%'}},
          
         ],
+        dlDeviceOptions : [],
       }
     },
     created() {
         this.getMediaOptions();
+        this.getDlDeviceOptions();
     },
     methods: {
         getData() {
@@ -167,6 +179,15 @@ export default {
                 this.setResponseData(res, 'normal');
                 this.isTableLoading = false;
             });
+        },
+         // 매체목록 조회
+        async getDlDeviceOptions() {
+            await this.requestCall('/api/Categories/dldevice-list', 'dlDeviceOptions');
+            console.info('this.dlDeviceOptions',this.dlDeviceOptions);
+            if(this.dlDeviceOptions.length > 0){
+              console.info('this.dlDeviceOptions.length',this.dlDeviceOptions.length);
+              this.searchItems.dlDeviceSeq =this.dlDeviceOptions[0].id;
+            }
         },
     }
 }

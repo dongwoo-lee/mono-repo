@@ -115,11 +115,14 @@ namespace MAMBrowser.BLL
             if (seqList.Count <= 0)
                 return;
 
-            //파일 실제 삭제
+            //물리파일 삭제
             foreach (var seq in seqList)
             {
                 var fileData = Get(seq);
-                _fileProtocol.Delete(fileData.FilePath);
+                if (File.Exists(fileData.FilePath))
+                {
+                    _fileProtocol.Delete(fileData.FilePath);
+                }
             }
 
             _dao.Delete(userId, seqList);

@@ -46,7 +46,7 @@
               <div class="page-info">전체 {{responseData.totalRowCount}}개</div>
             </div>
             <b-table
-              style="height:550px"
+              style="height:580px"
               class="custom-table"
               ref="custom-table"
               thead-class="custom-table-color"

@@ -834,7 +834,7 @@ namespace MAMBrowser.DAL
             returnData.SelectPage = selectPage;
             return returnData;
         }
-        public DTO_RESULT_PAGE_LIST<DTO_DL30> FineDLArchive(string media, string brd_dt, string name, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_DL30> FineDLArchive(string media, string brd_dt, long? deviceSeq, string name, string sortKey, string sortValue)
         {
             DTO_RESULT_PAGE_LIST<DTO_DL30> returnData = new DTO_RESULT_PAGE_LIST<DTO_DL30>();
             var builder = new SqlBuilder();
@@ -844,6 +844,7 @@ namespace MAMBrowser.DAL
                 MEDIA_CD = media,
                 SCH_DATE = brd_dt,
                 REC_NAME = name,
+                DEVICE_SEQ= deviceSeq,
             });
             string orderBy = "";
             if (string.IsNullOrEmpty(sortKey))
@@ -855,11 +856,16 @@ namespace MAMBrowser.DAL
                 orderBy = CommonUtility.GetSortString(typeof(DTO_DL30), sortKey, sortValue);
             }
 
-            var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, D.* FROM (SELECT ROWNUM AS RNO, A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
+            var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, D.* FROM (SELECT A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
                                                     INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
                                                     LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
                                                     /**where**/
                                                     {orderBy}) D");
+            
+            if (deviceSeq!=null)
+            {
+                builder.Where("DEVICE_SEQ=:DEVICE_SEQ");
+            }
             if (!string.IsNullOrEmpty(media))
             {
                 builder.Where("MEDIA_CD=:MEDIA_CD");
@@ -892,7 +898,7 @@ namespace MAMBrowser.DAL
                     ProgramID = row.PRODUCT_ID,
                     SourceID = row.SOURCE_ID,
                     RecName = row.REC_NAME,
-                    Duration = Convert.ToInt32(row.LENGTH),
+                    Duration = TimeSpan.FromSeconds(Convert.ToInt32(row.LENGTH)).ToString(),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = string.IsNullOrEmpty((string)row.FILE_PATH) ? string.Empty : $"{row.FILE_PATH}\\{((DateTime)row.BRD_DTM).ToString(Define.DTM14)}_{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
                     RegDtm = ((DateTime)row.REG_DTM).ToString(Define.DTM19),
@@ -936,7 +942,7 @@ namespace MAMBrowser.DAL
                     ProgramID = row.PRODUCT_ID,
                     SourceID = row.SOURCE_ID,
                     RecName = row.REC_NAME,
-                    Duration = Convert.ToInt32(row.LENGTH),
+                    Duration = TimeSpan.FromSeconds(Convert.ToInt32(row.LENGTH)).ToString(),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
                     FilePath = string.IsNullOrEmpty((string)row.FILE_PATH) ? string.Empty : $"{row.FILE_PATH}\\{((DateTime)row.BRD_DTM).ToString(Define.DTM14)}_{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
                     RegDtm = ((DateTime)row.REG_DTM).ToString(Define.DTM19),

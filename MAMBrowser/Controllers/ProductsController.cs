@@ -453,13 +453,13 @@ namespace MAMBrowser.Controllers
         /// <param name="name">녹음명</param>
         /// <returns></returns>
         [HttpGet("dl30/{media}/{schDate}")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindDLArchive(string media, string schDate, [FromQuery] string pgmName, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> FindDLArchive(string media, string schDate, [FromQuery] long? dlDeviceSeq, [FromQuery] string pgmName, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_DL30>>();
             try
             {
 
-                result.ResultObject = _bll.FineDLArchive(media, schDate, pgmName, sortKey, sortValue);
+                result.ResultObject = _bll.FineDLArchive(media, schDate, dlDeviceSeq, pgmName, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -425,42 +425,6 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// ?
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("config")]
-        public DTO_RESULT Getconfig()
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            return result;
-        }
-        /// <summary>
-        /// ?
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        [HttpPut("config")]
-        public DTO_RESULT UpdateConfig([FromBody] string dto)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            return result;
-        }
-
-
-        /// <summary>
-        /// Authorization 헤더 토큰 테스트용 API : ex) Bearer token(jwt)
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
-        [HttpGet("accesssecurity")]
-        public DTO_RESULT AccessSecurity()
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            result.ResultCode = RESUlT_CODES.SUCCESS;
-            return result;
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="start_dt">검색 시작일</param>

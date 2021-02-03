@@ -28,11 +28,11 @@ namespace MAMBrowser.DTO
         [XmlElement(ElementName = "DISC_ARR_NUM_SR")]
         public string DISC_ARR_NUM_SR { get; set; } // 배열번호
         [XmlElement(ElementName = "DISC_NAME_SR")]
-        public string ALBUM_NAME { get; set; } //앨번 이름
+        public string ALBUM_NAME { get; set; } //앨범 이름
         [XmlElement(ElementName = "DISC_DNAME_PRON_SR")]
-        public string ALBUM_PRON_NAME { get; set; } //앨번 이름
+        public string ALBUM_PRON_NAME { get; set; } //앨범 이름2
         [XmlElement(ElementName = "DISC_DNAME_TRANS_SR")]
-        public string ALBUM_TRANS_NAME { get; set; } //앨번 이름
+        public string ALBUM_TRANS_NAME { get; set; } //앨범 이름(번역)
 
         [XmlElement(ElementName = "JPG_COUNT_SR")]
         public string JPG_COUNT_SR { get; set; } // 앨범커버 개수

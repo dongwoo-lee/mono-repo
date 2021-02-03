@@ -22,7 +22,7 @@ namespace MAMBrowser.DAL
             DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL> returnData = new DTO_RESULT_PAGE_LIST<DTO_USER_DETAIL>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(
-                @"SELECT A.*, ((DISK_MAX*1000000000)-DISK_USED) AS DISK_AVLB FROM 
+                @"SELECT A.*, ((DISK_MAX*(1024*1024*1024))-DISK_USED) AS DISK_AVLB FROM 
                 (SELECT  A.*, NVL(C.DISK_USED, 0) AS DISK_USED FROM 
                     (SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, A.NAME AS AUTHOR_NAME, USER_EXT_ID, DISK_MAX, 
                     MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
@@ -73,7 +73,7 @@ namespace MAMBrowser.DAL
         {
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(
-                @"SELECT A.*, ((DISK_MAX*1000000000)-DISK_USED) AS DISK_AVLB FROM 
+                @"SELECT A.*, ((DISK_MAX*(1024*1024*1024))-DISK_USED) AS DISK_AVLB FROM 
                 (SELECT A.*, NVL(C.DISK_USED, 0) AS DISK_USED FROM 
                 (SELECT PERSONID, PERSONNAME, MIROS_USER.ROLE, ROLE_NAME, AUTHOR_CD, A.NAME AS AUTHOR_NAME, USER_EXT_ID, DISK_MAX, 
                 MENU_GRP_CD, B.NAME AS MENU_GRP_NAME, USED 
@@ -315,16 +315,5 @@ LEFT JOIN(SELECT * FROM M30_COMM_CODE WHERE PARENT_CODE = 'S01G03') AUTHOR ON AU
 
             return _repository.Update(queryTemplate.RawSql, paramMap);
         }
-
-        //public int Getconfig()
-        //{
-        //    DTO_RESULT result = new DTO_RESULT();
-        //    return result;
-        //}
-        //public int UpdateConfig()
-        //{
-        //    DTO_RESULT result = new DTO_RESULT();
-        //    return result;
-        //}
     }
 }

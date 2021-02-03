@@ -57,9 +57,9 @@ namespace MAMBrowser.BLL
         {
             return _dao.FindFillerTime(media, start_dt, end_dt, cate, status, editor, name, rowPerPage, selectPage, sortKey, sortValue);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_DL30> FineDLArchive(string media, string brd_dt, string name, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_DL30> FineDLArchive(string media, string brd_dt, long? dlDeviceSeq, string name, string sortKey, string sortValue)
         {
-            return _dao.FineDLArchive(media, brd_dt, name, sortKey, sortValue);
+            return _dao.FineDLArchive(media, brd_dt, dlDeviceSeq, name, sortKey, sortValue);
         }
         public DTO_DL30 GetDLArchive(long seq)
         {

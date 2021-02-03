@@ -1,4 +1,22 @@
 <template>
+<div>
+    <b-col lg="4" class="my-1">
+        <b-form-group
+        >
+            <b-input-group size="sm">
+            <b-form-input
+                id="filter-input"
+                v-model="filter"
+                type="search"
+                placeholder="ID나 사용자를 검색해 주세요."
+            ></b-form-input>
+
+            <b-input-group-append>
+                <b-button  variant="outline-primary default" v-if="filter" @click="filter = ''">Clear</b-button>
+            </b-input-group-append>
+            </b-input-group>
+        </b-form-group>
+    </b-col>
     <b-table
         ref="refUserListTable"
         sort-by="title" sort-desc.sync="false"
@@ -11,6 +29,8 @@
         :fields="fields"
         :items="userList"
         sticky-header="600px"
+        :filter="filter"
+        :filter-included-fields="filterFileds"
     >
         <template v-slot:cell(no)="{ index }">
             <div class="text-nowrap">{{ index + 1 }}</div>
@@ -66,6 +86,7 @@
             </div>
         </template>
     </b-table>
+</div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
@@ -86,6 +107,8 @@ export default {
             ],
             menuGrpOptions: [],
             diskScopeOptions: [],
+            filter:'',
+            filterFileds :['id','name'],
         }
     },
     created() {
@@ -153,7 +176,8 @@ export default {
         },
         onChangeDiskMax(value, item, index) {
             const findOptionItem = this.diskScopeOptions.filter(option => option.value === value);
-            const selectData = this.userList[index];
+            // const selectData = this.userList[index];
+            const selectData = this.userList.find(user=> user.id == item.id);
             
             // 변경 횟수 증가 및 원데이터 저장
             if (selectData.originDiskMax === undefined) {
@@ -171,7 +195,8 @@ export default {
         },
         onChangeMenuGrp(value, item, index) {
             const findOptionItem = this.menuGrpOptions.filter(option => option.code === value);
-            const selectData = this.userList[index];
+            // const selectData = this.userList[index];
+            const selectData = this.userList.find(user=> user.id == item.id);
 
             // 변경 횟수 증가 및 원데이터 저장
             if (selectData.originMenuGrpID === undefined) {
