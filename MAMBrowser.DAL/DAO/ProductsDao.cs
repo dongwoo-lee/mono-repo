@@ -286,14 +286,14 @@ namespace MAMBrowser.DAL
                 START_DT = start_dt,
                 END_DT = end_dt,
                 TYPE = type,
-                EDITOR = editor,
+                EDITOR = editor,    
                 START_NO = startNo,
                 LAST_NO = lastNo,
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_PROAUDIOFILE /**where**/");
             builder.Select("AUDIOID, AUDIONAME, CODENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, TYPENAME, MASTERFILE");
-            builder.Where("(MASTERTIME >= :START_DT AND MASTERTIME <= :END_DT)");
+            builder.Where("(MASTERTIME >= :START_DT AND MASTERTIME <=  TO_DATE(:END_DT,'YYYYMMDD')+1 )");
             //if (!string.IsNullOrEmpty(media))  //DB단 매체 필드가 없어서 조건으로 넣을 수 없음.
             //{
             //    builder.Where("MEDIA=:MEDIA");      
