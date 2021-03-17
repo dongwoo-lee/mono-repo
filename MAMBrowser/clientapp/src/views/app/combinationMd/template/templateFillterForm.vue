@@ -78,6 +78,7 @@
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
+              :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
@@ -242,7 +243,11 @@ export default {
           if (this.screenName === 'general') this.getGeneralOptions();
           // 필러(기타)
           if (this.screenName === 'etc') this.getEtcOptions();
-      }
+      },
+      downloadName(rowData) {
+      var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.categoryName}_${rowData.id}`;
+      return tmpName;
+    },
     }
 }
 </script>

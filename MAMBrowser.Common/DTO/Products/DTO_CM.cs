@@ -8,6 +8,7 @@ namespace MAMBrowser.DTO
 {
     public class DTO_CM : DTO_BASE
     {
+        public string MediaName { get; set; }   //매체명
         public string BrdDT { get; set; }  //방송일
         public string ID { get; set; }          //그룹ID
         public string Name { get; set; }    //그룹명

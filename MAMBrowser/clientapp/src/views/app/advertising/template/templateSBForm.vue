@@ -98,7 +98,7 @@
                     grpType : 'sb',
                     brd_Dt : searchItems.brd_dt,
                     grpId : data.item.id,
-                    downloadName : data.item.name,
+                    downloadName : downloadName(data.item),
                     })">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>   
@@ -232,7 +232,15 @@ export default {
         return `${this.selectName} 상세 내역`;
       }
       return '상세 내역';
-    }
+    },
+    downloadName(rowData) {
+      if(rowData.name == rowData.pgmName){
+        return `${rowData.name}_${rowData.brdDT}_${rowData.id}`;
+      }else{
+        return `${rowData.name}_${rowData.brdDT}_${rowData.pgmName}_${rowData.id}`;
+      }
+    },
+    
   }
 }
 </script>

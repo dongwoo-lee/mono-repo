@@ -82,7 +82,7 @@
                     grpType : 'cm',
                     brd_Dt : searchItems.brd_dt,
                     grpId : data.item.id,
-                    downloadName : data.item.name,
+                    downloadName : `${data.item.name}_${data.item.brdDT}_${data.item.mediaName}_${data.item.id}`,
                     })">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>

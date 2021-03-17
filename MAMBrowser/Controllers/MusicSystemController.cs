@@ -126,7 +126,7 @@ namespace MAMBrowser.Controllers
         /// <param name="token">파일 SEQ</param>
         /// <returns></returns>
         [HttpGet("files")]
-        public IActionResult MusicDownload([FromQuery] string token, [FromQuery] string inline = "N")
+        public IActionResult MusicDownload([FromQuery] string token, [FromQuery] string downloadName, [FromQuery] string inline = "N")
         {
             var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
             var musicInfo = MAMUtility.ParseToRequestContent(token);
@@ -137,7 +137,7 @@ namespace MAMBrowser.Controllers
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
                 //FileName = WebUtility.UrlEncode(requestInfo[2] as string),
-                FileName = Uri.EscapeDataString(requestInfo[2] as string),
+                FileName = Uri.EscapeDataString(downloadName),
                 Inline = inline == "Y" ? true : false
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());

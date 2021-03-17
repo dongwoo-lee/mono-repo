@@ -75,7 +75,11 @@ export default {
         isFilePathPreviewTitle: {
             type:Boolean,
             default: false,
-        }
+        },
+        downloadName: {
+            type: String,
+            default: '',
+        },
     },
     data() {
         return {
@@ -114,7 +118,7 @@ export default {
             this.$emit('preview', this.rowData);
         },
         onDownload() {
-            this.$emit('download', this.rowData);
+            this.$emit('download', this.rowData, this.downloadName);
         },
         onDelete() {
             if (!this.isPossibleDelete || !this.isSystemTopAdmin) { return; }

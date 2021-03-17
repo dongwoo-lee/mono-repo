@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -182,7 +183,10 @@ namespace MAMBrowser.Controllers
             var fileData = _bll.Get(key);
             try
             {
-                return _fileHelper.DownloadFromPath(fileData.FilePath, Response, _fileProtocol, inline);
+                string fileName = Path.GetFileName(fileData.FilePath);
+                var startIdx = fileName.IndexOf('_');
+                var downloadName = fileName.Substring(startIdx+1, fileName.Length - startIdx -1);
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileProtocol, inline);
             }
             catch (HttpStatusErrorException ex)
             {

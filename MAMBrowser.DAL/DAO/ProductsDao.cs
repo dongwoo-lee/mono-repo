@@ -483,7 +483,7 @@ namespace MAMBrowser.DAL
 
             string orderBy = "ORDER BY MEDIA, ONAIRTIME, CMGROUPNAME ASC";
             var querySource = builder.AddTemplate($@"SELECT ROWNUM AS RNO, A.* FROM (SELECT /**select**/ FROM M30_VW_CM_GROUP /**where**/ {orderBy}) A");
-            builder.Select("MEDIA, ONAIRDATE, CMGROUPNAME, CMGROUPID, PROID, DURSEC, CMCAPACITY, STATENAME, EDITOR, EDITORNAME, EDITTIME");
+            builder.Select("MEDIA, MEDIANAME, ONAIRDATE, CMGROUPNAME, CMGROUPID, PROID, DURSEC, CMCAPACITY, STATENAME, EDITOR, EDITORNAME, EDITTIME");
             if (!string.IsNullOrEmpty(media))
             {
                 builder.Where("MEDIA=:MEDIA");
@@ -511,6 +511,7 @@ namespace MAMBrowser.DAL
                 return new DTO_CM
                 {
                     RowNO = Convert.ToInt32(row.RNO),
+                    MediaName = row.MEDIANAME,
                     BrdDT = row.ONAIRDATE,
                     ID = row.CMGROUPID,
                     Name = row.CMGROUPNAME,

@@ -160,7 +160,10 @@ namespace MAMBrowser.Controllers
             var fileData = _bll.Get(key);
             try
             {
-                return _fileHelper.DownloadFromPath(fileData.FilePath, Response, _fileService, inline);
+                string fileName = Path.GetFileName(fileData.FilePath);
+                var startIdx = fileName.IndexOf('_');
+                var downloadName = fileName.Substring(startIdx + 1, fileName.Length - startIdx - 1);
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileService, inline);
             }
             catch (HttpStatusErrorException ex)
             {

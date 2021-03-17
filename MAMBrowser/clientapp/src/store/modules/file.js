@@ -184,12 +184,12 @@ export default {
                 }
             }
         },
-        downloadProduct({state}, item) { //products 파일 다운로드
-            const src = `/api/products/files?token=${item.fileToken}`;
+        downloadProduct({state}, {item, downloadName}) { //products 파일 다운로드
+            const src = `/api/products/files?token=${item.fileToken}&downloadName=${downloadName}`;
             state.downloadIframe.setAttribute('src', src);
         },
-        downloadMusic({state}, item) {       //music 파일 다운로드
-            const src = `/api/musicsystem/files?token=${item.fileToken}`;
+        downloadMusic({state}, {item, downloadName}) {       //music 파일 다운로드
+            const src = `/api/musicsystem/files?token=${item.fileToken}&downloadName=${downloadName}`;
             state.downloadIframe.setAttribute('src', src);
         },
         downloadDl30({state}, item) { //dl30 파일 다운로드

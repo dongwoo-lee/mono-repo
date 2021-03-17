@@ -75,6 +75,7 @@
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
+              :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
@@ -232,7 +233,11 @@ export default {
     },
     onProSelected(data) {
       this.searchItems.cate = data.id;
-    }
+    },
+    downloadName(rowData) {
+      var tmpName = `${rowData.name}_${rowData.categoryName}`;
+      return tmpName;
+    },
   }
 }
 </script>

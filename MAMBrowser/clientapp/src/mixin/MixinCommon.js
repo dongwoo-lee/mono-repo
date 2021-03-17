@@ -191,11 +191,11 @@ let mixinCommon = {
             this.soundItem = {};
             this.showPlayerPopup = false;
         },
-        onDownloadProduct(item) {
-            this.downloadProduct(item);
+        onDownloadProduct(item, downloadName) {
+            this.downloadProduct({item:item,downloadName:downloadName});
         },
-        onDownloadMusic(item) {
-            this.downloadMusic(item);
+        onDownloadMusic(item, downloadName) {
+            this.downloadMusic({item:item,downloadName:downloadName});
         },
         onDownloadDl30(item) {
             this.downloadDl30(item);

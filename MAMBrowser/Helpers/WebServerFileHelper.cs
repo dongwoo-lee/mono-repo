@@ -21,13 +21,12 @@ namespace MAMBrowser.Helper
         {
         }
 
-        public FileStreamResult Download(string token, HttpResponse response, IFileProtocol fileProtocol, string inline)
+        public FileStreamResult Download(string downloadName, string token, HttpResponse response, IFileProtocol fileProtocol, string inline)
         {
-
             string filePath = "";
             if (TokenGenerator.ValidateFileToken(token, ref filePath))
             {
-                string fileName = Path.GetFileName(filePath);
+                //string fileName = Path.GetFileName(filePath);
                 var fileExtProvider = new FileExtensionContentTypeProvider();
                 string contentType;
                 if (!fileExtProvider.TryGetContentType(filePath, out contentType))
@@ -37,7 +36,7 @@ namespace MAMBrowser.Helper
                 var stream = fileProtocol.GetFileStream(filePath, 0);
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    FileName = Uri.EscapeDataString(fileName),
+                    FileName = Uri.EscapeDataString(downloadName),
                     Inline = inline == "Y" ? true : false
                 };
                 response.Headers.Add("Content-Disposition", cd.ToString());
@@ -106,9 +105,9 @@ namespace MAMBrowser.Helper
                 throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
         }
 
-        public FileStreamResult DownloadFromPath(string filePath, HttpResponse response, IFileProtocol fileProtocol, string inline)
+        public FileStreamResult DownloadFromPath(string downloadName, string filePath, HttpResponse response, IFileProtocol fileProtocol, string inline)
         {
-            string fileName = Path.GetFileName(filePath);
+            
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
             if (!fileExtProvider.TryGetContentType(filePath, out contentType))
@@ -119,7 +118,7 @@ namespace MAMBrowser.Helper
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
                 //FileName = WebUtility.UrlEncode(fileName),
-                FileName = Uri.EscapeDataString(fileName),
+                FileName = Uri.EscapeDataString(downloadName),
                 Inline = inline == "Y" ? true : false
             };
             response.Headers.Add("Content-Disposition", cd.ToString());

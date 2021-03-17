@@ -89,6 +89,7 @@
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
+              :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadMusic"
@@ -279,6 +280,10 @@ export default {
     onAgree() {
         this.downloadMusic(this.copyrightItem);
         this.soundCopyrightPopup = false;
+    },
+    downloadName(rowData) {
+      var tmpName = `${rowData.name}_${rowData.artistName}_${rowData.sequenceNO}`;
+      return tmpName;
     },
   },
   // watch: {

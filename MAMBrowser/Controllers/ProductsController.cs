@@ -477,11 +477,11 @@ namespace MAMBrowser.Controllers
         /// <param name="inline"></param>
         /// <returns></returns>
         [HttpGet("files")]
-        public IActionResult Download([FromQuery] string token, [FromQuery] string inline = "N")
+        public IActionResult Download([FromQuery] string token, [FromQuery] string downloadName, [FromQuery] string inline = "N")
         {
             try
             {
-                return _fileHelper.Download(token, Response, _fileService, inline);
+                return _fileHelper.Download($"{downloadName}.wav", token, Response, _fileService, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -547,8 +547,6 @@ namespace MAMBrowser.Controllers
                 if (filePathList.Count <= 0)
                     return StatusCode(StatusCodes.Status400BadRequest, "소재가 없습니다.");
 
-                
-                
                 string mergeType = Define.WAV;
                 var firstFileExt = Path.GetExtension(filePathList.First()).ToUpper();
                 mergeType = filePathList.All(filePath => Path.GetExtension(filePath).ToUpper() == firstFileExt) ? firstFileExt : mergeType;
@@ -779,13 +777,15 @@ namespace MAMBrowser.Controllers
         /// <param name="inline">inline 여부</param>
         /// <returns></returns>
         [HttpGet("dl30-files/{seq}")]
-        public IActionResult Dl30Download([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV", [FromQuery] string inline = "N")
+        public IActionResult Dl30Download([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV",[FromQuery] string inline = "N")
         {
             var fileService = sr("DLArchiveConnection");
             var fileData = _bll.GetDLArchive(seq);
             try
             {
-                return _fileHelper.DownloadFromPath(fileData.FilePath, Response, fileService, inline);
+                string brdDtm = fileData.BrdDate.Replace(":", "").Replace("-","").Replace(" ", "-");
+                string downloadName = $"{fileData.RecName}_{brdDtm}_{fileData.DeviceName}.wav";
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, fileService, inline);
             }
             catch (HttpStatusErrorException ex)
             {

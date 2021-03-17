@@ -69,6 +69,7 @@
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
+              :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
@@ -222,6 +223,10 @@ export default {
             this.isTableLoading = false;
             this.isScrollLodaing = false;
       });
+    },
+    downloadName(rowData) {
+      var tmpName = `${rowData.name}_${rowData.brdDT}`;
+      return tmpName;
     },
   }
 }

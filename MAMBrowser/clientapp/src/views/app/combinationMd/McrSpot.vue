@@ -84,6 +84,7 @@
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
+              :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadProduct"
@@ -242,6 +243,10 @@ export default {
     },
     onChangeMedia() {
         this.getSpotOptions(this.searchItems.media);
+    },
+    downloadName(rowData) {
+      var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.mediaName}_${rowData.id}`;
+      return tmpName;
     },
   },
 }
