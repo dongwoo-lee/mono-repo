@@ -4,6 +4,26 @@
       <div class="text-center" v-if="spinnerFlag" >
         <b-spinner style="width: 4rem; height: 4rem;" variant="primary"></b-spinner>
       </div>
+      <div>
+        <b-container class="bv-example-row" v-if="isSuccess">
+        <b-row>
+          <b-col>
+          </b-col>
+          <b-col>
+            <div align="center" >
+            </div>
+          </b-col>
+          <b-col >
+            <p align="right" >
+               <vue-slider width="170px" :min="zoomMin" :max="zoomMax" :interval="zoomInterval" 
+              v-model="zoomSliderValue" @change="changedZoom" :drag-on-click="true" 
+              tooltip="none"
+              />
+            </p>
+          </b-col>
+        </b-row>
+      </b-container>
+      </div>
       <div id="waveform" >
       </div>
         <div id='wave-timeline'>
@@ -12,11 +32,17 @@
       <br>
       <b-container class="bv-example-row" v-if="isSuccess">
         <b-row>
-          <b-col>
-             <vue-slider width="170px" :min="min" :max="max" :interval="interval" 
+          <b-col class="myCol">
+              <i v-if="isMute" class="iconsminds-speaker-1" style="font-size: 20px; color:red" @click="muteToggle"/>
+              <i v-else class="iconsminds-sound" style="font-size: 20px;" @click="muteToggle"/>
+          </b-col>
+          <b-col class="myCol2">
+            <div class="slider">
+             <vue-slider width="150px" :min="min" :max="max" :interval="interval" 
              v-model="sliderValue" @change="changedVolume" :drag-on-click="true" 
              :tooltipFormatter="tooltipFormatter"
              />
+            </div>
           </b-col>
           <b-col>
             <div align="center" >
@@ -51,6 +77,7 @@ export default {
   },
   data () {
     return {
+      isMute : false,
       wavesurfer: null,
       CurrentTime : '00:00:00',
       TotalTime : '00:00:00',
@@ -63,6 +90,11 @@ export default {
       max:1,
       interval:0.01,
       sliderValue:1,
+
+      zoomMin:0,
+      zoomMax:160,
+      zoomInterval:20,
+      zoomSliderValue:0,
     }
   },
   mounted() {
@@ -228,9 +260,21 @@ export default {
     changedVolume(v){
       wavesurfer.setVolume(v);
     },
+    changedZoom(v){
+      var zoomLevel = Number(v);
+      console.info('zoomLevel', zoomLevel);
+      wavesurfer.zoom(zoomLevel);
+    },
     tooltipFormatter(v){
       return (v*100).toFixed(0);
     },
+    zoomTooltipFormatter(v){
+      return '';
+    },
+    muteToggle(){
+      this.isMute = !this.isMute;
+      wavesurfer.setMute(this.isMute)
+    }
   },
   props: {
       requestType : {
@@ -264,3 +308,16 @@ export default {
   },
 }
 </script>
+<style>
+.myCol{
+  max-width: 4.33333%;
+  padding-left:0px;
+  padding-right:0px;
+}
+.myCol2{
+  padding-left:0px;
+}
+.slider{
+  padding-top: 6px;
+}
+</style>
