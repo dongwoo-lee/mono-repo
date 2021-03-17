@@ -76,7 +76,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -107,7 +107,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -140,7 +140,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -172,7 +172,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -196,7 +196,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -220,7 +220,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -243,7 +243,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -269,7 +269,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -293,7 +293,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -320,7 +320,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -349,7 +349,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -379,7 +379,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -412,7 +412,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -441,7 +441,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -465,7 +465,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -473,7 +473,8 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 일반 소재 - 다운로드
         /// </summary>
-        /// <param name="seq">파일 SEQ</param>
+        /// <param name="token"></param>
+        /// <param name="inline"></param>
         /// <returns></returns>
         [HttpGet("files")]
         public IActionResult Download([FromQuery] string token, [FromQuery] string inline = "N")
@@ -490,7 +491,6 @@ namespace MAMBrowser.Controllers
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
-
         }
         /// <summary>
         /// 일반소재 - 병합 다운로드 요청

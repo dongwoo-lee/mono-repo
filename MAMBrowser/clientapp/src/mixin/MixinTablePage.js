@@ -30,7 +30,12 @@ let mixinTablePage = apiType => ({
     watch: {
         ['searchItems.brd_dt'](v) {
             if (v) {
-                this.getPgmOptions(v);
+                this.getPgmOptions(v, this.searchItems.media);
+            }
+        },
+        ['searchItems.media'](v) {
+            if (v) {
+                this.getPgmOptions(this.searchItems.brd_dt, v);
             }
         }
     },
@@ -39,7 +44,7 @@ let mixinTablePage = apiType => ({
             // 매체목록 조회
             this.getMediaOptions();
             // 사용처 조회
-            this.getPgmOptions(this.searchItems.brd_dt);
+            this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
             // 목록 조회
             this.getData();
         });

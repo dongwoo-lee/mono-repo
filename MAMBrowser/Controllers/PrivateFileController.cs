@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace MAMBrowser.Controllers
 {
@@ -24,10 +26,13 @@ namespace MAMBrowser.Controllers
         private readonly PrivateFileBll _bll;
         private readonly WebServerFileHelper _fileHelper;
         private readonly IFileProtocol _fileProtocol;
+        private readonly HttpContextDBLogger _logBll;
 
-        public PrivateFileController(IHostingEnvironment hostingEnvironment, PrivateFileBll bll, ServiceResolver sr, WebServerFileHelper fileHelper)
+        public PrivateFileController(IHostingEnvironment hostingEnvironment, PrivateFileBll bll, HttpContextDBLogger logger, ServiceResolver sr, WebServerFileHelper fileHelper)
         {
             _bll = bll;
+            _logBll = logger;
+            
             _hostingEnvironment = hostingEnvironment;
             _fileHelper = fileHelper;
             _fileProtocol = sr("PrivateWorkConnection");
@@ -52,12 +57,16 @@ namespace MAMBrowser.Controllers
                 {
                     metaData.FILE_SIZE = file.Length;
                     result =  _bll.UploadFile(userId, stream, file.FileName, metaData);
+                    if(result.ResultCode == RESUlT_CODES.SUCCESS)
+                    {
+                        _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 - 파일 업로드", UTF8JsonSerializer.Serialize(metaData));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.ToString();
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -76,6 +85,8 @@ namespace MAMBrowser.Controllers
                 if (_bll.UpdateData(metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
+                    
+                    _logBll.InfoAsync(HttpContext, userId, "MY공간 소재 - 메타데이터 편집", UTF8JsonSerializer.Serialize(metaData));
                 }
                 else
                 {
@@ -85,7 +96,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -126,7 +137,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -153,7 +164,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -265,14 +276,22 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
+                var datalist = _bll.Get(seqlist);
                 _bll.MoveRecycleBin(userId, seqlist.ToList<long>());
                 result.ResultCode = RESUlT_CODES.SUCCESS;
+
+                List<string> titles = new List<string>();
+                foreach(var data in datalist)
+                {
+                    titles.Add(data.Title);
+                }
+                _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 - 휴지통으로 보내기 : {UTF8JsonSerializer.Serialize(titles)}", null);
             }
             catch (Exception ex)
             {
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -289,14 +308,20 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
+                var datalist = _bll.Get(seqlist);
                 _bll.DeleteRecycleBin(userId, seqlist.ToList<long>());
                 result.ResultCode = RESUlT_CODES.SUCCESS;
+                foreach (var data in datalist)
+                {
+                    data.FileToken = null;
+                }
+                _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 - 영구삭제", UTF8JsonSerializer.Serialize(datalist));
             }
             catch (Exception ex)
             {
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -313,14 +338,20 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
+                var dataList = _bll.GetAllByUsedN(userId);
                 _bll.DeleteAllRecycleBin(userId);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
+                foreach (var data in dataList)
+                {
+                    data.FileToken = null;
+                }
+                _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 - 휴지통 비우기", UTF8JsonSerializer.Serialize(dataList));
             }
             catch (Exception ex)
             {
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -337,15 +368,22 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
+                var datalist = _bll.Get(seqlist);
                 _bll.RecycleAll(userId, seqlist);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
                 
+                List<string> titles = new List<string>();
+                foreach (var data in datalist)
+                {
+                    titles.Add(data.Title);
+                }
+                _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 복원 : {UTF8JsonSerializer.Serialize(titles)}", null);
             }
             catch (Exception ex)
             {
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }

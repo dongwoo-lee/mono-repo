@@ -255,16 +255,20 @@ namespace MAMBrowser.DAL
             returnData.Data = _repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
-        public DTO_RESULT_LIST<DTO_CATEGORY> GetPgmCodes(string brd_dt)
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetPgmCodes(string brd_dt, string media)
         {
+            
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
             var builder = new SqlBuilder();
             var queryTemplate = builder.AddTemplate(@"SELECT CODEID,CODENAME FROM M30_VW_CATEGORY
-WHERE CODETYPE = 'UP'
-AND SUBCODEID = (SELECT MAX(SUBCODEID) FROM M30_VW_CATEGORY /**where**/)
-ORDER BY NUM");
-            builder.Where("SUBCODEID <= :BRD_DT");
-            
+            /**where**/ 
+            ORDER BY NUM");
+            builder.Where("CODETYPE = 'UP' AND SUBCODEID = (SELECT MAX(SUBCODEID) FROM M30_VW_CATEGORY WHERE SUBCODEID <= :BRD_DT)");
+            if (!string.IsNullOrEmpty(media))
+            {
+                builder.Where("MEDIA = :MEDIA");
+            }
+
             var resultMapping = new Func<dynamic, DTO_CATEGORY>((row) =>
             {
                 return new DTO_CATEGORY
@@ -274,7 +278,7 @@ ORDER BY NUM");
                 };
             });
 
-            returnData.Data = _repository.Select(queryTemplate.RawSql, new {BRD_DT= brd_dt }, resultMapping);
+            returnData.Data = _repository.Select(queryTemplate.RawSql, new {BRD_DT= brd_dt, MEDIA= media }, resultMapping);
             return returnData;
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetPublicPrimary()

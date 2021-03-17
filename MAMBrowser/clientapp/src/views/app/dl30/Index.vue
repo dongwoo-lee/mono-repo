@@ -144,7 +144,7 @@ export default {
         fields: [
           { key: 'index', label: '순서', tdClass: 'list-item-heading', thClass:'text-center', tdClass: 'text-center', thStyle: { width: '4%'} },
           { key: 'brdDate', label: '송출일시', sortable: true, thClass:'text-center', tdClass: 'text-center bold', thStyle: { width: '15%'} },
-          { key: 'recName', label: '녹음소재명', sortable: true, thClass:'text-center', tdClass: 'text-center' },
+          { key: 'recName', label: '녹음소재명', sortable: true, thClass:'text-center', tdClass: 'text-center bold' },
           { key: 'sourceID', label: 'Source ID', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '7%'}},
           { key: 'duration', label: '녹음분량', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%'}},
           { key: 'fileSize', label: '파일사이즈', sortable: true, thClass:'text-center', tdClass: 'text-center', thStyle: { width: '10%' },

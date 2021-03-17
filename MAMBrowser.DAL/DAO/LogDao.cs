@@ -15,16 +15,16 @@ namespace MAMBrowser.DAL
             _repository = repository;
         }
 
-        public void AddLog(string logLevel, string category, string userId, string userName, string description, string note)
+        public void AddLog(string logLevel, string category, string userId, string description, string note)
         {
             var builder = new SqlBuilder();
-            var queryTemplate = builder.AddTemplate("INSERT INTO M30_COMM_LOG VALUES(M30_COMM_LOG_SEQ.NEXTVAL, :SYSTEM_CD, :LOG_LEVEL, :CATEGORY, :USER_ID, :USER_NAME, :DESCRIPTION, :NOTE, SYSDATE)");
+            var queryTemplate = builder.AddTemplate(@"INSERT INTO M30_COMM_LOG VALUES(M30_COMM_LOG_SEQ.NEXTVAL, :SYSTEM_CD, :LOG_LEVEL, :CATEGORY, :USER_ID, 
+            (SELECT PERSONNAME FROM MIROS_USER WHERE PERSONID=:USER_ID), :DESCRIPTION, :NOTE, SYSDATE)");
             DynamicParameters param = new DynamicParameters();
             param.Add("SYSTEM_CD", "S01");
             param.Add("LOG_LEVEL", logLevel);
             param.Add("CATEGORY", category);
             param.Add("USER_ID", userId);
-            param.Add("USER_NAME", userName);
             param.Add("DESCRIPTION", description);
             param.Add("NOTE", note);
 

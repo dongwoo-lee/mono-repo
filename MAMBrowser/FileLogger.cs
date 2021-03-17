@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace MAMBrowser
 {
-    public class MyLogger
+    public class FileLogger
     {
         public static void Debug(string title, string msg)
         {
@@ -16,7 +16,7 @@ namespace MAMBrowser
         }
         public static void Info(string title, string msg)
         {
-            var logger =log4net.LogManager.GetLogger(typeof(MyLogger));
+            var logger =log4net.LogManager.GetLogger(typeof(FileLogger));
             logger.Info(title);
         }
         public static void Warn(string title, string msg)

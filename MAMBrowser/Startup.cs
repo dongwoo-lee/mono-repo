@@ -141,6 +141,8 @@ namespace MAMBrowser
             services.AddTransient<WebServerFileHelper>();
             services.AddTransient<TransactionRepository>();
             services.AddTransient<Repository>();
+            services.AddTransient<HttpContextDBLogger>();
+            
 
             //DAL µî·Ï
             services.AddTransient<APIDao>();

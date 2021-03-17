@@ -221,7 +221,7 @@ export default {
     ['searchItems.brd_dt'](v) {
       if (v) {
         // 사용처 조회
-        this.getPgmOptions(this.searchItems.brd_dt);
+        this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
         setTimeout(() => {
           this.onSearch();
         },500);
@@ -229,7 +229,11 @@ export default {
     },
     ['searchItems.media'](v) {
       if (v) {
-        this.onSearch();
+       // 사용처 조회
+        this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
+        setTimeout(() => {
+          this.onSearch();
+        },500);
       }
     }
   },

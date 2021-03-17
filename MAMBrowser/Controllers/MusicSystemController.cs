@@ -78,7 +78,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -113,7 +113,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }

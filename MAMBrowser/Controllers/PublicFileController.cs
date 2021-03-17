@@ -29,10 +29,13 @@ namespace MAMBrowser.Controllers
         private readonly IOptions<AppSettings> _appSesstings;
         private readonly PublicFileBll _bll;
         private readonly WebServerFileHelper _fileHelper;
-        public PublicFileController(IOptions<AppSettings> appSesstings, PublicFileBll bll, ServiceResolver sr, WebServerFileHelper fileHelper)
+        private readonly HttpContextDBLogger _logBll;
+
+        public PublicFileController(IOptions<AppSettings> appSesstings, PublicFileBll bll, HttpContextDBLogger logger, ServiceResolver sr, WebServerFileHelper fileHelper)
         {
             _appSesstings = appSesstings;
             _bll = bll;
+            _logBll = logger;
             _fileService = sr("PublicWorkConnection");
             _fileHelper = fileHelper;
         }
@@ -56,12 +59,16 @@ namespace MAMBrowser.Controllers
                     metaData.FILE_SIZE = file.Length;
                     var dto = _bll.UploadFile(userId, stream, file.FileName, metaData);
                     result.ResultCode = dto != null ? RESUlT_CODES.SUCCESS : RESUlT_CODES.SERVICE_ERROR;
+                    if (result.ResultCode == RESUlT_CODES.SUCCESS)
+                    {
+                        _logBll.InfoAsync(HttpContext, userId, $"공유 소재 - 파일 업로드", UTF8JsonSerializer.Serialize(metaData));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -80,6 +87,7 @@ namespace MAMBrowser.Controllers
                 if (_bll.UpdateData(metaData.SEQ, metaData) > 0)
                 {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
+                    _logBll.InfoAsync(HttpContext, userId, "공유 소재 - 메타데이터 편집", UTF8JsonSerializer.Serialize(metaData));
                 }
                 else
                 {
@@ -89,7 +97,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -134,7 +142,7 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }
@@ -278,15 +286,21 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE>>();
             try
             {
+                var data = _bll.Get(seq);
+                data.FileToken = null;
                 if (_bll.Delete(seq))
+                {
                     result.ResultCode = RESUlT_CODES.SUCCESS;
+                    string userId = HttpContext.Items[Define.USER_ID] as string;
+                    _logBll.InfoAsync(HttpContext, userId, $"공유 소재 - 삭제", UTF8JsonSerializer.Serialize(data));
+                }
                 else
                     result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
             }
             catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
-                MyLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
         }

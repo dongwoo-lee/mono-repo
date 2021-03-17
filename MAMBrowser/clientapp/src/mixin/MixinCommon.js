@@ -153,9 +153,12 @@ let mixinCommon = {
             this.requestCall('/api/Categories/users', 'editorOptions');
         },
         // 사용처 목록 조회
-        getPgmOptions(brd_dt) {
+        getPgmOptions(brd_dt, media) {
             if (!brd_dt) return;
-            this.requestCall('/api/Categories/pgmcodes?brd_dt=' + brd_dt, 'pgmOptions');
+            if(!media){
+                media = '';
+            }
+            this.requestCall(`/api/Categories/pgmcodes?brd_dt=${brd_dt}&media=${media}`, 'pgmOptions');
         },
          // 사용처 분류 선택
          onPgmSelected(data) {

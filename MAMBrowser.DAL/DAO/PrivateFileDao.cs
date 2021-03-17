@@ -57,14 +57,20 @@ namespace MAMBrowser.DAL
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public List<long> GetAllByUsedN(string userId)    
+        public List<long> GetSeqAllByUsedN(string userId)
         {
             string getRecycleBin = @"SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE USED='N'";
             var dtoList = _repository.Select<DTO_PRIVATE_FILE>(getRecycleBin, null, DTO_PRIVATE_FILE.ResultMapping());
             List<long> seqList = new List<long>();
             dtoList.ToList().ForEach(dto => seqList.Add(dto.Seq));
             return seqList;
-        }     
+        }
+        public IList<DTO_PRIVATE_FILE> GetAllByUsedN(string userId)
+        {
+            string getRecycleBin = @"SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE USED='N'";
+            var dtoList = _repository.Select<DTO_PRIVATE_FILE>(getRecycleBin, null, DTO_PRIVATE_FILE.ResultMapping());
+            return dtoList;
+        }
 
         public int UpdateUsedY(string userId, List<long> seqList)    //복원
         {
@@ -91,6 +97,13 @@ namespace MAMBrowser.DAL
             var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE SEQ=:SEQ");
             var resultMapping = DTO_PRIVATE_FILE.ResultMapping();
             return _repository.Get(queryTemplate.RawSql, new { SEQ = id }, resultMapping);
+        }
+        public IList<DTO_PRIVATE_FILE> Get(List<long> idList)
+        {
+            var builder = new SqlBuilder();
+            var queryTemplate = builder.AddTemplate(@"SELECT * FROM M30_MAM_PRIVATE_SPACE WHERE SEQ IN :IDS");
+            var resultMapping = DTO_PRIVATE_FILE.ResultMapping();
+            return _repository.Select(queryTemplate.RawSql, new { IDS = idList }, resultMapping);
         }
         public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FindData(string used, string start_dt, string end_dt, string userId, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {

@@ -66,9 +66,9 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetFillerETC();
         }
-        public DTO_RESULT_LIST<DTO_CATEGORY> GetPgmCodes(string brd_dt)
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetPgmCodes(string brd_dt, string media)
         {
-            return _dao.GetPgmCodes(brd_dt);
+            return _dao.GetPgmCodes(brd_dt, media);
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetPublicPrimary()
         {

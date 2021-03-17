@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 namespace MAMBrowser.BLL
 {
@@ -68,7 +69,7 @@ namespace MAMBrowser.BLL
                 metaData.AUDIO_FORMAT = audioFormat;
                 metaData.FILE_PATH = @$"\\{_fileProtocol.UploadHost}\{relativeTargetPath}";
                 _dao.Insert(metaData);
-
+               
                 return validateResult;
             }
         }
@@ -130,9 +131,13 @@ namespace MAMBrowser.BLL
 
         public void DeleteAllRecycleBin(string userId)    
         {
-            var seqList = _dao.GetAllByUsedN(userId);
+            var seqList = _dao.GetSeqAllByUsedN(userId);
             DeleteRecycleBin(userId, seqList);
-        }     
+        }
+        public IList<DTO_PRIVATE_FILE> GetAllByUsedN(string userId)
+        {
+            return _dao.GetAllByUsedN(userId);
+        }
 
         public void RecycleAll(string userId, List<long> seqList)    //복원
         {
@@ -148,6 +153,11 @@ namespace MAMBrowser.BLL
         {
             return _dao.Get(id);
         }
+        public IList<DTO_PRIVATE_FILE> Get(List<long> ids)
+        {
+            return _dao.Get(ids);
+        }
+       
         public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> FindData(string used, string start_dt, string end_dt, string userId, string title, string memo, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             return _dao.FindData(used, start_dt, end_dt, userId, title, memo, rowPerPage, selectPage, sortKey, sortValue);
