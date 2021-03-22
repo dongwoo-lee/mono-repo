@@ -137,7 +137,7 @@ namespace MAMBrowser.Controllers
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
                 //FileName = WebUtility.UrlEncode(requestInfo[2] as string),
-                FileName = Uri.EscapeDataString(downloadName),
+                FileName = Uri.EscapeDataString(downloadName+".wav"),
                 Inline = inline == "Y" ? true : false
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
