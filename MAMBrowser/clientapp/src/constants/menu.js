@@ -126,5 +126,37 @@ const data = [
     label: "menu.dl3", // DL3.0
     to: "/app/dl3"
   },
+  {
+    id: "cuesheet", // 큐시트
+    icon: "iconsminds-notepad",
+    label: "menu.cuesheet",
+    subs: [
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-day-list", // 일큐시트 목록
+        to: "/app/cuesheet/day/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-week-list", // 기본큐시트 목록
+        to: "/app/cuesheet/week/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-template-list", //템플릿 목록
+        to: "/app/cuesheet/template/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-list", // 이전 큐시트 목록
+        to: "/app/cuesheet/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-favorite", // 즐겨찾기
+        to: "/app/cuesheet/favorite",
+      }
+    ]
+  },
 ];
 export default data;

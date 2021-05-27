@@ -160,6 +160,65 @@ const routes = [
         path: "dl30",
         component: () => import("./views/app/dl30/Index"),
       },
+       /**
+       * CueSheet
+       */
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-day-list',
+        path: "cuesheet/day/list",
+        component: () => import("./views/app/cuesheet/cuesheetDayList"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-day-detail',
+        path: "cuesheet/day/detail",
+        component: () => import("./views/app/cuesheet/cuesheetDayDetail"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-week-list',
+        path: "cuesheet/week/list",
+        component: () => import("./views/app/cuesheet/cuesheetWeekList"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-week-detail',
+        path: "cuesheet/week/detail",
+        component: () => import("./views/app/cuesheet/cuesheetWeekDetail"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-template-list',
+        path: "cuesheet/template/list",
+        component: () => import("./views/app/cuesheet/cuesheetTemplateList"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-template-detail',
+        path: "cuesheet/template/detail",
+        component: () => import("./views/app/cuesheet/cuesheetTemplateDetail"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-list',
+        path: "cuesheet/list",
+        component: () => import("./views/app/cuesheet/cuesheetList"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-detail',
+        path: "cuesheet/detail",
+        component: () => import("./views/app/cuesheet/cuesheetDetail"),
+      },
+      {
+        // cuesheet/day/list
+        name: 'cuesheet-favorite',
+        path: "cuesheet/favorite",
+        component: () => import("./views/app/cuesheet/cuesheetFavorite"),
+      },
+
+
       {
         name: 'config',
         path: "config", // 설정
