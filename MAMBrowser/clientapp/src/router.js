@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Function from './utils/CommonFunctions';
 import store from './store/index';
-import {AUTHORITY, AUTHORITY_ADMIN, ROUTE_NAMES, SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE} from '@/constants/config';
+import { AUTHORITY, AUTHORITY_ADMIN, ROUTE_NAMES, SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE } from '@/constants/config';
 
 Vue.use(VueRouter);
 
@@ -220,6 +220,60 @@ const routes = [
 
 
       {
+        // 일일 큐시트
+        name: 'create-cuesheet',
+        path: "cuesheet/create-cuesheet",
+        component: () => import("./views/app/cuesheet/CreateCuesheet"),
+      },
+      {
+        // 일일 큐시트 작성 리스트
+        name: 'create-cuesheet-list',
+        path: "cuesheet/create-cuesheet-list",
+        component: () => import("./views/app/cuesheet/CreateCuesheetList"),
+      },
+      // {
+      //   // 기본 큐시트 
+      //   name: 'default-cuesheet',
+      //   path: "cuesheet/default-cuesheet",
+      //   component: () => import("./views/app/cuesheet/DefaultCuesheet"),
+      // },
+      {
+        // 기본 큐시트 작성 리스트
+        name: 'default-cuesheet-list',
+        path: "cuesheet/default-cuesheet-list",
+        component: () => import("./views/app/cuesheet/DefaultCuesheetList"),
+      },
+      // {
+      //   // 템플릿 
+      //   name: 'template',
+      //   path: "cuesheet/template",
+      //   component: () => import("./views/app/cuesheet/Template"),
+      // },
+      // {
+      //   // 템플릿 리스트
+      //   name: 'template-list',
+      //   path: "cuesheet/template-list",
+      //   component: () => import("./views/app/cuesheet/TemplateList"),
+      // },
+      // {
+      //   // 큐시트 조회
+      //   name: 'views-cuesheet',
+      //   path: "cuesheet/views-cuesheet",
+      //   component: () => import("./views/app/cuesheet/ViewsCuesheet"),
+      // },
+      // {
+      //   // 일일 큐시트 작성 리스트
+      //   name: 'views-cuesheet-list',
+      //   path: "cuesheet/views-cuesheet-list",
+      //   component: () => import("./views/app/cuesheet/ViewsCuesheetList"),
+      // },
+      // {
+      //   // 즐겨찾기
+      //   name: 'favorites-cart',
+      //   path: "cuesheet/favorites-cart",
+      //   component: () => import("./views/app/cuesheet/FavoritesCart"),
+      // },
+      {
         name: 'config',
         path: "config", // 설정
         component: () => import("./views/app/config/Index"),
@@ -259,8 +313,8 @@ router.beforeEach((to, from, next) => {
       next();
       return;
     }
-  }  
-  
+  }
+
   // 권한체크
   const roles = JSON.parse(sessionStorage.getItem('role'));
   let matchRole = null;
@@ -271,22 +325,22 @@ router.beforeEach((to, from, next) => {
   }
 
   // 이동할 페이지에 권한이 있을 경우 || 시스템 관리자 접근 페이지
-  if ((matchRole && matchRole.length > 0) 
-    || (SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE.includes(to.name) && sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN)) 
-    {
-      store.dispatch('user/reissue', from);
-      next();
-      return;
+  if ((matchRole && matchRole.length > 0)
+    || (SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE.includes(to.name) && sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN)) {
+    store.dispatch('user/reissue', from);
+    next();
+    return;
   } else {
     // 이동할 페이지에 권한이 없을 경우
-    alert("접근 권한이 없습니다.");
+    next();
+    //alert("접근 권한이 없습니다.");
     if (from.name) {
       next(from);
       return;
     }
-  
+
     // 전페이지 정보가 없을 경우,
-    next({path: Function.getFirstAccessiblePage })
+    next({ path: Function.getFirstAccessiblePage })
   }
 });
 

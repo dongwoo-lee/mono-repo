@@ -3,12 +3,12 @@ import { mapGetters, mapActions } from 'vuex';
 import { eventBus } from '../eventBus';
 
 let mixinCommon = {
-    mixins: [ mixinValidate ],
+    mixins: [mixinValidate],
     data() {
         return {
-            streamingUrl : '/api/products/streaming',
-            waveformUrl : '/api/products/waveform',
-            tempDownloadUrl : '/api/products/temp-download',
+            streamingUrl: '/api/products/streaming',
+            waveformUrl: '/api/products/waveform',
+            tempDownloadUrl: '/api/products/temp-download',
 
             responseData: {                          // 응답 결과
                 data: null,
@@ -21,12 +21,12 @@ let mixinCommon = {
             editorOptions: [],                       // 사용자(제작자) 목록
             sortItems: {},
             soundItem: {},
-            showPlayerPopup : false,
+            showPlayerPopup: false,
             isLoadingClass: false,
             hasErrorClass: false,
             isTableLoading: false,
             isScrollLodaing: false,
-            copyToMySpacePopup : false,
+            copyToMySpacePopup: false,
         }
     },
     computed: {
@@ -34,28 +34,29 @@ let mixinCommon = {
     },
     watch: {
         ['searchItems.start_dt'](v) {
-          if (!this.$fn.checkGreaterStartDate(v, this.searchItems.end_dt)) {
-            this.hasErrorClass = false;
-          }
+            if (!this.$fn.checkGreaterStartDate(v, this.searchItems.end_dt)) {
+                this.hasErrorClass = false;
+            }
         },
         ['searchItems.end_dt'](v) {
-          if (!this.$fn.checkGreaterStartDate(this.searchItems.start_dt, v)) {
-            this.hasErrorClass = false;
-          }
+            if (!this.$fn.checkGreaterStartDate(this.searchItems.start_dt, v)) {
+                this.hasErrorClass = false;
+            }
         }
     },
     created() {
         // 토큰 만료시 재로그인할때, 로직 태움
-        eventBus.$on('onLoadData', (viewName)=> {
+        eventBus.$on('onLoadData', (viewName) => {
             this.getData();
         });
     },
     methods: {
         ...mapActions('file', ['downloadWorkspace', 'downloadProduct'
-            , 'downloadMusic', 'downloadDl30','downloadConcatenate']),
+            , 'downloadMusic', 'downloadDl30', 'downloadConcatenate']),
         ...mapActions('user', ['getSummaryUser']),
         // 검색
         onSearch() {
+            console.log("이건가");
             this.searchItems.selectPage = 1;
             // scroll paging table인 경우
             if (this.$refs.scrollPaging) {
@@ -142,7 +143,7 @@ let mixinCommon = {
                     }
                     this.isLoadingClass = false;
                     return res.data;
-          });
+                });
         },
         // 매체목록 조회
         getMediaOptions() {
@@ -155,13 +156,13 @@ let mixinCommon = {
         // 사용처 목록 조회
         getPgmOptions(brd_dt, media) {
             if (!brd_dt) return;
-            if(!media){
+            if (!media) {
                 media = '';
             }
             this.requestCall(`/api/Categories/pgmcodes?brd_dt=${brd_dt}&media=${media}`, 'pgmOptions');
         },
-         // 사용처 분류 선택
-         onPgmSelected(data) {
+        // 사용처 분류 선택
+        onPgmSelected(data) {
             const { id, name } = data;
             this.searchItems.pgm = id;
             this.searchItems.pgmName = name;
@@ -175,13 +176,13 @@ let mixinCommon = {
         addScrollClass() {
             setTimeout(() => {
                 if (this.$refs.scrollPaging) {
-                    this.$refs.scrollPaging.addClassScroll();  
+                    this.$refs.scrollPaging.addClassScroll();
                 }
             }, 0);
         },
         initSelectedIds() {
-            if(!this.$refs.scrollPaging) return;
-            this.$refs.scrollPaging.initSelectedIds();  
+            if (!this.$refs.scrollPaging) return;
+            this.$refs.scrollPaging.initSelectedIds();
         },
         onPreview(item) {
             this.soundItem = item;
@@ -192,10 +193,10 @@ let mixinCommon = {
             this.showPlayerPopup = false;
         },
         onDownloadProduct(item, downloadName) {
-            this.downloadProduct({item:item,downloadName:downloadName});
+            this.downloadProduct({ item: item, downloadName: downloadName });
         },
         onDownloadMusic(item, downloadName) {
-            this.downloadMusic({item:item,downloadName:downloadName});
+            this.downloadMusic({ item: item, downloadName: downloadName });
         },
         onDownloadDl30(item) {
             this.downloadDl30(item);
@@ -203,44 +204,44 @@ let mixinCommon = {
         onDownloadConcatenate(item) {
             this.downloadConcatenate(item);
         },
-        onMyDiskCopyFromPublic() { 
-            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+        onMyDiskCopyFromPublic() {
+            var item = this.$refs.refCopyToMySpacePopup.getRowData();
             var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
             this.onMyDisCopy(`/api/products/workspace/public/public-to-myspace/${item.seq}`, item.title, metaData);
         },
-        onMyDiskCopyFromMusic(item, metaData) { 
-            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+        onMyDiskCopyFromMusic(item, metaData) {
+            var item = this.$refs.refCopyToMySpacePopup.getRowData();
             var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
             this.onMyDisCopy(`/api/musicsystem/music-to-myspace?token=${item.fileToken}`, item.name, metaData);
         },
         onMyDiskCopyFromProduct(item, metaData) {
-            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+            var item = this.$refs.refCopyToMySpacePopup.getRowData();
             var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
             this.onMyDisCopy(`/api/products/product-to-myspace?token=${item.fileToken}`, item.name, metaData);
         },
         onMyDiskCopyFromDl30(item, metaData) {
-            var item =this.$refs.refCopyToMySpacePopup.getRowData();
+            var item = this.$refs.refCopyToMySpacePopup.getRowData();
             var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
             this.onMyDisCopy(`/api/products/dl30-to-myspace/${item.seq}`, item.recName, metaData);
         },
         onMyDisCopy(url, oldName, metaData) {
             // eventBus.$emit('common-loading-overlay-show');
             this.$fn.notify('primary', { message: `'${metaData.title}' MY디스크에 복사가 요청되었습니다. 용량에 따라 많은 시간이 소요 될 수 있습니다.` });
-            this.$http.post(url, metaData, {timeout: 3600000}).then(res => {
+            this.$http.post(url, metaData, { timeout: 3600000 }).then(res => {
                 if (res.data && res.data.resultCode === 0) {
                     this.$fn.notify('primary', { message: `MY공간으로 '${metaData.title}' 가 등록 되었습니다.` });
                     this.getSummaryUser();
                 }
             })
-            .finally(() => {
-                // eventBus.$emit('common-loading-overlay-hide');
-            })
+                .finally(() => {
+                    // eventBus.$emit('common-loading-overlay-hide');
+                })
         },
         onCopyToMySpacePopup(rowData) {
             this.$refs.refCopyToMySpacePopup.setData(rowData);
             this.copyToMySpacePopup = true;
         },
-        
+
     }
 }
 

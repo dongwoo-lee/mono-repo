@@ -3,12 +3,12 @@ import { mapActions } from 'vuex';
 import { PREVIEW_CODE, AUTHORITY, AUTHORITY_ADMIN } from "@/constants/config";
 
 let mixinTablePage = apiType => ({
-    mixins: [ MixinCommon ],
+    mixins: [MixinCommon],
     data() {
         return {
             PREVIEW_CODE: PREVIEW_CODE,
             IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
-            selectedItem : {},      //CM, SB에서 선택된 아이템만 다운로드 보이게끔하기 위해.
+            selectedItem: {},      //CM, SB에서 선택된 아이템만 다운로드 보이게끔하기 위해.
             selectBrdDate: '',
             selectName: '',
             responseData: {
@@ -51,13 +51,13 @@ let mixinTablePage = apiType => ({
     },
     mounted() {
         this.$nextTick(() => {
-          if (!this.screenName) {
-              // 광고 목록 조회
-            this.getCmOptions();
-          }
-          this.getData();
+            if (!this.screenName) {
+                // 광고 목록 조회
+                this.getCmOptions();
+            }
+            this.getData();
         });
-      },
+    },
     methods: {
         ...mapActions('file', ['download']),
         // 검색
@@ -70,10 +70,10 @@ let mixinTablePage = apiType => ({
         // 메인 데이터 조회
         getData() {
             if (!this.$v.searchItems.brd_dt.$invalid) {
-              this.$fn.notify('inputError', {});
-              return;
+                this.$fn.notify('inputError', {});
+                return;
             }
-            
+            console.log("이거맞아?");
             this.isTableLoading = true;
             const media = this.searchItems.media;
             const brd_dt = this.searchItems.brd_dt;
@@ -84,20 +84,20 @@ let mixinTablePage = apiType => ({
             }
             ///api/products/cm/{media}/{brd_dt}
             this.$http.get(`/api/products/${subUrl}`, { params: this.searchItems })
-              .then(res => {
-                 this.setResponseData(res);
-                 this.isTableLoading = false;
-            });
-          },
+                .then(res => {
+                    this.setResponseData(res);
+                    this.isTableLoading = false;
+                });
+        },
         // 서브 데이터 조회
         getDataContents(sbID, brdDT) {
             if (sbID === undefined) return;
             this.isSubTableLoading = true;
             this.$http.get(`/api/products/${apiType}/contents/${brdDT}/${sbID}`)
-              .then(res => {
-                 this.setReponseContentsData(res, 'normal');
-                 this.isSubTableLoading = false;
-            });
+                .then(res => {
+                    this.setReponseContentsData(res, 'normal');
+                    this.isSubTableLoading = false;
+                });
         },
         // 메인 결과값 설정
         setResponseData(res) {

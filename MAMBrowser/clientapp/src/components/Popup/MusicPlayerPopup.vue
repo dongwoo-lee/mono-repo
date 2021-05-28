@@ -1,176 +1,184 @@
 <template>
-<!-- 미리듣기 팝업 --> 
-<b-modal id="music-player" size="lg" v-model="show" no-close-on-backdrop >
-    <template slot="modal-title" >
-    <h5>{{this.music.name}}</h5>
+  <!-- 미리듣기 팝업 -->
+  <b-modal id="music-player" size="lg" v-model="show" no-close-on-backdrop>
+    <template slot="modal-title">
+      <h5>{{ this.music.name }}</h5>
     </template>
-    <template slot="default" >
-    <b-card>
-    <b-row>
-    <b-col cols="5"> 
-         <b-carousel id="carousel1"
-                  style="text-shadow: 1px 1px 2px #333;height:300px;width:300px"
-                  controls
-                  indicators
-                  background="#ababab"
-                  :interval="5000"
-                  v-model="slide"
-                 
-                  @sliding-start="onSlideStart"
-                  @sliding-end="onSlideEnd">
-
-            <b-carousel-slide v-for="imagePath in imagePathList" :key="imagePath">
+    <template slot="default">
+      <b-card>
+        <b-row>
+          <b-col cols="5">
+            <b-carousel
+              id="carousel1"
+              style="text-shadow: 1px 1px 2px #333; height: 300px; width: 300px"
+              controls
+              indicators
+              background="#ababab"
+              :interval="5000"
+              v-model="slide"
+              @sliding-start="onSlideStart"
+              @sliding-end="onSlideEnd"
+            >
+              <b-carousel-slide
+                v-for="imagePath in imagePathList"
+                :key="imagePath"
+              >
                 <template v-slot:img>
-                    <img
+                  <img
                     class="d-block class-name"
                     width="300"
                     height="300"
                     :src="imagePath"
-                    alt="image slot">
+                    alt="image slot"
+                  />
                 </template>
-            </b-carousel-slide>
-         </b-carousel>
-    </b-col>
-    <b-col cols="7">
-        <b-form-textarea
-            v-model="lyrics"
-            rows="15"
-            no-resize
-            readonly>
-        </b-form-textarea>
-    </b-col>
-    </b-row>
-    </b-card>
-    <br>
-    <b-card>
-    <Player
-        ref="play"
-        :requestType="requestType" 
-        :fileKey = "music.fileToken"
-        :streamingUrl = "streamingUrl"
-        :waveformUrl = "waveformUrl"
-        :tempDownloadUrl="tempDownloadUrl"
-        :direct = "direct"
-    />
-    </b-card>
+              </b-carousel-slide>
+            </b-carousel>
+          </b-col>
+          <b-col cols="7">
+            <b-form-textarea v-model="lyrics" rows="15" no-resize readonly>
+            </b-form-textarea>
+          </b-col>
+        </b-row>
+      </b-card>
+      <br />
+      <b-card>
+        <Player
+          ref="play"
+          :requestType="requestType"
+          :fileKey="music.fileToken"
+          :streamingUrl="streamingUrl"
+          :waveformUrl="waveformUrl"
+          :tempDownloadUrl="tempDownloadUrl"
+          :direct="direct"
+        />
+      </b-card>
     </template>
     <template v-slot:modal-footer>
-    <b-button
+      <b-button
         variant="outline-danger default cutom-label-cancel"
         size="sm"
         class="float-right"
-        @click="show=false"
-    >
-    닫기</b-button>
+        @click="show = false"
+      >
+        닫기</b-button
+      >
     </template>
-</b-modal>
+  </b-modal>
 </template>
 <script>
-import { USER_ID } from '@/constants/config';
+import { USER_ID } from "@/constants/config";
 export default {
-    data () {
-        return {
-            tempImageDownloadUrl : '/api/musicsystem/images/temp-download',
-            tempImageStreamingUrl : '/api/musicsystem/images/streaming',
-            lyricsUrl : '/api/musicsystem/lyrics',
-            imagePathList : [],
-            lyrics :'',
-            slide : 0,
-            sliding : null,
-            USER_ID
+  data() {
+    return {
+      tempImageDownloadUrl: "/api/musicsystem/images/temp-download",
+      tempImageStreamingUrl: "/api/musicsystem/images/streaming",
+      lyricsUrl: "/api/musicsystem/lyrics",
+      imagePathList: [],
+      lyrics: "",
+      slide: 0,
+      sliding: null,
+      USER_ID,
+    };
+  },
+  props: {
+    requestType: {
+      type: String,
+      default: () => {},
+    },
+    music: {
+      type: Object,
+      default: () => {},
+    },
+    tempDownloadUrl: {
+      type: String,
+      default: () => {},
+    },
+    streamingUrl: {
+      type: String,
+      default: () => {},
+    },
+    waveformUrl: {
+      type: String,
+      default: () => {},
+    },
+    showPlayerPopup: {
+      type: Boolean,
+      default: () => false,
+    },
+    direct: {
+      type: String,
+      default: () => {},
+    },
+  },
+  computed: {
+    show: {
+      get() {
+        return this.showPlayerPopup;
+      },
+      set(v) {
+        if (!v) {
+          this.closePlayer();
+        } else {
+          this.getMusic();
         }
+      },
     },
-    props:{
-        requestType : {
-            type: String,
-            default: () => {},
-        },
-        music:{
-            type: Object,
-            default: () => {},
-        },
-        tempDownloadUrl :{
-            type: String,
-            default: () => {},
-        },
-        streamingUrl :{
-            type: String,
-            default: () => {},
-        },
-        waveformUrl :{
-            type: String,
-            default: () => {},
-        },     
-        showPlayerPopup : {
-            type: Boolean,
-            default: () => false,
-        },
-        direct : {
-            type: String,
-            default: () => {},
-        },
-    },
-    computed: {
-        show: {
-            get() {
-                return this.showPlayerPopup;
-            },
-            set(v) {
-                if (!v) {
-                     this.closePlayer();
-                } else {
-                    this.getMusic();
-                }
-            }
-        },
-    },
-    watch: {
-        showPlayerPopup: {
-            handler: function(val, oldVal) {
-                if(val){
-                    this.getMusic();
-                }
-            }
+  },
+  watch: {
+    showPlayerPopup: {
+      handler: function (val, oldVal) {
+        if (val) {
+          this.getMusic();
         }
+      },
     },
-    methods: {
-        getMusic(){
-            this.tempDownloadedImageUrl();
-            this.getLyrics();
-        },
-        tempDownloadedImageUrl(){
-            let userId =sessionStorage.getItem(USER_ID);
-            var tempList = [];
-            this.imagePathList = [];
-            if(this.music.albumToken){
-                this.$http.get(`${this.tempImageDownloadUrl}?token=${this.music.fileToken}&albumtoken=${this.music.albumToken}`, null).then(res=>{
-                    tempList = res.data;
-                    tempList.forEach(fileName => {
-                        let newPath = `${this.tempImageStreamingUrl}?filename=${fileName}&userId=${userId}`;
-                        this.imagePathList.push(newPath);
-                        console.info('newPath', newPath);
-                    });
-                });
-            }
-        },
-        getLyrics(){
-            this.$http.get(`${this.lyricsUrl}/${this.music.lyricsSeq}`, null).then(res=>{
-                this.lyrics = res.data.resultObject.data;
+  },
+  methods: {
+    getMusic() {
+      this.tempDownloadedImageUrl();
+      this.getLyrics();
+    },
+    tempDownloadedImageUrl() {
+      let userId = sessionStorage.getItem(USER_ID);
+      var tempList = [];
+      this.imagePathList = [];
+      if (this.music.albumToken) {
+        this.$http
+          .get(
+            `${this.tempImageDownloadUrl}?token=${this.music.fileToken}&albumtoken=${this.music.albumToken}`,
+            null
+          )
+          .then((res) => {
+            tempList = res.data;
+            tempList.forEach((fileName) => {
+              let newPath = `${this.tempImageStreamingUrl}?filename=${fileName}&userId=${userId}`;
+              this.imagePathList.push(newPath);
+              console.info("newPath", newPath);
             });
-        },
-        closePlayer(){
-            this.lyrics='';
-            this.$refs.play.close();
-            this.$emit('closePlayer');
-        },
-        onSlideStart(slide) {
-            this.sliding = true
-        },
-        onSlideEnd(slide) {
-            this.sliding = false
-        },
+          });
+      }
     },
-}
+    getLyrics() {
+      this.$http
+        .get(`${this.lyricsUrl}/${this.music.lyricsSeq}`, null)
+        .then((res) => {
+          this.lyrics = res.data.resultObject.data;
+        });
+    },
+    closePlayer() {
+      this.lyrics = "";
+      this.$refs.play.close();
+      this.$emit("closePlayer");
+    },
+    onSlideStart(slide) {
+      this.sliding = true;
+    },
+    onSlideEnd(slide) {
+      this.sliding = false;
+    },
+  },
+};
 </script>
 <style scoped>
 </style>

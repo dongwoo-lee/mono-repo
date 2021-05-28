@@ -43,6 +43,15 @@
     "filler-mt": "FILLER(소재)",
     "filler-time": "FILLER(시간)",
     "filler-etc": "FILLER(기타)",
-    "dl30": "DL 3.0"
+    "dl30": "DL 3.0",
+    "cuesheet": "큐시트",
+    "create-cuesheet-list": "일일 큐시트 작성",
+    "default-cuesheet": "기본큐시트",
+    "default-cuesheet-list": "기본큐시트 작성",
+    "template": "템플릿",
+    "template-list": "템플릿 작성",
+    "views-cuesheet": "큐시트 조회",
+    "views-cuesheet-list": "이전 큐시트 조회",
+    "favorites-cart": "즐겨찾기"
   }
 }

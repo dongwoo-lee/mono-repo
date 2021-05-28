@@ -121,7 +121,8 @@
   
       &:active,
       &:focus,
-      &:hover {
+      &:hover 
+      {
         color: $theme-color-1 !important;
       }
     }

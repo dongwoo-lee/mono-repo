@@ -1,3 +1,6 @@
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
+
 import 'core-js/modules/es.array.iterator';
 import Vue from 'vue'
 import App from './App'
@@ -25,10 +28,10 @@ Vue.use({ install(Vue) { Vue.prototype.$http = http } })
 
 Vue.prototype.$fn = commonFunctions;
 Object.keys(commonFilters).forEach((key) => { Vue.filter(key, commonFilters[key]); });
-const i18n = new VueI18n({ locale: 'ko', fallbackLocale: 'en', messages});
+const i18n = new VueI18n({ locale: 'ko', fallbackLocale: 'en', messages });
 
 Vue.config.productionTip = false
-Vue.config.errorHandler = function(err, vm, info) {
+Vue.config.errorHandler = function (err, vm, info) {
   console.log(`Error: ${err.toString()}\nInfo: ${info}`);
 }
 

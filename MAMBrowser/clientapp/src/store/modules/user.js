@@ -2,7 +2,7 @@ import $http from '@/http.js'
 import $fn from '../../utils/CommonFunctions';
 import url from '@/constants/url';
 import jwt_decode from "jwt-decode";
-import {USER_ID, ROLE, ACCESS_TOKEN, AUTHORITY, SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER, SYSTEM_TOP_ADMIN_CODE} from '@/constants/config';
+import { USER_ID, ROLE, ACCESS_TOKEN, AUTHORITY, SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER, SYSTEM_TOP_ADMIN_CODE } from '@/constants/config';
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
 const getAddUrlAndIconMenuList = (menuList, roleList) => {
@@ -107,7 +107,7 @@ export default {
       delete resultObject.behaviorList;
       state.currentUser = resultObject;
       state.authority = getAuthority(state.behaviorList);
-      
+
       sessionStorage.setItem(USER_ID, id);
       sessionStorage.setItem(ROLE, JSON.stringify(state.roleList));
       sessionStorage.setItem(AUTHORITY, state.authority);
@@ -191,16 +191,16 @@ export default {
           $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })
         }
         return response;
-      } catch(error) {
+      } catch (error) {
         console.error(error);
         return error;
       }
     },
-    async reissue({commit}, from) {
+    async reissue({ commit }, from) {
       // 페이지 이동 조건
       if (!from.name || from.path == '/') { return; }
       commit('SET_INIT_TOKEN_TIMER', false);
-      
+
       const params = {
         UserID: sessionStorage.getItem(USER_ID),
         Pass: 'undefined',
@@ -217,12 +217,12 @@ export default {
         }
 
         return response.data.resultCode;
-      } catch(error) {
+      } catch (error) {
         console.error(error);
         return error;
       }
     },
-    getSummaryUser({getters, commit}) {
+    getSummaryUser({ getters, commit }) {
       $http.get(`/api/users/summary/${getters.userId}`).then(response => {
         const { resultCode, resultObject } = response.data;
         if (resultObject && resultCode === 0) {
@@ -230,10 +230,10 @@ export default {
         }
       })
     },
-    getMenu({commit}, userId) {
+    getMenu({ commit }, userId) {
       $http.get(`/api/users/${userId}/menu`).then(response => {
         const { status, data } = response;
-          if (status === 200 && data.resultObject && data.resultCode === 0) {
+        if (status === 200 && data.resultObject && data.resultCode === 0) {
           commit('SET_MENU', data.resultObject.data);
         }
       })
