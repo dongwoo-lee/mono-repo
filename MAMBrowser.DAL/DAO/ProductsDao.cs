@@ -191,6 +191,7 @@ namespace MAMBrowser.DAL
                 CATE = cate,
                 START_DT = start_dt,
                 END_DT = end_dt,
+                NAME= name,
                 PGM = pgmName,
                 EDITOR = editor,
                 REPORTER = reporterName,
@@ -220,6 +221,14 @@ namespace MAMBrowser.DAL
             if (!string.IsNullOrEmpty(editor))
             {
                 builder.Where("EDITOR = :EDITOR");
+            }
+            if (!string.IsNullOrEmpty(name))
+            {
+                string[] nameArray = name.Split(' ');
+                foreach (var word in nameArray)
+                {
+                    builder.Where($"LOWER(REPORTNAME) LIKE LOWER('%{word}%')");
+                }
             }
             if (isMastering == "Y")
             {

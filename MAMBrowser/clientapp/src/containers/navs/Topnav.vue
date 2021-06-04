@@ -41,8 +41,10 @@
               </td>
               <!-- 디스크 용량 정보 -->
               <td>
+                <div>
                 <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{(currentUser.diskMax)}} GB</span>
                 <span :class="currentUser.diskAvailable<=(1000*1000*100) ? 'free-space-red' : 'free-space-blue'" >여유 {{ $fn.formatMBBytes(currentUser.diskAvailable, 1048000) }}</span>
+                </div>
               </td>
               <!-- 사용자 정보 -->
               <td rowspan="2">
@@ -55,11 +57,13 @@
                   no-caret
                 >
                   <template slot="button-content">
-                    <span class="name mr-1">
+                    <div style="margin-top:6px">
+                    <i class="iconsminds-administrator" ></i>
+                    <span class="name mr-1" >
                       {{currentUser.name}}({{currentUser.menuGrpName}})
-                      <i class="iconsminds-administrator"></i>
                       </span>
-
+                    </div>
+                      <div style="float:right; color:red; font-size:12px; margin-right:6px">v1.0.210603</div>
                   </template>
                   <div v-if="isDisplaySetting()">
                     <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
@@ -68,6 +72,7 @@
                   </div>
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
                 </b-dropdown>
+
               </td>
             </tr>
             <tr>

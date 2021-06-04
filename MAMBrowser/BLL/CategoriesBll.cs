@@ -34,6 +34,11 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetMedia();
         }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpotMedia()
+        {
+            return _dao.GetMcrSpotMedia();
+        }
+        
         public DTO_RESULT_LIST<DTO_CATEGORY> GetReport()
         {
             return _dao.GetReport();

@@ -50,6 +50,27 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
+        /// 주조 SPOT 매체 목록
+        /// </summary>
+        /// <returns>주조 SPOT 매체 목록 반환</returns>
+        [HttpGet("media/mcrspot")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetMcrSpotMedia()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                result.ResultObject = _bll.GetMcrSpotMedia();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        
+        /// <summary>
         /// 사용자 목록 조회
         /// </summary>
         /// <returns></returns>

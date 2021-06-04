@@ -4,6 +4,7 @@ let mixinFillerPage = {
     mixins: [ MixinCommon ],
     data() {
         return {
+            mcrSpotMediaOptions: [],                      // 주조SPOT 매체 목록 
             spotOptions: [],                         // 주조 spot 분류 목록
             categoryOptions: [],                     // 필러 화면별 카테고리 분류
             timetoneOptions: [],                     // 필러(시간) 분류 목록
@@ -16,6 +17,10 @@ let mixinFillerPage = {
         });
     },
     methods: {
+        // 주조SPOT 매체 목록 조회
+        getmcrSpotMediaOptions() {
+          this.requestCall('/api/Categories/media/mcrspot', 'mcrSpotMediaOptions');
+        },
         // 주조 spot 분류 목록 조회
         getSpotOptions(media) {
           this.requestCall('/api/Categories/mcr/spot?media=' + media, 'spotOptions');

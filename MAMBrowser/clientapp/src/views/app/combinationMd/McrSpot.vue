@@ -25,7 +25,7 @@
           <b-form-select
             class="width-120"
             v-model="searchItems.media"
-            :options="mediaOptions"
+            :options="mcrSpotMediaOptions"
             value-field="id"
             text-field="name" 
             @change="onChangeMedia()"
@@ -216,12 +216,12 @@ export default {
     }
   },
   created() {
-    // 매체목록 조회
-    this.getMediaOptions();
     // 제작자(Md) 목록 조회
     this.getEditorForMd();
     // 주조 spot 분류 목록 조회
     this.getSpotOptions(this.searchItems.media);
+    // 주조SPOT 매체 목록 조회
+    this.getmcrSpotMediaOptions();
   },
   methods: {
     getData() {

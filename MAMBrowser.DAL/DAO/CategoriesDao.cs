@@ -111,6 +111,12 @@ namespace MAMBrowser.DAL
             returnData.Data = _repository.Select(queryTemplate.RawSql, null, resultMapping);
             return returnData;
         }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpotMedia()
+        {
+            var publicCodes =GetMedia();
+            publicCodes.Data.Add(new DTO_CATEGORY {ID="C", Name="공통" });
+            return publicCodes;
+        }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetReport()
         {
             DTO_RESULT_LIST<DTO_CATEGORY> returnData = new DTO_RESULT_LIST<DTO_CATEGORY>();
