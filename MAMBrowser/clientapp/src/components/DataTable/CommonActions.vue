@@ -53,15 +53,44 @@
     >
       <i class="iconsminds-shop i-custom-actions-shop" />
     </b-button>
-    <div>
-      <b-button
-        v-if="cuesheetData"
-        id="cueBtn"
-        variant="outline-primary"
-        @click="$router.push({ path: '/app/cuesheet/create-cuesheet' })"
-        >큐시트 작성</b-button
-      >
-    </div>
+    <b-button
+      v-if="rowData.state == '작성'"
+      id="cueBtn"
+      variant="outline-primary"
+      @click="$router.push({ path: '/app/cuesheet/day/detail' })"
+      >큐시트 작성</b-button
+    >
+    <b-button
+      v-if="rowData.state == '수정'"
+      id="cueBtn_update"
+      variant="outline-success"
+      @click="$router.push({ path: '/app/cuesheet/day/detail' })"
+      >큐시트 수정</b-button
+    >
+    <b-button
+      v-if="rowData.weekData"
+      id="cueBtn"
+      variant="outline-primary"
+      @click="$router.push({ path: '/app/cuesheet/week/detail' })"
+      >기본 큐시트 작성</b-button
+    >
+    <b-button
+      v-if="rowData.addDate && temData"
+      id="cueBtn"
+      variant="outline-primary"
+      @click="$router.push({ path: '/app/cuesheet/template/detail' })"
+      >템플릿 작성</b-button
+    >
+    <b-button
+      v-if="rowData.broadcastStatus"
+      id="cueBtn"
+      variant="outline-primary"
+      @click="$router.push({ path: '/app/cuesheet/detail' })"
+      >큐시트 조회</b-button
+    >
+    <b-button v-if="!temData" id="cueBtn" variant="outline-primary"
+      >선택</b-button
+    >
   </div>
 </template>
 <script>
@@ -79,7 +108,10 @@ import { mapGetters } from "vuex";
 
 export default {
   props: {
-    cuesheetData: false,
+    temData: {
+      type: Boolean,
+      default: true,
+    },
     rowData: {
       type: Object,
       default: () => {},
@@ -131,6 +163,10 @@ export default {
     },
   },
   methods: {
+    logout() {
+      this.SET_LOGOUT();
+      this.$router.push("/user/Login");
+    },
     display(value) {
       return this.behaviorData.some(
         (data) => data.id === value && data.visible === "Y"
@@ -141,7 +177,13 @@ export default {
         this.ROUTE_NAMES.PRIVATE,
         this.ROUTE_NAMES.WASTE_BASKET,
       ];
-      if (exceptPageNames.includes(this.currentPageName)) {
+      if (
+        exceptPageNames.includes(this.currentPageName) ||
+        this.rowData.state ||
+        this.rowData.weekData ||
+        this.rowData.addDate ||
+        this.rowData.broadcastStatus
+      ) {
         return false;
       }
       return this.roleList.some(
@@ -153,6 +195,8 @@ export default {
     },
     onPreview() {
       this.$emit("preview", this.rowData);
+      console.log("rowData임");
+      console.log(this.rowData);
     },
     onDownload() {
       this.$emit("download", this.rowData, this.downloadName);
@@ -204,11 +248,16 @@ export default {
 };
 </script>
 <style>
+#cueBtn_update {
+  border-color: #28a745;
+  color: #28a745;
+}
 #cueBtn {
   color: rgb(0, 110, 229);
   border-color: #007bff;
 }
-#cueBtn:active {
+#cueBtn:active,
+#cueBtn_update:active {
   color: white;
 }
 </style>

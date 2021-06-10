@@ -14,7 +14,7 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
+        <common-start-end-date-picker
           :startDate.sync="searchItems.start_dt"
           :endDate.sync="searchItems.end_dt"
           :required="false"
@@ -30,19 +30,36 @@
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="btn-outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="btn-outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
         </b-form-group>
       </template>
       <!-- 버튼 -->
       <template slot="form-btn-area">
         <b-input-group>
-          <b-button variant="outline-primary default" size="sm" @click="onShowModalFileUpload">파일 업로드</b-button>
+          <b-button
+            variant="outline-primary default"
+            size="sm"
+            @click="onShowModalFileUpload"
+            >파일 업로드</b-button
+          >
         </b-input-group>
         <b-input-group>
-          <b-button variant="outline-secondary default" size="sm" @click="onDownloadMultiple">선택 항목 다운로드</b-button>
+          <b-button
+            variant="outline-secondary default"
+            size="sm"
+            @click="onDownloadMultiple"
+            >선택 항목 다운로드</b-button
+          >
         </b-input-group>
         <b-input-group>
-          <b-button variant="outline-danger default" size="sm" @click="onMultiDeleteConfirm">선택 항목 휴지통 보내기</b-button>
+          <b-button
+            variant="outline-danger default"
+            size="sm"
+            @click="onMultiDeleteConfirm"
+            >선택 항목 휴지통 보내기</b-button
+          >
         </b-input-group>
       </template>
       <!-- 테이블 페이지 -->
@@ -66,16 +83,16 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-              <common-actions
-                :rowData="props.props.rowData"
-                :behaviorData="behaviorList"
-                :etcData="['delete', 'modify']"
-                @preview="onPreview"
-                @download="onDownloadSingle"
-                @delete="onDeleteConfirm"
-                @modify="onMetaModifyPopup"
-              >
-              </common-actions>
+            <common-actions
+              :rowData="props.props.rowData"
+              :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
+              @preview="onPreview"
+              @download="onDownloadSingle"
+              @delete="onDeleteConfirm"
+              @modify="onMetaModifyPopup"
+            >
+            </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
@@ -95,172 +112,190 @@
           ref="refMetaDataModifyPopup"
           :show="metaDataModifyPopup"
           @editSuccess="onEditSuccess"
-          @close="metaDataModifyPopup = false">
+          @close="metaDataModifyPopup = false"
+        >
         </meta-data-private-modify-popup>
       </template>
     </common-form>
 
-    <PlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.title"
-    :fileKey="soundItem.seq"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="key"
-    direct ="Y"
-    @closePlayer="onClosePlayer">
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.title"
+      :fileKey="soundItem.seq"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="key"
+      direct="Y"
+      @closePlayer="onClosePlayer"
+    >
     </PlayerPopup>
-
   </div>
 </template>
 
 <script>
-import MixinBasicPage from '../../../mixin/MixinBasicPage';
-import MetaDataPrivateModifyPopup from '../../../components/Popup/MetaDataPrivateModifyPopup';
-import { mapActions } from 'vuex';
-import { USER_ID } from '@/constants/config';
+import MixinBasicPage from "../../../mixin/MixinBasicPage";
+import MetaDataPrivateModifyPopup from "../../../components/Popup/MetaDataPrivateModifyPopup";
+import { mapActions } from "vuex";
+import { USER_ID } from "@/constants/config";
 
 export default {
-  mixins: [ MixinBasicPage ],
+  mixins: [MixinBasicPage],
   components: { MetaDataPrivateModifyPopup },
   data() {
     return {
-      streamingUrl : '/api/products/workspace/private/streaming',
-      waveformUrl : '/api/products/workspace/private/waveform',
-      tempDownloadUrl : '/api/products/workspace/private/temp-download',
+      streamingUrl: "/api/products/workspace/private/streaming",
+      waveformUrl: "/api/products/workspace/private/waveform",
+      tempDownloadUrl: "/api/products/workspace/private/temp-download",
       searchItems: {
-        cate: '',              // 분류(cate)
-        title: '',             // 제목
-        memo: '',              // 메모(memo)
-        start_dt: '',          // 등록일 시작일
-        end_dt: '',            // 등록일 종료일
+        cate: "", // 분류(cate)
+        title: "", // 제목
+        memo: "", // 메모(memo)
+        start_dt: "", // 등록일 시작일
+        end_dt: "", // 등록일 종료일
         rowPerPage: 30,
         selectPage: 1,
-        sortKey: '',
-        sortValue: '',
+        sortKey: "",
+        sortValue: "",
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
       isTableLoading: false,
-      innerHtmlSelectedFileNames: '',
+      innerHtmlSelectedFileNames: "",
       fields: [
         {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "3%"
+          width: "3%",
         },
         {
-          name: 'rowNO',
-          title: '순서',
+          name: "rowNO",
+          title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '4%',
+          width: "4%",
         },
         {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: 'title',
+          sortField: "title",
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: 'memo',
+          sortField: "memo",
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "5%",
         },
-         {
+        {
           name: "fileSize",
           title: "파일사이즈",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: 'fileSize',
+          sortField: "fileSize",
           width: "8%",
           callback: (v) => {
-            return this.$fn.formatBytes(v)
-          }
+            return this.$fn.formatBytes(v);
+          },
         },
         {
           name: "audioFormat",
           title: "오디오포맷",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: 'audioFormat',
-          width: "10%"
+          sortField: "audioFormat",
+          width: "10%",
         },
         {
           name: "editedDtm",
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: 'editedDtm',
-          width: "12%"
+          sortField: "editedDtm",
+          width: "12%",
         },
         {
-          name: '__slot:actions',
-          title: '추가작업',
+          name: "__slot:actions",
+          title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
-        }
+          width: "8%",
+        },
       ],
-      USER_ID
-    }
+      USER_ID,
+    };
   },
   methods: {
-    ...mapActions('file', ['open_popup']),
+    ...mapActions("file", ["open_popup"]),
     getData() {
-      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
-        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+      console.log(typeof this.searchItems.start_dt);
+      if (
+        this.$fn.checkGreaterStartDate(
+          this.searchItems.start_dt,
+          this.searchItems.end_dt
+        )
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
         this.hasErrorClass = true;
         return;
       }
 
       this.selectedIds = [];
-      this.isTableLoading = this.isScrollLodaing ? false: true;
+      this.isTableLoading = this.isScrollLodaing ? false : true;
       const userId = sessionStorage.getItem(USER_ID);
 
-      this.$http.get(`/api/products/workspace/private/meta/${userId}`, { params: this.searchItems })
-        .then(res => {
-            this.setResponseData(res);
-            this.addScrollClass();
-            this.isTableLoading = false;0
-            this.isScrollLodaing = false;
-      });
-    },    
+      this.$http
+        .get(`/api/products/workspace/private/meta/${userId}`, {
+          params: this.searchItems,
+        })
+        .then((res) => {
+          this.setResponseData(res);
+          this.addScrollClass();
+          this.isTableLoading = false;
+          0;
+          this.isScrollLodaing = false;
+        });
+    },
     onShowModalFileUpload() {
       this.open_popup();
     },
     onDownloadSingle(item) {
       let ids = [];
       ids.push(item.seq);
-      this.downloadWorkspace({ids: ids, type: 'private'});
+      this.downloadWorkspace({ ids: ids, type: "private" });
     },
     onDownloadMultiple() {
       let ids = this.selectedIds;
-      this.downloadWorkspace({ids: ids, type: 'private'});
+      this.downloadWorkspace({ ids: ids, type: "private" });
     },
     // 단일 휴지통 보내기 확인창
     onDeleteConfirm(rowData) {
       this.singleSelectedId = rowData.seq;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(rowData.title);
-      this.$bvModal.show('modalRemove');
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(
+        rowData.title
+      );
+      this.$bvModal.show("modalRemove");
     },
-    // 선택항목 휴지통 보내기 확인창 
+    // 선택항목 휴지통 보내기 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(this.selectedIds, this.responseData.data);
-      this.$bvModal.show('modalRemove');
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
+        this.selectedIds,
+        this.responseData.data
+      );
+      this.$bvModal.show("modalRemove");
     },
     // 휴지통 보내기
     onDelete() {
@@ -273,20 +308,25 @@ export default {
         this.singleSelectedId = null;
         this.selectedIds = [];
       }
-      
-      this.$http.delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
-        .then(res => {
+
+      this.$http
+        .delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
+        .then((res) => {
           if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify('primary', { message: '휴지통으로 이동되었습니다.' })
-            this.$bvModal.hide('modalRemove');
+            this.$fn.notify("primary", {
+              message: "휴지통으로 이동되었습니다.",
+            });
+            this.$bvModal.hide("modalRemove");
             setTimeout(() => {
               this.initSelectedIds();
               this.getData();
             }, 0);
           } else {
-            this.$fn.notify('error', { message: '휴지통 이동 실패: ' + res.data.errorMsg })
+            this.$fn.notify("error", {
+              message: "휴지통 이동 실패: " + res.data.errorMsg,
+            });
           }
-      });
+        });
     },
     onMetaModifyPopup(rowData) {
       this.$refs.refMetaDataModifyPopup.setData(rowData);
@@ -302,5 +342,5 @@ export default {
       return this.innerHtmlSelectedFileNames + "휴지통으로 이동하시겠습니까?";
     },
   },
-}
+};
 </script>

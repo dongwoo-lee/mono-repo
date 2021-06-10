@@ -128,7 +128,7 @@ const data = [
   },
   {
     id: "cuesheet", // 큐시트
-    icon: "iconsminds-notepad",
+    icon: "iconsminds-testimonal",
     label: "menu.cuesheet",
     subs: [
       {
@@ -138,13 +138,28 @@ const data = [
       },
       {
         icon: "iconsminds-notepad",
+        label: "menu.cuesheet-day-list", // 일큐시트 작성
+        to: "/app/cuesheet/day/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
         label: "menu.cuesheet-week-list", // 기본큐시트 목록
         to: "/app/cuesheet/week/list",
       },
       {
         icon: "iconsminds-notepad",
+        label: "menu.cuesheet-week-list", // 기본큐시트 목록
+        to: "/app/cuesheet/week/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
         label: "menu.cuesheet-template-list", //템플릿 목록
         to: "/app/cuesheet/template/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-template-detail", //템플릿
+        to: "/app/cuesheet/template/detail",
       },
       {
         icon: "iconsminds-notepad",

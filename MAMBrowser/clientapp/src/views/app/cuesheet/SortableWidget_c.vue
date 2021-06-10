@@ -15,7 +15,7 @@
         <div style="height: 100%">
           <div v-if="fileData[index - 1]">
             <span class="numb" v-if="fileData[index - 1].name"
-              >C{{ channelC_1_Class }}
+              >{{ index }}.
             </span>
             <span class="numb_i" v-if="fileData[index - 1].name">
               <b-icon icon="folder" class="m-0"></b-icon>
@@ -102,28 +102,28 @@ export default {
   position: absolute;
   padding: 0;
   width: 50px;
-  height: 40px;
+  height: 25px;
   font-weight: 550;
-  padding: 0px 0px 5px 150px;
-  font-size: 20px;
+  padding: 0px 0px 0px 150px;
+  font-size: 18px;
 }
 .numtextdate {
   position: absolute;
   font-size: 11px;
   margin-left: 103px;
-  margin-top: 38px;
+  margin-top: 22px;
 }
 .numtext {
   position: absolute;
-  font-size: 14.5px;
+  font-size: 14px;
   margin: 10px 10px 0px 13px;
-  padding: 65px 0px 0px 5px;
+  padding: 35px 0px 0px 5px;
 }
 .numtext_b {
   position: absolute;
   margin: 10px 10px 0px 13px;
-  padding: 82px 0px 0px 5px;
-  font-size: 13px;
+  padding: 55px 0px 0px 5px;
+  font-size: 12.5px;
 }
 .dx-icon-globe {
   position: absolute;
@@ -138,11 +138,10 @@ export default {
   color: #d8d8d8;
 }
 .numb {
-  background-color: rgb(85, 84, 84);
-  color: white;
+  color: rgb(85, 84, 84);
   position: absolute;
-  margin-left: 18px;
-  margin-top: 30px;
+  margin-left: 15px;
+  margin-top: 13px;
   padding: 2px;
   font-size: 15px;
 }
@@ -150,8 +149,8 @@ export default {
 .numb_i {
   position: absolute;
 
-  margin-left: 50px;
-  margin-top: 32px;
+  margin-left: 45px;
+  margin-top: 13px;
   font-size: 18px;
 }
 #cartC {

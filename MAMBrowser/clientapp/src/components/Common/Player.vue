@@ -209,7 +209,9 @@ export default {
       });
       wavesurfer.on("ready", function () {
         vm.LoadAudioInfo();
-        vm.Play();
+        if (this.playvalue) {
+          vm.Play();
+        }
       });
       wavesurfer.on("pause", function () {
         vm.LoadAudioInfo();
@@ -359,6 +361,7 @@ export default {
     },
   },
   props: {
+    playvalue: true,
     requestType: {
       type: String,
       default: () => {},

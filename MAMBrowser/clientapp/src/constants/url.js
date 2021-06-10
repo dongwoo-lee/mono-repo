@@ -142,61 +142,61 @@ const url = [
     {
         // 큐시트
         id: "S01G01C025",
-        icon: "iconsminds-big-data",
+        icon: "iconsminds-testimonal",
     },
     {
         // 일일 큐시트
         id: "S01G01C026",
         to: "/app/cuesheet/day/list",
-        icon: "iconsminds-big-data",
+        icon: "iconsminds-testimonal",
     },
-    // {
-    //     // 
-    //     id: "S01G01C027",
-    //     to: "/app/cuesheet/day/detail",
-    //     icon: "iconsminds-big-data",
-    // },
+    {
+        // 일일 큐시트 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/day/detail",
+        icon: "iconsminds-testimonal",
+    },
     {
         // 기본 큐시트
         id: "S01G01C027",
         to: "/app/cuesheet/week/list",
-        icon: "iconsminds-big-data",
+        icon: "iconsminds-testimonal",
     },
-    // {
-    //     // 
-    //     id: "S01G01C029",
-    //     to: "/app/cuesheet/week/detail",
-    //     icon: "iconsminds-big-data",
-    // },
+    {
+        // 기본 큐시트 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/week/detail",
+        icon: "iconsminds-testimonal",
+    },
     {
         // 템플릿
         id: "S01G01C028",
         to: "/app/cuesheet/template/list",
-        icon: "iconsminds-big-data",
+        icon: "iconsminds-testimonal",
     },
-    // {
-    //     // 
-    //     id: "S01G01C031",
-    //     to: "/app/cuesheet/template/detail",
-    //     icon: "iconsminds-big-data",
-    // },
+    {
+        // 템플릿 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/template/detail",
+        icon: "iconsminds-testimonal",
+    },
     {
         // 이전 큐시트 조회
         id: "S01G01C029",
         to: "/app/cuesheet/list",
-        icon: "iconsminds-big-data",
+        icon: "iconsminds-testimonal",
     },
-    // {
-    //     // 
-    //     id: "S01G01C033",
-    //     to: "/app/cuesheet/detail",
-    //     icon: "iconsminds-big-data",
-    // },
+    {
+        // 이전 큐시트
+        id: "S01G01C025",
+        to: "/app/cuesheet/detail",
+        icon: "iconsminds-testimonal",
+    },
     {
         // 즐겨찾기
         id: "S01G01C030",
         to: "/app/cuesheet/favorite",
-        icon: "iconsminds-big-data",
+        icon: "iconsminds-testimonal",
     },
 ]
 

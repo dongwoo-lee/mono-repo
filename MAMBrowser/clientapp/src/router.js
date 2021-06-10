@@ -160,89 +160,87 @@ const routes = [
         path: "dl30",
         component: () => import("./views/app/dl30/Index"),
       },
-       /**
-       * CueSheet
-       */
+      /**
+      * CueSheet
+      */
       {
-        // cuesheet/day/list
+        // 일일 큐시트 리스트
         name: 'cuesheet-day-list',
         path: "cuesheet/day/list",
         component: () => import("./views/app/cuesheet/cuesheetDayList"),
       },
       {
-        // cuesheet/day/list
+        // 일일 큐시트
         name: 'cuesheet-day-detail',
         path: "cuesheet/day/detail",
         component: () => import("./views/app/cuesheet/cuesheetDayDetail"),
       },
       {
-        // cuesheet/day/list
+        // 기본 큐시트 리스트
         name: 'cuesheet-week-list',
         path: "cuesheet/week/list",
         component: () => import("./views/app/cuesheet/cuesheetWeekList"),
       },
       {
-        // cuesheet/day/list
+        // 기본 큐시트
         name: 'cuesheet-week-detail',
         path: "cuesheet/week/detail",
         component: () => import("./views/app/cuesheet/cuesheetWeekDetail"),
       },
       {
-        // cuesheet/day/list
+        // 템플릿 리스트
         name: 'cuesheet-template-list',
         path: "cuesheet/template/list",
         component: () => import("./views/app/cuesheet/cuesheetTemplateList"),
       },
       {
-        // cuesheet/day/list
+        // 템플릿
         name: 'cuesheet-template-detail',
         path: "cuesheet/template/detail",
         component: () => import("./views/app/cuesheet/cuesheetTemplateDetail"),
       },
       {
-        // cuesheet/day/list
+        // 큐시트 조회 리스트
         name: 'cuesheet-list',
         path: "cuesheet/list",
         component: () => import("./views/app/cuesheet/cuesheetList"),
       },
       {
-        // cuesheet/day/list
+        // 큐시트 조회
         name: 'cuesheet-detail',
         path: "cuesheet/detail",
         component: () => import("./views/app/cuesheet/cuesheetDetail"),
       },
       {
-        // cuesheet/day/list
+        // 즐겨찾기
         name: 'cuesheet-favorite',
         path: "cuesheet/favorite",
         component: () => import("./views/app/cuesheet/cuesheetFavorite"),
       },
-
-
-      {
-        // 일일 큐시트
-        name: 'create-cuesheet',
-        path: "cuesheet/create-cuesheet",
-        component: () => import("./views/app/cuesheet/CreateCuesheet"),
-      },
-      {
-        // 일일 큐시트 작성 리스트
-        name: 'create-cuesheet-list',
-        path: "cuesheet/create-cuesheet-list",
-        component: () => import("./views/app/cuesheet/CreateCuesheetList"),
-      },
+      // {
+      //   // 일일 큐시트
+      //   name: 'create-cuesheet',
+      //   path: "cuesheet/create-cuesheet",
+      //   component: () => import("./views/app/cuesheet/CreateCuesheet"),
+      // },
+      // {
+      //   // 일일 큐시트 작성 리스트
+      //   name: 'create-cuesheet-list',
+      //   path: "cuesheet/create-cuesheet-list",
+      //   component: () => import("./views/app/cuesheet/CreateCuesheetList"),
+      // },
       // {
       //   // 기본 큐시트 
       //   name: 'default-cuesheet',
       //   path: "cuesheet/default-cuesheet",
       //   component: () => import("./views/app/cuesheet/DefaultCuesheet"),
       // },
-      {
-        // 기본 큐시트 작성 리스트
-        name: 'default-cuesheet-list',
-        path: "cuesheet/default-cuesheet-list",
-        component: () => import("./views/app/cuesheet/DefaultCuesheetList"),
-      },
+      // {
+      //   // 기본 큐시트 작성 리스트
+      //   name: 'default-cuesheet-list',
+      //   path: "cuesheet/default-cuesheet-list",
+      //   component: () => import("./views/app/cuesheet/DefaultCuesheetList"),
+      // },
       // {
       //   // 템플릿 
       //   name: 'template',
@@ -303,6 +301,8 @@ const router = new VueRouter({
 
 // 라우터 내비게이션 가드
 router.beforeEach((to, from, next) => {
+  console.info('from', from);
+  console.info('to', to);
   // 토큰 유무 체크
   const tokenString = sessionStorage.getItem('access_token');
   if (!tokenString || !from) {

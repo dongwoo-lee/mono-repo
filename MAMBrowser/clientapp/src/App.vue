@@ -5,9 +5,11 @@
 </template>
 
 <script>
-
 window.addEventListener("unhandledrejection", function (event) {
-  console.debug("WARNING: Unhandled promise rejection. Reason: " + event.reason, event);
+  console.debug(
+    "WARNING: Unhandled promise rejection. Reason: " + event.reason,
+    event
+  );
 });
 
 import { getDirection } from "./utils";
@@ -23,6 +25,6 @@ export default {
       document.dir = "ltr";
       document.body.classList.remove("rtl");
     }
-  }
+  },
 };
 </script>
