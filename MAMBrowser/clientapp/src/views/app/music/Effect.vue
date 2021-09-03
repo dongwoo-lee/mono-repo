@@ -15,7 +15,7 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <b-form-group label="검색어" class="has-float-label">
-          <common-input-text v-model="searchItems.searchText"/>
+          <common-input-text v-model="searchItems.searchText" @keydown="onSearch"/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>

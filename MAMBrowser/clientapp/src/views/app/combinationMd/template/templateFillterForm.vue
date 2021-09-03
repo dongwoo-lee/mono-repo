@@ -40,7 +40,7 @@
         </b-form-group>
         <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
-          <common-input-text v-model="searchItems.name"/>
+          <common-input-text v-model="searchItems.name" @keydown="onSearch"/>
         </b-form-group>
         <!-- 방송 유효일이 남은 소재만 보기 -->
         <!-- <b-form-checkbox v-if="screenName === 'pr'"

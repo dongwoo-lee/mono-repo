@@ -42,7 +42,7 @@
         </b-form-group>
         <!-- 녹음소재명 -->
         <b-form-group label="녹음소재명" class="has-float-label c-zindex">
-            <common-input-text v-model="searchItems.pgmName" />
+            <common-input-text v-model="searchItems.pgmName" @keydown="onSearch"/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>

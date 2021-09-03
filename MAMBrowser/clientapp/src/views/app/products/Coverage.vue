@@ -33,11 +33,11 @@
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처명" class="has-float-label w-10">
-          <common-input-text v-model="searchItems.pgmName"/>
+          <common-input-text v-model="searchItems.pgmName" @keydown="onSearch"/>
         </b-form-group>
         <!-- 취재인 -->
         <b-form-group label="취재인" class="has-float-label w-10">
-          <common-input-text v-model="searchItems.reporterName"/>
+          <common-input-text v-model="searchItems.reporterName" @keydown="onSearch"/>
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
@@ -45,7 +45,7 @@
         </b-form-group>
         <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
-          <common-input-text v-model="searchItems.name"/>
+          <common-input-text v-model="searchItems.name" @keydown="onSearch"/>
         </b-form-group>
         <!-- 마스터링 완료한 소재만 보기 -->
          <b-form-checkbox class="custom-checkbox-group-non-align"

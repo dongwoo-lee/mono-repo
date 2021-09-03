@@ -32,7 +32,7 @@
         </b-form-group>
         <!-- 사용처명 -->
         <b-form-group label="사용처명" class="has-float-label">
-          <common-input-text v-model="searchItems.pgmName"/>
+          <common-input-text v-model="searchItems.pgmName" @keydown="onSearch"/>
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
@@ -40,7 +40,7 @@
         </b-form-group>
         <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
-          <common-input-text v-model="searchItems.name"/>
+          <common-input-text v-model="searchItems.name" @keydown="onSearch"/>
         </b-form-group>
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
