@@ -45,7 +45,7 @@
         </b-form-group>
         <!-- 소재명 -->
          <b-form-group label="소재명" class="has-float-label">
-            <common-input-text v-model="searchItems.name"/>
+            <common-input-text v-model="searchItems.name" @keydown="onSearch"/>
           </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>

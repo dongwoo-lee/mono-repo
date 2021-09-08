@@ -30,7 +30,7 @@
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
-          <common-input-text v-model="searchItems.pgmName"/>
+          <common-input-text v-model="searchItems.pgmName" @keydown="onSearch"/>
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>

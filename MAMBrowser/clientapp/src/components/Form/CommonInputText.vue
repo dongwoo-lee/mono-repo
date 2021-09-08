@@ -6,7 +6,8 @@
         :placeholder="placeholder"
         @input="onInput"
         :pattern="pattern"
-        @keydown.enter.prevent
+        @keyup.enter="enterKeydown"
+        @keydown.prevent
     >
     </b-form-input>
 </template>
@@ -36,6 +37,12 @@ export default {
         },
     },
     methods: {
+        test(){
+            console.log("hi");
+        },
+        enterKeydown(){
+            this.$emit('keydown');
+        },
         onInput(input) {
             this.$emit('input', input);
         },

@@ -22,11 +22,11 @@
         />
         <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
-          <common-input-text v-model="searchItems.title" />
+          <common-input-text v-model="searchItems.title" @keydown="onSearch" />
         </b-form-group>
         <!-- 메모 -->
         <b-form-group label="메모" class="has-float-label">
-          <common-input-text class-string="memo" v-model="searchItems.memo" />
+          <common-input-text class-string="memo" v-model="searchItems.memo" @keydown="onSearch" />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
