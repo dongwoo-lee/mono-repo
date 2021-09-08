@@ -20,14 +20,6 @@ namespace MAMBrowser.Services
 {
     public class MusicService 
     {
-        public string Host
-        {
-            get
-            {
-                return MbcDomain;
-            }
-        }
-
         public string MbcDomain { get; set; }
         public string AuthorKey { get; set; }
         public string SearchDomain { get; set; }
@@ -36,28 +28,31 @@ namespace MAMBrowser.Services
         public string SearchLyricsUrl { get; set; }
         public string ImageListUrl { get; set; }
         public string FileUrl { get; set; }
+        private IDictionary<string, object> StorageMaps { get; set; }
+
+
 
         public int ExpireMusicTokenHour { get; set; }
-
-        private readonly IDictionary<string,object> _storageMap;
         private readonly ILogger<MusicService> _logger;
         private readonly WebServerFileHelper _fileHelper;
-
-
-
-        public MusicService(IOptions<AppSettings> appSesstings, IOptions<StorageConnections> connection, IOptions<StorageMaps> storageMap, ILogger<MusicService> logger, WebServerFileHelper fileHelper)
+        public MusicService()
         {
-            _storageMap = storageMap.Value.Map;
-            MbcDomain = connection.Value.MusicConnection["MbcDomain"].ToString();
-            AuthorKey = connection.Value.MusicConnection["AuthorKey"].ToString();
-            SearchDomain = connection.Value.MusicConnection["SearchDomain"].ToString();
-            SearchSongUrl = connection.Value.MusicConnection["SearchSongUrl"].ToString();
-            SearchEffectUrl = connection.Value.MusicConnection["SearchEffectUrl"].ToString();
-            SearchLyricsUrl = connection.Value.MusicConnection["SearchLyricsUrl"].ToString();
-            ImageListUrl = connection.Value.MusicConnection["ImageListUrl"].ToString();
-            FileUrl = connection.Value.MusicConnection["FileUrl"].ToString();
 
-            ExpireMusicTokenHour = appSesstings.Value.ExpireMusicTokenHour;
+        }
+        public MusicService(ILogger<MusicService> logger, WebServerFileHelper fileHelper)
+        {
+            //var musicCon = externalInfo.Value.MusicConnection;
+            //_storageMap = externalInfo.Value.StorageMaps;
+            //MbcDomain = musicCon["MbcDomain"].ToString();
+            //AuthorKey = musicCon["AuthorKey"].ToString();
+            //SearchDomain = musicCon["SearchDomain"].ToString();
+            //SearchSongUrl = musicCon["SearchSongUrl"].ToString();
+            //SearchEffectUrl = musicCon["SearchEffectUrl"].ToString();
+            //SearchLyricsUrl = musicCon["SearchLyricsUrl"].ToString();
+            //ImageListUrl = musicCon["ImageListUrl"].ToString();
+            //FileUrl = musicCon["FileUrl"].ToString();
+            
+            ExpireMusicTokenHour = Startup.AppSetting.ExpireMusicTokenHour;
             _logger = logger;
             _fileHelper = fileHelper;
         }
@@ -223,7 +218,7 @@ namespace MAMBrowser.Services
             _logger.LogDebug($"img path : {imgPath}");
 
             var host = MAMUtility.GetHost(wavPath).ToUpper();
-            var domainAndPort = _storageMap[host] as string;
+            var domainAndPort = StorageMaps[host] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
@@ -325,7 +320,7 @@ namespace MAMBrowser.Services
             var jsonEgyInfo = TokenGenerator.GetJsonRequestContentFromPath(egyPath, DateTime.Now.AddHours(ExpireMusicTokenHour));
             
             var host = MAMUtility.GetHost(wavPath);
-            var domainAndPort = _storageMap[host] as string;
+            var domainAndPort = StorageMaps[host] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
@@ -379,7 +374,7 @@ namespace MAMBrowser.Services
             var encodedFilePath = musicInfo[Define.MUSIC_FILEPATH];
             var filePath =  MusicSeedWrapper.SeedDecrypt(encodedFilePath);
             var host = MAMUtility.GetHost(filePath);
-            var domainAndPort = _storageMap[host] as string;        // 뮤직서비스에 구현.
+            var domainAndPort = StorageMaps[host] as string;        // 뮤직서비스에 구현.
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
             var fileName = Path.GetFileName(filePath);

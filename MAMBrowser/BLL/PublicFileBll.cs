@@ -12,11 +12,11 @@ namespace MAMBrowser.BLL
     public class PublicFileBll
     {
         private readonly PublicFileDao _dao;
-        private readonly IFileProtocol _fileProtocol;
+        private readonly IFileProtocol _fileSystem;
         public PublicFileBll(PublicFileDao dao, ServiceResolver sr)
         {
             _dao = dao;
-            _fileProtocol = sr("PublicWorkConnection");
+            _fileSystem = sr(MAMDefine.PublicWorkConnection).FileSystem;
         }
     
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PUBLIC_SPACE metaData)
@@ -32,8 +32,8 @@ namespace MAMBrowser.BLL
                 long ID = _dao.GetID();
                 string date = DateTime.Now.ToString(Define.DTM8);
                 string newFileName = $"{ID.ToString() }_{fileName}";
-                var relativeSourceFolder = $"{_fileProtocol.TmpUploadFolder}";
-                var relativeTargetFolder = @$"{_fileProtocol.UploadFolder}\{userId}\{userId}-{date}";      //공유소재도 유저확장ID 사용?, 분류코드별로...필요해보임.
+                var relativeSourceFolder = $"{_fileSystem.TmpUploadFolder}";
+                var relativeTargetFolder = @$"{_fileSystem.UploadFolder}\{userId}\{userId}-{date}";      //공유소재도 유저확장ID 사용?, 분류코드별로...필요해보임.
                 var relativeSourcePath = @$"{relativeSourceFolder}\{newFileName}";
                 var relativeTargetPath = @$"{relativeTargetFolder}\{newFileName}";
 
@@ -42,17 +42,17 @@ namespace MAMBrowser.BLL
                 var audioFormat = AudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
                 headerStream.Position = 0;
 
-                _fileProtocol.MakeDirectory(relativeSourceFolder);
-                _fileProtocol.Upload(headerStream, stream, relativeSourcePath);
-                _fileProtocol.MakeDirectory(relativeTargetFolder);
-                _fileProtocol.Move(relativeSourcePath, relativeTargetPath);
+                _fileSystem.MakeDirectory(relativeSourceFolder);
+                _fileSystem.Upload(headerStream, stream, relativeSourcePath);
+                _fileSystem.MakeDirectory(relativeTargetFolder);
+                _fileSystem.Move(relativeSourcePath, relativeTargetPath);
                 stream.Dispose();
                 headerStream.Dispose();
 
                 metaData.SEQ = ID;
                 metaData.USER_ID = userId;
                 metaData.AUDIO_FORMAT = audioFormat;
-                metaData.FILE_PATH = @$"\\{_fileProtocol.UploadHost}\{relativeTargetPath}";
+                metaData.FILE_PATH = @$"\\{_fileSystem.UploadHost}\{relativeTargetPath}";
                 _dao.Insert(metaData);
 
                 return validateResult;
@@ -61,7 +61,7 @@ namespace MAMBrowser.BLL
         public bool Delete(long seq)
         {
             var fileData = Get(seq);
-            _fileProtocol.Delete(fileData.FilePath);
+            _fileSystem.Delete(fileData.FilePath);
 
             return _dao.Delete(seq);
         }

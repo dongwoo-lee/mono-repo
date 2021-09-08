@@ -25,7 +25,7 @@ namespace MAMBrowser.BLL
         {
             _dao = dao;
             _apiDao = apiDao;
-            _fileProtocol = sr("PrivateWorkConnection");
+            _fileProtocol = sr(MAMDefine.PrivateWorkConnection).FileSystem;
         }
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PRIVATE_SPACE metaData)
         {

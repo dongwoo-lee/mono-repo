@@ -27,7 +27,7 @@ using MAMBrowser.Helper;
 
 namespace MAMBrowser
 {
-    public delegate IFileProtocol ServiceResolver(string key);
+    public delegate StorageManager ServiceResolver(string key);
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -161,81 +161,73 @@ namespace MAMBrowser
 
             //서비스 등록
             services.AddScoped<IUserService, UserService>();
-
-            //기타 등록
-            services.Configure<StorageMaps>(Configuration.GetSection("StorageMaps"));
         }
         private void StorageFactorySetting(IServiceCollection services)
         {
             //스토리지 연결정보 팩토리구성
-            var storagesSection = Configuration.GetSection("StorageConnections");
-            var storage = storagesSection.Get<StorageConnections>();
-            services.Configure<StorageConnections>(storagesSection);
-
-            services.AddTransient<IFileProtocol, NetDriveProtocol>(serviceProvider =>
+            services.AddTransient(serviceProvider =>
             {
-                return new NetDriveProtocol
-                {
-                    Name = "MirosConnection",
-                    UploadHost = storage.MirosConnection["UploadHost"].ToString(),
-                    UserId = storage.MirosConnection["UserId"].ToString(),
-                    UserPass = storage.MirosConnection["UserPass"].ToString(),
-                };
+                var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
+                var musicService = storagesSection.Get<MusicService>();
+                return musicService;
             });
-            services.AddTransient<MusicService>();
-            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
+            services.AddTransient(serviceProvider =>
             {
-                return new FTPProtocol
-                {
-                    Name = "PrivateWorkConnection",
-                    UploadHost = storage.PrivateWorkConnection["UploadHost"].ToString(),
-                    UserId = storage.PrivateWorkConnection["UserId"].ToString(),
-                    UserPass = storage.PrivateWorkConnection["UserPass"].ToString(),
-                    TmpUploadFolder = storage.PrivateWorkConnection["TmpUploadFolder"].ToString(),
-                    UploadFolder = storage.PrivateWorkConnection["UploadFolder"].ToString(),
-                    EncodingType = Convert.ToInt32(storage.PrivateWorkConnection["EncodingType"]),
-                };
+                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
+                var storage = storagesSection.Get<StorageManager>();
+                storage.FileSystem = GetProtocol(storage);
+                return storage;
             });
-            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
+            
+            services.AddTransient(serviceProvider =>
             {
-                return new FTPProtocol
-                {
-                    Name = "PublicWorkConnection",
-                    UploadHost = storage.PublicWorkConnection["UploadHost"].ToString(),
-                    UserId = storage.PublicWorkConnection["UserId"].ToString(),
-                    UserPass = storage.PublicWorkConnection["UserPass"].ToString(),
-                    TmpUploadFolder = storage.PublicWorkConnection["TmpUploadFolder"].ToString(),
-                    UploadFolder = storage.PublicWorkConnection["UploadFolder"].ToString(),
-                    EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
-                };
+                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PublicWorkConnection");
+                var storage = storagesSection.Get<StorageManager>();
+                storage.FileSystem = GetProtocol(storage);
+                return storage;
             });
-            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
+            services.AddTransient(serviceProvider =>
             {
-                return new FTPProtocol
-                {
-                    Name = "DLArchiveConnection",
-                    UploadHost = storage.DLArchiveConnection["UploadHost"].ToString(),
-                    UserId = storage.DLArchiveConnection["UserId"].ToString(),
-                    UserPass = storage.DLArchiveConnection["UserPass"].ToString(),
-                    EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
-                };
+                var storagesSection = Configuration.GetSection("StorageConnections:Internal:MirosConnection");
+                var storage = storagesSection.Get<StorageManager>();
+                storage.FileSystem = GetProtocol(storage);
+                return storage;
+            });
+            services.AddTransient(serviceProvider =>
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:Internal:DLArchiveConnection");
+                var storage = storagesSection.Get<StorageManager>();
+                storage.FileSystem = GetProtocol(storage);
+                return storage;
             });
             services.AddTransient<ServiceResolver>(serviceProvider => key =>
             {
                 switch (key)
                 {
-                    case "PrivateWorkConnection":
-                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
-                    case "PublicWorkConnection":
-                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
-                    case "MirosConnection":
-                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
-                    case "DLArchiveConnection":
-                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
+                    case MAMDefine.PrivateWorkConnection:
+                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
+                    case MAMDefine.PublicWorkConnection:
+                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
+                    case MAMDefine.MirosConnection:
+                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
+                    case MAMDefine.DLArchiveConnection:
+                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
                     default:
                         throw new Exception("KeyNotFoundException"); // or maybe return null, up to you
                 }
             });
+        }
+        private IFileProtocol GetProtocol(StorageManager sm)
+        {
+            switch (sm.Protocol)
+            {
+                case MAMDefine.FTP:
+                    return new FTPProtocol(sm.UploadHost, sm.UserId, sm.UserPass, sm.TmpUploadFolder, sm.UploadFolder, sm.EncodingType);
+                case MAMDefine.SMB:
+                    return new NetDriveProtocol(sm.UploadHost, sm.UserId, sm.UserPass, sm.TmpUploadFolder, sm.UploadFolder);
+                default:
+                    return null;
+            }
         }
     }
 }

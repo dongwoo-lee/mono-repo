@@ -8,13 +8,18 @@ namespace MAMBrowser.Foundation
     public class NetDriveProtocol : IFileProtocol
     {
         public string UploadHost { get; set; }
-        public string Name { get; set; }
-        public string TmpUploadFolder { get; set; }
-        public string UploadFolder { get; set; }
         public string UserId { get; set; }
         public string UserPass { get; set; }
-        public NetDriveProtocol()
+        public string TmpUploadFolder { get; set; }
+        public string UploadFolder { get; set; }
+        
+        public NetDriveProtocol(string uploadHost, string userId, string userPass, string tmpUploadFolder, string uploadFolder)
         {
+            UploadHost = uploadHost;
+            UserId = userId;
+            UserPass = userPass;
+            TmpUploadFolder = tmpUploadFolder;
+            UploadFolder = uploadFolder;
         }
         public Stream GetFileStream(string sourcePath, long offSet)
         {
@@ -46,17 +51,15 @@ namespace MAMBrowser.Foundation
         {
             Directory.CreateDirectory(directoryPath);
         }
-
         public void Move(string source, string destination)
         {
             File.Move(source, destination, true);
         }
-
         public void Upload(Stream headerStream, Stream fileStream, string sourcePath)
         {
+            //구현 및 테스트 필요.
             throw new NotImplementedException();
         }
-
         public bool ExistFile(string fromPath)
         {
             string sourceHost = MAMUtility.GetHost(fromPath);
@@ -70,7 +73,6 @@ namespace MAMBrowser.Foundation
         {
             throw new NotImplementedException();
         }
-
         public long GetFileSize(string sourcePath)
         {
             throw new NotImplementedException();

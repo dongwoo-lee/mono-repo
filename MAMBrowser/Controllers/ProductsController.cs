@@ -35,7 +35,7 @@ namespace MAMBrowser.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
         private readonly ProductsBll _bll;
-        private readonly IFileProtocol _fileService;
+        private readonly IFileProtocol _fileSystem;
         private readonly ILogger<ProductsController> _logger;
         private readonly WebServerFileHelper _fileHelper;
 
@@ -46,7 +46,7 @@ namespace MAMBrowser.Controllers
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
             _bll = bll;
-            _fileService = sr("MirosConnection");
+            _fileSystem = sr(MAMDefine.MirosConnection).FileSystem;
             _logger = logger;
             _fileHelper = fileHelper;
         }
@@ -481,7 +481,7 @@ namespace MAMBrowser.Controllers
         {
             try
             {
-                return _fileHelper.Download($"{downloadName}.wav", token, Response, _fileService, inline);
+                return _fileHelper.Download($"{downloadName}.wav", token, Response, _fileSystem, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -583,7 +583,7 @@ namespace MAMBrowser.Controllers
                     foreach (var filePath in filePathList)
                     {
                         var ext = Path.GetExtension(filePath).ToUpper();
-                        using (var inStream = _fileService.GetFileStream(filePath, 0))
+                        using (var inStream = _fileSystem.GetFileStream(filePath, 0))
                         {
                             if (mergeType == Define.WAV)    //wav 또는 mp2포함된 혼합 일경우 wav로 출력
                             {
@@ -724,7 +724,7 @@ namespace MAMBrowser.Controllers
             string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                _fileHelper.TempDownload(token, userId, remoteIp, _fileService);
+                _fileHelper.TempDownload(token, userId, remoteIp, _fileSystem);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -750,7 +750,7 @@ namespace MAMBrowser.Controllers
                 {
                     var fileName = Path.GetFileName(filePath);
                     string userId = HttpContext.Items[Define.USER_ID] as string;
-                    using (var stream = _fileService.GetFileStream(filePath, 0))
+                    using (var stream = _fileSystem.GetFileStream(filePath, 0))
                     {
                         metaData.FILE_SIZE = stream.Length;
                         result = privateBll.UploadFile(userId, stream, fileName, metaData);
@@ -779,13 +779,13 @@ namespace MAMBrowser.Controllers
         [HttpGet("dl30-files/{seq}")]
         public IActionResult Dl30Download([FromServices] ServiceResolver sr, long seq, [FromQuery] string fileType = "WAV",[FromQuery] string inline = "N")
         {
-            var fileService = sr("DLArchiveConnection");
+            var dlFileSystem = sr(MAMDefine.DLArchiveConnection).FileSystem;
             var fileData = _bll.GetDLArchive(seq);
             try
             {
                 string brdDtm = fileData.BrdDate.Replace(":", "").Replace("-","").Replace(" ", "-");
                 string downloadName = $"{fileData.RecName}_{brdDtm}_{fileData.DeviceName}.wav";
-                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, fileService, inline);
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, dlFileSystem, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -837,14 +837,14 @@ namespace MAMBrowser.Controllers
         [HttpGet("dl30-temp-download/{seq}")]
         public IActionResult TempDl30Download([FromServices] ServiceResolver sr, long seq)
         {
-            var fileService = sr("DLArchiveConnection");
+            var dlFileSystem = sr(MAMDefine.DLArchiveConnection).FileSystem;
             var fileData = _bll.GetDLArchive(seq);
 
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, fileService);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, dlFileSystem);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -863,7 +863,7 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
-                var fileService = sr("DLArchiveConnection");
+                var dlFileSystem = sr(MAMDefine.DLArchiveConnection).FileSystem;
                 var fileData = _bll.GetDLArchive(seq);
                 var fileName = Path.GetFileName(fileData.FilePath);
                 string userId = HttpContext.Items[Define.USER_ID] as string;
@@ -874,7 +874,7 @@ namespace MAMBrowser.Controllers
                 //}
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
+                    using (var stream = dlFileSystem.GetFileStream(fileData.FilePath, 0))
                     {
                         stream.CopyTo(ms);
                     }

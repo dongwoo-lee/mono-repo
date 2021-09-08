@@ -866,11 +866,9 @@ namespace MAMBrowser.DAL
                 orderBy = CommonUtility.GetSortString(typeof(DTO_DL30), sortKey, sortValue);
             }
 
-            var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, D.* FROM (SELECT A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
-                                                    INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
-                                                    LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
+            var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, A.* FROM (SELECT * FROM M30_DL_ARCHIVE
                                                     /**where**/
-                                                    {orderBy}) D");
+                                                    {orderBy}) A");
             
             if (deviceSeq!=null)
             {
@@ -910,7 +908,7 @@ namespace MAMBrowser.DAL
                     RecName = row.REC_NAME,
                     Duration = TimeSpan.FromSeconds(Convert.ToInt32(row.LENGTH)).ToString(),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    FilePath = string.IsNullOrEmpty((string)row.FILE_PATH) ? string.Empty : $"{row.FILE_PATH}\\{((DateTime)row.BRD_DTM).ToString(Define.DTM14)}_{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
+                    FilePath = row.FILE_PATH,
                     RegDtm = ((DateTime)row.REG_DTM).ToString(Define.DTM19),
                     DeviceName = row.DEVICE_NAME,
                 };
@@ -931,11 +929,7 @@ namespace MAMBrowser.DAL
                 SEQ = seq,
             });
 
-            var querySource = builder.AddTemplate(@$"SELECT A.*, B.FILE_EXT, B.FILE_SIZE, B.REG_DTM, B.DAMS_ID, C.DEVICE_NAME FROM M30_DL_ARCHIVE A
-                                                    INNER JOIN M30_DL_ARCHIVE_FILE B ON B.ARCHIVE_SEQ=A.SEQ AND B.FILE_EXT='WAV'
-                                                    LEFT JOIN M30_DL_DEVICE C ON C.SEQ = A.DEVICE_SEQ
-                                                    WHERE A.SEQ =:SEQ
-                                                    ORDER BY BRD_DTM");
+            var querySource = builder.AddTemplate(@$"SELECT * FROM M30_DL_ARCHIVE WHERE FILE_TYPE='WAV' ORDER BY BRD_DTM");
 
             
             var resultMapping = new Func<dynamic, DTO_DL30>((row) =>
@@ -954,7 +948,7 @@ namespace MAMBrowser.DAL
                     RecName = row.REC_NAME,
                     Duration = TimeSpan.FromSeconds(Convert.ToInt32(row.LENGTH)).ToString(),
                     FileSize = Convert.ToInt64(row.FILE_SIZE),
-                    FilePath = string.IsNullOrEmpty((string)row.FILE_PATH) ? string.Empty : $"{row.FILE_PATH}\\{((DateTime)row.BRD_DTM).ToString(Define.DTM14)}_{row.SOURCE_ID}.{((string)row.FILE_EXT).ToLower()}",
+                    FilePath = row.FILE_PATH,
                     RegDtm = ((DateTime)row.REG_DTM).ToString(Define.DTM19),
                     DeviceName = row.DEVICE_NAME,
                 };

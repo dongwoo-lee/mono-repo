@@ -26,7 +26,7 @@ namespace MAMBrowser.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly PrivateFileBll _bll;
         private readonly WebServerFileHelper _fileHelper;
-        private readonly IFileProtocol _fileProtocol;
+        private readonly IFileProtocol _fileSystem;
         private readonly HttpContextDBLogger _logBll;
 
         public PrivateFileController(IHostingEnvironment hostingEnvironment, PrivateFileBll bll, HttpContextDBLogger logger, ServiceResolver sr, WebServerFileHelper fileHelper)
@@ -36,7 +36,7 @@ namespace MAMBrowser.Controllers
             
             _hostingEnvironment = hostingEnvironment;
             _fileHelper = fileHelper;
-            _fileProtocol = sr("PrivateWorkConnection");
+            _fileSystem = sr(MAMDefine.PrivateWorkConnection).FileSystem;
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace MAMBrowser.Controllers
                 string fileName = Path.GetFileName(fileData.FilePath);
                 var startIdx = fileName.IndexOf('_');
                 var downloadName = fileName.Substring(startIdx+1, fileName.Length - startIdx -1);
-                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileProtocol, inline);
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileSystem, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -256,7 +256,7 @@ namespace MAMBrowser.Controllers
             string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileProtocol);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileSystem);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)

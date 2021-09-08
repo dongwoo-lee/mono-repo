@@ -13,7 +13,6 @@ namespace MAMBrowser.Helpers
         public string TokenSignature { get; set; }
         public string ConnectionString { get; set; }
         public List<DTO_NAMEVALUE> DiskScope { get; set; } = new List<DTO_NAMEVALUE>();
-        public Dictionary<string, string> RolExt { get; set; } = new Dictionary<string, string>();
         public string TempDownloadPath { get; set; }
         public int SessionTimeout { get; set; }
 

@@ -31,14 +31,14 @@ namespace MAMBrowser.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
-        private readonly MusicService _fileProtocol;
+        private readonly MusicService _fileService;
         private readonly WebServerFileHelper _fileHelper;
         private readonly ILogger<MusicService> _logger;
         public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicService fileService, WebServerFileHelper fileHelper, ILogger<MusicService> logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
-            _fileProtocol = fileService;
+            _fileService = fileService;
             _fileHelper = fileHelper;
             _logger = logger;
         }
@@ -67,7 +67,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject.Data = new List<DTO_SONG>();
                 else
-                    result.ResultObject.Data = _fileProtocol.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -102,7 +102,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
                 else
-                    result.ResultObject.Data = _fileProtocol.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
+                    result.ResultObject.Data = _fileService.SearchEffect(searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -130,10 +130,10 @@ namespace MAMBrowser.Controllers
         {
             var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
             var musicInfo = MAMUtility.ParseToRequestContent(token);
-            var requestInfo = _fileProtocol.GetRequestInfo(musicInfo);
+            var requestInfo = _fileService.GetRequestInfo(musicInfo);
             string contentType = "audio/wav";
             long fileSize;
-            var stream = _fileProtocol.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
+            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
             System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
             {
                 //FileName = WebUtility.UrlEncode(requestInfo[2] as string),
@@ -193,7 +193,7 @@ namespace MAMBrowser.Controllers
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             string userId = HttpContext.Items[Define.USER_ID] as string;
-            _fileProtocol.TempDownloadWavAndEgy(userId, remoteIp, token);
+            _fileService.TempDownloadWavAndEgy(userId, remoteIp, token);
             return Ok();
         }
         [HttpPost("music-to-myspace")]
@@ -204,12 +204,12 @@ namespace MAMBrowser.Controllers
             {
                 var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
                 var musicInfo = MAMUtility.ParseToRequestContent(token);
-                var requestInfo = _fileProtocol.GetRequestInfo(musicInfo);
+                var requestInfo = _fileService.GetRequestInfo(musicInfo);
                 var fileName = requestInfo[2] as string;
 
                 string userId = HttpContext.Items[Define.USER_ID] as string;
                 long fileSize;
-                using (var stream = _fileProtocol.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize))
+                using (var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize))
                 {
                     metaData.FILE_SIZE = fileSize;
                     result = privateBll.UploadFile(userId, stream, fileName, metaData);
@@ -234,7 +234,7 @@ namespace MAMBrowser.Controllers
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             string userId = HttpContext.Items[Define.USER_ID] as string;
-            return _fileProtocol.TempImageDownload(userId, remoteIp, token, albumToken);
+            return _fileService.TempImageDownload(userId, remoteIp, token, albumToken);
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = new DTO_RESULT_OBJECT<string>();
-                result.ResultObject.Data = _fileProtocol.SearchLyrics(lyricsSeq);
+                result.ResultObject.Data = _fileService.SearchLyrics(lyricsSeq);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
