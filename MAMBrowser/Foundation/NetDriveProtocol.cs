@@ -49,21 +49,38 @@ namespace MAMBrowser.Foundation
         }
         public void MakeDirectory(string directoryPath)
         {
-            Directory.CreateDirectory(directoryPath);
+            using (NetworkShareAccessor.Access(UploadHost, UserId, UserPass))
+            {
+                Directory.CreateDirectory($@"\\{UploadHost}\{directoryPath}");
+            }
         }
         public void Move(string source, string destination)
         {
-            File.Move(source, destination, true);
+            //source : self server temp folder (x) -> remote storage temp folder
+            //destination : remote storage
+            using (NetworkShareAccessor.Access(UploadHost, UserId, UserPass))
+            {
+                var sourcePath = $@"\\{UploadHost}\{source}";
+                var targetPath = $@"\\{UploadHost}\{destination}";
+                File.Move(sourcePath, targetPath, true);
+            }
         }
         public void Upload(Stream headerStream, Stream fileStream, string sourcePath)
         {
             //구현 및 테스트 필요.
-            throw new NotImplementedException();
+            using (NetworkShareAccessor.Access(UploadHost, UserId, UserPass))
+            {
+                var sourceFullPath = $@"\\{UploadHost}\{sourcePath}";
+                using (FileStream fs = new FileStream(sourceFullPath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    headerStream.CopyTo(fs);
+                    fileStream.CopyTo(fs);
+                }
+            }
         }
         public bool ExistFile(string fromPath)
         {
             string sourceHost = MAMUtility.GetHost(fromPath);
-
             using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
             {
                 return File.Exists(fromPath);
@@ -71,11 +88,19 @@ namespace MAMBrowser.Foundation
         }
         public void Delete(string filePath)
         {
-            throw new NotImplementedException();
+            string sourceHost = MAMUtility.GetHost(filePath);
+            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
+            {
+                File.Delete(filePath);
+            }
         }
         public long GetFileSize(string sourcePath)
         {
-            throw new NotImplementedException();
+            string sourceHost = MAMUtility.GetHost(sourcePath);
+            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
+            {
+                return new FileInfo(sourcePath).Length;
+            }
         }
     }
 }
