@@ -869,7 +869,8 @@ namespace MAMBrowser.DAL
             var querySource = builder.AddTemplate(@$"SELECT ROWNUM AS RNO, A.* FROM (SELECT * FROM M30_DL_ARCHIVE
                                                     /**where**/
                                                     {orderBy}) A");
-            
+
+            builder.Where("FILE_TYPE='WAV'");
             if (deviceSeq!=null)
             {
                 builder.Where("DEVICE_SEQ=:DEVICE_SEQ");
@@ -929,7 +930,8 @@ namespace MAMBrowser.DAL
                 SEQ = seq,
             });
 
-            var querySource = builder.AddTemplate(@$"SELECT * FROM M30_DL_ARCHIVE WHERE FILE_TYPE='WAV' ORDER BY BRD_DTM");
+            var querySource = builder.AddTemplate(@$"SELECT * FROM M30_DL_ARCHIVE WHERE 
+                                                     SEQ=:SEQ ORDER BY BRD_DTM");
 
             
             var resultMapping = new Func<dynamic, DTO_DL30>((row) =>

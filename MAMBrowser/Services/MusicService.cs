@@ -15,32 +15,26 @@ using System.Net.Http;
 using System.Text;
 using System.Xml.Serialization;
 using MAMBrowser.Common.Foundation;
+using Microsoft.Extensions.Configuration;
 
 namespace MAMBrowser.Services
 {
     public class MusicService 
     {
-        public string MbcDomain { get; set; }
-        public string AuthorKey { get; set; }
-        public string SearchDomain { get; set; }
-        public string SearchSongUrl { get; set; }
-        public string SearchEffectUrl { get; set; }
-        public string SearchLyricsUrl { get; set; }
-        public string ImageListUrl { get; set; }
-        public string FileUrl { get; set; }
-        private IDictionary<string, object> StorageMaps { get; set; }
-
-
+        public ExternalStorage Info { get; set; }
 
         public int ExpireMusicTokenHour { get; set; }
         private readonly ILogger<MusicService> _logger;
         private readonly WebServerFileHelper _fileHelper;
-        public MusicService()
-        {
+        public IDictionary<string, object> StorageMaps;
 
-        }
-        public MusicService(ILogger<MusicService> logger, WebServerFileHelper fileHelper)
+        public MusicService(ILogger<MusicService> logger, IConfiguration config, WebServerFileHelper fileHelper)
         {
+            //var externalInfo = config.GetSection("StorageConnections:External:MusicConnection");
+            Info = config.GetSection("StorageConnections:External:MusicConnection").Get<ExternalStorage>();
+            StorageMaps = config.GetSection("StorageConnections:External:MusicConnection:StorageMaps:Map").Get< Dictionary<string, object>>();
+
+
             //var musicCon = externalInfo.Value.MusicConnection;
             //_storageMap = externalInfo.Value.StorageMaps;
             //MbcDomain = musicCon["MbcDomain"].ToString();
@@ -51,7 +45,7 @@ namespace MAMBrowser.Services
             //SearchLyricsUrl = musicCon["SearchLyricsUrl"].ToString();
             //ImageListUrl = musicCon["ImageListUrl"].ToString();
             //FileUrl = musicCon["FileUrl"].ToString();
-            
+
             ExpireMusicTokenHour = Startup.AppSetting.ExpireMusicTokenHour;
             _logger = logger;
             _fileHelper = fileHelper;
@@ -124,8 +118,8 @@ namespace MAMBrowser.Services
         }
         public IList<DTO_SONG> SearchSong(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
-            var builder = new UriBuilder("http", SearchDomain, 80, SearchSongUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={10}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
+            var builder = new UriBuilder("http", Info.SearchDomain, 80, Info.SearchSongUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(Info.AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={10}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
             builder.Query = param;
             
             HttpClient client = new HttpClient();
@@ -152,8 +146,8 @@ namespace MAMBrowser.Services
         }
         public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)
         {
-            var builder = new UriBuilder("http", SearchDomain, 80, SearchEffectUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}";
+            var builder = new UriBuilder("http", Info.SearchDomain, 80, Info.SearchEffectUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(Info.AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}";
             builder.Query = param;
 
             HttpClient client = new HttpClient();
@@ -180,8 +174,8 @@ namespace MAMBrowser.Services
         }
         public string SearchLyrics(string lyricsSeq)
         {
-            var builder = new UriBuilder("http", SearchDomain, 80, SearchLyricsUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strWordSeq={lyricsSeq}";
+            var builder = new UriBuilder("http", Info.SearchDomain, 80, Info.SearchLyricsUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(Info.AuthorKey)}&strWordSeq={lyricsSeq}";
             builder.Query = param;
 
             HttpClient client = new HttpClient();
@@ -218,7 +212,7 @@ namespace MAMBrowser.Services
             _logger.LogDebug($"img path : {imgPath}");
 
             var host = MAMUtility.GetHost(wavPath).ToUpper();
-            var domainAndPort = StorageMaps[host] as string;
+            var domainAndPort = StorageMaps[host.ToUpper()] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
@@ -227,12 +221,12 @@ namespace MAMBrowser.Services
             var imgRelativePath = MAMUtility.GetRelativePath(imgPath);
             string imgFullUri = imgRelativePath.Replace(@"\", @"/");
 
-            string downloadImageUri = $"http://{imgDomain}.{MbcDomain}/{imgFullUri}";
+            string downloadImageUri = $"http://{imgDomain}.{Info.MbcDomain}/{imgFullUri}";
             _logger.LogDebug($"image streaming uri : {downloadImageUri}");
 
             //이미지 목록 검색
             StringContent sc = new StringContent(jsonImgInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
-            var builder = new UriBuilder("http", domain, port, ImageListUrl);
+            var builder = new UriBuilder("http", domain, port, Info.ImageListUrl);
             _logger.LogDebug($"Image file name list uri : {builder.ToString()}");
 
             HttpClient client = new HttpClient();
@@ -289,7 +283,7 @@ namespace MAMBrowser.Services
       
         public Stream GetFileStream(string domain, int port, string jsonRequestContent, out long fileSize)
         {
-            var builder = new UriBuilder("http", domain, port, FileUrl);
+            var builder = new UriBuilder("http", domain, port, Info.FileUrl);
             HttpClient client = new HttpClient();
             StringContent sc = new StringContent(jsonRequestContent, Encoding.UTF8, "application/json");
             var response = client.PostAsync(builder.ToString(), sc).Result;
@@ -320,7 +314,7 @@ namespace MAMBrowser.Services
             var jsonEgyInfo = TokenGenerator.GetJsonRequestContentFromPath(egyPath, DateTime.Now.AddHours(ExpireMusicTokenHour));
             
             var host = MAMUtility.GetHost(wavPath);
-            var domainAndPort = StorageMaps[host] as string;
+            var domainAndPort = StorageMaps[host.ToUpper()] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
@@ -346,7 +340,7 @@ namespace MAMBrowser.Services
         /// <param name="path"></param>
         public void TempDownloadCore(string domain, int port, string jsonRequestContent ,string targetSoundPath)
         {
-            var builder = new UriBuilder("http", domain, port, FileUrl);
+            var builder = new UriBuilder("http", domain, port, Info.FileUrl);
             HttpClient client = new HttpClient();
             StringContent sc = new StringContent(jsonRequestContent, Encoding.UTF8, "application/json");
             var response = client.PostAsync(builder.ToString(), sc).Result;
@@ -374,7 +368,7 @@ namespace MAMBrowser.Services
             var encodedFilePath = musicInfo[Define.MUSIC_FILEPATH];
             var filePath =  MusicSeedWrapper.SeedDecrypt(encodedFilePath);
             var host = MAMUtility.GetHost(filePath);
-            var domainAndPort = StorageMaps[host] as string;        // 뮤직서비스에 구현.
+            var domainAndPort = StorageMaps[host.ToUpper()] as string;        // 뮤직서비스에 구현.
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
             var fileName = Path.GetFileName(filePath);

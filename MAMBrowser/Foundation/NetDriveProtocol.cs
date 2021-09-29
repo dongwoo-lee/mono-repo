@@ -24,83 +24,67 @@ namespace MAMBrowser.Foundation
         public Stream GetFileStream(string sourcePath, long offSet)
         {
             string sourceHost = MAMUtility.GetHost(sourcePath);
-            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
-            {
-                FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                return fs;
-            }
+            NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
+            FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return fs;
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
             string sourceHost = MAMUtility.GetHost(fromPath);
-            
-            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
+
+            NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
+            //확인필요
+            using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                //확인필요
-                using (FileStream inStream = new FileStream(fromPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
-                    using (FileStream outStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-                    {
-                        inStream.CopyTo(outStream);
-                        return true;
-                    }
+                    inStream.CopyTo(outStream);
+                    return true;
                 }
             }
         }
         public void MakeDirectory(string directoryPath)
         {
-            using (NetworkShareAccessor.Access(UploadHost, UserId, UserPass))
-            {
-                Directory.CreateDirectory($@"\\{UploadHost}\{directoryPath}");
-            }
+            NetworkShareAccessor.Access(UploadHost, UserId, UserPass);
+            Directory.CreateDirectory($@"\\{UploadHost}\{directoryPath}");
         }
         public void Move(string source, string destination)
         {
             //source : self server temp folder (x) -> remote storage temp folder
             //destination : remote storage
-            using (NetworkShareAccessor.Access(UploadHost, UserId, UserPass))
-            {
-                var sourcePath = $@"\\{UploadHost}\{source}";
-                var targetPath = $@"\\{UploadHost}\{destination}";
-                File.Move(sourcePath, targetPath, true);
-            }
+            NetworkShareAccessor.Access(UploadHost, UserId, UserPass);
+            var sourcePath = $@"\\{UploadHost}\{source}";
+            var targetPath = $@"\\{UploadHost}\{destination}";
+            File.Move(sourcePath, targetPath, true);
         }
         public void Upload(Stream headerStream, Stream fileStream, string sourcePath)
         {
             //구현 및 테스트 필요.
-            using (NetworkShareAccessor.Access(UploadHost, UserId, UserPass))
+            NetworkShareAccessor.Access(UploadHost, UserId, UserPass);
+            var sourceFullPath = $@"\\{UploadHost}\{sourcePath}";
+            using (FileStream fs = new FileStream(sourceFullPath, FileMode.Create, FileAccess.ReadWrite))
             {
-                var sourceFullPath = $@"\\{UploadHost}\{sourcePath}";
-                using (FileStream fs = new FileStream(sourceFullPath, FileMode.Create, FileAccess.ReadWrite))
-                {
-                    headerStream.CopyTo(fs);
-                    fileStream.CopyTo(fs);
-                }
+                headerStream.CopyTo(fs);
+                fileStream.CopyTo(fs);
             }
         }
         public bool ExistFile(string fromPath)
         {
             string sourceHost = MAMUtility.GetHost(fromPath);
-            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
-            {
-                return File.Exists(fromPath);
-            }
+            NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
+            return File.Exists(fromPath);
         }
         public void Delete(string filePath)
         {
             string sourceHost = MAMUtility.GetHost(filePath);
-            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
-            {
-                File.Delete(filePath);
-            }
+            NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
+            File.Delete(filePath);
         }
         public long GetFileSize(string sourcePath)
         {
             string sourceHost = MAMUtility.GetHost(sourcePath);
-            using (NetworkShareAccessor.Access(sourceHost, UserId, UserPass))
-            {
-                return new FileInfo(sourcePath).Length;
-            }
+            NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
+            return new FileInfo(sourcePath).Length;
         }
     }
 }

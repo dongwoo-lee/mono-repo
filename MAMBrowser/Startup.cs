@@ -130,7 +130,7 @@ namespace MAMBrowser
             //옵션 DI
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
-            
+
             //글로벌 셋팅
             AppSetting = optionSection.Get<AppSettings>();
             Repository.ConnectionString = AppSetting.ConnectionString;
@@ -165,12 +165,14 @@ namespace MAMBrowser
         private void StorageFactorySetting(IServiceCollection services)
         {
             //스토리지 연결정보 팩토리구성
-            services.AddTransient(serviceProvider =>
-            {
-                var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
-                var musicService = storagesSection.Get<MusicService>();
-                return musicService;
-            });
+            //services.AddTransient(serviceProvider =>
+            //{
+            //    var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
+            //    var musicService = storagesSection.Get<MusicService>();
+            //    return musicService;
+            //});
+
+            services.AddTransient<MusicService>();
             services.AddTransient(serviceProvider =>
             {
                 var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
