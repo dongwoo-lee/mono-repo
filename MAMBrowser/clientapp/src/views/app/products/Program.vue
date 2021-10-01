@@ -15,7 +15,7 @@
       <template slot="form-search-area">
         <!-- 방송일 -->
         <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker v-model="searchItems.brd_dt"/>
+          <common-date-picker v-model="searchItems.brd_dt" />
         </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -24,7 +24,7 @@
             v-model="searchItems.media"
             :options="mediaOptions"
             value-field="id"
-            text-field="name" 
+            text-field="name"
           />
         </b-form-group>
         <!-- 프로그램 -->
@@ -33,15 +33,21 @@
             classString="width-220"
             :isLoadingClass="isLoadingClass"
             :suggestions="pgmOptions"
-            @selected="onPgmSelected" />
+            @selected="onPgmSelected"
+          />
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+          <common-dropdown-menu-input
+            :suggestions="editorOptions"
+            @selected="onEditorSelected"
+          />
         </b-form-group>
         <!-- 검색버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
         </b-form-group>
       </template>
       <!-- 테이블 페이지 -->
@@ -80,74 +86,76 @@
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           @ok="onMyDiskCopyFromProduct"
-          @close="copyToMySpacePopup = false">
+          @close="copyToMySpacePopup = false"
+        >
         </CopyToMySpacePopup>
       </template>
     </common-form>
-    
-    <PlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.name"
-    :fileKey="soundItem.fileToken"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="token"
-    @closePlayer="onClosePlayer">
+
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.name"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
     </PlayerPopup>
   </div>
 </template>
 
 <script>
-import MixinBasicPage from '../../../mixin/MixinBasicPage';
+import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 export default {
-  components:{CopyToMySpacePopup},
-  mixins: [ MixinBasicPage ],
+  components: { CopyToMySpacePopup },
+  mixins: [MixinBasicPage],
   data() {
     return {
       searchItems: {
-        media: 'A',
-        brd_dt: '',
-        pgm: '',
+        media: "A",
+        brd_dt: "",
+        pgm: "",
         rowPerPage: 30,
         selectPage: 1,
-        sortKey: '',
-        sortValue: '',
+        sortKey: "",
+        sortValue: ""
       },
       isTableLoading: false,
       fields: [
         {
-          name: 'rowNO',
-          title: '순서',
+          name: "rowNO",
+          title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '4%',
+          width: "4%"
         },
         {
           name: "mediaName",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '5%',
-          sortField: 'mediaName',
+          width: "5%",
+          sortField: "mediaName"
         },
         {
           name: "name",
           title: "프로그램명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: 'name',
+          sortField: "name"
         },
         {
           name: "brdDT",
           title: "방송일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%',
-          sortField: 'brdDT',
-          callback: (v) => {
-            return this.$fn.dateStringTohaipun(v)
+          width: "8%",
+          sortField: "brdDT",
+          callback: v => {
+            return this.$fn.dateStringTohaipun(v);
           }
         },
         {
@@ -155,18 +163,18 @@ export default {
           title: "방송시간",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '7%',
-          sortField: 'brdTime',
+          width: "7%",
+          sortField: "brdTime"
         },
         {
           name: "status",
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%',
-          sortField: 'status',
-          callback: (v) => {
-            if (v === '제작중') {
+          width: "8%",
+          sortField: "status",
+          callback: v => {
+            if (v === "제작중") {
               return `<span style="color:red; font-weight:600;">${v}</span>`;
             }
             return v;
@@ -177,67 +185,65 @@ export default {
           title: "길이(초)",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%',
-          sortField: 'duration',
+          width: "8%",
+          sortField: "duration"
         },
         {
           name: "editorName",
           title: "제작자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '8%',
-          sortField: 'editorName',
+          width: "8%",
+          sortField: "editorName"
         },
         {
           name: "editDtm",
           title: "최종편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '12%',
-          sortField: 'editDtm',
+          width: "12%",
+          sortField: "editDtm"
         },
         {
           name: "reqCompleteDtm",
           title: "방송의뢰일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '12%',
-          sortField: 'reqCompleteDtm',
+          width: "12%",
+          sortField: "reqCompleteDtm"
         },
         {
-          name: '__slot:actions',
-          title: '추가작업',
+          name: "__slot:actions",
+          title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"
         }
       ],
       contextMenu: [
-        { name: 'download', text: '다운로드' },
-        { name: 'storage', text: '내 저장공간으로 복사' },
+        { name: "download", text: "다운로드" },
+        { name: "storage", text: "내 저장공간으로 복사" }
       ]
-    }
+    };
   },
-  computed: {
-    
-  },
+  computed: {},
   watch: {
-    ['searchItems.brd_dt'](v) {
+    ["searchItems.brd_dt"](v) {
       if (v) {
         // 사용처 조회
         this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
         setTimeout(() => {
           this.onSearch();
-        },500);
+        }, 500);
       }
     },
-    ['searchItems.media'](v) {
+    ["searchItems.media"](v) {
       if (v) {
-       // 사용처 조회
+        // 사용처 조회
         this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
         setTimeout(() => {
           this.onSearch();
-        },500);
+        }, 500);
       }
     }
   },
@@ -249,20 +255,21 @@ export default {
   },
   methods: {
     getData() {
-      this.isTableLoading = this.isScrollLodaing ? false: true;
+      this.isTableLoading = this.isScrollLodaing ? false : true;
       const media = this.searchItems.media;
 
-      this.$http.get(`/api/products/pgm/${media}`, { params: this.searchItems })
+      this.$http
+        .get(`/api/products/pgm/${media}`, { params: this.searchItems })
         .then(res => {
-           this.setResponseData(res);
-           this.isTableLoading = false;
-           this.isScrollLodaing = false;
-      });
+          this.setResponseData(res);
+          this.isTableLoading = false;
+          this.isScrollLodaing = false;
+        });
     },
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}`;
       return tmpName;
-    },
-  },
-}
+    }
+  }
+};
 </script>

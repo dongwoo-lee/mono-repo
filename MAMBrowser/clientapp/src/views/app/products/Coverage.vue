@@ -14,12 +14,13 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
+        <common-start-end-date-picker
           :startDate.sync="searchItems.start_dt"
           :startDayAgo="7"
           :maxPeriodMonth="3"
           :endDate.sync="searchItems.end_dt"
           :required="true"
+          @SEDateEvent="onSearch"
         />
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
@@ -28,37 +29,56 @@
             v-model="searchItems.cate"
             :options="rePortOptions"
             value-field="id"
-            text-field="name" 
+            text-field="name"
+            @input="onSearch"
           />
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처명" class="has-float-label w-10">
-          <common-input-text v-model="searchItems.pgmName" @keydown="onSearch"/>
+          <common-input-text
+            v-model="searchItems.pgmName"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 취재인 -->
         <b-form-group label="취재인" class="has-float-label w-10">
-          <common-input-text v-model="searchItems.reporterName" @keydown="onSearch"/>
+          <common-input-text
+            v-model="searchItems.reporterName"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input classString="width-120" :suggestions="editorOptions" @selected="onEditorSelected" />
+          <common-dropdown-menu-input
+            classString="width-120"
+            :suggestions="editorOptions"
+            @selected="onEditorSelected"
+          />
         </b-form-group>
         <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
-          <common-input-text v-model="searchItems.name" @keydown="onSearch"/>
+          <common-input-text
+            v-model="searchItems.name"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 마스터링 완료한 소재만 보기 -->
-         <b-form-checkbox class="custom-checkbox-group-non-align"
-            v-model="searchItems.isMastering"
-            value="Y"
-            unchecked-value="N"
-            aria-describedby="selectedSearchType1"
-            aria-controls="selectedSearchType1">
-            마스터링 완료한 소재만 보기
-          </b-form-checkbox>
+        <b-form-checkbox
+          class="custom-checkbox-group-non-align"
+          v-model="searchItems.isMastering"
+          value="Y"
+          unchecked-value="N"
+          aria-describedby="selectedSearchType1"
+          aria-controls="selectedSearchType1"
+          @input="onSearch"
+        >
+          마스터링 완료한 소재만 보기
+        </b-form-checkbox>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
         </b-form-group>
       </template>
       <!-- 테이블 페이지 -->
@@ -69,7 +89,7 @@
         <!-- 테이블 -->
         <common-data-table-scroll-paging
           ref="scrollPaging"
-          tableHeight='525px'
+          tableHeight="525px"
           :fields="fields"
           :rows="responseData.data"
           :per-page="responseData.rowPerPage"
@@ -95,139 +115,140 @@
           </template>
         </common-data-table-scroll-paging>
 
-         <CopyToMySpacePopup
+        <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           @ok="onMyDiskCopyFromProduct"
-          @close="copyToMySpacePopup = false">
+          @close="copyToMySpacePopup = false"
+        >
         </CopyToMySpacePopup>
       </template>
     </common-form>
 
-     <PlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.name"
-    :fileKey="soundItem.fileToken"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="token"
-    @closePlayer="onClosePlayer">
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.name"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
     </PlayerPopup>
   </div>
 </template>
 
 <script>
-import MixinBasicPage from '../../../mixin/MixinBasicPage';
+import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 export default {
-  components:{CopyToMySpacePopup},
-  mixins: [ MixinBasicPage ],
+  components: { CopyToMySpacePopup },
+  mixins: [MixinBasicPage],
   data() {
     return {
       searchItems: {
-        cate: 'RC07',          // 분류
-        start_dt: '',          // 방송 시작일
-        end_dt: '',            // 방송 종료일
+        cate: "RC07", // 분류
+        start_dt: "", // 방송 시작일
+        end_dt: "", // 방송 종료일
         // brd_dt: '20200801',    // 방송일
-        pgm: '',               // 사용처1
-        pgmName: '',           // 사용처2
-        reporterName: '',      // 취재인 이름
-        editor: '',            // 제작자
-        name: '',              // 소재명
-        isMastering: 'Y',
+        pgm: "", // 사용처1
+        pgmName: "", // 사용처2
+        reporterName: "", // 취재인 이름
+        editor: "", // 제작자
+        name: "", // 소재명
+        isMastering: "Y",
         rowPerPage: 30,
         selectPage: 1,
-        sortKey: '',
-        sortValue: '',
+        sortKey: "",
+        sortValue: ""
       },
       isTableLoading: false,
       fields: [
         {
-          name: 'rowNO',
-          title: '순서',
-          titleClass: 'center aligned text-center',
+          name: "rowNO",
+          title: "순서",
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '4%',
+          width: "4%"
         },
         {
           name: "name",
           title: "소재명",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: 'name',
-          
+          sortField: "name"
         },
         {
           name: "reporter",
           title: "취재인",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '6%',
-          sortField: 'reporter',
+          width: "6%",
+          sortField: "reporter"
         },
         {
           name: "pgmName",
           title: "사용처명",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: 'pgmName',
+          sortField: "pgmName"
         },
         {
           name: "brdDT",
           title: "방송일",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '10%',
-          sortField: 'brdDT',
-          callback: (v) => {
+          width: "10%",
+          sortField: "brdDT",
+          callback: v => {
             return this.$fn.dateStringTohaipun(v);
           }
         },
         {
           name: "duration",
           title: "길이(초)",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '6%',
-          sortField: 'duration',
-          callback: (v) => {
+          width: "6%",
+          sortField: "duration",
+          callback: v => {
             return this.$fn.splitFirst(v);
           }
         },
         {
           name: "editorName",
           title: "제작자",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%',
-          sortField: 'editorName',
+          width: "8%",
+          sortField: "editorName"
         },
         {
           name: "editDtm",
           title: "최종편집일시",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '11%',
-          sortField: 'editDtm',
+          width: "11%",
+          sortField: "editDtm"
         },
         {
           name: "masteringDtm",
           title: "마스터링일시",
-          titleClass: 'center aligned text-center',
+          titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '11%',
-          sortField: 'masteringDtm',
+          width: "11%",
+          sortField: "masteringDtm"
         },
         {
-          name: '__slot:actions',
-          title: '추가작업',
+          name: "__slot:actions",
+          title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "7%"
         }
       ]
-    }
+    };
   },
   created() {
     // 취재물 분류 목록 조회
@@ -237,25 +258,33 @@ export default {
   },
   methods: {
     getData() {
-      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
-        this.$fn.notify('warning', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+      if (
+        this.$fn.checkGreaterStartDate(
+          this.searchItems.start_dt,
+          this.searchItems.end_dt
+        )
+      ) {
+        this.$fn.notify("warning", {
+          message: "시작 날짜가 종료 날짜보다 큽니다."
+        });
         this.hasErrorClass = true;
       }
 
-      this.isTableLoading = this.isScrollLodaing ? false: true;
+      this.isTableLoading = this.isScrollLodaing ? false : true;
 
-      this.$http.get(`/api/products/report`, { params: this.searchItems })
+      this.$http
+        .get(`/api/products/report`, { params: this.searchItems })
         .then(res => {
-            this.setResponseData(res);
-            this.addScrollClass();
-            this.isTableLoading = false;
-            this.isScrollLodaing = false;
-      });
+          this.setResponseData(res);
+          this.addScrollClass();
+          this.isTableLoading = false;
+          this.isScrollLodaing = false;
+        });
     },
     downloadName(rowData) {
       var tmpName = `${rowData.pgmName}_${rowData.brdDT}_${rowData.name}`;
       return tmpName;
-    },
+    }
   }
-}
+};
 </script>

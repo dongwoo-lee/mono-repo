@@ -15,11 +15,16 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <b-form-group label="검색어" class="has-float-label">
-          <common-input-text v-model="searchItems.searchText" @keydown="onSearch"/>
+          <common-input-text
+            v-model="searchItems.searchText"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
         </b-form-group>
       </template>
       <!-- 테이블 페이지 -->
@@ -47,104 +52,106 @@
           </template>
         </common-data-table>
 
-         <CopyToMySpacePopup
+        <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           @ok="onMyDiskCopyFromMusic"
-          @close="copyToMySpacePopup = false">
+          @close="copyToMySpacePopup = false"
+        >
         </CopyToMySpacePopup>
       </template>
     </common-form>
 
-     <PlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.name"
-    :fileKey="soundItem.fileToken"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="token"
-    @closePlayer="onClosePlayer">
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.name"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
     </PlayerPopup>
-
   </div>
 </template>
 
 <script>
-import MixinMusicPage from '../../../mixin/MixinMusicPage';
+import MixinMusicPage from "../../../mixin/MixinMusicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 export default {
-  components:{CopyToMySpacePopup},
-  mixins: [ MixinMusicPage ],
+  components: { CopyToMySpacePopup },
+  mixins: [MixinMusicPage],
   data() {
     return {
-      streamingUrl : '/api/musicsystem/streaming',
-      waveformUrl : '/api/musicsystem/waveform',
-     tempDownloadUrl : '/api/musicsystem/temp-download',
+      streamingUrl: "/api/musicsystem/streaming",
+      waveformUrl: "/api/musicsystem/waveform",
+      tempDownloadUrl: "/api/musicsystem/temp-download",
 
       searchItems: {
-        searchText: '',
+        searchText: "",
         rowPerPage: 30,
         selectPage: 1,
-        sortKey: '',
-        sortValue: 'DESC',
+        sortKey: "",
+        sortValue: "DESC"
       },
       isTableLoading: false,
       fields: [
         {
-          name: 'rowNO',
-          title: '순서',
+          name: "rowNO",
+          title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '4%',
+          width: "4%"
         },
         {
           name: "name",
           title: "효과음명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
+          dataClass: "center aligned text-center bold"
         },
         {
           name: "description",
           title: "설명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center"
         },
         {
           name: "duration",
           title: "길이(초)",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
+          dataClass: "center aligned text-center bold"
         },
         {
           name: "audioFormat",
           title: "오디오 포맷",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center"
         },
         {
-          name: '__slot:actions',
-          title: '추가작업',
+          name: "__slot:actions",
+          title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"
         }
       ]
-    }
+    };
   },
   methods: {
     getData() {
-      this.isTableLoading = this.isScrollLodaing ? false: true;
-      this.$http.get(`/api/musicsystem/effect`, { params: this.searchItems })
+      this.isTableLoading = this.isScrollLodaing ? false : true;
+      this.$http
+        .get(`/api/musicsystem/effect`, { params: this.searchItems })
         .then(res => {
-            this.setResponseData(res, 'normal');
-            this.isTableLoading = false;
-      });
+          this.setResponseData(res, "normal");
+          this.isTableLoading = false;
+        });
     },
     downloadName(rowData) {
       var tmpName = `${rowData.name}`;
       return tmpName;
-    },
+    }
   }
-}
+};
 </script>
