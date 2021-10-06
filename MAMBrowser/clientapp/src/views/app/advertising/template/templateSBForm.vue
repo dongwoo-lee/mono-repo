@@ -29,7 +29,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="mediaReset"
           />
         </b-form-group>
         <!-- 분류 -->
@@ -50,7 +50,9 @@
           class="has-float-label"
         >
           <common-vue-select
+            id="vselect"
             style="width:220px;"
+            :vSelectProps="vSelectProps"
             :suggestions="pgmOptions"
             @inputEvent="onPgmSelected"
             @blurEvent="onSearch"
@@ -213,6 +215,7 @@ export default {
   },
   data() {
     return {
+      vSelectProps: {},
       searchItems: {
         media: "A",
         brd_dt: "",
@@ -277,9 +280,13 @@ export default {
       ]
     };
   },
+
   methods: {
-    log() {
-      console.log("hi");
+    mediaReset() {
+      this.searchItems.pgm = null;
+      this.searchItems.pgmName = null;
+      this.vSelectProps = { id: null, name: null };
+      this.onSearch();
     },
     rowCustomClass(data) {
       if (this.reponseContentsData.data.length === 2 && data.index === 0) {

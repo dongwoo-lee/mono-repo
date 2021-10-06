@@ -5,6 +5,7 @@
     label="name"
     @input="inputEvent"
     @search:blur="blurEvent"
+    :value="vSelectValue"
   ></v-select>
 </template>
 
@@ -16,13 +17,22 @@ export default {
       default() {
         return [];
       }
+    },
+    vSelectProps: {
+      type: Object
     }
   },
   data() {
     return {
       selected: false,
-      deselected: false
+      deselected: false,
+      vSelectValue: { id: null, name: null }
     };
+  },
+  watch: {
+    vSelectProps(value) {
+      this.vSelectValue = value;
+    }
   },
   methods: {
     blurEvent() {
@@ -36,6 +46,7 @@ export default {
       }
     },
     inputEvent(e) {
+      this.vSelectValue = e;
       if (e == null) {
         if (this.selected) {
           this.$emit("inputEvent", { id: null, name: null });

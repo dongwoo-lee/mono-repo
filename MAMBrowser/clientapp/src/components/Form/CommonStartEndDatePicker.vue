@@ -107,7 +107,6 @@ export default {
   methods: {
     onSInput(v) {
       this.$emit("update:startDate", v);
-      this.$emit("SEDateEvent");
     },
     onEInput(v) {
       this.$emit("update:endDate", v);
@@ -141,6 +140,7 @@ export default {
         this.$emit("update:endDate", this.$fn.formatDate(periodDate));
       }
       this.maxDate = periodDate;
+      this.$emit("SEDateEvent");
     },
     isPeriodDate() {
       return (
@@ -165,3 +165,8 @@ export default {
   }
 };
 </script>
+<style>
+.bg-light {
+  background-color: #d4d4d4 !important;
+}
+</style>
