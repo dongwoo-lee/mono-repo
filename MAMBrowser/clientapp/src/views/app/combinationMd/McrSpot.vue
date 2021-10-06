@@ -35,12 +35,12 @@
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
-          <common-dropdown-menu-input
-            classString="width-220"
-            :isLoadingClass="isLoadingClass"
+          <common-vue-select
+            style="width:220px"
             :suggestions="spotOptions"
-            @selected="onSpotSelected"
-          />
+            @inputEvent="onSpotSelected"
+            @blurEvent="onSearch"
+          ></common-vue-select>
         </b-form-group>
         <!-- 상태 -->
         <!-- <b-form-group label="상태" class="has-float-label">
@@ -58,11 +58,12 @@
         </b-form-group> -->
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input
-            classString="width-180"
+          <common-vue-select
+            style="width:180px"
             :suggestions="editorOptions"
-            @selected="onEditorSelected"
-          />
+            @inputEvent="onEditorSelected"
+            @blurEvent="onSearch"
+          ></common-vue-select>
         </b-form-group>
         <!-- 검색버튼 -->
         <b-form-group>
@@ -129,8 +130,9 @@
 <script>
 import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 export default {
-  components: { CopyToMySpacePopup },
+  components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinFillerPage],
   data() {
     return {

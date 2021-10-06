@@ -41,10 +41,11 @@
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input
+          <common-vue-select
             :suggestions="editorOptions"
-            @selected="onEditorSelected"
-          />
+            @inputEvent="onEditorSelected"
+            @blurEvent="onSearch"
+          ></common-vue-select>
         </b-form-group>
         <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
@@ -119,8 +120,9 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 export default {
-  components: { CopyToMySpacePopup },
+  components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinBasicPage],
   data() {
     return {

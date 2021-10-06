@@ -29,19 +29,20 @@
         </b-form-group>
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">
-          <common-dropdown-menu-input
-            classString="width-220"
-            :isLoadingClass="isLoadingClass"
+          <common-vue-select
+            style="width:220px;"
             :suggestions="pgmOptions"
-            @selected="onPgmSelected"
-          />
+            @inputEvent="onPgmSelected"
+            @blurEvent="onSearch"
+          ></common-vue-select>
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input
+          <common-vue-select
             :suggestions="editorOptions"
-            @selected="onEditorSelected"
-          />
+            @inputEvent="onEditorSelected"
+            @blurEvent="onSearch"
+          ></common-vue-select>
         </b-form-group>
         <!-- 검색버튼 -->
         <b-form-group>
@@ -109,8 +110,9 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 export default {
-  components: { CopyToMySpacePopup },
+  components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinBasicPage],
   data() {
     return {
