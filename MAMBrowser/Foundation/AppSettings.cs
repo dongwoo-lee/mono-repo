@@ -1,4 +1,4 @@
-﻿using MAMBrowser.DTO;
+﻿using M30.AudioFile.Common.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

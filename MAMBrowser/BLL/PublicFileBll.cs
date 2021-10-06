@@ -1,9 +1,10 @@
 ﻿using Dapper;
-using MAMBrowser.Common;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.DAL;
+using M30.AudioFile.DAL.Dao;
 using MAMBrowser.Foundation;
-using MAMBrowser.Models;
 using System;
 using System.IO;
 

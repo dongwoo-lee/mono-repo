@@ -1,14 +1,11 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.Common.Foundation;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common;
+using M30.AudioFile.DAL;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +21,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Foundation;
+using M30.AudioFile.Common.Models;
 
 namespace MAMBrowser.Controllers
 {
@@ -691,6 +691,10 @@ namespace MAMBrowser.Controllers
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
         /// <summary>
         /// 일반 소재 - 파형 요청
@@ -709,6 +713,10 @@ namespace MAMBrowser.Controllers
             catch (HttpStatusErrorException ex)
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -730,6 +738,10 @@ namespace MAMBrowser.Controllers
             catch (HttpStatusErrorException ex)
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 

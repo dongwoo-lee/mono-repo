@@ -1,14 +1,15 @@
 ﻿using MAMBrowser.Controllers;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.DAL;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using M30.AudioFile.DAL.Dao;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.Common.DTO;
 
 namespace MAMBrowser.Services
 {

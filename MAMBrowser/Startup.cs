@@ -14,7 +14,7 @@ using System.IO;
 using System.Threading.Tasks;
 using MAMBrowser.Services;
 using System.Linq;
-using MAMBrowser.DAL;
+using M30.AudioFile.DAL;
 using MAMBrowser.BLL;
 using MAMBrowser.Middleware;
 using Microsoft.Extensions.Options;
@@ -22,8 +22,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using MAMBrowser.Foundation;
-using MAMBrowser.Common.Foundation;
 using MAMBrowser.Helper;
+using M30.AudioFile.DAL.Dao;
+using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser
 {
@@ -133,14 +134,15 @@ namespace MAMBrowser
 
             //±Û·Î¹ú ¼ÂÆÃ
             AppSetting = optionSection.Get<AppSettings>();
-            Repository.ConnectionString = AppSetting.ConnectionString;
+            QueryHelper.ConnectionString = AppSetting.ConnectionString;
+            TokenGenerator.UseToken = true;
             TokenGenerator.ExpireHour = AppSetting.ExpireMusicTokenHour;
             TokenGenerator.TokenIssuer = AppSetting.TokenIssuer;
             TokenGenerator.TokenSignature = AppSetting.TokenSignature;
             //
             services.AddTransient<WebServerFileHelper>();
-            services.AddTransient<TransactionRepository>();
-            services.AddTransient<Repository>();
+            //services.AddTransient<TransactionRepository>();
+            services.AddTransient<QueryHelper>();
             services.AddTransient<HttpContextDBLogger>();
             
 

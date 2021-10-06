@@ -203,9 +203,16 @@ export default {
           httpClient.get(waveformUrl, {
           cancelToken: source.token,
           }).then(res=>{
-            wavesurfer.load(fileUrl, res.data);
-            this.spinnerFlag = false;
-            this.isSuccess = true;
+            if(res.status == 200){
+              wavesurfer.load(fileUrl, res.data);
+              this.spinnerFlag = false;
+              this.isSuccess = true;
+            }else{
+              this.$notify("error", `${res.status} : ${res.statusText}` , res.data, {
+                  duration: 10000,
+                  permanent: false
+              });
+            }
           }).catch(error=>{
               console.debug('httpClient', error)
               if (error.response){
@@ -216,9 +223,24 @@ export default {
               } else {
                 console.debug('httpClient.get url:', waveformUrl, error);
               }
-          });;
+          });
+        }else{
+          this.$notify("error", `${res.status} : ${res.statusText}` , res.data, {
+              duration: 10000,
+              permanent: false
+          });
         }
-      });
+      }).catch(error=>{
+              console.debug('httpClient', error)
+              if (error.response){
+                this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+                    duration: 10000,
+                    permanent: false
+                });
+              } else {
+                console.debug('httpClient.get url:', waveformUrl, error);
+              }
+          });
     },
     LoadDirect(waveformUrl, fileUrl){
       httpClient.get(waveformUrl, {

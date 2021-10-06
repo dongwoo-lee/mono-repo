@@ -1,7 +1,5 @@
 ﻿using MAMBrowser.Helper;
-using MAMBrowser.Common;
-using MAMBrowser.DTO;
-using MAMBrowser.ExternalDTO;
+using M30.AudioFile.Common;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using Microsoft.Extensions.Logging;
@@ -14,8 +12,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Xml.Serialization;
-using MAMBrowser.Common.Foundation;
 using Microsoft.Extensions.Configuration;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser.Services
 {

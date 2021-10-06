@@ -1,10 +1,8 @@
 ﻿using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +14,8 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.Common.DTO;
 
 namespace MAMBrowser.Controllers
 {

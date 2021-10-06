@@ -10,8 +10,4 @@
     <PackageReference Include="ODP.NetCore" Version="2.0.12" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MAMBrowser.Common\MAMBrowser.Common.csproj" />
-  </ItemGroup>
-
 </Project>

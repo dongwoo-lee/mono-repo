@@ -1,4 +1,4 @@
-﻿using MAMBrowser.Common;
+﻿using M30.AudioFile.Common;
 using NAudio.Lame;
 using NAudio.Utils;
 using NAudio.Wave;

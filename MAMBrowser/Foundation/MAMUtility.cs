@@ -1,5 +1,5 @@
-﻿using MAMBrowser.Common;
-using MAMBrowser.Common.Foundation;
+﻿using M30.AudioFile.Common;
+using M30.AudioFile.Common.Foundation;
 using System;
 using System.Collections.Generic;
 using System.IO;

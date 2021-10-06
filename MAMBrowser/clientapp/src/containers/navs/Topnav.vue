@@ -63,7 +63,7 @@
                       {{currentUser.name}}({{currentUser.menuGrpName}})
                       </span>
                     </div>
-                      <div style="float:right; color:red; font-size:12px; margin-right:6px">v1.0.210924</div>
+                      <div style="float:right; color:red; font-size:12px; margin-right:6px">v1.0.210929</div>
                   </template>
                   <div v-if="isDisplaySetting()">
                     <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>

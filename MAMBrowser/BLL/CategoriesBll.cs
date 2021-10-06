@@ -1,7 +1,8 @@
 ﻿using Dapper;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
-using MAMBrowser.Models;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.DAL;
+using M30.AudioFile.DAL.Dao;
 using System;
 
 namespace MAMBrowser.BLL

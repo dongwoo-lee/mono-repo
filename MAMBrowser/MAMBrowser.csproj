@@ -26,20 +26,20 @@
     <PackageReference Include="FluentFTP" Version="33.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.11.1" />
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="NAudio.Lame" Version="1.1.6" />
     <PackageReference Include="NLayer.NAudioSupport" Version="1.1.0" />
     <PackageReference Include="ODP.NetCore" Version="2.0.12" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.110" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.5.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MAMBrowser.Common\MAMBrowser.Common.csproj" />
-    <ProjectReference Include="..\MAMBrowser.DAL\MAMBrowser.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +55,19 @@
     <None Update="song.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="RefFiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="M30.AudioFile.Common">
+      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="M30.AudioFile.DAL">
+      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
