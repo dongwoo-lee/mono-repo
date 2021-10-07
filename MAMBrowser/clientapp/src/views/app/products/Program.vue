@@ -25,6 +25,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
+            @change="mediaReset"
           />
         </b-form-group>
         <!-- 프로그램 -->
@@ -32,6 +33,7 @@
           <common-vue-select
             style="width:220px;"
             :suggestions="pgmOptions"
+            :vSelectProps="vSelectProps"
             @inputEvent="onPgmSelected"
             @blurEvent="onSearch"
           ></common-vue-select>
@@ -116,6 +118,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      vSelectProps: {},
       searchItems: {
         media: "A",
         brd_dt: "",
@@ -256,6 +259,12 @@ export default {
     this.getEditorForPd();
   },
   methods: {
+    mediaReset() {
+      this.searchItems.pgm = null;
+      this.searchItems.pgmName = null;
+      this.vSelectProps = { id: null, name: null };
+      //this.onSearch();
+    },
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       const media = this.searchItems.media;

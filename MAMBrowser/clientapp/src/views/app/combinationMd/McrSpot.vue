@@ -29,8 +29,7 @@
             :options="mcrSpotMediaOptions"
             value-field="id"
             text-field="name"
-            @change="onChangeMedia()"
-            @input="onSearch"
+            @change="mediaReset"
           />
         </b-form-group>
         <!-- 사용처 -->
@@ -38,6 +37,7 @@
           <common-vue-select
             style="width:220px"
             :suggestions="spotOptions"
+            :vSelectProps="vSelectProps"
             @inputEvent="onSpotSelected"
             @blurEvent="onSearch"
           ></common-vue-select>
@@ -136,6 +136,7 @@ export default {
   mixins: [MixinFillerPage],
   data() {
     return {
+      vSelectProps: {},
       searchItems: {
         media: "A", // 매체
         cate: "", // 분류
@@ -236,6 +237,13 @@ export default {
     this.getmcrSpotMediaOptions();
   },
   methods: {
+    mediaReset() {
+      this.getSpotOptions(this.searchItems.media);
+      this.searchItems.spotId = null;
+      this.searchItems.spotName = null;
+      this.vSelectProps = { id: null, name: null };
+      this.onSearch();
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(
@@ -260,9 +268,6 @@ export default {
           this.isTableLoading = false;
           this.isScrollLodaing = false;
         });
-    },
-    onChangeMedia() {
-      this.getSpotOptions(this.searchItems.media);
     },
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.mediaName}_${rowData.id}`;
