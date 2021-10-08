@@ -115,8 +115,7 @@ namespace MAMBrowser.Controllers
         /// 취재물 소재 조회. (사용처ID와 사용처이름이 동시에 기입될 경우 ID만 검색함)
         /// </summary>
         /// <param name="cate">분류 : ex)NPS-M</param>
-        /// <param name="start_dt">시작일 : 20200101</param>
-        ///  <param name="end_dt">종료일 : 20200620</param>
+        /// <param name="brd_dt">방송일 : 20200101</param>
         ///  <param name="isMastering">마스터링 여부 : Y / N</param>
         /// <param name="pgmName">사용처 : ex) PM1200NA, PM1900NA, PM1900SA</param>
         /// <param name="editor">제작자 : ex)010502</param>
@@ -128,13 +127,13 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("report")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string isMastering, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> FindReport([FromQuery] string cate, [FromQuery] string brd_dt, [FromQuery] string isMastering, [FromQuery] string pgmName, [FromQuery] string editor, [FromQuery] string reporterName, [FromQuery] string name, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_REPORT>>();
             try
             {
 
-                result.ResultObject = _bll.FindReport(cate, start_dt, end_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindReport(cate, brd_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

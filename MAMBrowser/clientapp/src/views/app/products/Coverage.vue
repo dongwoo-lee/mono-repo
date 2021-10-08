@@ -13,15 +13,24 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker
-          :startDate.sync="searchItems.start_dt"
-          :startDayAgo="7"
-          :maxPeriodMonth="3"
-          :endDate.sync="searchItems.end_dt"
-          :required="true"
-          @SEDateEvent="onSearch"
-        />
+
+        <!-- 방송일시 -->
+        <b-form-group
+          label="방송일시"
+          class="has-float-label"
+          :class="{ hasError: $v.searchItems.brd_dt.required }"
+        >
+          <common-date-picker
+            v-model="$v.searchItems.brd_dt.$model"
+            @input="onSearch"
+            required
+          />
+          <b-form-invalid-feedback :state="!$v.searchItems.brd_dt.required"
+            >날짜는 필수 입력입니다.</b-form-invalid-feedback
+          >
+        </b-form-group>
+
+
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
@@ -151,9 +160,7 @@ export default {
     return {
       searchItems: {
         cate: "RC07", // 분류
-        start_dt: "", // 방송 시작일
-        end_dt: "", // 방송 종료일
-        // brd_dt: '20200801',    // 방송일
+        brd_dt : "",
         pgm: "", // 사용처1
         pgmName: "", // 사용처2
         reporterName: "", // 취재인 이름
@@ -260,16 +267,9 @@ export default {
   },
   methods: {
     getData() {
-      if (
-        this.$fn.checkGreaterStartDate(
-          this.searchItems.start_dt,
-          this.searchItems.end_dt
-        )
-      ) {
-        this.$fn.notify("warning", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
-        });
-        this.hasErrorClass = true;
+      if (!this.$v.searchItems.brd_dt.$invalid) {
+        this.$fn.notify("inputError", {});
+        return;
       }
 
       this.isTableLoading = this.isScrollLodaing ? false : true;

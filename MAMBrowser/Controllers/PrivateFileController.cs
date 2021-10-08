@@ -194,7 +194,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
         /// <summary>
@@ -262,6 +262,10 @@ namespace MAMBrowser.Controllers
             catch (HttpStatusErrorException ex)
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

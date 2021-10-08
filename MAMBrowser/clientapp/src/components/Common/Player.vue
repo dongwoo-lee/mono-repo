@@ -1,6 +1,9 @@
 <template>
 <div>
     <div>
+      <div v-if="errorMsg">
+        {{errorMsg}}
+      </div>
       <div class="text-center" v-if="spinnerFlag" >
         <b-spinner style="width: 4rem; height: 4rem;" variant="primary"></b-spinner>
       </div>
@@ -95,6 +98,7 @@ export default {
       zoomMax:160,
       zoomInterval:20,
       zoomSliderValue:0,
+      errorMsg:'',
     }
   },
   mounted() {
@@ -212,6 +216,9 @@ export default {
                   duration: 10000,
                   permanent: false
               });
+               this.spinnerFlag = false;
+               this.isSuccess = false;
+               this.errorMsg = res.data;
             }
           }).catch(error=>{
               console.debug('httpClient', error)
@@ -223,12 +230,18 @@ export default {
               } else {
                 console.debug('httpClient.get url:', waveformUrl, error);
               }
+              this.spinnerFlag = false;
+              this.isSuccess = false;
+              this.errorMsg = error.response.data;
           });
         }else{
           this.$notify("error", `${res.status} : ${res.statusText}` , res.data, {
               duration: 10000,
               permanent: false
           });
+          this.spinnerFlag = false;
+          this.isSuccess = false;
+          this.errorMsg = res.data;
         }
       }).catch(error=>{
               console.debug('httpClient', error)
@@ -240,6 +253,9 @@ export default {
               } else {
                 console.debug('httpClient.get url:', waveformUrl, error);
               }
+          this.spinnerFlag = false;
+          this.isSuccess = false;
+          this.errorMsg = error.response.data;
           });
     },
     LoadDirect(waveformUrl, fileUrl){

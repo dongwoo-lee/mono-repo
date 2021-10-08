@@ -18,10 +18,9 @@
           startDateLabel="시작일(마스터링)"
           endDateLabel="종료일(마스터링)"
           :startDate.sync="searchItems.start_dt"
-          :startMonthAgo="3"
-          :maxPeriodMonth="3"
           :endDate.sync="searchItems.end_dt"
-          :required="true"
+          :required="false"
+          :isCurrentDate="false"
           @SEDateEvent="onSearch"
         />
         <!-- 구분 -->
