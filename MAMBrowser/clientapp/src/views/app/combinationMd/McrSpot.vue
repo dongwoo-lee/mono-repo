@@ -20,6 +20,7 @@
           :endDate.sync="searchItems.end_dt"
           :required="true"
           @SEDateEvent="onSearch"
+          @sDateError="sDateErrorLog"
         />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -38,8 +39,10 @@
             style="width:220px"
             :suggestions="spotOptions"
             :vSelectProps="vSelectProps"
+            :vChangedProps="vChangedProps"
             @inputEvent="onSpotSelected"
             @blurEvent="onSearch"
+            @propsChanged="propsChanged"
           ></common-vue-select>
         </b-form-group>
         <!-- 상태 -->
@@ -137,6 +140,7 @@ export default {
   data() {
     return {
       vSelectProps: {},
+      vChangedProps: false,
       searchItems: {
         media: "A", // 매체
         cate: "", // 분류
@@ -237,11 +241,21 @@ export default {
     this.getmcrSpotMediaOptions();
   },
   methods: {
+    sDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
+    propsChanged() {
+      this.vChangedProps = false;
+    },
     mediaReset() {
       this.getSpotOptions(this.searchItems.media);
       this.searchItems.spotId = null;
       this.searchItems.spotName = null;
       this.vSelectProps = { id: null, name: null };
+      this.vChangedProps = true;
       this.onSearch();
     },
     getData() {

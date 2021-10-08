@@ -15,7 +15,11 @@
       <template slot="form-search-area">
         <!-- 방송일 -->
         <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker v-model="searchItems.brd_dt" />
+          <common-date-picker
+            :pageProps="pageProps"
+            @commonDateEvent="onSearch"
+            v-model="searchItems.brd_dt"
+          />
         </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -118,6 +122,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      pageProps: "Program",
       vSelectProps: {},
       searchItems: {
         media: "A",

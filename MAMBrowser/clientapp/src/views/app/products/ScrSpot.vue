@@ -20,6 +20,7 @@
           :endDate.sync="searchItems.end_dt"
           :required="true"
           @SEDateEvent="onSearch"
+          @sDateError="sDateErrorLog"
         />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -225,6 +226,12 @@ export default {
     this.getEditorOptions();
   },
   methods: {
+    sDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(

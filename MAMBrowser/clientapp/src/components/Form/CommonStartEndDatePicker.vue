@@ -11,6 +11,7 @@
           :isCurrentDate="isCurrentDate"
           :required="required"
           @input="onSInput"
+          @commonDateEvent="commonDateEvent"
         />
       </b-form-group>
       <!-- 등록일: 종료일 -->
@@ -21,6 +22,7 @@
           :maxDate="maxDate"
           :required="required"
           @input="onEInput"
+          @commonDateEvent="commonDateEvent"
         />
       </b-form-group>
     </div>
@@ -33,6 +35,9 @@
 import { MAXIMUM_SEARCH_DATE } from "@/constants/config";
 export default {
   props: {
+    pageProps: {
+      type: String
+    },
     startDate: {
       type: String,
       default: ""
@@ -105,29 +110,39 @@ export default {
     }
   },
   methods: {
+    commonDateEvent() {
+      this.$emit("SEDateEvent");
+    },
     onSInput(v) {
       this.$emit("update:startDate", v);
     },
     onEInput(v) {
       this.$emit("update:endDate", v);
+      //debugger;
+      if (this.sDate != "" && v < this.sDate) {
+        this.$emit("sDateError");
+        return;
+      }
+      if (!this.required && v == "") {
+        return;
+      }
       this.$emit("SEDateEvent");
     },
     checkMaxPeriodDate(selectDate) {
       if (!selectDate) {
         return;
       }
-
       // 선택된 날짜 + periodDate
       const formatStartDate = this.$fn.dateStringTohaipun(selectDate);
       const periodDate = new Date(Date.parse(formatStartDate));
-
       if (this.maxPeriodDay > 0) {
         periodDate.setDate(periodDate.getDate() + this.maxPeriodDay);
       } else if (this.maxPeriodMonth > 0) {
         periodDate.setMonth(periodDate.getMonth() + this.maxPeriodMonth);
       } else if (this.maxPeriodYear > 0) {
         periodDate.setFullYear(periodDate.getFullYear() + this.maxPeriodYear);
-      } else {
+      } else if (!this.required) {
+        this.$emit("SEDateEvent");
         return;
       }
 
@@ -140,6 +155,12 @@ export default {
         this.$emit("update:endDate", this.$fn.formatDate(periodDate));
       }
       this.maxDate = periodDate;
+      if (this.eDate != "") {
+        if (this.sDate > this.eDate) {
+          this.$emit("sDateError");
+          return;
+        }
+      }
       this.$emit("SEDateEvent");
     },
     isPeriodDate() {

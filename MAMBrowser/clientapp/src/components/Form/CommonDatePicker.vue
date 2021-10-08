@@ -8,6 +8,7 @@
         :placeholder="placeHolder"
         :value="inputValue | yyyyMMdd"
         @input="onInput"
+        @blur="inputBlurEvent"
       />
       <!-- 데이터 피커 -->
       <b-input-group-append>
@@ -33,6 +34,9 @@ import { MINIMUM_DATE } from "@/constants/config";
 
 export default {
   props: {
+    pageProps: {
+      type: String
+    },
     value: {
       type: String,
       default: ""
@@ -85,6 +89,9 @@ export default {
   },
   data() {
     return {
+      pageSelect: false,
+      selected: false,
+      tempDate: "",
       date: "",
       inputValue: "",
       validBeforeDate: this.getValidBeforeDate()
@@ -111,6 +118,10 @@ export default {
     } else {
       this.date = this.value;
     }
+
+    if (this.pageProps === "Program") {
+      this.pageSelect = true;
+    }
   },
   watch: {
     date(v, o) {
@@ -119,6 +130,7 @@ export default {
         this.$emit("input", formatValue);
         if (v) this.validBeforeDate = formatValue;
         this.inputValue = formatValue;
+        this.tempDate = formatValue;
       }
     },
     value(v) {
@@ -127,15 +139,28 @@ export default {
     }
   },
   methods: {
+    inputBlurEvent(e) {
+      if (!this.required && this.tempDate == "") {
+        e.target.value = "";
+        if (this.selected) {
+          this.$emit("commonDateEvent");
+          this.selected = false;
+        }
+        if (this.pageProps == "Program" && this.pageSelect) {
+          this.$emit("commonDateEvent");
+          this.pageSelect = false;
+        }
+      } else {
+        var y = this.tempDate.substring(0, 4);
+        var m = this.tempDate.substring(4, 6);
+        var d = this.tempDate.substring(6, 8);
+        e.target.value = y + "-" + m + "-" + d;
+      }
+    },
     onInput(event) {
       const targetValue = event.target.value;
       // 필수 입력값 & 데이터가 없을 경우 체크
       if (this.required && (!targetValue || !/^[\d-]+$/.test(targetValue))) {
-        const convertDate = this.convertDateStringToHaipun(
-          this.validBeforeDate
-        );
-        event.target.value = convertDate;
-        this.date = convertDate;
         return;
       }
 
@@ -168,14 +193,17 @@ export default {
 
         // 검색 가능 최대일 확인
         const inputDate = new Date(Date.parse(convertDate));
-        if (inputDate > this.maxDate) {
+        if (this.maxDate != "" && inputDate > this.maxDate) {
           return this.revertDate(event);
         }
-
         // 값 업데이트
         event.target.value = convertDate;
         this.validBeforeDate = convertDate;
         this.date = convertDate;
+        this.selected = true;
+        if (this.pageProps == "Program") {
+          this.pageSelect = true;
+        }
       }
     },
     validDateType(value) {
