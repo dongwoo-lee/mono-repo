@@ -242,18 +242,20 @@ export default {
       if (v) {
         // 사용처 조회
         this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
-        setTimeout(() => {
-          this.onSearch();
-        }, 500);
+        //NOTE: 프로그램 두번 검색하는 쿼리 삭제
+        // setTimeout(() => {
+        //   this.onSearch();
+        // }, 500);
       }
     },
     ["searchItems.media"](v) {
       if (v) {
         // 사용처 조회
         this.getPgmOptions(this.searchItems.brd_dt, this.searchItems.media);
-        setTimeout(() => {
-          this.onSearch();
-        }, 500);
+        //NOTE: 프로그램 두번 검색하는 쿼리 삭제
+        // setTimeout(() => {
+        //   this.onSearch();
+        // }, 500);
       }
     }
   },
@@ -268,7 +270,7 @@ export default {
       this.searchItems.pgm = null;
       this.searchItems.pgmName = null;
       this.vSelectProps = { id: null, name: null };
-      //this.onSearch();
+      this.onSearch();
     },
     getData() {
       this.isTableLoading = this.isScrollLodaing ? false : true;
