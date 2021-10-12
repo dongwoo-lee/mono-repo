@@ -1944,9 +1944,9 @@ button {
         transition: color $menu-collapse-time;
         transition: background $menu-collapse-time;
 
-        &:hover,
-        &:focus {
-          color: $theme-color-1;
+        &:hover {
+          color: white !important;
+          background-color: #008ecc;
         }
       }
 
@@ -1956,12 +1956,15 @@ button {
       }
 
       &.active a {
-        color: $theme-color-1;
+        //메뉴 액티브
+        font-weight: 600 !important;
+        color: #008ecc;
+        // background-color: white;
       }
 
       &.active:after {
         content: " ";
-        background: $theme-color-1;
+        background: #008ecc;
         border-radius: 10px;
         position: absolute;
         width: 6px;
@@ -2009,6 +2012,7 @@ button {
   }
 
   .sub-menu {
+    border-left: 1px solid #cccccc !important;
     width: $sub-menu-width-xs;
     background: $foreground-color;
     z-index: 7;
@@ -2046,12 +2050,15 @@ button {
         position: relative;
 
         a {
-          font-size: 13px;
+          font-size: 14px;
           display: block;
           padding: 8px 0;
           margin-bottom: 10px;
         }
-
+        a:hover {
+          color: white !important;
+          background-color: #008ecc;
+        }
         i {
           font-size: 1.3em;
           margin-right: 10px;
@@ -2062,16 +2069,17 @@ button {
 
         &.active i,
         &.active a {
-          color: $theme-color-1;
+          font-weight: 600;
+          color: #008ecc;
         }
 
         &.active:after {
           content: " ";
-          background: $theme-color-1;
-          border-radius: 10px;
+          background: #008ecc;
+
           position: absolute;
-          width: 4px;
-          height: 4px;
+          width: 8px;
+          height: 8px;
           top: 50%;
           transform: translateY(-50%);
           left: -16px;
