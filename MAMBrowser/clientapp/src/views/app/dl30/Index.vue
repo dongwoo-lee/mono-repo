@@ -259,12 +259,8 @@ export default {
         "/api/Categories/dldevice-list",
         "dlDeviceOptions"
       );
-      console.info("this.dlDeviceOptions", this.dlDeviceOptions);
+
       if (this.dlDeviceOptions.length > 0) {
-        console.info(
-          "this.dlDeviceOptions.length",
-          this.dlDeviceOptions.length
-        );
         this.searchItems.dlDeviceSeq = this.dlDeviceOptions[0].id;
       }
     }
