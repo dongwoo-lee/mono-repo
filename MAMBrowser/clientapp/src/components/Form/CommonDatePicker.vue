@@ -23,6 +23,7 @@
           :hide-header="hideHeader"
           :size="size"
           :max="maxDate"
+          @input="binput"
         />
       </b-input-group-append>
     </b-input-group>
@@ -136,6 +137,9 @@ export default {
     }
   },
   methods: {
+    binput() {
+      this.selected = true;
+    },
     inputBlurEvent(e) {
       if (!this.required && this.tempDate == "") {
         e.target.value = "";
@@ -146,13 +150,15 @@ export default {
       } else {
         if (this.maxDate != null && this.maxDateChanged) {
           var maxDate = this.$fn.formatDate(this.maxDate);
-          var y = maxDate.substring(0, 4);
-          var m = maxDate.substring(4, 6);
-          var d = maxDate.substring(6, 8);
-          e.target.value = y + "-" + m + "-" + d;
-          this.maxDateChanged = false;
-          this.tempDate = maxDate;
-          return;
+          if (maxDate < this.tempDate) {
+            var y = maxDate.substring(0, 4);
+            var m = maxDate.substring(4, 6);
+            var d = maxDate.substring(6, 8);
+            e.target.value = y + "-" + m + "-" + d;
+            this.maxDateChanged = false;
+            this.tempDate = maxDate;
+            return;
+          }
         }
         var y = this.tempDate.substring(0, 4);
         var m = this.tempDate.substring(4, 6);
