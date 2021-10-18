@@ -15,11 +15,7 @@
       <template slot="form-search-area">
         <!-- 방송일 -->
         <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker
-            :pageProps="pageProps"
-            @commonDateEvent="onSearch"
-            v-model="searchItems.brd_dt"
-          />
+          <common-date-picker @input="onSearch" v-model="searchItems.brd_dt" />
         </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -39,7 +35,6 @@
             :suggestions="pgmOptions"
             :vSelectProps="vSelectProps"
             @inputEvent="onPgmSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 제작자 -->
@@ -47,7 +42,6 @@
           <common-vue-select
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 검색버튼 -->
@@ -122,7 +116,6 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
-      pageProps: "Program",
       vSelectProps: {},
       searchItems: {
         media: "A",
@@ -236,7 +229,6 @@ export default {
       ]
     };
   },
-  computed: {},
   watch: {
     ["searchItems.brd_dt"](v) {
       if (v) {
@@ -264,6 +256,9 @@ export default {
     this.getMediaOptions();
     // 제작자(PD용) 조회
     this.getEditorForPd();
+    this.$nextTick(() => {
+      this.getData();
+    });
   },
   methods: {
     mediaReset() {

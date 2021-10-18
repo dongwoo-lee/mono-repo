@@ -212,6 +212,11 @@ export default {
       USER_ID
     };
   },
+  created() {
+    this.$nextTick(() => {
+      this.getData();
+    });
+  },
   methods: {
     ...mapActions("user", ["getSummaryUser"]),
     getData() {

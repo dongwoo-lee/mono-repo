@@ -120,7 +120,7 @@ export default {
       this.$emit("update:endDate", v);
       //debugger;
       if (this.sDate != "" && v < this.sDate) {
-        this.$emit("sDateError");
+        this.$emit("SDateError");
         return;
       }
       if (!this.required && v == "") {
@@ -157,7 +157,7 @@ export default {
       this.maxDate = periodDate;
       if (this.eDate != "") {
         if (this.sDate > this.eDate) {
-          this.$emit("sDateError");
+          this.$emit("SDateError");
           return;
         }
       }

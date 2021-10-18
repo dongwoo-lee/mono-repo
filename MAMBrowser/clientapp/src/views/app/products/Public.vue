@@ -29,7 +29,7 @@
             :options="mediaPrimaryOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 분류 -->
@@ -41,7 +41,7 @@
             value-field="id"
             text-field="name"
             :disabled="publicCodesOptions.length === 0"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 제작자 -->

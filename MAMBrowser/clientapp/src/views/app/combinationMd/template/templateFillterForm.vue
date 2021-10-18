@@ -33,7 +33,7 @@
             :disabled="categoryOptions.length === 0"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           >
             <template v-slot:first>
               <b-form-select-option v-if="categoryOptions.length > 0" value=""
@@ -51,7 +51,6 @@
             style="width:220px;"
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 소재명 -->

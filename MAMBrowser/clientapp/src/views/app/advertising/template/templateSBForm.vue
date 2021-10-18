@@ -40,7 +40,7 @@
             :options="cmOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 사용처 -->
@@ -55,7 +55,6 @@
             :vSelectProps="vSelectProps"
             :suggestions="pgmOptions"
             @inputEvent="onPgmSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 검색 버튼 -->

@@ -22,6 +22,7 @@
           :required="false"
           :isCurrentDate="false"
           @SEDateEvent="onSearch"
+          @SDateError="SDateErrorLog"
         />
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">
@@ -33,7 +34,7 @@
               { value: 'Y', text: '방송중' },
               { value: 'N', text: '폐지' }
             ]"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 분류 -->
@@ -42,7 +43,6 @@
             style="width:220px;"
             :suggestions="proOptions"
             @inputEvent="onProSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 제작자 -->
@@ -50,7 +50,6 @@
           <common-vue-select
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 소재명 -->
@@ -229,8 +228,18 @@ export default {
     this.getEditorOptions();
     // (구)프로 목록 조회
     this.getProOptions();
+
+    this.$nextTick(() => {
+      this.getData();
+    });
   },
   methods: {
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(

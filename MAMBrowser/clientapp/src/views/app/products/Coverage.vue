@@ -13,7 +13,6 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
-
         <!-- 방송일시 -->
         <b-form-group
           label="방송일시"
@@ -30,7 +29,6 @@
           >
         </b-form-group>
 
-
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
@@ -39,7 +37,7 @@
             :options="rePortOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 사용처 -->
@@ -62,7 +60,6 @@
             style="width:120px;"
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 소재명 -->
@@ -160,7 +157,7 @@ export default {
     return {
       searchItems: {
         cate: "RC07", // 분류
-        brd_dt : "",
+        brd_dt: "",
         pgm: "", // 사용처1
         pgmName: "", // 사용처2
         reporterName: "", // 취재인 이름
@@ -264,6 +261,10 @@ export default {
     this.getReportOptions();
     // 사용자 목록 조회
     this.getEditorForReporter();
+
+    this.$nextTick(() => {
+      this.getData();
+    });
   },
   methods: {
     getData() {

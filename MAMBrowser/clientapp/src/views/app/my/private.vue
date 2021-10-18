@@ -243,6 +243,11 @@ export default {
       USER_ID
     };
   },
+  created() {
+    this.$nextTick(() => {
+      this.getData();
+    });
+  },
   methods: {
     ...mapActions("file", ["open_popup"]),
     getData() {

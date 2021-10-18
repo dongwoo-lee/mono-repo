@@ -34,9 +34,6 @@ import { MINIMUM_DATE } from "@/constants/config";
 
 export default {
   props: {
-    pageProps: {
-      type: String
-    },
     value: {
       type: String,
       default: ""
@@ -89,6 +86,7 @@ export default {
   },
   data() {
     return {
+      maxDateChanged: false,
       pageSelect: false,
       selected: false,
       tempDate: "",
@@ -118,10 +116,6 @@ export default {
     } else {
       this.date = this.value;
     }
-
-    if (this.pageProps === "Program") {
-      this.pageSelect = true;
-    }
   },
   watch: {
     date(v, o) {
@@ -136,6 +130,9 @@ export default {
     value(v) {
       if (v) this.validBeforeDate = v;
       this.inputValue = v;
+    },
+    maxDate(v) {
+      if (v) this.maxDateChanged = true;
     }
   },
   methods: {
@@ -146,11 +143,17 @@ export default {
           this.$emit("commonDateEvent");
           this.selected = false;
         }
-        if (this.pageProps == "Program" && this.pageSelect) {
-          this.$emit("commonDateEvent");
-          this.pageSelect = false;
-        }
       } else {
+        if (this.maxDate != null && this.maxDateChanged) {
+          var maxDate = this.$fn.formatDate(this.maxDate);
+          var y = maxDate.substring(0, 4);
+          var m = maxDate.substring(4, 6);
+          var d = maxDate.substring(6, 8);
+          e.target.value = y + "-" + m + "-" + d;
+          this.maxDateChanged = false;
+          this.tempDate = maxDate;
+          return;
+        }
         var y = this.tempDate.substring(0, 4);
         var m = this.tempDate.substring(4, 6);
         var d = this.tempDate.substring(6, 8);
@@ -201,9 +204,6 @@ export default {
         this.validBeforeDate = convertDate;
         this.date = convertDate;
         this.selected = true;
-        if (this.pageProps == "Program") {
-          this.pageSelect = true;
-        }
       }
     },
     validDateType(value) {

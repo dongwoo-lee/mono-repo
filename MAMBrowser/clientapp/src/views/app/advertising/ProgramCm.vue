@@ -29,7 +29,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 사용처 -->

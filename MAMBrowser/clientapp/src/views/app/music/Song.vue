@@ -36,7 +36,6 @@
               :options="searchTypes1"
               value-field="code"
               text-field="label"
-              @input="onSearch"
             >
             </b-form-checkbox-group>
           </div>
@@ -49,7 +48,6 @@
             :options="searchTypes2"
             value-field="code"
             text-field="label"
-            @input="onSearch"
           />
         </b-form-group>
         <!-- 검색옵션 -->
@@ -62,7 +60,6 @@
               :options="gradeTypes"
               value-field="code"
               text-field="label"
-              @input="onSearch"
             />
           </div>
         </fieldset>

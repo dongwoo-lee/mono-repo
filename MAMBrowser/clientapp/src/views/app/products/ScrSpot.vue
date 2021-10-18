@@ -20,7 +20,7 @@
           :endDate.sync="searchItems.end_dt"
           :required="true"
           @SEDateEvent="onSearch"
-          @sDateError="sDateErrorLog"
+          @SDateError="SDateErrorLog"
         />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -30,7 +30,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 사용처명 -->
@@ -45,7 +45,6 @@
           <common-vue-select
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
-            @blurEvent="onSearch"
           ></common-vue-select>
         </b-form-group>
         <!-- 소재명 -->
@@ -224,9 +223,13 @@ export default {
     this.getMediaOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
+
+    this.$nextTick(() => {
+      this.getData();
+    });
   },
   methods: {
-    sDateErrorLog() {
+    SDateErrorLog() {
       this.$fn.notify("error", {
         message: "시작 날짜가 종료 날짜보다 큽니다."
       });

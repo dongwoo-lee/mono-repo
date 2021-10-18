@@ -36,7 +36,7 @@
             :options="dlDeviceOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 매체 -->
@@ -47,7 +47,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
-            @input="onSearch"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 녹음소재명 -->
