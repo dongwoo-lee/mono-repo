@@ -1,25 +1,24 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
+
   pages: {
     index: {
-      entry: "src/index.js",
-      template: "public/index.html",
-      filename: "index.html"
+      entry: 'src/index.js',
+      template: 'public/index.html',
+      filename: 'index.html'
     }
-  },
+  }, 
   devServer: {
-    //NOTE: 캐시 사용 안함
-    headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
     proxy: {
-      "/api": {
-        target: "http://localhost:8000",
+      '/api': {
+        target: 'http://localhost:8000',
         ws: true,
-        changeOrigin: true
+        changeOrigin: true,
       }
     },
     // clientLogLevel: 'warning',
-    hot: true
+    hot: true,
     // contentBase: 'dist',
     // compress: true,
     // open: true,
@@ -33,22 +32,22 @@ module.exports = {
   },
 
   chainWebpack: config => {
-    config.plugins.delete("prefetch-index"),
-      config.module
-        .rule("vue")
-        .use("vue-loader")
-        .tap(args => {
-          args.compilerOptions.whitespace = "preserve";
-        });
+    config.plugins.delete('prefetch-index'),
+    config.module
+      .rule('vue')
+        .use('vue-loader')
+          .tap(args => {
+            args.compilerOptions.whitespace = 'preserve'
+          })
   },
   productionSourceMap: false,
-  assetsDir: "./assets/",
+  assetsDir: './assets/',
   configureWebpack: {
     plugins: [
       new CopyWebpackPlugin([
-        { from: "src/assets/img", to: "assets/img" },
-        { from: "src/assets/fonts", to: "assets/fonts" }
+        { from: 'src/assets/img', to: 'assets/img' },
+        { from: 'src/assets/fonts', to: 'assets/fonts' }
       ])
     ]
   }
-};
+}
