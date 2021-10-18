@@ -45,14 +45,14 @@
       </template>
       <!-- 버튼 -->
       <template slot="form-btn-area">
-        <b-input-group>
+        <!-- <b-input-group>
           <b-button
             variant="outline-primary default"
             size="sm"
             @click="onShowModalFileUpload"
             >파일 업로드</b-button
           >
-        </b-input-group>
+        </b-input-group> -->
         <b-input-group>
           <b-button
             variant="outline-secondary default"
