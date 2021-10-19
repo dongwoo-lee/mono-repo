@@ -26,29 +26,13 @@
           <slot name="actions" :props="props"></slot>
         </div>
       </template>
-      <template v-if="isWeekSlot" slot="weekrow" scope="props">
+      <template v-if="isWeeksSlot" slot="weeks" scope="props">
         <div class="table-button-container">
-          <span class="week" v-bind:class="{ black: weekclassbind1(props) }"
-            >월</span
-          >
-          <span class="week" v-bind:class="{ black: weekclassbind2(props) }"
-            >화</span
-          >
-          <span class="week" v-bind:class="{ black: weekclassbind3(props) }"
-            >수</span
-          >
-          <span class="week" v-bind:class="{ black: weekclassbind4(props) }"
-            >목</span
-          >
-          <span class="week" v-bind:class="{ black: weekclassbind5(props) }"
-            >금</span
-          >
-          <span class="week" v-bind:class="{ black: weekclassbind6(props) }"
-            >토</span
-          >
-          <span class="week" v-bind:class="{ black: weekclassbind7(props) }"
-            >일</span
-          >
+          <slot
+            name="weeks"
+            :props="props"
+            :productWeekList="productWeekList"
+          ></slot>
         </div>
       </template>
     </vuetable>
@@ -72,6 +56,10 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 export default {
   components: { Vuetable },
   props: {
+    productWeekList: {
+      type: Array,
+      default: () => [],
+    },
     keyName: {
       // rowData key
       type: String,
@@ -111,7 +99,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isWeekSlot: {
+    isWeeksSlot: {
       // actions: button 등 slot 사용 유무
       type: Boolean,
       default: false,
@@ -172,19 +160,7 @@ export default {
       this.addListener();
     });
   },
-  computed: {
-    // weekclassbind: function () {
-    //   console.log(this.rows[0].weekData);
-    //   console.log(this.rows);
-    //   return {
-    //     black: this.channelC_1_Class == 0,
-    //     draggable_c1: this.channelC_1_Class == 1,
-    //     draggable_c2: this.channelC_1_Class == 2,
-    //     draggable_c3: this.channelC_1_Class == 3,
-    //     draggable_c4: this.channelC_1_Class == 4,
-    //   };
-    // },
-  },
+  computed: {},
   destroyed() {
     if (this.tBody != null) {
       this.tBody.removeEventListener("scroll", this.handlerScroll);
@@ -197,62 +173,6 @@ export default {
     }
   },
   methods: {
-    weekclassbind1(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("mon") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind2(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("tue") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind3(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("wed") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind4(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("thu") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind5(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("fri") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind6(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("sat") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind7(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("sun") >= 0) {
-        return true;
-      }
-      return false;
-    },
     existScrollBar() {
       const { clientHeight, scrollTop, scrollHeight } = this.tBodyWrapper;
       return (

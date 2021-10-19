@@ -238,7 +238,6 @@ export default {
   methods: {
     ...mapActions("file", ["open_popup"]),
     getData() {
-      console.log(typeof this.searchItems.start_dt);
       if (
         this.$fn.checkGreaterStartDate(
           this.searchItems.start_dt,
@@ -291,10 +290,11 @@ export default {
     // 선택항목 휴지통 보내기 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
-        this.selectedIds,
-        this.responseData.data
-      );
+      this.innerHtmlSelectedFileNames =
+        this.getInnerHtmlSelectdFileNamesFromMulti(
+          this.selectedIds,
+          this.responseData.data
+        );
       this.$bvModal.show("modalRemove");
     },
     // 휴지통 보내기

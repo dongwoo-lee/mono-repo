@@ -13,6 +13,68 @@ namespace MAMBrowser.DAL
         {
             _repository = repository;
         }
+
+        //public DTO_RESULT_PAGE_LIST<DTO_PQSCON> FindCueSheet(string productid, string product_dt, int rowPerPage, int selectPage)
+        //{
+        //    int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
+        //    int lastNo = startNo + rowPerPage;
+
+        //    DTO_RESULT_PAGE_LIST<DTO_PQSCON> returnData = new DTO_RESULT_PAGE_LIST<DTO_PQSCON>();
+        //    var builder = new SqlBuilder();
+        //    DynamicParameters param = new DynamicParameters();
+        //    param.AddDynamicParams(new
+        //    {
+        //        PRODUCTID = productid,
+        //        ONAIRDATE = product_dt,
+        //        START_NO = startNo,
+        //        LAST_NO = lastNo,
+        //    });
+
+        //    var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM PD_PQSCON /**where**/");
+        //    builder.Select("PQSTYPE, SEQNUM, CARTID, CARTTYPE, EOM, TRANSTYPE, INTROTIME, EXTROTIME, FADEOUTTIME, FADEINTIME, DESCRIPTION, MAINTITLE,SUBTITLE");
+        //    builder.Where("PRODUCTID = :PRODUCTID");
+        //    builder.Where("ONAIRDATE = :ONAIRDATE");
+
+        //    string orderBy = "";
+
+
+        //    var queryTemplate = builder.AddTemplate($"SELECT A.*, ROWNUM AS RNO, COUNT(*) OVER () RESULT_COUNT FROM ({querySource.RawSql} {orderBy}) A");
+        //    var queryMaxPaging = builder.AddTemplate($"SELECT B.* FROM ({queryTemplate.RawSql}) B WHERE RNO <:LAST_NO");
+        //    var queryMaxMinPaging = builder.AddTemplate($"SELECT C.* FROM ({queryMaxPaging.RawSql}) C WHERE RNO >=:START_NO");
+
+
+        //    var resultMapping = new Func<dynamic, DTO_PQSCON>((row) =>
+        //    {
+        //        if (returnData.TotalRowCount == 0)
+        //        {
+        //            returnData.TotalRowCount = Convert.ToInt32(row.RESULT_COUNT);
+        //        }
+        //        return new DTO_PQSCON
+        //        {
+        //            Id = row.PRODUCTID,
+        //            Date = row.ONAIRDATE,
+        //            CartType = row.PQSTYPE,
+        //            Num = Convert.ToInt32(row.SEQNUM),
+        //            FileId = row.CARTID,
+        //            ItemType = row.CARTTYPE,
+        //            Duration = Convert.ToInt32(row.EOM),
+        //            TransType = row.TRANSTYPE,
+        //            InTime = Convert.ToInt32(row.INTROTIME),
+        //            OutTime = Convert.ToInt32(row.EXTROTIME),
+        //            FadeOutTime = Convert.ToInt32(row.FADEOUTTIME),
+        //            FadeInTime = Convert.ToInt32(row.FADEINTIME),
+        //            Memo = row.DESCRIPTION,
+        //            MainTitle = row.MAINTITLE,
+        //            SubTitle = row.SUBTITLE,
+        //        };
+        //    });
+
+        //    returnData.Data = _repository.Select(queryMaxMinPaging.RawSql, param, resultMapping);
+        //    returnData.RowPerPage = rowPerPage;
+        //    returnData.SelectPage = selectPage;
+        //    return returnData;
+        //}
+
         public DTO_RESULT_PAGE_LIST<DTO_PGM_INFO> FindPGM(string media, string brd_dt, string pgm, string editor, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
             int startNo = (rowPerPage * selectPage) - (rowPerPage - 1);
@@ -504,7 +566,6 @@ namespace MAMBrowser.DAL
                     builder.Where($"LOWER(CMGROUPNAME) LIKE LOWER('%{word}%')");
                 }
             }
-
             
             var resultMapping = new Func<dynamic, DTO_CM>((row) =>
             {

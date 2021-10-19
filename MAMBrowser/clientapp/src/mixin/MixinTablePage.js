@@ -73,7 +73,6 @@ let mixinTablePage = apiType => ({
                 this.$fn.notify('inputError', {});
                 return;
             }
-            console.log("이거맞아?");
             this.isTableLoading = true;
             const media = this.searchItems.media;
             const brd_dt = this.searchItems.brd_dt;
@@ -86,6 +85,7 @@ let mixinTablePage = apiType => ({
             this.$http.get(`/api/products/${subUrl}`, { params: this.searchItems })
                 .then(res => {
                     this.setResponseData(res);
+                    console.log(res)
                     this.isTableLoading = false;
                 });
         },
@@ -95,6 +95,13 @@ let mixinTablePage = apiType => ({
             this.isSubTableLoading = true;
             this.$http.get(`/api/products/${apiType}/contents/${brdDT}/${sbID}`)
                 .then(res => {
+                    console.log("apiType")
+                    console.log(apiType)
+                    console.log("brdDT")
+                    console.log(brdDT)
+                    console.log("sbID")
+                    console.log(sbID)
+                    console.log(res)
                     this.setReponseContentsData(res, 'normal');
                     this.isSubTableLoading = false;
                 });

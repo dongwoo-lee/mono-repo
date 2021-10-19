@@ -45,9 +45,10 @@
     "filler-etc": "FILLER(기타)",
     "dl30": "DL 3.0",
     "cuesheet": "큐시트",
-    "week": "기본 큐시트 작성",
-    "day": "일일 큐시트 작성",
+    "week": "기본 큐시트",
+    "day": "일일 큐시트",
     "list": "목록",
-    "template": "템플릿"
+    "template": "템플릿",
+    "detail": "큐시트 작성"
   }
 }

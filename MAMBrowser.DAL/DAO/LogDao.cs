@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MAMBrowser.Common;
+using MAMBrowser.DAL.Expand.Factories;
 using MAMBrowser.DTO;
 using System;
 using System.Collections.Generic;

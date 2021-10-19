@@ -4,10 +4,17 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>MAMBrowser</RootNamespace>
     <UserSecretsId>e3e68b19-222d-49f7-bc96-d2329e75f809</UserSecretsId>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,9 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DAP3.CueSheetCommon" Version="1.0.16" />
+    <PackageReference Include="DAP3.CueSheetDAL" Version="1.0.24" />
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
     <PackageReference Include="FluentFTP" Version="33.0.2" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
     <PackageReference Include="NAudio" Version="1.10.0" />
@@ -33,6 +43,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.5.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
@@ -40,6 +51,18 @@
   <ItemGroup>
     <ProjectReference Include="..\MAMBrowser.Common\MAMBrowser.Common.csproj" />
     <ProjectReference Include="..\MAMBrowser.DAL\MAMBrowser.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Oracle.DataAccess">
+      <HintPath>C:\Oracle\odac32\odp.net\bin\4\Oracle.DataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Entity">
+      <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.EnterpriseServices">
+      <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.EnterpriseServices.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

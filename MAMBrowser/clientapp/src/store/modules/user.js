@@ -29,7 +29,16 @@ const getAddUrlAndIconMenuList = (menuList, roleList) => {
       }
     });
   });
-
+  // 메뉴 정렬
+  menuList.sort(function (a, b) {
+    if (a.id > b.id) {
+      return 1;
+    }
+    if (a.id < b.id) {
+      return -1;
+    }
+    return 0;
+  });
   return menuList;
 };
 

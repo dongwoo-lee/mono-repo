@@ -51,6 +51,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("files/{userId}")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] M30_MAM_PRIVATE_SPACE metaData)
         {
+            
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {

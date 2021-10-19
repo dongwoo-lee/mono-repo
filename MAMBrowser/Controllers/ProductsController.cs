@@ -3,6 +3,7 @@ using MAMBrowser.BLL;
 using MAMBrowser.Common;
 using MAMBrowser.Common.Foundation;
 using MAMBrowser.DAL;
+using MAMBrowser.DAL.Expand.Factories;
 using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
@@ -38,8 +39,6 @@ namespace MAMBrowser.Controllers
         private readonly IFileProtocol _fileService;
         private readonly ILogger<ProductsController> _logger;
         private readonly WebServerFileHelper _fileHelper;
-
-
 
         public ProductsController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ProductsBll bll, ServiceResolver sr, ILogger<ProductsController> logger, WebServerFileHelper fileHelper)
         {

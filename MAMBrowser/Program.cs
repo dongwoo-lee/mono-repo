@@ -20,7 +20,7 @@ namespace MAMBrowser
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.CaptureStartupErrors(true).UseSetting("detailedErrors", "true").UseStartup<Startup>();
                 });
                 //.ConfigureLogging((hostingContext, logging) =>
                 //{

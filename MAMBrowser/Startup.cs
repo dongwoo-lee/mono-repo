@@ -24,6 +24,9 @@ using System.Net.Sockets;
 using MAMBrowser.Foundation;
 using MAMBrowser.Common.Foundation;
 using MAMBrowser.Helper;
+using MAMBrowser.DAL.Expand.Factories;
+using MAMBrowser.DAL.Expand.Factories.Web;
+using DAP3.CueSheetDAL.Factories.Web;
 
 namespace MAMBrowser
 {
@@ -42,6 +45,8 @@ namespace MAMBrowser
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
@@ -54,7 +59,8 @@ namespace MAMBrowser
                 c.IncludeXmlComments(xmlPath);
                 c.SchemaFilter<EnumSchemaFilter>();
             });
-
+            string value = Configuration.GetSection("ConnectionString").Value;
+            WebCueSheetFactory.Instance.SetConnectionString(value);
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
@@ -93,7 +99,6 @@ namespace MAMBrowser
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseRouting();
 
             // global cors policy
@@ -124,7 +129,7 @@ namespace MAMBrowser
 
             });
         }
-       
+     
         private void DISetting(IServiceCollection services)
         { 
             //옵션 DI
@@ -137,6 +142,7 @@ namespace MAMBrowser
             TokenGenerator.ExpireHour = AppSetting.ExpireMusicTokenHour;
             TokenGenerator.TokenIssuer = AppSetting.TokenIssuer;
             TokenGenerator.TokenSignature = AppSetting.TokenSignature;
+
             //
             services.AddTransient<WebServerFileHelper>();
             services.AddTransient<TransactionRepository>();
@@ -151,6 +157,9 @@ namespace MAMBrowser
             services.AddTransient<ProductsDao>();
             services.AddTransient<PublicFileDao>();
             services.AddTransient<LogDao>();
+            services.AddTransient<WebCueSheetFactory>();
+            
+
             //BLL 등록
             services.AddTransient<APIBll>();
             services.AddTransient<CategoriesBll>();
@@ -159,12 +168,36 @@ namespace MAMBrowser
             services.AddTransient<PublicFileBll>();
             services.AddTransient<LogBll>();
 
+            services.AddTransient<CueUserInfoBll>();
+            services.AddTransient<DayCueSheetBll>();
+            services.AddTransient<DefCueSheetBll>();
+            services.AddTransient<TemplateBll>();
+            services.AddTransient<FavoriteBll>();
+
             //서비스 등록
             services.AddScoped<IUserService, UserService>();
 
             //기타 등록
             services.Configure<StorageMaps>(Configuration.GetSection("StorageMaps"));
+
+            MAMWebFactory.Instance.Setting(AppSetting.ConnectionString, AppSetting.ExpireMusicTokenHour, GetIP(), AppSetting.TokenIssuer,
+                AppSetting.TokenSignature);
         }
+
+        //대기
+        private string GetIP()
+        {
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return null;
+        }
+
         private void StorageFactorySetting(IServiceCollection services)
         {
             //스토리지 연결정보 팩토리구성
@@ -239,3 +272,21 @@ namespace MAMBrowser
         }
     }
 }
+
+
+//대기
+//private string GetIP()
+//{
+//    IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+//    foreach (IPAddress ip in host.AddressList)
+//    {
+//        if (ip.AddressFamily == AddressFamily.InterNetwork)
+//        {
+//            return ip.ToString();
+//        }
+//    }
+//    return null;
+//}
+//대기
+//MAMWebFactory.Instance.Setting(AppSetting.ConnectionString, AppSetting.ExpireMusicTokenHour, GetIP(), AppSetting.TokenIssuer,
+//    AppSetting.TokenSignature);

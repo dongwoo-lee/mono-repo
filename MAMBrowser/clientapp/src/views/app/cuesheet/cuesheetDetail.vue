@@ -2,50 +2,95 @@
   <div class="overView">
     <div id="cuesheet_view">
       <div class="toolDiv">
-        <div id="subtitleDiv">
-          <span class="subTitle">큐시트</span>
-          <span class="subTitle">|</span>
-          <span class="subTitle">이전 큐시트 조회</span>
-        </div>
-        <div>
-          <h1>김이나의 별이 빛나는 밤에</h1>
-        </div>
-        <div class="separator mb-3"></div>
-        <div class="iconDiv">
-          <DxButton icon="columnchooser" v-b-modal.modal-template />
-          <DxDropDownButton
-            :items="downloaditem"
-            :drop-down-options="{ width: 70 }"
-            icon="download"
-            :showArrowIcon="false"
-            @item-click="onDownloadItemClick"
-          />
-          <DxButton icon="print" @click="exportGrid()" />
-          <DxButton icon="edit" v-b-modal.modal-memo />
+        <div v-if="tttt">
+          <div id="subtitleDiv">
+            <span class="subtitle">큐시트</span>
+            <span class="subtitle">|</span>
+            <span class="subtitle">이전 큐시트 조회</span>
+          </div>
+          <div>
+            <h1>김이나의 별이 빛나는 밤에</h1>
+          </div>
+          <div class="separator mb-3 mt-0"></div>
+          <div class="iconDiv">
+            <DxButton icon="arrowleft" v-b-modal.modal-new />
+            <DxButton icon="columnchooser" v-b-modal.modal-template />
+            <DxDropDownButton
+              :items="downloaditem"
+              :drop-down-options="{ width: 70 }"
+              icon="download"
+              :showArrowIcon="false"
+              @item-click="onDownloadItemClick"
+            />
+          </div>
+          <div class="detailText">
+            <span class="front">
+              <span class="test">.</span>
+              방송일 :
+              <span class="back">2021.04.21</span>
+            </span>
+            <span class="front">
+              <span class="test">.</span>
+              매체 :
+              <span class="back">FM4U</span>
+            </span>
+            <span class="front">
+              <span class="test">.</span>
+              담당자 :
+              <span class="back">김은비</span>
+            </span>
+            <span class="front">
+              <span class="test">.</span>
+              최종수정일 :
+              <span class="back">2021.04.21 16:09</span>
+            </span>
+          </div>
         </div>
         <b-modal
-          id="modal-template"
+          id="modal-new"
           size="lg"
           centered
-          title="템플릿으로 저장"
+          title="새큐시트"
+          ok-title="확인"
+          cancel-title="취소"
+        >
+          <div id="modelDiv" class="d-block text-center">
+            <div class="mb-3 mt-3" style="font-size: 20px">
+              <div class="mb-3">빈 새큐시트를 불러옵니다.</div>
+              입력한 모든 내용은 삭제됩니다. 계속하시겠습니까?
+            </div>
+          </div>
+        </b-modal>
+        <b-modal
+          id="modal-save"
+          size="lg"
+          centered
+          title="큐시트 저장"
+          ok-title="확인"
+          cancel-title="취소"
+        >
+          <div id="modelDiv" class="d-block text-center">
+            <div class="mb-3 mt-3" style="font-size: 20px">
+              <div class="mb-3">큐시트를 저장합니다.</div>
+            </div>
+          </div>
+        </b-modal>
+
+        <b-modal
+          ref="modal-templateLoad"
+          size="xl"
+          centered
+          title="템플릿 불러오기"
           ok-title="취소"
           ok-only
         >
           <div id="modelDiv" class="d-block text-center">
-            <div class="mb-3 mt-3" style="font-size: 20px">
-              <div>현재 큐시트를 템플릿으로 저장합니다.</div>
-              템플릿 이름을 입력해 주세요.
-            </div>
             <div>
-              <div
-                class="dx-field-label mt-3 mb-5 pl-5 pr-0"
-                style="font-size: 15px"
-              >
-                템플릿 명 :
-              </div>
-              <div class="dx-field-value mt-3 mb-5 pr-5">
-                <DxTextBox placeholder="이름없는 템플릿" width="320px" />
-              </div>
+              <CuesheetTemplateList
+                :modalData="modalData"
+                :temData="temData"
+                :tablewidth="tablewidth"
+              />
             </div>
           </div>
         </b-modal>
@@ -117,352 +162,659 @@
             </div>
           </div>
         </b-modal>
-        <div class="detailText">
-          <span class="front">
-            <span class="test">.</span>
-            방송일 :
-            <span class="back">2021.04.21</span>
-          </span>
-          <span class="front">
-            <span class="test">.</span>
-            채널 :
-            <span class="back">FM4U</span>
-          </span>
-          <span class="front">
-            <span class="test">.</span>
-            담당자 :
-            <span class="back">김은비</span>
-          </span>
-          <span class="front">
-            <span class="test">.</span>
-            수정일 :
-            <span class="back">2021.04.21 16:09</span>
-          </span>
-        </div>
-        <div id="musicTool">
-          <div class="musicseparator">
-            <div class="toptext">
-              <i class="dx-icon-globe"></i>
-              <span class="toptextin">꿈의팝송72-b</span>
-            </div>
-            <div class="centertext">
-              <div>카테고리 : 꿈의팝송</div>
-              <div>편집자 : 김현경</div>
-              <div>편집일 : 2020-03-29 16:11:44</div>
+        <b-modal
+          id="modal-setting"
+          size="lg"
+          centered
+          title="추가정보"
+          ok-title="저장"
+          cancel-title="취소"
+        >
+          <div class="settingDiv">
+            <div class="dx-fieldset">
+              <div class="dx-field">
+                <div class="dx-field-label" style="font-size: 15px">진행 :</div>
+                <div class="dx-field-value">
+                  <DxTextBox placeholder="김이나" width="320px" />
+                </div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label" style="font-size: 15px">구성 :</div>
+                <div class="dx-field-value">
+                  <DxTextBox placeholder="홍재정, 이희상" width="320px" />
+                </div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label" style="font-size: 15px">연출 :</div>
+                <div class="dx-field-value">
+                  <DxTextBox placeholder="홍희주" width="320px" />
+                </div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label" style="font-size: 15px">기타 :</div>
+                <div class="dx-field-value">
+                  <DxTextArea
+                    :height="100"
+                    value="이 문서는 MBC의 동의 없이 수정, 변경 및 복사 할 수 없습니다."
+                  />
+                </div>
+              </div>
             </div>
           </div>
-          <div class="playerDiv">
-            <div class="playerout">
-              <Player
-                ref="play"
-                :requestType="requestType"
-                :fileKey="fileKey"
-                :tempDownloadUrl="tempDownloadUrl"
-                :waveformUrl="waveformUrl"
-                :streamingUrl="streamingUrl"
-                :direct="direct"
-                :som="som"
-                :eom="eom"
+        </b-modal>
+        <div v-if="!tttt">
+          <div class="iconDivClose">
+            <div class="pt-1">
+              <DxButton icon="save" type="default" v-b-modal.modal-save />
+            </div>
+            <div class="pt-1">
+              <DxDropDownButton
+                :items="downloaditem"
+                :drop-down-options="{ width: 70 }"
+                width="36px"
+                icon="download"
+                :showArrowIcon="false"
+                @item-click="onDownloadItemClick"
               />
             </div>
+            <div class="pt-1">
+              <DxDropDownButton
+                :items="activefolderitem"
+                width="36px"
+                :drop-down-options="{ width: 160 }"
+                icon="activefolder"
+                :showArrowIcon="false"
+                @item-click="onActivefolderItemClick"
+              />
+            </div>
+            <div class="pt-1">
+              <DxButton icon="columnchooser" v-b-modal.modal-template />
+            </div>
+            <div class="pt-1">
+              <DxButton icon="doc" v-b-modal.modal-new />
+            </div>
+            <div class="pt-1">
+              <DxButton icon="arrowleft" v-b-modal.modal-new />
+            </div>
           </div>
         </div>
-        <div id="fileuploader" class="fileuploader-container">
-          <DxFileUploader
-            select-button-text="파일 첨부"
-            accept="image/*"
-            :multiple="true"
-            label-text="큐시트에 필요한 대본 등을 첨부합니다. (※ 파일을 드래그하여 추가가 가능합니다.)"
-            upload-mode="instantly"
-          />
-        </div>
-        <div class="tagDiv">
-          <DxTagBox
-            :accept-custom-value="true"
-            @customItemCreating="onCustomItemCreating"
-            placeholder="태그를 등록하세요 (※ 태그등록 시 큐시트 조회에서 태그 검색이 가능합니다.) "
-          />
-        </div>
-        <div class="buttonDiv">
-          <button type="button" class="btn btn-outline-dark btn-lg">
-            목록으로
-          </button>
-        </div>
-      </div>
-      <div id="tabsDiv">
-        <div>
-          <DxTabPanel
-            id="tabPanel"
-            :defer-rendering="false"
-            :onSelectionChanged="SelectionChanged"
-          >
-            <DxItem title="출력용">
-              <template #default>
-                <div class="TabDiv">
-                  <div class="datagrid_top">
-                    <div id="datagridtitleText">김이나의 별이 빛나는 밤에</div>
-                    <div class="datagridsubText">
-                      <div class="pdtext">PD : 김은비</div>
-                      <div>작가 : 김은비</div>
+        <div id="tabsDiv">
+          <div>
+            <DxTabPanel
+              id="tabPanel"
+              :defer-rendering="false"
+              :onSelectionChanged="SelectionChanged"
+            >
+              <DxItem title="출력용">
+                <template #default>
+                  <div class="TabDiv">
+                    <div>
+                      <DxDataGrid
+                        id="channelAB_id"
+                        :data-source="viewtable"
+                        :ref="dataGridRef"
+                        :height="view_channel_height"
+                        :focusedRowEnabled="false"
+                        :showColumnLines="true"
+                        :show-borders="true"
+                        :showRowLines="true"
+                        @selection-changed="onSelectionChanged_view"
+                        @toolbar-preparing="viewtableOnToolbarPreparing($event)"
+                        @focused-row-changed="onFocusedRowChanged2"
+                        keyExpr="rowNO"
+                      >
+                        <DxEditing
+                          :allow-adding="true"
+                          mode="cell"
+                          :allow-updating="true"
+                          start-edit-action="dblClick"
+                        />
+                        <DxSelection
+                          mode="multiple"
+                          showCheckBoxesMode="none"
+                        />
+                        <DxRowDragging
+                          dropFeedbackMode="indicate"
+                          :allow-reordering="true"
+                          :on-reorder="onReorder2"
+                          :on-add="onAddViewChannel"
+                          :on-drag-start="onDragStart"
+                          :on-drag-end="onDragEnd"
+                          :show-drag-icons="false"
+                          group="tasksGroup"
+                        />
+                        <DxColumn
+                          width="13%"
+                          edit-cell-template="cellTemplate8"
+                          alignment="center"
+                          data-field="code"
+                          caption="코드"
+                        />
+                        <DxColumn
+                          caption="내용"
+                          data-field="name"
+                          alignment="center"
+                          cell-template="cellTemplate12"
+                        />
+                        <DxColumn
+                          css-class="durationTime"
+                          data-field="startDuration"
+                          caption="사용시간"
+                          alignment="center"
+                          :width="100"
+                        />
+                        <DxColumn
+                          css-class="durationTime"
+                          caption="시작시간"
+                          :calculate-cell-value="calculateSalesAmount"
+                          alignment="center"
+                          :width="100"
+                        />
+                        <DxColumn
+                          caption="비고"
+                          :width="150"
+                          alignment="center"
+                          data-field="remarks"
+                        />
+                        <DxScrolling mode="virtual" />
+                        <template #cellTemplate8="{ data: cellInfo }">
+                          <div>
+                            <DxSelectBox
+                              :items="code_list"
+                              placeholder=""
+                              :on-value-changed="
+                                (value) => onValueChanged(value, cellInfo)
+                              "
+                              :value="cellInfo.data.code"
+                            />
+                          </div>
+                        </template>
+                        <template #cellTemplate12="{ data: cellInfo }">
+                          <div>
+                            {{ cellInfo.data.name }}
+                          </div>
+                        </template>
+                        <template #diff-cell-template6="{ data }">
+                          <div
+                            v-if="data.data.name"
+                            v-bind:class="{ graycolor: !data.data.categoryID }"
+                          >
+                            {{ data.data.duration }}
+                          </div>
+                        </template>
+                        <template #diff-cell-template5="{ data }">
+                          <div v-if="data.data.categoryID">
+                            {{ data.data.duration }}
+                          </div>
+                        </template>
+                        <template #diff-cell-template="{ data }">
+                          <div>
+                            <div class="dataname">{{ data.data.name }}</div>
+                            <div class="categoryname">
+                              {{ data.data.categoryName }}
+                            </div>
+                          </div>
+                        </template>
+                        <template #totalGroupCount3>
+                          <div>
+                            <DxButton
+                              id="gridDeleteSelected"
+                              :height="34"
+                              :disabled="!selectedItemKeys_view.length"
+                              icon="trash"
+                              @click="selectionDel_view"
+                            />
+                          </div>
+                        </template>
+                        <template #totalGroupCount2>
+                          <div>
+                            <DxButton
+                              id="gridDeleteSelected"
+                              :height="34"
+                              icon="print"
+                              @click="exportGrid()"
+                            />
+                          </div>
+                        </template>
+                        <template #totalGroupCount_setting>
+                          <div>
+                            <DxButton
+                              id="gridDeleteSelected"
+                              :height="34"
+                              icon="preferences"
+                              v-b-modal.modal-setting
+                            />
+                          </div>
+                        </template>
+                      </DxDataGrid>
                     </div>
                   </div>
-                  <div id="datagridbottomText">
-                    참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시
-                    마포구 성람로 267 김이나의 별이 빛나는 밤에
-                  </div>
-                  <div>
-                    <DxDataGrid
-                      id="channelAB_id"
-                      :data-source="viewtable"
-                      class="printView2"
-                      :row-alternation-enabled="true"
-                      :ref="dataGridRef"
-                      height="700px"
-                      :focusedRowEnabled="true"
-                      :showColumnLines="true"
-                      :show-borders="true"
-                      :showRowLines="true"
-                      @cell-prepared="onCellPrepared"
-                      @selection-changed="onSelectionChanged"
-                      keyExpr="rowNO"
-                    >
-                      <DxSelection mode="multiple" />
-                      <DxRowDragging
-                        dropFeedbackMode="indicate"
-                        :allow-reordering="true"
-                        :on-add="onAddChannelAB"
-                        :show-drag-icons="false"
-                        group="tasksGroup"
-                      />
-                      <DxColumn
-                        caption="코드"
-                        :width="60"
-                        alignment="center"
-                        cell-template="cellTemplate3"
-                      />
-                      <DxColumn caption="내용" data-field="categoryID" />
-                      <DxColumn
-                        caption="소재명"
-                        data-field="name"
-                        cell-template="diff-cell-template"
-                        :width="170"
-                      />
-                      <DxColumn
-                        css-class="durationTime"
-                        data-field="duration"
-                        caption="사용시간"
-                        alignment="center"
-                        cell-template="diff-cell-template6"
-                        :width="90"
-                      />
-                      <DxColumn
-                        css-class="durationTime"
-                        cell-template="diff-cell-template5"
-                        caption="시작시간"
-                        alignment="center"
-                        :width="90"
-                      />
-                      <DxColumn
-                        caption="비고"
-                        :width="120"
-                        alignment="center"
-                      />
-                      <DxScrolling mode="virtual" />
-                      <template #diff-cell-template6="{ data }">
-                        <div
-                          v-if="data.data.name"
-                          v-bind:class="{ graycolor: !data.data.categoryID }"
-                        >
-                          {{ data.data.duration }}
-                        </div>
-                      </template>
-                      <template #diff-cell-template5="{ data }">
-                        <div v-if="data.data.categoryID">
-                          {{ data.data.duration }}
-                        </div>
-                      </template>
-                      <template #diff-cell-template="{ data }">
-                        <div>
-                          <div class="dataname">{{ data.data.name }}</div>
-                          <div class="categoryname">
-                            {{ data.data.categoryName }}
-                          </div>
-                        </div>
-                      </template>
-                      <template #cellTemplate3="{ data }">
-                        <div
-                          class="rowbtn"
-                          v-if="data.data.categoryID"
-                          v-bind:class="{ graycolor: !data.data.categoryID }"
-                        >
-                          CM
-                        </div>
-                      </template>
-                      <template #totalGroupCount>
-                        <div>
-                          <DxButton
-                            id="gridDeleteSelected"
-                            :height="34"
-                            :disabled="!selectedItemKeys.length"
-                            text="선택항목 삭제"
-                            @click="selectionDel"
-                          />
-                        </div>
-                      </template>
-                    </DxDataGrid>
-                  </div>
+                </template>
+              </DxItem>
+              <template #title="data">
+                <div>
+                  <span v-if="data.index == 0"
+                    >출력용
+                    <span v-if="activetab == '출력용'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" /> </span
+                  ></span>
+                  <span v-if="data.index == 1"
+                    >C1
+                    <span v-if="activetab == 'C1'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" />
+                    </span>
+                  </span>
+                  <span v-if="data.index == 2"
+                    >C2
+                    <span v-if="activetab == 'C2'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" /> </span
+                  ></span>
+                  <span v-if="data.index == 3"
+                    >C3
+                    <span v-if="activetab == 'C3'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" /> </span
+                  ></span>
+                  <span v-if="data.index == 4"
+                    >C4
+                    <span v-if="activetab == 'C4'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" /> </span
+                  ></span>
+                  <span v-if="data.index == 5"
+                    >즐겨찾기
+                    <span v-if="activetab == '즐겨찾기'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" />
+                    </span>
+                  </span>
+                  <span v-if="data.index == 6"
+                    >부가정보
+                    <span v-if="activetab == '부가정보'" class="ml-1">
+                      <DxButton icon="trash" id="c1tabbtn" /> </span
+                  ></span>
                 </div>
               </template>
-            </DxItem>
-            <DxItem title="DAP (A,B)">
-              <template #default>
-                <div>
-                  <DxDataGrid
-                    id="channelAB_id2"
-                    :data-source="channelAB"
-                    :row-alternation-enabled="true"
-                    height="775px"
-                    :focusedRowEnabled="true"
-                    :showColumnLines="false"
-                    :show-borders="true"
-                    :showRowLines="true"
-                    keyExpr="rowNO"
-                    @selection-changed="onSelectionChanged"
-                  >
-                    <DxRowDragging
-                      dropFeedbackMode="indicate"
-                      :allow-reordering="true"
-                      :on-add="onAddChannelAB"
-                      :show-drag-icons="false"
-                      group="tasksGroup"
-                    />
-                    <DxSelection mode="multiple" />
-                    <DxColumn
-                      data-field="rowNO"
-                      caption="순서"
-                      :width="100"
-                      alignment="center"
-                    />
-                    <DxColumn
-                      caption=""
-                      :width="80"
-                      cell-template="cellTemplate2"
-                    />
-                    <DxColumn caption="소재명" cell-template="cellTemplate3" />
-                    <DxColumn
-                      data-field="duration"
-                      caption="시간"
-                      alignment="center"
-                      :width="170"
-                    />
-                    <DxColumn
-                      caption="편집정보"
-                      alignment="center"
-                      :width="80"
-                      cell-template="cellTemplate1"
-                    />
-                    <DxScrolling mode="virtual" />
-                    <template #cellTemplate1="{ data }">
-                      <div class="rowbtn" v-if="data === data">
-                        <b-icon icon="bar-chart-fill"></b-icon>
-                      </div>
-                    </template>
-                    <template #cellTemplate2="{ data }">
-                      <div class="rowbtn" v-if="data === data">
-                        <b-icon icon="folder-fill"></b-icon>
-                        <b-icon icon="suit-diamond-fill"></b-icon>
-                      </div>
-                    </template>
-                    <template #cellTemplate3="{ data }">
-                      <div>
-                        <div>{{ data.data.name }}</div>
-                        <div class="categoryname">
-                          {{ data.data.categoryName }}
-                        </div>
-                      </div>
-                    </template>
-                    <template #totalGroupCount>
-                      <div>
-                        <DxButton
-                          id="gridDeleteSelected"
-                          :height="34"
-                          :disabled="!selectedItemKeys.length"
-                          text="선택항목 삭제"
-                          @click="selectionDel"
+              <DxItem title="C1">
+                <template #default>
+                  <div class="cuesheet-cart-table">
+                    <div class="column">
+                      <SortableWidgetC
+                        :widgetIndex="widgetIndex"
+                        :fileData="channelC_1"
+                        :channelC_1_Class="(channelC_Class = 1)"
+                        :tttt="tttt"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </DxItem>
+              <DxItem title="C2">
+                <template #default>
+                  <div class="cuesheet-cart-table">
+                    <div class="column">
+                      <SortableWidgetC
+                        :widgetIndex="widgetIndex"
+                        :fileData="channelC_2"
+                        :channelC_1_Class="(channelC_Class = 2)"
+                        :tttt="tttt"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </DxItem>
+              <DxItem title="C3">
+                <template #default>
+                  <div class="cuesheet-cart-table">
+                    <div class="column">
+                      <SortableWidgetC
+                        :widgetIndex="widgetIndex"
+                        :fileData="channelC_3"
+                        :channelC_1_Class="(channelC_Class = 3)"
+                        :tttt="tttt"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </DxItem>
+              <DxItem title="C4">
+                <template #default>
+                  <div class="cuesheet-cart-table">
+                    <div class="column">
+                      <SortableWidgetC
+                        :widgetIndex="widgetIndex"
+                        :fileData="channelC_4"
+                        :channelC_1_Class="(channelC_Class = 4)"
+                        :tttt="tttt"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </DxItem>
+              <DxItem title="즐겨찾기">
+                <template #default>
+                  <div class="cuesheet-cart-table">
+                    <div class="column">
+                      <SortableWidgetC
+                        :widgetIndex="widgetIndex"
+                        :fileData="channelC_my"
+                        :channelC_1_Class="(channelC_Class = 0)"
+                        :tttt="tttt"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </DxItem>
+              <DxItem title="부가정보">
+                <template #default>
+                  <div style="padding: 5px">
+                    <div>
+                      <div id="fileuploader" class="fileuploader-container">
+                        <DxFileUploader
+                          select-button-text="파일 첨부"
+                          accept="image/*"
+                          :height="310"
+                          :multiple="true"
+                          label-text="큐시트에 필요한 대본 등을 첨부합니다. (※ 파일을 드래그하여 추가가 가능합니다.)"
+                          upload-mode="instantly"
                         />
                       </div>
-                    </template>
-                  </DxDataGrid>
-                </div>
-              </template>
-            </DxItem>
-            <DxItem title="C1">
-              <template #default>
-                <div class="cuesheet-cart-table">
-                  <div class="column">
-                    <SortableWidget
-                      :widgetIndex="widgetIndex"
-                      :fileData="channelC_1"
-                      :channelC_1_Class="(channelC_Class = 1)"
-                    />
+                      <div id="modelDiv" class="d-block text-center">
+                        <div class="mb-3 mt-3" style="font-size: 20px">
+                          <DxTextArea
+                            :height="232"
+                            :value.sync="valueForEditableTextArea"
+                          />
+                        </div>
+                      </div>
+                      <div class="tagDiv">
+                        <DxTagBox
+                          :accept-custom-value="true"
+                          @customItemCreating="onCustomItemCreating"
+                          placeholder="태그를 등록하세요 (※ 태그등록 시 큐시트 조회에서 태그 검색이 가능합니다.) "
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </template>
-            </DxItem>
-            <DxItem title="C2">
-              <template #default>
-                <div class="cuesheet-cart-table">
-                  <div class="column">
-                    <SortableWidget
-                      :widgetIndex="widgetIndex"
-                      :fileData="channelC_2"
-                      :channelC_1_Class="(channelC_Class = 2)"
-                    />
-                  </div>
-                </div>
-              </template>
-            </DxItem>
-            <DxItem title="C3">
-              <template #default>
-                <div class="cuesheet-cart-table">
-                  <div class="column">
-                    <SortableWidget
-                      :widgetIndex="widgetIndex"
-                      :fileData="channelC_3"
-                      :channelC_1_Class="(channelC_Class = 3)"
-                    />
-                  </div>
-                </div>
-              </template>
-            </DxItem>
-            <DxItem title="C4">
-              <template #default>
-                <div class="cuesheet-cart-table">
-                  <div class="column">
-                    <SortableWidget
-                      :widgetIndex="widgetIndex"
-                      :fileData="channelC_4"
-                      :channelC_1_Class="(channelC_Class = 4)"
-                    />
-                  </div>
-                </div>
-              </template>
-            </DxItem>
-            <DxItem title="즐겨찾기">
-              <template #default>
-                <div class="cuesheet-cart-table">
-                  <div class="column">
-                    <SortableWidget
-                      :widgetIndex="widgetIndex"
-                      :fileData="channelC_my"
-                      :channelC_1_Class="(channelC_Class = 0)"
-                    />
-                  </div>
-                </div>
-              </template>
-            </DxItem>
-          </DxTabPanel>
+                </template>
+              </DxItem>
+            </DxTabPanel>
+          </div>
         </div>
+      </div>
+      <div>
+        <div class="abchannel">
+          <div class="tabletoptextgrid">
+            DAP (A,B) <DxButton icon="trash" id="c1tabbtn" />
+          </div>
+          <DxDataGrid
+            id="channelAB_id2"
+            :focused-row-enabled="true"
+            :data-source="channelAB"
+            :height="ab_channel_height"
+            :focusedRowEnabled="false"
+            :showColumnLines="false"
+            :show-borders="true"
+            :showRowLines="true"
+            keyExpr="abchannelrowNO"
+            @selection-changed="onSelectionChanged_ab"
+            @toolbar-preparing="onToolbarPreparing($event)"
+            @focused-row-changed="onFocusedRowChanged"
+            :show-column-headers="false"
+          >
+            <DxRowDragging
+              dropFeedbackMode="indicate"
+              :allow-reordering="true"
+              :on-add="onAddChannelAB"
+              :on-reorder="onReorder"
+              :show-drag-icons="false"
+              group="tasksGroup"
+            />
+            <DxEditing
+              :allow-adding="true"
+              :allow-updating="true"
+              mode="cell"
+              start-edit-action="dblClick"
+            />
+            <DxSelection mode="multiple" showCheckBoxesMode="none" />
+            <DxColumn
+              cell-template="rowIndexTemplate"
+              caption="순서"
+              :width="70"
+              alignment="center"
+            />
+            <DxColumn caption="" :width="80" cell-template="cellTemplate2" />
+            <DxColumn
+              caption="소재명"
+              cell-template="cellTemplate3"
+              data-field="name"
+            />
+            <DxColumn
+              caption="시간"
+              alignment="center"
+              :width="120"
+              cell-template="cellTemplate4"
+            />
+            <DxColumn
+              caption="편집정보"
+              alignment="center"
+              data-field="transtype"
+              :width="120"
+              cell-template="cellTemplate1"
+            />
+            <DxScrolling mode="virtual" />
+            <template #rowIndexTemplate="{ data }">
+              <div>
+                <div>{{ data.rowIndex + 1 }}</div>
+              </div>
+            </template>
+            <template #cellTemplate1="{ data }">
+              <div class="rowbtn" v-if="data.data[0].categoryName">
+                <b-icon icon="align-start"></b-icon>
+                <b-icon icon="align-end"></b-icon>
+                <b-icon icon="play-circle-fill" style="color: #008ecc"></b-icon>
+              </div>
+            </template>
+            <template #cellTemplate2="{ data }">
+              <div class="rowbtn" v-if="data.data[0].categoryName">
+                <b-icon icon="disc"></b-icon>
+                <b-icon
+                  icon="suit-diamond-fill"
+                  style="color: #ffc107"
+                  @click="iconselect(data)"
+                  v-if="data.data.transtype === 's'"
+                ></b-icon>
+                <b-icon
+                  icon="arrow-repeat"
+                  style="color: #f44336"
+                  @click="iconselect(data)"
+                  v-if="data.data.transtype === 'l'"
+                ></b-icon>
+                <b-icon
+                  icon="arrow-down"
+                  style="color: #03a9f4"
+                  @click="iconselect(data)"
+                  v-if="data.data.transtype === 'c'"
+                ></b-icon>
+              </div>
+            </template>
+            <template #cellTemplate3="{ data }">
+              <div>
+                <div>
+                  {{ data.data[0].name }}
+                </div>
+                <div class="categoryname" v-if="data.data[0].categoryName">
+                  {{ data.data[0].categoryName }}
+                </div>
+              </div>
+            </template>
+            <template #cellTemplate4="{ data }">
+              <div>
+                <div v-if="data.data[0].categoryName">
+                  {{ data.data[0].duration }}
+                </div>
+              </div>
+            </template>
+            <template #totalGroupCount>
+              <div>
+                <DxButton
+                  id="gridDeleteSelected"
+                  :height="34"
+                  :disabled="!selectedItemKeys_ab.length"
+                  icon="trash"
+                  @click="selectionDel_ab"
+                />
+              </div>
+            </template>
+          </DxDataGrid>
+        </div>
+      </div>
+    </div>
+    <div class="schdiv">
+      <div class="schlist mt-3">
+        <div>
+          <DxMenu
+            id="subjectMenu"
+            :data-source="products"
+            orientation="vertical"
+            :selectedItem="products[0]"
+            display-expr="name"
+            :selectByClick="true"
+            selectionMode="single"
+            :onItemClick="itemclick"
+          />
+        </div>
+        <div>
+          <div class="schsch" v-if="menuitem_id != '4_1'">
+            <h3 class="ml-4 mb-5 mt-3">음반기록실</h3>
+            <div class="ml-5">
+              <div class="mt-3 mb-3">
+                <div>
+                  <span class="mr-3">대분류 :</span>
+                  <DxSelectBox
+                    class="subjectList mr-3"
+                    :items="subjectList_b"
+                    :value="subjectList_b[0]"
+                    width="150px"
+                    height="35px"
+                  />
+                </div>
+                <div class="mt-2">
+                  <span class="mr-3">소분류 :</span>
+                  <DxSelectBox
+                    class="subjectList mr-2"
+                    :items="subjectList_s"
+                    :value="subjectList_s[0]"
+                    width="150px"
+                    height="35px"
+                  />
+                </div>
+                <div class="mt-2">
+                  <span class="mr-2">검색옵션 :</span>
+                  <DxSelectBox
+                    class="subjectList mr-3"
+                    :items="subjectList_o"
+                    :value="subjectList_o[0]"
+                    width="150px"
+                    height="35px"
+                  />
+                </div>
+              </div>
+              <div class="mt-4 mb-3">
+                <div>
+                  <span class="mr-3">검색어 :</span>
+                  <DxTextBox
+                    placeholder=""
+                    class="subjectList mr-3"
+                    width="200px"
+                  />
+                </div>
+                <button
+                  type="button"
+                  id="schbtn2"
+                  class="btn btn-outline-primary btn-sm"
+                >
+                  검색
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="schsch" v-else>
+            <h3 class="ml-5 mb-5 mt-3">부조SB</h3>
+            <div class="ml-5">
+              <div>
+                <span class="subjectList mr-2">방송일 :</span>
+                <DxDateBox
+                  :value="now"
+                  type="date"
+                  class="subjectList mr-3"
+                  width="130px"
+                  height="35px"
+                  display-format="yyyy-MM-dd"
+                />
+                <span class="subjectList mr-2">매체 :</span>
+                <DxSelectBox
+                  class="subjectList mr-2"
+                  :items="subjectList_sb"
+                  :value="subjectList_sb[0]"
+                  width="120px"
+                  height="35px"
+                />
+              </div>
+              <div class="subjectListDiv mt-3 mb-3">
+                <span class="subjectList mr-2">사용처 :</span>
+                <DxTextBox
+                  placeholder=""
+                  class="subjectList mr-2"
+                  width="250px"
+                />
+                <button
+                  type="button"
+                  id="schbtn2"
+                  class="btn btn-outline-primary btn-sm"
+                >
+                  검색
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="schtable mt-3">
+        <DxDataGrid
+          :data-source="dataSource"
+          :ref="dataGridRef"
+          height="400"
+          :focusedRowEnabled="false"
+          :showColumnLines="true"
+          :show-borders="true"
+          :row-alternation-enabled="true"
+          :showRowLines="true"
+          keyExpr="rowNO"
+          :element-attr="dataGridAttri"
+        >
+          <DxRowDragging
+            :show-drag-icons="false"
+            group="tasksGroup"
+            :on-drag-start="onDragStart"
+            :on-drag-end="onDragEnd"
+          />
+          <DxSelection mode="multiple" showCheckBoxesMode="none" />
+          <DxColumn
+            caption="순서"
+            :width="50"
+            alignment="center"
+            data-field="rowNO"
+          />
+          <DxColumn data-field="name" caption="소재명" />
+          <DxColumn data-field="categoryName" caption="분류" :width="130" />
+          <DxColumn data-field="editorName" caption="제작자" :width="80" />
+          <DxColumn data-field="duration" caption="사용시간" :width="110" />
+          <DxColumn
+            data-field="masteringDtm"
+            caption="마스터링 일시"
+            :width="180"
+          />
+          <DxColumn data-field="proType" caption="타입" :width="70" />
+          <DxScrolling mode="virtual" />
+        </DxDataGrid>
       </div>
     </div>
   </div>
@@ -471,7 +823,7 @@
 <script>
 import { DxProgressBar } from "devextreme-vue/progress-bar";
 import CuesheetTemplateList from "./cuesheetTemplateList";
-import DxDropDownButton from "devextreme-vue/drop-down-button";
+import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import Player from "../../../components/Common/Player";
 import DxTextArea from "devextreme-vue/text-area";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
@@ -480,18 +832,20 @@ import { mapGetters } from "vuex";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxCheckBox } from "devextreme-vue/check-box";
 import DxMenu from "devextreme-vue/menu";
-import SortableWidget from "./SortableWidget";
+// import SortableWidget from "./SortableWidget";
+// import SortableWidgetC from "./SortableWidget_c.vue";
 import {
   DxDataGrid,
   DxColumn,
+  DxEditing,
   DxSelection,
   DxScrolling,
   DxRowDragging,
 } from "devextreme-vue/data-grid";
+import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxFileUploader } from "devextreme-vue/file-uploader";
 import DxTagBox from "devextreme-vue/tag-box";
 import DxButton from "devextreme-vue/button";
-import DxList from "devextreme-vue/list";
 import DxTextBox from "devextreme-vue/text-box";
 import font from "../../../data/font";
 import axios from "axios";
@@ -513,7 +867,6 @@ import { saveAs } from "file-saver";
 const dataGridRef = "dataGrid";
 const widgetIndex = 16;
 const maxValue = 10;
-
 function statusFormat(value) {
   return `Loading: ${value * 100}%`;
 }
@@ -526,26 +879,47 @@ export default {
     DxFileUploader,
     DxTagBox,
     DxSelection,
-    DxList,
     DxTextBox,
-    SortableWidget,
+    // SortableWidget,
+    // SortableWidgetC,
     DxRowDragging,
     DxMenu,
     DxCheckBox,
     DxSelectBox,
     DxTabPanel,
     DxItem,
+    DxEditing,
     DxDateBox,
     DxTextArea,
     Player,
+    DxSpeedDialAction,
     DxDropDownButton,
     CuesheetTemplateList,
     DxProgressBar,
   },
   data() {
     return {
-      testrowNO: 99,
+      testkeyevent: false,
+      code_list: [
+        "오프닝",
+        "CM",
+        "SB",
+        "SM",
+        "BGM",
+        "LOGO",
+        "M",
+        "Filler",
+        "CODE",
+        "(빈칸)",
+      ],
+      view_channel_height: "650px",
+      ab_channel_height: "820px",
+      tttt: true,
+      viewtitletext: "김이나의 별이 빛나는 밤에",
+      abchannelrowNO: 0,
+      viewtestNO: 9,
       focusRowIndex: -1,
+      focusRowIndex2: -1,
       valueForEditableTextArea: "메모를 삽입하세요.",
       maxValue,
       seconds: maxValue,
@@ -561,7 +935,7 @@ export default {
         "이전 큐시트 불러오기",
       ],
       downloaditem: [".zip", ".wav", ".pdf", ".docx", ".excel"],
-      activetab: null,
+      activetab: "출력용",
       som: false,
       eom: false,
       code: "CM",
@@ -656,14 +1030,55 @@ export default {
           ],
         },
       ],
-      viewtable: [],
+      viewtable: [
+        { code: "", name: "1부", startDuration: "", remarks: "", rowNO: 0 },
+        {
+          code: "SM",
+          name: "오프닝",
+          startDuration: "",
+          remarks: "",
+          rowNO: 1,
+        },
+        {
+          code: "CM",
+          name: "1부 CM",
+          startDuration: "",
+          remarks: "",
+          rowNO: 2,
+        },
+        { code: "", name: "2부", startDuration: "", remarks: "", rowNO: 3 },
+        {
+          code: "CM",
+          name: "2부 CM",
+          startDuration: "",
+          remarks: "",
+          rowNO: 4,
+        },
+        { code: "", name: "3부", startDuration: "", remarks: "", rowNO: 5 },
+        {
+          code: "CM",
+          name: "3부 CM",
+          startDuration: "",
+          remarks: "",
+          rowNO: 6,
+        },
+        { code: "", name: "4부", startDuration: "", remarks: "", rowNO: 7 },
+        {
+          code: "CM",
+          name: "4부 CM",
+          startDuration: "",
+          remarks: "",
+          rowNO: 8,
+        },
+      ],
       channelAB: [],
       channelC_1: [],
       channelC_2: [],
       channelC_3: [],
       channelC_4: [],
       channelC_my: [],
-      selectedItemKeys: [],
+      selectedItemKeys_view: [],
+      selectedItemKeys_ab: [],
       schdivVal: true,
       programSchedule: [],
       widgetIndex,
@@ -706,8 +1121,6 @@ export default {
       params: this.searchItems,
     }).then((res) => {
       this.dataSource = res.data.resultObject.data;
-      console.log("axios -> dataSource Data");
-      console.log(this.dataSource);
     });
   },
   computed: {
@@ -725,6 +1138,79 @@ export default {
     },
   },
   methods: {
+    iconselect(data) {
+      if (data.data.transtype == "s") {
+        data.component.cellValue(data.rowIndex, "transtype", "l");
+      } else {
+        if (data.data.transtype == "l") {
+          data.component.cellValue(data.rowIndex, "transtype", "c");
+        } else {
+          data.component.cellValue(data.rowIndex, "transtype", "s");
+        }
+      }
+      data.component.saveEditData();
+    },
+    downSpace() {
+      this.testkeyevent = false;
+    },
+    clickSpace() {
+      this.testkeyevent = true;
+    },
+    getSelectedRowElements(keys) {
+      let arr = [],
+        idx = null,
+        el;
+      keys.forEach((key) => {
+        idx = this.dataGrid.getRowIndexByKey(key);
+        el = this.dataGrid.getRowElement(idx)[0];
+        arr.push(el);
+      });
+      return arr;
+    },
+    onDragStart(e) {
+      var selectedRowKeys = e.component.getSelectedRowKeys();
+      var selectedRowElements = this.getSelectedRowElements(selectedRowKeys);
+      var numSelected = selectedRowKeys.length;
+      e.component._selectedRowElements = selectedRowElements;
+      var testIndex = [];
+
+      selectedRowKeys.forEach((selectindex) => {
+        var index = e.component.getRowIndexByKey(selectindex);
+        testIndex.push(index);
+      });
+      if (!testIndex.includes(e.fromIndex)) {
+        numSelected = 0;
+        if (document.styleSheets[2].rules.length > 3)
+          document.styleSheets[2].removeRule(3);
+      }
+
+      if (numSelected >= 2) {
+        document.styleSheets[2].addRule(
+          ".dx-sortable-clone.dx-sortable-dragging:before",
+          'content: "' +
+            numSelected +
+            '"; background-color: green; color: white; padding: 2px 5px 2px 5px;'
+        );
+      }
+    },
+    onDragEnd() {
+      if (document.styleSheets[2].rules.length > 3)
+        document.styleSheets[2].removeRule(3);
+    },
+    //시작시간이 string 형태라서 변환하고 계산해야함
+    calculateSalesAmount(rowData) {
+      if (rowData.startDuration) {
+        return rowData.startDuration;
+      }
+    },
+    onFocusedRowChanged(e) {
+      this.focusRowIndex = e.rowIndex;
+    },
+    onFocusedRowChanged2(e) {
+      this.focusRowIndex2 = e.rowIndex;
+      this.dataGrid.focus(this.dataGrid.getCellElement(3, e.columnIndex));
+      //this.focusedRowKey = e.component.option("focusedRowKey");
+    },
     cancelClick(e) {
       this.buttonText = "확인";
       e();
@@ -778,9 +1264,6 @@ export default {
         this.$refs["modal-templateLoad"].show();
       }
     },
-    alldelete_c() {
-      console.log(channelC_1);
-    },
     SelectionChanged(e) {
       this.activetab = e.addedItems[0].title;
     },
@@ -789,34 +1272,31 @@ export default {
     },
     c_som() {
       this.som = !this.som;
-      console.log(this.som);
     },
     onValueChanged(value, cellInfo) {
-      cellInfo.setValue(value);
-      cellInfo.component.updateDimensions();
+      if (value.value == "(빈칸)") {
+        cellInfo.data.code = "";
+      } else {
+        cellInfo.data.code = value.value;
+      }
     },
     itemclick(e) {
-      console.log(e.itemData.id);
       this.menuitem_id = e.itemData.id;
     },
-    onToolbarPreparing(e) {
+    viewtableOnToolbarPreparing(e) {
       let toolbarItems = e.toolbarOptions.items;
-      toolbarItems.forEach((item) => {
-        if (item.name === "addRowButton") {
-          item.location = "before";
-        }
-      });
+
       toolbarItems.push({
-        location: "before",
-        template: "totalGroupCount",
+        location: "after",
+        template: "totalGroupCount2",
       });
     },
-    selectionDel() {
+    selectionDel_ab() {
       let a = this.channelAB;
-      let b = this.selectedItemKeys;
+      let b = this.selectedItemKeys_ab;
       for (let i = 0; i < b.length; i++) {
         for (let j = 0; j < a.length; j++) {
-          if (b[i].rowNO == a[j].rowNO) {
+          if (b[i].abchannelrowNO == a[j].abchannelrowNO) {
             a.splice(j, 1);
             break;
           }
@@ -824,36 +1304,176 @@ export default {
         this.channelAB = a;
       }
     },
-    onSelectionChanged({ selectedRowsData }) {
-      this.selectedItemKeys = selectedRowsData;
-      console.log(this.selectedItemKeys);
+    selectionDel_view() {
+      let a = this.viewtable;
+      let b = this.selectedItemKeys_view;
+      for (let i = 0; i < b.length; i++) {
+        for (let j = 0; j < a.length; j++) {
+          if (b[i].rowNO == a[j].rowNO) {
+            a.splice(j, 1);
+            break;
+          }
+        }
+        this.viewtable = a;
+      }
     },
-    testclick() {
-      console.log(this.selectedItemKeys);
+    onSelectionChanged_ab({ selectedRowsData }) {
+      this.selectedItemKeys_ab = selectedRowsData;
+    },
+    onSelectionChanged_view({ selectedRowsData }) {
+      this.selectedItemKeys_view = selectedRowsData;
     },
     onAddChannelAB(e) {
       this.channelAB = [...this.channelAB];
-      if (e.fromData !== undefined) {
-        this.channelAB.splice(e.toIndex, 0, e.fromData);
+      console.log(e.itemData);
+      var selectedRowsData = e.fromComponent.getSelectedRowsData();
+      if (selectedRowsData.length >= 2) {
+        selectedRowsData.forEach((data, index) => {
+          var row = [];
+          row.push(data);
+          row.transtype = "s";
+          row.abchannelrowNO = this.abchannelrowNO;
+          this.channelAB.splice(e.toIndex + index, 0, row);
+          this.abchannelrowNO = this.abchannelrowNO + 1;
+        });
       } else {
-        this.channelAB.splice(e.toIndex, 0, e.itemData);
+        var row = [];
+        row.push(e.itemData);
+        row.transtype = "s";
+        row.abchannelrowNO = this.abchannelrowNO;
+        if (e.fromData !== undefined) {
+          this.channelAB.splice(e.toIndex, 0, fromData);
+        } else {
+          this.channelAB.splice(e.toIndex, 0, row);
+          this.abchannelrowNO = this.abchannelrowNO + 1;
+        }
       }
+      e.fromComponent.clearSelection();
+    },
+    onAddViewChannel(e) {
+      this.viewtable = [...this.viewtable];
+      var selectedRowsData = e.fromComponent.getSelectedRowsData();
+      if (selectedRowsData.length >= 2) {
+        selectedRowsData.forEach((data, index) => {
+          var row = [];
+          row.code = data.categoryID;
+          row.name = data.name;
+          row.startDuration = data.duration;
+          row.rowNO = this.viewtestNO;
+          this.viewtable.splice(e.toIndex + index, 0, row);
+          this.viewtestNO = this.viewtestNO + 1;
+        });
+      } else {
+        var row = [];
+        if (e.fromData !== undefined) {
+          this.viewtable.splice(e.toIndex, 0, e.fromData);
+        } else {
+          //소재유형 알아내서 categoryID 바꾸기
+          row.code = e.itemData.categoryID;
+          row.name = e.itemData.name;
+          row.startDuration = e.itemData.duration;
+          row.rowNO = this.viewtestNO;
+          this.viewtable.splice(e.toIndex, 0, row);
+          this.viewtestNO = this.viewtestNO + 1;
+        }
+      }
+      e.fromComponent.clearSelection();
+    },
+    onReorder(e) {
+      this.channelAB = [...this.channelAB];
+      this.channelAB.splice(e.fromIndex, 1);
+      this.channelAB.splice(e.toIndex, 0, e.itemData);
+    },
+    onReorder2(e) {
+      this.viewtable = [...this.viewtable];
+      var selectedRowsData = e.component.getSelectedRowsData();
+      var selectedRowsKey = this.dataGrid.getSelectedRowKeys();
+      // selectedRowsKey.forEach((rowkey) => {
+      //   console.log(
+      //     "바뀐값 [" + rowkey + "] : " + e.component.getRowIndexByKey(rowkey)
+      //   );
+      // });
+      var testIndex = [];
+      selectedRowsKey.forEach((selectindex) => {
+        var index = e.component.getRowIndexByKey(selectindex);
+        testIndex.push(index);
+      });
+      if (!testIndex.includes(e.fromIndex)) {
+        selectedRowsData = [];
+      }
+      if (selectedRowsData.length > 1) {
+        var startindex = e.fromIndex;
+        var newindex = e.toIndex;
+        this.selectionDel_view();
+
+        if (startindex > e.toIndex) {
+          selectedRowsKey.forEach((selectindex) => {
+            var index = e.component.getRowIndexByKey(selectindex);
+            if (index < e.toIndex) {
+              newindex = newindex - 1;
+            }
+          });
+          selectedRowsData.forEach((obj, index) => {
+            this.viewtable.splice(newindex + index, 0, obj);
+          });
+        } else {
+          selectedRowsKey.forEach((selectindex) => {
+            var index = e.component.getRowIndexByKey(selectindex);
+            if (index < e.toIndex) {
+              newindex = newindex - 1;
+            }
+          });
+          newindex = newindex + 1;
+          selectedRowsData.forEach((obj, index) => {
+            this.viewtable.splice(newindex + index, 0, obj);
+          });
+        }
+      } else {
+        this.viewtable.splice(e.fromIndex, 1);
+        this.viewtable.splice(e.toIndex, 0, e.itemData);
+      }
+      e.component.clearSelection();
     },
     itemfindOff() {
       document.querySelector(".schdiv").classList.remove("schdivon");
       this.schdivVal = true;
     },
     itemfindOn() {
-      document.querySelector(".schdiv").classList.add("schdivon");
-      this.schdivVal = false;
-    },
-    getstoredata() {
-      console.log(this.cuesheetSchedule);
-    },
-    onCellPrepared(e) {
-      if (e.row.data.categoryID) {
-        e.cellElement.style.backgroundColor = "skyblue";
+      if (this.tttt) {
+        document.querySelector(".schdiv").classList.add("schdivon");
+        this.schdivVal = false;
+        this.view_channel_height = "364px";
+        this.ab_channel_height = "395px";
+        this.tttt = !this.tttt;
+      } else {
+        document.querySelector(".schdiv").classList.remove("schdivon");
+        this.schdivVal = true;
+        this.view_channel_height = "650px";
+        this.ab_channel_height = "820px";
+        this.tttt = !this.tttt;
       }
+    },
+    onCellPrepared_view(e) {
+      if (
+        e.row.data.code === "" &&
+        (e.row.data.name === "1부" ||
+          e.row.data.name === "2부" ||
+          e.row.data.name === "3부" ||
+          e.row.data.name === "4부")
+      ) {
+        e.cellElement.style.backgroundColor = "#E0E0E0";
+        //e.cellElement.style.color = "#C4C4C4";
+      }
+      if (e.row.data.code === "SB") {
+        e.cellElement.style.backgroundColor = "#DCEDC8";
+      }
+      if (e.row.data.code === "CM") {
+        e.cellElement.style.backgroundColor = "#B3E5FC";
+      }
+    },
+    onCellPrepared_ab(e) {
+      if (!e.row.data[0].categoryName)
+        e.cellElement.style.backgroundColor = "#E0E0E0";
     },
     exportWord() {
       const rows = [];
@@ -980,6 +1600,97 @@ export default {
 </script>
 
 <style scope>
+.dx-field-label {
+  padding-left: 20px;
+  width: 20%;
+}
+.dx-field-value-static,
+.dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+  width: 80%;
+}
+.dx-field {
+  font-family: "MBC 새로움 M";
+}
+.dx-datagrid-rowsview
+  .dx-row-focused.dx-data-row
+  .dx-command-edit:not(.dx-focused)
+  .dx-link,
+.dx-datagrid-rowsview .dx-row-focused.dx-data-row > td:not(.dx-focused),
+.dx-datagrid-rowsview .dx-row-focused.dx-data-row > tr > td:not(.dx-focused) {
+  background-color: #5c95c5 !important;
+}
+#c1tabbtn {
+  background-color: #e0e0e0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-bottom: 1px;
+}
+#c1tabbtn i {
+  font-size: 12px;
+  color: #6c757d;
+}
+#c1tabbtn .dx-button-content {
+  padding: 0px;
+}
+.opentexttitle {
+  position: absolute;
+  top: 250px;
+  left: 25px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  width: 10px;
+  height: 250px;
+}
+.opentext {
+  position: absolute;
+  top: 250px;
+  font-size: 12px;
+  left: 7px;
+  letter-spacing: 2px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  width: 10px;
+  height: 200px;
+}
+.iconDivClose {
+  position: fixed;
+  left: 133px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+#subjectMenu .dx-item-content {
+  line-height: 3;
+  height: 50px;
+}
+.tabletoptextgrid {
+  font-size: 15px;
+  padding: 7px;
+  position: absolute;
+  z-index: 8;
+}
+.abchannel {
+  padding: 10px;
+  background-color: white;
+  border: solid 0.5px #ddd;
+}
+#progress-bar-status {
+  display: inline-block;
+}
+.complete .dx-progressbar-range {
+  background-color: green;
+}
+.wavemodalabel {
+  padding: 0;
+  width: 130px;
+}
+.wavemodalDiv {
+  margin: auto;
+  width: 500px;
+}
 .graycolor {
   color: #cccccc;
 }
@@ -1001,6 +1712,9 @@ export default {
 #channelAB_id2 td {
   vertical-align: middle;
 }
+#channelAB_id {
+  padding: 5px;
+}
 /* 파일첨부문구 */
 .dx-fileuploader-input-container {
   width: 800px;
@@ -1017,19 +1731,18 @@ export default {
 }
 /* tab내부높이 */
 .dx-multiview-wrapper {
-  height: 800px;
-  padding: 10px;
+  padding: 5px;
 }
+
 /* 드래그 안고장나게해주는 CSS */
 #app-container {
   position: fixed;
 }
-
-/* 뭔지모르겠음 */
-.schdatagrid {
-  top: 0px !important;
+:root {
+  --ab-channel-height: 395px;
+  --c-channel-height: 364px;
+  --tab-height: 375px;
 }
-
 /* C채널 즐겨찾기 */
 .column {
   background-color: white;
@@ -1043,13 +1756,6 @@ export default {
 /* 출력뷰 */
 .dx-widget {
   background-color: white;
-}
-.printView > .dx-datagrid {
-  top: 40px;
-}
-.printView2 > .dx-datagrid {
-  height: 650px;
-  top: 85px;
 }
 
 #datagridtitleText {
@@ -1083,15 +1789,6 @@ export default {
   background-color: #008ecc;
 }
 
-#searchBtn {
-  margin-left: 0;
-  position: absolute;
-  left: 0;
-  bottom: 20px;
-  font-weight: 350;
-  font-size: 14px;
-}
-
 #searchBtnClose {
   color: #008ecc;
   padding: 0;
@@ -1107,13 +1804,14 @@ export default {
 /* 소재 토글창 */
 .schdiv {
   position: absolute;
-  border-right: thick solid #008ecc;
-  left: -2000px;
+  bottom: -1155px;
   z-index: 6;
   background-color: white;
-  width: 890px;
-  height: 100%;
+  right: 25px;
+  left: 180px;
+  height: 90%;
   transition-duration: 1s;
+  box-shadow: 0 3px 30px rgb(0 0 0 / 10%), 0 3px 20px rgb(0 0 0 / 10%);
 }
 
 #schtitleText {
@@ -1127,7 +1825,7 @@ export default {
 /* 토글 On / Off CSS */
 .schdivon {
   transition-duration: 1s;
-  transform: translate(1955px, 0px);
+  transform: translate(0px, -700px);
 }
 
 /* 소재검색 상단 목록 */
@@ -1146,19 +1844,21 @@ export default {
 
 .schlist {
   display: grid;
-  border: solid 0.5px rgb(182, 182, 182);
-  grid-template-columns: 1fr 5fr;
+  border: solid 0.5px #ddd;
+  grid-template-columns: 1fr 7fr;
   border-radius: 2px;
   position: absolute;
-  top: 60px;
-  width: 835px;
-  height: 220px;
+  width: 500px;
+  height: 400px;
   padding: 10px 10px 10px 10px;
-  margin: 10px 0px 0px 20px;
+  margin: 0px 0px 0px 15px;
 }
 
 #schbtn2 {
+  position: absolute;
+  right: 25px;
   width: 100px;
+  bottom: 25px;
   font-weight: 300;
   font-size: 13px;
 }
@@ -1169,11 +1869,11 @@ export default {
 }
 
 .schtable {
+  right: 0;
   border-radius: 1.5px;
-  top: 340px;
   position: absolute;
-  width: 835px;
-  margin: 10px 0px 0px 20px;
+  width: 1180px;
+  margin: 10px 10px 0px 20px;
 }
 
 .schtext {
@@ -1185,7 +1885,7 @@ export default {
 /* 도구아이콘 */
 .iconDiv {
   position: absolute;
-  top: 45px;
+  top: 40px;
   right: 0px;
 }
 
@@ -1215,7 +1915,7 @@ export default {
 }
 
 /* 메인타이틀옆 부가정보 타이틀 */
-.subTitle {
+.subtitle {
   margin-right: 5px;
   color: #3a3a3a;
   font-size: 12.8px;
@@ -1255,9 +1955,8 @@ export default {
 
 /* 좌측 프로그램 상세 정보 */
 .detailText {
-  height: 50px;
-  margin: 10px 0px 0px 0px;
-  padding: 15px;
+  height: 35px;
+  padding: 0px 0px 0px 0px;
 }
 
 #autosavebtn {
@@ -1265,8 +1964,9 @@ export default {
 }
 
 .autosavesapn {
-  float: right;
-  margin: -3px 0px 0px 0px;
+  position: absolute;
+  right: 10px;
+  top: 100px;
 }
 
 /* Main */
@@ -1279,7 +1979,7 @@ export default {
 /* 좌측도구 전체DIV */
 .toolDiv {
   position: relative;
-  width: 95%;
+  margin-right: 10px;
 }
 
 .dx-widget {
@@ -1296,7 +1996,7 @@ export default {
 .buttonDiv {
   position: absolute;
   right: 0px;
-  bottom: 20px;
+  top: 40px;
 }
 
 #listbtn {
@@ -1307,6 +2007,7 @@ export default {
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
   line-height: 1.8;
+  font-weight: 250;
 }
 
 /* 소재상세보기 */
@@ -1356,7 +2057,7 @@ export default {
 /* 태그 */
 .fileuploader-container,
 .tagDiv {
-  border: solid 0.5px rgb(182, 182, 182);
+  border: 1px solid #d3d3d3;
   border-radius: 4px;
   margin-top: 20px;
 }
@@ -1367,7 +2068,6 @@ export default {
 
 /* 파일업로드 */
 .dx-fileuploader-files-container {
-  height: 100px;
   overflow: auto;
 }
 .dx-fileuploader-files-container {

@@ -77,14 +77,6 @@ export default {
   },
   methods: {
     closePlayer() {
-      console.log(this.requestType);
-      console.log(this.fileKey);
-      console.log(this.title);
-      console.log(this.tempDownloadUrl);
-      console.log(this.streamingUrl);
-      console.log(this.waveformUrl);
-      console.log(this.showPlayerPopup);
-      console.log(this.direct);
       this.$refs.play.close();
       this.$emit("closePlayer");
     },

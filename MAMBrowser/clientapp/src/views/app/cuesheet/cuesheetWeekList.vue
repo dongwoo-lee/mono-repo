@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="기본 큐시트" />
+        <piaf-breadcrumb heading="기본큐시트" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -13,49 +13,21 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
-        <!-- 채널 -->
+        <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
-            class="width-140"
-            v-model="searchItems.channel"
-            :options="[
-              { value: '', text: '전체' },
-              { value: 'Y', text: 'FM4U' },
-              { value: 'N', text: '표준FM' },
-            ]"
+            style="width: 100px"
+            v-model="searchItems.media"
+            :options="mediasOption"
+            @change="eventClick($event, 'list')"
           />
         </b-form-group>
         <!-- 프로그램명 -->
         <b-form-group label="프로그램명" class="has-float-label">
           <b-form-select
-            class="width-230"
-            v-model="searchItems.programName"
-            :options="[
-              { value: '', text: '전체' },
-              { value: 'Y', text: '김이나의 별이 빛나는 밤에' },
-              { value: 'N', text: '두시의 데이트 뮤지, 안영미입니다' },
-            ]"
-          />
-        </b-form-group>
-        <!-- 수정일 -->
-        <b-form-group label="수정일" class="has-float-label">
-          <common-date-picker />
-        </b-form-group>
-        <!-- 상태 -->
-        <b-form-group label="요일" class="has-float-label">
-          <b-form-select
-            class="width-140"
-            v-model="searchItems.weekData"
-            :options="[
-              { value: '', text: '전체' },
-              { value: 'mon', text: '월' },
-              { value: 'tue', text: '화' },
-              { value: 'wed', text: '수' },
-              { value: 'thu', text: '목' },
-              { value: 'fri', text: '금' },
-              { value: 'sat', text: '토' },
-              { value: 'sun', text: '일' },
-            ]"
+            style="width: 400px"
+            v-model="searchItems.productid"
+            :options="programList"
           />
         </b-form-group>
         <!-- 검색 버튼 -->
@@ -72,12 +44,15 @@
           <b-button
             variant="outline-primary default"
             size="sm"
-            v-b-modal.modal-center
+            @click="addModal"
             >기본 큐시트 추가</b-button
           >
         </b-input-group>
         <b-input-group>
-          <b-button variant="outline-secondary default" size="sm"
+          <b-button
+            variant="outline-secondary default"
+            size="sm"
+            v-b-modal.modal-del
             >선택 항목 삭제</b-button
           >
         </b-input-group>
@@ -93,139 +68,99 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="cuesheetSchedule_d"
+          :rows="cueList"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
-          isWeekSlot="true"
+          :isWeeksSlot="true"
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
+          @selectedIds="onSelectedIds"
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <common-actions :rowData="props.props.rowData"> </common-actions>
+            <common-actions
+              :rowData="props.props.rowData"
+              :widgetIndex="16"
+              :productWeekList="productWeekList"
+            >
+            </common-actions>
+          </template>
+          <template slot="weeks" scope="props">
+            <common-weeks
+              :rowData="props.props.rowData"
+              :productWeekList="productWeekList"
+            >
+            </common-weeks>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
 
+    <!-- 기본큐시트 추가 modal -->
     <b-modal
-      id="modal-center"
+      ref="modal-add"
       size="lg"
       centered
       title="기본 큐시트 추가"
       ok-title="확인"
       cancel-title="취소"
+      @ok="addWeekCue"
     >
       <div id="modelDiv" class="d-block text-center">
-        <div class="mb-3 mt-3" style="font-size: 20px">
-          <div
-            v-if="test == '두시의 데이트 뮤지, 안영미입니다' && test2 == '전체'"
-          >
-            기본 큐시트를 적용할 요일을 선택하세요.
-          </div>
-          <div v-else>기본 큐시트를 추가할 프로그램을 선택하세요.</div>
-          <div
-            v-if="test == '김이나의 별이 빛나는 밤에' && test2 == '전체'"
-            style="font-size: 16px; color: red"
-          >
-            ※ 이미 모든 요일에 기본 큐시트가 적용되어 있습니다.
-          </div>
+        <div class="mb-4" style="font-size: 20px">
+          <div>기본 큐시트를 추가할 프로그램을 선택하세요.</div>
         </div>
-        <div class="dx-fieldset">
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">프로그램 :</div>
-            <div class="dx-field-value">
-              <DxSelectBox
-                width="320px"
-                :items="simpleProducts"
-                :value.sync="test"
-                placeholder=""
-              />
-            </div>
-          </div>
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">매체 :</div>
-            <div class="dx-field-value">
-              <DxSelectBox
-                width="320px"
-                :items="simpleProducts2"
-                :value.sync="test2"
-                placeholder=""
-              />
-            </div>
-          </div>
+        <div class="modal_search">
+          <b-form-group label="매체" class="has-float-label">
+            <b-form-select
+              style="width: 150px"
+              v-model="cuesheetData.media"
+              :options="mediasOption"
+              @change="eventClick($event, 'modal')"
+            />
+          </b-form-group>
+          <b-form-group label="프로그램명" class="has-float-label ml-3">
+            <b-form-select
+              style="width: 400px"
+              v-model="cuesheetData.productid"
+              :options="modalProgramList"
+              @change="getWeekList($event)"
+            />
+          </b-form-group>
         </div>
-
-        <div
-          v-if="test == '김이나의 별이 빛나는 밤에' && test2 == '전체'"
-          class="pt-0"
-        >
-          <template>
-            <div>
-              <div style="color: white">
-                ※ 이미 모든 요일에 기본 큐시트가 적용되어 있습니다.
-              </div>
-              <DxDataGrid
-                id="gridContainer"
-                :data-source="cuesheetSchedule_d"
-                height="200px"
-                :show-borders="true"
-                :showRowLines="true"
-                keyExpr="updateDate"
-              >
-                <DxColumn caption="매체" width="80px" data-field="channel" />
-                <DxColumn caption="프로그램 명" data-field="programName" />
-                <DxColumn
-                  caption="수정일"
-                  width="150px"
-                  data-field="updateDate"
-                />
-                <DxColumn
-                  caption="적용요일"
-                  width="170px"
-                  data-field="updateDate"
-                  cell-template="cellTemplate"
-                />
-                <template #cellTemplate>
-                  <div>
-                    <span class="week">월</span>
-                    <span class="week">화</span>
-                    <span class="week">수</span>
-                    <span class="week">목</span>
-                    <span class="week">금</span>
-                    <span class="week">토</span>
-                    <span class="week">일</span>
-                  </div>
-                </template>
-              </DxDataGrid>
-            </div>
-          </template>
+        <div class="modal_week_form">
+          <b-button-group size="sm">
+            <b-button
+              v-for="(btn, idx) in weekButtons"
+              :key="idx"
+              :pressed.sync="btn.state"
+              :disabled="btn.disable"
+              class="m-2 p-3"
+              style="font-size: 16px"
+              variant="outline-primary"
+            >
+              {{ btn.caption }}
+            </b-button>
+          </b-button-group>
         </div>
-        <div
-          v-if="test == '두시의 데이트 뮤지, 안영미입니다' && test2 == '전체'"
-          class="weekBtn"
-        >
-          <div class="testclass">
-            <span class="week2">월</span>
-            <span class="week2">화</span>
-            <span class="week2">수</span>
-            <span class="week2">목</span>
-            <span class="week2">금</span>
-            <span class="week2">토</span>
-            <span class="week2">일</span>
-          </div>
-          <div class="testclass2">
-            <DxCheckBox class="week3" :value="true" />
-            <DxCheckBox class="week3" :value="true" />
-            <DxCheckBox class="week3" :value="true" />
-            <DxCheckBox class="week3" :value="true" />
-            <DxCheckBox class="week3" :value="true" />
-            <DxCheckBox class="week3" :value="true" />
-            <DxCheckBox class="week3" :value="true" />
-          </div>
+      </div>
+    </b-modal>
+    <!-- 기본큐시트 삭제 modal -->
+    <b-modal
+      id="modal-del"
+      size="lg"
+      centered
+      title="기본 큐시트 삭제"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="delWeekCue"
+    >
+      <div id="modelDiv" class="d-block text-center">
+        <div class="m-3" style="font-size: 20px">
+          <div>선택된 기본 큐시트를 삭제하시겠습니까?</div>
         </div>
       </div>
     </b-modal>
@@ -233,61 +168,90 @@
 </template>
 
 <script>
-import { DxCheckBox } from "devextreme-vue/check-box";
-import DxSelectBox from "devextreme-vue/select-box";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
+import axios from "axios";
+import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
+import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
+const userId = sessionStorage.getItem(USER_ID);
+const moment = require("moment");
+const qs = require("qs");
+
 export default {
+  components: { CommonWeeks },
   mixins: [MixinBasicPage],
-  components: {
-    DxSelectBox,
-    DxDataGrid,
-    DxColumn,
-    DxCheckBox,
-  },
   data() {
     return {
-      test: null,
-      test2: null,
-      date: null,
-      simpleProducts: [
-        "김이나의 별이 빛나는 밤에",
-        "두시의 데이트 뮤지, 안영미입니다",
-      ],
-      simpleProducts2: ["전체", "표준FM", "FM4U"],
+      isWeekSlot: true,
+      cueList: [],
+      productWeekList: [],
+      programList: [{ value: "", text: "매체를 선택하세요" }],
+      modalProgramList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
-        updateDate: "", // 수정일
-        channel: "", // 채널
-        programName: "", // 프로그램명
-        weekData: "", // 작성상태
+        media: "", // 매체
+        productid: "", // 프로그램명
+        cueid: -1, // 작성상태
+        rowPerPage: 30,
+        selectPage: 1,
       },
-      proOptions: [],
+      weekButtons: [
+        { caption: "월", value: "MON", state: false, disable: false },
+        { caption: "화", value: "TUE", state: false, disable: false },
+        { caption: "수", value: "WED", state: false, disable: false },
+        { caption: "목", value: "THU", state: false, disable: false },
+        { caption: "금", value: "FRI", state: false, disable: false },
+        { caption: "토", value: "SAT", state: false, disable: false },
+        { caption: "일", value: "SUN", state: false, disable: false },
+      ],
+      cuesheetData: {
+        edittime: "",
+        media: "",
+        personid: "",
+        productid: "",
+        directorname: "", //이거 해야함
+        headertitle: "", //이거 말해야함
+        footertitle: "참여방법: #8001번 단문 50원",
+      },
       fields: [
         {
-          name: "channel",
-          title: "매체",
+          name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "12%",
-          sortField: "duration",
+          width: "3%",
         },
         {
-          name: "programName",
+          name: "edittime",
+          title: "수정일",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format(
+                  "YYYY-MM-DD : HH시 mm분"
+                );
+          },
+        },
+        {
+          name: "eventname",
           title: "프로그램명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "categoryName",
+          sortField: "eventname",
         },
         {
-          name: "updateDate",
-          title: "수정일",
+          name: "media",
+          title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "18%",
+          sortField: "media",
+          width: "15%",
+          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
         },
         {
-          name: "__slot:weekrow",
+          name: "__slot:weeks",
           title: "적용 요일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
@@ -305,129 +269,203 @@ export default {
   },
 
   computed: {
-    ...mapGetters("cuesheet", ["cuesheetSchedule_d"]),
+    ...mapGetters("cuesheet", ["userProOption"]),
+    ...mapGetters("cuesheet", ["mediasOption"]),
+    ...mapGetters("cuesheet", ["userProList"]),
+    btnWeekStates() {
+      var result = this.weekButtons.map((btn) => {
+        if (btn.state == true) {
+          return btn.value;
+        }
+      });
+      return result.filter((ele) => {
+        return ele !== undefined;
+      });
+    },
   },
-
-  created() {
-    // (구)프로소재, 공유소재 매체 목록 조회
-    this.getMediaPrimaryOptions();
-    // 사용자 목록 조회
-    this.getEditorOptions();
-    // (구)프로 목록 조회
-    this.getProOptions();
+  mounted() {
+    this.selectedIds = [];
   },
+  created() {},
   methods: {
-    weekclassbind1(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("mon") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind2(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("tue") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind3(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("wed") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind4(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("thu") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind5(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("fri") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind6(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("sat") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    weekclassbind7(props) {
-      console.log(props.rowIndex);
-      var s = this.rows[props.rowIndex].weekData;
-      if (s.indexOf("sun") >= 0) {
-        return true;
-      }
-      return false;
-    },
-    getData() {
-      if (
-        this.$fn.checkGreaterStartDate(
-          this.searchItems.start_dt,
-          this.searchItems.end_dt
-        )
-      ) {
-        this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
-        });
-        this.hasErrorClass = true;
-        return;
-      }
+    ...mapActions("cuesheet", ["getuserProOption"]),
+    ...mapActions("cuesheet", ["getMediasOption"]),
+
+    async getData() {
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      this.$http
-        .get(`/api/products/old_pro`, { params: this.searchItems })
-        .then((res) => {
-          this.setResponseData(res);
-          this.addScrollClass();
-          this.isTableLoading = false;
-          this.isScrollLodaing = false;
+      if (!this.searchItems.productid) {
+        var mediaOption = await this.getMediasOption(userId);
+        this.searchItems.productid = this.userProList;
+      }
+      //기본 큐시트 목록 가져오기
+      var defList = await this.getDefCueList();
+      if (defList) {
+        this.disableList(defList.data);
+        var seqnum = 0;
+        defList.data.forEach((ele) => {
+          var activeWeekList = [];
+          var cueids = [];
+          ele.productWeekList = this.productWeekList.filter((week) => {
+            return week.productid == ele.productid;
+          });
+          ele.detail.forEach((activeWeek) => {
+            activeWeekList.push(activeWeek.week);
+            cueids.push(activeWeek.cueid);
+          });
+          ele.activeWeekList = activeWeekList;
+          ele.cueid = cueids;
+          ele.seq = seqnum;
+          seqnum = seqnum + 1;
         });
+        this.setResponseData(defList);
+        this.addScrollClass();
+        this.isTableLoading = false;
+        this.isScrollLodaing = false;
+        this.cueList = defList.data;
+      }
+    },
+    //기본 큐시트 목록 가져오기
+    getDefCueList() {
+      return axios.get(`/api/DefCueSheet/GetDefList`, {
+        params: {
+          productids: this.searchItems.productid,
+        },
+        paramsSerializer: (params) => {
+          return qs.stringify(params);
+        },
+      });
+    },
+    //매체 선택시 프로그램 목록 가져오기 (일반,modal)
+    async eventClick(e, V) {
+      var pram = { personid: userId, media: e };
+      var proOption = await this.getuserProOption(pram);
+      if (V == "list") {
+        this.programList = this.userProOption;
+      } else if (V == "modal") {
+        this.modalProgramList = this.userProOption;
+      }
+    },
+    addModal() {
+      this.cuesheetData.media = "";
+      this.cuesheetData.productid = "";
+      this.weekButtons.forEach((ele) => {
+        ele.state = false;
+        ele.disable = false;
+      });
+      this.$refs["modal-add"].show();
+    },
+    // 기본큐시트 추가 (modal)
+    async addWeekCue() {
+      this.cuesheetData.personid = userId;
+      var pram = {
+        cueParam: this.cuesheetData,
+        defParams: this.btnWeekStates,
+      };
+      await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {});
+      this.getData();
+    },
+    // 요일확인 및 목록 가져오기 (modal)
+    async getWeekList(e) {
+      await axios
+        .get(`/api/DefCueSheet/GetDefList?productids=` + e)
+        .then((res) => {
+          var weekArr = [];
+          res.data.forEach((ele) => {
+            ele.detail.forEach((week) => {
+              weekArr.push(week.week);
+            });
+          });
+          this.weekButtons.forEach((week) => {
+            if (weekArr.includes(week.value)) {
+              week.disable = true;
+            } else {
+              week.disable = false;
+            }
+          });
+          if (weekArr.length == 7) {
+            //이미 모든요일이 설정되어 있을때 해야함
+          }
+        });
+    },
+    //기본큐시트 삭제
+    async delWeekCue(e) {
+      if (this.selectedIds.length > 0) {
+        var delcueidList = [];
+        this.selectedIds.forEach((ids) => {
+          this.cueList[ids].detail.forEach((ele) => {
+            delcueidList.push(ele.cueid);
+          });
+        });
+        await axios.delete(`/api/DefCueSheet/DelDefCue`, {
+          params: {
+            delParams: delcueidList,
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        });
+        this.getData();
+        this.initSelectedIds();
+      }
+    },
+    //프로그램별 요일 확인
+    disableList(rowData) {
+      this.productWeekList = [];
+      rowData.forEach((ele) => {
+        var checker = true;
+        var key = ele.productid;
+        var value = [];
+        ele.detail.forEach((week) => {
+          value.push(week.week);
+        });
+        if (this.productWeekList.length == 0) {
+          var result = {
+            productid: key,
+            weekList: value,
+          };
+          this.productWeekList.push(result);
+        } else {
+          for (let i = 0; i < this.productWeekList.length; i++) {
+            if (this.productWeekList[i].productid == key) {
+              this.productWeekList[i].weekList =
+                this.productWeekList[i].weekList.concat(value);
+              checker = false;
+              return;
+            }
+          }
+          if (checker) {
+            var result = {
+              productid: key,
+              weekList: value,
+            };
+            this.productWeekList.push(result);
+          }
+        }
+      });
     },
   },
 };
 </script>
-<style scope>
-.weekBtn {
-  border: solid 0.5px #008ecc;
-  border-radius: 2px;
+<style>
+.modal_search {
   width: 700px;
-  height: 150px;
+  text-align: center;
   margin: auto;
-  padding: auto;
 }
-.staca {
-  border-bottom: 1px solid #d7d7d7;
+.modal_search fieldset {
+  display: inline-block;
 }
-
-.week3 {
-  padding: 15.5px;
+.modal_week_form {
+  margin-top: 10px;
+  height: 150px;
+  border: 1px solid #d7d7d7;
+  display: table-cell;
+  vertical-align: middle;
+  width: 800px;
 }
-.testclass {
-  margin-top: 30px;
-}
-.week2 {
-  float: inline-start;
-  padding: 15px;
-  font-size: 25px;
-}
-.black {
-  background-color: black;
-  color: white;
-}
-.week {
-  padding: 2px;
+.modal_week_form .btn-outline-primary:disabled {
+  border: solid 1px #757575;
+  background-color: rgb(223, 222, 222);
+  color: #757575;
 }
 </style>

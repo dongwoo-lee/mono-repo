@@ -6,12 +6,18 @@ import menu from './modules/menu'
 import user from './modules/user'
 import file from './modules/file'
 import cuesheet from './modules/cuesheet'
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
   },
+  plugins: [
+    createPersistedState({
+      paths: ['cuesheet'],
+    })
+  ],
   mutations: {
     changeLang(state, payload) {
       app.$i18n.locale = payload

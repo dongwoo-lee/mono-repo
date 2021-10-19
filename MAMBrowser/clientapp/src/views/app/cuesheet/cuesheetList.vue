@@ -67,7 +67,7 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="cuesheet"
+          :rows="cuesheetList"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -149,7 +149,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters("cuesheet", ["cuesheet"]),
+    ...mapGetters("cuesheet", ["cuesheetList"]),
   },
 
   created() {

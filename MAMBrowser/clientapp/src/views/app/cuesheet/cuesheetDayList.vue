@@ -22,40 +22,21 @@
           :required="false"
           :isCurrentDate="false"
         />
-        <!-- 채널 -->
+        <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
-            class="width-140"
-            v-model="searchItems.channel"
-            :options="[
-              { value: '', text: '전체' },
-              { value: 'Y', text: 'FM4U' },
-              { value: 'N', text: '표준FM' },
-            ]"
+            style="width: 100px"
+            v-model="searchItems.media"
+            :options="mediasOption"
+            @change="eventClick($event)"
           />
         </b-form-group>
         <!-- 프로그램명 -->
         <b-form-group label="프로그램명" class="has-float-label">
           <b-form-select
-            class="width-230"
-            v-model="searchItems.programName"
-            :options="[
-              { value: '', text: '전체' },
-              { value: 'Y', text: '김이나의 별이 빛나는 밤에' },
-              { value: 'N', text: '두시의 데이트 뮤지, 안영미입니다' },
-            ]"
-          />
-        </b-form-group>
-        <!-- 상태 -->
-        <b-form-group label="작성상태" class="has-float-label">
-          <b-form-select
-            class="width-140"
-            v-model="searchItems.state"
-            :options="[
-              { value: '', text: '전체' },
-              { value: 'Y', text: '작성' },
-              { value: 'N', text: '수정' },
-            ]"
+            style="width: 400px"
+            v-model="searchItems.productid"
+            :options="programList"
           />
         </b-form-group>
         <!-- 검색 버튼 -->
@@ -75,7 +56,7 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="cuesheetSchedule"
+          :rows="cueList"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -86,7 +67,8 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <common-actions :rowData="props.props.rowData"> </common-actions>
+            <common-actions :rowData="props.props.rowData" :widgetIndex="16">
+            </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
@@ -95,55 +77,88 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
+import axios from "axios";
+import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-
+const userId = sessionStorage.getItem(USER_ID);
+const moment = require("moment");
+const qs = require("qs");
 const date = new Date();
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
+
 date.setDate(date.getDate() + 14);
+var endDay = get_date_str(date);
 
 export default {
   mixins: [MixinBasicPage],
   data() {
     return {
       date,
+      cueList: [],
+      programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
-        broadcastDate: "", // 방송예정일
-        broadcastTime: "", // 방송시간
-        channel: "", // 채널
-        responsibility: "", // 담당자
-        programName: "", // 프로그램명
-        state: "", // 작성상태
+        start_dt: "", // 시작일
+        end_dt: "", // 종료일
+        media: "", // 매체
+        productid: "", // 프로그램명
+        cueid: -1, // 작성상태
+        rowPerPage: 30,
+        selectPage: 1,
       },
-      proOptions: [],
       fields: [
         {
-          name: "broadcastDate",
+          name: "day",
           title: "방송예정일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "20%",
+          width: "15%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
+          },
         },
         {
-          name: "broadcastTime",
+          name: "eventname",
+          title: "프로그램명",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          sortField: "eventname",
+        },
+        {
+          name: "media",
+          title: "매체",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          sortField: "media",
+          width: "15%",
+          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
+        },
+        {
+          name: "r_ONAIRTIME",
           title: "방송시간",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "15%",
-        },
-        {
-          name: "programName",
-          title: "프로그램명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          sortField: "categoryName",
-        },
-        {
-          name: "channel",
-          title: "매체",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "15%",
-          sortField: "duration",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYY-MM-DD'T'HH:mm:ss").format("HH:mm");
+          },
         },
         {
           name: "__slot:actions",
@@ -157,19 +172,22 @@ export default {
   },
 
   computed: {
-    ...mapGetters("cuesheet", ["cuesheetSchedule"]),
+    // ...mapGetters("cuesheet", ["daycuesheetList"]),
+    ...mapGetters("cuesheet", ["userProOption"]),
+    ...mapGetters("cuesheet", ["mediasOption"]),
+    ...mapGetters("cuesheet", ["userProList"]),
   },
-
-  created() {
-    // (구)프로소재, 공유소재 매체 목록 조회
-    this.getMediaPrimaryOptions();
-    // 사용자 목록 조회
-    this.getEditorOptions();
-    // (구)프로 목록 조회
-    this.getProOptions();
+  mounted() {
+    this.searchItems.start_dt = toDay;
+    this.searchItems.end_dt = endDay;
   },
+  created() {},
   methods: {
-    getData() {
+    // ...mapMutations("cuesheet", ["SET_DAYCUELIST"]),
+    ...mapActions("cuesheet", ["getuserProOption"]),
+    ...mapActions("cuesheet", ["getMediasOption"]),
+
+    async getData() {
       if (
         this.$fn.checkGreaterStartDate(
           this.searchItems.start_dt,
@@ -183,14 +201,38 @@ export default {
         return;
       }
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      this.$http
-        .get(`/api/products/old_pro`, { params: this.searchItems })
-        .then((res) => {
-          this.setResponseData(res);
-          this.addScrollClass();
-          this.isTableLoading = false;
-          this.isScrollLodaing = false;
-        });
+      if (!this.searchItems.productid) {
+        var mediaOption = await this.getMediasOption(userId);
+        this.searchItems.productid = this.userProList;
+      }
+      var dayList = await this.getDayCueList();
+      if (dayList) {
+        this.setResponseData(dayList);
+        this.addScrollClass();
+        this.isTableLoading = false;
+        this.isScrollLodaing = false;
+        this.cueList = dayList.data;
+        // this.SET_DAYCUELIST();
+      }
+    },
+    //매체 선택시 프로그램 목록 가져오기
+    async eventClick(e) {
+      var pram = { personid: userId, media: e };
+      var proOption = await this.getuserProOption(pram);
+      this.programList = this.userProOption;
+    },
+    //날짜별 일일 큐시트 목록 가져오기
+    getDayCueList() {
+      return axios.get(`/api/daycuesheet/Getdaycuelist`, {
+        params: {
+          start_dt: this.searchItems.start_dt,
+          end_dt: this.searchItems.end_dt,
+          products: this.searchItems.productid,
+        },
+        paramsSerializer: (params) => {
+          return qs.stringify(params);
+        },
+      });
     },
   },
 };

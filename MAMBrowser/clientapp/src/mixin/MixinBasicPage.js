@@ -1,7 +1,7 @@
 import MixinCommon from './MixinCommon';
 
 let mixinBasicPage = {
-    mixins: [ MixinCommon ],
+    mixins: [MixinCommon],
     data() {
         return {
             selectedItems: [],                            // 선택된 로우 데이터
@@ -25,13 +25,13 @@ let mixinBasicPage = {
     methods: {
         // 우측메뉴 액션
         onContextMenuAction(v) {
-            switch(v) {
+            switch (v) {
                 case 'edit': console.log(v); break;
                 case 'throw': console.log(v); break;
-                case 'download':  console.log(v); break;
-                case 'storage':  console.log(v); break;
-                case 'restore':  console.log(v); break;
-                case 'delete':  console.log(v); break;
+                case 'download': console.log(v); break;
+                case 'storage': console.log(v); break;
+                case 'restore': console.log(v); break;
+                case 'delete': console.log(v); break;
                 default: break;
             }
         },
@@ -56,13 +56,13 @@ let mixinBasicPage = {
         // 공유 소재 분류 목록 조회
         getPublicCodesOptions(primaryCode = '') {
             this.requestCall(`/api/categories/public-codes/primary/${primaryCode}`, 'publicCodesOptions')
-            .then(data => {
-                if(data.resultObject && data.resultCode === 0) {
-                    if (data.resultObject.data.length > 0) {
-                        this.searchItems.cate =  data.resultObject.data[0].id;
+                .then(data => {
+                    if (data.resultObject && data.resultCode === 0) {
+                        if (data.resultObject.data.length > 0) {
+                            this.searchItems.cate = data.resultObject.data[0].id;
+                        }
                     }
-                }
-            });
+                });
         },
         // 제작자(PD용) 조회
         getEditorForPd() {
@@ -76,17 +76,18 @@ let mixinBasicPage = {
             return `파일명:<text style="color:red;">${title}</text><br><br>`;
         },
         getInnerHtmlSelectdFileNamesFromMulti(selectedIds, rows) {
+            console.log()
             const selectedNames = [];
             selectedIds.forEach(id => {
                 rows.some(data => {
-                  if (data.seq === id) {
-                    selectedNames.push(data.title);
-                    return true;
-                  }
-                  return false;
+                    if (data.seq === id) {
+                        selectedNames.push(data.title);
+                        return true;
+                    }
+                    return false;
                 });
             });
-      
+
             return `파일명:<text style="color:red;">${selectedNames.join(',')}</text><br>파일 개수:${selectedNames.length}개<br><br>`;
         }
     }

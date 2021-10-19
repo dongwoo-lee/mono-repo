@@ -56,7 +56,6 @@ let mixinCommon = {
         ...mapActions('user', ['getSummaryUser']),
         // 검색
         onSearch() {
-            console.log("이건가");
             this.searchItems.selectPage = 1;
             // scroll paging table인 경우
             if (this.$refs.scrollPaging) {
@@ -185,6 +184,7 @@ let mixinCommon = {
             this.$refs.scrollPaging.initSelectedIds();
         },
         onPreview(item) {
+            console.log(item);
             this.soundItem = item;
             this.showPlayerPopup = true;
         },

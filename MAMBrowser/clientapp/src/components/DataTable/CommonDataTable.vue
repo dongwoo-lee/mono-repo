@@ -55,11 +55,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    isActionsSlot: {
-      // actions: button 등 slot 사용 유무
-      type: Boolean,
-      default: false,
-    },
     noDataTemplate: {
       type: String,
       default: "데이터가 없습니다.",

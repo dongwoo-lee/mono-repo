@@ -10,12 +10,26 @@
       <div>
         <b-container class="bv-example-row" v-if="isSuccess">
           <b-row>
-            <b-col> </b-col>
-            <b-col>
-              <div align="center"></div>
+            <b-col cols="3" class="p-0 mb-2">
+              <p align="left">
+                <b-button-group size="sm">
+                  <b-button @click="somClick"> Start Point </b-button>
+                  <b-button @click="eomClick"> End Point </b-button>
+                </b-button-group>
+              </p>
             </b-col>
-            <b-col>
-              <p align="right">
+            <b-col cols="4" class="pl-3">
+              <p align="left" style="margin-top: 8px; margin-bootm: 0">
+                <b-form-checkbox-group
+                  class="custom-checkbox-group"
+                  :options="fadeOptions"
+                  value-field="value"
+                  text-field="text"
+                />
+              </p>
+            </b-col>
+            <b-col cols="5">
+              <p align="right" style="margin-top: 8px; margin-bootm: 0">
                 <vue-slider
                   width="170px"
                   :min="zoomMin"
@@ -73,10 +87,18 @@
               <b-btn variant="outline-primary" size="sm" @click.prevent="Stop"
                 >■</b-btn
               >
+              <b-btn variant="outline-primary" size="sm" @click="editplay"
+                >영역 Play</b-btn
+              >
             </div>
           </b-col>
           <b-col>
-            <p align="right">{{ CurrentTime }} / {{ TotalTime }}</p>
+            <div>
+              <p align="right" class="m-0">{{ somTime }} / {{ eomTime }}</p>
+              <p align="right" class="m-0">
+                {{ CurrentTime }} / {{ TotalTime }}
+              </p>
+            </div>
           </b-col>
         </b-row>
       </b-container>
@@ -89,7 +111,9 @@ import WaveSurfer from "wavesurfer.js";
 import TimelinePlugin from "wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js";
 import { USER_ID, ACCESS_TOKEN } from "@/constants/config";
 import VueSlider from "vue-slider-component";
-import Markers from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
+// import Markers from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
+import Regions from "wavesurfer.js/dist/plugin/wavesurfer.regions.min.js";
+
 import "vue-slider-component/theme/default.css";
 import axios from "axios";
 var wavesurfer;
@@ -103,15 +127,6 @@ export default {
   },
   data() {
     return {
-      somtime: {
-        time: null,
-        color: "black",
-      },
-      eomtime: {
-        time: null,
-        color: "black",
-        position: "top",
-      },
       isMute: false,
       wavesurfer: null,
       CurrentTime: "00:00:00",
@@ -125,10 +140,44 @@ export default {
       max: 1,
       interval: 0.01,
       sliderValue: 1,
+
       zoomMin: 0,
       zoomMax: 160,
       zoomInterval: 20,
       zoomSliderValue: 0,
+
+      options: {
+        id: "Trim",
+        start: 0,
+        loop: false,
+        drag: false,
+        color: "hsla(200, 50%, 70%, 0.4)",
+      },
+      som: 0,
+      eom: 0,
+      somTime: "00:00:00.0",
+      eomTime: "00:00:00.0",
+      fadeOptions: [
+        {
+          text: "Fade In",
+          value: false,
+        },
+        { text: "Fade Out", value: true },
+      ],
+      buttonItem: [
+        {
+          icon: "alignleft",
+          hint: "현재 재생지점을 Start Point로 변경",
+          style: "bold",
+          text: "Start Point",
+        },
+        {
+          icon: "alignleft",
+          hint: "현재 재생지점을 End Point로 변경",
+          style: "bold",
+          text: "End Point",
+        },
+      ],
     };
   },
   mounted() {
@@ -136,27 +185,32 @@ export default {
     source = cancelToken.source();
     this.LoadAudio();
   },
-  watch: {
-    som: function (newValue) {
-      if (newValue === true) {
-        this.testsom();
-      }
-    },
-    eom: function (newValue) {
-      if (newValue === true) {
-        this.testeom();
-      }
-    },
-  },
   computed: {},
   methods: {
-    testsom() {
-      this.somtime.time = wavesurfer.getCurrentTime();
-      wavesurfer.addMarker(this.somtime);
+    editplay() {
+      wavesurfer.regions.list["Trim"].play();
     },
-    testeom() {
-      this.eomtime.time = wavesurfer.getCurrentTime();
-      wavesurfer.addMarker(this.eomtime);
+    somClick() {
+      //console.log(wavesurfer.regions.list.Trim);
+      this.options.start = wavesurfer.getCurrentTime();
+      this.options.end = wavesurfer.regions.list.Trim.end;
+      wavesurfer.regions.clear();
+      wavesurfer.addRegion(this.options);
+
+      this.somTime = new Date(
+        wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
+      );
+      this.somTime = this.somTime.toISOString().substr(11, 10);
+    },
+    eomClick() {
+      this.options.start = wavesurfer.regions.list.Trim.start;
+      this.options.end = wavesurfer.getCurrentTime();
+      wavesurfer.regions.clear();
+      wavesurfer.addRegion(this.options);
+      this.eomTime = new Date(
+        wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
+      );
+      this.eomTime = this.eomTime.toISOString().substr(11, 10);
     },
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
@@ -164,10 +218,7 @@ export default {
           TimelinePlugin.create({
             container: "#wave-timeline",
           }),
-          Markers.create({
-            markers: this.myMarker,
-            style: "width=50px",
-          }),
+          Regions.create(),
         ],
         container: "#waveform",
         forceDecode: "true",
@@ -207,11 +258,37 @@ export default {
       wavesurfer.on("finish", function () {
         vm.LoadAudioInfo();
       });
-      wavesurfer.on("ready", function () {
-        vm.LoadAudioInfo();
-        if (this.playvalue) {
-          vm.Play();
+      wavesurfer.on("seek", (e) => {
+        if (wavesurfer.regions.getCurrentRegion() != null) {
+          wavesurfer.play(
+            wavesurfer.getCurrentTime(),
+            wavesurfer.regions.getCurrentRegion().end
+          );
         }
+      });
+      wavesurfer.on("ready", () => {
+        vm.LoadAudioInfo();
+        vm.Play();
+        //처음에 정한 som / eom 에 따라 지역 그려주는거 이쪽에서 해야함 지금은 우선 전체로 되어잇음 if로 나눠주기
+        vm.options.end = wavesurfer.getDuration();
+        wavesurfer.addRegion(vm.options);
+
+        vm.eom = wavesurfer.getDuration();
+        vm.eomTime = new Date(vm.eom.toFixed(2) * 1000);
+        vm.eomTime = vm.eomTime.toISOString().substr(11, 10);
+        vm.somTime = new Date(vm.som.toFixed(2) * 1000);
+        vm.somTime = vm.somTime.toISOString().substr(11, 10);
+      });
+      wavesurfer.on("region-updated", (obj) => {
+        vm.eom = obj.end;
+        vm.som = obj.start;
+        console.log(obj.start);
+        vm.eomTime = new Date(obj.end.toFixed(2) * 1000)
+          .toISOString()
+          .substr(11, 10);
+        vm.somTime = new Date(obj.start.toFixed(2) * 1000)
+          .toISOString()
+          .substr(11, 10);
       });
       wavesurfer.on("pause", function () {
         vm.LoadAudioInfo();
@@ -232,7 +309,7 @@ export default {
         this.CurrentTime = 0;
       }
     },
-    LoadAudio() {
+    async LoadAudio() {
       this.InjectWaveSurfer();
       this.SetWaveSurfer();
       let fileUrl = "";
@@ -323,7 +400,6 @@ export default {
         });
     },
     Play() {
-      console.log(this.som);
       if (wavesurfer.isPlaying()) {
         wavesurfer.pause();
       } else {
@@ -361,7 +437,6 @@ export default {
     },
   },
   props: {
-    playvalue: true,
     requestType: {
       type: String,
       default: () => {},
@@ -390,8 +465,10 @@ export default {
       type: String,
       default: () => {},
     },
-    som: Boolean,
-    eom: Boolean,
+    // duration: {
+    //   type: String,
+    //   default: () => {},
+    // },
   },
 };
 </script>
@@ -406,5 +483,16 @@ export default {
 }
 .slider {
   padding-top: 6px;
+}
+.wavesurfer-region {
+  z-index: 3 !important;
+}
+#editform {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  padding: 15px;
+  border: solid 1px #d7d7d7;
+  /* background-color: #d7d7d7; */
+  text-align: center;
 }
 </style>
