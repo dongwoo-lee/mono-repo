@@ -9,7 +9,7 @@ module.exports = {
     }
   },
   devServer: {
-    headers: { "Cache-Control": "no-cache, no-store" },
+    // headers: { "Cache-Control": "no-cache, no-store" },
     proxy: {
       "/api": {
         target: "http://localhost:8000",
@@ -17,14 +17,13 @@ module.exports = {
         changeOrigin: true
       }
     },
-    // clientLogLevel: 'warning',
     hot: true
     // contentBase: 'dist',
     // compress: true,
     // open: true,
-    // overlay: { warnings: false, errors: true },
+
     // publicPath: '/',
-    // quiet: true,
+
     // watchOptions: {
     //   poll: false,
     //   ignored: /node_modules/
