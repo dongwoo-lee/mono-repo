@@ -267,3 +267,8 @@ export default {
   }
 };
 </script>
+<style scope>
+.b-table-sticky-header > .table.b-table > thead > tr > th {
+  font-weight: 400 !important;
+}
+</style>
