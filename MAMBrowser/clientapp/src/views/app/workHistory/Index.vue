@@ -22,7 +22,7 @@
           <common-date-picker
             v-model="searchItems.start_dt"
             :dayAgo="7"
-            @input="onSearch"
+            @input="searchDateCheck"
             required
           />
         </b-form-group>
@@ -34,7 +34,7 @@
         >
           <common-date-picker
             v-model="searchItems.end_dt"
-            @input="onSearch"
+            @input="searchDateCheck"
             required
           />
         </b-form-group>
@@ -47,7 +47,7 @@
             value-field="id"
             text-field="name"
             size="sm"
-            @change="onSearch"
+            @change="searchDateCheck"
           >
             <template v-slot:first>
               <b-form-select-option value=""
@@ -59,13 +59,13 @@
         <!-- 작업자 -->
         <b-form-group label="작업자" class="has-float-label c-zindex">
           <common-input-text
-            @inputEnterEvent="onSearch"
+            @inputEnterEvent="searchDateCheck"
             v-model="searchItems.userName"
           />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch"
+          <b-button variant="outline-primary default" @click="searchDateCheck"
             >검색</b-button
           >
         </b-form-group>
@@ -185,6 +185,19 @@ export default {
     });
   },
   methods: {
+    searchDateCheck() {
+      if (
+        this.searchItems.end_dt < this.searchItems.start_dt &&
+        this.searchItems.end_dt != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다."
+        });
+        return;
+      } else {
+        this.onSearch();
+      }
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(
