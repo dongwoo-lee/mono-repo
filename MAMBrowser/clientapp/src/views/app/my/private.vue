@@ -20,6 +20,7 @@
           :required="false"
           :isCurrentDate="false"
           @SEDateEvent="onSearch"
+          @SDateError="SDateErrorLog"
         />
         <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
@@ -250,6 +251,12 @@ export default {
   },
   methods: {
     ...mapActions("file", ["open_popup"]),
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(
