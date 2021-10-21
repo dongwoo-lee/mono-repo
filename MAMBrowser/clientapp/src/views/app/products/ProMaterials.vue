@@ -19,8 +19,10 @@
           endDateLabel="종료일(마스터링)"
           :startDate.sync="searchItems.start_dt"
           :endDate.sync="searchItems.end_dt"
+          :startMonthAgo="3"
           :required="false"
-          :isCurrentDate="false"
+          :isCurrentDate="true"
+          @SEDateNullEvent="onSearch"
           @SEDateEvent="onSearch"
           @SDateError="SDateErrorLog"
         />

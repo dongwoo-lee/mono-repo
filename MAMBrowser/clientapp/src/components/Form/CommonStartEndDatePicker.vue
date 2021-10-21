@@ -115,10 +115,15 @@ export default {
     },
     onSInput(v) {
       this.$emit("update:startDate", v);
+      if (v == "") {
+        this.$emit("SEDateNullEvent");
+      }
     },
     onEInput(v) {
       this.$emit("update:endDate", v);
-      //debugger;
+      if (v == "") {
+        this.$emit("SEDateNullEvent");
+      }
       if (this.sDate != "" && v < this.sDate) {
         this.$emit("SDateError");
         return;
