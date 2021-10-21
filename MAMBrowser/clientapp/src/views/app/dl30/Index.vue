@@ -21,9 +21,10 @@
         >
           <common-date-picker
             v-model="$v.searchItems.regDtm.$model"
-            @input="onSearch"
+            @input="searchCheck"
             required
           />
+
           <b-form-invalid-feedback :state="!$v.searchItems.regDtm.required"
             >날짜는 필수 입력입니다.</b-form-invalid-feedback
           >
@@ -36,7 +37,7 @@
             :options="dlDeviceOptions"
             value-field="id"
             text-field="name"
-            @change="onSearch"
+            @change="searchCheck"
           />
         </b-form-group>
         <!-- 매체 -->
@@ -47,19 +48,19 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
-            @change="onSearch"
+            @change="searchCheck"
           />
         </b-form-group>
         <!-- 녹음소재명 -->
         <b-form-group label="녹음소재명" class="has-float-label c-zindex">
           <common-input-text
+            @inputEnterEvent="searchCheck"
             v-model="searchItems.pgmName"
-            @inputEnterEvent="onSearch"
           />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch"
+          <b-button variant="outline-primary default" @click="searchCheck"
             >검색</b-button
           >
         </b-form-group>
@@ -234,6 +235,11 @@ export default {
     this.getDlDeviceOptions();
   },
   methods: {
+    searchCheck() {
+      if (this.searchItems.dlDeviceSeq != 0) {
+        this.onSearch();
+      }
+    },
     getData() {
       if (!this.$v.searchItems.regDtm.$invalid) {
         this.$fn.notify("inputError", {});
@@ -259,9 +265,9 @@ export default {
         "/api/Categories/dldevice-list",
         "dlDeviceOptions"
       );
-
       if (this.dlDeviceOptions.length > 0) {
         this.searchItems.dlDeviceSeq = this.dlDeviceOptions[0].id;
+        this.getData();
       }
     }
   }
