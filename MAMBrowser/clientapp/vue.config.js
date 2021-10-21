@@ -9,7 +9,7 @@ module.exports = {
     }
   },
   devServer: {
-    // headers: { "Cache-Control": "no-cache, no-store" },
+    headers: { "Cache-Control": "no-cache, no-store" },
     proxy: {
       "/api": {
         target: "http://localhost:8000",
