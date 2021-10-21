@@ -226,7 +226,7 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  width: 221px;
+  width: 290px;
   height: 30px;
   position: absolute;
   top: 10px;

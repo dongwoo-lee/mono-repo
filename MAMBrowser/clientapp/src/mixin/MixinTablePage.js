@@ -85,7 +85,6 @@ let mixinTablePage = apiType => ({
             this.$http.get(`/api/products/${subUrl}`, { params: this.searchItems })
                 .then(res => {
                     this.setResponseData(res);
-                    console.log(res)
                     this.isTableLoading = false;
                 });
         },

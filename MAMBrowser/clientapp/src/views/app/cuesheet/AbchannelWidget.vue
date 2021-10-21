@@ -319,8 +319,9 @@ export default {
     }
   },
   created() {
-    eventBus.$on("clearData_ab", (val) => {
+    eventBus.$on("abDataSet", (val) => {
       this.channelAB = val;
+      this.rowData.rowNum = val.length;
     });
   },
   components: {

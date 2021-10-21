@@ -156,6 +156,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
@@ -165,6 +166,7 @@ import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import axios from "axios";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
+const userId = sessionStorage.getItem(USER_ID);
 
 export default {
   components: {
@@ -196,6 +198,7 @@ export default {
         membername: "",
         memo: "",
         productid: "",
+        personid: "",
         servicename: "",
         startdate: "",
         week: "",
@@ -211,10 +214,11 @@ export default {
   },
   created() {
     this.cuesheetData = Object.assign(this.cuesheetData, this.seleDayCue);
+    this.cuesheetData.personid = userId;
+    //수정 또는 작성일때 여기서 불러와야함 store할때 고치기 (큐시트 수정 > 뒤로가기 데이터 변경 후 앞으로 해서 진입때 다시 가져오려면)
     if (this.cuesheetData.directorname == "") {
       this.getProUserList(this.cuesheetData.productid);
     }
-    console.log(this.weekData);
   },
   computed: {
     ...mapGetters("cuesheet", ["seleDayCue"]),
@@ -294,7 +298,7 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  width: 280px;
+  width: 290px;
   height: 30px;
   position: absolute;
   top: 10px;

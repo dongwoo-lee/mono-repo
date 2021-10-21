@@ -239,6 +239,13 @@ export default {
       } else {
         this.$refs.vuetable.selectId(itemId);
       }
+      if (dataItem.tabletype == "modal") {
+        this.$refs.vuetable.selectedTo.forEach((id) => {
+          if (id != itemId) {
+            this.$refs.vuetable.unselectId(id);
+          }
+        });
+      }
     },
     rightClicked(dataItem, field, event) {
       event.preventDefault();

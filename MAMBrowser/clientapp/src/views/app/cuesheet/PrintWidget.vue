@@ -218,8 +218,9 @@ export default {
     }
   },
   created() {
-    eventBus.$on("clearData_print", (val) => {
+    eventBus.$on("printDataSet", (val) => {
       this.printdata = val;
+      this.rowData.rowNum = val.length;
     });
   },
   components: {

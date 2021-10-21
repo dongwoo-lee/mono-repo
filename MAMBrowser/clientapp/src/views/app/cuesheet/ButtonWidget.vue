@@ -20,6 +20,8 @@
         hint="가져오기"
         @item-click="onActivefolderItemClick"
       />
+
+      <!-- <DxDropDownButton :drop-down-options="{ width: 70 }" icon="activefolder" v-b-modal.commonCueimport hint="가져오기" /> -->
       <DxDropDownButton
         :items="downloaditem"
         :drop-down-options="{ width: 70 }"
@@ -111,19 +113,9 @@
       </div>
     </b-modal>
 
-    <!-- 템플릿 불러오기 -->
-    <b-modal
-      ref="modal-templateLoad"
-      size="xl"
-      centered
-      title="템플릿 불러오기"
-      ok-title="취소"
-      ok-only
-    >
-      <div class="d-block text-center">
-        <div>{템플릿 테이블 컴포넌트}</div>
-      </div>
-    </b-modal>
+    <!-- 가져오기 -->
+    <common-import-tem :id="id" />
+    <common-import-def :proid="proid" :cuesheetData="cuesheetData" />
 
     <!-- 내보내기 -->
     <b-modal
@@ -246,6 +238,8 @@ import DxTextBox from "devextreme-vue/text-box";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import axios from "axios";
 import { eventBus } from "@/eventBus";
+import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
+import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 
 export default {
   props: {
@@ -254,6 +248,9 @@ export default {
   data() {
     return {
       temtitle: "이름없는 템플릿",
+      proid: "",
+      id: "",
+      cuetype: "",
       allCheck: true,
       selected: ["print", "ab", "fav"],
       cartSelected: ["c1", "c2", "c3", "c4"],
@@ -271,15 +268,21 @@ export default {
       valueForEditableTextArea: "메모를 삽입하세요.",
       buttonText: "확인",
       activefolderitem: [
-        "템플릿 불러오기",
-        "기본 큐시트 불러오기",
-        "이전 큐시트 불러오기",
+        "템플릿 가져오기",
+        "기본 큐시트 가져오기",
+        "이전 큐시트 가져오기",
       ],
       downloaditem: [".zip", ".wav", ".pdf", ".docx", ".excel"],
     };
   },
-  created() {},
-  components: { DxButton, DxDropDownButton, DxTextBox },
+  mounted() {},
+  components: {
+    DxButton,
+    DxDropDownButton,
+    DxTextBox,
+    CommonImportDef,
+    CommonImportTem,
+  },
   computed: {
     ...mapGetters("cuesheet", ["abChannelData"]),
     ...mapGetters("cuesheet", ["cChannelData"]),
@@ -291,6 +294,7 @@ export default {
     ...mapMutations("cuesheet", ["SET_CUEPRINT"]),
     ...mapMutations("cuesheet", ["SET_ABCHANNELDATA"]),
     ...mapMutations("cuesheet", ["SET_CCHANNELDATA"]),
+
     //템플릿으로 저장(추가정보들도 추가해야함 footer 등등)
     async addTemplate() {
       var pram = this.cueDataSet();
@@ -314,12 +318,12 @@ export default {
         if (this.selected.includes("print")) {
           var printData = [];
           this.SET_CUEPRINT([]);
-          eventBus.$emit("clearData_print", printData);
+          eventBus.$emit("printDataSet", printData);
         }
         if (this.selected.includes("ab")) {
           var abData = [];
           this.SET_ABCHANNELDATA([]);
-          eventBus.$emit("clearData_ab", abData);
+          eventBus.$emit("abDataSet", abData);
         }
       }
       if (this.cartSelected.length > 0) {
@@ -379,8 +383,20 @@ export default {
       }
     },
     onActivefolderItemClick(e) {
-      if (e.itemData === "템플릿 불러오기") {
-        this.$refs["modal-templateLoad"].show();
+      switch (e.itemData) {
+        case "템플릿 가져오기":
+          this.id = this.cuesheetData.personid;
+          this.$bvModal.show("commonImportTem");
+          break;
+        case "기본 큐시트 가져오기":
+          this.proid = this.cuesheetData.productid;
+          this.$bvModal.show("commonImportDef");
+          break;
+        case "이전 큐시트 가져오기":
+          // this.$bvModal.show("commonCueimport");
+          break;
+        default:
+          break;
       }
     },
     //큐시트 저장
