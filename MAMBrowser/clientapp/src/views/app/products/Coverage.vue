@@ -32,6 +32,7 @@
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
+            style="border-radius:0px !impotant;"
             class="width-100"
             v-model="searchItems.cate"
             :options="rePortOptions"
@@ -57,7 +58,7 @@
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-vue-select
-            style="width:120px;"
+            style="width:160px;"
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
           ></common-vue-select>
