@@ -25,6 +25,7 @@ using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using M30.AudioFile.DAL.Dao;
 using M30.AudioFile.Common.Foundation;
+using MAMBrowser.Hubs;
 
 namespace MAMBrowser
 {
@@ -56,6 +57,7 @@ namespace MAMBrowser
                 c.SchemaFilter<EnumSchemaFilter>();
             });
 
+            services.AddSignalR();
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
@@ -109,6 +111,7 @@ namespace MAMBrowser
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<FileHubs>("/FileHubs");
             });
 
             app.UseSpa(spa =>

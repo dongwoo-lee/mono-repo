@@ -1,5 +1,6 @@
 import { mapGetters, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
+import commonFunction from "../../utils/CommonFunctions";
 import FileModal from "../Modal/FileModal.vue";
 import MetaModal from "../Modal/MetaModal.vue";
 import DxFileUploader from "devextreme-vue/file-uploader";
@@ -7,6 +8,7 @@ import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import * as signalR from "@microsoft/signalr";
 const dxfu = "my-fileupload";
 export default {
   props: {
@@ -20,6 +22,7 @@ export default {
     DxColumn,
     FileModal,
     MetaModal,
+    commonFunction,
     DxFileUploader,
     DxTextBox,
     DxValidator,
@@ -29,14 +32,12 @@ export default {
   data() {
     return {
       dxfu,
-      modalShow: false,
       processing: false,
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
-      fileuploading: false,
-      modal: false,
-      exmodal: false,
+      fileModal: false,
+      metaModal: false,
       localFiles: {},
       title: "",
       memo: "",
@@ -50,52 +51,36 @@ export default {
       isActive: false,
       date: "",
       formatted: "",
-      dateselected: "",
-      fileselect: false,
+      dateSelected: "",
+      fileSelect: false,
+      typeOptions: [
+        { value: "f", text: "소재 유형" },
+        { value: "a", text: "My디스크" }
+      ],
       logTable: "560px",
       notiTable: "560px",
-      logData: [
-        {
-          fileName: "숀 (SHAUN) - Way Back Home.mp3",
-          fileSize: 8858948,
-          title: "건강한 아침 오프닝",
-          memo: "12시까지 확인",
-          step: 1
-        },
-        {
-          fileName: "숀 (SHAUN) - Way Back Home.mp3",
-          fileSize: 8858948,
-          title: "건강한 아침 오프닝",
-          memo: "12시까지 확인",
-          step: 1
-        }
-      ],
       vtData: [
         {
           fileName: "숀 (SHAUN) - Way Back Home",
-          fileSize: "83200",
+          fileSize: 8858948,
           title: "건강한 아침 오프닝",
           memo: "12시까지 확인",
           step: 1
         },
         {
           fileName: "모모랜드 (MOMOLAND) - 뿜뿜",
-          fileSize: "83200",
+          fileSize: 8858948,
           title: "생생 정보통 오프닝",
           memo: "오늘 칼퇴",
           step: 2
         },
         {
           fileName: "CHRISTOPHER - Monogamy (Lyrics)",
-          fileSize: "100",
+          fileSize: 8858948,
           title: "ddd",
           memo: "sss",
           step: 1
         }
-      ],
-      typeOptions: [
-        { value: "f", text: "소재 유형" },
-        { value: "a", text: "My디스크" }
       ],
       mediaOptions: [
         { value: "a", text: "AM" },
@@ -267,7 +252,6 @@ export default {
       console.log(res);
       console.log(message);
       if (res == 1) {
-        this.logData.push(message);
         this.vtData.push(message);
       } else if (res == 2) {
         this.vtData.forEach(element => {
@@ -320,12 +304,12 @@ export default {
     onSelectionChanged() {
       console.log("selection changed");
     },
-    exmodaloff() {
-      this.exmodal = false;
+    metaModalOff() {
+      this.metaModal = false;
       this.reset();
     },
-    exmodalon() {
-      this.exmodal = true;
+    metaModalOn() {
+      this.metaModal = true;
     },
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     getRowData(props) {
@@ -352,7 +336,7 @@ export default {
         }
       } else {
         this.datereset();
-        $fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+        this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
     convertDateSTH(value) {
@@ -361,10 +345,10 @@ export default {
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       if (12 < mm) {
-        $fn.notify("error", { message: "날짜 형식 오류" });
+        this.$fn.notify("error", { message: "날짜 형식 오류" });
         this.date = "";
       } else if (31 < dd) {
-        $fn.notify("error", { message: "날짜 형식 오류" });
+        this.$fn.notify("error", { message: "날짜 형식 오류" });
         this.date = "";
       } else {
         return `${yyyy}-${mm}-${dd}`;
@@ -374,7 +358,7 @@ export default {
       // The date formatted in the locale, or the `label-no-date-selected` string
       this.formatted = ctx.selectedFormatted;
       // The following will be an empty string until a valid date is entered
-      this.dateselected = ctx.selectedYMD;
+      this.dateSelected = ctx.selectedYMD;
     },
     datereset() {
       var input = document.getElementById("dateinput");
@@ -382,10 +366,12 @@ export default {
     },
     //#endregion
     uploadError() {
-      $fn.notify("error", { message: "파일 업로드 실패" });
+      this.$fn.notify("error", { message: "파일 업로드 실패" });
     },
     uploadSuccess() {
+      this.$fn.notify("primary", { message: "파일 업로드 성공" });
       this.reset();
+      this.metaModalOff();
       this.uploadRefresh();
     },
     memoreset() {
@@ -404,13 +390,13 @@ export default {
       this.fileselect = false;
       this.localFiles = [];
       if (this.processing) {
-        $fn.notify("error", { message: "파일 업로드 취소" });
+        this.$fn.notify("error", { message: "파일 업로드 취소" });
       }
     },
     uploadAborted() {
       this.fileuploading = false;
       this.fileselect = false;
-      $fn.notify("error", { message: "파일 업로드 취소" });
+      this.$fn.notify("error", { message: "파일 업로드 취소" });
     },
     fileRemove() {
       this.fileupload.removeFile(0);
@@ -444,16 +430,6 @@ export default {
           if (res) {
             // 파일 업로드
             this.fileupload.upload(0);
-            // this.connection.on("send", (res, message) => {
-            //   if (res) {
-            //     console.log(message);
-            //   }
-            // });
-            // this.reset();
-
-            // if (this.isDragDropState) {
-            //   this.SET_DRAG_DROP_STATE(false);
-            // }
           }
         });
       } else if (!this.metavalid) {
@@ -462,7 +438,7 @@ export default {
         alert("파일 확인");
       }
     },
-    modalon(event) {
+    valueChanged(event) {
       this.localFiles = [];
       this.localFiles.push(event.value[0]);
       if (event.value.length != 0) {
@@ -470,8 +446,8 @@ export default {
           event.value[0].type == "audio/mpeg" ||
           event.value[0].type == "image/jpeg"
         ) {
-          this.modal = true;
-          this.exmodalon();
+          this.fileModal = true;
+          this.metaModalOn();
           this.fileselect = true;
           this.fileuploading = true;
         } else {
@@ -501,26 +477,26 @@ export default {
       });
     },
     openModal() {
-      this.modal = true;
+      this.fileModal = true;
     },
     closeModal() {
-      this.modal = false;
+      this.fileModal = false;
     },
     confirm() {
       if (this.localFiles.length != null) {
         if (this.localFiles.length == 1) {
           if (confirm("현재 진행 중인 작업이 있습니다. 창을 닫으시겠습니까?")) {
-            this.modal = false;
+            this.fileModal = false;
             this.localFiles = [];
             this.reset();
           } else {
             return;
           }
         } else {
-          this.modal = false;
+          this.fileModal = false;
         }
       } else {
-        this.modal = false;
+        this.fileModal = false;
       }
     },
     onDropZoneEnter(e) {

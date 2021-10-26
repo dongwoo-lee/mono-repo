@@ -87,6 +87,13 @@ export default {
     }
   },
   actions: {
+    uploadRefresh({ dispatch }) {
+      // TopNav 디스크 갱신
+      dispatch("user/getSummaryUser", null, { root: true });
+      // 테이블 새로고침
+      const refScrollPaging = FileUploadRefElement.getScrollPaging();
+      refScrollPaging.tableRefresh();
+    },
     async verifyMeta({}, { type, title, files, categoryCD }) {
       let url = "";
       let params = {

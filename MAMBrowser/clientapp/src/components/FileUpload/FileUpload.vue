@@ -1,5 +1,4 @@
 <template>
-  <!-- props 로 modal 값 제어 -->
   <div id="file-container">
     <div
       id="dropzone-external"
@@ -34,7 +33,7 @@
 
     <transition name="slide-fade">
       <FileModal
-        v-show="modal"
+        v-show="fileModal"
         @close="confirm()"
         style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
       >
@@ -45,7 +44,6 @@
             id="addFile"
             >추가</b-button
           >
-          <!-- <b-button @click="exmodalon">추가</b-button> -->
           <DxFileUploader
             :chunk-size="200000"
             dialog-trigger="#addFile"
@@ -59,7 +57,7 @@
             upload-mode="useButtons"
             :multiple="false"
             :visible="false"
-            @valueChanged="modalon"
+            @valueChanged="valueChanged"
             @upload-started="() => (chunks = [])"
             @upload-aborted="uploadAborted"
             @upload-error="uploadError"
@@ -135,7 +133,7 @@
                       ref="vuetable-scrollable"
                       :api-mode="false"
                       :fields="logFields"
-                      :data="logData"
+                      :data="vtData"
                       no-data-template=""
                     >
                       <template slot="rowNO" scope="props">
@@ -174,8 +172,8 @@
     </transition>
     <transition name="slide-fade">
       <MetaModal
-        v-show="exmodal"
-        @close="exmodaloff"
+        v-show="metaModal"
+        @close="metaModalOff"
         style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
       >
         <h3 slot="header">
@@ -442,312 +440,9 @@ export default {
 };
 </script>
 <style>
-.form-control:focus {
-  z-index: 0 !important;
-}
-.data-grid-div {
-  position: absolute;
-  top: 90px;
-  width: 550px;
-  margin-top: 10px;
-  height: 250px;
-  border: 1px solid #008ecc;
-}
-.date-div {
-  position: relative;
-  left: 0px;
-  width: 550px;
-  height: 380px;
-}
-/* .modal-file-processing-button {
-  position: absolute;
-  top: 465px;
-  left: 330px;
-}
-.modal-file-upload-button {
-  position: absolute;
-  top: 465px;
-  left: 360px;
-}
-.modal-file-reset-button {
-  position: absolute;
-  top: 465px;
-  left: 40px;
-} */
-.file-modal-button {
-  padding-top: 25px;
-  margin-left: 400px;
-}
-.date-modal-button {
-  padding-top: 25px;
-  margin-left: 400px;
-}
-.file-modal {
-  padding-left: 20px;
-  height: 480px;
-}
-.date-modal {
-  padding-left: 20px;
-  height: 600px;
-}
-#__BVID__25___BV_modal_outer_ {
-  z-index: 2000 !important;
-}
-.myModal-body {
-  margin: 0px !important;
-}
-
-#dropzone-external.dropzone-active {
-  position: absolute;
-  z-index: 9989;
-  top: 10px;
-  left: 10px;
-  width: 1920px;
-  height: 934px;
-  border: 3px solid #1f1f1f !important;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-.is-valid {
-  border-color: #28a745 !important;
-  height: 36px !important;
-}
-.is-invalid {
-  border-color: #dc3545 !important;
-  height: 36px !important;
-}
-.editTask {
-  margin-top: 10px;
-  border-radius: 3px;
-  width: 400px;
-  height: 36px;
-  /* font-family: "Courier New"; */
-  font-weight: 400;
-  font-size: 18;
-}
-
-.title {
-  padding: 20px 0 20px 0;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.editors {
-  margin-right: 320px;
-}
-
-.editors .left,
-.editors .right {
-  display: inline-block;
-  width: 49%;
-  padding-right: 20px;
-  box-sizing: border-box;
-}
-
-.editors .left {
-  margin-right: 4px;
-}
-
-.editors .left > *,
-.editors .right > *,
-.editors .center > * {
-  margin-bottom: 20px;
-}
-
-.editors .center {
-  padding: 20px 27px 0 0;
-}
-
-.validate {
-  float: right;
-}
-
-.options {
-  padding: 20px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 260px;
-  top: 0;
-  background-color: rgba(191, 191, 191, 0.15);
-}
-
-.caption {
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.option {
-  margin-top: 20px;
-}
-.slide-fade-enter-active {
-  transition: all 0.5s ease;
-}
-.slide-fade-leave-active {
-  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  transform: translateY(-30px);
-  opacity: 0;
-}
-.chunk-panel {
-  width: 505px;
-  height: 165px;
-  overflow-y: auto;
-  padding: 18px;
-  margin-top: 40px;
-  background-color: rgba(191, 191, 191, 0.15);
-}
-.segment-size,
-.loaded-size {
-  margin-left: 3px;
-}
-.note {
-  display: block;
-  font-size: 10pt;
-  color: #484848;
-  margin-left: 9px;
-}
-.note > span {
-  font-weight: 700;
-}
-#dropzone-external {
-  position: absolute;
-  top: -100px;
-  z-index: 800;
-
-  width: 1920px;
-  height: 900px;
-  background-color: rgba(183, 183, 183, 0.1);
-  border-width: 2px;
-  border-style: dashed;
-  padding: 10px;
-}
-#dropzone-external > * {
-  pointer-events: none;
-}
-#dropzone-external.dropzone-active {
-  border-style: solid;
-}
-.widget-container > span {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
-#dropzone-image {
-  max-width: 100%;
-  max-height: 100%;
-}
-#dropzone-text > span {
-  font-weight: 100;
-  opacity: 0.5;
-}
-#upload-progress {
-  display: flex;
-  margin-top: 10px;
-}
-.flex-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.dx-fileuploader-files-container {
-  height: 50px;
-  width: 400px;
-  overflow-y: auto;
-}
-.dx-fileuploader-wrapper {
-  width: 400px;
-  height: 130px;
-  background-color: #ececec;
-}
-.dx-fileuploader-files-container {
-  width: 400px !important;
-  background-color: #ececec;
-  padding: 0px 3px 0px !important;
-}
-.dx-fileuploader-file-name {
-  color: black;
-}
-.dx-fileuploader-file-size {
-  color: black;
-}
-/* .dx-progressbar {
-} */
-.dx-fileuploader-file-status-message {
-  color: black;
-}
-/* 버튼 없는 버전 */
-/* .dx-fileuploader-file{
-  position:absolute;
-  right:45px;
-  top:110px;
-  width:380px;
-  background-color:#ECECEC;
-} */
-/* 버튼 있는 버전 */
-.dx-fileuploader-file {
-  position: absolute;
-  padding-left: 10px;
-  left: 40px;
-  top: 120px;
-  width: 352px;
-  background-color: #ececec;
-}
-.dx-fileuploader-files-container::-webkit-scrollbar {
-  width: 10px;
-}
-/* Track */
-.dx-fileuploader-files-container::-webkit-scrollbar-track {
-  background: #faafaf;
-  border-radius: 5px;
-}
-/* Handle */
-.dx-fileuploader-files-container::-webkit-scrollbar-thumb {
-  background: #0f0f0f;
-  border-radius: 5px;
-}
-/* Handle on hover */
-.dx-fileuploader-files-container::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-.dx-fileuploader-upload-button.dx-button-has-text {
-  display: none !important;
-}
-/* .dx-fileuploader-button-container{
-  display: none !important;
-} */
-.dx-fileuploader-upload-button.dx-button-has-text {
-  display: none !important;
-}
-.dx-fileuploader-input-label {
-  display: none !important;
-}
-.nav-pills .nav-link {
-  border-radius: 0px !important;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
-}
-.nav-pills .nav-link.active {
-  color: #008ecc;
-  background-color: white !important;
-  border-right: 5px solid #008ecc !important;
-}
-.nav-item {
-  border: 1px solid rgb(211, 211, 211);
-}
-.dropdown-toggle {
-  border-radius: 0.1rem !important;
-}
-.btn {
-  border-radius: 0.1rem !important;
-}
+@import "./FileUploadCSS.css";
 </style>
 <style scoped>
-/* ::-webkit-scrollbar {
-  display: none;
-} */
 .progress__wrapper {
   margin: 0px !important;
 }
