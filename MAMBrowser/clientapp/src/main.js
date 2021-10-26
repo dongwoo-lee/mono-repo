@@ -15,7 +15,7 @@ import commonFunctions from "./utils/CommonFunctions";
 import commonFilters from "./utils/CommonFilters";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-
+import "devextreme/dist/css/dx.light.css";
 import "./components/index";
 
 Vue.component("v-select", vSelect);
