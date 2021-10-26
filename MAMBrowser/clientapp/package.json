@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@glidejs/glide": "^3.4.1",
+    "@microsoft/signalr": "^5.0.11",
     "axios": "^0.21.4",
     "babel-plugin-dynamic-import-polyfill": "^1.0.0",
     "bootstrap-vue": "^2.21.2",
@@ -27,6 +28,7 @@
     "vue-runtime-helpers": "^1.1.2",
     "vue-select": "^3.13.0",
     "vue-slider-component": "^3.2.14",
+    "vue-step-progress-indicator": "^1.0.2",
     "vue-upload-component": "^2.8.22",
     "vuelidate": "^0.7.6",
     "vuetable-2": "^1.7.5",
