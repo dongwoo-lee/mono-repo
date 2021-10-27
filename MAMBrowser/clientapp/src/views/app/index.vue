@@ -8,7 +8,7 @@
     <router-view />
     <!-- 파일 업로드 -->
     <file-upload
-      :FileModalState="FileModalState"
+      :DragFileModalState="DragFileModalState"
       @dropZoneLeave="FileDrop"
     ></file-upload>
     <!-- 업로딩 토스트 -->
@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      FileModalState: false,
+      DragFileModalState: false,
       FileDragState: false
     };
   },
@@ -91,11 +91,11 @@ export default {
     },
     FileDragEnter() {
       if (!this.FileDragState) {
-        this.FileModalState = true;
+        this.DragFileModalState = true;
       }
     },
     FileDrop() {
-      this.FileModalState = false;
+      this.DragFileModalState = false;
     }
   }
 };

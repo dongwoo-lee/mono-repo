@@ -1,8 +1,8 @@
 import { mapGetters, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import commonFunction from "../../utils/CommonFunctions";
-import FileModal from "../Modal/FileModal.vue";
-import MetaModal from "../Modal/MetaModal.vue";
+
+import CommonMetaModal from "../Modal/CommonMetaModal.vue";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
@@ -11,17 +11,10 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 import * as signalR from "@microsoft/signalr";
 const dxfu = "my-fileupload";
 export default {
-  props: {
-    modalState: {
-      type: Boolean,
-      default: false
-    }
-  },
   components: {
     DxDataGrid,
     DxColumn,
-    FileModal,
-    MetaModal,
+    CommonMetaModal,
     commonFunction,
     DxFileUploader,
     DxTextBox,
@@ -36,7 +29,7 @@ export default {
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
-      fileModal: false,
+      // fileModal: false,
       metaModal: false,
       localFiles: {},
       title: "",
@@ -230,9 +223,6 @@ export default {
       } else if (v == "a") {
         this.isActive = true;
       }
-    },
-    modalState(v) {
-      this.dropzone = v;
     }
   },
   created() {
@@ -301,6 +291,9 @@ export default {
   //   }
   // },
   methods: {
+    toast() {
+      this.$fn.notify("primary", { title: "dd" });
+    },
     onSelectionChanged() {
       console.log("selection changed");
     },
@@ -446,7 +439,7 @@ export default {
           event.value[0].type == "audio/mpeg" ||
           event.value[0].type == "image/jpeg"
         ) {
-          this.fileModal = true;
+          this.FileModal = true;
           this.metaModalOn();
           this.fileselect = true;
           this.fileuploading = true;
@@ -476,9 +469,9 @@ export default {
         autoHideDelay: 5000
       });
     },
-    openModal() {
-      this.fileModal = true;
-    },
+    // openModal() {
+    //   this.fileModal = true;
+    // },
     closeModal() {
       this.fileModal = false;
     },

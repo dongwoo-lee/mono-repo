@@ -438,8 +438,8 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
-import FileModal from "../Modal/FileModal.vue";
-import MetaModal from "../Modal/MetaModal.vue";
+import FileModal from "../Modal/CommonFileModal.vue";
+import MetaModal from "../Modal/CommonMetaModal.vue";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
