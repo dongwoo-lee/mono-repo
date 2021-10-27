@@ -1,8 +1,8 @@
 import { mapGetters, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import commonFunction from "../../utils/CommonFunctions";
-import FileModal from "../Modal/FileModal.vue";
-import MetaModal from "../Modal/MetaModal.vue";
+
+import CommonMetaModal from "../Modal/CommonMetaModal.vue";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
@@ -20,8 +20,7 @@ export default {
   components: {
     DxDataGrid,
     DxColumn,
-    FileModal,
-    MetaModal,
+    CommonMetaModal,
     commonFunction,
     DxFileUploader,
     DxTextBox,
@@ -36,7 +35,7 @@ export default {
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
-      fileModal: false,
+      // fileModal: false,
       metaModal: false,
       localFiles: {},
       title: "",
@@ -301,6 +300,9 @@ export default {
   //   }
   // },
   methods: {
+    toast() {
+      this.$fn.notify("primary", { title: "dd" });
+    },
     onSelectionChanged() {
       console.log("selection changed");
     },
@@ -476,9 +478,9 @@ export default {
         autoHideDelay: 5000
       });
     },
-    openModal() {
-      this.fileModal = true;
-    },
+    // openModal() {
+    //   this.fileModal = true;
+    // },
     closeModal() {
       this.fileModal = false;
     },
