@@ -56,6 +56,25 @@ namespace MAMBrowser.Controllers
         {
             return View();
         }
+
+        [HttpPost("check")]
+        public ActionResult check([FromForm] IFormFile file)
+        {
+            try
+            {
+                var stream = file.OpenReadStream();
+                var buffer = new byte[1024];
+                int count = 0;
+                stream.Read(buffer, 0, buffer.Length);
+
+                Console.WriteLine(buffer);
+            }
+             catch (Exception ex)
+            {
+                return StatusCode(400, ex);
+            }
+            return new EmptyResult();
+        }
         [HttpPost]
         public ActionResult UploadChunk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string user_id, [FromForm] string connectionId,
             [FromForm] string title, [FromForm] string memo, [FromForm] long fileSize, [FromForm] string mediaCD, [FromForm] string categoryCD)

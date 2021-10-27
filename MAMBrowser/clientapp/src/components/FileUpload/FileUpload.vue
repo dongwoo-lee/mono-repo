@@ -178,6 +178,7 @@ import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
 import MetaModal from "./MetaModal";
 import * as signalR from "@microsoft/signalr";
+import axios from "axios";
 const dxfu = "my-fileupload";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
@@ -298,12 +299,25 @@ export default {
       this.fileupload.upload(0);
     },
     valueChanged(event) {
+      //#region header stream
+      // var blob = event.value[0].slice(0, 44);
+      // // const reader = new FileReader(blob);
+      // // reader.onload = function(res) {
+      // //   console.log(res);
+      // // };
+      // // var buffer = reader.readAsArrayBuffer(blob);
+      // let form = new FormData();
+      // form.append("file", blob);
+
+      // axios.post("/api/fileupload/check", form);
+      //#endregion
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       this.setMetaModalTitle(event.value[0].name);
       if (event.value.length != 0) {
         if (
           event.value[0].type == "audio/mpeg" ||
+          event.value[0].type == "audio/wav" ||
           event.value[0].type == "image/jpeg"
         ) {
           this.FileModal = true;

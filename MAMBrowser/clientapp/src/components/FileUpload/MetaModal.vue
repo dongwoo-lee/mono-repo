@@ -16,7 +16,7 @@
                 <p style=" font-size:16px;">
                   파일 명 : {{ this.MetaModalTitle }}
                 </p>
-                <div style="width:550px; height:80px;">
+                <div style="width:550px; height:80px; margin-bottom:10px;">
                   <h3 style="color:#008ECC;">
                     소재 유형
                   </h3>
@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="date-div" v-show="isActive">
-                  <h3 style="color:#008ECC; margin-top:10px;">
+                  <h3 style="color:#008ECC; ">
                     프로그램 선택
                   </h3>
                   <div style="margin-top:15px;">
