@@ -2,8 +2,8 @@
   <div>
     <transition name="slide-fade">
       <CommonMetaModal
-        v-show="metaModal"
-        @close="metaModalOff"
+        v-show="this.MetaModal"
+        @close="MetaModalOff"
         style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
       >
         <h3 slot="header">
@@ -264,18 +264,25 @@
 </template>
 
 <script>
-import CommonMetaModal from "../Modal/CommonMetaModal.vue";
-import CommonFile from "./CommonFile";
+import CommonMetaModal from "../Modal/CommonMetaModal";
+import CommonFileFunction from "./CommonFileFunction";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   components: {
     CommonMetaModal
   },
-  mixins: [CommonFile],
+  mixins: [CommonFileFunction],
+  data() {
+    return {};
+  },
   computed: {
     ...mapState("FileStore", {
-      fileModal: state => state.fileModal
+      MetaModal: state => state.MetaModal
     })
+  },
+  watch: {},
+  methods: {
+    ...mapMutations("FileStore", ["MetaModalOff"])
   }
 };
 </script>

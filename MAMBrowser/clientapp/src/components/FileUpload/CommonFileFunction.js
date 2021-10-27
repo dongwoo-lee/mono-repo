@@ -2,19 +2,16 @@ import { mapGetters, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import commonFunction from "../../utils/CommonFunctions";
 
-import CommonMetaModal from "../Modal/CommonMetaModal.vue";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
-import * as signalR from "@microsoft/signalr";
-const dxfu = "my-fileupload";
+
 export default {
   components: {
     DxDataGrid,
     DxColumn,
-    CommonMetaModal,
     commonFunction,
     DxFileUploader,
     DxTextBox,
@@ -24,28 +21,18 @@ export default {
   },
   data() {
     return {
-      dxfu,
       processing: false,
-      dropzone: false,
-      isDropZoneActive: false,
-      chunks: [],
-      // fileModal: false,
-      metaModal: false,
-      localFiles: {},
-      title: "",
-      memo: "",
-      type: "",
-      mediaCD: "",
-      categoryCD: "",
-      uploaderCustomData: {},
-      step: 1,
       typeSelected: "f",
       mediaSelected: "a",
       isActive: false,
       date: "",
       formatted: "",
       dateSelected: "",
-      fileSelect: false,
+      title: "",
+      memo: "",
+      type: "",
+      mediaCD: "",
+      categoryCD: "",
       typeOptions: [
         { value: "f", text: "소재 유형" },
         { value: "a", text: "My디스크" }
@@ -194,9 +181,7 @@ export default {
   },
   computed: {
     ...mapGetters("menu", ["getMenuType"]),
-    fileupload: function() {
-      return this.$refs[dxfu].instance;
-    },
+
     typeState() {
       return this.typeSelected == "f" ? true : false;
     },
@@ -225,86 +210,13 @@ export default {
       }
     }
   },
-  created() {
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("/FileHubs", {
-        skipNegotiation: false
-        // transport: signalR.HttpTransportType.WebSockets
-      })
-      .withAutomaticReconnect([3000, 5000, 10000, null])
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-  },
-  mounted() {
-    this.connection.start();
-    // 화살표 함수
-    this.connection.on("send", (res, message) => {
-      console.log(res);
-      console.log(message);
-      if (res == 1) {
-        this.vtData.push(message);
-      } else if (res == 2) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
-      } else if (res == 3) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
-      } else if (res == 4) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
-      } else if (res == 5) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
-        console.log("파일 업로드 성공");
-      }
-    });
-    // window.addEventListener("beforeunload", this.unLoadEvent);
-    setTimeout(() => {
-      document.body.classList.add("default-transition");
-    }, 100);
-  },
-  beforeUnmount() {
-    this.connection.stop();
-    // window.removeEventListener("beforeunload", this.unLoadEvent);
-  },
-  // beforeRouteLeave(to, from, next) {
-  //   if (!this.fileuploading) {
-  //     if (
-  //       confirm(
-  //         "이 사이트에서 나가시겠습니까?\n변경사항이 저장되지 않을 수 있습니다."
-  //       )
-  //     ) {
-  //       next();
-  //     }
-  //   }
-  // },
+
   methods: {
-    toast() {
-      this.$fn.notify("primary", { title: "dd" });
-    },
+    ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
+
     onSelectionChanged() {
       console.log("selection changed");
     },
-    metaModalOff() {
-      this.metaModal = false;
-      this.reset();
-    },
-    metaModalOn() {
-      this.metaModal = true;
-    },
-    ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     getRowData(props) {
       console.log(props);
     },
@@ -358,15 +270,7 @@ export default {
       input.value = null;
     },
     //#endregion
-    uploadError() {
-      this.$fn.notify("error", { message: "파일 업로드 실패" });
-    },
-    uploadSuccess() {
-      this.$fn.notify("primary", { message: "파일 업로드 성공" });
-      this.reset();
-      this.metaModalOff();
-      this.uploadRefresh();
-    },
+
     memoreset() {
       this.memo = "";
     },
@@ -384,124 +288,6 @@ export default {
       this.localFiles = [];
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });
-      }
-    },
-    uploadAborted() {
-      this.fileuploading = false;
-      this.fileselect = false;
-      this.$fn.notify("error", { message: "파일 업로드 취소" });
-    },
-    fileRemove() {
-      this.fileupload.removeFile(0);
-      this.localFiles = [];
-    },
-    async uploadfile() {
-      if (this.metavalid && this.fileselect) {
-        if (this.typeSelected == "a") {
-          this.type = "private";
-        }
-
-        //NOTE: 커스텀 데이터 파라미터
-
-        var data = {
-          user_id: sessionStorage.getItem("user_id"),
-          title: this.title,
-          memo: this.memo,
-          fileSize: this.localFiles[0].size,
-          connectionId: this.connection.connectionId
-        };
-
-        this.uploaderCustomData = data;
-        this.processing = true;
-        this.verifyMeta({
-          type: this.type,
-          title: this.title,
-          files: this.localFiles,
-          categoryCD: this.categoryCD
-        }).then(res => {
-          this.processing = false;
-          if (res) {
-            // 파일 업로드
-            this.fileupload.upload(0);
-          }
-        });
-      } else if (!this.metavalid) {
-        alert("메타데이터");
-      } else if (!this.fileselect) {
-        alert("파일 확인");
-      }
-    },
-    valueChanged(event) {
-      this.localFiles = [];
-      this.localFiles.push(event.value[0]);
-      if (event.value.length != 0) {
-        if (
-          event.value[0].type == "audio/mpeg" ||
-          event.value[0].type == "image/jpeg"
-        ) {
-          this.FileModal = true;
-          this.metaModalOn();
-          this.fileselect = true;
-          this.fileuploading = true;
-        } else {
-          //TODO: 얼럿 창 예쁜 모달로 변경
-          alert("업로드 할 수 없는 파일 형식입니다.");
-          this.fileupload.removeFile(0);
-          this.fileselect = false;
-        }
-      } else if (event.value.length == 0) {
-        this.fileselect = false;
-      }
-    },
-    onUploadProgress(e) {
-      this.chunks.push({
-        segmentSize: e.segmentSize,
-        bytesLoaded: e.bytesLoaded,
-        bytesTotal: e.bytesTotal
-      });
-    },
-    makeToast(variant = null) {
-      this.$bvToast.toast("FileName Background Task Start", {
-        title: "File Upload Complete",
-        variant: variant,
-        solid: true,
-        noAutoHide: false,
-        autoHideDelay: 5000
-      });
-    },
-    // openModal() {
-    //   this.fileModal = true;
-    // },
-    closeModal() {
-      this.fileModal = false;
-    },
-    confirm() {
-      if (this.localFiles.length != null) {
-        if (this.localFiles.length == 1) {
-          if (confirm("현재 진행 중인 작업이 있습니다. 창을 닫으시겠습니까?")) {
-            this.fileModal = false;
-            this.localFiles = [];
-            this.reset();
-          } else {
-            return;
-          }
-        } else {
-          this.fileModal = false;
-        }
-      } else {
-        this.fileModal = false;
-      }
-    },
-    onDropZoneEnter(e) {
-      if (e.dropZoneElement.id === "dropzone-external") {
-        this.isDropZoneActive = true;
-      }
-    },
-    onDropZoneLeave(e) {
-      if (e.dropZoneElement.id === "dropzone-external") {
-        this.isDropZoneActive = false;
-        this.dropzone = false;
-        this.$emit("dropZoneLeave");
       }
     }
   }

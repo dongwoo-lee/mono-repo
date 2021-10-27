@@ -1,7 +1,25 @@
 export default {
   namespaced: true,
-  state: {},
+  state: {
+    MetaModal: false,
+    // MetaData: {
+    //   title: "",
+    //   memo: "",
+    //   type: "",
+    //   mediaCD: "",
+    //   categoryCD: ""
+    // },
+    localFiles: [],
+    uploaderCustomData: {}
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    MetaModalOn(state) {
+      state.MetaModal = true;
+    },
+    MetaModalOff(state) {
+      state.MetaModal = false;
+    }
+  },
   actions: {}
 };
