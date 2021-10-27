@@ -169,7 +169,7 @@
       </CommonFileModal>
     </transition>
 
-    <MetaModal></MetaModal>
+    <MetaModal @upload="upload"></MetaModal>
   </div>
 </template>
 
@@ -199,8 +199,7 @@ export default {
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
-      fileSelect: false,
-      fileUploading: false
+      fileSelect: false
     };
   },
   watch: {
@@ -219,7 +218,11 @@ export default {
       .build();
   },
   mounted() {
-    this.connection.start();
+    this.connection.start().then(
+      setTimeout(() => {
+        this.setConnectionId(this.connection.connectionId);
+      }, 500)
+    );
     this.connection.on("send", (res, message) => {
       console.log(res);
       console.log(message);
@@ -252,6 +255,7 @@ export default {
         console.log("파일 업로드 성공");
       }
     });
+
     // window.addEventListener("beforeunload", this.unLoadEvent);
     setTimeout(() => {
       document.body.classList.add("default-transition");
@@ -262,7 +266,7 @@ export default {
   },
   // window.removeEventListener("beforeunload", this.unLoadEvent);
   // beforeRouteLeave(to, from, next) {
-  //   if (!this.fileuploading) {
+  //   if (!this.fileSelect) {
   //     if (
   //       confirm(
   //         "이 사이트에서 나가시겠습니까?\n변경사항이 저장되지 않을 수 있습니다."
@@ -282,47 +286,21 @@ export default {
     })
   },
   methods: {
-    ...mapMutations("FileStore", ["MetaModalOn"]),
+    ...mapMutations("FileStore", [
+      "MetaModalOn",
+      "addLocalFiles",
+      "resetLocalFiles",
+      "setMetaModalTitle",
+      "setConnectionId"
+    ]),
     //#region 파일 조작
-    async uploadfile() {
-      if (this.metavalid && this.fileselect) {
-        if (this.typeSelected == "a") {
-          this.type = "private";
-        }
-
-        //NOTE: 커스텀 데이터 파라미터
-
-        var data = {
-          user_id: sessionStorage.getItem("user_id"),
-          title: this.title,
-          memo: this.memo,
-          fileSize: this.localFiles[0].size,
-          connectionId: this.connection.connectionId
-        };
-
-        this.uploaderCustomData = data;
-        this.processing = true;
-        this.verifyMeta({
-          type: this.type,
-          title: this.title,
-          files: this.localFiles,
-          categoryCD: this.categoryCD
-        }).then(res => {
-          this.processing = false;
-          if (res) {
-            // 파일 업로드
-            this.fileupload.upload(0);
-          }
-        });
-      } else if (!this.metavalid) {
-        alert("메타데이터");
-      } else if (!this.fileselect) {
-        alert("파일 확인");
-      }
+    upload() {
+      this.fileupload.upload(0);
     },
     valueChanged(event) {
-      this.localFiles = [];
-      this.localFiles.push(event.value[0]);
+      this.resetLocalFiles();
+      this.addLocalFiles(event.value[0]);
+      this.setMetaModalTitle(event.value[0].name);
       if (event.value.length != 0) {
         if (
           event.value[0].type == "audio/mpeg" ||
@@ -356,7 +334,6 @@ export default {
       this.$fn.notify("error", { message: "파일 업로드 실패" });
     },
     uploadAborted() {
-      this.fileuploading = false;
       this.fileselect = false;
       this.$fn.notify("error", { message: "파일 업로드 취소" });
     },

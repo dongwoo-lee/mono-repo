@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       processing: false,
+      fileUploading: false,
       typeSelected: "f",
       mediaSelected: "a",
       isActive: false,

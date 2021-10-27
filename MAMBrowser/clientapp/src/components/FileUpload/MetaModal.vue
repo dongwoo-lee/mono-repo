@@ -4,15 +4,18 @@
       <CommonMetaModal
         v-show="this.MetaModal"
         @close="MetaModalOff"
-        style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
+        style="font-family: MBC 새로움 M;"
       >
         <h3 slot="header">
-          파일 메타 데이터 입력
+          파일 업로드 메타 데이터 입력
         </h3>
         <h4 slot="body">
           <div :class="[isActive ? 'date-modal' : 'file-modal']">
             <div style="height:600px; overflow-y:auto; ">
               <div style="position:relative; top:20px;">
+                <p style=" font-size:16px;">
+                  파일 명 : {{ this.MetaModalTitle }}
+                </p>
                 <div style="width:550px; height:80px;">
                   <h3 style="color:#008ECC;">
                     소재 유형
@@ -28,7 +31,7 @@
                 </div>
 
                 <div class="date-div" v-show="isActive">
-                  <h3 style="color:#008ECC; margin-top:20px;">
+                  <h3 style="color:#008ECC; margin-top:10px;">
                     프로그램 선택
                   </h3>
                   <div style="margin-top:15px;">
@@ -114,7 +117,7 @@
                     </DxDataGrid>
                   </div>
                 </div>
-                <h3 style="color:#008ECC; margin-top:20px;">
+                <h3 style="color:#008ECC; margin-top:-10px;">
                   메타 데이터
                 </h3>
                 <div style="height:50px;  margin-top : 10px;">
@@ -245,7 +248,12 @@
               v-show="processing"
             >
               <b-spinner small type="grow"></b-spinner>
-              <span class="label">확인중...</span>
+              <span class="label" v-show="processing && !fileUploading"
+                >확인중...</span
+              >
+              <span class="label" v-show="processing && fileUploading"
+                >업로드 중...</span
+              >
             </b-button>
 
             <b-button
@@ -277,12 +285,49 @@ export default {
   },
   computed: {
     ...mapState("FileStore", {
-      MetaModal: state => state.MetaModal
+      MetaModal: state => state.MetaModal,
+      MetaModalTitle: state => state.MetaModalTitle,
+      localFiles: state => state.localFiles,
+      connectionId: state => state.connectionId
     })
   },
   watch: {},
   methods: {
-    ...mapMutations("FileStore", ["MetaModalOff"])
+    ...mapMutations("FileStore", ["MetaModalOff", "setUploaderCustomData"]),
+    async uploadfile() {
+      if (this.metavalid) {
+        if (this.typeSelected == "a") {
+          this.type = "private";
+        }
+
+        //NOTE: 커스텀 데이터 파라미터
+
+        var data = {
+          user_id: sessionStorage.getItem("user_id"),
+          title: this.title,
+          memo: this.memo,
+          fileSize: this.localFiles[0].size,
+          connectionId: this.connectionId
+        };
+        this.setUploaderCustomData(data);
+        this.processing = true;
+        this.verifyMeta({
+          type: this.type,
+          title: this.title,
+          files: this.localFiles,
+          categoryCD: this.categoryCD
+        }).then(res => {
+          this.processing = false;
+          if (res) {
+            // 파일 업로드
+            this.$emit("upload");
+            // this.fileupload.upload(0);
+          }
+        });
+      } else if (!this.metavalid) {
+        alert("메타데이터");
+      }
+    }
   }
 };
 </script>

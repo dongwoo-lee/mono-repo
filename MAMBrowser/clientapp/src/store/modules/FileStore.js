@@ -2,6 +2,7 @@ export default {
   namespaced: true,
   state: {
     MetaModal: false,
+    MetaModalTitle: "",
     // MetaData: {
     //   title: "",
     //   memo: "",
@@ -10,7 +11,8 @@ export default {
     //   categoryCD: ""
     // },
     localFiles: [],
-    uploaderCustomData: {}
+    uploaderCustomData: {},
+    connectionId: ""
   },
   getters: {},
   mutations: {
@@ -19,6 +21,22 @@ export default {
     },
     MetaModalOff(state) {
       state.MetaModal = false;
+      state.localFiles = [];
+    },
+    addLocalFiles(state, payload) {
+      state.localFiles.push(payload);
+    },
+    resetLocalFiles(state) {
+      state.localFiles = [];
+    },
+    setMetaModalTitle(state, payload) {
+      state.MetaModalTitle = payload;
+    },
+    setConnectionId(state, payload) {
+      state.connectionId = payload;
+    },
+    setUploaderCustomData(state, payload) {
+      state.uploaderCustomData = payload;
     }
   },
   actions: {}
