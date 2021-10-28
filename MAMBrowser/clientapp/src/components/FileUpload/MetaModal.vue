@@ -321,7 +321,6 @@ export default {
           if (res) {
             // 파일 업로드
             this.$emit("upload");
-            // this.fileupload.upload(0);
           }
         });
       } else if (!this.metavalid) {
