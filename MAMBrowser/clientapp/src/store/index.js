@@ -5,7 +5,8 @@ import app from "../main";
 import menu from "./modules/menu";
 import user from "./modules/user";
 import file from "./modules/file";
-import FileStore from "./modules/FileStore";
+
+import FileIndexStore from "./modules/FileUpload/index";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -25,7 +26,7 @@ const store = new Vuex.Store({
     menu,
     user,
     file,
-    FileStore
+    FileIndexStore
   }
 });
 

@@ -1,7 +1,6 @@
 import { mapGetters, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import commonFunction from "../../utils/CommonFunctions";
-
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
@@ -23,50 +22,27 @@ export default {
     return {
       processing: false,
       fileUploading: false,
-      typeSelected: "f",
-      mediaSelected: "a",
       isActive: false,
       date: "",
       formatted: "",
       dateSelected: "",
-      title: "",
-      memo: "",
-      type: "",
-      mediaCD: "",
-      categoryCD: "",
+      MetaData: {
+        title: "",
+        memo: "",
+        mediaCD: "",
+        categoryCD: "",
+        typeSelected: "null",
+        mediaSelected: "a"
+      },
       typeOptions: [
-        { value: "f", text: "소재 유형" },
-        { value: "a", text: "My디스크" }
-      ],
-      logTable: "560px",
-      notiTable: "560px",
-      vtData: [
-        {
-          fileName: "숀 (SHAUN) - Way Back Home",
-          fileSize: 8858948,
-          title: "건강한 아침 오프닝",
-          memo: "12시까지 확인",
-          step: 1
-        },
-        {
-          fileName: "모모랜드 (MOMOLAND) - 뿜뿜",
-          fileSize: 8858948,
-          title: "생생 정보통 오프닝",
-          memo: "오늘 칼퇴",
-          step: 2
-        },
-        {
-          fileName: "CHRISTOPHER - Monogamy (Lyrics)",
-          fileSize: 8858948,
-          title: "ddd",
-          memo: "sss",
-          step: 1
-        }
+        { value: "null", text: "소재 유형" },
+        { value: "private", text: "My디스크" }
       ],
       mediaOptions: [
         { value: "a", text: "AM" },
         { value: "f", text: "FM" }
       ],
+      vueTableWidth: "560px",
       logFields: [
         {
           name: "__slot:rowNO",
@@ -184,37 +160,43 @@ export default {
     ...mapGetters("menu", ["getMenuType"]),
 
     typeState() {
-      return this.typeSelected == "f" ? true : false;
+      return this.MetaData.typeSelected == "null" ? true : false;
     },
     titleState() {
-      return this.title.length >= 1 ? true : false;
+      return this.MetaData.title.length >= 1 ? true : false;
     },
     memoState() {
-      return this.memo.length >= 1 ? true : false;
+      return this.MetaData.memo.length >= 1 ? true : false;
     },
-    metavalid() {
+    metaValid() {
       if (
-        this.title.length >= 1 &&
-        this.memo.length >= 1 &&
-        this.typeSelected != "f"
+        this.MetaData.title.length >= 1 &&
+        this.MetaData.memo.length >= 1 &&
+        this.MetaData.typeSelected != "null"
       )
         return true;
       else return false;
     }
   },
   watch: {
-    typeSelected: function(v) {
-      if (v == "f") {
-        this.isActive = false;
-      } else if (v == "a") {
-        this.isActive = true;
+    MetaData: {
+      deep: true,
+      handler(v) {
+        if (v.typeSelected == "null") {
+          this.isActive = false;
+        } else if (v.typeSelected == "private") {
+          this.isActive = true;
+        }
       }
     }
   },
 
   methods: {
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
-
+    fileStateFalse() {
+      this.processing = false;
+      this.fileUploading = false;
+    },
     onSelectionChanged() {
       console.log("selection changed");
     },
@@ -241,7 +223,7 @@ export default {
           this.date = convertDate;
         }
       } else {
-        this.datereset();
+        this.dateReset();
         this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
@@ -266,27 +248,25 @@ export default {
       // The following will be an empty string until a valid date is entered
       this.dateSelected = ctx.selectedYMD;
     },
-    datereset() {
+    dateReset() {
       var input = document.getElementById("dateinput");
       input.value = null;
     },
     //#endregion
 
-    memoreset() {
-      this.memo = "";
+    memoReset() {
+      this.MetaData.memo = "";
     },
-    titlereset() {
-      this.title = "";
+    titleReset() {
+      this.MetaData.title = "";
     },
     reset() {
-      this.memo = "";
-      this.title = "";
-      this.typeSelected = "f";
-      this.datereset();
-      this.fileupload.removeFile(0);
-      this.fileuploading = false;
-      this.fileselect = false;
-      this.localFiles = [];
+      this.titleReset();
+      this.memoReset();
+      this.MetaData.typeSelected = "null";
+      this.dateReset();
+      this.fileStateFalse();
+      this.fileSelect = false;
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });
       }

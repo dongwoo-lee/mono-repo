@@ -72,11 +72,11 @@
                 <b-tab title="알림"
                   ><div>
                     <vuetable
-                      :table-height="notiTable"
+                      :table-height="vueTableWidth"
                       ref="vuetable-scrollable"
                       :api-mode="false"
                       :fields="notiFields"
-                      :data="vtData"
+                      :data="vueTableData"
                       no-data-template=""
                     >
                       <template slot="name" scope="props">
@@ -107,31 +107,12 @@
                 </b-tab>
                 <b-tab title="로그">
                   <div style=" margin-left:20px; width:995px; height:150px;">
-                    <!-- <DxDataGrid
-                      :data-source="this.vtData"
-                      :selection="{ mode: 'single' }"
-                      :show-borders="true"
-                      :hover-state-enabled="true"
-                      key-expr="fileGuid"
-                      @selection-changed="onSelectionChanged"
-                    >
-                      <DxColumn
-                        :width="70"
-                        data-field="Prefix"
-                        caption="Title"
-                      />
-                      <DxColumn data-field="FirstName" />
-                      <DxColumn data-field="LastName" />
-                      <DxColumn :width="180" data-field="Position" />
-                      <DxColumn data-field="BirthDate" data-type="date" />
-                      <DxColumn data-field="HireDate" data-type="date" />
-                    </DxDataGrid> -->
                     <vuetable
-                      :table-height="logTable"
+                      :table-height="vueTableWidth"
                       ref="vuetable-scrollable"
                       :api-mode="false"
                       :fields="logFields"
-                      :data="vtData"
+                      :data="vueTableData"
                       no-data-template=""
                     >
                       <template slot="rowNO" scope="props">
@@ -169,7 +150,7 @@
       </CommonFileModal>
     </transition>
 
-    <MetaModal @upload="upload"></MetaModal>
+    <MetaModal @upload="upload" :fileState="fileState"></MetaModal>
   </div>
 </template>
 
@@ -200,7 +181,8 @@ export default {
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
-      fileSelect: false
+      fileSelect: false,
+      fileState: ""
     };
   },
   watch: {
@@ -225,35 +207,18 @@ export default {
       }, 500)
     );
     this.connection.on("send", (res, message) => {
-      console.log(res);
-      console.log(message);
       if (res == 1) {
-        this.vtData.push(message);
+        this.setVueTableData(message);
+        this.MetaModalOff();
+        this.fileState = "업로드 성공";
       } else if (res == 2) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
+        this.forEachVueTableData(message);
       } else if (res == 3) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
+        this.forEachVueTableData(message);
       } else if (res == 4) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
+        this.forEachVueTableData(message);
       } else if (res == 5) {
-        this.vtData.forEach(element => {
-          if (message.fileName == element.fileName) {
-            element.step = message.step;
-          }
-        });
-        console.log("파일 업로드 성공");
+        this.forEachVueTableData(message);
       }
     });
 
@@ -281,21 +246,26 @@ export default {
     fileupload: function() {
       return this.$refs[dxfu].instance;
     },
-    ...mapState("FileStore", {
+    ...mapState("FileIndexStore", {
       uploaderCustomData: state => state.uploaderCustomData,
-      localFiles: state => state.localFiles
+      localFiles: state => state.localFiles,
+      vueTableData: state => state.vueTableData
     })
   },
   methods: {
-    ...mapMutations("FileStore", [
+    ...mapMutations("FileIndexStore", [
       "MetaModalOn",
+      "MetaModalOff",
       "addLocalFiles",
       "resetLocalFiles",
       "setMetaModalTitle",
-      "setConnectionId"
+      "setConnectionId",
+      "setVueTableData",
+      "forEachVueTableData"
     ]),
     //#region 파일 조작
     upload() {
+      this.fileState = "업로드 시작";
       this.fileupload.upload(0);
     },
     valueChanged(event) {
@@ -303,7 +273,6 @@ export default {
       // var blob = event.value[0].slice(0, 44);
       // // const reader = new FileReader(blob);
       // // reader.onload = function(res) {
-      // //   console.log(res);
       // // };
       // // var buffer = reader.readAsArrayBuffer(blob);
       // let form = new FormData();
@@ -313,7 +282,9 @@ export default {
       //#endregion
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
-      this.setMetaModalTitle(event.value[0].name);
+      if (event.value.length != 0) {
+        this.setMetaModalTitle(event.value[0].name);
+      }
       if (event.value.length != 0) {
         if (
           event.value[0].type == "audio/mpeg" ||
@@ -336,12 +307,12 @@ export default {
     },
     fileRemove() {
       this.fileupload.removeFile(0);
-      this.localFiles = [];
+      this.resetLocalFiles();
     },
     uploadSuccess() {
       this.$fn.notify("primary", { message: "파일 업로드 성공" });
-      this.reset();
-      this.metaModalOff();
+      this.fileState = "리셋";
+      this.fileRemove();
       this.uploadRefresh();
     },
     uploadError() {

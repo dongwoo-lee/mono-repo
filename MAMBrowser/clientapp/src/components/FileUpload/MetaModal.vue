@@ -23,7 +23,7 @@
                   <b-form-select
                     style="width:300px;"
                     id="filetype"
-                    v-model="typeSelected"
+                    v-model="MetaData.typeSelected"
                     :options="typeOptions"
                     :state="!typeState"
                     required
@@ -71,7 +71,7 @@
                         font-scale="1"
                         style="position:absolute; top:15px; right:110px; z-index:9999;"
                         variant="secondary"
-                        @click="datereset"
+                        @click="dateReset"
                       ></b-icon>
                     </button>
 
@@ -83,7 +83,7 @@
                       <b-form-select
                         class="media-select"
                         style=" width:140px; height:37px;"
-                        v-model="mediaSelected"
+                        v-model="MetaData.mediaSelected"
                         :options="mediaOptions"
                       />
                     </b-form-group>
@@ -97,7 +97,7 @@
                   <div v-show="isActive" class="data-grid-div">
                     <!-- //TODO: Data Binding -->
                     <DxDataGrid
-                      :data-source="this.vtData"
+                      :data-source="vueTableData"
                       :selection="{ mode: 'single' }"
                       :show-borders="true"
                       :hover-state-enabled="true"
@@ -123,7 +123,7 @@
                 <div style="height:50px;  margin-top : 10px;">
                   <b-form-input
                     class="editTask"
-                    v-model="title"
+                    v-model="MetaData.title"
                     :state="titleState"
                     placeholder="제목"
                     trim
@@ -137,7 +137,7 @@
                       font-scale="1"
                       style="position:relative; top:0px; right:0px; z-index:999;"
                       variant="secondary"
-                      @click="titlereset"
+                      @click="titleReset"
                     ></b-icon>
                   </button>
                 </div>
@@ -145,7 +145,7 @@
                 <div style="height:50px;">
                   <b-form-input
                     class="editTask"
-                    v-model="memo"
+                    v-model="MetaData.memo"
                     :state="memoState"
                     aria-describedby="input-live-help input-live-feedback"
                     placeholder="설명"
@@ -160,14 +160,14 @@
                       font-scale="1"
                       style="position:relative; top:0px; right:0px; z-index:999;"
                       variant="secondary"
-                      @click="memoreset"
+                      @click="memoReset"
                     ></b-icon>
                   </button>
                 </div>
                 <div style="height:50px;  margin-top : 10px;" v-show="isActive">
                   <b-form-input
                     class="editTask"
-                    v-model="title"
+                    v-model="MetaData.title"
                     :state="titleState"
                     placeholder="제목"
                     trim
@@ -181,49 +181,7 @@
                       font-scale="1"
                       style="position:relative; top:0px; right:0px; z-index:999;"
                       variant="secondary"
-                      @click="titlereset"
-                    ></b-icon>
-                  </button>
-                </div>
-                <div style="height:50px;  margin-top : 10px;" v-show="isActive">
-                  <b-form-input
-                    class="editTask"
-                    v-model="title"
-                    :state="titleState"
-                    placeholder="제목"
-                    trim
-                  />
-
-                  <button
-                    style="position:relative; left:365px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
-                  >
-                    <b-icon
-                      icon="x-circle"
-                      font-scale="1"
-                      style="position:relative; top:0px; right:0px; z-index:999;"
-                      variant="secondary"
-                      @click="titlereset"
-                    ></b-icon>
-                  </button>
-                </div>
-                <div style="height:40px;  margin-top : 10px;" v-show="isActive">
-                  <b-form-input
-                    class="editTask"
-                    v-model="title"
-                    :state="titleState"
-                    placeholder="제목"
-                    trim
-                  />
-
-                  <button
-                    style="position:relative; left:365px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
-                  >
-                    <b-icon
-                      icon="x-circle"
-                      font-scale="1"
-                      style="position:relative; top:0px; right:0px; z-index:999;"
-                      variant="secondary"
-                      @click="titlereset"
+                      @click="titleReset"
                     ></b-icon>
                   </button>
                 </div>
@@ -238,29 +196,30 @@
               class="modal-file-reset-button"
               @click="reset()"
             >
-              초기화
+              취소
             </b-button>
 
             <b-button
               variant="outline-success"
               class="modal-file-processing-button"
-              @click="uploadfile()"
-              v-show="processing"
+              v-show="processing && !fileUploading"
             >
               <b-spinner small type="grow"></b-spinner>
-              <span class="label" v-show="processing && !fileUploading"
-                >확인중...</span
-              >
-              <span class="label" v-show="processing && fileUploading"
-                >업로드 중...</span
-              >
+              <span class="label">확인중...</span>
             </b-button>
-
+            <b-button
+              variant="outline-success"
+              class="modal-file-processing-button"
+              v-show="!processing && fileUploading"
+            >
+              <b-spinner small type="grow"></b-spinner>
+              <span class="label">업로드 중...</span>
+            </b-button>
             <b-button
               variant="outline-success"
               @click="uploadfile()"
               class="modal-file-upload-button"
-              v-show="!processing"
+              v-show="!processing && !fileUploading"
             >
               <span class="label">업로드</span>
             </b-button>
@@ -276,6 +235,12 @@ import CommonMetaModal from "../Modal/CommonMetaModal";
 import CommonFileFunction from "./CommonFileFunction";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
+  props: {
+    fileState: {
+      type: String,
+      default: ""
+    }
+  },
   components: {
     CommonMetaModal
   },
@@ -284,47 +249,59 @@ export default {
     return {};
   },
   computed: {
-    ...mapState("FileStore", {
+    ...mapState("FileIndexStore", {
       MetaModal: state => state.MetaModal,
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
-      connectionId: state => state.connectionId
+      connectionId: state => state.connectionId,
+      vueTableData: state => state.vueTableData
     })
   },
-  watch: {},
+  watch: {
+    fileState(v) {
+      if (v == "업로드 성공") {
+        this.fileUploading = false;
+      } else if (v == "리셋") {
+        this.reset();
+      }
+    },
+    MetaModal(v) {
+      if (!v) {
+        this.reset();
+      }
+    }
+  },
   methods: {
-    ...mapMutations("FileStore", ["MetaModalOff", "setUploaderCustomData"]),
+    ...mapMutations("FileIndexStore", [
+      "MetaModalOff",
+      "setUploaderCustomData"
+    ]),
     async uploadfile() {
-      if (this.metavalid) {
-        if (this.typeSelected == "a") {
-          this.type = "private";
-        }
-
+      if (this.metaValid) {
         //NOTE: 커스텀 데이터 파라미터
-
         var data = {
           user_id: sessionStorage.getItem("user_id"),
-          title: this.title,
-          memo: this.memo,
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
           fileSize: this.localFiles[0].size,
           connectionId: this.connectionId
         };
         this.setUploaderCustomData(data);
         this.processing = true;
         this.verifyMeta({
-          type: this.type,
-          title: this.title,
+          type: this.MetaData.typeSelected,
+          title: this.MetaData.title,
           files: this.localFiles,
-          categoryCD: this.categoryCD
+          categoryCD: this.MetaData.categoryCD
         }).then(res => {
-          this.processing = false;
           if (res) {
-            // 파일 업로드
+            this.processing = false;
+            this.fileUploading = true;
             this.$emit("upload");
           }
         });
-      } else if (!this.metavalid) {
-        alert("메타데이터");
+      } else if (!this.metaValid) {
+        this.$fn.notify("error", { title: "메타 데이터 확인" });
       }
     }
   }

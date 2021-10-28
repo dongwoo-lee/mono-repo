@@ -5,6 +5,7 @@ import App from "./App";
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import router from "./router";
 import store from "./store";
+import FileIndexStore from "./store/modules/FileUpload";
 import messages from "./locales/index";
 import VueI18n from "vue-i18n";
 import Notifications from "./components/Common/Notification";
@@ -46,5 +47,6 @@ export default new Vue({
   i18n,
   router,
   store,
+  FileIndexStore,
   render: h => h(App)
 }).$mount("#app");
