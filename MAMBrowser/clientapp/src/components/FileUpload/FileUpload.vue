@@ -68,8 +68,7 @@
           <div>
             <b-card no-body>
               <b-tabs pills justified vertical>
-                <b-tab title="파일 업로드" active> </b-tab>
-                <b-tab title="알림"
+                <b-tab title="알림" active
                   ><div>
                     <vuetable
                       :table-height="vueTableWidth"
@@ -143,6 +142,7 @@
                     </vuetable>
                   </div>
                 </b-tab>
+                <b-tab title="파일 업로드"> </b-tab>
               </b-tabs>
             </b-card>
           </div>
