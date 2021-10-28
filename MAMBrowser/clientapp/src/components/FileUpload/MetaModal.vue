@@ -215,14 +215,27 @@
               <b-spinner small type="grow"></b-spinner>
               <span class="label">업로드 중...</span>
             </b-button>
-            <b-button
-              variant="outline-success"
-              @click="uploadfile()"
-              class="modal-file-upload-button"
-              v-show="!processing && !fileUploading"
-            >
-              <span class="label">업로드</span>
-            </b-button>
+            <span v-show="metaValid">
+              <b-button
+                variant="outline-success"
+                @click="uploadfile()"
+                class="modal-file-upload-button"
+                v-show="!processing && !fileUploading"
+              >
+                <span class="label">업로드</span>
+              </b-button>
+            </span>
+            <span v-show="!metaValid">
+              <b-button
+                variant="success"
+                disabled
+                @click="uploadfile()"
+                class="modal-file-upload-button"
+                v-show="!processing && !fileUploading"
+              >
+                <span class="label">업로드</span>
+              </b-button>
+            </span>
           </div>
         </h3>
       </CommonMetaModal>
