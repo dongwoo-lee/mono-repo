@@ -372,14 +372,9 @@ export default {
 @import "./FileUploadCSS.css";
 </style>
 <style scoped>
+/* //TODO: vueTable height 조절 */
 .progress__wrapper {
   margin: 0px !important;
-}
-.vuetable .thead .tr {
-  height: 33px !important;
-}
-.vuetable-head-wrapper {
-  height: 33px !important;
 }
 .card {
   height: 675px !important;
