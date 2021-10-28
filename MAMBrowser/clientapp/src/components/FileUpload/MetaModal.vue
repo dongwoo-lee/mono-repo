@@ -97,23 +97,34 @@
                   <div v-show="isActive" class="data-grid-div">
                     <!-- //TODO: Data Binding -->
                     <DxDataGrid
-                      :data-source="vueTableData"
+                      style="height:248px;"
+                      :data-source="ProgramData"
                       :selection="{ mode: 'single' }"
                       :show-borders="true"
                       :hover-state-enabled="true"
-                      key-expr="id"
+                      key-expr="ProductId"
+                      :allow-column-resizing="true"
+                      :column-auto-width="true"
                       @selection-changed="onSelectionChanged"
                     >
+                      <DxColumn data-field="EventName" caption="이벤트 명" />
                       <DxColumn
-                        :width="70"
-                        data-field="Prefix"
-                        caption="Title"
+                        :width="60"
+                        data-field="EventType"
+                        caption="타입"
                       />
-                      <DxColumn data-field="FirstName" />
-                      <DxColumn data-field="LastName" />
-                      <DxColumn :width="180" data-field="Position" />
-                      <DxColumn data-field="BirthDate" data-type="date" />
-                      <DxColumn data-field="HireDate" data-type="date" />
+                      <DxColumn data-field="ProductId" caption="프로그램 ID" />
+                      <DxColumn
+                        data-field="OnairTime"
+                        caption="방송 시간"
+                        data-type="date"
+                      />
+                      <DxColumn
+                        :width="130"
+                        data-field="SourceID"
+                        caption="소스 코드"
+                      />
+                      <DxColumn data-field="Duration" caption="재생 시간" />
                     </DxDataGrid>
                   </div>
                 </div>
@@ -267,7 +278,8 @@ export default {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
       connectionId: state => state.connectionId,
-      vueTableData: state => state.vueTableData
+      vueTableData: state => state.vueTableData,
+      ProgramData: state => state.ProgramData
     })
   },
   watch: {
@@ -297,7 +309,8 @@ export default {
           title: this.MetaData.title,
           memo: this.MetaData.memo,
           fileSize: this.localFiles[0].size,
-          connectionId: this.connectionId
+          connectionId: this.connectionId,
+          ProgramSelected: this.ProgramSelected
         };
         this.setUploaderCustomData(data);
         this.processing = true;

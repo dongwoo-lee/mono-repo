@@ -34,6 +34,7 @@ export default {
         typeSelected: "null",
         mediaSelected: "a"
       },
+      ProgramSelected: [],
       typeOptions: [
         { value: "null", text: "소재 유형" },
         { value: "private", text: "My디스크" }
@@ -197,14 +198,11 @@ export default {
       this.processing = false;
       this.fileUploading = false;
     },
-    onSelectionChanged() {
-      console.log("selection changed");
-    },
-    getRowData(props) {
-      console.log(props);
+    onSelectionChanged(v) {
+      this.ProgramSelected = v.selectedRowsData[0];
     },
     getPro() {
-      console.log(this.date + "_" + this.mediaSelected);
+      console.log(this.date + "_" + this.MetaData.mediaSelected);
     },
     //#region 파일 업로드 모달 캘린더
     onInput(event) {

@@ -79,7 +79,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost]
         public ActionResult UploadChunk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string user_id, [FromForm] string connectionId,
-            [FromForm] string title, [FromForm] string memo, [FromForm] long fileSize, [FromForm] string mediaCD, [FromForm] string categoryCD)
+            [FromForm] string title, [FromForm] string memo, [FromForm] long fileSize, [FromForm] Object ProgramSelected, [FromForm] string mediaCD, [FromForm] string categoryCD)
         {
             try
             {
