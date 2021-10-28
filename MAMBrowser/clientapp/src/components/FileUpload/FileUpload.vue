@@ -150,7 +150,11 @@
       </CommonFileModal>
     </transition>
 
-    <MetaModal @upload="upload" :fileState="fileState"></MetaModal>
+    <MetaModal
+      @upload="upload"
+      :fileState="fileState"
+      :percent="percent"
+    ></MetaModal>
   </div>
 </template>
 
@@ -182,7 +186,8 @@ export default {
       isDropZoneActive: false,
       chunks: [],
       fileSelect: false,
-      fileState: ""
+      fileState: "",
+      percent: 0
     };
   },
   watch: {
@@ -323,11 +328,7 @@ export default {
       this.$fn.notify("error", { message: "파일 업로드 취소" });
     },
     onUploadProgress(e) {
-      this.chunks.push({
-        segmentSize: e.segmentSize,
-        bytesLoaded: e.bytesLoaded,
-        bytesTotal: e.bytesTotal
-      });
+      this.percent = Math.ceil((e.bytesLoaded / e.bytesTotal) * 100);
     },
     //#endregion
     //#region 모달 조작

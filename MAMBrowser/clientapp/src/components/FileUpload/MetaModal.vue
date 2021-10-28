@@ -12,11 +12,30 @@
         <h4 slot="body">
           <div :class="[isActive ? 'date-modal' : 'file-modal']">
             <div style="height:600px; overflow-y:auto; ">
-              <div style="position:relative; top:20px;">
-                <p style=" font-size:16px;">
-                  파일 명 : {{ this.MetaModalTitle }}
-                </p>
-                <div style="width:550px; height:80px; margin-bottom:10px;">
+              <div style="position:relative; top:20px; ">
+                <span style="width:500px; margin-bottom:20px;">
+                  <h6
+                    style=" font-size:16px; width:500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  >
+                    파일 명 : {{ this.MetaModalTitle }}
+                  </h6>
+                  <b-progress
+                    class="w-85"
+                    variant="success"
+                    :max="100"
+                    height="16px"
+                  >
+                    <b-progress-bar
+                      :max="100"
+                      :value="percent"
+                      :label="`${percent} %`"
+                      show-progress
+                    ></b-progress-bar
+                  ></b-progress>
+                </span>
+                <div
+                  style="width:550px; height:80px; margin-top:20px; margin-bottom:10px;"
+                >
                   <h3 style="color:#008ECC;">
                     소재 유형
                   </h3>
@@ -263,6 +282,10 @@ export default {
     fileState: {
       type: String,
       default: ""
+    },
+    percent: {
+      type: Number,
+      default: 0
     }
   },
   components: {
