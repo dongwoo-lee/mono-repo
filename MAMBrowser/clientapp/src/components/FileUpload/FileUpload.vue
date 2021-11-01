@@ -315,7 +315,6 @@ export default {
 
       // axios.post("/api/fileupload/check", form);
       //#endregion
-      console.log(this.localFiles);
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {

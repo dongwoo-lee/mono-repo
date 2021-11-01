@@ -37,7 +37,14 @@ export default {
       ProgramSelected: [],
       typeOptions: [
         { value: "null", text: "소재 유형" },
-        { value: "private", text: "My디스크" }
+        { value: "private", text: "My디스크" },
+        { value: "program", text: "프로그램" },
+        { value: "mcrspot", text: "주조SPOT" },
+        { value: "scrspot", text: "부조SPOT" },
+        { value: "static", text: "고정소재" },
+        { value: "variable", text: "변동소재" },
+        { value: "coverage", text: "취재물" },
+        { value: "piller", text: "필러" }
       ],
       mediaOptions: [
         { value: "a", text: "AM" },
@@ -159,7 +166,6 @@ export default {
   },
   computed: {
     ...mapGetters("menu", ["getMenuType"]),
-
     typeState() {
       return this.MetaData.typeSelected == "null" ? true : false;
     },
@@ -170,23 +176,20 @@ export default {
       return this.MetaData.memo.length >= 1 ? true : false;
     },
     metaValid() {
-      if (
-        this.MetaData.title.length >= 1 &&
-        this.MetaData.memo.length >= 1 &&
-        this.MetaData.typeSelected != "null"
-      )
+      if (this.typeState && this.titleState && this.memoState) {
+        this.$emit("metaValid");
         return true;
-      else return false;
+      } else return false;
     }
   },
   watch: {
     MetaData: {
       deep: true,
       handler(v) {
-        if (v.typeSelected == "null") {
-          this.isActive = false;
-        } else if (v.typeSelected == "private") {
+        if (v.typeSelected == "program") {
           this.isActive = true;
+        } else {
+          this.isActive = false;
         }
       }
     }

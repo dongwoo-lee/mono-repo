@@ -11,7 +11,7 @@
         </h3>
         <h4 slot="body">
           <div :class="[isActive ? 'date-modal' : 'file-modal']">
-            <div style="height:600px; overflow-y:auto; ">
+            <div>
               <div style="position:relative; top:20px; ">
                 <span style="width:500px; margin-bottom:20px;">
                   <h6
@@ -116,7 +116,7 @@
                   <div v-show="isActive" class="data-grid-div">
                     <!-- //TODO: Data Binding -->
                     <DxDataGrid
-                      style="height:248px;"
+                      style="height:208px;"
                       :data-source="ProgramData"
                       :selection="{ mode: 'single' }"
                       :show-borders="true"
@@ -147,7 +147,8 @@
                     </DxDataGrid>
                   </div>
                 </div>
-                <h3 style="color:#008ECC; margin-top:-10px;">
+
+                <h3 style="color:#008ECC; ">
                   메타 데이터
                 </h3>
                 <div style="height:50px;  margin-top : 10px;">
@@ -300,6 +301,9 @@ export default {
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setUploaderCustomData"]),
+    metaValid() {
+      this.isActive = true;
+    },
     MetaModalOff() {
       if (this.processing || this.fileUploading) {
         this.cancel = true;
