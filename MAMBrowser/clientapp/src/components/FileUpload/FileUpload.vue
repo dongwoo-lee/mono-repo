@@ -27,15 +27,19 @@
       class="btn btn-outline-primary btn-sm default cutom-label mr-2"
       id="fileuploadbutton"
       @click="openFileModal"
-      style="position:absolute; top:-80px; right:580px; z-index:1030; border-color:#008ECC; color:#008ECC; background-color:white;"
+      style="position:absolute; top:-80px; right:570px; z-index:1030; border-color:#008ECC; color:#008ECC; background-color:white;"
     >
-      <b-icon
-        icon="folder2"
-        style="margin-right:15px;"
-        aria-hidden="true"
-      ></b-icon
-      >파일 업로드
+      <b-icon icon="folder2" style="margin-right:15px;" aria-hidden="true">
+      </b-icon>
+      파일 업로드
     </b-button>
+    <b-badge
+      v-if="getBadge != 0"
+      style="position:absolute; top:-90px; right:570px; z-index:1030; 
+      bordercolor:red; color:red; background-color:white;  border-radius:80%"
+      variant="outline-danger"
+      >{{ getBadge }}</b-badge
+    >
     <transition name="slide-fade">
       <CommonFileModal
         v-show="FileModal"
@@ -76,6 +80,7 @@
               >
                 알림
               </p>
+
               <b-button
                 style="position:absolute; top:85px; right:5px;  border-color:#008ECC; color:#008ECC; background-color:white;"
                 class="btn btn-outline-primary btn-sm default cutom-label mr-2"
@@ -283,6 +288,7 @@ export default {
       return this.$refs[dxfu].instance;
     },
     ...mapGetters("user", ["diskAvailable"]),
+    ...mapGetters("FileIndexStore", ["getBadge"]),
     ...mapState("FileIndexStore", {
       uploaderCustomData: state => state.uploaderCustomData,
       localFiles: state => state.localFiles,
@@ -377,7 +383,7 @@ export default {
       this.fileRemove();
       this.uploadRefresh();
     },
-    uploadError() {
+    uploadError(e) {
       this.percent = 0;
       this.$fn.notify("error", { message: "파일 업로드 실패" });
     },
@@ -396,21 +402,7 @@ export default {
       this.FileModal = true;
     },
     closeFileModal() {
-      if (this.localFiles.length != null) {
-        if (this.localFiles.length == 1) {
-          if (confirm("현재 진행 중인 작업이 있습니다. 창을 닫으시겠습니까?")) {
-            this.FileModal = false;
-            // this.localFiles = [];
-            // this.reset();
-          } else {
-            return;
-          }
-        } else {
-          this.FileModal = false;
-        }
-      } else {
-        this.FileModal = false;
-      }
+      this.FileModal = false;
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {

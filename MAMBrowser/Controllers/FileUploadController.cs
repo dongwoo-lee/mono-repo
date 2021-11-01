@@ -1,4 +1,5 @@
 ﻿using M30.AudioFile.Common;
+using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL.Dao;
 using MAMBrowser.Foundation;
@@ -44,8 +45,14 @@ namespace MAMBrowser.Controllers
             public string user_id { get; set; }
             public string title { get; set; }
             public string memo { get; set; }
-
         }
+
+        public class Validate 
+        { 
+            public string duration { get; set; }
+            public string audioFormat { get; set; }
+        }
+
         public FileUploadController(IHubContext<FileHubs> hubContext, PrivateFileDao dao)
         {
             _dao = dao;
@@ -78,7 +85,7 @@ namespace MAMBrowser.Controllers
         //}
 
         [HttpPost]
-        public ActionResult UploadChunk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string user_id, [FromForm] string connectionId,
+        public ActionResult<string> UploadChunk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string user_id, [FromForm] string connectionId,
             [FromForm] string title, [FromForm] string memo, [FromForm] long fileSize, [FromForm] Object ProgramSelected, [FromForm] string mediaCD, [FromForm] string categoryCD)
         {
             try
@@ -151,7 +158,33 @@ namespace MAMBrowser.Controllers
             {
                 return StatusCode(400, ex);
             }
-            return new EmptyResult();
+            return new ActionResult<string>("ㅋㅋㅋ");
+        }
+
+        [HttpPost("Validation")]
+        public ActionResult<string> Validation([FromForm] string metaData)
+        {
+
+            //DTO_RESULT<string> result = new DTO_RESULT<string>();
+
+           
+            if (metaData == "0")   //성공
+            {
+                Validate v = new Validate();
+                v.duration = "값";
+                v.audioFormat = "포맷값";
+
+                string json = JsonConvert.SerializeObject(v);
+                return new ActionResult<string>(json);
+            }
+            else if (metaData == "1")   //유효성검사 실패
+            {
+                Dictionary<string, string> param = new Dictionary<string, string>();
+                param.Add("errorMsg", "에러문구");
+                var returnData = System.Text.Json.JsonSerializer.Serialize(param);
+                return new ActionResult<string>(returnData);
+            }
+            return new ActionResult<string>("ㅋㅋㅋ");
         }
 
 

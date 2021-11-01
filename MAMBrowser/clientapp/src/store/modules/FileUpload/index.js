@@ -14,7 +14,9 @@ export default {
       mediaCD: "",
       categoryCD: "",
       typeSelected: "null",
-      mediaSelected: "a"
+      mediaSelected: "a",
+      duration: "",
+      audioFormat: ""
     },
     connectionId: "",
     vueTableData: [],

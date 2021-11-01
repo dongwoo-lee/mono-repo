@@ -195,6 +195,22 @@
                     ></b-icon>
                   </button>
                 </div>
+                <b-form-input
+                  class="editTask"
+                  v-model="MetaData.duration"
+                  readonly
+                  aria-describedby="input-live-help input-live-feedback"
+                  placeholder="duration"
+                  trim
+                />
+                <b-form-input
+                  class="editTask"
+                  v-model="MetaData.audioFormat"
+                  readonly
+                  aria-describedby="input-live-help input-live-feedback"
+                  placeholder="audioFormat"
+                  trim
+                />
               </div>
             </div>
           </div>
@@ -251,6 +267,7 @@
 <script>
 import CommonMetaModal from "../Modal/CommonMetaModal";
 import CommonFileFunction from "./CommonFileFunction";
+import axios from "axios";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   props: {
@@ -311,7 +328,9 @@ export default {
       "setUploaderCustomData",
       "resetTitle",
       "resetMemo",
-      "resetType"
+      "resetType",
+      "setDuration",
+      "setAudioFormat"
     ]),
     MetaModalOff() {
       if (this.processing || this.fileUploading) {
@@ -344,8 +363,16 @@ export default {
             return;
           } else {
             if (res) {
-              this.fileUploading = true;
-              this.$emit("upload");
+              let form = new FormData();
+              form.append("metaData", "0");
+
+              axios.post("/api/fileupload/Validation", form).then(res => {
+                console.log(res);
+                this.setDuration(res.data.duration);
+                this.setAudioFormat(res.data.audioFormat);
+                this.fileUploading = true;
+                this.$emit("upload");
+              });
             }
           }
         });

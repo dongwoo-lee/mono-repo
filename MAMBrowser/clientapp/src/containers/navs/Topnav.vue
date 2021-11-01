@@ -33,6 +33,7 @@
         <div class="user d-inline-block">
           <table class="topnav-right-table">
             <tr>
+              <td rowspan="2"></td>
               <!-- 타이머 -->
               <td rowspan="2">
                 <timer

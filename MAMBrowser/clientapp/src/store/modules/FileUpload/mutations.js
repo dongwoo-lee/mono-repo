@@ -14,6 +14,12 @@ export default {
   setVueTableData(state, payload) {
     state.vueTableData.push(payload);
   },
+  setDuration(state, payload) {
+    state.MetaData.duration = payload;
+  },
+  setAudioFormat(state, payload) {
+    state.MetaData.audioFormat = payload;
+  },
   resetLocalFiles(state) {
     state.localFiles = [];
   },

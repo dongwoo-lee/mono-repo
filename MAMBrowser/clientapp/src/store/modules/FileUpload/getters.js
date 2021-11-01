@@ -12,5 +12,8 @@ export default {
     if (getters.typeState && getters.titleState && getters.memoState) {
       return true;
     } else return false;
+  },
+  getBadge(state) {
+    return state.vueTableData.length;
   }
 };
