@@ -44,7 +44,7 @@
                     id="filetype"
                     v-model="MetaData.typeSelected"
                     :options="typeOptions"
-                    :state="!typeState"
+                    :state="typeState"
                     required
                   ></b-form-select>
                 </div>
@@ -168,7 +168,7 @@
                       font-scale="1"
                       style="position:relative; top:0px; right:0px; z-index:999;"
                       variant="secondary"
-                      @click="titleReset"
+                      @click="resetTitle"
                     ></b-icon>
                   </button>
                 </div>
@@ -191,7 +191,7 @@
                       font-scale="1"
                       style="position:relative; top:0px; right:0px; z-index:999;"
                       variant="secondary"
-                      @click="memoReset"
+                      @click="resetMemo"
                     ></b-icon>
                   </button>
                 </div>
@@ -280,10 +280,17 @@ export default {
     ...mapState("FileIndexStore", {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
+      MetaData: state => state.MetaData,
       connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData
-    })
+    }),
+    ...mapGetters("FileIndexStore", [
+      "typeState",
+      "titleState",
+      "memoState",
+      "metaValid"
+    ])
   },
   watch: {
     fileState(v) {
@@ -300,10 +307,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setUploaderCustomData"]),
-    metaValid() {
-      this.isActive = true;
-    },
+    ...mapMutations("FileIndexStore", [
+      "setUploaderCustomData",
+      "resetTitle",
+      "resetMemo",
+      "resetType"
+    ]),
     MetaModalOff() {
       if (this.processing || this.fileUploading) {
         this.cancel = true;

@@ -8,6 +8,14 @@ export default {
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
+    MetaData: {
+      title: "",
+      memo: "",
+      mediaCD: "",
+      categoryCD: "",
+      typeSelected: "null",
+      mediaSelected: "a"
+    },
     connectionId: "",
     vueTableData: [],
     ProgramData: [

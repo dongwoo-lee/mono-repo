@@ -2,9 +2,6 @@ export default {
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
   },
-  resetLocalFiles(state) {
-    state.localFiles = [];
-  },
   setMetaModalTitle(state, payload) {
     state.MetaModalTitle = payload;
   },
@@ -16,6 +13,18 @@ export default {
   },
   setVueTableData(state, payload) {
     state.vueTableData.push(payload);
+  },
+  resetLocalFiles(state) {
+    state.localFiles = [];
+  },
+  resetTitle(state) {
+    state.MetaData.title = "";
+  },
+  resetMemo(state) {
+    state.MetaData.memo = "";
+  },
+  resetType(state) {
+    state.MetaData.typeSelected = "null";
   },
   forEachVueTableData(state, payload) {
     state.vueTableData.forEach(element => {

@@ -1,4 +1,4 @@
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import commonFunction from "../../utils/CommonFunctions";
 import DxFileUploader from "devextreme-vue/file-uploader";
@@ -26,14 +26,6 @@ export default {
       date: "",
       formatted: "",
       dateSelected: "",
-      MetaData: {
-        title: "",
-        memo: "",
-        mediaCD: "",
-        categoryCD: "",
-        typeSelected: "null",
-        mediaSelected: "a"
-      },
       ProgramSelected: [],
       typeOptions: [
         { value: "null", text: "소재 유형" },
@@ -165,22 +157,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("menu", ["getMenuType"]),
-    typeState() {
-      return this.MetaData.typeSelected == "null" ? true : false;
-    },
-    titleState() {
-      return this.MetaData.title.length >= 1 ? true : false;
-    },
-    memoState() {
-      return this.MetaData.memo.length >= 1 ? true : false;
-    },
-    metaValid() {
-      if (this.typeState && this.titleState && this.memoState) {
-        this.$emit("metaValid");
-        return true;
-      } else return false;
-    }
+    ...mapGetters("menu", ["getMenuType"])
   },
   watch: {
     MetaData: {
@@ -197,6 +174,12 @@ export default {
 
   methods: {
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
+    ...mapMutations("FileIndexStore", [
+      "setUploaderCustomData",
+      "resetTitle",
+      "resetMemo",
+      "resetType"
+    ]),
     fileStateFalse() {
       this.processing = false;
       this.fileUploading = false;
@@ -252,19 +235,14 @@ export default {
     dateReset() {
       var input = document.getElementById("dateinput");
       input.value = null;
+      this.date = "";
     },
     //#endregion
 
-    memoReset() {
-      this.MetaData.memo = "";
-    },
-    titleReset() {
-      this.MetaData.title = "";
-    },
     reset() {
-      this.titleReset();
-      this.memoReset();
-      this.MetaData.typeSelected = "null";
+      this.resetTitle();
+      this.resetMemo();
+      this.resetType();
       this.dateReset();
       this.fileStateFalse();
       this.fileSelect = false;
