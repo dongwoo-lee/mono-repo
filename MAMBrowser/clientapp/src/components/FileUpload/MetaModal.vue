@@ -194,44 +194,18 @@
                     ></b-icon>
                   </button>
                 </div>
-                <div style="height:50px;  margin-top : 10px;" v-show="isActive">
-                  <b-form-input
-                    class="editTask"
-                    v-model="MetaData.title"
-                    :state="titleState"
-                    placeholder="제목"
-                    trim
-                  />
-
-                  <button
-                    style="position:relative; left:365px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
-                  >
-                    <b-icon
-                      icon="x-circle"
-                      font-scale="1"
-                      style="position:relative; top:0px; right:0px; z-index:999;"
-                      variant="secondary"
-                      @click="titleReset"
-                    ></b-icon>
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </h4>
         <h3 slot="footer">
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
-            <b-button
-              variant="outline-danger"
-              class="modal-file-reset-button"
-              @click="reset()"
-            >
-              취소
+            <b-button variant="outline-danger" @click="reset()">
+              초기화
             </b-button>
 
             <b-button
               variant="outline-success"
-              class="modal-file-processing-button"
               v-show="processing && !fileUploading"
             >
               <b-spinner small type="grow"></b-spinner>
@@ -239,7 +213,7 @@
             </b-button>
             <b-button
               variant="outline-success"
-              class="modal-file-processing-button"
+              style="margin-right:10px;"
               v-show="!processing && fileUploading"
             >
               <b-spinner small type="grow"></b-spinner>
@@ -249,7 +223,7 @@
               <b-button
                 variant="outline-success"
                 @click="uploadfile()"
-                class="modal-file-upload-button"
+                style="margin-left:28px;"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
@@ -260,7 +234,7 @@
                 variant="success"
                 disabled
                 @click="uploadfile()"
-                class="modal-file-upload-button"
+                style="margin-left:28px;"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
@@ -286,6 +260,10 @@ export default {
     percent: {
       type: Number,
       default: 0
+    },
+    MetaModal: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -293,11 +271,12 @@ export default {
   },
   mixins: [CommonFileFunction],
   data() {
-    return {};
+    return {
+      cancel: false
+    };
   },
   computed: {
     ...mapState("FileIndexStore", {
-      MetaModal: state => state.MetaModal,
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
       connectionId: state => state.connectionId,
@@ -320,10 +299,14 @@ export default {
     }
   },
   methods: {
-    ...mapMutations("FileIndexStore", [
-      "MetaModalOff",
-      "setUploaderCustomData"
-    ]),
+    ...mapMutations("FileIndexStore", ["setUploaderCustomData"]),
+    MetaModalOff() {
+      if (this.processing || this.fileUploading) {
+        this.cancel = true;
+        this.$emit("cancel");
+      }
+      this.$emit("close");
+    },
     async uploadfile() {
       if (this.metaValid) {
         //NOTE: 커스텀 데이터 파라미터
@@ -343,10 +326,14 @@ export default {
           files: this.localFiles,
           categoryCD: this.MetaData.categoryCD
         }).then(res => {
-          if (res) {
-            this.processing = false;
-            this.fileUploading = true;
-            this.$emit("upload");
+          this.processing = false;
+          if (this.cancel) {
+            return;
+          } else {
+            if (res) {
+              this.fileUploading = true;
+              this.$emit("upload");
+            }
           }
         });
       } else if (!this.metaValid) {

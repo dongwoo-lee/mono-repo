@@ -28,6 +28,12 @@
       id="fileuploadbutton"
       @click="openFileModal"
       style="position:absolute; top:-80px; right:580px; z-index:1030; border-color:#008ECC; color:#008ECC; background-color:white;"
+    >
+      <b-icon
+        icon="folder2"
+        style="margin-right:15px;"
+        aria-hidden="true"
+      ></b-icon
       >파일 업로드
     </b-button>
     <transition name="slide-fade">
@@ -38,11 +44,8 @@
       >
         <h3 slot="header">
           음원 파일 업로드
-          <b-button
-            class="btn btn-outline-primary btn-sm default cutom-label mr-2"
-            id="addFile"
-            >추가</b-button
-          >
+        </h3>
+        <h4 slot="body">
           <DxFileUploader
             :chunk-size="200000"
             dialog-trigger="#addFile"
@@ -63,88 +66,112 @@
             @uploaded="uploadSuccess"
             @progress="onUploadProgress($event)"
           />
-        </h3>
-        <h4 slot="body">
           <div>
-            <b-card no-body>
-              <b-tabs pills justified vertical>
-                <b-tab title="알림" active
-                  ><div>
-                    <vuetable
-                      :table-height="vueTableWidth"
-                      ref="vuetable-scrollable"
-                      :api-mode="false"
-                      :fields="notiFields"
-                      :data="vueTableData"
-                      no-data-template=""
-                    >
-                      <template slot="name" scope="props">
-                        <div style="font-size:18px;">
-                          {{ props.rowData.fileName }}
-                        </div>
-                      </template>
-                      <template slot="mastering" scope="props">
-                        <div style="width:200px; height:20px;">
-                          <vue-step-progress-indicator
-                            :steps="[
-                              '대기 중',
-                              '스토리지 복사',
-                              '파일 샘플링',
-                              '파일 마스터링',
-                              '완료'
-                            ]"
-                            :active-step="props.rowData.step"
-                            :is-reactive="false"
-                            :styles="styleData"
-                            :colors="colorData"
-                            style="margin-left:10px; width:670px;"
-                          />
-                        </div>
-                      </template>
-                    </vuetable>
+            <!-- <b-card no-body>
+              <b-tabs pills>
+                <b-tab title="알림" active> -->
+            <span>
+              <p
+                style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px;"
+              >
+                알림
+              </p>
+              <b-button
+                style="position:absolute; top:85px; right:5px;  border-color:#008ECC; color:#008ECC; background-color:white;"
+                class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                id="addFile"
+              >
+                파일 추가
+              </b-button>
+            </span>
+            <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
+            <div style="width:1180px; margin-left:auto; margin-right:auto;">
+              <vuetable
+                :table-height="vueTableWidth"
+                ref="vuetable-scrollable"
+                :api-mode="false"
+                :fields="notiFields"
+                :data="vueTableData"
+                no-data-template="데이터가 없습니다."
+              >
+                <template slot="name" scope="props">
+                  <div style="font-size:18px;">
+                    {{ props.rowData.fileName }}
                   </div>
-                </b-tab>
-                <b-tab title="로그">
-                  <div style=" margin-left:20px; width:995px; height:150px;">
-                    <vuetable
-                      :table-height="vueTableWidth"
-                      ref="vuetable-scrollable"
-                      :api-mode="false"
-                      :fields="logFields"
-                      :data="vueTableData"
-                      no-data-template=""
-                    >
-                      <template slot="rowNO" scope="props">
-                        <div>{{ props.rowIndex + 1 }}</div>
-                        <!-- <button @click="getRowData(props)">확인</button> 
+                </template>
+                <template slot="mastering" scope="props">
+                  <div style="width:220px; height:20px;">
+                    <vue-step-progress-indicator
+                      :steps="[
+                        '대기 중',
+                        '스토리지 복사',
+                        '파일 샘플링',
+                        '파일 마스터링',
+                        '완료'
+                      ]"
+                      :active-step="props.rowData.step"
+                      :is-reactive="false"
+                      :styles="styleData"
+                      :colors="colorData"
+                      style="margin-left:30px; width:680px;"
+                    />
+                  </div>
+                </template>
+              </vuetable>
+            </div>
+
+            <!-- </b-tab>
+                <b-tab title="로그"> -->
+            <span>
+              <p
+                style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px;"
+              >
+                로그
+              </p>
+            </span>
+            <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
+            <div style="width:1180px; margin-left:auto; margin-right:auto;">
+              <vuetable
+                :table-height="vueTableWidth"
+                ref="vuetable-scrollable"
+                :api-mode="false"
+                :fields="logFields"
+                :data="vueTableData"
+                no-data-template="데이터가 없습니다."
+              >
+                <template slot="rowNO" scope="props">
+                  <div>{{ props.rowIndex + 1 }}</div>
+                  <!-- <button @click="getRowData(props)">확인</button> 
                         -+ -->
-                      </template>
-                      <template slot="fileName" scope="props">
-                        <div>
-                          {{ props.rowData.fileName }}
-                        </div>
-                      </template>
-                      <template slot="fileSize" scope="props">
-                        <div>
-                          {{ (props.rowData.fileSize / 1048576).toFixed(2) }} MB
-                        </div>
-                      </template>
-                      <template slot="title" scope="props">
-                        <div style="font-size:18px;">
-                          {{ props.rowData.title }}
-                        </div>
-                      </template>
-                      <template slot="memo" scope="props">
-                        <div style="font-size:18px;">
-                          {{ props.rowData.memo }}
-                        </div>
-                      </template>
-                    </vuetable>
+                </template>
+                <template slot="fileName" scope="props">
+                  <div>
+                    {{ props.rowData.fileName }}
                   </div>
-                </b-tab>
+                </template>
+                <template slot="fileSize" scope="props">
+                  <div>
+                    {{ (props.rowData.fileSize / 1048576).toFixed(2) }} MB
+                  </div>
+                </template>
+                <template slot="title" scope="props">
+                  <div style="font-size:18px;">
+                    {{ props.rowData.title }}
+                  </div>
+                </template>
+                <template slot="memo" scope="props">
+                  <div style="font-size:18px;">
+                    {{ props.rowData.memo }}
+                  </div>
+                </template>
+              </vuetable>
+            </div>
+            <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
+
+            <!-- </b-tab>
                 <b-tab title="파일 업로드"> </b-tab>
               </b-tabs>
-            </b-card>
+            </b-card> -->
           </div>
         </h4>
       </CommonFileModal>
@@ -152,6 +179,9 @@
 
     <MetaModal
       @upload="upload"
+      @cancel="fileUploadCancel"
+      @close="MetaModalClose"
+      :MetaModal="MetaModal"
       :fileState="fileState"
       :percent="percent"
     ></MetaModal>
@@ -182,6 +212,7 @@ export default {
     return {
       dxfu,
       FileModal: false,
+      MetaModal: false,
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
@@ -214,7 +245,7 @@ export default {
     this.connection.on("send", (res, message) => {
       if (res == 1) {
         this.setVueTableData(message);
-        this.MetaModalOff();
+        this.MetaModal = false;
         this.fileState = "업로드 성공";
       } else if (res == 2) {
         this.forEachVueTableData(message);
@@ -251,6 +282,7 @@ export default {
     fileupload: function() {
       return this.$refs[dxfu].instance;
     },
+    ...mapGetters("user", ["diskAvailable"]),
     ...mapState("FileIndexStore", {
       uploaderCustomData: state => state.uploaderCustomData,
       localFiles: state => state.localFiles,
@@ -259,8 +291,6 @@ export default {
   },
   methods: {
     ...mapMutations("FileIndexStore", [
-      "MetaModalOn",
-      "MetaModalOff",
       "addLocalFiles",
       "resetLocalFiles",
       "setMetaModalTitle",
@@ -285,30 +315,57 @@ export default {
 
       // axios.post("/api/fileupload/check", form);
       //#endregion
+      console.log(this.localFiles);
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
         this.setMetaModalTitle(event.value[0].name);
       }
       if (event.value.length != 0) {
-        if (
-          event.value[0].type == "audio/mpeg" ||
-          event.value[0].type == "audio/wav" ||
-          event.value[0].type == "image/jpeg"
-        ) {
-          this.FileModal = true;
-          this.MetaModalOn();
-          this.fileSelect = true;
-          this.fileUploading = true;
+        if (this.notDiskAvailable(event.value[0].size)) {
+          if (
+            event.value[0].type == "audio/mpeg" ||
+            event.value[0].type == "audio/wav" ||
+            event.value[0].type == "image/jpeg"
+          ) {
+            this.FileModal = true;
+            this.MetaModal = true;
+            this.fileSelect = true;
+            this.fileUploading = true;
+          } else {
+            //TODO: 얼럿 창 예쁜 모달로 변경
+            alert("업로드 할 수 없는 파일 형식입니다.");
+            this.fileupload.removeFile(0);
+            this.fileselect = false;
+          }
         } else {
-          //TODO: 얼럿 창 예쁜 모달로 변경
-          alert("업로드 할 수 없는 파일 형식입니다.");
-          this.fileupload.removeFile(0);
-          this.fileselect = false;
+          this.$fn.notify("error", { title: "디스크 공간이 부족합니다." });
         }
       } else if (event.value.length == 0) {
         this.fileselect = false;
       }
+    },
+    notDiskAvailable(files) {
+      const result = this.diskAvailable - files;
+      if (result < 0) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    MetaModalClose() {
+      this.resetLocalFiles();
+      this.reset();
+      this.percent = 0;
+      this.MetaModal = false;
+    },
+    fileUploadCancel() {
+      this.$fn.notify("error", { title: "파일 업로드 취소" });
+      this.fileupload.abortUpload();
+      this.resetLocalFiles();
+      this.reset();
+      this.percent = 0;
+      this.MetaModal = false;
     },
     fileRemove() {
       this.fileupload.removeFile(0);
@@ -317,14 +374,18 @@ export default {
     uploadSuccess() {
       this.$fn.notify("primary", { message: "파일 업로드 성공" });
       this.fileState = "리셋";
+      this.percent = 0;
       this.fileRemove();
       this.uploadRefresh();
     },
     uploadError() {
+      this.percent = 0;
       this.$fn.notify("error", { message: "파일 업로드 실패" });
     },
     uploadAborted() {
+      console.log("취소?");
       this.fileselect = false;
+      this.percent = 0;
       this.$fn.notify("error", { message: "파일 업로드 취소" });
     },
     onUploadProgress(e) {
@@ -373,6 +434,10 @@ export default {
 </style>
 <style scoped>
 /* //TODO: vueTable height 조절 */
+.myTableHeader {
+  margin-left: 100px !important;
+  height: 400px !important;
+}
 .progress__wrapper {
   margin: 0px !important;
 }

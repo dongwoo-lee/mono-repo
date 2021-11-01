@@ -43,7 +43,7 @@ export default {
         { value: "a", text: "AM" },
         { value: "f", text: "FM" }
       ],
-      vueTableWidth: "560px",
+      vueTableWidth: "220px",
       logFields: [
         {
           name: "__slot:rowNO",

@@ -1,11 +1,4 @@
 export default {
-  MetaModalOn(state) {
-    state.MetaModal = true;
-  },
-  MetaModalOff(state) {
-    state.MetaModal = false;
-    state.localFiles = [];
-  },
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
   },
@@ -26,7 +19,7 @@ export default {
   },
   forEachVueTableData(state, payload) {
     state.vueTableData.forEach(element => {
-      if (payload.fileName == element.fileName) {
+      if (payload.title == element.title) {
         element.step = payload.step;
       }
     });
