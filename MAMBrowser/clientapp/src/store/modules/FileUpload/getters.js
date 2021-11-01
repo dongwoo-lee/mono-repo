@@ -8,12 +8,8 @@ export default {
   memoState(state) {
     return state.MetaData.memo.length >= 1 ? true : false;
   },
-  metaValid(state) {
-    if (
-      state.MetaData.typeSelected != "null" &&
-      state.MetaData.title.length >= 1 &&
-      state.MetaData.memo.length >= 1
-    ) {
+  metaValid(state, getters) {
+    if (getters.typeState && getters.titleState && getters.memoState) {
       return true;
     } else return false;
   }
