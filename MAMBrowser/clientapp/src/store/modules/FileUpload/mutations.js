@@ -20,6 +20,9 @@ export default {
   setAudioFormat(state, payload) {
     state.MetaData.audioFormat = payload;
   },
+  setProgramData(state, payload) {
+    state.ProgramData = payload;
+  },
   resetLocalFiles(state) {
     state.localFiles = [];
   },

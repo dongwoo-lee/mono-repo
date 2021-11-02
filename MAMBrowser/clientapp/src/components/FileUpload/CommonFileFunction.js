@@ -6,6 +6,7 @@ import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import axios from "axios";
 
 export default {
   components: {
@@ -20,6 +21,7 @@ export default {
   },
   data() {
     return {
+      watch: "",
       processing: false,
       fileUploading: false,
       isActive: false,
@@ -34,14 +36,11 @@ export default {
         { value: "mcrspot", text: "주조SPOT" },
         { value: "scrspot", text: "부조SPOT" },
         { value: "static", text: "고정소재" },
-        { value: "variable", text: "변동소재" },
-        { value: "coverage", text: "취재물" },
-        { value: "piller", text: "필러" }
+        { value: "var", text: "변동소재" },
+        { value: "report", text: "취재물" },
+        { value: "filler", text: "필러" }
       ],
-      mediaOptions: [
-        { value: "a", text: "AM" },
-        { value: "f", text: "FM" }
-      ],
+      mediaOptions: [],
       vueTableWidth: "220px",
       logFields: [
         {
@@ -84,7 +83,21 @@ export default {
           title: "파일명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
+        },
+        {
+          name: "__slot:fileSize",
+          title: "파일 크기",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:title",
+          title: "제목",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
         },
         {
           name: "__slot:mastering",
@@ -162,11 +175,28 @@ export default {
   watch: {
     MetaData: {
       deep: true,
-      handler(v) {
+      handler(v, ov) {
         if (v.typeSelected == "program") {
           this.isActive = true;
         } else {
           this.isActive = false;
+        }
+
+        if (
+          v.typeSelected == "program" ||
+          v.typeSelected == "mcrspot" ||
+          v.typeSelected == "static" ||
+          v.typeSelected == "var"
+        ) {
+          if (this.watch != v.typeSelected) {
+            this.mediaOptions = [];
+            axios.get("/api/categories/media").then(res => {
+              res.data.resultObject.data.forEach(e => {
+                this.mediaOptions.push({ value: e.id, text: e.name });
+              });
+              this.watch = v.typeSelected;
+            });
+          }
         }
       }
     }
@@ -176,6 +206,7 @@ export default {
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
+      "setProgramData",
       "resetTitle",
       "resetMemo",
       "resetType"
@@ -188,7 +219,46 @@ export default {
       this.ProgramSelected = v.selectedRowsData[0];
     },
     getPro() {
-      console.log(this.date + "_" + this.MetaData.mediaSelected);
+      const replaceVal = this.date.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+      axios
+        .get(
+          `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
+        )
+        .then(res => {
+          var value = res.data.resultObject.data;
+          value.forEach(e => {
+            e.durationSec = this.getDurationSec(e.durationSec);
+
+            e.onairTime = this.getOnAirTime(e.onairTime);
+          });
+          this.setProgramData(res.data.resultObject.data);
+        });
+    },
+    getOnAirTime(date) {
+      var d = date.substring(0, 10);
+      var t = date.substring(11, 19);
+      return d + " " + t;
+    },
+    getDurationSec(sec) {
+      var sec_num = parseInt(sec, 10); // don't forget the second param
+      var hours = Math.floor(sec_num / 3600);
+      var minutes = Math.floor((sec_num - hours * 3600) / 60);
+      var seconds = sec_num - hours * 3600 - minutes * 60;
+
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      return hours + ":" + minutes + ":" + seconds;
     },
     //#region 파일 업로드 모달 캘린더
     onInput(event) {
