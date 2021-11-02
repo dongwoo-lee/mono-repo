@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MAMBrowser.Controllers
 {
@@ -474,26 +475,60 @@ namespace MAMBrowser.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="optionGrpCd">옵션그룹코드</param>
-        /// <returns></returns>
+        ///// <summary>
+        ///// 마스터링 옵션 목록 반환
+        ///// </summary>
+        ///// <param name="optionGrpCd">옵션그룹코드</param>
+        ///// <returns></returns>
         [HttpGet("options/{optionGrpCd}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> GetOptions(string optionGrpCd)
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>> GetOptions(string optionGrpCd)
         {
-            //string systemCode = systemcd.ToUpper();
-            return null;
+            if (string.IsNullOrEmpty(optionGrpCd))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
+            string systemCode = optionGrpCd.ToUpper();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
+                result.ResultObject.Data = _bll.GetOptions(optionGrpCd);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost("options")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> SetOptions([FromBody] M30_COMM_OPTION_GRP optionGrp)
+        ///// <summary>
+        ///// 마스터링 옵션 목록 저장
+        ///// </summary>
+        ///// <param name="optionGrpCd">옵션그룹코드</param>
+        ///// <param name="options">옵션 데이터 목록</param>
+        ///// <returns></returns>
+        [HttpPost("options/{optionGrpCd}")]
+        public ActionResult<DTO_RESULT> SetOptions(string optionGrpCd, [FromBody] List<DTO_NAMEVALUE> options)
         {
-            //string systemCode = systemcd.ToUpper();
-            return null;
+            if (string.IsNullOrEmpty(optionGrpCd))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
+            if (options == null)
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 2 is empty");
+            if (options.Count <=0)
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 2 count : 0");
+
+            string systemCode = optionGrpCd.ToUpper();
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                _bll.SetOptions(optionGrpCd, options);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
         }
     }
 }

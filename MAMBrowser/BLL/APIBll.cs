@@ -73,5 +73,18 @@ namespace MAMBrowser.BLL
         {
             return _dao.UpdateRole(updateDtoList);
         }
+
+        public void SetOptions(string optionGrpCd, List<DTO_NAMEVALUE> options)
+        {
+            var selectOptions = _dao.GetOptions(optionGrpCd);
+            if (selectOptions.Count == 0)
+                _dao.InsertOptions(optionGrpCd, options);
+            else
+                _dao.UpdateOptions(optionGrpCd, options);
+        }
+        public IList<DTO_NAMEVALUE> GetOptions(string optionGrpCd)
+        {
+            return _dao.GetOptions(optionGrpCd);
+        }
     }
 }
