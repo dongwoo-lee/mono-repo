@@ -477,10 +477,10 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="systemcd"></param>
+        /// <param name="optionGrpCd">옵션그룹코드</param>
         /// <returns></returns>
-        [HttpGet("options/{systemcd}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> GetOptions(string systemcd)
+        [HttpGet("options/{optionGrpCd}")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> GetOptions(string optionGrpCd)
         {
             //string systemCode = systemcd.ToUpper();
             return null;
@@ -488,10 +488,13 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="systemcd"></param>
         /// <returns></returns>
         [HttpPost("options")]
+<<<<<<< HEAD
         public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> SetOptions( string systemcd, [ModelBinder(BinderType = typeof(JsonModelBinder))]List<M30_COMM_OPTIONS> options)
+=======
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> SetOptions([FromBody] M30_COMM_OPTION_GRP optionGrp)
+>>>>>>> f025cd85055462823fcc980418c54418a3095a49
         {
             //string systemCode = systemcd.ToUpper();
             return null;
