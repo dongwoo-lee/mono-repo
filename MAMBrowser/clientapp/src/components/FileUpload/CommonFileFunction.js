@@ -84,7 +84,21 @@ export default {
           title: "파일명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "8%"
+        },
+        {
+          name: "__slot:fileSize",
+          title: "파일 크기",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:title",
+          title: "제목",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
         },
         {
           name: "__slot:mastering",

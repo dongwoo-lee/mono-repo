@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -123,7 +124,16 @@ export default {
   },
   methods: {
     save() {
-      console.log(this.optionData);
+      let list = {
+        systemCd: "value",
+        opKey: "value",
+        opValue: "value",
+        userId: "radioeng"
+      };
+      let metaData = JSON.stringify(list);
+      let form = new FormData();
+      form.append("options", list);
+      axios.post("/api/options", form);
     },
     cancel() {}
   }

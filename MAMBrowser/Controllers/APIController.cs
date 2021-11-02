@@ -50,7 +50,7 @@ namespace MAMBrowser.Controllers
                 }
                 else
                 {
-                    
+
                     if (!_bll.Authenticate(account))
                     {
                         result.ErrorMsg = "비밀번호가 틀립니다.";
@@ -132,7 +132,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        
+
         /// <summary>
         /// 사용자 목록 조회
         /// </summary>
@@ -434,7 +434,7 @@ namespace MAMBrowser.Controllers
         /// <param name="description">내용</param>
         /// <returns></returns>
         [HttpGet("Logs")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices]LogBll logBll )
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices] LogBll logBll)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>>();
             try
@@ -490,8 +490,8 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <param name="systemcd"></param>
         /// <returns></returns>
-        [HttpPost("options/{systemcd}")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> SetOptions(string systemcd, [ModelBinder(BinderType = typeof(JsonModelBinder))]List<M30_COMM_OPTIONS> options)
+        [HttpPost("options")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> SetOptions( string systemcd, [ModelBinder(BinderType = typeof(JsonModelBinder))]List<M30_COMM_OPTIONS> options)
         {
             //string systemCode = systemcd.ToUpper();
             return null;
