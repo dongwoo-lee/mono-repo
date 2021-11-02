@@ -229,8 +229,36 @@ export default {
           `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
         )
         .then(res => {
+          var value = res.data.resultObject.data;
+          value.forEach(e => {
+            e.durationSec = this.getDurationSec(e.durationSec);
+
+            e.onairTime = this.getOnAirTime(e.onairTime);
+          });
           this.setProgramData(res.data.resultObject.data);
         });
+    },
+    getOnAirTime(date) {
+      var d = date.substring(0, 10);
+      var t = date.substring(11, 19);
+      return d + " " + t;
+    },
+    getDurationSec(sec) {
+      var sec_num = parseInt(sec, 10); // don't forget the second param
+      var hours = Math.floor(sec_num / 3600);
+      var minutes = Math.floor((sec_num - hours * 3600) / 60);
+      var seconds = sec_num - hours * 3600 - minutes * 60;
+
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      return hours + ":" + minutes + ":" + seconds;
     },
     //#region 파일 업로드 모달 캘린더
     onInput(event) {

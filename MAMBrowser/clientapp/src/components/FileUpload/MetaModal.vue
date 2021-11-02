@@ -135,12 +135,8 @@
                         caption="타입"
                       />
                       <DxColumn data-field="productId" caption="프로그램 ID" />
-                      <DxColumn
-                        data-field="onairTime"
-                        caption="방송 시간"
-                        data-type="date"
-                      />
-                      <DxColumn data-field="durationSec" caption="재생 시간" />
+                      <DxColumn data-field="onairTime" caption="방송 시간" />
+                      <DxColumn data-field="durationSec" caption="편성 분량" />
                     </DxDataGrid>
                   </div>
                 </div>
