@@ -59,7 +59,7 @@
             drop-zone=".dropzone"
             @drop-zone-enter="onDropZoneEnter"
             @drop-zone-leave="onDropZoneLeave"
-            upload-url="/api/fileupload/"
+            upload-url="/api/fileupload/UploadChunk"
             upload-mode="useButtons"
             :multiple="false"
             :visible="false"
@@ -106,14 +106,25 @@
                     {{ props.rowData.fileName }}
                   </div>
                 </template>
+                <template slot="title" scope="props">
+                  <div style="font-size:18px;">
+                    {{ props.rowData.title }}
+                  </div>
+                </template>
+                <template slot="fileSize" scope="props">
+                  <div>
+                    {{ (props.rowData.fileSize / 1048576).toFixed(2) }} MB
+                  </div>
+                </template>
                 <template slot="mastering" scope="props">
                   <div style="width:220px; height:20px;">
                     <vue-step-progress-indicator
                       :steps="[
                         '대기 중',
-                        '스토리지 복사',
-                        '파일 샘플링',
-                        '파일 마스터링',
+                        '디코딩',
+                        '리샘플링',
+                        '노말라이즈',
+                        '스토리지 저장',
                         '완료'
                       ]"
                       :active-step="props.rowData.step"
@@ -432,6 +443,8 @@ export default {
   height: 400px !important;
 }
 .progress__wrapper {
+  width: 600px !important;
+  /* margin-left: 20px !important; */
   margin: 0px !important;
 }
 .card {

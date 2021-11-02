@@ -59,10 +59,6 @@ namespace MAMBrowser.Controllers
             _hubContext = hubContext;
         }
 
-        public ActionResult ChunkUploading()
-        {
-            return View();
-        }
 
         //header stream
         //[HttpPost("check")]
@@ -84,7 +80,7 @@ namespace MAMBrowser.Controllers
         //    return new EmptyResult();
         //}
 
-        [HttpPost]
+        [HttpPost("UploadChunk")]
         public ActionResult<string> UploadChunk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string user_id, [FromForm] string connectionId,
             [FromForm] string title, [FromForm] string memo, [FromForm] long fileSize, [FromForm] Object ProgramSelected, [FromForm] string mediaCD, [FromForm] string categoryCD)
         {
@@ -209,7 +205,7 @@ namespace MAMBrowser.Controllers
             if (stream.Length > 4000000000)
                 throw new Exception("File is too large");
         }
-        private void ProcessUploadedFile(string tempFilePath, string fileName, string date, string userId, string title, string memo, long fileSize)
+       void ProcessUploadedFile(string tempFilePath, string fileName, string date, string userId, string title, string memo, long fileSize)
         //private void ProcessUploadedFile(string tempFilePath, string fileName, string date)
         {
             try

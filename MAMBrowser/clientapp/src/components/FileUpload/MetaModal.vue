@@ -122,29 +122,25 @@
                       :selection="{ mode: 'single' }"
                       :show-borders="true"
                       :hover-state-enabled="true"
-                      key-expr="ProductId"
+                      key-expr="productId"
                       :allow-column-resizing="true"
                       :column-auto-width="true"
+                      no-data-text="No Data"
                       @selection-changed="onSelectionChanged"
                     >
-                      <DxColumn data-field="EventName" caption="이벤트 명" />
+                      <DxColumn data-field="eventName" caption="이벤트 명" />
                       <DxColumn
                         :width="60"
-                        data-field="EventType"
+                        data-field="eventType"
                         caption="타입"
                       />
-                      <DxColumn data-field="ProductId" caption="프로그램 ID" />
+                      <DxColumn data-field="productId" caption="프로그램 ID" />
                       <DxColumn
-                        data-field="OnairTime"
+                        data-field="onairTime"
                         caption="방송 시간"
                         data-type="date"
                       />
-                      <DxColumn
-                        :width="130"
-                        data-field="SourceID"
-                        caption="소스 코드"
-                      />
-                      <DxColumn data-field="Duration" caption="재생 시간" />
+                      <DxColumn data-field="durationSec" caption="재생 시간" />
                     </DxDataGrid>
                   </div>
                 </div>

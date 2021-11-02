@@ -1,56 +1,61 @@
 <template>
   <div class="card-body">
-    <div>
-      <span style="width:400px;float:left; margin-right:180px;">
+    <div style="margin-left:395px">
+      <span style="width:200px;float:left; margin-right:90px;">
         <b-form-group label="Sample Rate" class="has-float-label">
           <b-form-select
-            style="width:400px;"
+            style="width:200px;"
             v-model="optionData.SampleRate"
             :options="SampleRateOptions"
           />
         </b-form-group>
       </span>
-      <span style="width:400px;float:left; margin-right:180px;">
+      <span style="width:200px;float:left; margin-right:90px;">
         <b-form-group label="Bit Depth" class="has-float-label">
           <b-form-select
-            style="width:400px;"
+            style="width:200px;"
             v-model="optionData.BitDepth"
             :options="BitDepthOptions"
           />
         </b-form-group>
       </span>
-      <span style="width:400px;">
+      <span style="width:200px;">
         <b-form-group label="Channels" class="has-float-label">
           <b-form-select
-            style="width:400px;"
+            style="width:200px;"
             v-model="optionData.Channels"
             :options="ChannelsOptions"
           />
         </b-form-group>
       </span>
     </div>
-    <div>
-      <span style="width:200px; float:left; margin-right:20px;">
-        <b-form-group label="MSec" class="has-float-label">
-          <b-form-input v-model="optionData.Msec" />
+    <div style="margin-left:395px;">
+      <span style="width:200px; float:left; margin-right:90px;">
+        <b-form-group label="SILENCE_DURATION" class="has-float-label">
+          <b-form-input
+            :state="isActive"
+            v-model="optionData.SILENCE_DURATION"
+          />
         </b-form-group>
       </span>
-      <p style="vertical-align:text-top; float:left; margin-right:100px;">
-        {{ getMSec }}
-      </p>
-      <span style="width:400px;float:left; margin-right:180px;">
-        <b-form-group label="DB" class="has-float-label">
-          <b-form-input v-model="optionData.DB" />
+      <span style="width:200px;float:left; margin-right:90px;">
+        <b-form-group label="SILENCE_DB" class="has-float-label">
+          <b-form-input v-model="optionData.SILENCE_DB" />
         </b-form-group>
       </span>
-      <span style="width:400px;">
+      <span style="width:200px;">
         <b-form-group label="MP3 Decoder" class="has-float-label">
-          <b-form-input style="width:400px;" v-model="optionData.MP3Decoder" />
+          <b-form-input style="width:200px;" v-model="optionData.MP3Decoder" />
         </b-form-group>
       </span>
+      <p
+        style="position:absolute; top:200px; left:450px; color:red; font-size:10.5px;"
+      >
+        {{ getSILENCE_DURATION }}
+      </p>
     </div>
 
-    <div style="margin-top:20px;">
+    <div style="margin-top:40px; margin-left:395px; width:780px;">
       <b-form-group label="AM" class="has-float-label">
         <b-form-input v-model="optionData.AM" />
       </b-form-group>
@@ -76,7 +81,7 @@
         <b-form-input v-model="optionData.STATIC" />
       </b-form-group>
     </div>
-    <div style="margin-left:1432px;">
+    <div style="margin-left:1040px;">
       <b-button variant="outline-success" @click="save">저장</b-button>
       <b-button variant="outline-danger" @click="cancel">취소</b-button>
     </div>
@@ -92,8 +97,8 @@ export default {
         SampleRate: "44100",
         BitDepth: "16",
         Channels: "2",
-        Msec: "4",
-        DB: "-40",
+        SILENCE_DURATION: "4000",
+        SILENCE_DB: "-40",
         MP3Decoder: "LAME",
         AM: "\\\\TEST_SVR\\MBCDATA\\AM\\",
         FM: "\\\\TEST_SVR\\MBCDATA\\FM\\",
@@ -112,28 +117,84 @@ export default {
         { value: "16", text: "16" },
         { value: "24", text: "24" }
       ],
-      ChannelsOptions: [{ value: "2", text: "2" }]
+      ChannelsOptions: [{ value: "2", text: "2" }],
+      isActivce: false
     };
   },
   computed: {
-    getMSec() {
-      if (this.Msec < 50 || 10000 < this.Msec) {
+    getSILENCE_DURATION() {
+      if (
+        this.optionData.SILENCE_DURATION < 50 ||
+        10000 < this.optionData.SILENCE_DURATION
+      ) {
+        this.isActivce = false;
         return "50에서 10000 사이의 값만 입력해야 합니다.";
+      } else {
+        this.isActivce = true;
       }
     }
   },
   methods: {
     save() {
       let list = {
-        systemCd: "value",
-        opKey: "value",
-        opValue: "value",
-        userId: "radioeng"
+        optionGrpCd: "S01G06C001",
+        userId: null,
+        options: [
+          {
+            opKey: "BIT_DEPTH",
+            opValue: this.optionData.BitDepth
+          },
+          {
+            opKey: "SAMPLE_RATE",
+            opValue: this.optionData.SampleRate
+          },
+          {
+            opKey: "CHANNEL",
+            opValue: this.optionData.Channels
+          },
+          {
+            opKey: "SILENCE_DURATION",
+            opValue: this.optionData.SILENCE_DURATION
+          },
+          {
+            opKey: "SILENCE_DB",
+            opValue: this.optionData.SILENCE_DB
+          },
+          {
+            opKey: "PGM_AM_PATH",
+            opValue: this.optionData.AM
+          },
+          {
+            opKey: "PGM_FM_PATH",
+            opValue: this.optionData.FM
+          },
+          {
+            opKey: "PGM_DMB_PATH",
+            opValue: this.optionData.DMB
+          },
+          {
+            opKey: "SPOT_PATH",
+            opValue: this.optionData.SPOT
+          },
+          {
+            opKey: "REPORT_PATH",
+            opValue: this.optionData.REPORT
+          },
+          {
+            opKey: "FILLER_PATH",
+            opValue: this.optionData.FILLER
+          },
+          {
+            opKey: "STATIC_PATH",
+            opValue: this.optionData.STATIC
+          },
+          {
+            opKey: "VAR_PATH",
+            opValue: this.optionData.VAR
+          }
+        ]
       };
-      let metaData = JSON.stringify(list);
-      let form = new FormData();
-      form.append("options", list);
-      axios.post("/api/options", form);
+      axios.post("/api/options", list);
     },
     cancel() {}
   }

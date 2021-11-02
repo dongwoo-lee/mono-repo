@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+    <DocumentationFile>D:\CDS\ADsoft\FileUpload\mambrowser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

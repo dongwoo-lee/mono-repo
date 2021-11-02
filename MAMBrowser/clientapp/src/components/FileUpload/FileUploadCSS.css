@@ -72,11 +72,11 @@
 }
 .is-valid {
     border-color: #28a745 !important;
-    height: 36px !important;
+    /* height: 36px !important; */
 }
 .is-invalid {
     border-color: #dc3545 !important;
-    height: 36px !important;
+    /* height: 36px !important; */
 }
 .editTask {
     margin-top: 10px;
