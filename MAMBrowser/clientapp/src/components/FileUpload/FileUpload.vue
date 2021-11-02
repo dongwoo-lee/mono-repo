@@ -90,7 +90,9 @@
               </b-button>
             </span>
             <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
-            <div style="width:1180px; margin-left:auto; margin-right:auto;">
+            <div
+              style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
+            >
               <vuetable
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
@@ -100,7 +102,7 @@
                 no-data-template="데이터가 없습니다."
               >
                 <template slot="name" scope="props">
-                  <div style="font-size:18px;">
+                  <div>
                     {{ props.rowData.fileName }}
                   </div>
                 </template>

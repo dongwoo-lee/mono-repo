@@ -100,6 +100,7 @@
                       style="position:absolute; margin-left:320px; z-index:9999;"
                     >
                       <b-form-select
+                        id="program-media"
                         class="media-select"
                         style=" width:140px; height:37px;"
                         v-model="MetaData.mediaSelected"
