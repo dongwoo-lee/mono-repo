@@ -57,13 +57,6 @@ export default {
           width: "4%"
         },
         {
-          name: "__slot:user_id",
-          title: "등록자",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "4%"
-        },
-        {
           name: "__slot:date",
           title: "등록일시",
           titleClass: "center aligned text-center",

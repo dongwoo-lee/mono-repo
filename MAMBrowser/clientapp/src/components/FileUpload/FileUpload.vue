@@ -142,6 +142,50 @@
                   </div>
                 </template>
               </vuetable>
+              <vuetable
+                v-if="this.role != 'ADMIN'"
+                :table-height="vueTableWidth"
+                ref="vuetable-scrollable"
+                :api-mode="false"
+                :fields="userFields"
+                :data="vueTableData"
+                no-data-template="데이터가 없습니다."
+              >
+                <template slot="title" scope="props">
+                  <div style="font-size:14px;">
+                    {{ props.rowData.title }}
+                  </div>
+                </template>
+                <template slot="type" scope="props">
+                  <div>
+                    {{ props.rowData.type }}
+                  </div>
+                </template>
+                <template slot="date" scope="props">
+                  <div>
+                    {{ props.rowData.date }}
+                  </div>
+                </template>
+                <template slot="step" scope="props">
+                  <div style="width:220px; height:20px;">
+                    <vue-step-progress-indicator
+                      :steps="[
+                        '대기 중',
+                        '디코딩',
+                        '리샘플링',
+                        '노말라이즈',
+                        '스토리지 저장',
+                        '완료'
+                      ]"
+                      :active-step="props.rowData.step"
+                      :is-reactive="false"
+                      :styles="styleData"
+                      :colors="colorData"
+                      style="margin-left:30px; width:680px;"
+                    />
+                  </div>
+                </template>
+              </vuetable>
             </div>
 
             <!-- </b-tab>
@@ -158,10 +202,11 @@
               style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
             >
               <vuetable
+                v-if="this.role == 'ADMIN'"
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"
-                :fields="userFields"
+                :fields="adminFields"
                 :data="vueTableData"
                 no-data-template="데이터가 없습니다."
               >
@@ -170,11 +215,37 @@
                   <!-- <button @click="getRowData(props)">확인</button> 
                         -+ -->
                 </template>
-                <template slot="fileName" scope="props">
-                  <div>
-                    {{ props.rowData.fileName }}
+
+                <template slot="title" scope="props">
+                  <div style="font-size:14px;">
+                    {{ props.rowData.title }}
                   </div>
                 </template>
+                <template slot="type" scope="props">
+                  <div>
+                    {{ props.rowData.type }}
+                  </div>
+                </template>
+                <template slot="user_id" scope="props">
+                  <div>
+                    {{ props.rowData.user_id }}
+                  </div>
+                </template>
+                <template slot="date" scope="props">
+                  <div>
+                    {{ props.rowData.date }}
+                  </div>
+                </template>
+              </vuetable>
+              <vuetable
+                v-if="this.role != 'ADMIN'"
+                :table-height="vueTableWidth"
+                ref="vuetable-scrollable"
+                :api-mode="false"
+                :fields="userFields"
+                :data="vueTableData"
+                no-data-template="데이터가 없습니다."
+              >
                 <template slot="title" scope="props">
                   <div style="font-size:14px;">
                     {{ props.rowData.title }}
