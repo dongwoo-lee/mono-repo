@@ -38,18 +38,7 @@ export default {
         durationSec: ""
       },
       ProgramSelected: [],
-      typeOptions: [
-        { value: "null", text: "소재 유형" },
-        { value: "private", text: "My디스크" },
-        { value: "program", text: "프로그램" },
-        { value: "mcrspot", text: "주조SPOT" },
-        { value: "scrspot", text: "부조SPOT" },
-        { value: "static", text: "고정소재" },
-        { value: "var", text: "변동소재" },
-        { value: "report", text: "취재물" },
-        { value: "filler", text: "필러" }
-      ],
-      typeOptions2: [{ value: "null", text: "소재 유형" }],
+      typeOptions: [{ value: "null", text: "소재 유형" }],
       mediaOptions: [],
       vueTableWidth: "220px",
       userFields: [

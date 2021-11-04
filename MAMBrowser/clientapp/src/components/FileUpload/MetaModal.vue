@@ -447,22 +447,19 @@ export default {
       if (!v) {
         this.reset();
       } else {
-        if (this.getMenuGrpName == "관리자") {
-          console.log(this.getMenuGrpName);
-        } else if (this.getMenuGrpName == "편성PD") {
-          console.log(this.getMenuGrpName);
-        } else if (this.getMenuGrpName == "제작PD") {
-          console.log(this.getMenuGrpName);
-        } else if (this.getMenuGrpName == "리포터") {
-          console.log(this.getMenuGrpName);
-        } else if (this.getMenuGrpName == "라디오뉴스") {
-          console.log(this.getMenuGrpName);
-        } else if (this.getMenuGrpName == "제작 Staff") {
-          console.log(this.getMenuGrpName);
-        } else if (this.getMenuGrpName == "TD") {
-          console.log(this.getMenuGrpName);
+        if (this.typeOptions.length == 1) {
+          this.typeOptionsByRole(this.getMenuGrpName);
         }
       }
+
+      //  { value: "private", text: "My디스크" },
+      //   { value: "program", text: "프로그램" },
+      //   { value: "mcrspot", text: "주조SPOT" },
+      //   { value: "scrspot", text: "부조SPOT" },
+      //   { value: "static", text: "고정소재" },
+      //   { value: "var", text: "변동소재" },
+      //   { value: "report", text: "취재물" },
+      //   { value: "filler", text: "필러" }
     }
   },
   methods: {
@@ -510,6 +507,41 @@ export default {
         });
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
+      }
+    },
+    typeOptionsByRole(role) {
+      if (role == "관리자") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
+        this.typeOptions.push({ value: "program", text: "프로그램" });
+        this.typeOptions.push({ value: "mcrspot", text: "주조SPOT" });
+        this.typeOptions.push({ value: "scrspot", text: "부조SPOT" });
+        this.typeOptions.push({ value: "static", text: "고정소재" });
+        this.typeOptions.push({ value: "var", text: "변동소재" });
+        this.typeOptions.push({ value: "report", text: "취재물" });
+        this.typeOptions.push({ value: "filler", text: "필러" });
+      } else if (role == "편성PD") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
+        this.typeOptions.push({ value: "program", text: "프로그램" });
+        this.typeOptions.push({ value: "scrspot", text: "부조SPOT" });
+        this.typeOptions.push({ value: "report", text: "취재물" });
+        this.typeOptions.push({ value: "mcrspot", text: "주조SPOT" });
+        this.typeOptions.push({ value: "filler", text: "필러" });
+        this.typeOptions.push({ value: "static", text: "고정소재" });
+        this.typeOptions.push({ value: "var", text: "변동소재" });
+      } else if (role == "제작PD") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
+        this.typeOptions.push({ value: "program", text: "프로그램" });
+        this.typeOptions.push({ value: "filler", text: "필러" });
+      } else if (role == "리포터") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
+        this.typeOptions.push({ value: "report", text: "취재물" });
+      } else if (role == "라디오뉴스") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
+        this.typeOptions.push({ value: "report", text: "취재물" });
+      } else if (role == "제작 Staff") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
+      } else if (role == "TD") {
+        this.typeOptions.push({ value: "private", text: "My디스크" });
       }
     }
   }
