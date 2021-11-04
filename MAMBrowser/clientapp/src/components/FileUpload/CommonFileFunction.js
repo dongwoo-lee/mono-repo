@@ -7,6 +7,7 @@ import DxTextBox from "devextreme-vue/text-box";
 import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import axios from "axios";
+import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 export default {
   components: {
@@ -22,12 +23,20 @@ export default {
   data() {
     return {
       watch: "",
+      role: "",
       processing: false,
       fileUploading: false,
       isActive: false,
       date: "",
       formatted: "",
       dateSelected: "",
+      ProgramGrid: {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: ""
+      },
       ProgramSelected: [],
       typeOptions: [
         { value: "null", text: "소재 유형" },
@@ -40,58 +49,10 @@ export default {
         { value: "report", text: "취재물" },
         { value: "filler", text: "필러" }
       ],
+      typeOptions2: [{ value: "null", text: "소재 유형" }],
       mediaOptions: [],
       vueTableWidth: "220px",
-      logFields: [
-        {
-          name: "__slot:rowNO",
-          title: "순서",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "7%"
-        },
-        {
-          name: "__slot:fileName",
-          title: "파일명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "40%"
-        },
-        {
-          name: "__slot:fileSize",
-          title: "파일 크기",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "12%"
-        },
-        {
-          name: "__slot:title",
-          title: "제목",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center"
-        },
-        {
-          name: "__slot:memo",
-          title: "메모",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center"
-        }
-      ],
-      notiFields: [
-        {
-          name: "__slot:name",
-          title: "파일명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "8%"
-        },
-        {
-          name: "__slot:fileSize",
-          title: "파일 크기",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "4%"
-        },
+      userFields: [
         {
           name: "__slot:title",
           title: "제목",
@@ -100,8 +61,66 @@ export default {
           width: "6%"
         },
         {
-          name: "__slot:mastering",
-          title: "마스터링",
+          name: "__slot:type",
+          title: "소재유형",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:user_id",
+          title: "등록자",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:date",
+          title: "등록일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:step",
+          title: "상태",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "20%"
+        }
+      ],
+      adminFields: [
+        {
+          name: "__slot:title",
+          title: "제목",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%"
+        },
+        {
+          name: "__slot:type",
+          title: "소재유형",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:user_id",
+          title: "등록자",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:date",
+          title: "등록일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "4%"
+        },
+        {
+          name: "__slot:step",
+          title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "20%"
@@ -170,32 +189,42 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("menu", ["getMenuType"])
+    ...mapGetters("menu", ["getMenuType"]),
+    ...mapGetters("user", ["getMenuGrpName"])
+  },
+  created() {
+    this.role = sessionStorage.getItem("authority");
   },
   watch: {
     MetaData: {
       deep: true,
-      handler(v, ov) {
-        if (v.typeSelected == "program") {
-          this.isActive = true;
-        } else {
-          this.isActive = false;
-        }
+      handler(v) {
+        this.type = v.typeSelected;
 
-        if (
-          v.typeSelected == "program" ||
-          v.typeSelected == "mcrspot" ||
-          v.typeSelected == "static" ||
-          v.typeSelected == "var"
-        ) {
-          if (this.watch != v.typeSelected) {
-            this.mediaOptions = [];
-            axios.get("/api/categories/media").then(res => {
-              res.data.resultObject.data.forEach(e => {
-                this.mediaOptions.push({ value: e.id, text: e.name });
+        if (!v.title || !v.memo) {
+          if (v.typeSelected == "program") {
+            this.isActive = false;
+          } else {
+            this.isActive = true;
+          }
+
+          if (
+            v.typeSelected == "program" ||
+            v.typeSelected == "mcrspot" ||
+            v.typeSelected == "static" ||
+            v.typeSelected == "var"
+          ) {
+            if (this.watch != v.typeSelected) {
+              this.resetProgramData();
+              this.dateReset();
+              this.mediaOptions = [];
+              axios.get("/api/categories/media").then(res => {
+                res.data.resultObject.data.forEach(e => {
+                  this.mediaOptions.push({ value: e.id, text: e.name });
+                });
+                this.watch = v.typeSelected;
               });
-              this.watch = v.typeSelected;
-            });
+            }
           }
         }
       }
@@ -209,14 +238,16 @@ export default {
       "setProgramData",
       "resetTitle",
       "resetMemo",
-      "resetType"
+      "resetType",
+      "resetProgramData"
     ]),
     fileStateFalse() {
       this.processing = false;
       this.fileUploading = false;
     },
-    onSelectionChanged(v) {
-      this.ProgramSelected = v.selectedRowsData[0];
+    onRowClick(v) {
+      this.ProgramGrid = v.data;
+      this.ProgramSelected = JSON.stringify(v.data);
     },
     getPro() {
       const replaceVal = this.date.replace(/-/g, "");
@@ -232,7 +263,6 @@ export default {
           var value = res.data.resultObject.data;
           value.forEach(e => {
             e.durationSec = this.getDurationSec(e.durationSec);
-
             e.onairTime = this.getOnAirTime(e.onairTime);
           });
           this.setProgramData(res.data.resultObject.data);
@@ -315,6 +345,16 @@ export default {
       this.resetType();
       this.dateReset();
       this.fileStateFalse();
+      this.resetProgramData();
+      this.mediaOptions = [];
+      this.watch = "";
+      this.ProgramGrid = {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: ""
+      };
       this.fileSelect = false;
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });

@@ -102,14 +102,15 @@ export default {
         fileSize: files[0].size
       };
       const userId = sessionStorage.getItem(USER_ID);
-      if (type === ROUTE_NAMES.PRIVATE) {
-        url = `/api/products/workspace/private/verify/${userId}`;
-      }
 
-      if (type === ROUTE_NAMES.SHARED) {
-        url = `/api/products/workspace/public/verify/${userId}`;
-        params.categoryCD = categoryCD;
-      }
+      // if (type === ROUTE_NAMES.PRIVATE) {
+      url = `/api/products/workspace/private/verify/${userId}`;
+      // }
+
+      // if (type === ROUTE_NAMES.SHARED) {
+      //   url = `/api/products/workspace/public/verify/${userId}`;
+      //   params.categoryCD = categoryCD;
+      // }
 
       try {
         const res = await $http.post(url, params);

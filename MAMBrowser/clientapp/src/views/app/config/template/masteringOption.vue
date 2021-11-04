@@ -121,6 +121,11 @@ export default {
       isActivce: false
     };
   },
+  created() {
+    axios.get("/api/options/S01G06C001").then(res => {
+      console.log(res);
+    });
+  },
   computed: {
     getSILENCE_DURATION() {
       if (
@@ -136,65 +141,62 @@ export default {
   },
   methods: {
     save() {
-      let list = {
-        optionGrpCd: "S01G06C001",
-        userId: null,
-        options: [
-          {
-            opKey: "BIT_DEPTH",
-            opValue: this.optionData.BitDepth
-          },
-          {
-            opKey: "SAMPLE_RATE",
-            opValue: this.optionData.SampleRate
-          },
-          {
-            opKey: "CHANNEL",
-            opValue: this.optionData.Channels
-          },
-          {
-            opKey: "SILENCE_DURATION",
-            opValue: this.optionData.SILENCE_DURATION
-          },
-          {
-            opKey: "SILENCE_DB",
-            opValue: this.optionData.SILENCE_DB
-          },
-          {
-            opKey: "PGM_AM_PATH",
-            opValue: this.optionData.AM
-          },
-          {
-            opKey: "PGM_FM_PATH",
-            opValue: this.optionData.FM
-          },
-          {
-            opKey: "PGM_DMB_PATH",
-            opValue: this.optionData.DMB
-          },
-          {
-            opKey: "SPOT_PATH",
-            opValue: this.optionData.SPOT
-          },
-          {
-            opKey: "REPORT_PATH",
-            opValue: this.optionData.REPORT
-          },
-          {
-            opKey: "FILLER_PATH",
-            opValue: this.optionData.FILLER
-          },
-          {
-            opKey: "STATIC_PATH",
-            opValue: this.optionData.STATIC
-          },
-          {
-            opKey: "VAR_PATH",
-            opValue: this.optionData.VAR
-          }
-        ]
-      };
-      axios.post("/api/options", list);
+      let list = [
+        {
+          name: "BIT_DEPTH",
+          value: this.optionData.BitDepth
+        },
+        {
+          name: "SAMPLE_RATE",
+          value: this.optionData.SampleRate
+        },
+        {
+          name: "CHANNEL",
+          value: this.optionData.Channels
+        },
+        {
+          name: "SILENCE_DURATION",
+          value: this.optionData.SILENCE_DURATION
+        },
+        {
+          name: "SILENCE_DB",
+          value: this.optionData.SILENCE_DB
+        },
+        {
+          name: "PGM_AM_PATH",
+          value: this.optionData.AM
+        },
+        {
+          name: "PGM_FM_PATH",
+          value: this.optionData.FM
+        },
+        {
+          name: "PGM_DMB_PATH",
+          value: this.optionData.DMB
+        },
+        {
+          name: "SPOT_PATH",
+          value: this.optionData.SPOT
+        },
+        {
+          name: "REPORT_PATH",
+          value: this.optionData.REPORT
+        },
+        {
+          name: "FILLER_PATH",
+          value: this.optionData.FILLER
+        },
+        {
+          name: "STATIC_PATH",
+          value: this.optionData.STATIC
+        },
+        {
+          name: "VAR_PATH",
+          value: this.optionData.VAR
+        }
+      ];
+
+      axios.post("/api/options/S01G06C001", list);
     },
     cancel() {}
   }

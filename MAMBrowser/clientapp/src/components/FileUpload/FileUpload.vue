@@ -94,29 +94,35 @@
               style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
             >
               <vuetable
+                v-if="this.role == 'ADMIN'"
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"
-                :fields="notiFields"
+                :fields="adminFields"
                 :data="vueTableData"
                 no-data-template="데이터가 없습니다."
               >
-                <template slot="name" scope="props">
-                  <div>
-                    {{ props.rowData.fileName }}
-                  </div>
-                </template>
                 <template slot="title" scope="props">
-                  <div style="font-size:18px;">
+                  <div style="font-size:14px;">
                     {{ props.rowData.title }}
                   </div>
                 </template>
-                <template slot="fileSize" scope="props">
+                <template slot="type" scope="props">
                   <div>
-                    {{ (props.rowData.fileSize / 1048576).toFixed(2) }} MB
+                    {{ props.rowData.type }}
                   </div>
                 </template>
-                <template slot="mastering" scope="props">
+                <template slot="user_id" scope="props">
+                  <div>
+                    {{ props.rowData.user_id }}
+                  </div>
+                </template>
+                <template slot="date" scope="props">
+                  <div>
+                    {{ props.rowData.date }}
+                  </div>
+                </template>
+                <template slot="step" scope="props">
                   <div style="width:220px; height:20px;">
                     <vue-step-progress-indicator
                       :steps="[
@@ -148,12 +154,14 @@
               </p>
             </span>
             <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
-            <div style="width:1180px; margin-left:auto; margin-right:auto;">
+            <div
+              style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
+            >
               <vuetable
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"
-                :fields="logFields"
+                :fields="userFields"
                 :data="vueTableData"
                 no-data-template="데이터가 없습니다."
               >
@@ -167,19 +175,24 @@
                     {{ props.rowData.fileName }}
                   </div>
                 </template>
-                <template slot="fileSize" scope="props">
-                  <div>
-                    {{ (props.rowData.fileSize / 1048576).toFixed(2) }} MB
-                  </div>
-                </template>
                 <template slot="title" scope="props">
-                  <div style="font-size:18px;">
+                  <div style="font-size:14px;">
                     {{ props.rowData.title }}
                   </div>
                 </template>
-                <template slot="memo" scope="props">
-                  <div style="font-size:18px;">
-                    {{ props.rowData.memo }}
+                <template slot="type" scope="props">
+                  <div>
+                    {{ props.rowData.type }}
+                  </div>
+                </template>
+                <template slot="user_id" scope="props">
+                  <div>
+                    {{ props.rowData.user_id }}
+                  </div>
+                </template>
+                <template slot="date" scope="props">
+                  <div>
+                    {{ props.rowData.date }}
                   </div>
                 </template>
               </vuetable>
@@ -228,6 +241,7 @@ export default {
   },
   data() {
     return {
+      role: "",
       dxfu,
       FileModal: false,
       MetaModal: false,
@@ -262,6 +276,7 @@ export default {
     );
     this.connection.on("send", (res, message) => {
       if (res == 1) {
+        console.log(message);
         this.setVueTableData(message);
         this.MetaModal = false;
         this.fileState = "업로드 성공";
@@ -315,6 +330,8 @@ export default {
       "setMetaModalTitle",
       "setConnectionId",
       "setVueTableData",
+      "setDuration",
+      "setAudioFormat",
       "forEachVueTableData"
     ]),
     //#region 파일 조작
@@ -323,17 +340,6 @@ export default {
       this.fileupload.upload(0);
     },
     valueChanged(event) {
-      //#region header stream
-      // var blob = event.value[0].slice(0, 44);
-      // // const reader = new FileReader(blob);
-      // // reader.onload = function(res) {
-      // // };
-      // // var buffer = reader.readAsArrayBuffer(blob);
-      // let form = new FormData();
-      // form.append("file", blob);
-
-      // axios.post("/api/fileupload/check", form);
-      //#endregion
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
@@ -346,10 +352,25 @@ export default {
             event.value[0].type == "audio/wav" ||
             event.value[0].type == "image/jpeg"
           ) {
-            this.FileModal = true;
-            this.MetaModal = true;
-            this.fileSelect = true;
-            this.fileUploading = true;
+            // var blob = event.value[0].slice(0, 44);
+            // const reader = new FileReader(blob);
+            // reader.onload = function(res) {};
+            // var buffer = reader.readAsArrayBuffer(blob);
+            let form = new FormData();
+            form.append("metaData", "0");
+
+            axios.post("/api/fileupload/Validation", form).then(res => {
+              if (res.data.duration == null || res.data.audioFormat == null) {
+                this.$fn.notify("error", { title: "오디오 파일 확인" });
+                return;
+              }
+              this.setDuration(res.data.duration);
+              this.setAudioFormat(res.data.audioFormat);
+              this.openFileModal();
+              this.MetaModal = true;
+              this.fileSelect = true;
+              this.fileUploading = true;
+            });
           } else {
             //TODO: 얼럿 창 예쁜 모달로 변경
             alert("업로드 할 수 없는 파일 형식입니다.");

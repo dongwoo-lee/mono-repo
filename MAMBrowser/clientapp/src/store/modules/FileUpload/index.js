@@ -8,6 +8,7 @@ export default {
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
+    type: "null",
     MetaData: {
       title: "",
       memo: "",

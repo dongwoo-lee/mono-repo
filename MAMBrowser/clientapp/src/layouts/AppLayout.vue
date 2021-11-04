@@ -41,15 +41,11 @@ export default {
     }, 100);
   },
   methods: {
-    FileDragStart(e) {
-      if (e.dataTransfer.files.length == 0) {
-        this.$emit("FileDragStart");
-      }
+    FileDragStart() {
+      this.$emit("FileDragStart");
     },
-    FileDragEnd(e) {
-      if (e.dataTransfer.files.length == 0) {
-        this.$emit("FileDragEnd");
-      }
+    FileDragEnd() {
+      this.$emit("FileDragEnd");
     },
     dropzoneoff() {
       this.$emit("FileDrop");

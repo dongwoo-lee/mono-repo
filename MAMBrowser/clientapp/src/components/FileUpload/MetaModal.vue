@@ -10,204 +10,333 @@
           파일 업로드 메타 데이터 입력
         </h3>
         <h4 slot="body">
-          <div :class="[isActive ? 'date-modal' : 'file-modal']">
-            <div>
-              <div style="position:relative; top:20px; ">
-                <span style="width:500px; margin-bottom:20px;">
-                  <h6
-                    style=" font-size:16px; width:500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                  >
-                    파일 명 : {{ this.MetaModalTitle }}
-                  </h6>
-                  <b-progress
-                    class="w-85"
-                    variant="success"
-                    :max="100"
-                    height="16px"
-                  >
-                    <b-progress-bar
-                      :max="100"
-                      :value="percent"
-                      :label="`${percent} %`"
-                      show-progress
-                    ></b-progress-bar
-                  ></b-progress>
-                </span>
-                <div
-                  style="width:550px; height:80px; margin-top:20px; margin-bottom:10px;"
-                >
-                  <h3 style="color:#008ECC;">
-                    소재 유형
-                  </h3>
-                  <b-form-select
-                    style="width:300px;"
-                    id="filetype"
-                    v-model="MetaData.typeSelected"
-                    :options="typeOptions"
-                    :state="typeState"
-                    required
-                  ></b-form-select>
-                </div>
+          <div style="width:1000px; height:470px; float:left;">
+            <div
+              style="width:350px; height:70px; position:relative; top:15px; left:20px; margin-bottom:20px; "
+            >
+              <p
+                style=" font-size:16px; width:350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+              >
+                파일 명 : {{ this.MetaModalTitle }}
+              </p>
+              <b-progress
+                class="w-100"
+                variant="success"
+                :max="100"
+                height="16px"
+              >
+                <b-progress-bar
+                  :max="100"
+                  :value="percent"
+                  :label="`${percent} %`"
+                  show-progress
+                ></b-progress-bar
+              ></b-progress>
+            </div>
+            <div :class="[isActive ? 'date-modal' : 'file-modal']">
+              <div>
+                <div style="position:relative; ">
+                  <div style="width:300px; height:80px;  margin-bottom:10px;">
+                    <h3 style="color:#008ECC;">
+                      소재 유형
+                    </h3>
+                    <b-form-select
+                      style="width:350px;"
+                      id="filetype"
+                      v-model="MetaData.typeSelected"
+                      :options="typeOptions"
+                      :state="typeState"
+                      required
+                    ></b-form-select>
+                  </div>
 
-                <div class="date-div" v-show="isActive">
                   <h3 style="color:#008ECC; ">
-                    프로그램 선택
+                    메타 데이터
                   </h3>
-                  <div style="margin-top:15px;">
-                    <b-form-group
-                      label="방송일"
-                      class="has-float-label"
-                      style="position:absolute; z-index:9989; font-color:black;"
-                    >
-                      <b-input-group
-                        class="mb-3"
-                        style="width:300px; float:left;"
-                      >
-                        <input
-                          id="dateinput"
-                          type="text"
-                          class="form-control input-picker date-input"
-                          :value="date"
-                          @input="onInput"
-                        />
-                        <b-input-group-append>
-                          <b-form-datepicker
-                            v-model="date"
-                            button-only
-                            button-variant="outline-primary"
-                            right
-                            aria-controls="example-input"
-                            @context="onContext"
-                          ></b-form-datepicker>
-                        </b-input-group-append>
-                      </b-input-group>
-                    </b-form-group>
+                  <div style="height:50px;  margin-top : 10px;">
+                    <b-form-input
+                      class="editTask"
+                      v-model="MetaData.duration"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="duration"
+                      trim
+                    />
+                  </div>
+                  <div style="height:50px;  margin-top : 10px;">
+                    <b-form-input
+                      class="editTask"
+                      v-model="MetaData.audioFormat"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="audioFormat"
+                      trim
+                    />
+                  </div>
+
+                  <div style="height:50px;  margin-top : 10px;">
+                    <b-form-input
+                      class="editTask"
+                      v-model="MetaData.title"
+                      :state="titleState"
+                      placeholder="제목"
+                      trim
+                    />
+
                     <button
-                      style="position:absolute; right:210px; top:32px; z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
+                      style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
                     >
                       <b-icon
                         icon="x-circle"
                         font-scale="1"
-                        style="position:absolute; top:15px; right:110px; z-index:9999;"
+                        style="position:relative; top:0px; right:0px; z-index:999;"
                         variant="secondary"
-                        @click="dateReset"
+                        @click="resetTitle"
                       ></b-icon>
                     </button>
-
-                    <b-form-group
-                      label="매체"
-                      class="has-float-label"
-                      style="position:absolute; margin-left:320px; z-index:9999;"
-                    >
-                      <b-form-select
-                        id="program-media"
-                        class="media-select"
-                        style=" width:140px; height:37px;"
-                        v-model="MetaData.mediaSelected"
-                        :options="mediaOptions"
-                      />
-                    </b-form-group>
-                    <b-button
-                      variant="outline-primary"
-                      style="position:absolute; margin-left:484px; z-index:9989; "
-                      @click="getPro"
-                      >검색</b-button
-                    >
                   </div>
-                  <div v-show="isActive" class="data-grid-div">
-                    <!-- //TODO: Data Binding -->
-                    <DxDataGrid
-                      style="height:208px;"
-                      :data-source="ProgramData"
-                      :selection="{ mode: 'single' }"
-                      :show-borders="true"
-                      :hover-state-enabled="true"
-                      key-expr="productId"
-                      :allow-column-resizing="true"
-                      :column-auto-width="true"
-                      no-data-text="No Data"
-                      @selection-changed="onSelectionChanged"
+
+                  <div style="height:50px;">
+                    <b-form-input
+                      class="editTask"
+                      v-model="MetaData.memo"
+                      :state="memoState"
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="설명"
+                      trim
+                    />
+
+                    <button
+                      style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
                     >
-                      <DxColumn data-field="eventName" caption="이벤트 명" />
-                      <DxColumn
-                        :width="60"
-                        data-field="eventType"
-                        caption="타입"
-                      />
-                      <DxColumn data-field="productId" caption="프로그램 ID" />
-                      <DxColumn data-field="onairTime" caption="방송 시간" />
-                      <DxColumn data-field="durationSec" caption="편성 분량" />
-                    </DxDataGrid>
+                      <b-icon
+                        icon="x-circle"
+                        font-scale="1"
+                        style="position:relative; top:0px; right:0px; z-index:999;"
+                        variant="secondary"
+                        @click="resetMemo"
+                      ></b-icon>
+                    </button>
+                  </div>
+
+                  <div style="height:50px;">
+                    <b-form-input
+                      class="editTask"
+                      v-model="MetaData.memo"
+                      :state="memoState"
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="설명"
+                      trim
+                    />
+
+                    <button
+                      style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                    >
+                      <b-icon
+                        icon="x-circle"
+                        font-scale="1"
+                        style="position:relative; top:0px; right:0px; z-index:999;"
+                        variant="secondary"
+                        @click="resetMemo"
+                      ></b-icon>
+                    </button>
+                  </div>
+                  <div style="height:50px;">
+                    <b-form-input
+                      class="editTask"
+                      v-model="MetaData.memo"
+                      :state="memoState"
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="설명"
+                      trim
+                    />
+
+                    <button
+                      style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                    >
+                      <b-icon
+                        icon="x-circle"
+                        font-scale="1"
+                        style="position:relative; top:0px; right:0px; z-index:999;"
+                        variant="secondary"
+                        @click="resetMemo"
+                      ></b-icon>
+                    </button>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="date-div">
+              <h3 style="color:#008ECC; ">
+                프로그램 선택
+              </h3>
+              <div style="margin-top:15px;">
+                <b-form-group
+                  label="방송일"
+                  class="has-float-label"
+                  style="position:absolute; z-index:9989; font-color:black;"
+                >
+                  <b-input-group class="mb-3" style="width:300px; float:left;">
+                    <input
+                      :disabled="isActive"
+                      id="dateinput"
+                      type="text"
+                      class="form-control input-picker date-input"
+                      :value="date"
+                      @input="onInput"
+                    />
+                    <b-input-group-append>
+                      <b-form-datepicker
+                        v-model="date"
+                        button-only
+                        :disabled="isActive"
+                        :button-variant="getVariant"
+                        right
+                        aria-controls="example-input"
+                        @context="onContext"
+                      ></b-form-datepicker>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+                <button
+                  v-show="!isActive"
+                  style="position:absolute; right:340px; top:45px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
+                >
+                  <b-icon
+                    icon="x-circle"
+                    font-scale="1"
+                    style="position:absolute; z-index:9999;"
+                    variant="secondary"
+                    @click="dateReset"
+                  ></b-icon>
+                </button>
 
-                <h3 style="color:#008ECC; ">
-                  메타 데이터
-                </h3>
-                <div style="height:50px;  margin-top : 10px;">
-                  <b-form-input
-                    class="editTask"
-                    v-model="MetaData.title"
-                    :state="titleState"
-                    placeholder="제목"
-                    trim
+                <b-form-group
+                  label="매체"
+                  class="has-float-label"
+                  style="position:absolute; margin-left:320px; z-index:9999;"
+                >
+                  <b-form-select
+                    :disabled="isActive"
+                    id="program-media"
+                    class="media-select"
+                    style=" width:140px; height:37px;"
+                    v-model="MetaData.mediaSelected"
+                    :options="mediaOptions"
                   />
-
-                  <button
-                    style="position:relative; left:365px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                </b-form-group>
+                <b-button
+                  :disabled="isActive"
+                  :variant="getVariant"
+                  style="position:absolute; margin-left:484px; z-index:9989; "
+                  @click="getPro"
+                  >검색</b-button
+                >
+              </div>
+              <div v-show="!isActive" class="data-grid-div">
+                <!-- //TODO: Data Binding -->
+                <DxDataGrid
+                  v-show="this.ProgramData.eventName != ''"
+                  style="height:208px;"
+                  :data-source="ProgramData"
+                  :selection="{ mode: 'single' }"
+                  :show-borders="true"
+                  :hover-state-enabled="true"
+                  key-expr="productId"
+                  :allow-column-resizing="true"
+                  :column-auto-width="true"
+                  no-data-text="No Data"
+                  @row-click="onRowClick"
+                >
+                  <DxColumn data-field="eventName" caption="이벤트 명" />
+                  <DxColumn :width="60" data-field="eventType" caption="타입" />
+                  <DxColumn data-field="productId" caption="프로그램 ID" />
+                  <DxColumn data-field="onairTime" caption="방송 시간" />
+                  <DxColumn data-field="durationSec" caption="편성 분량" />
+                </DxDataGrid>
+              </div>
+              <div
+                v-show="!isActive && ProgramGrid.eventName != ''"
+                style="width: 550px; height:140px; margin-top:10px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
+              >
+                <div style="width:180px; float:left;">
+                  <b-form-group
+                    label="이벤트 명"
+                    class="has-float-label"
+                    style="margin-top:20px;"
                   >
-                    <b-icon
-                      icon="x-circle"
-                      font-scale="1"
-                      style="position:relative; top:0px; right:0px; z-index:999;"
-                      variant="secondary"
-                      @click="resetTitle"
-                    ></b-icon>
-                  </button>
+                    <b-form-input
+                      style="width:180px;"
+                      class="editTask"
+                      v-model="ProgramGrid.eventName"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      trim
+                    />
+                  </b-form-group>
+                </div>
+                <div style="width:170px; margin-left:20px; float:left;">
+                  <b-form-group
+                    label="프로그램 ID"
+                    class="has-float-label"
+                    style="margin-top:20px;"
+                  >
+                    <b-form-input
+                      style="width:170px;"
+                      class="editTask"
+                      v-model="ProgramGrid.productId"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      trim
+                    />
+                  </b-form-group>
+                </div>
+                <div style="width:120px; margin-left:400px;">
+                  <b-form-group
+                    label="이벤트 타입"
+                    class="has-float-label"
+                    style="margin-top:20px;"
+                  >
+                    <b-form-input
+                      style="width:120px;"
+                      class="editTask"
+                      v-model="ProgramGrid.eventType"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      trim
+                    />
+                  </b-form-group>
                 </div>
 
-                <div style="height:50px;">
-                  <b-form-input
-                    class="editTask"
-                    v-model="MetaData.memo"
-                    :state="memoState"
-                    aria-describedby="input-live-help input-live-feedback"
-                    placeholder="설명"
-                    trim
-                  />
-
-                  <button
-                    style="position:relative; left:365px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
-                  >
-                    <b-icon
-                      icon="x-circle"
-                      font-scale="1"
-                      style="position:relative; top:0px; right:0px; z-index:999;"
-                      variant="secondary"
-                      @click="resetMemo"
-                    ></b-icon>
-                  </button>
+                <div style="width:200px; float:left;">
+                  <b-form-group label="방송 시간" class="has-float-label">
+                    <b-form-input
+                      style="width:200px;"
+                      class="editTask"
+                      v-model="ProgramGrid.onairTime"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      trim
+                    />
+                  </b-form-group>
                 </div>
-                <b-form-input
-                  class="editTask"
-                  v-model="MetaData.duration"
-                  readonly
-                  aria-describedby="input-live-help input-live-feedback"
-                  placeholder="duration"
-                  trim
-                />
-                <b-form-input
-                  class="editTask"
-                  v-model="MetaData.audioFormat"
-                  readonly
-                  aria-describedby="input-live-help input-live-feedback"
-                  placeholder="audioFormat"
-                  trim
-                />
+                <div style="width:200px; margin-left:20px; float:left;">
+                  <b-form-group label="편성 분량" class="has-float-label">
+                    <b-form-input
+                      style="width:120px;"
+                      class="editTask"
+                      v-model="ProgramGrid.durationSec"
+                      readonly
+                      aria-describedby="input-live-help input-live-feedback"
+                      trim
+                    />
+                  </b-form-group>
+                </div>
               </div>
             </div>
           </div>
         </h4>
+
         <h3 slot="footer">
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <b-button variant="outline-danger" @click="reset()">
@@ -300,7 +429,11 @@ export default {
       "titleState",
       "memoState",
       "metaValid"
-    ])
+    ]),
+    ...mapGetters("user", ["getMenuGrpName"]),
+    getVariant() {
+      return this.isActive ? "outline-dark" : "outline-primary";
+    }
   },
   watch: {
     fileState(v) {
@@ -313,6 +446,22 @@ export default {
     MetaModal(v) {
       if (!v) {
         this.reset();
+      } else {
+        if (this.getMenuGrpName == "관리자") {
+          console.log(this.getMenuGrpName);
+        } else if (this.getMenuGrpName == "편성PD") {
+          console.log(this.getMenuGrpName);
+        } else if (this.getMenuGrpName == "제작PD") {
+          console.log(this.getMenuGrpName);
+        } else if (this.getMenuGrpName == "리포터") {
+          console.log(this.getMenuGrpName);
+        } else if (this.getMenuGrpName == "라디오뉴스") {
+          console.log(this.getMenuGrpName);
+        } else if (this.getMenuGrpName == "제작 Staff") {
+          console.log(this.getMenuGrpName);
+        } else if (this.getMenuGrpName == "TD") {
+          console.log(this.getMenuGrpName);
+        }
       }
     }
   },
@@ -321,9 +470,7 @@ export default {
       "setUploaderCustomData",
       "resetTitle",
       "resetMemo",
-      "resetType",
-      "setDuration",
-      "setAudioFormat"
+      "resetType"
     ]),
     MetaModalOff() {
       if (this.processing || this.fileUploading) {
@@ -335,10 +482,11 @@ export default {
     async uploadfile() {
       if (this.metaValid) {
         //NOTE: 커스텀 데이터 파라미터
+
         var data = {
           user_id: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
-          memo: this.MetaData.memo,
+          type: this.MetaData.typeSelected,
           fileSize: this.localFiles[0].size,
           connectionId: this.connectionId,
           ProgramSelected: this.ProgramSelected
@@ -356,16 +504,7 @@ export default {
             return;
           } else {
             if (res) {
-              let form = new FormData();
-              form.append("metaData", "0");
-
-              axios.post("/api/fileupload/Validation", form).then(res => {
-                console.log(res);
-                this.setDuration(res.data.duration);
-                this.setAudioFormat(res.data.audioFormat);
-                this.fileUploading = true;
-                this.$emit("upload");
-              });
+              this.$emit("upload");
             }
           }
         });
@@ -377,4 +516,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

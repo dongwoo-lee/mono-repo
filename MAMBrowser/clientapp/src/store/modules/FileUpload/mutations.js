@@ -35,6 +35,16 @@ export default {
   resetType(state) {
     state.MetaData.typeSelected = "null";
   },
+  resetProgramData(state) {
+    for (var i = 1; i < state.ProgramData.length; ) {
+      state.ProgramData.pop();
+    }
+    state.ProgramData.eventName = "";
+    state.ProgramData.eventType = "";
+    state.ProgramData.productId = "";
+    state.ProgramData.onairTime = "";
+    state.ProgramData.durationSec = "";
+  },
   forEachVueTableData(state, payload) {
     state.vueTableData.forEach(element => {
       if (payload.title == element.title) {

@@ -45,12 +45,23 @@ namespace MAMBrowser.Controllers
             public string user_id { get; set; }
             public string title { get; set; }
             public string memo { get; set; }
+            public string type { get; set; }
+            public string date { get; set; }
         }
 
         public class Validate 
         { 
             public string duration { get; set; }
             public string audioFormat { get; set; }
+        }
+
+        public class ProgramInfo {
+            public string DurationSec { get; set; }
+            public string EventName { get; set; }
+            public string EventType { get; set; }
+            public string OnAirTime { get; set; }
+            public string ProductId { get; set; }
+
         }
 
         public FileUploadController(IHubContext<FileHubs> hubContext, PrivateFileDao dao)
@@ -82,14 +93,14 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("UploadChunk")]
         public ActionResult<string> UploadChunk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string user_id, [FromForm] string connectionId,
-            [FromForm] string title, [FromForm] string memo, [FromForm] long fileSize, [FromForm] Object ProgramSelected, [FromForm] string mediaCD, [FromForm] string categoryCD)
+            [FromForm] string title, [FromForm] string memo, [FromForm] string type, [FromForm] long fileSize, [FromForm] string ProgramSelected, [FromForm] string mediaCD, [FromForm] string categoryCD)
         {
             try
             {
                 if (!string.IsNullOrEmpty(chunkMetadata))
                 {
                     var metaDataObject = JsonConvert.DeserializeObject<ChunkMetadata>(chunkMetadata);
-
+                    //var Program = JsonConvert.DeserializeObject<ProgramInfo>(ProgramSelected);
                     CheckFileExtensionValid(metaDataObject.FileName);
                     string sdate = DateTime.Now.ToString(Define.DTM8);
 
@@ -108,7 +119,7 @@ namespace MAMBrowser.Controllers
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
                         string date = DateTime.Now.ToString(Define.DTM8);
-
+                        string dbDate = DateTime.Now.ToString(Define.DTM19);
                         string newFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
 
                         //Upload (비동기 Upload await)
@@ -125,6 +136,8 @@ namespace MAMBrowser.Controllers
                         fi.user_id = user_id;
                         fi.title = title;
                         fi.memo = memo;
+                        fi.type = type;
+                        fi.date = dbDate;
 
                         string json = JsonConvert.SerializeObject(fi);
                         _hubContext.Clients.Client(connectionId).SendAsync("send", 1, fi);
@@ -167,11 +180,11 @@ namespace MAMBrowser.Controllers
             if (metaData == "0")   //성공
             {
                 Validate v = new Validate();
-                v.duration = "값";
-                v.audioFormat = "포맷값";
+                v.duration = "Duration Value";
+                v.audioFormat = "AudioFormat Value";
 
                 string json = JsonConvert.SerializeObject(v);
-                return new ActionResult<string>(json);
+                return new ActionResult<string>(json); 
             }
             else if (metaData == "1")   //유효성검사 실패
             {

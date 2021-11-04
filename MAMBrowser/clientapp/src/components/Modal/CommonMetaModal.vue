@@ -52,10 +52,10 @@ export default {};
 
 .meta-modal-container {
   position: fixed;
-  right: 680px;
-  width: 600px;
-  height: 637px;
-  margin-top: -400px;
+  right: 450px;
+  width: 1000px;
+  height: 577px;
+  margin-top: -320px;
   background-color: white;
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
@@ -69,7 +69,7 @@ export default {};
 }
 
 .meta-modal-body {
-  height: 600px;
+  height: 470px;
   background-color: white;
 }
 
@@ -97,7 +97,7 @@ export default {};
   transform: scale(1.1);
 }
 .meta-modal-footer {
-  width: 600px;
+  width: 1000px;
   height: 83px;
   background-color: white;
 }
