@@ -483,6 +483,7 @@ export default {
         var data = {
           user_id: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
+          memo: this.MetaData.memo,
           type: this.MetaData.typeSelected,
           fileSize: this.localFiles[0].size,
           connectionId: this.connectionId,

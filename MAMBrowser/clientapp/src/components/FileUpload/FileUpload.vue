@@ -106,6 +106,7 @@
                   <div style="font-size:14px;">
                     {{ props.rowData.title }}
                   </div>
+                  <b-button @click="getProps(props)">확인</b-button>
                 </template>
                 <template slot="type" scope="props">
                   <div>
@@ -123,7 +124,10 @@
                   </div>
                 </template>
                 <template slot="step" scope="props">
-                  <div style="width:220px; height:20px;">
+                  <div
+                    style="width:220px; height:20px;"
+                    v-if="props.rowData.step != 6"
+                  >
                     <vue-step-progress-indicator
                       :steps="[
                         '대기 중',
@@ -136,7 +140,27 @@
                       :active-step="props.rowData.step"
                       :is-reactive="false"
                       :styles="styleData"
-                      :colors="colorData"
+                      :colors="successColorData"
+                      style="margin-left:30px; width:680px;"
+                    />
+                  </div>
+                  <div
+                    style="width:220px; height:20px;"
+                    v-if="props.rowData.step == 6"
+                  >
+                    <vue-step-progress-indicator
+                      :steps="[
+                        '대기 중',
+                        '디코딩',
+                        '리샘플링',
+                        '노말라이즈',
+                        '스토리지 저장',
+                        '실패'
+                      ]"
+                      :active-step="props.rowData.step"
+                      :is-reactive="false"
+                      :styles="styleData"
+                      :colors="failColorData"
                       style="margin-left:30px; width:680px;"
                     />
                   </div>
@@ -167,7 +191,10 @@
                   </div>
                 </template>
                 <template slot="step" scope="props">
-                  <div style="width:220px; height:20px;">
+                  <div
+                    style="width:220px; height:20px;"
+                    v-if="props.rowData.step != 6"
+                  >
                     <vue-step-progress-indicator
                       :steps="[
                         '대기 중',
@@ -180,7 +207,27 @@
                       :active-step="props.rowData.step"
                       :is-reactive="false"
                       :styles="styleData"
-                      :colors="colorData"
+                      :colors="successColorData"
+                      style="margin-left:30px; width:680px;"
+                    />
+                  </div>
+                  <div
+                    style="width:220px; height:20px;"
+                    v-if="props.rowData.step == 6"
+                  >
+                    <vue-step-progress-indicator
+                      :steps="[
+                        '대기 중',
+                        '디코딩',
+                        '리샘플링',
+                        '노말라이즈',
+                        '스토리지 저장',
+                        '실패'
+                      ]"
+                      :active-step="props.rowData.step"
+                      :is-reactive="false"
+                      :styles="styleData"
+                      :colors="failColorData"
                       style="margin-left:30px; width:680px;"
                     />
                   </div>
@@ -359,6 +406,9 @@ export default {
         this.forEachVueTableData(message);
       } else if (res == 5) {
         this.forEachVueTableData(message);
+        console.log(message);
+      } else if (res == -1) {
+        this.forEachVueTableData(message);
       }
     });
 
@@ -395,6 +445,9 @@ export default {
     })
   },
   methods: {
+    getProps(props) {
+      console.log(props);
+    },
     ...mapMutations("FileIndexStore", [
       "addLocalFiles",
       "resetLocalFiles",
@@ -489,8 +542,9 @@ export default {
       this.uploadRefresh();
     },
     uploadError(e) {
+      console.log(e);
       this.percent = 0;
-      this.$fn.notify("error", { message: "파일 업로드 실패" });
+      this.$fn.notify("error", { message: e.error.response });
     },
     uploadAborted() {
       console.log("취소?");

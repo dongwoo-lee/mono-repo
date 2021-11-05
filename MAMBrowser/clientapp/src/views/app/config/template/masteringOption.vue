@@ -37,8 +37,13 @@
 
         <span style="width:200px; float:left; margin-right:90px;">
           <b-form-group label="SILENCE_DURATION" class="has-float-label">
-            <b-form-input :state="isDuration" v-model="SILENCE_DURATION" />
+            <b-form-input v-model="SILENCE_DURATION" />
           </b-form-group>
+          <p
+            style="position:absolute; top:270px; left:475px; color:red; font-size:10.5px;"
+          >
+            {{ getSILENCE_DURATION }}
+          </p>
         </span>
         <span style="width:200px;float:left; margin-right:90px;">
           <b-form-group label="SILENCE_DB" class="has-float-label">
@@ -50,11 +55,6 @@
             <b-form-input style="width:200px;" v-model="MP3_DECODER" />
           </b-form-group>
         </span>
-        <p
-          style="position:absolute; top:200px; left:450px; color:red; font-size:10.5px;"
-        >
-          {{ getSILENCE_DURATION }}
-        </p>
       </div>
       <h4 style="color:#008ECC;margin-top:40px;">
         파일 경로 설정

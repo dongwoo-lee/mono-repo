@@ -140,32 +140,38 @@ namespace MAMBrowser.Controllers
                         fi.date = dbDate;
 
                         string json = JsonConvert.SerializeObject(fi);
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 1, fi);
+                        _hubContext.Clients.Client(connectionId).SendAsync("send", 0, fi);
 
                         RabbitMQ(fi);
 
                         Thread.Sleep(5000);
                         fi.step = 1;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 2, fi);
+                        _hubContext.Clients.Client(connectionId).SendAsync("send", 1, fi);
 
                         Thread.Sleep(5000);
                         fi.step = 2;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 3, fi);
+                        _hubContext.Clients.Client(connectionId).SendAsync("send", 2, fi);
 
                         Thread.Sleep(5000);
                         fi.step = 3;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 4, fi);
+                        _hubContext.Clients.Client(connectionId).SendAsync("send", 3, fi);
 
                         Thread.Sleep(5000);
                         fi.step = 4;
 
+                        _hubContext.Clients.Client(connectionId).SendAsync("send", 4, fi);
+
+                        Thread.Sleep(5000);
+                        fi.step = 6;
                         _hubContext.Clients.Client(connectionId).SendAsync("send", 5, fi);
+                        throw new Exception("파일 마스터링 실패");
                     }
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(400, ex);
+                
+                return StatusCode(400, "파일 마스터링 실패");
             }
             return new ActionResult<string>("ㅋㅋㅋ");
         }

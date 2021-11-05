@@ -138,7 +138,7 @@ export default {
           font: "14px;"
         }
       },
-      colorData: {
+      successColorData: {
         progress__bubble: {
           active: {
             color: "#fff",
@@ -165,6 +165,36 @@ export default {
           },
           completed: {
             color: "#27ae60"
+          }
+        }
+      },
+      failColorData: {
+        progress__bubble: {
+          active: {
+            color: "#fff",
+            backgroundColor: "#e74c3c",
+            borderColor: "#e74c3c"
+          },
+          inactive: {
+            color: "#fff",
+            backgroundColor: "#e74c3c",
+            borderColor: "#e74c3c"
+          },
+          completed: {
+            color: "#fff",
+            borderColor: "#e74c3c",
+            backgroundColor: "#e74c3c"
+          }
+        },
+        progress__label: {
+          active: {
+            color: "#e74c3c"
+          },
+          inactive: {
+            color: "#e74c3c"
+          },
+          completed: {
+            color: "#e74c3c"
           }
         }
       }
