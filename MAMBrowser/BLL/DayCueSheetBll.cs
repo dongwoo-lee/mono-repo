@@ -2,6 +2,7 @@
 using DAP3.CueSheetCommon.DTO.Result;
 using DAP3.CueSheetDAL.Factories.Web;
 using Dapper;
+using MAMBrowser.DTO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

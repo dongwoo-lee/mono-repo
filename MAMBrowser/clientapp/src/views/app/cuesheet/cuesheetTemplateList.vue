@@ -15,7 +15,7 @@
       <template slot="form-search-area">
         <!-- 템플릿 이름 -->
         <b-form-group label="템플릿 이름" class="has-float-label">
-          <common-input-text />
+          <common-input-text v-model="searchTemptitle" />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -54,7 +54,7 @@
         <common-data-table-scroll-paging
           ref="scrollPaging"
           :fields="fields"
-          :rows="templateList"
+          :rows="tempCuesheetListArr.data"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -99,7 +99,7 @@
             <DxTextBox
               placeholder="이름없는 템플릿"
               width="320px"
-              v-model="temData.tmptitle"
+              v-model="tmpTitleTextBoxValue"
             />
           </div>
         </div>
@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { USER_ID } from "@/constants/config";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
@@ -145,15 +145,12 @@ export default {
   },
   data() {
     return {
-      templateList: [],
+      searchTemptitle: "",
       searchItems: {
         rowPerPage: 30,
         selectPage: 1,
       },
-      temData: {
-        personid: "",
-        tmptitle: "이름없는 템플릿",
-      },
+      tmpTitleTextBoxValue: "이름없는 템플릿",
       fields: [
         {
           name: "__checkbox",
@@ -208,40 +205,32 @@ export default {
   },
 
   computed: {
-    // ...mapGetters("cuesheet", ["templateList"]),
+    ...mapGetters("cueList", ["tempCuesheetListArr"]),
   },
 
   mounted() {
     this.selectedIds = [];
   },
   methods: {
+    ...mapActions("cueList", ["getcuesheetListArrTemp"]),
+    ...mapActions("cueList", ["addTemplate"]),
     async getData() {
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      var temList = await this.getTemList();
-      if (temList) {
-        var seqnum = 0;
-        this.setResponseData(temList);
-        temList.data.forEach((ele) => {
-          ele.seq = seqnum;
-          seqnum = seqnum + 1;
-        });
-        this.addScrollClass();
-        this.isTableLoading = false;
-        this.isScrollLodaing = false;
-        this.templateList = temList.data;
-      }
-    },
-    //템플릿 목록 가져오기
-    getTemList() {
-      return axios.get(`/api/TempCueSheet/GetTempList?personid=${userId}`);
+      var params = {
+        personid: userId,
+        temptitle: this.searchTemptitle,
+      };
+      await this.getcuesheetListArrTemp(params);
+      this.addScrollClass();
+      this.isTableLoading = false;
+      this.isScrollLodaing = false;
     },
     // 템플릿 추가 (modal)
     async addTemCue() {
-      this.temData.personid = userId;
-      var pram = {
-        temParam: this.temData,
+      var params = {
+        temParam: { personid: userId, tmptitle: this.tmpTitleTextBoxValue },
       };
-      await axios.post(`/api/TempCueSheet/SaveTempCue`, pram).then((res) => {});
+      await this.addTemplate(params);
       this.getData();
     },
     //템플릿 삭제
@@ -249,7 +238,7 @@ export default {
       if (this.selectedIds.length > 0) {
         var delcueidList = [];
         this.selectedIds.forEach((ids) => {
-          delcueidList.push(this.templateList[ids].cueid);
+          delcueidList.push(this.tempCuesheetListArr.data[ids].cueid);
         });
         await axios.delete(`/api/TempCueSheet/DelTempCue`, {
           params: {
@@ -266,5 +255,3 @@ export default {
   },
 };
 </script>
-<style scope>
-</style>

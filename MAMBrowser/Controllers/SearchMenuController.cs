@@ -3,13 +3,7 @@ using MAMBrowser.Common.Expand.CommonType;
 using MAMBrowser.Common.Expand.Menus;
 using MAMBrowser.Common.Expand.Result;
 using MAMBrowser.DAL.Expand.Factories.Web;
-using MAMBrowser.Foundation;
-using MAMBrowser.Helper;
-using MAMBrowser.Helpers;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace MAMBrowser.Controllers
 {
@@ -17,21 +11,6 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class SearchMenuController : ControllerBase
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly AppSettings _appSesstings;
-        //private readonly CueAttachmentsBll _bll;
-        private readonly IFileProtocol _fileService;
-        private readonly ILogger<ProductsController> _logger;
-        private readonly WebServerFileHelper _fileHelper;
-
-        public SearchMenuController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, ServiceResolver sr, ILogger<ProductsController> logger, WebServerFileHelper fileHelper)
-        {
-            _hostingEnvironment = hostingEnvironment;
-            _appSesstings = appSesstings.Value;
-            _fileService = sr("MirosConnection");
-            _logger = logger;
-            _fileHelper = fileHelper;
-        }
         public class Pram
         {
             public string startDate { get; set; }

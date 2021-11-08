@@ -34,21 +34,12 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class DayCueSheetController : ControllerBase
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly AppSettings _appSesstings;
         private readonly DayCueSheetBll _bll;
-        private readonly IFileProtocol _fileService;
-        private readonly ILogger<ProductsController> _logger;
-        private readonly WebServerFileHelper _fileHelper;
 
-        public DayCueSheetController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, DayCueSheetBll bll, ServiceResolver sr, ILogger<ProductsController> logger, WebServerFileHelper fileHelper)
+        public DayCueSheetController(DayCueSheetBll bll)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _appSesstings = appSesstings.Value;
+            Debug.WriteLine("DayCueSheetController");
             _bll = bll;
-            _fileService = sr("MirosConnection");
-            _logger = logger;
-            _fileHelper = fileHelper;
         }
 
         //시작일, 종료일 날짜
@@ -71,6 +62,7 @@ namespace MAMBrowser.Controllers
         {
             try
             {
+                Debug.WriteLine("GetDayCueList");
                 List<string> cal = setDateList(start_dt, end_dt);
                 string[] dates = cal.ToArray();
                 var result =  _bll.GetDayCueList(products, dates);
@@ -80,13 +72,14 @@ namespace MAMBrowser.Controllers
             {
                 throw;
             }
-        }
         //일일큐시트 상세내용 가져오기
+        }
         [HttpGet("GetDayCue")]
         public CueSheetCollectionDTO GetDayCue([FromQuery] string productid, [FromQuery] int cueid)
         {
             try
             {
+                Debug.WriteLine("GetDayCue");
                 var result = _bll.GetDayCue(productid, cueid);
                 return result;
             }
@@ -101,6 +94,7 @@ namespace MAMBrowser.Controllers
         {
             try
             {
+                Debug.WriteLine("SaveDayCue");
                 var result = _bll.SaveDayCue(pram.cueParam, pram.dayParam, pram.conParams, pram.tagParams, pram.printParams, pram.attParams);
                 return result;
             }

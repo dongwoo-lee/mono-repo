@@ -18,11 +18,24 @@ namespace MAMBrowser.BLL
         {
             _factory = factory;
         }
-        // 템플릿 목록 가져오기
-        public List<TemplateListDTO> GetTemplateList(string personid)
+        //// 템플릿 목록 가져오기
+        //public List<TemplateListDTO> GetTemplateList(string personid)
+        //{
+        //    return _factory.TemplateRepository.GetPersonIDTemplateList(personid).ToList();
+        //}
+
+        //// 템플릿 이름 검색
+        //public List<TemplateListDTO> GetTitleTemplateList(string title)
+        //{
+        //    return _factory.TemplateRepository.GetTitleTemplateList(title).ToList();
+        //}
+
+        public List<TemplateListDTO> GetPersonIDWithTitleTemplateList(string personid, string title)
         {
-            return _factory.TemplateRepository.GetTemplateList(personid).ToList();
+            return _factory.TemplateRepository.GetPersonIDWithTitleTemplateList(personid, title).ToList();
         }
+
+
 
         // 템플릿 상세내용 가져오기 
         public TemplateCollectionDTO GetTemplate(int cueid)

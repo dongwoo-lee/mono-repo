@@ -2,11 +2,14 @@
   <div>
     <div class="abchannel_view">
       <div class="abchannel_title mt-2 ml-1">DAP (A,B)</div>
+      <div class="abchannel_total_num mt-2 ml-1">
+        전체 : {{ abCartArr.length }}개
+      </div>
       <DxDataGrid
         id="channelAB"
         :focused-row-enabled="false"
         :ref="dataGridRef"
-        :data-source="abChannelData"
+        :data-source="abCartArr"
         :height="abChannelHeight"
         :showColumnLines="false"
         :show-borders="true"
@@ -234,17 +237,6 @@
               hint="미리듣기/음원편집"
               @click="onPreview(data.data)"
             />
-            <PlayerPopup
-              :showPlayerPopup="showPlayerPopup"
-              :title="soundItem.maintitle"
-              :fileKey="soundItem.fileToken"
-              :streamingUrl="streamingUrl"
-              :waveformUrl="waveformUrl"
-              :tempDownloadUrl="tempDownloadUrl"
-              requestType="token"
-              @closePlayer="onClosePlayer"
-            >
-            </PlayerPopup>
           </div>
         </template>
         <DxScrolling mode="infinite" />
@@ -254,11 +246,23 @@
               icon="trash"
               @click="selectionDel"
               :disabled="!selectedItemKeys.length"
+              hint="선택 행 삭제"
             />
           </div>
         </template>
       </DxDataGrid>
     </div>
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.maintitle"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
+    </PlayerPopup>
   </div>
 </template>
 
@@ -289,7 +293,6 @@ export default {
   data() {
     return {
       dataGridRef,
-      channelAB: [],
       rowData: {
         onairdate: "",
         cartid: "", // 소재ID
@@ -306,22 +309,24 @@ export default {
         rowNum: 0,
         productType: "",
         fileToken: "", //미리듣기 때문 바뀔수도있음
-        //totalTime: 0,
         duration: "", //string
       },
       selectedItemKeys: [],
     };
   },
   mounted() {
-    if (this.abChannelData.length > 0) {
-      this.channelAB = this.abChannelData;
-      this.rowData.rowNum = this.abChannelData.length;
+    if (this.abCartArr.length > 0) {
+      this.rowData.rowNum = this.abCartArr.length;
     }
   },
   created() {
+    // if(this.cueInfo.cueid!=-1){
+    // }else{
+    //   this.SET_ABCARTARR([]);
+    // }
     eventBus.$on("abDataSet", (val) => {
-      this.channelAB = val;
-      this.rowData.rowNum = val.length;
+      // this.channelAB = val;
+      this.rowData.rowNum = this.abCartArr.length;
     });
   },
   components: {
@@ -335,15 +340,17 @@ export default {
     DxTextBox,
   },
   computed: {
-    ...mapGetters("cuesheet", ["searchListData"]),
-    ...mapGetters("cuesheet", ["abChannelData"]),
+    ...mapGetters("cueList", ["searchListData"]),
+    ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("cueList", ["abCartArr"]),
     dataGrid: function () {
       return this.$refs[dataGridRef].instance;
     },
   },
   methods: {
-    ...mapMutations("cuesheet", ["SET_ABCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_ABCARTARR"]),
     onAddChannelAB(e) {
+      var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
         if (selectedRowsData.length > 1) {
@@ -473,7 +480,7 @@ export default {
                   break;
               }
             }
-            this.channelAB.splice(e.toIndex + index, 0, row);
+            arrData.splice(e.toIndex + index, 0, row);
             this.rowData.rowNum = this.rowData.rowNum + 1;
           });
         } else {
@@ -603,7 +610,7 @@ export default {
                 break;
             }
           }
-          this.channelAB.splice(e.toIndex, 0, row);
+          arrData.splice(e.toIndex, 0, row);
           this.rowData.rowNum = this.rowData.rowNum + 1;
         }
       } else if (e.fromData.subtitle !== undefined) {
@@ -611,14 +618,14 @@ export default {
         var row = { ...search_row };
         row.rowNum = this.rowData.rowNum;
         delete row.editTarget;
-        this.channelAB.splice(e.toIndex, 0, row);
+        arrData.splice(e.toIndex, 0, row);
         this.rowData.rowNum = this.rowData.rowNum + 1;
       }
       // e.fromComponent.clearSelection();
-      this.SET_ABCHANNELDATA(this.channelAB);
+      this.SET_ABCARTARR(arrData);
     },
     onReorderChannelAB(e) {
-      this.channelAB = [...this.channelAB];
+      var arrData = this.abCartArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       var selectedRowsKey = this.sortSelectedRowsData(e, "key");
       var testIndex = [];
@@ -642,7 +649,7 @@ export default {
             }
           });
           selectedRowsData.forEach((obj, index) => {
-            this.channelAB.splice(newindex + index, 0, obj);
+            arrData.splice(newindex + index, 0, obj);
           });
         } else {
           selectedRowsKey.forEach((selectindex) => {
@@ -653,15 +660,15 @@ export default {
           });
           newindex = newindex + 1;
           selectedRowsData.forEach((obj, index) => {
-            this.channelAB.splice(newindex + index, 0, obj);
+            arrData.splice(newindex + index, 0, obj);
           });
         }
       } else {
-        this.channelAB.splice(e.fromIndex, 1);
-        this.channelAB.splice(e.toIndex, 0, e.itemData);
+        arrData.splice(e.fromIndex, 1);
+        arrData.splice(e.toIndex, 0, e.itemData);
       }
       //e.component.clearSelection();
-      this.SET_ABCHANNELDATA(this.channelAB);
+      this.SET_ABCARTARR(arrData);
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -710,7 +717,8 @@ export default {
       }
     },
     selectionDel() {
-      let a = this.channelAB;
+      var arrData = this.abCartArr;
+      let a = arrData;
       let b = this.selectedItemKeys;
       for (let i = 0; i < b.length; i++) {
         for (let j = 0; j < a.length; j++) {
@@ -719,9 +727,9 @@ export default {
             break;
           }
         }
-        this.channelAB = a;
+        arrData = a;
       }
-      this.SET_ABCHANNELDATA(this.channelAB);
+      this.SET_ABCARTARR(arrData);
     },
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
@@ -754,19 +762,21 @@ export default {
         if (item.name === "addRowButton") {
           item.options = {
             icon: "add",
+            hint: "행 추가",
             onClick: () => {
+              var arrData = this.abCartArr;
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
               var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
               row.rowNum = this.rowData.rowNum;
               if (rastkey != -1) {
                 var index = this.dataGrid.getRowIndexByKey(rastkey);
-                this.channelAB.splice(index + 1, 0, row);
+                arrData.splice(index + 1, 0, row);
               } else {
-                this.channelAB.splice(1, 0, row);
+                arrData.splice(1, 0, row);
               }
               this.rowData.rowNum = this.rowData.rowNum + 1;
-              this.SET_ABCHANNELDATA(this.channelAB);
+              this.SET_ABCARTARR(arrData);
             },
           };
         }
@@ -825,6 +835,13 @@ export default {
   background-color: #2a4878;
 }
 .abchannel_title {
+  padding: 0;
+  position: absolute;
+  color: white;
+  z-index: 1;
+}
+.abchannel_total_num {
+  right: 100px;
   padding: 0;
   position: absolute;
   color: white;

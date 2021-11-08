@@ -74,10 +74,6 @@ export default {
       type: Object,
       default: () => {},
     },
-    productWeekList: {
-      type: Array,
-      default: () => [],
-    },
     edit: {
       type: Boolean,
       default: false,
@@ -93,11 +89,6 @@ export default {
       activeList: [],
     };
   },
-  mounted() {},
-  computed: {},
-  created() {},
-  watch: {},
-  methods: {},
 };
 </script>
 <style>

@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import MixinCommon from "../../../mixin/MixinCommon";
 import searchMenuList from "../../../data/searchMenuList";
 import DxMenu from "devextreme-vue/menu";
@@ -246,19 +246,8 @@ export default {
     DxButton,
     mapMutations,
   },
-  // watch: {
-  //   searchDataList: {
-  //     deep: true,
-  //     handler(newVal) {
-  //       newVal.options.forEach((ele) => {
-  //         if (ele.name == "medias" && ele.selectVal) {
-  //           this.getOptionsData(ele.selectVal);
-  //         }
-  //       });
-  //     },
-  //   },
-  // },
   computed: {
+    ...mapGetters("cueList", ["searchListData"]),
     widthSizeClass: function () {
       return {
         width_size_big: this.width_size == 330,
@@ -288,7 +277,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("cuesheet", ["SET_SEARCHLISTDATA"]),
+    ...mapMutations("cueList", ["SET_SEARCHLISTDATA"]),
     eventClick(newObjectState, object) {
       const url = `/api/SearchMenu/GetPublicSecond`;
       if (object.name == "medias") {

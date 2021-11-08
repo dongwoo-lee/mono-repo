@@ -18,29 +18,21 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class DefCueSheetController : ControllerBase
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly AppSettings _appSesstings;
         private readonly DefCueSheetBll _bll;
-        private readonly IFileProtocol _fileService;
-        private readonly ILogger<ProductsController> _logger;
-        private readonly WebServerFileHelper _fileHelper;
 
-        public DefCueSheetController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, DefCueSheetBll bll, ServiceResolver sr, ILogger<ProductsController> logger, WebServerFileHelper fileHelper)
+        public DefCueSheetController(DefCueSheetBll bll)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _appSesstings = appSesstings.Value;
             _bll = bll;
-            _fileService = sr("MirosConnection");
-            _logger = logger;
-            _fileHelper = fileHelper;
         }
         // 기본큐시트 목록 가져오기
         [HttpGet("GetDefList")]
         public List<DefaultCueSheetListDTO> GetDefList([FromQuery] string[] productids)
         {
+
             try
             {
-                return _bll.GetDefCueList(productids);
+                var result = _bll.GetDefCueList(productids);
+                return result;
             }
             catch
             {
@@ -72,7 +64,7 @@ namespace MAMBrowser.Controllers
                 //var def = pram.defParams.Skip(2);
                 return _bll.SaveDefaultCueSheet(pram.cueParam, pram.defParams, pram.conParams, pram.tagParams, pram.printParams, pram.attParams);
             }
-            catch
+            catch (Exception ex)
             {
                 throw;
             }

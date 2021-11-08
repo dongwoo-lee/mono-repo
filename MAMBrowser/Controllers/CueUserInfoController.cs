@@ -1,31 +1,14 @@
 ﻿using DAP3.CueSheetCommon.DTO.Result;
-using Dapper;
 using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.Common.Foundation;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
-using MAMBrowser.Entiies;
-using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
-using MAMBrowser.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading;
 
 namespace MAMBrowser.Controllers
 {
@@ -33,21 +16,12 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class CueUserInfoController : ControllerBase
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly AppSettings _appSesstings;
         private readonly CueUserInfoBll _bll;
-        private readonly IFileProtocol _fileService;
-        private readonly ILogger<ProductsController> _logger;
-        private readonly WebServerFileHelper _fileHelper;
 
-        public CueUserInfoController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, CueUserInfoBll bll, ServiceResolver sr, ILogger<ProductsController> logger, WebServerFileHelper fileHelper)
+        public CueUserInfoController(CueUserInfoBll bll)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _appSesstings = appSesstings.Value;
+            Debug.WriteLine("CueUserInfoController");
             _bll = bll;
-            _fileService = sr("MirosConnection");
-            _logger = logger;
-            _fileHelper = fileHelper;
         }
         //유저별 프로그램 리스트 가져오기
         [HttpGet("GetProgramList")]
@@ -55,6 +29,7 @@ namespace MAMBrowser.Controllers
         {
             try
             {
+                Debug.WriteLine("GetUserProgramList");
                 return _bll.GetUserPgmList(personid, media);
             }
             catch
@@ -69,11 +44,13 @@ namespace MAMBrowser.Controllers
         {
             try
             {
+                Debug.WriteLine("GetDirectorList");
                 var result = _bll.GetDirectorList(productid);
                 return result;
             }
-            catch
+            catch(Exception exp)
             {
+                Debug.WriteLine(exp.Message);
                 throw;
             }
         }

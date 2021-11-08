@@ -9,33 +9,37 @@
                 <piaf-breadcrumb />
               </div>
               <div class="MainTilte">
-                <h1>{{ cuesheetData.eventname }}</h1>
+                <h1>{{ cueInfo.eventname }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
               <div class="subtitle">
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   방송 예정일 :
-                  <span>{{ cuesheetData.brddate }}</span>
+                  <span>{{
+                    $moment(cueInfo.detail[0].brdtime).format("YYYY-MM-DD")
+                  }}</span>
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   매체 :
-                  <span v-if="cuesheetData.media == 'A'">AM</span>
-                  <span v-if="cuesheetData.media == 'F'">FM</span>
-                  <span v-if="cuesheetData.media == 'D'">DMB</span>
-                  <span v-if="cuesheetData.media == 'C'">공통</span>
-                  <span v-if="cuesheetData.media == 'Z'">기타</span>
+                  <span v-if="cueInfo.media == 'A'">AM</span>
+                  <span v-if="cueInfo.media == 'F'">FM</span>
+                  <span v-if="cueInfo.media == 'D'">DMB</span>
+                  <span v-if="cueInfo.media == 'C'">공통</span>
+                  <span v-if="cueInfo.media == 'Z'">기타</span>
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   담당자 :
-                  <span>{{ directors }}</span>
+                  <span>{{ proUserList }}</span>
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   수정일 :
-                  <span> {{ cuesheetData.edittime }} </span>
+                  <span>{{
+                    $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                  }}</span>
                 </span>
                 <span class="autosave">
                   <b-form-checkbox-group
@@ -46,7 +50,7 @@
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget :cuesheetData="cuesheetData" />
+                <ButtonWidget :type="type" />
               </div>
             </div>
             <div class="left_bottom">
@@ -63,9 +67,8 @@
                     <template #default>
                       <div class="c_channel_panel">
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 1)"
                           channelKey="channel_1"
                         />
                       </div>
@@ -75,9 +78,8 @@
                     <template #default>
                       <div class="c_channel_panel">
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 2)"
                           channelKey="channel_2"
                         />
                       </div>
@@ -87,9 +89,8 @@
                     <template #default>
                       <div>
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 3)"
                           channelKey="channel_3"
                         />
                       </div>
@@ -99,9 +100,8 @@
                     <template #default>
                       <div>
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 4)"
                           channelKey="channel_4"
                         />
                       </div>
@@ -113,17 +113,11 @@
                         <SortableWidget
                           :widgetIndex="16"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 0)"
                           channelKey="channel_my"
                         />
                       </div>
                     </template>
                   </DxItem>
-                  <!-- <DxItem title="부가정보">
-                    <template #default>
-                      <div>ddd</div>
-                    </template>
-                  </DxItem> -->
                 </DxTabPanel>
               </div>
             </div>
@@ -149,7 +143,6 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import { USER_ID } from "@/constants/config";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
@@ -157,15 +150,13 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
-import axios from "axios";
-const userId = sessionStorage.getItem(USER_ID);
 
 //새로고침 감지
-window.onbeforeunload = function (e) {
-  var dialogText = "Dialog text here";
-  e.returnValue = dialogText;
-  return dialogText;
-};
+// window.onbeforeunload = function (e) {
+//   var dialogText = "Dialog text here";
+//   e.returnValue = dialogText;
+//   return dialogText;
+// };
 
 export default {
   components: {
@@ -178,58 +169,27 @@ export default {
     SortableWidget,
     DxSpeedDialAction,
   },
+
   data() {
     return {
-      directors: "", //수정불가 directors
-      cuesheetData: {
-        personid: "",
-        brddate: "",
-        brdtime: "",
-        cuetype: "",
-        directorname: "", //수정가능
-        useflag: "Y",
-        djname: "",
-        edittime: "",
-        eventname: "",
-        footertitle: "참여방법: #8001번 단문 50원",
-        headertitle: "",
-        media: "",
-        membername: "",
-        memo: "",
-        productid: "",
-        servicename: "",
-        startdate: "",
-        week: "",
-      },
+      brdDate: "",
+      editData: "",
+      type: "D",
       options: [{ text: "자동저장", value: false }],
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
+      widgetIndex: 16,
     };
   },
-  async mounted() {
+  mounted() {
     document.getElementById("app-container").classList.add("drag_");
   },
-  created() {
-    this.cuesheetData = Object.assign(this.cuesheetData, this.seleDayCue);
-    this.cuesheetData.personid = userId;
-    //수정 또는 작성일때 여기서 불러와야함 store할때 고치기 (큐시트 수정 > 뒤로가기 데이터 변경 후 앞으로 해서 진입때 다시 가져오려면)
-    if (this.cuesheetData.directorname == "") {
-      this.getProUserList(this.cuesheetData.productid);
-    }
-  },
   computed: {
-    ...mapGetters("cuesheet", ["seleDayCue"]),
+    ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("cueList", ["proUserList"]),
   },
   methods: {
-    getProUserList(productid) {
-      axios
-        .get(`/api/CueUserInfo/GetDirectorList?productid=` + productid)
-        .then((res) => {
-          this.directors = res.data;
-          this.cuesheetData.directorname = res.data;
-        });
-    },
     onTextEdit() {
       this.$refs.inputText.focus();
     },
@@ -295,7 +255,7 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  width: 290px;
+  width: 280px;
   height: 30px;
   position: absolute;
   top: 10px;
@@ -339,5 +299,16 @@ input {
 .listTitle .breadcrumb {
   margin: 0;
   padding: 0;
+}
+/* 모달 CSS */
+#modal-setting .dx-field-label {
+  font-family: "MBC 새로움 M" !important;
+  text-align: end;
+  width: 28%;
+}
+#modal-setting
+  .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+  font-family: "MBC 새로움 M" !important;
+  width: 65%;
 }
 </style>

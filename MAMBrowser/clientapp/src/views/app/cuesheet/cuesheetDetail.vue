@@ -1735,9 +1735,9 @@ export default {
 }
 
 /* 드래그 안고장나게해주는 CSS */
-#app-container {
+/* #app-container {
   position: fixed;
-}
+} */
 :root {
   --ab-channel-height: 395px;
   --c-channel-height: 364px;

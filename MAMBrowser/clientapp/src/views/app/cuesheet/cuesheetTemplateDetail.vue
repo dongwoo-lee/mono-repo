@@ -9,19 +9,23 @@
                 <piaf-breadcrumb />
               </div>
               <div class="MainTilte">
-                <h1>{{ cuesheetData.detail[0].tmptitle }}</h1>
+                <h1>{{ cueInfo.detail[0].tmptitle }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
               <div class="subtitle">
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   생성일 :
-                  <span>{{ cuesheetData.detail[0].createtime }}</span>
+                  <span>{{
+                    $moment(cueInfo.detail[0].createtime).format("YYYY-MM-DD")
+                  }}</span>
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   수정일 :
-                  <span> {{ cuesheetData.edittime }} </span>
+                  <span>{{
+                    $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                  }}</span>
                 </span>
                 <span class="autosave">
                   <b-form-checkbox-group
@@ -32,7 +36,7 @@
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget :cuesheetData="cuesheetData" />
+                <ButtonWidget :type="type" />
               </div>
             </div>
             <div class="left_bottom">
@@ -51,7 +55,6 @@
                         <SortableWidget
                           :widgetIndex="16"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 1)"
                           channelKey="channel_1"
                         />
                       </div>
@@ -63,7 +66,6 @@
                         <SortableWidget
                           :widgetIndex="16"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 2)"
                           channelKey="channel_2"
                         />
                       </div>
@@ -75,7 +77,6 @@
                         <SortableWidget
                           :widgetIndex="16"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 3)"
                           channelKey="channel_3"
                         />
                       </div>
@@ -87,7 +88,6 @@
                         <SortableWidget
                           :widgetIndex="16"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 4)"
                           channelKey="channel_4"
                         />
                       </div>
@@ -99,17 +99,11 @@
                         <SortableWidget
                           :widgetIndex="16"
                           :searchToggleSwitch="searchToggleSwitch"
-                          :colorValue="(colorValue = 0)"
                           channelKey="channel_my"
                         />
                       </div>
                     </template>
                   </DxItem>
-                  <!-- <DxItem title="부가정보">
-                    <template #default>
-                      <div>ddd</div>
-                    </template>
-                  </DxItem> -->
                 </DxTabPanel>
               </div>
             </div>
@@ -135,7 +129,6 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import { USER_ID } from "@/constants/config";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
@@ -143,8 +136,6 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
-import axios from "axios";
-const userId = sessionStorage.getItem(USER_ID);
 
 export default {
   components: {
@@ -159,23 +150,7 @@ export default {
   },
   data() {
     return {
-      cuesheetData: {
-        detail: [
-          {
-            createtime: "",
-            cueid: -1,
-            tmptitle: "",
-          },
-        ],
-        directorname: "",
-        djname: "",
-        edittime: "",
-        footertitle: "참여방법: #8001번 단문 50원",
-        headertitle: "",
-        membername: "",
-        memo: "",
-        personid: "",
-      },
+      type: "T",
       options: [{ text: "자동저장", value: false }],
       searchToggleSwitch: true,
       printHeight: 560,
@@ -185,14 +160,9 @@ export default {
   async mounted() {
     document.getElementById("app-container").classList.add("drag_");
   },
-  created() {
-    this.cuesheetData = Object.assign(this.cuesheetData, this.seleDayCue);
-    this.cuesheetData = Object.assign(this.cuesheetData, this.seleDayCue);
-    this.cuesheetData.personid = userId;
-    //수정 또는 작성일때 여기서 불러와야함 store할때 고치기 (큐시트 수정 > 뒤로가기 데이터 변경 후 앞으로 해서 진입때 다시 가져오려면)
-  },
+  created() {},
   computed: {
-    ...mapGetters("cuesheet", ["seleDayCue"]),
+    ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
     onTextEdit() {
@@ -260,7 +230,7 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  width: 290px;
+  width: 280px;
   height: 30px;
   position: absolute;
   top: 10px;

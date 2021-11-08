@@ -1,8 +1,11 @@
 <template>
   <div class="TabDiv">
     <div>
+      <div class="print_total_num mt-2 ml-1">
+        전체 : {{ printArr.length }}개
+      </div>
       <DxDataGrid
-        :data-source="cuePrint"
+        :data-source="printArr"
         :ref="dataGridRef"
         :height="printHeight"
         :focusedRowEnabled="false"
@@ -103,7 +106,7 @@
         </template>
         <DxColumn
           css-class="durationTime"
-          data-field="startTime"
+          data-field="starttime"
           caption="시작시간"
           alignment="center"
           :width="105"
@@ -126,32 +129,35 @@
           </div>
         </template>
         <DxScrolling mode="virtual" />
-        <template #totalGroupCount3>
+        <template #deleteTem>
           <div>
             <DxButton
               :height="34"
               @click="selectionDel"
               :disabled="!selectedItemKeys.length"
               icon="trash"
+              hint="선택 행 삭제"
             />
           </div>
         </template>
-        <template #totalGroupCount2>
+        <template #printTem>
           <div>
             <DxButton
               id="gridDeleteSelected"
               :height="34"
               icon="print"
-              @click="exportGrid()"
+              hint="인쇄"
+              @click="exportGrid('print')"
             />
           </div>
         </template>
-        <template #totalGroupCount_setting>
+        <template #settingTem>
           <div>
             <DxButton
               id="gridDeleteSelected"
               :height="34"
               icon="preferences"
+              hint="추가설정"
               v-b-modal.modal-setting
             />
           </div>
@@ -175,9 +181,30 @@ import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
+import { jsPDF } from "jspdf";
+import font from "../../../data/font";
+import { Workbook } from "exceljs";
+import "jspdf-autotable";
+import { exportDataGrid as exportDataGridToPdf } from "devextreme/pdf_exporter";
+import { exportDataGrid } from "devextreme/excel_exporter";
+import { saveAs } from "file-saver";
+import "moment/locale/ko";
+import {
+  AlignmentType,
+  Document,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  WidthType,
+  Footer,
+  Header,
+} from "docx";
 
 const dataGridRef = "dataGrid";
 const selectBoxRef = "selectBox";
+const moment = require("moment");
 
 export default {
   props: {
@@ -186,13 +213,12 @@ export default {
   data() {
     return {
       selectedItemKeys: [],
-      printdata: [],
       rowData: {
         rowNum: 0,
         code: "",
         contents: "",
         duration: "",
-        startTime: "",
+        starttime: "",
         etc: "",
       },
       code_list: [
@@ -212,15 +238,28 @@ export default {
     };
   },
   mounted() {
-    if (this.cuePrint.length > 0) {
-      this.printdata = this.cuePrint;
-      this.rowData.rowNum = this.cuePrint.length;
+    if (this.printArr.length > 0) {
+      this.rowData.rowNum = this.printArr.length;
     }
   },
   created() {
     eventBus.$on("printDataSet", (val) => {
-      this.printdata = val;
-      this.rowData.rowNum = val.length;
+      this.rowData.rowNum = this.printArr.length;
+    });
+    eventBus.$on("exportGo", (val) => {
+      switch (val) {
+        case ".docx":
+          this.exportWord();
+          break;
+        case ".pdf":
+          this.exportGrid("save");
+          break;
+        case ".excel":
+          this.exportExcel();
+          break;
+        default:
+          break;
+      }
     });
   },
   components: {
@@ -235,8 +274,10 @@ export default {
     DxTextBox,
   },
   computed: {
-    ...mapGetters("cuesheet", ["searchListData"]),
-    ...mapGetters("cuesheet", ["cuePrint"]),
+    ...mapGetters("cueList", ["searchListData"]),
+    ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("cueList", ["printArr"]),
+
     dataGrid: function () {
       return this.$refs[dataGridRef].instance;
     },
@@ -245,9 +286,9 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("cuesheet", ["SET_CUEPRINT"]),
+    ...mapMutations("cueList", ["SET_PRINTARR"]),
     onAddPrint(e) {
-      console.log(this.cuePrint);
+      var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       if (selectedRowsData.length > 1) {
         selectedRowsData.forEach((data, index) => {
@@ -322,7 +363,7 @@ export default {
                 break;
             }
           }
-          this.printdata.splice(e.toIndex + index, 0, row);
+          arrData.splice(e.toIndex + index, 0, row);
           this.rowData.rowNum = this.rowData.rowNum + 1;
         });
       } else {
@@ -400,14 +441,14 @@ export default {
               break;
           }
         }
-        this.printdata.splice(e.toIndex, 0, row);
+        arrData.splice(e.toIndex, 0, row);
         this.rowData.rowNum = this.rowData.rowNum + 1;
       }
-      this.SET_CUEPRINT(this.printdata);
+      this.SET_PRINTARR(arrData);
       // e.fromComponent.clearSelection();
     },
     onReorderPrint(e) {
-      this.printdata = [...this.printdata];
+      var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       var selectedRowsKey = this.sortSelectedRowsData(e, "key");
       var testIndex = [];
@@ -431,7 +472,7 @@ export default {
             }
           });
           selectedRowsData.forEach((obj, index) => {
-            this.printdata.splice(newindex + index, 0, obj);
+            arrData.splice(newindex + index, 0, obj);
           });
         } else {
           selectedRowsKey.forEach((selectindex) => {
@@ -442,19 +483,20 @@ export default {
           });
           newindex = newindex + 1;
           selectedRowsData.forEach((obj, index) => {
-            this.printdata.splice(newindex + index, 0, obj);
+            arrData.splice(newindex + index, 0, obj);
           });
         }
       } else {
-        this.printdata.splice(e.fromIndex, 1);
-        this.printdata.splice(e.toIndex, 0, e.itemData);
+        arrData.splice(e.fromIndex, 1);
+        arrData.splice(e.toIndex, 0, e.itemData);
       }
-      this.SET_CUEPRINT(this.printdata);
+      this.SET_PRINTARR(arrData);
 
       //e.component.clearSelection();
     },
     selectionDel() {
-      let a = this.printdata;
+      var arrData = this.printArr;
+      let a = arrData;
       let b = this.selectedItemKeys;
       for (let i = 0; i < b.length; i++) {
         for (let j = 0; j < a.length; j++) {
@@ -463,9 +505,9 @@ export default {
             break;
           }
         }
-        this.printdata = a;
+        arrData = a;
       }
-      this.SET_CUEPRINT(this.printdata);
+      this.SET_PRINTARR(arrData);
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -556,19 +598,21 @@ export default {
         if (item.name === "addRowButton") {
           item.options = {
             icon: "add",
+            hint: "행 추가",
             onClick: () => {
+              var arrData = this.printArr;
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
               var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
               row.rowNum = this.rowData.rowNum;
               if (rastkey != -1) {
                 var index = this.dataGrid.getRowIndexByKey(rastkey);
-                this.printdata.splice(index + 1, 0, row);
+                arrData.splice(index + 1, 0, row);
               } else {
-                this.printdata.splice(1, 0, row);
+                arrData.splice(1, 0, row);
               }
               this.rowData.rowNum = this.rowData.rowNum + 1;
-              this.SET_CUEPRINT(this.printdata);
+              this.SET_PRINTARR(arrData);
             },
           };
         }
@@ -576,23 +620,339 @@ export default {
 
       toolbarItems.push({
         location: "after",
-        template: "totalGroupCount2",
+        template: "printTem",
       });
       toolbarItems.push({
         location: "after",
-        template: "totalGroupCount_setting",
+        template: "settingTem",
       });
       toolbarItems.push({
         location: "after",
-        template: "totalGroupCount3",
+        template: "deleteTem",
       });
+    },
+    exportWord() {
+      const rows = [];
+      var num = 1;
+      console.log(this.printArr);
+      this.printArr.forEach((i) => {
+        var code = this.exportCode(i.code);
+        if (code == "M") {
+          code = code + num;
+          num = num + 1;
+        }
+        rows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                width: {
+                  size: 2000,
+                  type: WidthType.DXA,
+                },
+                children: [new Paragraph(code)],
+              }),
+              new TableCell({
+                width: {
+                  size: 5000,
+                  type: WidthType.DXA,
+                },
+                children: [new Paragraph(this.nullChecker(i.contents))],
+              }),
+              new TableCell({
+                width: {
+                  size: 1500,
+                  type: WidthType.DXA,
+                },
+                children: [new Paragraph(this.nullChecker(i.duration))],
+              }),
+              new TableCell({
+                width: {
+                  size: 1500,
+                  type: WidthType.DXA,
+                },
+                children: [new Paragraph(this.nullChecker(i.starttime))],
+              }),
+              new TableCell({
+                width: {
+                  size: 3000,
+                  type: WidthType.DXA,
+                },
+                children: [new Paragraph(this.nullChecker(i.etc))],
+              }),
+            ],
+          })
+        );
+      });
+      const table = new Table({
+        columnWidths: [3505, 5505],
+        rows: rows,
+      });
+      const doc = new Document({
+        sections: [
+          {
+            headers: {
+              default: new Header({
+                children: [
+                  new Paragraph(this.nullChecker(this.cueInfo.headertitle)),
+                ],
+              }),
+            },
+            footers: {
+              default: new Footer({
+                children: [
+                  new Paragraph(this.nullChecker(this.cueInfo.footertitle)),
+                ],
+              }),
+            },
+            children: [
+              new Paragraph({
+                text: moment(
+                  this.cueInfo.detail[0].brdtime,
+                  "YYYY-MM-DD'T'HH:mm:ss"
+                ).format("YYYY년 MM월 DD일 (ddd)"),
+                alignment: AlignmentType.RIGHT,
+              }),
+              new Paragraph({
+                text:
+                  "진행 : " +
+                  this.cueInfo.djname +
+                  " / 연출 : " +
+                  this.cueInfo.membername +
+                  " / 구성 : " +
+                  this.cueInfo.directorname,
+                alignment: AlignmentType.RIGHT,
+              }),
+              table,
+            ],
+          },
+        ],
+      });
+
+      Packer.toBlob(doc).then((blob) => {
+        saveAs(blob, this.nullChecker(this.cueInfo.headertitle) + ".docx");
+      });
+    },
+    exportGrid(v) {
+      var num = 1;
+      const doc = new jsPDF();
+      this.dataGrid.columnOption("소재명", "visible", false);
+      doc.addFileToVFS("MBC NEW M-normal.ttf", font);
+      doc.addFont("MBC NEW M-normal.ttf", "MBC NEW M", "normal");
+      exportDataGridToPdf({
+        jsPDFDocument: doc,
+        component: this.dataGrid,
+        customizeCell: function (options) {
+          const { gridCell, pdfCell } = options;
+          pdfCell.styles = {
+            font: "MBC NEW M",
+            fontSize: 10,
+            showHead: "firstPage",
+          };
+          switch (pdfCell.content) {
+            case "CSGP01":
+              pdfCell.content = "오프닝";
+              break;
+            case "CSGP02":
+              pdfCell.content = "CM";
+              break;
+            case "CSGP03":
+              pdfCell.content = "SB";
+              break;
+            case "CSGP04":
+              pdfCell.content = "SM";
+              break;
+            case "CSGP05":
+              pdfCell.content = "BGM";
+              break;
+            case "CSGP06":
+              pdfCell.content = "LOGO";
+              break;
+            case "CSGP07":
+              pdfCell.content = "M" + num;
+              num = num + 1;
+              break;
+            case "CSGP08":
+              pdfCell.content = "Filler";
+              break;
+            case "CSGP09":
+              pdfCell.content = "CODE";
+              break;
+            case "CSGP10":
+              pdfCell.content = "";
+              break;
+            default:
+              break;
+          }
+        },
+        autoTableOptions: {
+          margin: { top: 30 },
+        },
+      }).then(() => {
+        this.dataGrid.columnOption("소재명", "visible", true);
+        const pageSize = doc.internal.pageSize;
+        const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+        const pageHeight = pageSize.height
+          ? pageSize.height
+          : pageSize.getHeight();
+        pageHeight;
+        doc.setFontSize(18);
+        doc.setFont("MBC NEW M");
+        doc.text(
+          this.nullChecker(this.cueInfo.headertitle),
+          pageWidth / 2 -
+            doc.getTextWidth(this.nullChecker(this.cueInfo.headertitle)) / 2,
+          5,
+          {
+            baseline: "top",
+          }
+        );
+        doc.setFontSize(10);
+        doc.text(
+          moment(
+            this.cueInfo.detail[0].brdtime,
+            "YYYY-MM-DD'T'HH:mm:ss"
+          ).format("YYYY년 MM월 DD일 (ddd)"),
+          pageWidth - 52,
+          20,
+          {}
+        );
+        doc.setFontSize(9);
+        doc.text(
+          "진행 : " +
+            this.cueInfo.djname +
+            " / 연출 : " +
+            this.cueInfo.membername +
+            " / 구성 : " +
+            this.cueInfo.directorname,
+          pageWidth - 76,
+          25,
+          {}
+        );
+        doc.text(
+          this.nullChecker(this.cueInfo.footertitle),
+          pageWidth / 2 -
+            doc.getTextWidth(this.nullChecker(this.cueInfo.footertitle)) / 2,
+          pageHeight - 5,
+          { baseline: "bottom" }
+        );
+        if (v == "print") {
+          doc.autoPrint();
+        } else {
+          doc.save(this.nullChecker(this.cueInfo.headertitle) + ".pdf");
+        }
+        //doc.output("dataurlnewwindow");
+
+        const hiddFrame = document.createElement("iframe");
+        hiddFrame.style.position = "fixed";
+        hiddFrame.style.width = "1px";
+        hiddFrame.style.height = "1px";
+        hiddFrame.style.opacity = "0.01";
+        const isSafari = /^((?!chrome|android).)*safari/i.test(
+          window.navigator.userAgent
+        );
+        if (isSafari) {
+          hiddFrame.onload = () => {
+            try {
+              hiddFrame.contentWindow.document.execCommand(
+                "print",
+                false,
+                null
+              );
+            } catch (e) {
+              hiddFrame.contentWindow.print();
+            }
+          };
+        }
+        hiddFrame.src = doc.output("bloburl");
+        document.body.appendChild(hiddFrame);
+      });
+    },
+    exportExcel() {
+      var num = 1;
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet("dataGrid");
+
+      exportDataGrid({
+        component: this.dataGrid,
+        worksheet: worksheet,
+        autoFilterEnabled: false,
+        customizeCell: function (options) {
+          const { excelCell, gridCell } = options;
+          switch (excelCell.value) {
+            case "CSGP01":
+              excelCell.value = "오프닝";
+              break;
+            case "CSGP02":
+              excelCell.value = "CM";
+              break;
+            case "CSGP03":
+              excelCell.value = "SB";
+              break;
+            case "CSGP04":
+              excelCell.value = "SM";
+              break;
+            case "CSGP05":
+              excelCell.value = "BGM";
+              break;
+            case "CSGP06":
+              excelCell.value = "LOGO";
+              break;
+            case "CSGP07":
+              excelCell.value = "M" + num;
+              num = num + 1;
+              break;
+            case "CSGP08":
+              excelCell.value = "Filler";
+              break;
+            case "CSGP09":
+              excelCell.value = "CODE";
+              break;
+            case "CSGP10":
+              excelCell.value = "";
+              break;
+            default:
+              break;
+          }
+        },
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(
+            new Blob([buffer], { type: "application/octet-stream" }),
+            this.nullChecker(this.cueInfo.headertitle) + "xlsx.xlsx"
+          );
+        });
+      });
+    },
+    nullChecker(text) {
+      if (text == null) {
+        return "";
+      } else {
+        return text;
+      }
+    },
+    exportCode(code) {
+      var codeText;
+      this.code_list.filter((ele) => {
+        if (ele.value == code) {
+          codeText = ele.text;
+        }
+      });
+      if (codeText == null) {
+        codeText = "";
+      }
+      return codeText;
     },
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .TabDiv {
   padding: 10px;
+}
+.print_total_num {
+  right: 180px;
+  padding: 0;
+  position: absolute;
+  z-index: 1;
 }
 </style>

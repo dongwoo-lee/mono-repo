@@ -311,7 +311,6 @@ export default {
   methods: {
     ...mapActions("file", ["open_popup", "downloadWorkspace"]),
     getData() {
-      console.log(this.searchItems);
       if (
         this.$fn.checkGreaterStartDate(
           this.searchItems.start_dt,

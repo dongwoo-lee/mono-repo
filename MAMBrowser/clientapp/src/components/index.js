@@ -20,6 +20,7 @@ import CommonActions from './DataTable/CommonActions';
 import Player from './Common/Player';
 import Clock from './Common/Clock';
 import Timer from './Common/Timer';
+import vueMoment from 'vue-moment'
 
 Vue.component('piaf-breadcrumb', Breadcrumb);
 Vue.component('b-colxx', Colxx);
@@ -41,5 +42,5 @@ Vue.component('CommonActions', CommonActions);
 Vue.component('Player', Player);
 Vue.component('Timer', Timer);
 Vue.component('Clock', Clock);
-
+Vue.use(vueMoment);
 export default {};

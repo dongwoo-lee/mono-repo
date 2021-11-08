@@ -270,5 +270,11 @@ namespace WebCueSheetBLLTest
             int[] test = { 673, 674, 675, 676 };
             var result = WebCueSheetFactory.Instance.CueSheetRepository.GetDefultCueSheet("PM0500NF", test);
         }
+
+        [TestMethod]
+        public void Test5()
+        {
+            var result = WebCueSheetFactory.Instance.CueSheetRepository.GetDayCueSheet("PM0500NF", 1103);
+        }
     }
 }

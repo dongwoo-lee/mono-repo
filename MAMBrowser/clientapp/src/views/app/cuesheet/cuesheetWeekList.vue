@@ -68,7 +68,7 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="cueList"
+          :rows="defCuesheetListArr.data"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -81,19 +81,10 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <common-actions
-              :rowData="props.props.rowData"
-              :widgetIndex="16"
-              :productWeekList="productWeekList"
-            >
-            </common-actions>
+            <common-actions :rowData="props.props.rowData"> </common-actions>
           </template>
           <template slot="weeks" scope="props">
-            <common-weeks
-              :rowData="props.props.rowData"
-              :productWeekList="productWeekList"
-            >
-            </common-weeks>
+            <common-weeks :rowData="props.props.rowData"> </common-weeks>
           </template>
         </common-data-table-scroll-paging>
       </template>
@@ -184,8 +175,6 @@ export default {
   data() {
     return {
       isWeekSlot: true,
-      cueList: [],
-      productWeekList: [],
       programList: [{ value: "", text: "매체를 선택하세요" }],
       modalProgramList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
@@ -209,9 +198,6 @@ export default {
         media: "",
         personid: "",
         productid: "",
-        directorname: "", //이거 해야함
-        headertitle: "", //이거 말해야함
-        footertitle: "참여방법: #8001번 단문 50원",
       },
       fields: [
         {
@@ -269,9 +255,10 @@ export default {
   },
 
   computed: {
-    ...mapGetters("cuesheet", ["userProOption"]),
-    ...mapGetters("cuesheet", ["mediasOption"]),
-    ...mapGetters("cuesheet", ["userProList"]),
+    ...mapGetters("cueList", ["defCuesheetListArr"]),
+    ...mapGetters("cueList", ["userProOption"]),
+    ...mapGetters("cueList", ["mediasOption"]),
+    ...mapGetters("cueList", ["userProList"]),
     btnWeekStates() {
       var result = this.weekButtons.map((btn) => {
         if (btn.state == true) {
@@ -286,54 +273,23 @@ export default {
   mounted() {
     this.selectedIds = [];
   },
-  created() {},
   methods: {
-    ...mapActions("cuesheet", ["getuserProOption"]),
-    ...mapActions("cuesheet", ["getMediasOption"]),
-
+    ...mapActions("cueList", ["getcuesheetListArrDef"]),
+    ...mapActions("cueList", ["getMediasOption"]),
+    ...mapActions("cueList", ["getuserProOption"]),
     async getData() {
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      if (!this.searchItems.productid) {
-        var mediaOption = await this.getMediasOption(userId);
+      if (this.searchItems.productid == "") {
+        await this.getMediasOption(userId);
         this.searchItems.productid = this.userProList;
       }
-      //기본 큐시트 목록 가져오기
-      var defList = await this.getDefCueList();
-      if (defList) {
-        this.disableList(defList.data);
-        var seqnum = 0;
-        defList.data.forEach((ele) => {
-          var activeWeekList = [];
-          var cueids = [];
-          ele.productWeekList = this.productWeekList.filter((week) => {
-            return week.productid == ele.productid;
-          });
-          ele.detail.forEach((activeWeek) => {
-            activeWeekList.push(activeWeek.week);
-            cueids.push(activeWeek.cueid);
-          });
-          ele.activeWeekList = activeWeekList;
-          ele.cueid = cueids;
-          ele.seq = seqnum;
-          seqnum = seqnum + 1;
-        });
-        this.setResponseData(defList);
-        this.addScrollClass();
-        this.isTableLoading = false;
-        this.isScrollLodaing = false;
-        this.cueList = defList.data;
-      }
-    },
-    //기본 큐시트 목록 가져오기
-    getDefCueList() {
-      return axios.get(`/api/DefCueSheet/GetDefList`, {
-        params: {
-          productids: this.searchItems.productid,
-        },
-        paramsSerializer: (params) => {
-          return qs.stringify(params);
-        },
-      });
+      var params = {
+        productids: this.searchItems.productid,
+      };
+      await this.getcuesheetListArrDef(params);
+      this.addScrollClass();
+      this.isTableLoading = false;
+      this.isScrollLodaing = false;
     },
     //매체 선택시 프로그램 목록 가져오기 (일반,modal)
     async eventClick(e, V) {
@@ -392,7 +348,7 @@ export default {
       if (this.selectedIds.length > 0) {
         var delcueidList = [];
         this.selectedIds.forEach((ids) => {
-          this.cueList[ids].detail.forEach((ele) => {
+          this.defCuesheetListArr.data[ids].detail.forEach((ele) => {
             delcueidList.push(ele.cueid);
           });
         });
@@ -407,41 +363,6 @@ export default {
         this.getData();
         this.initSelectedIds();
       }
-    },
-    //프로그램별 요일 확인
-    disableList(rowData) {
-      this.productWeekList = [];
-      rowData.forEach((ele) => {
-        var checker = true;
-        var key = ele.productid;
-        var value = [];
-        ele.detail.forEach((week) => {
-          value.push(week.week);
-        });
-        if (this.productWeekList.length == 0) {
-          var result = {
-            productid: key,
-            weekList: value,
-          };
-          this.productWeekList.push(result);
-        } else {
-          for (let i = 0; i < this.productWeekList.length; i++) {
-            if (this.productWeekList[i].productid == key) {
-              this.productWeekList[i].weekList =
-                this.productWeekList[i].weekList.concat(value);
-              checker = false;
-              return;
-            }
-          }
-          if (checker) {
-            var result = {
-              productid: key,
-              weekList: value,
-            };
-            this.productWeekList.push(result);
-          }
-        }
-      });
     },
   },
 };

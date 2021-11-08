@@ -28,11 +28,7 @@
       </template>
       <template v-if="isWeeksSlot" slot="weeks" scope="props">
         <div class="table-button-container">
-          <slot
-            name="weeks"
-            :props="props"
-            :productWeekList="productWeekList"
-          ></slot>
+          <slot name="weeks" :props="props"></slot>
         </div>
       </template>
     </vuetable>
@@ -56,10 +52,6 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 export default {
   components: { Vuetable },
   props: {
-    productWeekList: {
-      type: Array,
-      default: () => [],
-    },
     keyName: {
       // rowData key
       type: String,

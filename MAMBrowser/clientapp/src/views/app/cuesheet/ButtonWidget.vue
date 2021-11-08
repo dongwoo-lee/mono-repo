@@ -3,14 +3,24 @@
     <div>
       <DxButton
         icon="arrowleft"
-        @click="$router.push({ path: '/app/cuesheet/day/list' })"
+        @click="
+          $router.push({ path: '/app/cuesheet/' + goBackPoint + '/list' })
+        "
         hint="목록으로"
+        v-if="!fav"
       />
-      <DxButton icon="doc" v-b-modal.modal-clear hint="새큐시트" />
+      <DxButton icon="doc" v-b-modal.modal-clear hint="새큐시트" v-if="!fav" />
+      <DxButton
+        icon="trash"
+        v-b-modal.modal-favDel
+        hint="카트 비우기"
+        v-if="fav"
+      />
       <DxButton
         icon="columnchooser"
         v-b-modal.modal-template
         hint="템플릿으로 저장"
+        v-if="!fav"
       />
       <DxDropDownButton
         :items="activefolderitem"
@@ -19,9 +29,8 @@
         :showArrowIcon="false"
         hint="가져오기"
         @item-click="onActivefolderItemClick"
+        v-if="!fav"
       />
-
-      <!-- <DxDropDownButton :drop-down-options="{ width: 70 }" icon="activefolder" v-b-modal.commonCueimport hint="가져오기" /> -->
       <DxDropDownButton
         :items="downloaditem"
         :drop-down-options="{ width: 70 }"
@@ -29,6 +38,7 @@
         :showArrowIcon="false"
         hint="내려받기"
         @item-click="onDownloadItemClick"
+        v-if="!fav"
       />
       <DxButton
         icon="save"
@@ -81,6 +91,23 @@
       </div>
     </b-modal>
 
+    <!-- 즐겨찾기 비우기 -->
+    <b-modal
+      id="modal-favDel"
+      size="lg"
+      centered
+      title="즐겨찾기 카트 비우기"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="favDelOk"
+    >
+      <div class="d-block text-center">
+        <div class="mb-3 mt-3" style="font-size: 20px">
+          <div class="mb-3">작성된 모든 내용을 삭제합니다.</div>
+        </div>
+      </div>
+    </b-modal>
+
     <!-- 템플릿으로 저장 -->
     <b-modal
       id="modal-template"
@@ -89,7 +116,7 @@
       title="템플릿으로 저장"
       ok-title="확인"
       cancel-title="취소"
-      @ok="addTemplate"
+      @ok="addtemClick"
     >
       <div id="modelDiv" class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
@@ -106,7 +133,7 @@
             <DxTextBox
               placeholder="이름없는 템플릿"
               width="320px"
-              v-model="temtitle"
+              v-model="tmpTitleTextBoxValue"
             />
           </div>
         </div>
@@ -115,7 +142,7 @@
 
     <!-- 가져오기 -->
     <common-import-tem :id="id" />
-    <common-import-def :proid="proid" :cuesheetData="cuesheetData" />
+    <common-import-def :proid="proid" :type="type" />
 
     <!-- 내보내기 -->
     <b-modal
@@ -168,50 +195,6 @@
       </template>
     </b-modal>
 
-    <!-- 추가정보 -->
-    <b-modal
-      id="modal-setting"
-      size="lg"
-      centered
-      title="추가정보"
-      ok-title="저장"
-      cancel-title="취소"
-    >
-      <div class="settingDiv">
-        <div class="dx-fieldset">
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">
-              이게되는거야? :
-            </div>
-            <div class="dx-field-value">
-              <DxTextBox placeholder="김이나" width="320px" />
-            </div>
-          </div>
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">구성 :</div>
-            <div class="dx-field-value">
-              <DxTextBox placeholder="홍재정, 이희상" width="320px" />
-            </div>
-          </div>
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">연출 :</div>
-            <div class="dx-field-value">
-              <DxTextBox placeholder="홍희주" width="320px" />
-            </div>
-          </div>
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">기타 :</div>
-            <div class="dx-field-value">
-              <DxTextArea
-                :height="100"
-                value="이 문서는 MBC의 동의 없이 수정, 변경 및 복사 할 수 없습니다."
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </b-modal>
-
     <!-- 큐시트 저장 -->
     <b-modal
       id="modal-save"
@@ -228,6 +211,75 @@
         </div>
       </div>
     </b-modal>
+    <!-- 추가정보 -->
+    <b-modal
+      id="modal-setting"
+      size="lg"
+      centered
+      title="추가설정"
+      ok-title="저장"
+      cancel-title="취소"
+    >
+      <div class="settingDiv">
+        <div class="dx-fieldset">
+          <div class="dx-field">
+            <div class="dx-field-label" style="font-size: 15px">DJ 명 :</div>
+            <div class="dx-field-value">
+              <DxTextBox width="320px" v-model="cueInfo.djname" />
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label" style="font-size: 15px">구성 :</div>
+            <div class="dx-field-value">
+              <DxTextBox width="320px" v-model="cueInfo.membername" />
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label" style="font-size: 15px">연출 :</div>
+            <div class="dx-field-value">
+              <DxTextBox width="320px" v-model="cueInfo.directorname" />
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label" style="font-size: 15px">머리글 :</div>
+            <div class="dx-field-value">
+              <DxTextArea
+                :height="50"
+                width="320px"
+                v-model="cueInfo.headertitle"
+              />
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label" style="font-size: 15px">바닥글 :</div>
+            <div class="dx-field-value">
+              <DxTextArea
+                :height="100"
+                width="320px"
+                v-model="cueInfo.footertitle"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </b-modal>
+
+    <!-- ExportZip -->
+    <b-modal
+      ref="modal-export-zip-wave"
+      size="lg"
+      centered
+      title="내보내기"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="exportZipWave"
+    >
+      <div class="d-block text-center">
+        <div class="mb-3 mt-3" style="font-size: 20px">
+          <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -235,29 +287,37 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
+import DxTextArea from "devextreme-vue/text-area";
+import { USER_ID } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
-import axios from "axios";
 import { eventBus } from "@/eventBus";
+import axios from "axios";
+
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 
 export default {
   props: {
-    cuesheetData: Object,
+    // cuesheetData: Object,
+    type: String,
+    fav: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      temtitle: "이름없는 템플릿",
+      goBackPoint: "",
+      tmpTitleTextBoxValue: "이름없는 템플릿",
       proid: "",
       id: "",
       cuetype: "",
       allCheck: true,
-      selected: ["print", "ab", "fav"],
+      selected: ["print", "ab"],
       cartSelected: ["c1", "c2", "c3", "c4"],
       options: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
-        { name: "즐겨찾기", value: "fav", notEnabled: true },
       ],
       cartOptions: [
         { name: "C1", value: "c1", notEnabled: true },
@@ -272,58 +332,73 @@ export default {
         "기본 큐시트 가져오기",
         "이전 큐시트 가져오기",
       ],
-      downloaditem: [".zip", ".wav", ".pdf", ".docx", ".excel"],
+      downloaditem: [".zip", ".pdf", ".docx", ".excel"],
     };
   },
-  mounted() {},
+  mounted() {
+    switch (this.type) {
+      case "D":
+        this.goBackPoint = "day";
+        break;
+      case "B":
+        this.goBackPoint = "week";
+        break;
+      case "T":
+        this.goBackPoint = "template";
+        break;
+
+      default:
+        break;
+    }
+  },
   components: {
     DxButton,
     DxDropDownButton,
     DxTextBox,
+    DxTextArea,
     CommonImportDef,
     CommonImportTem,
   },
   computed: {
-    ...mapGetters("cuesheet", ["abChannelData"]),
-    ...mapGetters("cuesheet", ["cChannelData"]),
-    ...mapGetters("cuesheet", ["cuePrint"]),
+    ...mapGetters("cueList", ["abCartArr"]),
+    ...mapGetters("cueList", ["cChannelData"]),
+    ...mapGetters("cueList", ["printArr"]),
+    ...mapGetters("cueList", ["cueFavorites"]),
+    ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
-    ...mapActions("cuesheet", ["saveDayCue"]),
-    ...mapMutations("cuesheet", ["SET_SELEDAYCUE"]),
-    ...mapMutations("cuesheet", ["SET_CUEPRINT"]),
-    ...mapMutations("cuesheet", ["SET_ABCHANNELDATA"]),
-    ...mapMutations("cuesheet", ["SET_CCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_PRINTARR"]),
+    ...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
+    ...mapActions("cueList", ["saveDayCue"]),
+    ...mapActions("cueList", ["saveDefCue"]),
+    ...mapActions("cueList", ["saveTempCue"]),
 
-    //템플릿으로 저장(추가정보들도 추가해야함 footer 등등)
-    async addTemplate() {
-      var pram = this.cueDataSet();
-      pram.temParam = {
-        personid: this.cuesheetData.personid,
-        tmptitle: this.temtitle,
-        directorname: this.cuesheetData.directorname,
-        djname: this.cuesheetData.djname,
-        footertitle: this.cuesheetData.footertitle,
-        headertitle: this.cuesheetData.headertitle,
-        membername: this.cuesheetData.membername,
-        memo: this.cuesheetData.memo,
-      };
-      await axios.post(`/api/TempCueSheet/SaveTempCue`, pram).then((res) => {
-        this.temtitle = "이름없는 템플릿";
-      });
+    ...mapActions("cueList", ["addTemplate"]),
+    ...mapActions("cueList", ["setCueConFav_save"]),
+    ...mapActions("cueList", ["setclearFav"]),
+
+    //테스트중
+    ...mapActions("cueList", ["exportZip"]),
+
+    //템플릿으로 저장
+    async addtemClick() {
+      const userId = sessionStorage.getItem(USER_ID);
+      var cueCon = await this.setCueConFav_save(false);
+      var temParam = { personid: userId, tmptitle: this.tmpTitleTextBoxValue };
+      cueCon.temParam = temParam;
+
+      await this.addTemplate(cueCon);
     },
-    //새큐시트 전체 및 부분삭제 (즐겨찾기 추가해야함)
+    //이거 나중에 setclearCon 나눠서 변경해서 사용하는거로 바꾸기
     clearOk() {
       if (this.selected.length > 0) {
         if (this.selected.includes("print")) {
-          var printData = [];
-          this.SET_CUEPRINT([]);
-          eventBus.$emit("printDataSet", printData);
+          this.SET_PRINTARR([]);
         }
         if (this.selected.includes("ab")) {
-          var abData = [];
-          this.SET_ABCHANNELDATA([]);
-          eventBus.$emit("abDataSet", abData);
+          this.SET_ABCARTARR([]);
         }
       }
       if (this.cartSelected.length > 0) {
@@ -333,26 +408,31 @@ export default {
         }
         if (this.cartSelected.includes("c1")) {
           this.SET_CCHANNELDATA({ type: "channel_1", value: cData });
-          eventBus.$emit("channel_1", cData);
+          eventBus.$emit("channel_1");
         }
         if (this.cartSelected.includes("c2")) {
           this.SET_CCHANNELDATA({ type: "channel_2", value: cData });
-          eventBus.$emit("channel_2", cData);
+          eventBus.$emit("channel_2");
         }
         if (this.cartSelected.includes("c3")) {
           this.SET_CCHANNELDATA({ type: "channel_3", value: cData });
-          eventBus.$emit("channel_3", cData);
+          eventBus.$emit("channel_3");
         }
         if (this.cartSelected.includes("c4")) {
           this.SET_CCHANNELDATA({ type: "channel_4", value: cData });
-          eventBus.$emit("channel_4", cData);
+          eventBus.$emit("channel_4");
         }
       }
+    },
+    //즐겨찾기 비우기
+    favDelOk() {
+      this.setclearFav();
+      eventBus.$emit("clearFav");
     },
     clickCheckTilte() {
       if (this.allCheck) {
         //아이템 전체 비활성화
-        this.selected = ["print", "ab", "fav"];
+        this.selected = ["print", "ab"];
         this.cartSelected = ["c1", "c2", "c3", "c4"];
         this.options.forEach((ele) => {
           ele.notEnabled = true;
@@ -371,25 +451,22 @@ export default {
       }
     },
     onDownloadItemClick(e) {
-      if (e.itemData === ".wav") {
-        this.$refs["modal-wav"].show();
+      //wav도 추가해야함
+      if (e.itemData == ".zip" || e.itemData == ".wav") {
+        this.$refs["modal-export-zip-wave"].show();
+      } else {
+        eventBus.$emit("export", e.itemData);
       }
-      if (
-        e.itemData === ".pdf" ||
-        e.itemData === ".docx" ||
-        e.itemData === ".excel"
-      ) {
-        this.exportWord();
-      }
+      // eventBus.$emit("exportGo", e.itemData);
     },
     onActivefolderItemClick(e) {
       switch (e.itemData) {
         case "템플릿 가져오기":
-          this.id = this.cuesheetData.personid;
+          this.id = this.cueInfo.personid;
           this.$bvModal.show("commonImportTem");
           break;
         case "기본 큐시트 가져오기":
-          this.proid = this.cuesheetData.productid;
+          this.proid = this.cueInfo.productid;
           this.$bvModal.show("commonImportDef");
           break;
         case "이전 큐시트 가져오기":
@@ -400,102 +477,60 @@ export default {
       }
     },
     //큐시트 저장
-    saveOk() {
-      var pram = this.cueDataSet();
-      this.saveCueApi(pram);
-    },
-    cueDataSet() {
-      //출력용
-      var printData = [];
-      this.cuePrint.forEach((ele, index) => {
-        printData[index] = Object.assign({}, ele);
-        printData[index].seqnum = index + 1;
-        printData[index].starttime = ele.duration;
-        delete printData[index].rowNum;
-        if (ele.code == "") {
-          printData[index].code = "CSGP10";
-        }
-      });
-      //AB채널
-      var abData = [];
-      this.abChannelData.forEach((ele, index) => {
-        abData[index] = Object.assign({}, ele);
-        abData[index].channeltype = "N";
-        abData[index].seqnum = index + 1;
-      });
-      //C채널
-      var cData = [];
-      var seqnum = 1;
-      for (let i = 0; i <= 3; i++) {
-        this.cChannelData[Object.keys(this.cChannelData)[i]].forEach((ele) => {
-          cData.push(Object.assign({}, ele));
-        });
-      }
-      var cDataResult = [];
-      cData.forEach((ele, index) => {
-        if (Object.keys(ele).length !== 0) {
-          ele.channeltype = "I";
-          ele.seqnum = index + 1;
-          cDataResult.push(ele);
-        }
-        seqnum = seqnum + 1;
-      });
-      var conParams = abData.concat(cDataResult);
-      var pram = {
-        conParams: conParams,
-        printParams: printData,
-      };
-      return pram;
-    },
-    async saveCueApi(pram) {
-      var cuetype = "";
-      var dayData = {};
-      var defParams = [];
-      var temParam = {};
-      switch (this.cuesheetData.cuetype) {
+    async saveOk() {
+      switch (this.type) {
         case "D":
-          dayData = {
-            brddate: this.cuesheetData.detail[0].brddate,
-            brdtime: this.cuesheetData.detail[0].brdtime,
-          };
-          this.cuesheetData.cueid = this.cuesheetData.detail[0].cueid;
-          cuetype = "day";
+          this.saveDayCue();
           break;
+
         case "B":
-          //기존에 선택한 요일에서 삭제할경우 해야함
-          this.cuesheetData.detail.forEach((ele) => {
-            defParams.push(ele.week);
-          });
-          cuetype = "def";
+          this.saveDefCue();
           break;
+
         case "T":
-          temParam = this.cuesheetData;
-          temParam.cueid = temParam.detail[0].cueid;
-          temParam.tmptitle = temParam.detail[0].tmptitle;
-          cuetype = "temp";
+          this.saveTempCue();
+          break;
+
+        case "F":
+          const userId = sessionStorage.getItem(USER_ID);
+          var favData = this.cueFavorites;
+          var favDataResult = [];
+          var favSeqnum = 1;
+
+          favData.forEach((ele) => {
+            if (Object.keys(ele).length !== 0) {
+              ele.seqnum = favSeqnum;
+              //불방처리부분 개발되면 변경하기 우선 Y로 해놓음
+              ele.useflag = "Y";
+              favDataResult.push(ele);
+            }
+            favSeqnum = favSeqnum + 1;
+          });
+          var pram = {
+            favConParam: favDataResult,
+          };
+          await axios.post(
+            `/api/Favorite/SetFavorites?personid=${userId}`,
+            pram
+          );
           break;
         default:
-          //날짜정보
-          dayData = {
-            brddate: this.cuesheetData.brddate,
-            brdtime: this.cuesheetData.brdtime,
-          };
-          cuetype = "day";
           break;
       }
-      pram.cueParam = this.cuesheetData;
-      pram.temParam = temParam;
-      pram.dayParam = dayData;
-      pram.defParams = defParams;
-
-      //일일큐시트저장
+    },
+    // zip 파일 다운로드
+    async exportZipWave() {
+      var cuesheetpram = await this.setCueConFav_save(false);
       await axios
-        .post(`/api/${cuetype}CueSheet/Save${cuetype}Cue`, pram)
-        .then((res) => {
-          if (cuetype == "day") {
-            this.cuesheetData.cueid = res.data.cueID;
-            this.SET_SELEDAYCUE(this.cuesheetData);
-          }
+        .post(`/api/CueAttachments/exportZipFile`, cuesheetpram.conParams)
+        .then((response) => {
+          const link = document.createElement("a");
+          link.href = "/api/CueAttachments/exportZipFileDownload";
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(function (error) {
+          console.log(error);
         });
     },
   },

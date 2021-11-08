@@ -2,9 +2,10 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Function from './utils/CommonFunctions';
 import store from './store/index';
-import { AUTHORITY, AUTHORITY_ADMIN, ROUTE_NAMES, SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE } from '@/constants/config';
-
+import { USER_ID, AUTHORITY, AUTHORITY_ADMIN, ROUTE_NAMES, SYSTEM_MANAGEMENT_ACCESS_PAGE_CODE } from '@/constants/config';
 Vue.use(VueRouter);
+import axios from "axios";
+const qs = require("qs");
 
 const routes = [
   {
@@ -174,6 +175,70 @@ const routes = [
         name: 'cuesheet-day-detail',
         path: "cuesheet/day/detail",
         component: () => import("./views/app/cuesheet/cuesheetDayDetail"),
+        beforeEnter: (async (to, from, next) => {
+          const userId = sessionStorage.getItem(USER_ID);
+          if (store.getters['cueList/cueInfo'].cueid != -1) {
+            //큐시트 수정
+            var params = {
+              productid: store.getters['cueList/cueInfo'].productid,
+              cueid: store.getters['cueList/cueInfo'].cueid,
+            };
+            await axios.get(`/api/daycuesheet/GetdayCue`, {
+              params: params,
+              paramsSerializer: (params) => {
+                return qs.stringify(params);
+              },
+            })
+              .then((res) => {
+                var cueData = res.data.cueSheet
+                cueData.personid = userId
+                store.dispatch('cueList/setCueConData', { conData: res, cueData: cueData });
+                store.dispatch('cueList/getProUserList', store.getters['cueList/cueInfo'].productid);
+              });
+          } else {
+            //큐시트 작성
+            var cueData = store.getters['cueList/cueInfo']
+            cueData.detail = [{
+              brddate: cueData.day,
+              brdtime: cueData.r_ONAIRTIME,
+              cueid: cueData.cueid
+            }]
+            cueData.personid = userId
+            store.dispatch('cueList/setclearCon', cueData);
+            await store.dispatch('cueList/getProUserList', store.getters['cueList/cueInfo'].productid);
+          }
+          store.dispatch('cueList/setclearFav');
+
+          if (
+            !store.getters['cueList/cueInfo'].directorname ||
+            store.getters['cueList/cueInfo'].directorname == "" ||
+            store.getters['cueList/cueInfo'].directorname == null || store.getters['cueList/cueInfo'].directorname == "라디오기술부"
+          ) {
+            store.getters['cueList/cueInfo'].directorname = store.getters['cueList/proUserList'];
+          }
+          if (
+            !store.getters['cueList/cueInfo'].headertitle ||
+            store.getters['cueList/cueInfo'].headertitle == "" ||
+            store.getters['cueList/cueInfo'].headertitle == null
+          ) {
+            store.getters['cueList/cueInfo'].headertitle = store.getters['cueList/cueInfo'].servicename;
+          }
+          if (
+            !store.getters['cueList/cueInfo'].footertitle ||
+            store.getters['cueList/cueInfo'].footertitle == "" ||
+            store.getters['cueList/cueInfo'].footertitle == null
+          ) {
+            store.getters['cueList/cueInfo'].footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
+          }
+
+          if (store.getters['cueList/cueInfo'] != "") {
+            // console.log("store.getters['cueList/cueInfo']");
+            // console.log(store.getters['cueList/abCartArr']);
+            // console.log(store.getters['cueList/cChannelData']);
+            next();
+          }
+        }
+        )
       },
       {
         // 기본 큐시트 리스트
@@ -186,6 +251,53 @@ const routes = [
         name: 'cuesheet-week-detail',
         path: "cuesheet/week/detail",
         component: () => import("./views/app/cuesheet/cuesheetWeekDetail"),
+        beforeEnter: (async (to, from, next) => {
+          var params = {
+            productid: store.getters['cueList/cueInfo'].productid,
+            cueid: store.getters['cueList/cueInfo'].cueid,
+          };
+          await axios.get(`/api/defcuesheet/GetdefCue`, {
+            params: params,
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+            .then((res) => {
+              var cueData = res.data.cueSheet
+              cueData.activeWeekList = store.getters['cueList/cueInfo'].activeWeekList
+              cueData.cueid = store.getters['cueList/cueInfo'].cueid
+              cueData.productWeekList = store.getters['cueList/cueInfo'].productWeekList
+
+              store.dispatch('cueList/setCueConData', { conData: res, cueData: cueData });
+              store.dispatch('cueList/getProUserList', store.getters['cueList/cueInfo'].productid);
+            });
+          store.dispatch('cueList/setclearFav');
+
+          if (
+            !store.getters['cueList/cueInfo'].directorname ||
+            store.getters['cueList/cueInfo'].directorname == "" ||
+            store.getters['cueList/cueInfo'].directorname == null || store.getters['cueList/cueInfo'].directorname == "라디오기술부"
+          ) {
+            store.getters['cueList/cueInfo'].directorname = store.getters['cueList/proUserList'];
+          }
+          if (
+            !store.getters['cueList/cueInfo'].headertitle ||
+            store.getters['cueList/cueInfo'].headertitle == "" ||
+            store.getters['cueList/cueInfo'].headertitle == null
+          ) {
+            store.getters['cueList/cueInfo'].headertitle = store.getters['cueList/cueInfo'].servicename;
+          }
+          if (
+            !store.getters['cueList/cueInfo'].footertitle ||
+            store.getters['cueList/cueInfo'].footertitle == "" ||
+            store.getters['cueList/cueInfo'].footertitle == null
+          ) {
+            store.getters['cueList/cueInfo'].footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
+          }
+
+          next();
+        }
+        )
       },
       {
         // 템플릿 리스트
@@ -198,6 +310,42 @@ const routes = [
         name: 'cuesheet-template-detail',
         path: "cuesheet/template/detail",
         component: () => import("./views/app/cuesheet/cuesheetTemplateDetail"),
+        beforeEnter: (async (to, from, next) => {
+
+          var params = {
+            cueid: store.getters['cueList/cueInfo'].cueid,
+          };
+          await axios.get(`/api/tempcuesheet/GettempCue`, {
+            params: params,
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+            .then((res) => {
+              var cueData = res.data.template
+              store.dispatch('cueList/setCueConData', { conData: res, cueData: cueData });
+            });
+          store.dispatch('cueList/setclearFav');
+
+          if (
+            !store.getters['cueList/cueInfo'].headertitle ||
+            store.getters['cueList/cueInfo'].headertitle == "" ||
+            store.getters['cueList/cueInfo'].headertitle == null || store.getters['cueList/cueInfo'].headertitle == undefined
+          ) {
+            store.getters['cueList/cueInfo'].headertitle = store.getters['cueList/cueInfo'].detail[0].tmptitle;
+            console.log(store.getters['cueList/cueInfo'])
+
+          }
+          if (
+            !store.getters['cueList/cueInfo'].footertitle ||
+            store.getters['cueList/cueInfo'].footertitle == "" ||
+            store.getters['cueList/cueInfo'].footertitle == null
+          ) {
+            store.getters['cueList/cueInfo'].footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
+          }
+          next();
+        }
+        )
       },
       {
         // 큐시트 조회 리스트
@@ -216,61 +364,12 @@ const routes = [
         name: 'cuesheet-favorite',
         path: "cuesheet/favorite",
         component: () => import("./views/app/cuesheet/cuesheetFavorite"),
+        beforeEnter: ((to, from, next) => {
+          store.dispatch('cueList/setclearFav');
+          next();
+        }
+        )
       },
-      // {
-      //   // 일일 큐시트
-      //   name: 'create-cuesheet',
-      //   path: "cuesheet/create-cuesheet",
-      //   component: () => import("./views/app/cuesheet/CreateCuesheet"),
-      // },
-      // {
-      //   // 일일 큐시트 작성 리스트
-      //   name: 'create-cuesheet-list',
-      //   path: "cuesheet/create-cuesheet-list",
-      //   component: () => import("./views/app/cuesheet/CreateCuesheetList"),
-      // },
-      // {
-      //   // 기본 큐시트 
-      //   name: 'default-cuesheet',
-      //   path: "cuesheet/default-cuesheet",
-      //   component: () => import("./views/app/cuesheet/DefaultCuesheet"),
-      // },
-      // {
-      //   // 기본 큐시트 작성 리스트
-      //   name: 'default-cuesheet-list',
-      //   path: "cuesheet/default-cuesheet-list",
-      //   component: () => import("./views/app/cuesheet/DefaultCuesheetList"),
-      // },
-      // {
-      //   // 템플릿 
-      //   name: 'template',
-      //   path: "cuesheet/template",
-      //   component: () => import("./views/app/cuesheet/Template"),
-      // },
-      // {
-      //   // 템플릿 리스트
-      //   name: 'template-list',
-      //   path: "cuesheet/template-list",
-      //   component: () => import("./views/app/cuesheet/TemplateList"),
-      // },
-      // {
-      //   // 큐시트 조회
-      //   name: 'views-cuesheet',
-      //   path: "cuesheet/views-cuesheet",
-      //   component: () => import("./views/app/cuesheet/ViewsCuesheet"),
-      // },
-      // {
-      //   // 일일 큐시트 작성 리스트
-      //   name: 'views-cuesheet-list',
-      //   path: "cuesheet/views-cuesheet-list",
-      //   component: () => import("./views/app/cuesheet/ViewsCuesheetList"),
-      // },
-      // {
-      //   // 즐겨찾기
-      //   name: 'favorites-cart',
-      //   path: "cuesheet/favorites-cart",
-      //   component: () => import("./views/app/cuesheet/FavoritesCart"),
-      // },
       {
         name: 'config',
         path: "config", // 설정

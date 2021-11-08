@@ -56,7 +56,7 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="cueList"
+          :rows="cuesheetListArr.data"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -67,8 +67,7 @@
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
-            <common-actions :rowData="props.props.rowData" :widgetIndex="16">
-            </common-actions>
+            <common-actions :rowData="props.props.rowData"> </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
@@ -77,14 +76,12 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from "vuex";
-import { USER_ID } from "@/constants/config";
-import axios from "axios";
+import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
+import { USER_ID } from "@/constants/config";
 const userId = sessionStorage.getItem(USER_ID);
 const moment = require("moment");
-const qs = require("qs");
 const date = new Date();
 
 function get_date_str(date) {
@@ -108,14 +105,12 @@ export default {
   data() {
     return {
       date,
-      cueList: [],
       programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
         start_dt: "", // 시작일
         end_dt: "", // 종료일
         media: "", // 매체
         productid: "", // 프로그램명
-        cueid: -1, // 작성상태
         rowPerPage: 30,
         selectPage: 1,
       },
@@ -172,22 +167,22 @@ export default {
   },
 
   computed: {
-    // ...mapGetters("cuesheet", ["daycuesheetList"]),
-    ...mapGetters("cuesheet", ["userProOption"]),
-    ...mapGetters("cuesheet", ["mediasOption"]),
-    ...mapGetters("cuesheet", ["userProList"]),
+    ...mapGetters("cueList", ["cuesheetListArr"]),
+    ...mapGetters("cueList", ["userProOption"]),
+    ...mapGetters("cueList", ["mediasOption"]),
+    ...mapGetters("cueList", ["userProList"]),
   },
   mounted() {
     this.searchItems.start_dt = toDay;
     this.searchItems.end_dt = endDay;
   },
-  created() {},
   methods: {
-    // ...mapMutations("cuesheet", ["SET_DAYCUELIST"]),
-    ...mapActions("cuesheet", ["getuserProOption"]),
-    ...mapActions("cuesheet", ["getMediasOption"]),
+    ...mapActions("cueList", ["getcuesheetListArr"]),
+    ...mapActions("cueList", ["getMediasOption"]),
+    ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
+      this.isTableLoading = this.isScrollLodaing ? false : true;
       if (
         this.$fn.checkGreaterStartDate(
           this.searchItems.start_dt,
@@ -200,39 +195,25 @@ export default {
         this.hasErrorClass = true;
         return;
       }
-      this.isTableLoading = this.isScrollLodaing ? false : true;
-      if (!this.searchItems.productid) {
-        var mediaOption = await this.getMediasOption(userId);
+      if (this.searchItems.productid == "") {
+        await this.getMediasOption(userId);
         this.searchItems.productid = this.userProList;
       }
-      var dayList = await this.getDayCueList();
-      if (dayList) {
-        this.setResponseData(dayList);
-        this.addScrollClass();
-        this.isTableLoading = false;
-        this.isScrollLodaing = false;
-        this.cueList = dayList.data;
-        // this.SET_DAYCUELIST();
-      }
+      var params = {
+        start_dt: this.searchItems.start_dt,
+        end_dt: this.searchItems.end_dt,
+        products: this.searchItems.productid,
+      };
+      await this.getcuesheetListArr(params);
+      this.addScrollClass();
+      this.isTableLoading = false;
+      this.isScrollLodaing = false;
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
       var pram = { personid: userId, media: e };
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
-    },
-    //날짜별 일일 큐시트 목록 가져오기
-    getDayCueList() {
-      return axios.get(`/api/daycuesheet/Getdaycuelist`, {
-        params: {
-          start_dt: this.searchItems.start_dt,
-          end_dt: this.searchItems.end_dt,
-          products: this.searchItems.productid,
-        },
-        paramsSerializer: (params) => {
-          return qs.stringify(params);
-        },
-      });
     },
   },
 };

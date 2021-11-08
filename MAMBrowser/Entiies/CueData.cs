@@ -17,5 +17,8 @@ namespace MAMBrowser.Entiies
 
         //템플릿
         public TemplateParamDTO temParam { get; set; }
+
+        //즐겨찾기
+        public IEnumerable<FavConParamDTO> favConParam { get; set; }
     }
 }

@@ -137,11 +137,11 @@
 </template>
 
 <script>
+import { USER_ID } from "@/constants/config";
 import { DxSortable } from "devextreme-vue/sortable";
 import DxButton from "devextreme-vue/button";
-import { mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import { eventBus } from "@/eventBus";
-
 import "moment/locale/ko";
 const moment = require("moment");
 
@@ -149,7 +149,6 @@ export default {
   props: {
     widgetIndex: Number,
     searchToggleSwitch: Boolean,
-    colorValue: Number,
     channelKey: String,
   },
   data() {
@@ -176,31 +175,33 @@ export default {
       },
     };
   },
-  mounted() {},
-  created() {
-    eventBus.$on(this.channelKey, (val) => {
-      this.fileData = val;
-    });
+  async created() {
     if (this.channelKey == "channel_my") {
-      //즐겨찾기 부분
-      for (var i = 0; i < this.widgetIndex; i++) {
-        this.fileData.push({});
-      }
+      this.fileData = this.cueFavorites;
+      var userId = sessionStorage.getItem(USER_ID);
+      //즐겨찾기
+      await this.getCueDayFav(userId);
+      this.fileData = this.cueFavorites;
     } else {
-      if (this.cChannelData[this.channelKey] == undefined) {
-        for (var i = 0; i < this.widgetIndex; i++) {
-          this.fileData.push({});
-        }
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      } else {
-        this.fileData = this.cChannelData[this.channelKey];
-      }
+      // 일반 C카트
+      this.fileData = this.cChannelData[this.channelKey];
+      this.rowData.rowNum = this.cChannelData[this.channelKey].length;
     }
+
+    eventBus.$on(this.channelKey, (val) => {
+      this.fileData = this.cChannelData[this.channelKey];
+      this.rowData.rowNum = this.cChannelData[this.channelKey].length;
+    });
+    eventBus.$on("clearFav", (val) => {
+      this.fileData = this.cueFavorites;
+    });
   },
   components: { DxSortable, DxButton },
   computed: {
-    ...mapGetters("cuesheet", ["searchListData"]),
-    ...mapGetters("cuesheet", ["cChannelData"]),
+    ...mapGetters("cueList", ["searchListData"]),
+    ...mapGetters("cueList", ["cChannelData"]),
+    ...mapGetters("cueList", ["cueFavorites"]),
+    ...mapGetters("cueList", ["proUserList"]),
     sortableColor() {
       return (index) => {
         return {
@@ -224,7 +225,9 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("cuesheet", ["SET_CCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
+    ...mapActions("cueList", ["getCueDayFav"]),
     onAdd(e, totalIndex) {
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
@@ -506,7 +509,7 @@ export default {
       }
 
       if (this.channelKey == "channel_my") {
-        //즐겨찾기 부분
+        this.SET_CUEFAVORITES(this.fileData);
       } else {
         this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
       }
@@ -561,6 +564,7 @@ export default {
       // }
       if (this.channelKey == "channel_my") {
         //즐겨찾기 부분
+        this.SET_CUEFAVORITES(this.fileData);
       } else {
         this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
       }
@@ -572,6 +576,7 @@ export default {
       });
       if (this.channelKey == "channel_my") {
         //즐겨찾기 부분
+        this.SET_CUEFAVORITES(this.fileData);
       } else {
         this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
       }
@@ -592,6 +597,7 @@ export default {
       this.fileData[index - 1].editTarget = true;
       if (this.channelKey == "channel_my") {
         //즐겨찾기 부분
+        this.SET_CUEFAVORITES(this.fileData);
       } else {
         this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
       }
@@ -600,6 +606,7 @@ export default {
       this.fileData.splice(index - 1, 1, {});
       if (this.channelKey == "channel_my") {
         //즐겨찾기 부분
+        this.SET_CUEFAVORITES(this.fileData);
       } else {
         this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
       }

@@ -6,6 +6,7 @@ import menu from './modules/menu'
 import user from './modules/user'
 import file from './modules/file'
 import cuesheet from './modules/cuesheet'
+import cueList from './modules/cueList'
 import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex)
@@ -33,7 +34,8 @@ const store = new Vuex.Store({
     menu,
     user,
     file,
-    cuesheet
+    cuesheet,
+    cueList,
   }
 })
 

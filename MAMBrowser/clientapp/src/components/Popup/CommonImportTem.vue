@@ -15,7 +15,7 @@
         <template slot="form-search-area">
           <!-- 템플릿 이름 -->
           <b-form-group label="템플릿 이름" class="has-float-label">
-            <common-input-text />
+            <common-input-text v-model="temtitle" />
           </b-form-group>
           <!-- 검색 버튼 -->
           <b-form-group>
@@ -35,7 +35,7 @@
             ref="scrollPaging"
             tableHeight="280px"
             :fields="fields"
-            :rows="rows"
+            :rows="tempCuesheetListArr.data"
             :per-page="responseData.rowPerPage"
             :totalCount="responseData.totalRowCount"
             is-actions-slot
@@ -74,7 +74,6 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import { eventBus } from "@/eventBus";
-const qs = require("qs");
 import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
@@ -89,11 +88,11 @@ export default {
   },
   data() {
     return {
+      temtitle: "",
       searchItems: {
         rowPerPage: 30,
         selectPage: 1,
       },
-      rows: [],
       fields: [
         {
           name: "__checkbox",
@@ -138,12 +137,11 @@ export default {
         },
       ],
       allCheck: true,
-      MenuSelected: ["print", "ab", "fav", "c1", "c2", "c3", "c4"],
+      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4"],
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
-        { name: "즐겨찾기", value: "fav", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
         { name: "C3", value: "c3", notEnabled: true },
@@ -160,6 +158,7 @@ export default {
       this.getData();
     },
     selectedIds: function (val) {
+      //ok,cancel 시 선택 해지해주기
       if (val.length > 0) {
         this.MenuOptions.forEach((item) => {
           item.notEnabled = false;
@@ -172,36 +171,35 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("cuesheet", ["abChannelData"]),
-    ...mapGetters("cuesheet", ["cuePrint"]),
+    ...mapGetters("cueList", ["abCartArr"]),
+    ...mapGetters("cueList", ["printArr"]),
+    ...mapGetters("cueList", ["tempCuesheetListArr"]),
   },
   methods: {
-    ...mapMutations("cuesheet", ["SET_ABCHANNELDATA"]),
-    ...mapMutations("cuesheet", ["SET_CCHANNELDATA"]),
-    ...mapMutations("cuesheet", ["SET_CUEPRINT"]),
+    ...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_PRINTARR"]),
+    ...mapMutations("cueList", ["SET_TEMPCUESHEETLISTARR"]),
     async getData() {
       if (this.id != "") {
-        //템플릿 목록 가져오기
         this.isTableLoading = this.isScrollLodaing ? false : true;
-        var temList = await this.getTemList();
-        if (temList) {
-          var seqnum = 0;
-          temList.data.forEach((ele) => {
-            ele.tabletype = "modal";
-            ele.seq = seqnum;
-            seqnum = seqnum + 1;
+        await axios
+          .get(
+            `/api/TempCueSheet/GetTempList?personid=${this.id}&title=${this.temtitle}`
+          )
+          .then((res) => {
+            var seqnum = 0;
+            res.data.forEach((ele) => {
+              ele.tabletype = "modal";
+              ele.seq = seqnum;
+              seqnum = seqnum + 1;
+            });
+            this.SET_TEMPCUESHEETLISTARR(res);
+            this.addScrollClass();
+            this.isTableLoading = false;
+            this.isScrollLodaing = false;
           });
-          this.setResponseData(temList);
-          this.addScrollClass();
-          this.isTableLoading = false;
-          this.isScrollLodaing = false;
-          this.rows = temList.data;
-        }
       }
-    },
-    //템플릿 목록 가져오기
-    getTemList() {
-      return axios.get(`/api/TempCueSheet/GetTempList?personid=${this.id}`);
     },
     async ok() {
       if (this.selectedIds.length == 0) {
@@ -213,7 +211,7 @@ export default {
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
-          beforePrintData = this.cuePrint;
+          beforePrintData = this.printArr;
           if (beforePrintData.length > 0) {
             rowNum_print =
               Math.max.apply(
@@ -223,7 +221,7 @@ export default {
                 })
               ) + 1;
           }
-          beforeAbData = this.abChannelData;
+          beforeAbData = this.abCartArr;
           if (beforeAbData.length > 0) {
             rowNum_ab =
               Math.max.apply(
@@ -238,7 +236,7 @@ export default {
           alert("가져오기할 항목들을 선택하세요.");
         } else {
           var seqnum = this.selectedIds[0];
-          var cueid = this.rows[seqnum].cueid;
+          var cueid = this.tempCuesheetListArr.data[seqnum].cueid;
           await axios
             .get(`/api/tempcuesheet/GettempCue?cueid=${cueid}`)
             .then((res) => {
@@ -256,9 +254,10 @@ export default {
                   printData[index].starttime = ele.starttime;
                   delete printData[index].seqnum;
                 });
+
                 var resultPrintData = beforePrintData.concat(printData);
-                this.SET_CUEPRINT(resultPrintData);
-                eventBus.$emit("printDataSet", resultPrintData);
+                this.SET_PRINTARR(resultPrintData);
+                eventBus.$emit("printDataSet");
               }
               if (this.MenuSelected.includes("ab")) {
                 //AB채널
@@ -273,9 +272,10 @@ export default {
                     return ele;
                   }
                 });
+
                 var resultABData = beforeAbData.concat(abData);
-                this.SET_ABCHANNELDATA(resultABData);
-                eventBus.$emit("abDataSet", resultABData);
+                this.SET_ABCARTARR(resultABData);
+                eventBus.$emit("abDataSet");
               }
               if (
                 this.MenuSelected.includes("c1") ||
@@ -324,7 +324,7 @@ export default {
                       type: "channel_" + (channelNum + 1),
                       value: cDataResult,
                     });
-                    eventBus.$emit("channel_" + (channelNum + 1), cDataResult);
+                    eventBus.$emit("channel_" + (channelNum + 1));
                   }
                 }
                 //추가정보들 가지고올꺼도 추가해야함
@@ -384,7 +384,6 @@ export default {
       }
       return arr;
     },
-    close() {},
   },
 };
 </script>

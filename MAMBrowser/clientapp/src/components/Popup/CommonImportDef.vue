@@ -19,7 +19,7 @@
               :disabled="disabledVal"
               v-model="searchItems.media"
               :options="mediasOption"
-              @change="eventClick($event)"
+              @change="eventClick($event, 'list')"
             />
           </b-form-group>
           <b-form-group label="프로그램명" class="has-float-label">
@@ -50,7 +50,7 @@
             ref="scrollPaging"
             tableHeight="280px"
             :fields="fields"
-            :rows="rows"
+            :rows="defCuesheetListArr.data"
             :per-page="responseData.rowPerPage"
             :totalCount="responseData.totalRowCount"
             is-actions-slot
@@ -63,11 +63,7 @@
             @refresh="onRefresh"
           >
             <template slot="weeks" scope="props">
-              <common-weeks
-                :rowData="props.props.rowData"
-                :productWeekList="productWeekList"
-              >
-              </common-weeks>
+              <common-weeks :rowData="props.props.rowData"> </common-weeks>
             </template>
           </common-data-table-scroll-paging>
         </template>
@@ -105,30 +101,27 @@ import "moment/locale/ko";
 const moment = require("moment");
 
 export default {
-  mixins: [MixinBasicPage],
   components: { CommonWeeks },
+  mixins: [MixinBasicPage],
   props: {
     proid: {
       type: String,
       default: "",
     },
-    cuesheetData: {
-      type: Object,
-      default: {},
+    type: {
+      type: String,
     },
   },
   data() {
     return {
+      disabledVal: true,
       searchItems: {
         media: "", // 매체
         productid: "", // 프로그램명
         rowPerPage: 30,
         selectPage: 1,
       },
-      rows: [],
       programList: [{ value: "", text: "매체를 선택하세요" }],
-      disabledVal: true,
-      productWeekList: [],
       fields: [
         {
           name: "__checkbox",
@@ -175,12 +168,11 @@ export default {
         },
       ],
       allCheck: true,
-      MenuSelected: ["print", "ab", "fav", "c1", "c2", "c3", "c4"],
+      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4"],
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
-        { name: "즐겨찾기", value: "fav", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
         { name: "C3", value: "c3", notEnabled: true },
@@ -209,24 +201,29 @@ export default {
     },
   },
   created() {
-    if (this.cuesheetData.cuetype == "T") {
+    if (this.type == "T") {
       this.disabledVal = false;
     } else {
-      this.searchItems.media = this.cuesheetData.media;
+      this.searchItems.media = this.cueInfo.media;
     }
   },
   computed: {
-    ...mapGetters("cuesheet", ["abChannelData"]),
-    ...mapGetters("cuesheet", ["cuePrint"]),
-    ...mapGetters("cuesheet", ["mediasOption"]),
-    ...mapGetters("cuesheet", ["userProOption"]),
+    ...mapGetters("cueList", ["abCartArr"]),
+    ...mapGetters("cueList", ["printArr"]),
+    ...mapGetters("cueList", ["defCuesheetListArr"]),
+    ...mapGetters("cueList", ["userProOption"]),
+    ...mapGetters("cueList", ["mediasOption"]),
+    ...mapGetters("cueList", ["userProList"]),
+    ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
-    ...mapMutations("cuesheet", ["SET_ABCHANNELDATA"]),
-    ...mapMutations("cuesheet", ["SET_CCHANNELDATA"]),
-    ...mapMutations("cuesheet", ["SET_CUEPRINT"]),
-    ...mapActions("cuesheet", ["getuserProOption"]),
-    ...mapActions("cuesheet", ["getMediasOption"]),
+    ...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
+    ...mapMutations("cueList", ["SET_PRINTARR"]),
+    ...mapMutations("cueList", ["SET_DEFCUESHEETLISTARR"]),
+    ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("cueList", ["getMediasOption"]),
+    ...mapActions("cueList", ["disableList"]),
 
     async getData() {
       if (this.proid != "") {
@@ -234,86 +231,47 @@ export default {
         this.isTableLoading = this.isScrollLodaing ? false : true;
         if (!this.searchItems.productid) {
           var mediaOption = await this.getMediasOption(userId);
-          if (this.cuesheetData.cuetype != "T") {
-            var test = await this.eventClick(this.cuesheetData.media);
-            this.searchItems.productid = this.cuesheetData.productid;
+          if (this.type != "T") {
+            var temmedia = await this.eventClick(this.cueInfo.media);
+            this.searchItems.productid = this.cueInfo.productid;
           } else {
             this.searchItems.productid = this.userProList;
           }
         }
-        var defList = await this.getDefCueList();
-        if (defList) {
-          this.disableList(defList.data);
-          var seqnum = 0;
-          defList.data.forEach((ele) => {
-            var activeWeekList = [];
-            var cueids = [];
-            ele.productWeekList = this.productWeekList.filter((week) => {
-              return week.productid == ele.productid;
+        await axios
+          .get(`/api/DefCueSheet/GetDefList`, {
+            params: {
+              productids: this.searchItems.productid,
+            },
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+          .then(async (res) => {
+            var productWeekList = await this.disableList(res.data);
+            var seqnum = 0;
+            res.data.forEach((ele) => {
+              var activeWeekList = [];
+              var cueids = [];
+              ele.productWeekList = productWeekList.filter((week) => {
+                return week.productid == ele.productid;
+              });
+              ele.detail.forEach((activeWeek) => {
+                activeWeekList.push(activeWeek.week);
+                cueids.push(activeWeek.cueid);
+              });
+              ele.activeWeekList = activeWeekList;
+              ele.cueid = cueids;
+              ele.tabletype = "modal";
+              ele.seq = seqnum;
+              seqnum = seqnum + 1;
             });
-            ele.detail.forEach((activeWeek) => {
-              activeWeekList.push(activeWeek.week);
-              cueids.push(activeWeek.cueid);
-            });
-            ele.activeWeekList = activeWeekList;
-            ele.cueid = cueids;
-            ele.tabletype = "modal";
-            ele.seq = seqnum;
-            seqnum = seqnum + 1;
+            this.SET_DEFCUESHEETLISTARR(res);
           });
-          this.setResponseData(defList);
-          this.addScrollClass();
-          this.isTableLoading = false;
-          this.isScrollLodaing = false;
-          this.rows = defList.data;
-        }
+        this.addScrollClass();
+        this.isTableLoading = false;
+        this.isScrollLodaing = false;
       }
-    },
-    //기본 큐시트 목록 가져오기
-    getDefCueList() {
-      return axios.get(`/api/DefCueSheet/GetDefList`, {
-        params: {
-          productids: this.searchItems.productid,
-        },
-        paramsSerializer: (params) => {
-          return qs.stringify(params);
-        },
-      });
-    },
-    //프로그램별 요일 확인
-    disableList(rowData) {
-      this.productWeekList = [];
-      rowData.forEach((ele) => {
-        var checker = true;
-        var key = ele.productid;
-        var value = [];
-        ele.detail.forEach((week) => {
-          value.push(week.week);
-        });
-        if (this.productWeekList.length == 0) {
-          var result = {
-            productid: key,
-            weekList: value,
-          };
-          this.productWeekList.push(result);
-        } else {
-          for (let i = 0; i < this.productWeekList.length; i++) {
-            if (this.productWeekList[i].productid == key) {
-              this.productWeekList[i].weekList =
-                this.productWeekList[i].weekList.concat(value);
-              checker = false;
-              return;
-            }
-          }
-          if (checker) {
-            var result = {
-              productid: key,
-              weekList: value,
-            };
-            this.productWeekList.push(result);
-          }
-        }
-      });
     },
     async ok() {
       if (this.selectedIds.length == 0) {
@@ -325,7 +283,7 @@ export default {
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
-          beforePrintData = this.cuePrint;
+          beforePrintData = this.printArr;
           if (beforePrintData.length > 0) {
             rowNum_print =
               Math.max.apply(
@@ -335,7 +293,7 @@ export default {
                 })
               ) + 1;
           }
-          beforeAbData = this.abChannelData;
+          beforeAbData = this.abCartArr;
           if (beforeAbData.length > 0) {
             rowNum_ab =
               Math.max.apply(
@@ -350,11 +308,11 @@ export default {
           alert("가져오기할 항목들을 선택하세요.");
         } else {
           var seqnum = this.selectedIds[0];
-          var cueid = this.rows[seqnum].cueid;
+          var cueid = this.defCuesheetListArr.data[seqnum].cueid;
           await axios
             .get(`/api/defcuesheet/GetdefCue`, {
               params: {
-                productid: this.proid,
+                productid: this.searchItems.productid,
                 cueid: cueid,
               },
               paramsSerializer: (params) => {
@@ -377,8 +335,8 @@ export default {
                   delete printData[index].seqnum;
                 });
                 var resultPrintData = beforePrintData.concat(printData);
-                this.SET_CUEPRINT(resultPrintData);
-                eventBus.$emit("printDataSet", resultPrintData);
+                this.SET_PRINTARR(resultPrintData);
+                eventBus.$emit("printDataSet");
               }
               if (this.MenuSelected.includes("ab")) {
                 //AB채널
@@ -394,8 +352,8 @@ export default {
                   }
                 });
                 var resultABData = beforeAbData.concat(abData);
-                this.SET_ABCHANNELDATA(resultABData);
-                eventBus.$emit("abDataSet", resultABData);
+                this.SET_ABCARTARR(resultABData);
+                eventBus.$emit("abDataSet");
               }
               if (
                 this.MenuSelected.includes("c1") ||
@@ -444,7 +402,7 @@ export default {
                       type: "channel_" + (channelNum + 1),
                       value: cDataResult,
                     });
-                    eventBus.$emit("channel_" + (channelNum + 1), cDataResult);
+                    eventBus.$emit("channel_" + (channelNum + 1));
                   }
                 }
                 //추가정보들 가지고올꺼도 추가해야함
@@ -504,7 +462,6 @@ export default {
       }
       return arr;
     },
-    close() {},
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
       var pram = { personid: userId, media: e };
