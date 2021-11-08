@@ -2,6 +2,9 @@ export default {
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
   },
+  setType(state, payload) {
+    state.type = payload;
+  },
   setMetaModalTitle(state, payload) {
     state.MetaModalTitle = payload;
   },

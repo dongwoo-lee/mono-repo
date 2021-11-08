@@ -34,7 +34,7 @@
       파일 업로드
     </b-button>
     <b-badge
-      v-if="getBadge != 0"
+      v-show="getBadge != 0"
       style="position:absolute; top:-90px; right:570px; z-index:1030; 
       bordercolor:red; color:red; background-color:white;  border-radius:80%"
       variant="outline-danger"
@@ -94,7 +94,7 @@
               style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
             >
               <vuetable
-                v-if="this.role == 'ADMIN'"
+                v-show="this.role == 'ADMIN'"
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"
@@ -126,7 +126,7 @@
                 <template slot="step" scope="props">
                   <div
                     style="width:220px; height:20px;"
-                    v-if="props.rowData.step != 6"
+                    v-show="props.rowData.step != 6"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -146,7 +146,7 @@
                   </div>
                   <div
                     style="width:220px; height:20px;"
-                    v-if="props.rowData.step == 6"
+                    v-show="props.rowData.step == 6"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -167,7 +167,7 @@
                 </template>
               </vuetable>
               <vuetable
-                v-if="this.role != 'ADMIN'"
+                v-show="this.role != 'ADMIN'"
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"
@@ -193,7 +193,7 @@
                 <template slot="step" scope="props">
                   <div
                     style="width:220px; height:20px;"
-                    v-if="props.rowData.step != 6"
+                    v-show="props.rowData.step != 6"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -213,7 +213,7 @@
                   </div>
                   <div
                     style="width:220px; height:20px;"
-                    v-if="props.rowData.step == 6"
+                    v-show="props.rowData.step == 6"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -249,7 +249,7 @@
               style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
             >
               <vuetable
-                v-if="this.role == 'ADMIN'"
+                v-show="this.role == 'ADMIN'"
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"
@@ -285,7 +285,7 @@
                 </template>
               </vuetable>
               <vuetable
-                v-if="this.role != 'ADMIN'"
+                v-show="this.role != 'ADMIN'"
                 :table-height="vueTableWidth"
                 ref="vuetable-scrollable"
                 :api-mode="false"

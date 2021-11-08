@@ -211,7 +211,7 @@ export default {
     MetaData: {
       deep: true,
       handler(v) {
-        this.type = v.typeSelected;
+        this.setType(v.typeSelected);
 
         if (!v.title || !v.memo) {
           if (v.typeSelected == "program") {
@@ -248,6 +248,7 @@ export default {
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setProgramData",
+      "setType",
       "resetTitle",
       "resetMemo",
       "resetType",
@@ -345,8 +346,8 @@ export default {
       this.dateSelected = ctx.selectedYMD;
     },
     dateReset() {
-      var input = document.getElementById("dateinput");
-      input.value = null;
+      // var input = document.getElementById("dateinput");
+      // input.value = "";
       this.date = "";
     },
     //#endregion

@@ -2,7 +2,11 @@
   <transition name="modal" appear>
     <div id="meta-modal-mask">
       <div class="meta-modal-wrapper">
-        <div class="meta-modal-container">
+        <div
+          v-bind:class="[
+            !isActive ? 'meta-modal-container' : 'meta-modal-container2'
+          ]"
+        >
           <div class="modal-header">
             <slot name="header">
               default header
@@ -13,14 +17,17 @@
               </p>
             </button>
           </div>
-
           <div class="meta-modal-body">
             <slot name="body">
               default body
             </slot>
           </div>
 
-          <div class="meta-modal-footer">
+          <div
+            v-bind:class="[
+              !isActive ? 'meta-modal-footer' : 'meta-modal-footer2'
+            ]"
+          >
             <slot name="footer"> </slot>
           </div>
         </div>
@@ -30,7 +37,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    isActive: {
+      type: Boolean, // list data
+      default: false
+    }
+  }
+};
 </script>
 
 <style>
@@ -54,8 +68,21 @@ export default {};
   position: fixed;
   right: 450px;
   width: 1000px;
-  height: 577px;
-  margin-top: -320px;
+  height: 700px;
+  margin-top: -400px;
+  background-color: white;
+  border-radius: 2px;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
+  transition: all 0.3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.meta-modal-container2 {
+  position: fixed;
+  right: 720px;
+  width: 400px;
+  height: 700px;
+  margin-top: -400px;
   background-color: white;
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
@@ -69,7 +96,8 @@ export default {};
 }
 
 .meta-modal-body {
-  height: 470px;
+  width: 400px;
+  height: 550px;
   background-color: white;
 }
 
@@ -98,6 +126,11 @@ export default {};
 }
 .meta-modal-footer {
   width: 1000px;
+  height: 83px;
+  background-color: white;
+}
+.meta-modal-footer2 {
+  width: 400px;
   height: 83px;
   background-color: white;
 }

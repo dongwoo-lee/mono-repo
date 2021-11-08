@@ -5,12 +5,13 @@
         v-show="this.MetaModal"
         @close="MetaModalOff"
         style="font-family: MBC 새로움 M;"
+        :isActive="this.isActive"
       >
         <h3 slot="header">
           파일 업로드 메타 데이터 입력
         </h3>
         <h4 slot="body">
-          <div style="width:1000px; height:470px; float:left;">
+          <div style="width:1000px; height:540px; float:left;">
             <div
               style="width:350px; height:70px; position:relative; top:15px; left:20px; margin-bottom:20px; "
             >
@@ -32,6 +33,27 @@
                   show-progress
                 ></b-progress-bar
               ></b-progress>
+
+              <div style="height:50px;  margin-top : 20px;">
+                <b-form-input
+                  class="editTask"
+                  v-model="MetaData.duration"
+                  readonly
+                  aria-describedby="input-live-help input-live-feedback"
+                  placeholder="duration"
+                  trim
+                />
+              </div>
+              <div style="height:50px;  margin-top : 10px;">
+                <b-form-input
+                  class="editTask"
+                  v-model="MetaData.audioFormat"
+                  readonly
+                  aria-describedby="input-live-help input-live-feedback"
+                  placeholder="audioFormat"
+                  trim
+                />
+              </div>
             </div>
             <div :class="[isActive ? 'date-modal' : 'file-modal']">
               <div>
@@ -53,26 +75,6 @@
                   <h3 style="color:#008ECC; ">
                     메타 데이터
                   </h3>
-                  <div style="height:50px;  margin-top : 10px;">
-                    <b-form-input
-                      class="editTask"
-                      v-model="MetaData.duration"
-                      readonly
-                      aria-describedby="input-live-help input-live-feedback"
-                      placeholder="duration"
-                      trim
-                    />
-                  </div>
-                  <div style="height:50px;  margin-top : 10px;">
-                    <b-form-input
-                      class="editTask"
-                      v-model="MetaData.audioFormat"
-                      readonly
-                      aria-describedby="input-live-help input-live-feedback"
-                      placeholder="audioFormat"
-                      trim
-                    />
-                  </div>
 
                   <div style="height:50px;  margin-top : 10px;">
                     <b-form-input
@@ -166,7 +168,7 @@
                 </div>
               </div>
             </div>
-            <div class="date-div">
+            <div v-if="!isActive" class="date-div">
               <h3 style="color:#008ECC; ">
                 프로그램 선택
               </h3>
