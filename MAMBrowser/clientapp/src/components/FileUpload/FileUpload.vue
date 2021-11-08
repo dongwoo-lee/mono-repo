@@ -106,7 +106,7 @@
                   <div style="font-size:14px;">
                     {{ props.rowData.title }}
                   </div>
-                  <b-button @click="getProps(props)">확인</b-button>
+                  <!-- <b-button @click="getProps(props)">확인</b-button> -->
                 </template>
                 <template slot="type" scope="props">
                   <div>
@@ -126,7 +126,7 @@
                 <template slot="step" scope="props">
                   <div
                     style="width:220px; height:20px;"
-                    v-show="props.rowData.step != 6"
+                    v-show="props.rowData.step != -1"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -146,7 +146,7 @@
                   </div>
                   <div
                     style="width:220px; height:20px;"
-                    v-show="props.rowData.step == 6"
+                    v-show="props.rowData.step == -1"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -193,7 +193,7 @@
                 <template slot="step" scope="props">
                   <div
                     style="width:220px; height:20px;"
-                    v-show="props.rowData.step != 6"
+                    v-show="props.rowData.step != -1"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -213,7 +213,7 @@
                   </div>
                   <div
                     style="width:220px; height:20px;"
-                    v-show="props.rowData.step == 6"
+                    v-show="props.rowData.step == -1"
                   >
                     <vue-step-progress-indicator
                       :steps="[
@@ -524,7 +524,7 @@ export default {
     },
     fileUploadCancel() {
       this.$fn.notify("error", { title: "파일 업로드 취소" });
-      this.fileupload.abortUpload();
+      this.fileupload.abortUpload(0);
       this.resetLocalFiles();
       this.reset();
       this.percent = 0;
@@ -547,10 +547,9 @@ export default {
       this.$fn.notify("error", { message: e.error.response });
     },
     uploadAborted() {
-      console.log("취소?");
       this.fileselect = false;
-      this.percent = 0;
-      this.$fn.notify("error", { message: "파일 업로드 취소" });
+      // this.percent = 0;
+      // this.$fn.notify("error", { message: "파일 업로드 취소" });
     },
     onUploadProgress(e) {
       this.percent = Math.ceil((e.bytesLoaded / e.bytesTotal) * 100);

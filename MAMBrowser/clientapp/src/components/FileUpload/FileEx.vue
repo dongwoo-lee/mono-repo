@@ -240,7 +240,7 @@
                         font-scale="1"
                         style="position:absolute; top:15px; right:110px; z-index:9999;"
                         variant="secondary"
-                        @click="datereset"
+                        @click="resetDate"
                       ></b-icon>
                     </button>
 
@@ -820,7 +820,7 @@ export default {
           this.date = convertDate;
         }
       } else {
-        this.datereset();
+        this.resetDate();
         $fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
@@ -845,7 +845,7 @@ export default {
       // The following will be an empty string until a valid date is entered
       this.dateselected = ctx.selectedYMD;
     },
-    datereset() {
+    resetDate() {
       var input = document.getElementById("dateinput");
       input.value = null;
     },
@@ -867,7 +867,7 @@ export default {
       this.memo = "";
       this.title = "";
       this.typeSelected = "f";
-      this.datereset();
+      this.resetDate();
       this.fileupload.removeFile(0);
       this.fileuploading = false;
       this.fileselect = false;

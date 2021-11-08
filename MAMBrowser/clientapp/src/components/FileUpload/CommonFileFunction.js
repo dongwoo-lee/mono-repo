@@ -213,31 +213,35 @@ export default {
       handler(v) {
         this.setType(v.typeSelected);
 
-        if (!v.title || !v.memo) {
-          if (v.typeSelected == "program") {
-            this.isActive = false;
-          } else {
-            this.isActive = true;
-          }
+        if (v.typeSelected == "program") {
+          this.isActive = false;
+        } else {
+          this.isActive = true;
+        }
 
-          if (
-            v.typeSelected == "program" ||
-            v.typeSelected == "mcrspot" ||
-            v.typeSelected == "static" ||
-            v.typeSelected == "var"
-          ) {
-            if (this.watch != v.typeSelected) {
-              this.resetProgramData();
-              this.dateReset();
-              this.mediaOptions = [];
-              axios.get("/api/categories/media").then(res => {
-                res.data.resultObject.data.forEach(e => {
-                  this.mediaOptions.push({ value: e.id, text: e.name });
-                });
-                this.watch = v.typeSelected;
+        if (
+          v.typeSelected == "program" ||
+          v.typeSelected == "mcrspot" ||
+          v.typeSelected == "static" ||
+          v.typeSelected == "var"
+        ) {
+          if (this.watch != v.typeSelected) {
+            this.resetProgramData();
+            this.resetDate();
+            this.mediaOptions = [];
+            axios.get("/api/categories/media").then(res => {
+              res.data.resultObject.data.forEach(e => {
+                this.mediaOptions.push({ value: e.id, text: e.name });
               });
-            }
+              this.watch = v.typeSelected;
+            });
           }
+        } else {
+          this.resetProgramData();
+          this.resetProgramGrid();
+          this.resetDate();
+          this.mediaOptions = [];
+          this.watch = v.typeSelected;
         }
       }
     }
@@ -261,6 +265,15 @@ export default {
     onRowClick(v) {
       this.ProgramGrid = v.data;
       this.ProgramSelected = JSON.stringify(v.data);
+    },
+    resetProgramGrid() {
+      this.ProgramGrid = {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: ""
+      };
     },
     getPro() {
       const replaceVal = this.date.replace(/-/g, "");
@@ -320,7 +333,7 @@ export default {
           this.date = convertDate;
         }
       } else {
-        this.dateReset();
+        this.resetDate();
         this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
@@ -345,7 +358,7 @@ export default {
       // The following will be an empty string until a valid date is entered
       this.dateSelected = ctx.selectedYMD;
     },
-    dateReset() {
+    resetDate() {
       // var input = document.getElementById("dateinput");
       // input.value = "";
       this.date = "";
@@ -356,18 +369,12 @@ export default {
       this.resetTitle();
       this.resetMemo();
       this.resetType();
-      this.dateReset();
+      this.resetDate();
       this.fileStateFalse();
       this.resetProgramData();
+      this.resetProgramGrid();
       this.mediaOptions = [];
       this.watch = "";
-      this.ProgramGrid = {
-        eventName: "",
-        eventType: "",
-        productId: "",
-        onairTime: "",
-        durationSec: ""
-      };
       this.fileSelect = false;
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });

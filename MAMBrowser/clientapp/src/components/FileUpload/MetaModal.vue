@@ -209,7 +209,7 @@
                     font-scale="1"
                     style="position:absolute; z-index:9999;"
                     variant="secondary"
-                    @click="dateReset"
+                    @click="resetDate"
                   ></b-icon>
                 </button>
 
@@ -501,9 +501,11 @@ export default {
         }).then(res => {
           this.processing = false;
           if (this.cancel) {
+            this.cancel = false;
             return;
           } else {
             if (res) {
+              this.fileUploading = true;
               this.$emit("upload");
             }
           }

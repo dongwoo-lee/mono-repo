@@ -164,7 +164,11 @@ namespace MAMBrowser.Controllers
                         Thread.Sleep(5000);
                         fi.step = 5;
                         _hubContext.Clients.Client(connectionId).SendAsync("send", 5, fi);
-                        throw new Exception("파일 마스터링 실패");
+
+                        //Thread.Sleep(5000);
+                        //fi.step = -1;
+                        //_hubContext.Clients.Client(connectionId).SendAsync("send", -1, fi);
+                        //throw new Exception("파일 마스터링 실패");
                     }
                 }
             }
