@@ -1,4 +1,5 @@
 ﻿using M30.AudioFile.Common;
+using MAMBrowser.MAMDto;
 using NAudio.Lame;
 using NAudio.Utils;
 using NAudio.Wave;
@@ -547,6 +548,33 @@ namespace MAMBrowser.Foundation
             }
            
             return "unknown";
+        }
+        public static AudioInfo GetAudioInfo(MemoryStream memoryStream, string fileName)
+        {
+            AudioInfo info = new AudioInfo();
+            var ext = Path.GetExtension(fileName);
+
+            if (ext.ToUpper() == Define.WAV)
+            {
+                WaveFileReader reader = new WaveFileReader(memoryStream);
+                info.AudioFormatInfo = $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
+                info.Duration = reader.TotalTime.ToString(Define.TIME8);
+            }
+            else if (ext.ToUpper() == Define.MP2)
+            {
+                Mp3FileReader reader = new Mp3FileReader(memoryStream, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
+                var frame = reader.ReadNextFrame();
+                info.AudioFormatInfo = $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                info.Duration = reader.TotalTime.ToString(Define.TIME8);
+            }
+            else if (ext.ToUpper() == Define.MP3)
+            {
+                Mp3FileReader reader = new Mp3FileReader(memoryStream);
+                var frame = reader.ReadNextFrame();
+                info.AudioFormatInfo = $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
+                info.Duration = reader.TotalTime.ToString(Define.TIME8);
+            }
+            return info;
         }
         public static MemoryStream GetHeaderStream(Stream stream)
         {
