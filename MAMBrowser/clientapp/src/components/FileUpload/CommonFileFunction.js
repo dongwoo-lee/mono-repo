@@ -359,8 +359,8 @@ export default {
       this.dateSelected = ctx.selectedYMD;
     },
     resetDate() {
-      // var input = document.getElementById("dateinput");
-      // input.value = "";
+      var input = document.getElementById("dateinput");
+      input.value = "";
       this.date = "";
     },
     //#endregion

@@ -59,7 +59,7 @@
             drop-zone=".dropzone"
             @drop-zone-enter="onDropZoneEnter"
             @drop-zone-leave="onDropZoneLeave"
-            upload-url="/api/fileupload/UploadChunk"
+            :upload-url="getUrl"
             upload-mode="useButtons"
             :multiple="false"
             :visible="false"
@@ -239,11 +239,63 @@
                 <b-tab title="로그"> -->
             <span>
               <p
-                style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px;"
+                style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px; float:left;"
               >
                 로그
               </p>
             </span>
+            <div style="margin-top:10px;">
+              <b-form-group
+                label="시작일"
+                class="has-float-label"
+                style="width:200px; float:left; margin-left:20px; margin-right:20px;"
+              >
+                <b-input-group class="mb-3" style="width:200px; float:left;">
+                  <input
+                    id="sdateinput"
+                    type="text"
+                    class="form-control input-picker date-input"
+                    :value="sdate"
+                    @input="onsInput"
+                  />
+                  <b-input-group-append>
+                    <b-form-datepicker
+                      v-model="sdate"
+                      button-only
+                      button-variant="outline-primary"
+                      right
+                      aria-controls="example-input"
+                      @context="onContext"
+                    ></b-form-datepicker>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+              <b-form-group
+                label="종료일"
+                class="has-float-label"
+                style="width:200px;"
+              >
+                <b-input-group class="mb-3" style="width:200px; float:left;">
+                  <input
+                    id="edateinput"
+                    type="text"
+                    class="form-control input-picker date-input"
+                    :value="edate"
+                    @input="oneInput"
+                  />
+                  <b-input-group-append>
+                    <b-form-datepicker
+                      v-model="edate"
+                      button-only
+                      button-variant="outline-primary"
+                      right
+                      aria-controls="example-input"
+                      @context="onContext"
+                    ></b-form-datepicker>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+            </div>
             <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
             <div
               style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
@@ -368,7 +420,9 @@ export default {
       chunks: [],
       fileSelect: false,
       fileState: "",
-      percent: 0
+      percent: 0,
+      sdate: "",
+      edate: ""
     };
   },
   watch: {
@@ -442,11 +496,54 @@ export default {
       uploaderCustomData: state => state.uploaderCustomData,
       localFiles: state => state.localFiles,
       vueTableData: state => state.vueTableData
-    })
+    }),
+    getUrl() {
+      return `/api/Mastering/my-disk`;
+    }
   },
   methods: {
     getProps(props) {
       console.log(props);
+    },
+    onsInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          this.sdate = convertDate;
+        }
+      } else if (targetValue == "-") {
+        const replaceAllTargetValue = targetValue.replace(/-/g, "");
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          this.sdate = convertDate;
+        }
+      } else {
+        this.sdate = "";
+        this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+      }
+    },
+    oneInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          this.edate = convertDate;
+        }
+      } else if (targetValue == "-") {
+        const replaceAllTargetValue = targetValue.replace(/-/g, "");
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          this.edate = convertDate;
+        }
+      } else {
+        this.edate = "";
+        this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+      }
     },
     ...mapMutations("FileIndexStore", [
       "addLocalFiles",
@@ -476,25 +573,30 @@ export default {
             event.value[0].type == "audio/wav" ||
             event.value[0].type == "image/jpeg"
           ) {
-            // var blob = event.value[0].slice(0, 44);
-            // const reader = new FileReader(blob);
-            // reader.onload = function(res) {};
-            // var buffer = reader.readAsArrayBuffer(blob);
+            var blob = event.value[0].slice(0, 1152);
+            const reader = new FileReader(blob);
+            var fileHeaders = reader.readAsArrayBuffer(blob);
             let form = new FormData();
             form.append("metaData", "0");
 
-            axios.post("/api/fileupload/Validation", form).then(res => {
-              if (res.data.duration == null || res.data.audioFormat == null) {
-                this.$fn.notify("error", { title: "오디오 파일 확인" });
-                return;
-              }
-              this.setDuration(res.data.duration);
-              this.setAudioFormat(res.data.audioFormat);
-              this.openFileModal();
-              this.MetaModal = true;
-              this.fileSelect = true;
-              this.fileUploading = true;
-            });
+            axios
+              .post(
+                "/api/Mastering/Validation",
+                fileHeaders,
+                event.value[0].fileName
+              )
+              .then(res => {
+                if (res.data.duration == null || res.data.audioFormat == null) {
+                  this.$fn.notify("error", { title: "오디오 파일 확인" });
+                  return;
+                }
+                this.setDuration(res.data.duration);
+                this.setAudioFormat(res.data.audioFormat);
+                this.openFileModal();
+                this.MetaModal = true;
+                this.fileSelect = true;
+                this.fileUploading = true;
+              });
           } else {
             //TODO: 얼럿 창 예쁜 모달로 변경
             alert("업로드 할 수 없는 파일 형식입니다.");

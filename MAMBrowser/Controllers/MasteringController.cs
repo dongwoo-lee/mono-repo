@@ -47,6 +47,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             string clientIp = HttpContext.Connection.RemoteIpAddress.ToString();
 
+            meta.RegDtm = DateTime.Now.ToString(Define.DTM19);
+            meta.SoundType = MAMDefine.SoundDataTypes.MY_DISK;
             //1. 임시파일 쓰기
 
 

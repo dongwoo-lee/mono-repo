@@ -168,7 +168,10 @@
                 </div>
               </div>
             </div>
-            <div v-if="!isActive" class="date-div">
+            <div
+              v-show="this.MetaData.typeSelected == 'program'"
+              class="date-div"
+            >
               <h3 style="color:#008ECC; ">
                 프로그램 선택
               </h3>
@@ -491,7 +494,9 @@ export default {
           connectionId: this.connectionId,
           ProgramSelected: this.ProgramSelected
         };
-        this.setUploaderCustomData(data);
+        var formData = new FormData();
+        formData.append(metaData, data);
+        this.setUploaderCustomData(formData);
         this.processing = true;
         this.verifyMeta({
           type: this.MetaData.typeSelected,
@@ -553,4 +558,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.defaultButton {
+  background-color: #fff !important;
+  border-color: #bbbbbb !important;
+  color: #3a3a3a !important;
+}
+</style>
