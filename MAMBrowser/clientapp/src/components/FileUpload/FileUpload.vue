@@ -573,30 +573,25 @@ export default {
             event.value[0].type == "audio/wav" ||
             event.value[0].type == "image/jpeg"
           ) {
-            var blob = event.value[0].slice(0, 1152);
-            const reader = new FileReader(blob);
-            var fileHeaders = reader.readAsArrayBuffer(blob);
-            let form = new FormData();
-            form.append("metaData", "0");
-
-            axios
-              .post(
-                "/api/Mastering/Validation",
-                fileHeaders,
-                event.value[0].fileName
-              )
-              .then(res => {
-                if (res.data.duration == null || res.data.audioFormat == null) {
-                  this.$fn.notify("error", { title: "오디오 파일 확인" });
-                  return;
-                }
-                this.setDuration(res.data.duration);
-                this.setAudioFormat(res.data.audioFormat);
-                this.openFileModal();
-                this.MetaModal = true;
-                this.fileSelect = true;
-                this.fileUploading = true;
-              });
+            var blob = event.value[0].slice(0, 1000);
+            var formData = new FormData();
+            formData.append("file", blob);
+            formData.append("fileExt", event.value[0].name);
+            axios.post("/api/Mastering/Validation", formData).then(res => {
+              if (
+                res.data.resultObject.duration == null ||
+                res.data.resultObject.audioFormatInfo == null
+              ) {
+                this.$fn.notify("error", { title: "오디오 파일 확인" });
+                return;
+              }
+              this.setDuration(res.data.resultObject.duration);
+              this.setAudioFormat(res.data.resultObject.audioFormatInfo);
+              this.openFileModal();
+              this.MetaModal = true;
+              this.fileSelect = true;
+              this.fileUploading = true;
+            });
           } else {
             //TODO: 얼럿 창 예쁜 모달로 변경
             alert("업로드 할 수 없는 파일 형식입니다.");

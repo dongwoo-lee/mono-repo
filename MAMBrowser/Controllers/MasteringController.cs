@@ -25,13 +25,16 @@ namespace MAMBrowser.Controllers
 
         //fileHeader size = 1152
         [HttpPost("Validation")]
-        public ActionResult<DTO_RESULT<AudioInfo>> Validation(byte[] fileHeaders, string fileExt)
+        public ActionResult<DTO_RESULT<AudioInfo>> Validation([FromForm] IFormFile file,[FromForm] string fileExt)
         {
             DTO_RESULT<AudioInfo> result = new DTO_RESULT<AudioInfo>();
-            using (MemoryStream ms = new MemoryStream(fileHeaders))
+            
+            using (MemoryStream ms = new MemoryStream())
             {
+                file.CopyTo(ms);
                 try
                 {
+                    ms.Position = 0;
                     result.ResultObject = AudioEngine.GetAudioInfo(ms, fileExt);
                 }
                 catch (Exception ex)
