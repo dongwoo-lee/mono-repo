@@ -558,6 +558,7 @@ export default {
     //#region 파일 조작
     upload() {
       this.fileState = "업로드 시작";
+      console.log(this.uploaderCustomData);
       this.fileupload.upload(0);
     },
     valueChanged(event) {

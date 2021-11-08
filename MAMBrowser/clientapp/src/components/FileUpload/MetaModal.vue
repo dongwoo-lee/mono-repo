@@ -486,17 +486,15 @@ export default {
         //NOTE: 커스텀 데이터 파라미터
 
         var data = {
-          user_id: sessionStorage.getItem("user_id"),
+          UserId: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
-          memo: this.MetaData.memo,
-          type: this.MetaData.typeSelected,
-          fileSize: this.localFiles[0].size,
-          connectionId: this.connectionId,
-          ProgramSelected: this.ProgramSelected
+          memo: this.MetaData.memo
+          // type: this.MetaData.typeSelected,
+          // fileSize: this.localFiles[0].size,
+          // connectionId: this.connectionId,
+          // ProgramSelected: this.ProgramSelected
         };
-        var formData = new FormData();
-        formData.append(metaData, data);
-        this.setUploaderCustomData(formData);
+        this.setUploaderCustomData(data);
         this.processing = true;
         this.verifyMeta({
           type: this.MetaData.typeSelected,
