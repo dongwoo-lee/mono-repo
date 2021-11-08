@@ -52,7 +52,7 @@ namespace MAMBrowser.Controllers
 
             //2. 우선순위 확인 (ip, user, brdDtm)           
             //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
-            var users = Startup.AppSetting.MasteringPriorities["Users"] as NameValueCollection;
+            var users = Startup.AppSetting.MasteringPriorities["Users"] as Dictionary<string,int>;
             var userPriority = Convert.ToInt32(users["S01G04C001"]);
 
 
