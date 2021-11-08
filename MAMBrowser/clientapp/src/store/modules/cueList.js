@@ -456,6 +456,7 @@ export default {
             const cueSheetCons = payload.conData.data.cueSheetCons;
             var rowNum_ab = 0;
             var rowNum_c = 0;
+            var filePath = []; //그룹 소재의 경우 여러개 , 나중에 이부분 수정 필요함
 
             //AB채널
             var abData = cueSheetCons.filter((ele) => {
@@ -488,6 +489,7 @@ export default {
             });
 
             //C채널 - 카트별
+
             var cDataResult = [];
             var row = {};
             for (var channelNum = 0; 4 > channelNum; channelNum++) {

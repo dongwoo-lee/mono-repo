@@ -43,7 +43,7 @@ namespace MAMBrowser.Controllers
         }
 
         //시작일, 종료일 날짜
-        public List<string> setDateList(string start_dt, string end_dt) 
+        public List<string> setDateList(string start_dt, string end_dt)
         {
             List<string> dateList = new List<string>();
             DateTime startDate = DateTime.ParseExact(start_dt, "yyyyMMdd", null);
@@ -65,15 +65,15 @@ namespace MAMBrowser.Controllers
                 Debug.WriteLine("GetDayCueList");
                 List<string> cal = setDateList(start_dt, end_dt);
                 string[] dates = cal.ToArray();
-                var result =  _bll.GetDayCueList(products, dates);
+                var result = _bll.GetDayCueList(products, dates);
                 return result;
             }
             catch
             {
                 throw;
             }
-        //일일큐시트 상세내용 가져오기
         }
+        //일일큐시트 상세내용 가져오기
         [HttpGet("GetDayCue")]
         public CueSheetCollectionDTO GetDayCue([FromQuery] string productid, [FromQuery] int cueid)
         {
@@ -88,6 +88,96 @@ namespace MAMBrowser.Controllers
                 throw;
             }
         }
+        //일일큐시트 상세내용 가져오기 - DTO
+        [HttpGet("GetDayCueDTO")]
+        public ViewCueSheetCollection GetDayCueDTO([FromQuery] string productid, [FromQuery] int cueid)
+        {
+            var result = new ViewCueSheetCollection();
+            var abConResult = new List<ViewCueSheetConDTO>();
+            var cCon = new List<ViewCueSheetConDTO>();
+            int rowNum_ab = 1;
+            try
+            {
+                Debug.WriteLine("GetDayCue");
+                var conData = _bll.GetDayCue(productid, cueid);
+
+                foreach (var item in conData.CueSheetCons)
+                {
+                    var con = new ViewCueSheetConDTO();
+                    con.CartCode = item.CARTCODE ?? "";
+                    con.ChannelType = item.CHANNELTYPE ?? "";
+                    con.CartId = item.CARTID ?? "";
+                    con.OnairDate = item.ONAIRDATE ?? "";
+                    con.Duration = item.ENDPOSITION;
+                    con.StartPosition = item.STARTPOSITION;
+                    con.EndPosition = item.ENDPOSITION;
+                    con.FadeInTime = item.FADEINTIME;
+                    con.FadeOutTime = item.FADEOUTTIME;
+                    con.MainTitle = item.MAINTITLE ?? "";
+                    con.SubTitle = item.SUBTITLE ?? "";
+                    con.Memo = item.MEMO ?? "";
+                    con.TransType = item.TRANSTYPE;
+                    con.UseFlag = item.USEFLAG ?? "Y";
+                    con.Editting = true;
+
+                    if (item.CONS.Count != 0)
+                    {
+                        List<string> filepath = new List<string>();
+                        foreach (var con_i in item.CONS)
+                        {
+                            filepath.Add(con_i.P_MASTERFILE);
+                        }
+                        con.FilePath_test = filepath;
+                        con.FilePath = item.CONS[0].P_MASTERFILE;
+                        List<string> filetoken = new List<string>();
+                        foreach (var path in con.FilePath_test)
+                        {
+                            var token = TokenGenerator.GenerateMusicToken(path);
+                            filetoken.Add(token);
+                        }
+                        con.FileToken = filetoken;
+                    }
+                    if (item.CHANNELTYPE == "N")
+                    {
+                        con.RowNum = rowNum_ab++;
+                        abConResult.Add(con);
+                    }
+                    if (item.CHANNELTYPE == "I")
+                    {
+                        con.RowNum = item.SEQNUM;
+                        cCon.Add(con);
+                    }
+
+                }
+                 result.abCartCon = abConResult;
+                var cConResult = new List<List<ViewCueSheetConDTO>>();
+                 for (var channelNum=0; 4 > channelNum; channelNum++)
+                {
+                    var cartData = new List<ViewCueSheetConDTO>();
+                    for(var i=0; 16 > i; i++)
+                    {
+                        var row = new ViewCueSheetConDTO();
+                        for (var itemIndex = 0; cCon.Count > itemIndex; itemIndex++)
+                        {
+                            if(cCon[itemIndex].RowNum == i + 16 * channelNum + 1)
+                            {
+                                row = cCon[itemIndex];
+                                break;
+                            }
+                        }
+                        cartData.Add(row);
+                    }
+                  cConResult.Add(cartData);
+                }
+                result.cCartCon = cConResult;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         //일일큐시트 생성 & 업데이트
         [HttpPost("SaveDayCue")]
         public SaveResultDTO SaveDayCue([FromBody] CueData pram)
@@ -98,11 +188,11 @@ namespace MAMBrowser.Controllers
                 var result = _bll.SaveDayCue(pram.cueParam, pram.dayParam, pram.conParams, pram.tagParams, pram.printParams, pram.attParams);
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw;
             }
-            
+
         }
 
         //일일큐시트 삭제
