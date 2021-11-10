@@ -458,7 +458,6 @@ export default {
     //#region 파일 조작
     upload() {
       this.fileState = "업로드 시작";
-      console.log(this.uploaderCustomData);
       this.fileupload.upload(0);
     },
     valueChanged(event) {
@@ -541,7 +540,6 @@ export default {
       this.uploadRefresh();
     },
     uploadError(e) {
-      console.log(e);
       this.percent = 0;
       this.$fn.notify("error", { message: e.error.response });
     },

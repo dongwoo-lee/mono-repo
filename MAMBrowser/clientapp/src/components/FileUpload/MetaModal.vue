@@ -366,7 +366,6 @@ export default {
       this.setEditor(v.id);
     },
     log() {
-      console.log(this.EventSelected);
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
