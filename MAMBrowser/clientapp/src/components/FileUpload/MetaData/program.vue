@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="position:absolute; top:30px;">
+    <div style="position:absolute; top:40px;">
       <b-form-group
         label="방송일"
         class="has-float-label"
@@ -30,7 +30,7 @@
       </b-form-group>
       <button
         v-show="!isActive"
-        style="position:absolute; right:-220px; top:10px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
+        style="position:absolute; right:-220px; top:7px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
       >
         <b-icon
           icon="x-circle"
@@ -65,7 +65,7 @@
     </div>
     <div
       v-show="this.MetaData.typeSelected == 'program'"
-      style="position:relative; top:50px; height: 210px;
+      style="position:absolute; width:550px; top:90px; height: 210px;
     border: 1px solid #008ecc;"
     >
       <!-- //TODO: Data Binding -->
@@ -93,7 +93,7 @@
     <!-- 프로그램 -->
     <div
       v-show="!isActive && ProgramGrid.eventName != ''"
-      style="width: 550px; height:140px; margin-top:60px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
+      style="width: 550px; height:140px; margin-top:280px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
     >
       <div style="width:180px; float:left;">
         <b-form-group
