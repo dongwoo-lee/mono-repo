@@ -77,14 +77,23 @@ namespace MAMBrowser.BLL
         public void SetOptions(string optionGrpCd, List<DTO_NAMEVALUE> options)
         {
             var selectOptions = _dao.GetOptions(optionGrpCd);
-            if (selectOptions.Count == 0)
+            if (selectOptions == null || selectOptions.Count == 0)
                 _dao.InsertOptions(optionGrpCd, options);
+            else if (selectOptions.Count!= options.Count)
+            {
+                _dao.DeleteOptions(optionGrpCd);
+                _dao.InsertOptions(optionGrpCd, options);
+            }
             else
                 _dao.UpdateOptions(optionGrpCd, options);
         }
         public IList<DTO_NAMEVALUE> GetOptions(string optionGrpCd)
         {
             return _dao.GetOptions(optionGrpCd);
+        }
+        public IList<DTO_MASTERING_STATUS> GetMasteringStatus(string workStatus)
+        {
+            return _dao.GetMasteringStatus(workStatus);
         }
     }
 }

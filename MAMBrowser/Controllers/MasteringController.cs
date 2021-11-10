@@ -1,5 +1,6 @@
 ﻿using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
+using MAMBrowser.BLL;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.MAMDto;
@@ -239,6 +240,23 @@ namespace MAMBrowser.Controllers
         public ActionResult<DTO_RESULT> VarSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {
             DTO_RESULT result = new DTO_RESULT();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="workStatus"></param>
+        /// <returns></returns>
+        [HttpGet("mastering-status")]
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_STATUS>>> GetMasteringStatus([FromQuery]string workStatus, [FromServices] APIBll bll)
+        {
+            if (string.IsNullOrEmpty(workStatus))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter1 is empty");
+
+            DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_STATUS>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_STATUS>>();
+            result.ResultObject.Data = bll.GetMasteringStatus(workStatus);
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
