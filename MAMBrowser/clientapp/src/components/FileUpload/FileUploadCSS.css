@@ -8,7 +8,6 @@
     z-index: 0 !important;
 }
 .data-grid-div {
-    margin-top: 60px;
     height: 210px;
     border: 1px solid #008ecc;
 }
@@ -162,6 +161,13 @@
 .slide-fade-enter, .slide-fade-leave-to
 /* .slide-fade-leave-active below version 2.1.8 */ {
     transform: translateY(-30px);
+    opacity: 0;
+}
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
 }
 .chunk-panel {

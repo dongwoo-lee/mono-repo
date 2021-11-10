@@ -495,10 +495,15 @@ export default {
     ...mapState("FileIndexStore", {
       uploaderCustomData: state => state.uploaderCustomData,
       localFiles: state => state.localFiles,
-      vueTableData: state => state.vueTableData
+      vueTableData: state => state.vueTableData,
+      MetaData: state => state.MetaData
     }),
     getUrl() {
-      return `/api/Mastering/my-disk`;
+      if (this.MetaData.typeSelected == null) {
+        return `/api/Mastering/`;
+      } else {
+        return `/api/Mastering/${this.MetaData.typeSelected}`;
+      }
     }
   },
   methods: {
@@ -634,8 +639,9 @@ export default {
     },
     uploadSuccess() {
       this.$fn.notify("primary", { message: "파일 업로드 성공" });
-      this.fileState = "리셋";
+      this.fileState = "업로드 성공";
       this.percent = 0;
+      this.fileUploading = false;
       this.fileRemove();
       this.uploadRefresh();
     },

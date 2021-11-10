@@ -8,14 +8,15 @@ export default {
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
-    type: "null",
     MetaData: {
       title: "",
       memo: "",
+      editor: "",
       mediaCD: "",
       categoryCD: "",
       typeSelected: "null",
-      mediaSelected: "A",
+      proMediaSelected: "A",
+      mcrMediaSelected: "A",
       duration: "",
       audioFormat: ""
     },
@@ -28,6 +29,12 @@ export default {
         productId: "",
         onairTime: "",
         durationSec: ""
+      }
+    ],
+    EventData: [
+      {
+        name: "",
+        id: ""
       }
     ],
     FileUploadProgress: {}

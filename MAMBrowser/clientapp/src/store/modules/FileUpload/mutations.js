@@ -2,9 +2,6 @@ export default {
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
   },
-  setType(state, payload) {
-    state.type = payload;
-  },
   setMetaModalTitle(state, payload) {
     state.MetaModalTitle = payload;
   },
@@ -26,6 +23,9 @@ export default {
   setProgramData(state, payload) {
     state.ProgramData = payload;
   },
+  setEventData(state, payload) {
+    state.EventData = payload;
+  },
   resetLocalFiles(state) {
     state.localFiles = [];
   },
@@ -34,6 +34,12 @@ export default {
   },
   resetMemo(state) {
     state.MetaData.memo = "";
+  },
+  resetMediaSelected(state) {
+    state.MetaData.mediaSelected = "";
+  },
+  resetEditor(state) {
+    state.MetaData.editor = "";
   },
   resetType(state) {
     state.MetaData.typeSelected = "null";
@@ -47,6 +53,14 @@ export default {
     state.ProgramData.productId = "";
     state.ProgramData.onairTime = "";
     state.ProgramData.durationSec = "";
+  },
+  resetEventData(state) {
+    state.EventData = [
+      {
+        name: "",
+        id: ""
+      }
+    ];
   },
   forEachVueTableData(state, payload) {
     state.vueTableData.forEach(element => {

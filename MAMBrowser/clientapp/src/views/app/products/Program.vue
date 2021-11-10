@@ -70,26 +70,28 @@
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
+          <CopyToMySpacePopup
+            ref="refCopyToMySpacePopup"
+            :show="copyToMySpacePopup"
+            @ok="onMyDiskCopyFromProduct"
+            @close="copyToMySpacePopup = false"
+          >
+          </CopyToMySpacePopup>
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @delete="onDeleteConfirm"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
-
-        <CopyToMySpacePopup
-          ref="refCopyToMySpacePopup"
-          :show="copyToMySpacePopup"
-          @ok="onMyDiskCopyFromProduct"
-          @close="copyToMySpacePopup = false"
-        >
-        </CopyToMySpacePopup>
       </template>
     </common-form>
 
@@ -220,12 +222,12 @@ export default {
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "10%"
         }
       ],
       contextMenu: [
-        { name: "download", text: "다운로드" },
-        { name: "storage", text: "내 저장공간으로 복사" }
+        { name: "storage", text: "내 저장공간으로 복사" },
+        { name: "download", text: "다운로드" }
       ]
     };
   },
@@ -282,6 +284,47 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}`;
       return tmpName;
+    },
+    onDeleteConfirm(rowData) {
+      console.log(rowData);
+    },
+
+    // 휴지통 보내기
+    onDelete() {
+      const userId = sessionStorage.getItem(USER_ID);
+      let ids = this.selectedIds;
+
+      if (this.singleSelectedId !== null) {
+        ids = [];
+        ids.push(this.singleSelectedId);
+        this.singleSelectedId = null;
+        this.selectedIds = [];
+      }
+
+      this.$http
+        .delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
+        .then(res => {
+          if (res.status === 200 && !res.data.errorMsg) {
+            this.$fn.notify("primary", {
+              message: "휴지통으로 이동되었습니다."
+            });
+            this.$bvModal.hide("modalRemove");
+            setTimeout(() => {
+              this.initSelectedIds();
+              this.getData();
+            }, 0);
+          } else {
+            this.$fn.notify("error", {
+              message: "휴지통 이동 실패: " + res.data.errorMsg
+            });
+          }
+        });
+    },
+    onMetaModifyPopup(rowData) {
+      console.log(rowData);
+    },
+    onEditSuccess() {
+      this.getData();
     }
   }
 };

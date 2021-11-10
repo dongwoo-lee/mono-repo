@@ -8,6 +8,7 @@ import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import axios from "axios";
 import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
+import { DxCommonAxisSettingsConstantLineStyle } from "devextreme-vue/chart";
 
 export default {
   components: {
@@ -22,7 +23,7 @@ export default {
   },
   data() {
     return {
-      watch: "",
+      watch: "null",
       role: "",
       processing: false,
       fileUploading: false,
@@ -37,7 +38,12 @@ export default {
         onairTime: "",
         durationSec: ""
       },
+      EventGrid: {
+        name: "",
+        id: ""
+      },
       ProgramSelected: [],
+      eventSelected: [],
       typeOptions: [{ value: "null", text: "소재 유형" }],
       mediaOptions: [],
       vueTableWidth: "220px",
@@ -201,8 +207,26 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("menu", ["getMenuType"]),
-    ...mapGetters("user", ["getMenuGrpName"])
+    ...mapState("FileIndexStore", {
+      MetaModalTitle: state => state.MetaModalTitle,
+      localFiles: state => state.localFiles,
+      MetaData: state => state.MetaData,
+      connectionId: state => state.connectionId,
+      vueTableData: state => state.vueTableData,
+      ProgramData: state => state.ProgramData
+    }),
+    ...mapGetters("FileIndexStore", [
+      "typeState",
+      "titleState",
+      "memoState",
+      "editorState",
+      "metaValid"
+    ]),
+    ...mapGetters("user", ["getMenuGrpName"]),
+    getVariant() {
+      return this.isActive ? "outline-dark" : "outline-primary";
+    },
+    ...mapGetters("menu", ["getMenuType"])
   },
   created() {
     this.role = sessionStorage.getItem("authority");
@@ -211,36 +235,40 @@ export default {
     MetaData: {
       deep: true,
       handler(v) {
-        this.setType(v.typeSelected);
-
-        if (v.typeSelected == "program") {
+        if (v.typeSelected == "program" || v.typeSelected == "mcr-spot") {
           this.isActive = false;
         } else {
           this.isActive = true;
         }
 
-        if (
-          v.typeSelected == "program" ||
-          v.typeSelected == "mcrspot" ||
-          v.typeSelected == "static" ||
-          v.typeSelected == "var"
-        ) {
+        if (v.typeSelected == "program") {
           if (this.watch != v.typeSelected) {
-            this.resetProgramData();
-            this.resetDate();
             this.mediaOptions = [];
+            this.resetMediaSelected();
             axios.get("/api/categories/media").then(res => {
               res.data.resultObject.data.forEach(e => {
-                this.mediaOptions.push({ value: e.id, text: e.name });
+                this.mediaOptions.push({
+                  value: e.id,
+                  text: e.name
+                });
+              });
+              this.watch = v.typeSelected;
+            });
+          }
+        } else if (v.typeSelected == "mcr-spot") {
+          if (this.watch != v.typeSelected) {
+            this.mediaOptions = [];
+            axios.get("/api/categories/media/mcrspot").then(res => {
+              res.data.resultObject.data.forEach(e => {
+                this.mediaOptions.push({
+                  value: e.id,
+                  text: e.name
+                });
               });
               this.watch = v.typeSelected;
             });
           }
         } else {
-          this.resetProgramData();
-          this.resetProgramGrid();
-          this.resetDate();
-          this.mediaOptions = [];
           this.watch = v.typeSelected;
         }
       }
@@ -252,19 +280,27 @@ export default {
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setProgramData",
-      "setType",
+      "setEventData",
       "resetTitle",
       "resetMemo",
       "resetType",
-      "resetProgramData"
+      "resetMediaSelected",
+      "resetProgramData",
+      "resetEventData"
     ]),
     fileStateFalse() {
       this.processing = false;
       this.fileUploading = false;
     },
     onRowClick(v) {
-      this.ProgramGrid = v.data;
-      this.ProgramSelected = JSON.stringify(v.data);
+      console.log(v);
+      if (this.MetaData.typeSelected == "program") {
+        this.ProgramGrid = v.data;
+        this.ProgramSelected = JSON.stringify(v.data);
+      } else if (this.MetaData.typeSelected == "mcr-spot") {
+        this.EventGrid = v.data;
+        this.EventSelected = JSON.stringify(v.data);
+      }
     },
     resetProgramGrid() {
       this.ProgramGrid = {
@@ -281,18 +317,32 @@ export default {
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       var date = yyyy + "" + mm + "" + dd;
-      axios
-        .get(
-          `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
-        )
-        .then(res => {
-          var value = res.data.resultObject.data;
-          value.forEach(e => {
-            e.durationSec = this.getDurationSec(e.durationSec);
-            e.onairTime = this.getOnAirTime(e.onairTime);
+
+      if (this.MetaData.typeSelected == "program") {
+        axios
+          .get(
+            `/api/categories/pgm-sch?media=${this.MetaData.proMediaSelected}&date=${date}`
+          )
+          .then(res => {
+            console.log(res.data.resultObject.data);
+            var value = res.data.resultObject.data;
+            value.forEach(e => {
+              e.durationSec = this.getDurationSec(e.durationSec);
+              e.onairTime = this.getOnAirTime(e.onairTime);
+            });
+            this.setProgramData(res.data.resultObject.data);
           });
-          this.setProgramData(res.data.resultObject.data);
-        });
+      } else if (this.MetaData.typeSelected == "mcr-spot") {
+        this.resetEventData();
+        axios
+          .get(
+            `/api/Categories/mcr/spot?media=${this.MetaData.mcrMediaSelected}`
+          )
+          .then(res => {
+            console.log(res.data.resultObject.data);
+            this.setEventData(res.data.resultObject.data);
+          });
+      }
     },
     getOnAirTime(date) {
       var d = date.substring(0, 10);
@@ -359,8 +409,8 @@ export default {
       this.dateSelected = ctx.selectedYMD;
     },
     resetDate() {
-      var input = document.getElementById("dateinput");
-      input.value = "";
+      // var input = document.getElementById("dateinput");
+      // input.value = "";
       this.date = "";
     },
     //#endregion
@@ -373,6 +423,7 @@ export default {
       this.fileStateFalse();
       this.resetProgramData();
       this.resetProgramGrid();
+      //reset editor,
       this.mediaOptions = [];
       this.watch = "";
       this.fileSelect = false;

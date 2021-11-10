@@ -8,10 +8,22 @@ export default {
   memoState(state) {
     return state.MetaData.memo.length >= 1 ? true : false;
   },
+  editorState(state) {
+    return state.MetaData.editor.length >= 1 ? true : false;
+  },
+  programState(state) {
+    return state.ProgramData.productId != "" ? true : false;
+  },
   metaValid(state, getters) {
-    if (getters.typeState && getters.titleState && getters.memoState) {
-      return true;
-    } else return false;
+    if (state.MetaData.typeSelected == "my-disk") {
+      if (getters.typeState && getters.titleState && getters.memoState)
+        return true;
+    } else if (state.MetaData.typeSelected == "program") {
+      if (getters.editorState && getters.programState) {
+        return true;
+      }
+    }
+    return false;
   },
   getBadge(state) {
     return state.vueTableData.length;

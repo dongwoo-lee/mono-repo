@@ -10,5 +10,6 @@ namespace MAMBrowser.MAMDto
         /// 등록일시 : ex)yyyy-MM-dd HH:mm:ss
         /// </summary>
         public string RegDtm { get; set; }
+        public string FilePath { get; set; }
     }
 }
