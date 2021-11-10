@@ -46,7 +46,7 @@ export default {
       EventSelected: [],
       typeOptions: [{ value: "null", text: "소재 유형" }],
       mediaOptions: [],
-      vueTableWidth: "220px",
+      vueTableWidth: "195px",
       userFields: [
         {
           name: "__slot:title",
@@ -104,7 +104,7 @@ export default {
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "8%"
         },
         {
           name: "__slot:step",
@@ -226,12 +226,18 @@ export default {
     getVariant() {
       return this.isActive ? "outline-dark" : "outline-primary";
     },
-    ...mapGetters("menu", ["getMenuType"])
+    ...mapGetters("menu", ["getMenuType"]),
+    programState() {
+      return this.ProgramGrid.productId != "" ? true : false;
+    }
   },
   created() {
     this.role = sessionStorage.getItem("authority");
   },
   watch: {
+    programState(v) {
+      this.setProgramState(v);
+    },
     MetaData: {
       deep: true,
       handler(v) {
@@ -281,6 +287,7 @@ export default {
       "setUploaderCustomData",
       "setProgramData",
       "setEventData",
+      "setProgramState",
       "resetTitle",
       "resetMemo",
       "resetType",
@@ -293,10 +300,10 @@ export default {
       this.fileUploading = false;
     },
     onRowClick(v) {
-      console.log(v);
       if (this.MetaData.typeSelected == "program") {
         this.ProgramGrid = v.data;
         this.ProgramSelected = JSON.stringify(v.data);
+        this.$emit("proData", v.data);
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.EventGrid = v.data;
         this.EventSelected = JSON.stringify(v.data);
@@ -385,6 +392,7 @@ export default {
         this.resetDate();
         this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
+      this.$emit("proDate", this.date);
       this.$emit("mcrDate", this.date);
     },
     convertDateSTH(value) {

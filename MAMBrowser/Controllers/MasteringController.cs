@@ -76,7 +76,7 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + title + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + title + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
 
                     
                     var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
@@ -143,7 +143,7 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + productId + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + productId + "_"+ metaDataObject.FileGuid + "_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
@@ -213,7 +213,7 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + productId + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + productId + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");

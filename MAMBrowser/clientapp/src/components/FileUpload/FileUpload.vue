@@ -29,9 +29,13 @@
       @click="openFileModal"
       style="position:absolute; top:-80px; right:570px; z-index:1030; border-color:#008ECC; color:#008ECC; background-color:white;"
     >
-      <b-icon icon="folder2" style="margin-right:15px;" aria-hidden="true">
+      <b-icon
+        icon="file-earmark-music"
+        style="margin-right:15px;"
+        aria-hidden="true"
+      >
       </b-icon>
-      파일 업로드
+      마스터링
     </b-button>
     <b-badge
       v-show="getBadge != 0"
@@ -47,7 +51,7 @@
         style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
       >
         <h3 slot="header">
-          음원 파일 업로드
+          마스터링
         </h3>
         <h4 slot="body">
           <DxFileUploader
@@ -74,305 +78,251 @@
             <!-- <b-card no-body>
               <b-tabs pills>
                 <b-tab title="알림" active> -->
-            <span>
+            <!-- <span>
               <p
                 style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px;"
               >
                 알림
-              </p>
+              </p> -->
 
-              <b-button
-                style="position:absolute; top:85px; right:5px;  border-color:#008ECC; color:#008ECC; background-color:white;"
-                class="btn btn-outline-primary btn-sm default cutom-label mr-2"
-                id="addFile"
-              >
-                파일 추가
-              </b-button>
-            </span>
-            <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
-            <div
-              style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
+            <b-button
+              style="position:absolute; top:115px; right:45px;  border-color:#008ECC; color:#008ECC; background-color:white; z-index:9999;"
+              class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+              id="addFile"
             >
-              <vuetable
-                v-show="this.role == 'ADMIN'"
-                :table-height="vueTableWidth"
-                ref="vuetable-scrollable"
-                :api-mode="false"
-                :fields="adminFields"
-                :data="vueTableData"
-                no-data-template="데이터가 없습니다."
+              파일 업로드
+            </b-button>
+            <!-- </span> -->
+            <b-card title="마스터링 작업목록">
+              <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
+              <div
+                style="width:1300px; margin-left:auto; margin-right:auto; font-size:14px;"
               >
-                <template slot="title" scope="props">
-                  <div style="font-size:14px;">
-                    {{ props.rowData.title }}
-                  </div>
-                  <!-- <b-button @click="getProps(props)">확인</b-button> -->
-                </template>
-                <template slot="type" scope="props">
-                  <div>
-                    {{ props.rowData.type }}
-                  </div>
-                </template>
-                <template slot="user_id" scope="props">
-                  <div>
-                    {{ props.rowData.user_id }}
-                  </div>
-                </template>
-                <template slot="date" scope="props">
-                  <div>
-                    {{ props.rowData.date }}
-                  </div>
-                </template>
-                <template slot="step" scope="props">
-                  <div
-                    style="width:220px; height:20px;"
-                    v-show="props.rowData.step != -1"
-                  >
-                    <vue-step-progress-indicator
-                      :steps="[
-                        '대기 중',
-                        '디코딩',
-                        '리샘플링',
-                        '노말라이즈',
-                        '스토리지 저장',
-                        '완료'
-                      ]"
-                      :active-step="props.rowData.step"
-                      :is-reactive="false"
-                      :styles="styleData"
-                      :colors="successColorData"
-                      style="margin-left:30px; width:680px;"
-                    />
-                  </div>
-                  <div
-                    style="width:220px; height:20px;"
-                    v-show="props.rowData.step == -1"
-                  >
-                    <vue-step-progress-indicator
-                      :steps="[
-                        '대기 중',
-                        '디코딩',
-                        '리샘플링',
-                        '노말라이즈',
-                        '스토리지 저장',
-                        '실패'
-                      ]"
-                      :active-step="props.rowData.step"
-                      :is-reactive="false"
-                      :styles="styleData"
-                      :colors="failColorData"
-                      style="margin-left:30px; width:680px;"
-                    />
-                  </div>
-                </template>
-              </vuetable>
-              <vuetable
-                v-show="this.role != 'ADMIN'"
-                :table-height="vueTableWidth"
-                ref="vuetable-scrollable"
-                :api-mode="false"
-                :fields="userFields"
-                :data="vueTableData"
-                no-data-template="데이터가 없습니다."
-              >
-                <template slot="title" scope="props">
-                  <div style="font-size:14px;">
-                    {{ props.rowData.title }}
-                  </div>
-                </template>
-                <template slot="type" scope="props">
-                  <div>
-                    {{ props.rowData.type }}
-                  </div>
-                </template>
-                <template slot="date" scope="props">
-                  <div>
-                    {{ props.rowData.date }}
-                  </div>
-                </template>
-                <template slot="step" scope="props">
-                  <div
-                    style="width:220px; height:20px;"
-                    v-show="props.rowData.step != -1"
-                  >
-                    <vue-step-progress-indicator
-                      :steps="[
-                        '대기 중',
-                        '디코딩',
-                        '리샘플링',
-                        '노말라이즈',
-                        '스토리지 저장',
-                        '완료'
-                      ]"
-                      :active-step="props.rowData.step"
-                      :is-reactive="false"
-                      :styles="styleData"
-                      :colors="successColorData"
-                      style="margin-left:30px; width:680px;"
-                    />
-                  </div>
-                  <div
-                    style="width:220px; height:20px;"
-                    v-show="props.rowData.step == -1"
-                  >
-                    <vue-step-progress-indicator
-                      :steps="[
-                        '대기 중',
-                        '디코딩',
-                        '리샘플링',
-                        '노말라이즈',
-                        '스토리지 저장',
-                        '실패'
-                      ]"
-                      :active-step="props.rowData.step"
-                      :is-reactive="false"
-                      :styles="styleData"
-                      :colors="failColorData"
-                      style="margin-left:30px; width:680px;"
-                    />
-                  </div>
-                </template>
-              </vuetable>
-            </div>
+                <vuetable
+                  v-show="this.role == 'ADMIN'"
+                  :table-height="vueTableWidth"
+                  ref="vuetable-scrollable"
+                  :api-mode="false"
+                  :fields="adminFields"
+                  :data="vueTableData"
+                  no-data-template="데이터가 없습니다."
+                >
+                  <template slot="title" scope="props">
+                    <div style="font-size:14px;">
+                      {{ props.rowData.title }}
+                    </div>
+                    <!-- <b-button @click="getProps(props)">확인</b-button> -->
+                  </template>
+                  <template slot="type" scope="props">
+                    <div>
+                      {{ props.rowData.type }}
+                    </div>
+                  </template>
+                  <template slot="user_id" scope="props">
+                    <div>
+                      {{ props.rowData.user_id }}
+                    </div>
+                  </template>
+                  <template slot="date" scope="props">
+                    <div>
+                      {{ props.rowData.date }}
+                    </div>
+                  </template>
+                  <template slot="step" scope="props">
+                    <div style="width:220px; height:20px;">
+                      <vue-step-progress-indicator
+                        :steps="[
+                          '대기 중',
+                          '디코딩',
+                          '리샘플링',
+                          '노말라이즈',
+                          '스토리지 저장',
+                          '완료'
+                        ]"
+                        :active-step="props.rowData.step"
+                        :is-reactive="false"
+                        :styles="styleData"
+                        :colors="successColorData"
+                        style="margin-left:30px; width:680px;"
+                      />
+                    </div>
+                  </template>
+                </vuetable>
+                <vuetable
+                  v-show="this.role != 'ADMIN'"
+                  :table-height="vueTableWidth"
+                  ref="vuetable-scrollable"
+                  :api-mode="false"
+                  :fields="userFields"
+                  :data="vueTableData"
+                  no-data-template="데이터가 없습니다."
+                >
+                  <template slot="title" scope="props">
+                    <div style="font-size:14px;">
+                      {{ props.rowData.title }}
+                    </div>
+                  </template>
+                  <template slot="type" scope="props">
+                    <div>
+                      {{ props.rowData.type }}
+                    </div>
+                  </template>
+                  <template slot="date" scope="props">
+                    <div>
+                      {{ props.rowData.date }}
+                    </div>
+                  </template>
+                  <template slot="step" scope="props">
+                    <div style="width:220px; height:20px;">
+                      <vue-step-progress-indicator
+                        :steps="[
+                          '대기 중',
+                          '디코딩',
+                          '리샘플링',
+                          '노말라이즈',
+                          '스토리지 저장',
+                          '완료'
+                        ]"
+                        :active-step="props.rowData.step"
+                        :is-reactive="false"
+                        :styles="styleData"
+                        :colors="successColorData"
+                        style="margin-left:30px; width:680px;"
+                      />
+                    </div>
+                  </template>
+                </vuetable>
+              </div>
+            </b-card>
 
-            <!-- </b-tab>
-                <b-tab title="로그"> -->
-            <span>
-              <p
-                style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px; float:left;"
-              >
-                로그
-              </p>
-            </span>
-            <div style="margin-top:10px;">
-              <b-form-group
-                label="시작일"
-                class="has-float-label"
-                style="width:200px; float:left; margin-left:20px; margin-right:20px;"
-              >
-                <b-input-group class="mb-3" style="width:200px; float:left;">
-                  <input
-                    id="sdateinput"
-                    type="text"
-                    class="form-control input-picker date-input"
-                    :value="sdate"
-                    @input="onsInput"
-                  />
-                  <b-input-group-append>
-                    <b-form-datepicker
-                      v-model="sdate"
-                      button-only
-                      button-variant="outline-primary"
-                      right
-                      aria-controls="example-input"
-                      @context="onContext"
-                    ></b-form-datepicker>
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-              <b-form-group
-                label="종료일"
-                class="has-float-label"
-                style="width:200px;"
-              >
-                <b-input-group class="mb-3" style="width:200px; float:left;">
-                  <input
-                    id="edateinput"
-                    type="text"
-                    class="form-control input-picker date-input"
-                    :value="edate"
-                    @input="oneInput"
-                  />
-                  <b-input-group-append>
-                    <b-form-datepicker
-                      v-model="edate"
-                      button-only
-                      button-variant="outline-primary"
-                      right
-                      aria-controls="example-input"
-                      @context="onContext"
-                    ></b-form-datepicker>
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-            </div>
-            <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
-            <div
-              style="width:1180px; margin-left:auto; margin-right:auto; font-size:14px;"
-            >
-              <vuetable
-                v-show="this.role == 'ADMIN'"
-                :table-height="vueTableWidth"
-                ref="vuetable-scrollable"
-                :api-mode="false"
-                :fields="adminFields"
-                :data="vueTableData"
-                no-data-template="데이터가 없습니다."
-              >
-                <template slot="rowNO" scope="props">
-                  <div>{{ props.rowIndex + 1 }}</div>
-                  <!-- <button @click="getRowData(props)">확인</button> 
-                        -+ -->
-                </template>
+            <b-card title="마스터링 로그">
+              <div style="position:absolute; top:22px; left: 160px;">
+                <b-form-group
+                  label="시작일"
+                  class="has-float-label"
+                  style="width:200px; float:left; margin-left:20px; margin-right:20px;"
+                >
+                  <b-input-group class="mb-3" style="width:200px; float:left;">
+                    <input
+                      style="height:33px;"
+                      id="sdateinput"
+                      type="text"
+                      class="form-control input-picker date-input"
+                      :value="sdate"
+                      @input="onsInput"
+                    />
+                    <b-input-group-append>
+                      <b-form-datepicker
+                        style="height:33px;"
+                        v-model="sdate"
+                        button-only
+                        button-variant="outline-primary"
+                        right
+                        aria-controls="example-input"
+                        @context="onContext"
+                      ></b-form-datepicker>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+                <b-form-group
+                  label="종료일"
+                  class="has-float-label"
+                  style="width:200px;"
+                >
+                  <b-input-group class="mb-3" style="width:200px; float:left;">
+                    <input
+                      style="height:33px;"
+                      id="edateinput"
+                      type="text"
+                      class="form-control input-picker date-input"
+                      :value="edate"
+                      @input="oneInput"
+                    />
+                    <b-input-group-append>
+                      <b-form-datepicker
+                        style="height:33px;"
+                        v-model="edate"
+                        button-only
+                        button-variant="outline-primary"
+                        right
+                        aria-controls="example-input"
+                        @context="onContext"
+                      ></b-form-datepicker>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+              </div>
 
-                <template slot="title" scope="props">
-                  <div style="font-size:14px;">
-                    {{ props.rowData.title }}
-                  </div>
-                </template>
-                <template slot="type" scope="props">
-                  <div>
-                    {{ props.rowData.type }}
-                  </div>
-                </template>
-                <template slot="user_id" scope="props">
-                  <div>
-                    {{ props.rowData.user_id }}
-                  </div>
-                </template>
-                <template slot="date" scope="props">
-                  <div>
-                    {{ props.rowData.date }}
-                  </div>
-                </template>
-              </vuetable>
-              <vuetable
-                v-show="this.role != 'ADMIN'"
-                :table-height="vueTableWidth"
-                ref="vuetable-scrollable"
-                :api-mode="false"
-                :fields="userFields"
-                :data="vueTableData"
-                no-data-template="데이터가 없습니다."
+              <div
+                style="width:1300px; margin-left:auto; margin-right:auto; font-size:14px;"
               >
-                <template slot="title" scope="props">
-                  <div style="font-size:14px;">
-                    {{ props.rowData.title }}
-                  </div>
-                </template>
-                <template slot="type" scope="props">
-                  <div>
-                    {{ props.rowData.type }}
-                  </div>
-                </template>
-                <template slot="user_id" scope="props">
-                  <div>
-                    {{ props.rowData.user_id }}
-                  </div>
-                </template>
-                <template slot="date" scope="props">
-                  <div>
-                    {{ props.rowData.date }}
-                  </div>
-                </template>
-              </vuetable>
-            </div>
-            <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
+                <vuetable
+                  v-show="this.role == 'ADMIN'"
+                  :table-height="vueTableWidth"
+                  ref="vuetable-scrollable"
+                  :api-mode="false"
+                  :fields="adminFields"
+                  :data="vueTableData"
+                  no-data-template="데이터가 없습니다."
+                >
+                  <template slot="rowNO" scope="props">
+                    <div>{{ props.rowIndex + 1 }}</div>
+                  </template>
 
-            <!-- </b-tab>
-                <b-tab title="파일 업로드"> </b-tab>
-              </b-tabs>
-            </b-card> -->
+                  <template slot="title" scope="props">
+                    <div style="font-size:14px;">
+                      {{ props.rowData.title }}
+                    </div>
+                  </template>
+                  <template slot="type" scope="props">
+                    <div>
+                      {{ props.rowData.type }}
+                    </div>
+                  </template>
+                  <template slot="user_id" scope="props">
+                    <div>
+                      {{ props.rowData.user_id }}
+                    </div>
+                  </template>
+                  <template slot="date" scope="props">
+                    <div>
+                      {{ props.rowData.date }}
+                    </div>
+                  </template>
+                </vuetable>
+
+                <vuetable
+                  v-show="this.role != 'ADMIN'"
+                  :table-height="vueTableWidth"
+                  ref="vuetable-scrollable"
+                  :api-mode="false"
+                  :fields="userFields"
+                  :data="vueTableData"
+                  no-data-template="데이터가 없습니다."
+                >
+                  <template slot="title" scope="props">
+                    <div style="font-size:14px;">
+                      {{ props.rowData.title }}
+                    </div>
+                  </template>
+                  <template slot="type" scope="props">
+                    <div>
+                      {{ props.rowData.type }}
+                    </div>
+                  </template>
+                  <template slot="user_id" scope="props">
+                    <div>
+                      {{ props.rowData.user_id }}
+                    </div>
+                  </template>
+                  <template slot="date" scope="props">
+                    <div>
+                      {{ props.rowData.date }}
+                    </div>
+                  </template>
+                </vuetable>
+              </div>
+            </b-card>
           </div>
         </h4>
       </CommonFileModal>
@@ -393,7 +343,6 @@
 import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
 import MetaModal from "./MetaModal";
-import * as signalR from "@microsoft/signalr";
 import axios from "axios";
 const dxfu = "my-fileupload";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
@@ -430,62 +379,6 @@ export default {
       this.dropzone = v;
     }
   },
-  created() {
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("/FileHubs", {
-        skipNegotiation: false
-        // transport: signalR.HttpTransportType.WebSockets
-      })
-      .withAutomaticReconnect([3000, 5000, 10000, null])
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-  },
-  mounted() {
-    this.connection.start().then(
-      setTimeout(() => {
-        this.setConnectionId(this.connection.connectionId);
-      }, 500)
-    );
-    this.connection.on("send", (res, message) => {
-      if (res == 1) {
-        console.log(message);
-        this.setVueTableData(message);
-        this.MetaModal = false;
-        this.fileState = "업로드 성공";
-      } else if (res == 2) {
-        this.forEachVueTableData(message);
-      } else if (res == 3) {
-        this.forEachVueTableData(message);
-      } else if (res == 4) {
-        this.forEachVueTableData(message);
-      } else if (res == 5) {
-        this.forEachVueTableData(message);
-        console.log(message);
-      } else if (res == -1) {
-        this.forEachVueTableData(message);
-      }
-    });
-
-    // window.addEventListener("beforeunload", this.unLoadEvent);
-    setTimeout(() => {
-      document.body.classList.add("default-transition");
-    }, 100);
-  },
-  beforeUnmount() {
-    this.connection.stop();
-  },
-  // window.removeEventListener("beforeunload", this.unLoadEvent);
-  // beforeRouteLeave(to, from, next) {
-  //   if (!this.fileSelect) {
-  //     if (
-  //       confirm(
-  //         "이 사이트에서 나가시겠습니까?\n변경사항이 저장되지 않을 수 있습니다."
-  //       )
-  //     ) {
-  //       next();
-  //     }
-  //   }
-  // },
   computed: {
     fileupload: function() {
       return this.$refs[dxfu].instance;
@@ -697,7 +590,10 @@ export default {
   margin: 0px !important;
 }
 .card {
-  height: 675px !important;
+  width: 1350px;
+  height: 330px;
+  margin-left: 20px;
+  margin-top: 20px;
 }
 .date-input:focus {
   border: 1px solid #4475c4 !important;

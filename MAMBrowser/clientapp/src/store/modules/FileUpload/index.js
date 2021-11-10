@@ -31,6 +31,7 @@ export default {
         durationSec: ""
       }
     ],
+    programState: false,
     EventData: [
       {
         name: "",
