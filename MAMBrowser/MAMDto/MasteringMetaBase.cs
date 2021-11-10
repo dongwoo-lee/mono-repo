@@ -1,4 +1,5 @@
-﻿using static MAMBrowser.Foundation.MAMDefine;
+﻿using M30.AudioFile.Common;
+using static MAMBrowser.Foundation.MAMDefine;
 
 namespace MAMBrowser.MAMDto
 {

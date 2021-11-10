@@ -99,7 +99,7 @@ namespace MAMBrowser.Controllers
                         MyDisk.UserId = UserId;
                         MyDisk.FilePath = newFilePath;
                         MyDisk.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        MyDisk.SoundType = MAMDefine.SoundDataTypes.MY_DISK;
+                        MyDisk.SoundType = SoundDataTypes.MY_DISK;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -169,7 +169,7 @@ namespace MAMBrowser.Controllers
                         Program.Editor = editor;
                         Program.FilePath = newFilePath;
                         Program.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        Program.SoundType = MAMDefine.SoundDataTypes.MY_DISK;
+                        Program.SoundType = SoundDataTypes.MY_DISK;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -239,7 +239,7 @@ namespace MAMBrowser.Controllers
                         mcr.Editor = editor;
                         mcr.FilePath = newFilePath;
                         mcr.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        mcr.SoundType = MAMDefine.SoundDataTypes.MY_DISK;
+                        mcr.SoundType = SoundDataTypes.MY_DISK;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -308,16 +308,17 @@ namespace MAMBrowser.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="startDt"></param>
+        /// <param name="endDt"></param>
         /// <param name="workStatus"></param>
+        /// <param name="bll"></param>
         /// <returns></returns>
         [HttpGet("mastering-status")]
-        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_STATUS>>> GetMasteringStatus([FromQuery]string workStatus, [FromServices] APIBll bll)
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus([FromQuery] string startDt, [FromQuery] string endDt, [FromQuery] string workStatus, [FromServices] APIBll bll)
         {
-            if (string.IsNullOrEmpty(workStatus))
-                return StatusCode(StatusCodes.Status400BadRequest, "parameter1 is empty");
-
-            DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_STATUS>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_STATUS>>();
-            result.ResultObject.Data = bll.GetMasteringStatus(workStatus);
+            DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
+            result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
+            result.ResultObject.Data = bll.GetMasteringStatus(startDt, endDt, workStatus);
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }

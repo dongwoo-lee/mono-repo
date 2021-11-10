@@ -91,9 +91,9 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetOptions(optionGrpCd);
         }
-        public IList<DTO_MASTERING_STATUS> GetMasteringStatus(string workStatus)
+        public IList<DTO_MASTERING_INFO> GetMasteringStatus(String startDt, string endDt, string workStatus)
         {
-            return _dao.GetMasteringStatus(workStatus);
+            return _dao.GetMasteringStatus(startDt, endDt, workStatus);
         }
     }
 }
