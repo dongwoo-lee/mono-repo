@@ -87,7 +87,8 @@
                       />
 
                       <button
-                        style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                        v-show="titleState"
+                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
                       >
                         <b-icon
                           icon="x-circle"
@@ -110,7 +111,8 @@
                     />
 
                     <button
-                      style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                      v-show="memoState"
+                      style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
                     >
                       <b-icon
                         icon="x-circle"
@@ -121,7 +123,7 @@
                       ></b-icon>
                     </button>
                   </div>
- <transition name="fade">
+
                   <div v-show="this.MetaData.typeSelected == 'program'">
                     <div style="height:50px;  margin-top : 10px;">
                       <b-form-input
@@ -133,7 +135,8 @@
                       />
 
                       <button
-                        style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                        v-show="editorState"
+                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
                       >
                         <b-icon
                           icon="x-circle"
@@ -157,7 +160,8 @@
                       />
 
                       <button
-                        style="position:relative; left:315px; top:-30px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                        v-show="editorState"
+                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
                       >
                         <b-icon
                           icon="x-circle"
@@ -172,24 +176,35 @@
                 </div>
               </div>
             </div>
-            <div v-show="!isActive" class="date-div">
-              <h3 style="color:#008ECC; ">
-                프로그램 선택
-              </h3>
-              <program
-                v-if="this.MetaData.typeSelected == 'program'"
-                :proMediaOptions="this.mediaOptions"
-              ></program>
-              <mcr-spot
-                v-if="this.MetaData.typeSelected == 'mcr-spot'"
-                :mcrMediaOptions="this.mediaOptions"
-              ></mcr-spot>
-              <!-- mcr-spot -->
-            </div>
+            <transition name="slide-fade">
+              <div v-show="!isActive" class="date-div">
+                <h3 style="color:#008ECC; ">
+                  프로그램 선택
+                </h3>
+                <program
+                  v-if="this.MetaData.typeSelected == 'program'"
+                  :proMediaOptions="this.mediaOptions"
+                ></program>
+                <mcr-spot
+                  v-if="this.MetaData.typeSelected == 'mcr-spot'"
+                  :mcrMediaOptions="this.mediaOptions"
+                  @mcrData="mcrData"
+                  @mcrDate="mcrDate"
+                ></mcr-spot>
+                <!-- mcr-spot -->
+              </div>
+            </transition>
           </div>
         </h4>
 
         <h3 slot="footer">
+          <b-button
+            variant="outline-success"
+            @click="log"
+            style="margin-left:0px;"
+          >
+            <span class="label">확인</span>
+          </b-button>
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <b-button variant="outline-danger" @click="reset()">
               초기화
@@ -311,18 +326,38 @@ export default {
           this.typeOptionsByRole(this.getMenuGrpName);
         }
       }
-
-      //  { value: "private", text: "My디스크" },
-      //   { value: "program", text: "프로그램" },
-      //   { value: "mcrspot", text: "주조SPOT" },
-      //   { value: "scrspot", text: "부조SPOT" },
-      //   { value: "static", text: "고정소재" },
-      //   { value: "var", text: "변동소재" },
-      //   { value: "report", text: "취재물" },
-      //   { value: "filler", text: "필러" }
     }
   },
   methods: {
+    log() {
+      console.log(this.EventSelected);
+      if (this.MetaData.typeSelected == "my-disk") {
+        var data = {
+          UserId: sessionStorage.getItem("user_id"),
+          title: this.MetaData.title,
+          memo: this.MetaData.memo
+        };
+      } else if (this.MetaData.typeSelected == "program") {
+        var data = {
+          memo: this.MetaData.memo,
+          UserId: sessionStorage.getItem("user_id"),
+          media: this.MetaData.proMediaSelected,
+          productId: this.ProgramGrid.productId,
+          onairTime: this.ProgramGrid.onairTime,
+          editor: this.MetaData.editor
+        };
+      } else if (this.MetaData.typeSelected == "mcr-spot") {
+        var data = {
+          memo: this.MetaData.memo,
+          UserId: sessionStorage.getItem("user_id"),
+          media: this.MetaData.mcrMediaSelected,
+          productId: this.EventSelected,
+          onairTime: this.date,
+          editor: this.MetaData.editor
+        };
+      }
+      console.log(data);
+    },
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "resetTitle",
@@ -348,26 +383,23 @@ export default {
           };
         } else if (this.MetaData.typeSelected == "program") {
           var data = {
+            memo: this.MetaData.memo,
             UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.proMediaSelected,
             productId: this.ProgramGrid.productId,
             onairTime: this.ProgramGrid.onairTime,
             editor: this.MetaData.editor
-            // type: this.MetaData.typeSelected,
-            // fileSize: this.localFiles[0].size,
-            // connectionId: this.connectionId,
-            // ProgramSelected: this.ProgramSelected
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
           var data = {
+            memo: this.MetaData.memo,
             UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mcrMediaSelected,
-            ProductId: this.MetaData.eventSelected,
-            editor: this.MetaData.editor,
-            date: this.date
+            productId: this.EventSelected,
+            onairTime: this.date,
+            editor: this.MetaData.editor
           };
         }
-        console.log(data);
         this.setUploaderCustomData(data);
         this.processing = true;
         // this.verifyMeta({
@@ -388,6 +420,12 @@ export default {
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
       }
+    },
+    mcrData(v) {
+      this.EventSelected = v;
+    },
+    mcrDate(v) {
+      this.date = v;
     },
     typeOptionsByRole(role) {
       if (role == "관리자") {

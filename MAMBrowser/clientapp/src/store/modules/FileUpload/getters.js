@@ -14,12 +14,19 @@ export default {
   programState(state) {
     return state.ProgramData.productId != "" ? true : false;
   },
+  eventState(state) {
+    return state.EventData.id != "" ? true : false;
+  },
   metaValid(state, getters) {
     if (state.MetaData.typeSelected == "my-disk") {
       if (getters.typeState && getters.titleState && getters.memoState)
         return true;
     } else if (state.MetaData.typeSelected == "program") {
-      if (getters.editorState && getters.programState) {
+      if (getters.memoState && getters.editorState && getters.programState) {
+        return true;
+      }
+    } else if (state.MetaData.typeSelected == "mcr-spot") {
+      if (getters.memoState && getters.editorState && getters.eventState) {
         return true;
       }
     }

@@ -43,7 +43,7 @@ export default {
         id: ""
       },
       ProgramSelected: [],
-      eventSelected: [],
+      EventSelected: [],
       typeOptions: [{ value: "null", text: "소재 유형" }],
       mediaOptions: [],
       vueTableWidth: "220px",
@@ -300,6 +300,7 @@ export default {
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.EventGrid = v.data;
         this.EventSelected = JSON.stringify(v.data);
+        this.$emit("mcrData", v.data.id);
       }
     },
     resetProgramGrid() {
@@ -324,7 +325,6 @@ export default {
             `/api/categories/pgm-sch?media=${this.MetaData.proMediaSelected}&date=${date}`
           )
           .then(res => {
-            console.log(res.data.resultObject.data);
             var value = res.data.resultObject.data;
             value.forEach(e => {
               e.durationSec = this.getDurationSec(e.durationSec);
@@ -339,7 +339,6 @@ export default {
             `/api/Categories/mcr/spot?media=${this.MetaData.mcrMediaSelected}`
           )
           .then(res => {
-            console.log(res.data.resultObject.data);
             this.setEventData(res.data.resultObject.data);
           });
       }
@@ -386,6 +385,7 @@ export default {
         this.resetDate();
         this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
+      this.$emit("mcrDate", this.date);
     },
     convertDateSTH(value) {
       const replaceVal = value.replace(/-/g, "");
@@ -423,7 +423,7 @@ export default {
       this.fileStateFalse();
       this.resetProgramData();
       this.resetProgramGrid();
-      //reset editor,
+      //reset editor, event
       this.mediaOptions = [];
       this.watch = "";
       this.fileSelect = false;
