@@ -100,6 +100,46 @@
                       </button>
                     </div>
                   </div>
+
+                  <!-- program -->
+                  <transition name="fade">
+                    <div v-show="this.MetaData.typeSelected == 'program'">
+                      <b-form-group
+                        label="제작자"
+                        class="has-float-label"
+                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
+                      >
+                        <common-vue-select
+                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+                          :suggestions="editorOptions"
+                          @inputEvent="inputEditor"
+                        ></common-vue-select>
+                      </b-form-group>
+                    </div>
+                  </transition>
+
+                  <!-- mcr-spot -->
+                  <transition name="fade">
+                    <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
+                      <b-form-group
+                        label="제작자"
+                        class="has-float-label"
+                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
+                      >
+                        <common-vue-select
+                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+                          :suggestions="editorOptions"
+                          @inputEvent="inputEditor"
+                        ></common-vue-select>
+                      </b-form-group>
+                    </div>
+                  </transition>
+
+                  <!-- scr-spot -->
+                  <scr-spot
+                    v-if="this.MetaData.typeSelected == 'scr-spot'"
+                  ></scr-spot>
+
                   <div style="height:50px;">
                     <b-form-input
                       class="editTask"
@@ -123,38 +163,6 @@
                       ></b-icon>
                     </button>
                   </div>
-
-                  <transition name="fade">
-                    <div v-show="this.MetaData.typeSelected == 'program'">
-                      <b-form-group
-                        label="제작자"
-                        class="has-float-label"
-                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
-                      >
-                        <common-vue-select
-                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
-                          :suggestions="editorOptions"
-                          @inputEvent="inputEditor"
-                        ></common-vue-select>
-                      </b-form-group>
-                    </div>
-                  </transition>
-
-                  <transition name="fade">
-                    <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
-                      <b-form-group
-                        label="제작자"
-                        class="has-float-label"
-                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
-                      >
-                        <common-vue-select
-                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
-                          :suggestions="editorOptions"
-                          @inputEvent="inputEditor"
-                        ></common-vue-select>
-                      </b-form-group>
-                    </div>
-                  </transition>
                 </div>
               </div>
             </div>
@@ -163,18 +171,19 @@
                 <h3 style="color:#008ECC; ">
                   프로그램 선택
                 </h3>
+                <!-- program -->
                 <program
                   v-if="this.MetaData.typeSelected == 'program'"
                   :proMediaOptions="this.mediaOptions"
                   @proData="proData"
                 ></program>
+                <!-- mcr-spot -->
                 <mcr-spot
                   v-if="this.MetaData.typeSelected == 'mcr-spot'"
                   :mcrMediaOptions="this.mediaOptions"
                   @mcrData="mcrData"
                   @mcrDate="mcrDate"
                 ></mcr-spot>
-                <!-- mcr-spot -->
               </div>
             </transition>
           </div>
@@ -241,6 +250,7 @@ import CommonMetaModal from "../Modal/CommonMetaModal";
 import CommonFileFunction from "./CommonFileFunction";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
+import scrSpot from "./MetaData/scr-spot.vue";
 import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import axios from "axios";
@@ -264,6 +274,7 @@ export default {
     CommonMetaModal,
     program,
     mcrSpot,
+    scrSpot,
     CommonVueSelect
   },
   mixins: [CommonFileFunction, MixinBasicPage],
