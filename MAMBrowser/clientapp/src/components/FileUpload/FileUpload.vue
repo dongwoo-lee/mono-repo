@@ -50,9 +50,9 @@
         @close="closeFileModal"
         style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
       >
-        <h3 slot="header">
+        <h2 slot="header">
           마스터링
-        </h3>
+        </h2>
         <h4 slot="body">
           <DxFileUploader
             :chunk-size="200000"
@@ -93,7 +93,7 @@
               파일 업로드
             </b-button>
             <!-- </span> -->
-            <b-card title="마스터링 작업목록">
+            <b-card style="color: #008ECC;" title="마스터링 작업목록">
               <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
               <div
                 style="width:1300px; margin-left:auto; margin-right:auto; font-size:14px;"
@@ -195,8 +195,10 @@
               </div>
             </b-card>
 
-            <b-card title="마스터링 로그">
-              <div style="position:absolute; top:22px; left: 160px;">
+            <b-card style="color: #008ECC;" title="마스터링 로그">
+              <div
+                style="position:absolute; top:22px; left: 160px; font-size:14px;"
+              >
                 <b-form-group
                   label="시작일"
                   class="has-float-label"
@@ -204,7 +206,7 @@
                 >
                   <b-input-group class="mb-3" style="width:200px; float:left;">
                     <input
-                      style="height:33px;"
+                      style="height:33px; font-size:13px;"
                       id="sdateinput"
                       type="text"
                       class="form-control input-picker date-input"
@@ -231,7 +233,7 @@
                 >
                   <b-input-group class="mb-3" style="width:200px; float:left;">
                     <input
-                      style="height:33px;"
+                      style="height:33px; font-size:13px;"
                       id="edateinput"
                       type="text"
                       class="form-control input-picker date-input"
