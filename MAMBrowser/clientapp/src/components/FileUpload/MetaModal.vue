@@ -145,6 +145,9 @@
                 <scr-spot
                   v-if="this.MetaData.typeSelected == 'scr-spot'"
                 ></scr-spot>
+                <static-spot
+                  v-if="this.MetaData.typeSelected == 'static-spot'"
+                ></static-spot>
               </div>
             </transition>
           </div>
@@ -212,6 +215,7 @@ import CommonMetaModal from "../Modal/CommonMetaModal";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
 import scrSpot from "./MetaData/scr-spot.vue";
+import staticSpot from "./MetaData/static-spot.vue";
 import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import axios from "axios";
@@ -236,6 +240,7 @@ export default {
     program,
     mcrSpot,
     scrSpot,
+    staticSpot,
     CommonVueSelect
   },
   mixins: [MixinBasicPage],

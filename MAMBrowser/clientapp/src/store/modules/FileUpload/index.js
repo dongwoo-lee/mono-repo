@@ -14,6 +14,8 @@ export default {
     localFiles: [],
     uploaderCustomData: {},
     date: "",
+    fileSDate: "",
+    fileEData: "",
     MetaData: {
       title: "",
       memo: "",

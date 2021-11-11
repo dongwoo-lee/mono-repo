@@ -190,11 +190,14 @@ export default {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
       date: state => state.date,
+      fileSDate: state => state.fileSDate,
+      fileEDate: state => state.fileEDate,
       MetaData: state => state.MetaData,
       fileMediaOptions: state => state.fileMediaOptions,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
       ProgramSelected: state => state.ProgramSelected,
+      EventData: state => state.EventData,
       EventSelected: state => state.EventSelected,
       isActive: state => state.isActive,
       processing: state => state.processing,
@@ -232,19 +235,6 @@ export default {
           this.setIsActive(false);
         } else if (v.typeSelected == "static-spot") {
           this.setIsActive(false);
-
-          if (this.watch != v.typeSelected) {
-            this.resetFileMediaOptions();
-            axios.get("/api/categories/media").then(res => {
-              res.data.resultObject.data.forEach(e => {
-                this.setFileMediaOptions({
-                  value: e.id,
-                  text: e.name
-                });
-              });
-              this.watch = v.typeSelected;
-            });
-          }
         } else {
           this.watch = v.typeSelected;
           this.setIsActive(true);

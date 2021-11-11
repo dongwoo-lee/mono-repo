@@ -43,8 +43,9 @@
         id="program-media"
         class="media-select"
         style=" width:200px; height:37px;"
-        v-model="this.MetaData.proMediaSelected"
+        :value="scrMedia"
         :options="fileMediaOptions"
+        @input="mediaChange"
       />
     </b-form-group>
 
@@ -134,41 +135,38 @@ import CommonFileFunction from "../CommonFileFunction";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import axios from "axios";
 export default {
   components: {
     CommonVueSelect
   },
   mixins: [CommonFileFunction, MixinBasicPage],
+  data() {
+    return {
+      scrMedia: "A"
+    };
+  },
   created() {
     this.getEditorForPd();
-  },
-  computed: {
-    ...mapState("FileIndexStore", {
-      MetaModalTitle: state => state.MetaModalTitle,
-      localFiles: state => state.localFiles,
-      MetaData: state => state.MetaData,
-      vueTableData: state => state.vueTableData,
-      ProgramData: state => state.ProgramData,
-      EventData: state => state.EventData,
-      isActive: state => state.isActive,
-      processing: state => state.processing,
-      fileUploading: state => state.fileUploading
-    }),
-    ...mapGetters("FileIndexStore", [
-      "typeState",
-      "titleState",
-      "memoState",
-      "editorState",
-      "usageState",
-      "advertiserState",
-      "metaValid"
-    ]),
-    ...mapGetters("user", ["getMenuGrpName"])
+    this.resetFileMediaOptions();
+    axios.get("/api/categories/media").then(res => {
+      res.data.resultObject.data.forEach(e => {
+        this.setFileMediaOptions({
+          value: e.id,
+          text: e.name
+        });
+      });
+    });
+    this.scrMedia = "A";
+    this.setMediaSelected(this.scrMedia);
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
     inputEditor(v) {
       this.setEditor(v.id);
+    },
+    mediaChange(v) {
+      this.setMediaSelected(v);
     }
   }
 };

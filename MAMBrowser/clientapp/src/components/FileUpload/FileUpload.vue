@@ -210,13 +210,13 @@
                       id="sdateinput"
                       type="text"
                       class="form-control input-picker date-input"
-                      :value="sdate"
+                      :value="logSDate"
                       @input="onsInput"
                     />
                     <b-input-group-append>
                       <b-form-datepicker
                         style="height:33px;"
-                        v-model="sdate"
+                        v-model="logSDate"
                         button-only
                         button-variant="outline-primary"
                         right
@@ -237,13 +237,13 @@
                       id="edateinput"
                       type="text"
                       class="form-control input-picker date-input"
-                      :value="edate"
+                      :value="logEDate"
                       @input="oneInput"
                     />
                     <b-input-group-append>
                       <b-form-datepicker
                         style="height:33px;"
-                        v-model="edate"
+                        v-model="logEDate"
                         button-only
                         button-variant="outline-primary"
                         right
@@ -373,8 +373,8 @@ export default {
       fileSelect: false,
       fileState: "",
       percent: 0,
-      sdate: "",
-      edate: ""
+      logSDate: "",
+      logEDate: ""
     };
   },
   watch: {

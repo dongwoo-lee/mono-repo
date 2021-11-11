@@ -174,31 +174,7 @@ export default {
       });
     });
     this.mcrMedia = "A";
-    this.setMediaSelected("A");
-  },
-  computed: {
-    ...mapState("FileIndexStore", {
-      MetaModalTitle: state => state.MetaModalTitle,
-      localFiles: state => state.localFiles,
-      MetaData: state => state.MetaData,
-      vueTableData: state => state.vueTableData,
-      ProgramData: state => state.ProgramData,
-      EventData: state => state.EventData,
-      isActive: state => state.isActive,
-      processing: state => state.processing,
-      fileUploading: state => state.fileUploading
-    }),
-    ...mapGetters("FileIndexStore", [
-      "typeState",
-      "titleState",
-      "memoState",
-      "editorState",
-      "metaValid"
-    ]),
-    ...mapGetters("user", ["getMenuGrpName"]),
-    getVariant() {
-      return this.isActive ? "outline-dark" : "outline-primary";
-    }
+    this.setMediaSelected(this.mcrMedia);
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
