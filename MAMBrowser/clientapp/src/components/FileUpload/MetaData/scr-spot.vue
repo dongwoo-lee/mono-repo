@@ -3,7 +3,7 @@
     <b-form-group
       label="방송일"
       class="has-float-label"
-      style="margin-top:20px;font-color:black;"
+      style="margin-top:20px; margin-bottom:0px;"
     >
       <b-input-group class="mb-3" style="width:300px; float:left;">
         <input
@@ -27,7 +27,7 @@
     </b-form-group>
     <button
       v-show="!isActive"
-      style="position:absolute; right:160px; top:140px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
+      style="position:absolute; right:330px; top:50px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
     >
       <b-icon
         icon="x-circle"
@@ -51,7 +51,7 @@
     <b-form-group
       label="제작자"
       class="has-float-label"
-      style="margin-top:10px;"
+      style="margin-top:20px;"
     >
       <common-vue-select
         style="font-size:14px; width:200px; border: 1px solid #008ecc;"
@@ -64,31 +64,67 @@
       <b-form-input
         class="editTask"
         v-model="MetaData.title"
-        :state="memoState"
+        :state="titleState"
         aria-describedby="input-live-help input-live-feedback"
         placeholder="소재 명"
         trim
       />
+      <button
+        v-show="titleState"
+        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+      >
+        <b-icon
+          icon="x-circle"
+          font-scale="1"
+          style="position:relative; top:0px; right:0px; z-index:999;"
+          variant="secondary"
+          @click="resetTitle"
+        ></b-icon>
+      </button>
     </div>
     <div style="height:50px;">
       <b-form-input
         class="editTask"
-        v-model="MetaData.title"
-        :state="memoState"
+        v-model="MetaData.usage"
+        :state="usageState"
         aria-describedby="input-live-help input-live-feedback"
         placeholder="사용처 명"
         trim
       />
+      <button
+        v-show="usageState"
+        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+      >
+        <b-icon
+          icon="x-circle"
+          font-scale="1"
+          style="position:relative; top:0px; right:0px; z-index:999;"
+          variant="secondary"
+          @click="resetUsage"
+        ></b-icon>
+      </button>
     </div>
     <div style="height:50px;">
       <b-form-input
         class="editTask"
-        v-model="MetaData.title"
-        :state="memoState"
+        v-model="MetaData.advertiser"
+        :state="advertiserState"
         aria-describedby="input-live-help input-live-feedback"
         placeholder="광고주 명"
         trim
       />
+      <button
+        v-show="advertiserState"
+        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+      >
+        <b-icon
+          icon="x-circle"
+          font-scale="1"
+          style="position:relative; top:0px; right:0px; z-index:999;"
+          variant="secondary"
+          @click="resetAdvertiser"
+        ></b-icon>
+      </button>
     </div>
   </div>
 </template>
@@ -112,7 +148,6 @@ export default {
       localFiles: state => state.localFiles,
       MetaData: state => state.MetaData,
       vueTableData: state => state.vueTableData,
-      mediaOptions: state => state.mediaOptions,
       ProgramData: state => state.ProgramData,
       EventData: state => state.EventData,
       isActive: state => state.isActive,
@@ -124,6 +159,8 @@ export default {
       "titleState",
       "memoState",
       "editorState",
+      "usageState",
+      "advertiserState",
       "metaValid"
     ]),
     ...mapGetters("user", ["getMenuGrpName"])

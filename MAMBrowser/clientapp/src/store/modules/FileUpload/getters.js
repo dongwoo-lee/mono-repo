@@ -2,6 +2,9 @@ export default {
   typeState(state) {
     return state.MetaData.typeSelected != "null" ? true : false;
   },
+  dateState(state) {
+    return state.date.length == 8 ? true : false;
+  },
   titleState(state) {
     return state.MetaData.title.length >= 1 ? true : false;
   },
@@ -10,6 +13,12 @@ export default {
   },
   editorState(state) {
     return state.MetaData.editor.length >= 1 ? true : false;
+  },
+  usageState(state) {
+    return state.MetaData.usage.length >= 1 ? true : false;
+  },
+  advertiserState(state) {
+    return state.MetaData.advertiser.length >= 1 ? true : false;
   },
   programState(state) {
     return state.programState ? true : false;
@@ -29,7 +38,18 @@ export default {
       if (getters.memoState && getters.editorState && getters.eventState) {
         return true;
       }
+    } else if (state.MetaData.typeSelected == "scr-spot") {
+      if (
+        getters.titleState &&
+        getters.memoState &&
+        getters.usageState &&
+        getters.advertiserState &&
+        getters.editorState
+      ) {
+        return true;
+      }
     }
+
     return false;
   },
   getBadge(state) {

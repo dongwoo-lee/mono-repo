@@ -227,11 +227,8 @@ export default {
       deep: true,
       handler(v) {
         if (v.typeSelected == "program" || v.typeSelected == "scr-spot") {
-          if (v.typeSelected == "program") {
-            this.setIsActive(false);
-          } else {
-            this.setIsActive(true);
-          }
+          this.setIsActive(false);
+
           if (this.watch != v.typeSelected) {
             this.resetFileMediaOptions();
             this.resetMediaSelected();
@@ -286,6 +283,8 @@ export default {
       "resetMemo",
       "resetEditor",
       "resetType",
+      "resetUsage",
+      "resetAdvertiser",
       "resetFileMediaOptions",
       "resetMediaSelected",
       "resetProgramData",
@@ -412,6 +411,8 @@ export default {
       this.resetEditor();
       this.resetEventData();
       this.resetEventSelected();
+      this.resetUsage();
+      this.resetAdvertiser();
       //reset editor, event
       this.mediaOptions = [];
       this.watch = "";

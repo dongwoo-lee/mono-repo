@@ -68,6 +68,12 @@ export default {
   resetEditor(state) {
     state.MetaData.editor = "";
   },
+  resetUsage(state) {
+    state.MetaData.usage = "";
+  },
+  resetAdvertiser(state) {
+    state.MetaData.advertiser = "";
+  },
   resetType(state) {
     state.MetaData.typeSelected = "null";
   },

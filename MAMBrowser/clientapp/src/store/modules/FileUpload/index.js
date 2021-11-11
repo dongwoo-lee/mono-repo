@@ -18,6 +18,7 @@ export default {
       title: "",
       memo: "",
       editor: "",
+      usage: "",
       advertiser: "",
       mediaCD: "",
       categoryCD: "",

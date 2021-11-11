@@ -68,6 +68,7 @@
                       v-model="MetaData.typeSelected"
                       :options="typeOptions"
                       :state="typeState"
+                      @change="resetMemo"
                       required
                     ></b-form-select>
                   </div>
@@ -100,11 +101,6 @@
                       </button>
                     </div>
                   </div>
-
-                  <!-- scr-spot -->
-                  <scr-spot
-                    v-if="this.MetaData.typeSelected == 'scr-spot'"
-                  ></scr-spot>
 
                   <div style="height:50px;">
                     <b-form-input
@@ -145,6 +141,10 @@
                 <mcr-spot
                   v-if="this.MetaData.typeSelected == 'mcr-spot'"
                 ></mcr-spot>
+                <!-- scr-spot -->
+                <scr-spot
+                  v-if="this.MetaData.typeSelected == 'scr-spot'"
+                ></scr-spot>
               </div>
             </transition>
           </div>
@@ -315,8 +315,8 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "program") {
         var data = {
-          memo: this.MetaData.memo,
           UserId: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
           media: this.MetaData.proMediaSelected,
           productId: this.ProgramSelected.productId,
           onairTime: this.ProgramSelected.onairTime,
@@ -324,12 +324,23 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         var data = {
-          memo: this.MetaData.memo,
           UserId: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
           media: this.MetaData.mcrMediaSelected,
           productId: this.EventSelected.id,
           onairTime: this.date,
           editor: this.MetaData.editor
+        };
+      } else if (this.MetaData.typeSelected == "scr-spot") {
+        var data = {
+          UserId: sessionStorage.getItem("user_id"),
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+          usage: this.MetaData.usage,
+          advertiser: this.MetaData.advertiser,
+          editor: this.MetaData.editor,
+          media: this.MetaData.proMediaSelected,
+          onairTime: this.date
         };
       }
       console.log(data);
@@ -407,6 +418,17 @@ export default {
             productId: this.EventSelected,
             onairTime: this.date,
             editor: this.MetaData.editor
+          };
+        } else if (this.MetaData.typeSelected == "scr-spot") {
+          var data = {
+            UserId: sessionStorage.getItem("user_id"),
+            title: this.MetaData.title,
+            memo: this.MetaData.memo,
+            usage: this.MetaData.usage,
+            advertiser: this.MetaData.advertiser,
+            editor: this.MetaData.editor,
+            media: this.MetaData.proMediaSelected,
+            onairTime: this.date
           };
         }
         this.setUploaderCustomData(data);
