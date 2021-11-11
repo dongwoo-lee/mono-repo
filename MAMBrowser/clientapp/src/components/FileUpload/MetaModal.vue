@@ -101,25 +101,6 @@
                     </div>
                   </div>
 
-                  <!-- program -->
-                  <transition name="fade">
-                    <div v-show="this.MetaData.typeSelected == 'program'">
-                      <b-form-group
-                        label="제작자"
-                        class="has-float-label"
-                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
-                      >
-                        <common-vue-select
-                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
-                          :suggestions="editorOptions"
-                          @inputEvent="inputEditor"
-                        ></common-vue-select>
-                      </b-form-group>
-                    </div>
-                  </transition>
-
-                  <!-- mcr-spot -->
-
                   <!-- scr-spot -->
                   <scr-spot
                     v-if="this.MetaData.typeSelected == 'scr-spot'"
@@ -233,7 +214,6 @@
 
 <script>
 import CommonMetaModal from "../Modal/CommonMetaModal";
-// import CommonFileFunction from "./CommonFileFunction";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
 import scrSpot from "./MetaData/scr-spot.vue";

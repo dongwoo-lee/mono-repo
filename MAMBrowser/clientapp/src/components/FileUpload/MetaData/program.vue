@@ -1,5 +1,20 @@
 <template>
   <div>
+    <transition name="fade">
+      <div>
+        <b-form-group
+          label="제작자"
+          class="has-float-label"
+          style="position:absolute; top:380px; left:-400px; z-index:9999; font-size:16px;"
+        >
+          <common-vue-select
+            style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+            :suggestions="editorOptions"
+            @inputEvent="inputEditor"
+          ></common-vue-select>
+        </b-form-group>
+      </div>
+    </transition>
     <div style="position:absolute; top:40px;">
       <b-form-group
         label="방송일"
@@ -174,7 +189,9 @@
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import { mapState, mapGetters } from "vuex";
+import CommonVueSelect from "../../Form/CommonVueSelect.vue";
+import MixinBasicPage from "../../../mixin/MixinBasicPage";
+import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
   props: {
     proMediaOptions: {
@@ -182,7 +199,13 @@ export default {
       default: []
     }
   },
-  mixins: [CommonFileFunction],
+  components: {
+    CommonVueSelect
+  },
+  mixins: [CommonFileFunction, MixinBasicPage],
+  created() {
+    this.getEditorForPd();
+  },
   computed: {
     ...mapState("FileIndexStore", {
       MetaModalTitle: state => state.MetaModalTitle,
@@ -205,6 +228,12 @@ export default {
     ...mapGetters("user", ["getMenuGrpName"]),
     getVariant() {
       return this.isActive ? "outline-dark" : "outline-primary";
+    }
+  },
+  methods: {
+    ...mapMutations("FileIndexStore", ["setEditor"]),
+    inputEditor(v) {
+      this.setEditor(v.id);
     }
   }
 };

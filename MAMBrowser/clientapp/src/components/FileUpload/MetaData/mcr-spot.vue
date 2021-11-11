@@ -5,7 +5,7 @@
         <b-form-group
           label="제작자"
           class="has-float-label"
-          style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
+          style="position:absolute; top:380px; left:-400px; z-index:9999; font-size:16px;"
         >
           <common-vue-select
             style="font-size:14px; width:200px; border: 1px solid #008ecc;"

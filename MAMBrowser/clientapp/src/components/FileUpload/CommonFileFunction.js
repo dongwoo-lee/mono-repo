@@ -7,8 +7,6 @@ import DxTextBox from "devextreme-vue/text-box";
 import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import axios from "axios";
-import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
-import { DxCommonAxisSettingsConstantLineStyle } from "devextreme-vue/chart";
 
 export default {
   components: {
