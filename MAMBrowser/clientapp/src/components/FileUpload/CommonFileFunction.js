@@ -23,24 +23,8 @@ export default {
     return {
       watch: "null",
       role: "",
-      date: "",
       formatted: "",
       dateSelected: "",
-      ProgramGrid: {
-        eventName: "",
-        eventType: "",
-        productId: "",
-        onairTime: "",
-        durationSec: ""
-      },
-      EventGrid: {
-        name: "",
-        id: ""
-      },
-      ProgramSelected: [],
-      EventSelected: [],
-
-      mediaOptions: [],
       vueTableWidth: "195px",
       userFields: [
         {
@@ -205,10 +189,13 @@ export default {
     ...mapState("FileIndexStore", {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
+      date: state => state.date,
       MetaData: state => state.MetaData,
-      connectionId: state => state.connectionId,
+      fileMediaOptions: state => state.fileMediaOptions,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
+      ProgramSelected: state => state.ProgramSelected,
+      EventSelected: state => state.EventSelected,
       isActive: state => state.isActive,
       processing: state => state.processing,
       fileUploading: state => state.fileUploading
@@ -226,7 +213,7 @@ export default {
     },
     ...mapGetters("menu", ["getMenuType"]),
     programState() {
-      return this.ProgramGrid.productId != "" ? true : false;
+      return this.ProgramSelected.productId != "" ? true : false;
     }
   },
   created() {
@@ -246,11 +233,11 @@ export default {
             this.setIsActive(true);
           }
           if (this.watch != v.typeSelected) {
-            this.mediaOptions = [];
+            this.resetFileMediaOptions();
             this.resetMediaSelected();
             axios.get("/api/categories/media").then(res => {
               res.data.resultObject.data.forEach(e => {
-                this.mediaOptions.push({
+                this.setFileMediaOptions({
                   value: e.id,
                   text: e.name
                 });
@@ -261,10 +248,10 @@ export default {
         } else if (v.typeSelected == "mcr-spot") {
           this.setIsActive(false);
           if (this.watch != v.typeSelected) {
-            this.mediaOptions = [];
+            this.resetFileMediaOptions();
             axios.get("/api/categories/media/mcrspot").then(res => {
               res.data.resultObject.data.forEach(e => {
-                this.mediaOptions.push({
+                this.setFileMediaOptions({
                   value: e.id,
                   text: e.name
                 });
@@ -284,18 +271,27 @@ export default {
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
+      "setDate",
       "setProgramData",
       "setEventData",
       "setProgramState",
       "setIsActive",
       "setProcessing",
       "setFileUploading",
+      "setFileMediaOptions",
+      "setProgramSelected",
+      "setEventSelected",
+      "resetDate",
       "resetTitle",
       "resetMemo",
+      "resetEditor",
       "resetType",
+      "resetFileMediaOptions",
       "resetMediaSelected",
       "resetProgramData",
-      "resetEventData"
+      "resetProgramSelected",
+      "resetEventData",
+      "resetEventSelected"
     ]),
     fileStateFalse() {
       this.setProcessing(false);
@@ -303,23 +299,10 @@ export default {
     },
     onRowClick(v) {
       if (this.MetaData.typeSelected == "program") {
-        this.ProgramGrid = v.data;
-        this.ProgramSelected = JSON.stringify(v.data);
-        this.$emit("proData", v.data);
+        this.setProgramSelected(v.data);
       } else if (this.MetaData.typeSelected == "mcr-spot") {
-        this.EventGrid = v.data;
-        this.EventSelected = JSON.stringify(v.data);
-        this.$emit("mcrData", v.data.id);
+        this.setEventSelected(v.data);
       }
-    },
-    resetProgramGrid() {
-      this.ProgramGrid = {
-        eventName: "",
-        eventType: "",
-        productId: "",
-        onairTime: "",
-        durationSec: ""
-      };
     },
     getPro() {
       const replaceVal = this.date.replace(/-/g, "");
@@ -382,20 +365,18 @@ export default {
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.date = convertDate;
+          this.setDate(convertDate);
         }
       } else if (targetValue == "-") {
         const replaceAllTargetValue = targetValue.replace(/-/g, "");
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.date = convertDate;
+          this.setDate(convertDate);
         }
       } else {
         this.resetDate();
         this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
-      this.$emit("proDate", this.date);
-      this.$emit("mcrDate", this.date);
     },
     convertDateSTH(value) {
       const replaceVal = value.replace(/-/g, "");
@@ -418,11 +399,6 @@ export default {
       // The following will be an empty string until a valid date is entered
       this.dateSelected = ctx.selectedYMD;
     },
-    resetDate() {
-      // var input = document.getElementById("dateinput");
-      // input.value = "";
-      this.date = "";
-    },
     //#endregion
 
     reset() {
@@ -432,7 +408,10 @@ export default {
       this.resetDate();
       this.fileStateFalse();
       this.resetProgramData();
-      this.resetProgramGrid();
+      this.resetProgramSelected();
+      this.resetEditor();
+      this.resetEventData();
+      this.resetEventSelected();
       //reset editor, event
       this.mediaOptions = [];
       this.watch = "";

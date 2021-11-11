@@ -67,7 +67,7 @@
           class="media-select"
           style=" width:140px; height:37px;"
           v-model="MetaData.mcrMediaSelected"
-          :options="this.mcrMediaOptions"
+          :options="fileMediaOptions"
         />
       </b-form-group>
       <b-button
@@ -104,7 +104,7 @@
     </div>
     <!-- 프로그램 -->
     <div
-      v-show="!isActive && EventGrid.id != ''"
+      v-show="!isActive && EventSelected.id != ''"
       style="width: 550px; height:110px; margin-top:280px; padding-top:10px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
     >
       <div style="width:180px; float:left;">
@@ -116,7 +116,7 @@
           <b-form-input
             style="width:180px;"
             class="editTask"
-            v-model="EventGrid.name"
+            v-model="EventSelected.name"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -132,7 +132,7 @@
           <b-form-input
             style="width:170px;"
             class="editTask"
-            v-model="EventGrid.id"
+            v-model="EventSelected.id"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -149,12 +149,6 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
-  props: {
-    mcrMediaOptions: {
-      type: [],
-      default: []
-    }
-  },
   components: {
     CommonVueSelect
   },
@@ -167,7 +161,6 @@ export default {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
       MetaData: state => state.MetaData,
-      connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
       EventData: state => state.EventData,

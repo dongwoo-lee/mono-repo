@@ -451,7 +451,6 @@ export default {
       "resetLocalFiles",
       "setFileUploading",
       "setMetaModalTitle",
-      "setConnectionId",
       "setVueTableData",
       "setDuration",
       "setAudioFormat",

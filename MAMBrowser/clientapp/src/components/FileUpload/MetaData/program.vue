@@ -9,6 +9,7 @@
         >
           <common-vue-select
             style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+            deselectFromDropdown
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>
@@ -67,7 +68,7 @@
           class="media-select"
           style=" width:140px; height:37px;"
           v-model="this.MetaData.proMediaSelected"
-          :options="this.proMediaOptions"
+          :options="fileMediaOptions"
         />
       </b-form-group>
       <b-button
@@ -107,7 +108,7 @@
     </div>
     <!-- 프로그램 -->
     <div
-      v-show="!isActive && ProgramGrid.eventName != ''"
+      v-show="!isActive && this.ProgramSelected.eventName != ''"
       style="width: 550px; height:140px; margin-top:280px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
     >
       <div style="width:180px; float:left;">
@@ -119,7 +120,7 @@
           <b-form-input
             style="width:180px;"
             class="editTask"
-            v-model="ProgramGrid.eventName"
+            v-model="this.ProgramSelected.eventName"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -135,7 +136,7 @@
           <b-form-input
             style="width:170px;"
             class="editTask"
-            v-model="ProgramGrid.productId"
+            v-model="this.ProgramSelected.productId"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -151,7 +152,7 @@
           <b-form-input
             style="width:120px;"
             class="editTask"
-            v-model="ProgramGrid.eventType"
+            v-model="this.ProgramSelected.eventType"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -164,7 +165,7 @@
           <b-form-input
             style="width:200px;"
             class="editTask"
-            v-model="ProgramGrid.onairTime"
+            v-model="this.ProgramSelected.onairTime"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -176,7 +177,7 @@
           <b-form-input
             style="width:120px;"
             class="editTask"
-            v-model="ProgramGrid.durationSec"
+            v-model="this.ProgramSelected.durationSec"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -193,12 +194,6 @@ import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
-  props: {
-    proMediaOptions: {
-      type: [],
-      default: []
-    }
-  },
   components: {
     CommonVueSelect
   },
@@ -211,9 +206,9 @@ export default {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
       MetaData: state => state.MetaData,
-      connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
+      ProgramSelected: state => state.ProgramSelected,
       isActive: state => state.isActive,
       processing: state => state.processing,
       fileUploading: state => state.fileUploading

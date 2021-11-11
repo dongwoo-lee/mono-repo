@@ -44,7 +44,7 @@
         class="media-select"
         style=" width:200px; height:37px;"
         v-model="this.MetaData.proMediaSelected"
-        :options="this.proMediaOptions"
+        :options="fileMediaOptions"
       />
     </b-form-group>
 
@@ -99,12 +99,6 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
-  props: {
-    proMediaOptions: {
-      type: [],
-      default: []
-    }
-  },
   components: {
     CommonVueSelect
   },
@@ -117,8 +111,8 @@ export default {
       MetaModalTitle: state => state.MetaModalTitle,
       localFiles: state => state.localFiles,
       MetaData: state => state.MetaData,
-      connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
+      mediaOptions: state => state.mediaOptions,
       ProgramData: state => state.ProgramData,
       EventData: state => state.EventData,
       isActive: state => state.isActive,

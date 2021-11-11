@@ -9,9 +9,11 @@ export default {
     fileUploading: false,
     isActive: false,
     typeOptions: [{ value: "null", text: "소재 유형" }],
+    fileMediaOptions: [],
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
+    date: "",
     MetaData: {
       title: "",
       memo: "",
@@ -25,7 +27,6 @@ export default {
       duration: "",
       audioFormat: ""
     },
-    connectionId: "",
     vueTableData: [],
     ProgramData: [
       {
@@ -36,6 +37,13 @@ export default {
         durationSec: ""
       }
     ],
+    ProgramSelected: {
+      eventName: "",
+      eventType: "",
+      productId: "",
+      onairTime: "",
+      durationSec: ""
+    },
     programState: false,
     EventData: [
       {
@@ -43,6 +51,10 @@ export default {
         id: ""
       }
     ],
+    EventSelected: {
+      id: "",
+      name: ""
+    },
     FileUploadProgress: {}
   },
   getters,

@@ -104,7 +104,6 @@
                   <!-- scr-spot -->
                   <scr-spot
                     v-if="this.MetaData.typeSelected == 'scr-spot'"
-                    :proMediaOptions="this.mediaOptions"
                   ></scr-spot>
 
                   <div style="height:50px;">
@@ -141,15 +140,10 @@
                 <!-- program -->
                 <program
                   v-if="this.MetaData.typeSelected == 'program'"
-                  :proMediaOptions="this.mediaOptions"
-                  @proData="proData"
                 ></program>
                 <!-- mcr-spot -->
                 <mcr-spot
                   v-if="this.MetaData.typeSelected == 'mcr-spot'"
-                  :mcrMediaOptions="this.mediaOptions"
-                  @mcrData="mcrData"
-                  @mcrDate="mcrDate"
                 ></mcr-spot>
               </div>
             </transition>
@@ -157,13 +151,13 @@
         </h4>
 
         <h3 slot="footer">
-          <!-- <b-button
+          <b-button
             variant="outline-success"
             @click="log"
             style="margin-left:0px;"
           >
             <span class="label">확인</span>
-          </b-button> -->
+          </b-button>
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <b-button variant="outline-danger" @click="resetEvent">
               초기화
@@ -266,11 +260,13 @@ export default {
   computed: {
     ...mapState("FileIndexStore", {
       MetaModalTitle: state => state.MetaModalTitle,
+      date: state => state.date,
       localFiles: state => state.localFiles,
       MetaData: state => state.MetaData,
-      connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
+      ProgramSelected: state => state.ProgramSelected,
+      EventSelected: state => state.EventSelected,
       isActive: state => state.isActive,
       processing: state => state.processing,
       fileUploading: state => state.fileUploading,
@@ -322,8 +318,8 @@ export default {
           memo: this.MetaData.memo,
           UserId: sessionStorage.getItem("user_id"),
           media: this.MetaData.proMediaSelected,
-          productId: this.ProgramGrid.productId,
-          onairTime: this.ProgramGrid.onairTime,
+          productId: this.ProgramSelected.productId,
+          onairTime: this.ProgramSelected.onairTime,
           editor: this.MetaData.editor
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
@@ -331,7 +327,7 @@ export default {
           memo: this.MetaData.memo,
           UserId: sessionStorage.getItem("user_id"),
           media: this.MetaData.mcrMediaSelected,
-          productId: this.EventSelected,
+          productId: this.EventSelected.id,
           onairTime: this.date,
           editor: this.MetaData.editor
         };
@@ -399,8 +395,8 @@ export default {
             memo: this.MetaData.memo,
             UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.proMediaSelected,
-            productId: this.ProgramGrid.productId,
-            onairTime: this.ProgramGrid.onairTime,
+            productId: this.ProgramSelected.productId,
+            onairTime: this.ProgramSelected.onairTime,
             editor: this.MetaData.editor
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
@@ -433,15 +429,6 @@ export default {
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
       }
-    },
-    proData(v) {
-      this.ProgramGrid = v;
-    },
-    mcrData(v) {
-      this.EventSelected = v;
-    },
-    mcrDate(v) {
-      this.date = v;
     },
     typeOptionsByRole(role) {
       if (role == "관리자") {
