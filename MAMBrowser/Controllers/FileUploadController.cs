@@ -3,7 +3,6 @@ using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL.Dao;
 using MAMBrowser.Foundation;
-using MAMBrowser.Hubs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -23,7 +22,6 @@ namespace MAMBrowser.Controllers
     public class FileUploadController : Controller
     {
         private readonly PrivateFileDao _dao;
-        private readonly IHubContext<FileHubs> _hubContext;
 
         public class ChunkMetadata
         {
@@ -64,10 +62,9 @@ namespace MAMBrowser.Controllers
 
         }
 
-        public FileUploadController(IHubContext<FileHubs> hubContext, PrivateFileDao dao)
+        public FileUploadController( PrivateFileDao dao)
         {
             _dao = dao;
-            _hubContext = hubContext;
         }
 
 
@@ -140,30 +137,30 @@ namespace MAMBrowser.Controllers
                         fi.date = dbDate;
 
                         string json = JsonConvert.SerializeObject(fi);
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 0, fi);
+                       
 
                         RabbitMQ(fi);
 
                         Thread.Sleep(5000);
                         fi.step = 1;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 1, fi);
+                        
 
                         Thread.Sleep(5000);
                         fi.step = 2;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 2, fi);
+                        
 
                         Thread.Sleep(5000);
                         fi.step = 3;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 3, fi);
+                        
 
                         Thread.Sleep(5000);
                         fi.step = 4;
 
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 4, fi);
+                      
 
                         Thread.Sleep(5000);
                         fi.step = 5;
-                        _hubContext.Clients.Client(connectionId).SendAsync("send", 5, fi);
+                  
 
                         //Thread.Sleep(5000);
                         //fi.step = -1;

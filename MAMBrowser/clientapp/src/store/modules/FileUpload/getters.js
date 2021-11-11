@@ -12,7 +12,7 @@ export default {
     return state.MetaData.editor.length >= 1 ? true : false;
   },
   programState(state) {
-    return state.ProgramData.productId != "" ? true : false;
+    return state.programState ? true : false;
   },
   eventState(state) {
     return state.EventData.id != "" ? true : false;

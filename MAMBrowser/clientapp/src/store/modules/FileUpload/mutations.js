@@ -26,6 +26,12 @@ export default {
   setEventData(state, payload) {
     state.EventData = payload;
   },
+  setEditor(state, payload) {
+    state.MetaData.editor = payload;
+  },
+  setProgramState(state, payload) {
+    state.programState = payload;
+  },
   resetLocalFiles(state) {
     state.localFiles = [];
   },

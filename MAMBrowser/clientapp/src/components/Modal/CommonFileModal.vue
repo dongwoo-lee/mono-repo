@@ -52,9 +52,9 @@ export default {};
 
 .file-modal-container {
   position: fixed;
-  right: 350px;
-  width: 1200px;
-  height: 760px;
+  right: 200px;
+  width: 1400px;
+  height: 800px;
   margin-top: -400px;
   background-color: white;
   border-radius: 2px;
@@ -63,9 +63,10 @@ export default {};
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.modal-header h3 {
+.modal-header h2 {
   margin-top: 10px;
   color: #008ecc;
+  font-weight: bolder;
 }
 
 .file-modal-body {

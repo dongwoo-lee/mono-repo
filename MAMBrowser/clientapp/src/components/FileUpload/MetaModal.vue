@@ -124,55 +124,37 @@
                     </button>
                   </div>
 
-                  <div v-show="this.MetaData.typeSelected == 'program'">
-                    <div style="height:50px;  margin-top : 10px;">
-                      <b-form-input
-                        class="editTask"
-                        v-model="MetaData.editor"
-                        :state="editorState"
-                        placeholder="제작자"
-                        trim
-                      />
-
-                      <button
-                        v-show="editorState"
-                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                  <transition name="fade">
+                    <div v-show="this.MetaData.typeSelected == 'program'">
+                      <b-form-group
+                        label="제작자"
+                        class="has-float-label"
+                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
                       >
-                        <b-icon
-                          icon="x-circle"
-                          font-scale="1"
-                          style="position:relative; top:0px; right:0px; z-index:999;"
-                          variant="secondary"
-                          @click="resetEditor"
-                        ></b-icon>
-                      </button>
+                        <common-vue-select
+                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+                          :suggestions="editorOptions"
+                          @inputEvent="inputEditor"
+                        ></common-vue-select>
+                      </b-form-group>
                     </div>
-                  </div>
+                  </transition>
 
-                  <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
-                    <div style="height:50px;  margin-top : 10px;">
-                      <b-form-input
-                        class="editTask"
-                        v-model="MetaData.editor"
-                        :state="editorState"
-                        placeholder="제작자"
-                        trim
-                      />
-
-                      <button
-                        v-show="editorState"
-                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                  <transition name="fade">
+                    <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
+                      <b-form-group
+                        label="제작자"
+                        class="has-float-label"
+                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
                       >
-                        <b-icon
-                          icon="x-circle"
-                          font-scale="1"
-                          style="position:relative; top:0px; right:0px; z-index:999;"
-                          variant="secondary"
-                          @click="resetEditor"
-                        ></b-icon>
-                      </button>
+                        <common-vue-select
+                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+                          :suggestions="editorOptions"
+                          @inputEvent="inputEditor"
+                        ></common-vue-select>
+                      </b-form-group>
                     </div>
-                  </div>
+                  </transition>
                 </div>
               </div>
             </div>
@@ -184,6 +166,7 @@
                 <program
                   v-if="this.MetaData.typeSelected == 'program'"
                   :proMediaOptions="this.mediaOptions"
+                  @proData="proData"
                 ></program>
                 <mcr-spot
                   v-if="this.MetaData.typeSelected == 'mcr-spot'"
@@ -198,13 +181,13 @@
         </h4>
 
         <h3 slot="footer">
-          <b-button
+          <!-- <b-button
             variant="outline-success"
             @click="log"
             style="margin-left:0px;"
           >
             <span class="label">확인</span>
-          </b-button>
+          </b-button> -->
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <b-button variant="outline-danger" @click="reset()">
               초기화
@@ -258,6 +241,8 @@ import CommonMetaModal from "../Modal/CommonMetaModal";
 import CommonFileFunction from "./CommonFileFunction";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
+import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
+import MixinBasicPage from "../../mixin/MixinBasicPage";
 import axios from "axios";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
@@ -278,13 +263,29 @@ export default {
   components: {
     CommonMetaModal,
     program,
-    mcrSpot
+    mcrSpot,
+    CommonVueSelect
   },
-  mixins: [CommonFileFunction],
+  mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
       cancel: false
     };
+  },
+  created() {
+    this.getEditorForPd();
+    axios.get("/api/Mastering/mastering-status").then(res => {
+      res.data.resultObject.data.forEach(e => {
+        var vueTableData = {
+          title: e.title,
+          type: this.getCategory(e.category),
+          user_id: e.regUserId,
+          date: e.regDtm,
+          step: e.workStatus
+        };
+        this.setVueTableData(vueTableData);
+      });
+    });
   },
   computed: {
     ...mapState("FileIndexStore", {
@@ -329,6 +330,30 @@ export default {
     }
   },
   methods: {
+    getCategory(v) {
+      if (v == 0) {
+        return "My 디스크";
+      } else if (v == 1) {
+        return "프로소재";
+      } else if (v == 2) {
+        return "프로그램";
+      } else if (v == 3) {
+        return "주조SPOT";
+      } else if (v == 4) {
+        return "부조SPOT";
+      } else if (v == 5) {
+        return "FILLER";
+      } else if (v == 6) {
+        return "취재물";
+      } else if (v == 7) {
+        return "고정소재";
+      } else if (v == 8) {
+        return "변동소재";
+      }
+    },
+    inputEditor(v) {
+      this.setEditor(v.id);
+    },
     log() {
       console.log(this.EventSelected);
       if (this.MetaData.typeSelected == "my-disk") {
@@ -360,6 +385,8 @@ export default {
     },
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
+      "setEditor",
+      "setVueTableData",
       "resetTitle",
       "resetMemo",
       "resetEditor",
@@ -420,6 +447,9 @@ export default {
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
       }
+    },
+    proData(v) {
+      this.ProgramGrid = v;
     },
     mcrData(v) {
       this.EventSelected = v;
