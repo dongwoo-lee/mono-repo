@@ -2,6 +2,15 @@ export default {
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
   },
+  setIsActive(state, payload) {
+    state.isActive = payload;
+  },
+  setProcessing(state, payload) {
+    state.processing = payload;
+  },
+  setFileUploading(state, payload) {
+    state.fileUploading = payload;
+  },
   setMetaModalTitle(state, payload) {
     state.MetaModalTitle = payload;
   },

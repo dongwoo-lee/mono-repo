@@ -25,9 +25,6 @@ export default {
     return {
       watch: "null",
       role: "",
-      processing: false,
-      fileUploading: false,
-      isActive: false,
       date: "",
       formatted: "",
       dateSelected: "",
@@ -44,7 +41,7 @@ export default {
       },
       ProgramSelected: [],
       EventSelected: [],
-      typeOptions: [{ value: "null", text: "소재 유형" }],
+
       mediaOptions: [],
       vueTableWidth: "195px",
       userFields: [
@@ -213,7 +210,10 @@ export default {
       MetaData: state => state.MetaData,
       connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
-      ProgramData: state => state.ProgramData
+      ProgramData: state => state.ProgramData,
+      isActive: state => state.isActive,
+      processing: state => state.processing,
+      fileUploading: state => state.fileUploading
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
@@ -241,13 +241,12 @@ export default {
     MetaData: {
       deep: true,
       handler(v) {
-        if (v.typeSelected == "program" || v.typeSelected == "mcr-spot") {
-          this.isActive = false;
-        } else {
-          this.isActive = true;
-        }
-
-        if (v.typeSelected == "program") {
+        if (v.typeSelected == "program" || v.typeSelected == "scr-spot") {
+          if (v.typeSelected == "program") {
+            this.setIsActive(false);
+          } else {
+            this.setIsActive(true);
+          }
           if (this.watch != v.typeSelected) {
             this.mediaOptions = [];
             this.resetMediaSelected();
@@ -262,6 +261,7 @@ export default {
             });
           }
         } else if (v.typeSelected == "mcr-spot") {
+          this.setIsActive(false);
           if (this.watch != v.typeSelected) {
             this.mediaOptions = [];
             axios.get("/api/categories/media/mcrspot").then(res => {
@@ -276,6 +276,7 @@ export default {
           }
         } else {
           this.watch = v.typeSelected;
+          this.setIsActive(true);
         }
       }
     }
@@ -288,6 +289,9 @@ export default {
       "setProgramData",
       "setEventData",
       "setProgramState",
+      "setIsActive",
+      "setProcessing",
+      "setFileUploading",
       "resetTitle",
       "resetMemo",
       "resetType",
@@ -296,8 +300,8 @@ export default {
       "resetEventData"
     ]),
     fileStateFalse() {
-      this.processing = false;
-      this.fileUploading = false;
+      this.setProcessing(false);
+      this.setFileUploading(false);
     },
     onRowClick(v) {
       if (this.MetaData.typeSelected == "program") {

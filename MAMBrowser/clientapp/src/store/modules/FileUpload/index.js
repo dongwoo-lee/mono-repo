@@ -5,6 +5,10 @@ import actions from "./actions.js";
 export default {
   namespaced: true,
   state: {
+    processing: false,
+    fileUploading: false,
+    isActive: false,
+    typeOptions: [{ value: "null", text: "소재 유형" }],
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
@@ -12,6 +16,7 @@ export default {
       title: "",
       memo: "",
       editor: "",
+      advertiser: "",
       mediaCD: "",
       categoryCD: "",
       typeSelected: "null",

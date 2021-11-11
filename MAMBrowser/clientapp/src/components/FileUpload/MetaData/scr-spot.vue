@@ -40,7 +40,6 @@
 
     <b-form-group label="매체" class="has-float-label">
       <b-form-select
-        :disabled="isActive"
         id="program-media"
         class="media-select"
         style=" width:200px; height:37px;"
@@ -96,19 +95,23 @@
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
+import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
-  // props: {
-  //   mcrMediaOptions: {
-  //     type: [],
-  //     default: []
-  //   }
-  // },
+  props: {
+    proMediaOptions: {
+      type: [],
+      default: []
+    }
+  },
   components: {
     CommonVueSelect
   },
-  mixins: [CommonFileFunction],
+  mixins: [CommonFileFunction, MixinBasicPage],
+  created() {
+    this.getEditorForPd();
+  },
   computed: {
     ...mapState("FileIndexStore", {
       MetaModalTitle: state => state.MetaModalTitle,
@@ -117,7 +120,10 @@ export default {
       connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
-      EventData: state => state.EventData
+      EventData: state => state.EventData,
+      isActive: state => state.isActive,
+      processing: state => state.processing,
+      fileUploading: state => state.fileUploading
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
@@ -127,6 +133,12 @@ export default {
       "metaValid"
     ]),
     ...mapGetters("user", ["getMenuGrpName"])
+  },
+  methods: {
+    ...mapMutations("FileIndexStore", ["setEditor"]),
+    inputEditor(v) {
+      this.setEditor(v.id);
+    }
   }
 };
 </script>

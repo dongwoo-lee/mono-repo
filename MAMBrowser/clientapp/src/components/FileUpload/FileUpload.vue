@@ -332,6 +332,7 @@
 
     <MetaModal
       @upload="upload"
+      @reset="reset"
       @cancel="fileUploadCancel"
       @close="MetaModalClose"
       :MetaModal="MetaModal"
@@ -448,6 +449,7 @@ export default {
     ...mapMutations("FileIndexStore", [
       "addLocalFiles",
       "resetLocalFiles",
+      "setFileUploading",
       "setMetaModalTitle",
       "setConnectionId",
       "setVueTableData",
@@ -490,7 +492,7 @@ export default {
               this.openFileModal();
               this.MetaModal = true;
               this.fileSelect = true;
-              this.fileUploading = true;
+              // this.setFileUploading(true);
             });
           } else {
             //TODO: 얼럿 창 예쁜 모달로 변경
@@ -535,7 +537,7 @@ export default {
       this.$fn.notify("primary", { message: "파일 업로드 성공" });
       this.fileState = "업로드 성공";
       this.percent = 0;
-      this.fileUploading = false;
+      this.setFileUploading(false);
       this.fileRemove();
       this.uploadRefresh();
     },

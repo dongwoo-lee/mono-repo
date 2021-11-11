@@ -119,25 +119,11 @@
                   </transition>
 
                   <!-- mcr-spot -->
-                  <transition name="fade">
-                    <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
-                      <b-form-group
-                        label="제작자"
-                        class="has-float-label"
-                        style="position:fixed; top:550px; left:490px; z-index:9999; font-size:16px;"
-                      >
-                        <common-vue-select
-                          style="font-size:14px; width:200px; border: 1px solid #008ecc;"
-                          :suggestions="editorOptions"
-                          @inputEvent="inputEditor"
-                        ></common-vue-select>
-                      </b-form-group>
-                    </div>
-                  </transition>
 
                   <!-- scr-spot -->
                   <scr-spot
                     v-if="this.MetaData.typeSelected == 'scr-spot'"
+                    :proMediaOptions="this.mediaOptions"
                   ></scr-spot>
 
                   <div style="height:50px;">
@@ -198,7 +184,7 @@
             <span class="label">확인</span>
           </b-button> -->
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
-            <b-button variant="outline-danger" @click="reset()">
+            <b-button variant="outline-danger" @click="resetEvent">
               초기화
             </b-button>
 
@@ -247,7 +233,7 @@
 
 <script>
 import CommonMetaModal from "../Modal/CommonMetaModal";
-import CommonFileFunction from "./CommonFileFunction";
+// import CommonFileFunction from "./CommonFileFunction";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
 import scrSpot from "./MetaData/scr-spot.vue";
@@ -277,14 +263,13 @@ export default {
     scrSpot,
     CommonVueSelect
   },
-  mixins: [CommonFileFunction, MixinBasicPage],
+  mixins: [MixinBasicPage],
   data() {
     return {
       cancel: false
     };
   },
   created() {
-    this.getEditorForPd();
     axios.get("/api/Mastering/mastering-status").then(res => {
       res.data.resultObject.data.forEach(e => {
         var vueTableData = {
@@ -305,7 +290,11 @@ export default {
       MetaData: state => state.MetaData,
       connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
-      ProgramData: state => state.ProgramData
+      ProgramData: state => state.ProgramData,
+      isActive: state => state.isActive,
+      processing: state => state.processing,
+      fileUploading: state => state.fileUploading,
+      typeOptions: state => state.typeOptions
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
@@ -322,17 +311,17 @@ export default {
   watch: {
     fileState(v) {
       if (v == "업로드 성공") {
-        this.fileUploading = false;
+        this.setFileUploading(false);
         this.MetaModalOff();
-        this.reset();
+        this.resetEvent();
       } else if (v == "리셋") {
         this.MetaModalOff();
-        this.reset();
+        this.resetEvent();
       }
     },
     MetaModal(v) {
       if (!v) {
-        this.reset();
+        this.resetEvent();
       } else {
         if (this.typeOptions.length == 1) {
           this.typeOptionsByRole(this.getMenuGrpName);
@@ -341,30 +330,6 @@ export default {
     }
   },
   methods: {
-    getCategory(v) {
-      if (v == 0) {
-        return "My 디스크";
-      } else if (v == 1) {
-        return "프로소재";
-      } else if (v == 2) {
-        return "프로그램";
-      } else if (v == 3) {
-        return "주조SPOT";
-      } else if (v == 4) {
-        return "부조SPOT";
-      } else if (v == 5) {
-        return "FILLER";
-      } else if (v == 6) {
-        return "취재물";
-      } else if (v == 7) {
-        return "고정소재";
-      } else if (v == 8) {
-        return "변동소재";
-      }
-    },
-    inputEditor(v) {
-      this.setEditor(v.id);
-    },
     log() {
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {
@@ -397,13 +362,44 @@ export default {
       "setUploaderCustomData",
       "setEditor",
       "setVueTableData",
+      "setProcessing",
+      "setFileUploading",
       "resetTitle",
       "resetMemo",
       "resetEditor",
       "resetType"
     ]),
+    resetEvent() {
+      this.$emit("reset");
+    },
+    getCategory(v) {
+      if (v == 0) {
+        return "My 디스크";
+      } else if (v == 1) {
+        return "프로소재";
+      } else if (v == 2) {
+        return "프로그램";
+      } else if (v == 3) {
+        return "주조SPOT";
+      } else if (v == 4) {
+        return "부조SPOT";
+      } else if (v == 5) {
+        return "FILLER";
+      } else if (v == 6) {
+        return "취재물";
+      } else if (v == 7) {
+        return "고정소재";
+      } else if (v == 8) {
+        return "변동소재";
+      }
+    },
+    inputEditor(v) {
+      this.setEditor(v.id);
+    },
     MetaModalOff() {
       if (this.processing || this.fileUploading) {
+        console.log(this.processing);
+        console.log(this.fileUploading);
         this.cancel = true;
         this.$emit("cancel");
       }
@@ -438,19 +434,19 @@ export default {
           };
         }
         this.setUploaderCustomData(data);
-        this.processing = true;
+        this.setProcessing(true);
         // this.verifyMeta({
         //   type: this.MetaData.typeSelected,
         //   title: this.MetaData.title,
         //   files: this.localFiles,
         //   categoryCD: this.MetaData.categoryCD
         // }).then(res => {
-        this.processing = false;
+        this.setProcessing(false);
         if (this.cancel) {
           this.cancel = false;
           return;
         } else {
-          this.fileUploading = true;
+          this.setFileUploading(true);
           this.$emit("upload");
         }
         // });

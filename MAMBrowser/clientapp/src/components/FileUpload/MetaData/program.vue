@@ -190,7 +190,10 @@ export default {
       MetaData: state => state.MetaData,
       connectionId: state => state.connectionId,
       vueTableData: state => state.vueTableData,
-      ProgramData: state => state.ProgramData
+      ProgramData: state => state.ProgramData,
+      isActive: state => state.isActive,
+      processing: state => state.processing,
+      fileUploading: state => state.fileUploading
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
