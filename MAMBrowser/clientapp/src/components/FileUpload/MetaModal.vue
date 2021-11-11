@@ -151,13 +151,15 @@
         </h4>
 
         <h3 slot="footer">
-          <b-button
+          <!-- 로그 버튼 -->
+          <!-- <b-button
             variant="outline-success"
             @click="log"
             style="margin-left:0px;"
           >
             <span class="label">확인</span>
-          </b-button>
+          </b-button> -->
+
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <b-button variant="outline-danger" @click="resetEvent">
               초기화
@@ -431,6 +433,7 @@ export default {
             onairTime: this.date
           };
         }
+        console.log(data);
         this.setUploaderCustomData(data);
         this.setProcessing(true);
         // this.verifyMeta({
