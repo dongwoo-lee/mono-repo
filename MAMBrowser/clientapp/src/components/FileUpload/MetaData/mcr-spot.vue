@@ -66,8 +66,9 @@
           id="program-media"
           class="media-select"
           style=" width:140px; height:37px;"
-          v-model="MetaData.mcrMediaSelected"
+          :value="mcrMedia"
           :options="fileMediaOptions"
+          @input="mediaChange"
         />
       </b-form-group>
       <b-button
@@ -148,13 +149,32 @@ import CommonFileFunction from "../CommonFileFunction";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import axios from "axios";
 export default {
   components: {
     CommonVueSelect
   },
   mixins: [CommonFileFunction, MixinBasicPage],
+  data() {
+    return {
+      mcrMedia: "A"
+    };
+  },
   created() {
+    this.reset();
     this.getEditorForPd();
+    this.resetFileMediaOptions();
+
+    axios.get("/api/categories/media/mcrspot").then(res => {
+      res.data.resultObject.data.forEach(e => {
+        this.setFileMediaOptions({
+          value: e.id,
+          text: e.name
+        });
+      });
+    });
+    this.mcrMedia = "A";
+    this.setMediaSelected("A");
   },
   computed: {
     ...mapState("FileIndexStore", {
@@ -184,6 +204,9 @@ export default {
     ...mapMutations("FileIndexStore", ["setEditor"]),
     inputEditor(v) {
       this.setEditor(v.id);
+    },
+    mediaChange(v) {
+      this.setMediaSelected(v);
     }
   }
 };

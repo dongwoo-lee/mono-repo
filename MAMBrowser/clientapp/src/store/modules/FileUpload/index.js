@@ -23,8 +23,7 @@ export default {
       mediaCD: "",
       categoryCD: "",
       typeSelected: "null",
-      proMediaSelected: "A",
-      mcrMediaSelected: "A",
+      mediaSelected: "A",
       duration: "",
       audioFormat: ""
     },

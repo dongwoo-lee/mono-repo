@@ -26,6 +26,9 @@ export default {
   setFileMediaOptions(state, payload) {
     state.fileMediaOptions.push(payload);
   },
+  setMediaSelected(state, payload) {
+    state.MetaData.mediaSelected = payload;
+  },
   setDuration(state, payload) {
     state.MetaData.duration = payload;
   },

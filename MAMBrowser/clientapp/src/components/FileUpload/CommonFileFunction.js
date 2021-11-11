@@ -228,25 +228,14 @@ export default {
       handler(v) {
         if (v.typeSelected == "program" || v.typeSelected == "scr-spot") {
           this.setIsActive(false);
+        } else if (v.typeSelected == "mcr-spot") {
+          this.setIsActive(false);
+        } else if (v.typeSelected == "static-spot") {
+          this.setIsActive(false);
 
           if (this.watch != v.typeSelected) {
             this.resetFileMediaOptions();
-            this.resetMediaSelected();
             axios.get("/api/categories/media").then(res => {
-              res.data.resultObject.data.forEach(e => {
-                this.setFileMediaOptions({
-                  value: e.id,
-                  text: e.name
-                });
-              });
-              this.watch = v.typeSelected;
-            });
-          }
-        } else if (v.typeSelected == "mcr-spot") {
-          this.setIsActive(false);
-          if (this.watch != v.typeSelected) {
-            this.resetFileMediaOptions();
-            axios.get("/api/categories/media/mcrspot").then(res => {
               res.data.resultObject.data.forEach(e => {
                 this.setFileMediaOptions({
                   value: e.id,
@@ -276,6 +265,7 @@ export default {
       "setProcessing",
       "setFileUploading",
       "setFileMediaOptions",
+      "setMediaSelected",
       "setProgramSelected",
       "setEventSelected",
       "resetDate",
@@ -313,7 +303,7 @@ export default {
       if (this.MetaData.typeSelected == "program") {
         axios
           .get(
-            `/api/categories/pgm-sch?media=${this.MetaData.proMediaSelected}&date=${date}`
+            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
           )
           .then(res => {
             var value = res.data.resultObject.data;
@@ -326,9 +316,7 @@ export default {
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.resetEventData();
         axios
-          .get(
-            `/api/Categories/mcr/spot?media=${this.MetaData.mcrMediaSelected}`
-          )
+          .get(`/api/Categories/mcr/spot?media=${this.MetaData.mediaSelected}`)
           .then(res => {
             this.setEventData(res.data.resultObject.data);
           });
@@ -399,8 +387,25 @@ export default {
       this.dateSelected = ctx.selectedYMD;
     },
     //#endregion
-
     reset() {
+      this.resetTitle();
+      this.resetMemo();
+      this.resetDate();
+      this.fileStateFalse();
+      this.resetProgramData();
+      this.resetProgramSelected();
+      this.resetEditor();
+      this.resetEventData();
+      this.resetEventSelected();
+      this.resetUsage();
+      this.resetAdvertiser();
+      this.watch = "";
+      this.fileSelect = false;
+      if (this.processing) {
+        this.$fn.notify("error", { message: "파일 업로드 취소" });
+      }
+    },
+    typeReset() {
       this.resetTitle();
       this.resetMemo();
       this.resetType();
@@ -413,8 +418,6 @@ export default {
       this.resetEventSelected();
       this.resetUsage();
       this.resetAdvertiser();
-      //reset editor, event
-      this.mediaOptions = [];
       this.watch = "";
       this.fileSelect = false;
       if (this.processing) {

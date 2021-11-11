@@ -96,7 +96,7 @@ export default {
             },
             set(v) {
                 if (!v) {
-                    this.reset();
+                    this.typeReset();
                     this.$emit('close');
                 }
             }

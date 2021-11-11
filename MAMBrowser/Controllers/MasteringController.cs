@@ -337,20 +337,6 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        [HttpPost("filler")]
-        public ActionResult<DTO_RESULT> Filler([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            result.ResultCode = RESUlT_CODES.SUCCESS;
-            return result;
-        }
-        [HttpPost("report")]
-        public ActionResult<DTO_RESULT> Report([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-            result.ResultCode = RESUlT_CODES.SUCCESS;
-            return result;
-        }
         [HttpPost("static-spot")]
         public ActionResult<DTO_RESULT> StaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {
@@ -365,6 +351,22 @@ namespace MAMBrowser.Controllers
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
+        [HttpPost("report")]
+        public ActionResult<DTO_RESULT> Report([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
+        }
+        [HttpPost("filler")]
+        public ActionResult<DTO_RESULT> Filler([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
+        }
+        
+       
         [HttpPost("pro")]
         public ActionResult<DTO_RESULT> Pro([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {

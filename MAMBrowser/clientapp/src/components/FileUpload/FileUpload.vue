@@ -516,7 +516,7 @@ export default {
     },
     MetaModalClose() {
       this.resetLocalFiles();
-      this.reset();
+      this.typeReset();
       this.percent = 0;
       this.MetaModal = false;
     },
@@ -524,7 +524,7 @@ export default {
       this.$fn.notify("error", { title: "파일 업로드 취소" });
       this.fileupload.abortUpload(0);
       this.resetLocalFiles();
-      this.reset();
+      this.typeReset();
       this.percent = 0;
       this.MetaModal = false;
     },

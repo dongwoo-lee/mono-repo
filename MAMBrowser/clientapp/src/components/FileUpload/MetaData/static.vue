@@ -9,7 +9,6 @@
         >
           <common-vue-select
             style="font-size:14px; width:200px; border: 1px solid #008ecc;"
-            deselectFromDropdown
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>
@@ -67,8 +66,7 @@
           id="program-media"
           class="media-select"
           style=" width:140px; height:37px;"
-          :value="this.proMedia"
-          @input="mediaChange"
+          v-model="MetaData.mcrMediaSelected"
           :options="fileMediaOptions"
         />
       </b-form-group>
@@ -81,36 +79,33 @@
       >
     </div>
     <div
-      v-show="this.MetaData.typeSelected == 'program'"
+      v-show="this.MetaData.typeSelected == 'mcr-spot'"
       style="position:absolute; width:550px; top:90px; height: 210px;
     border: 1px solid #008ecc;"
     >
       <!-- //TODO: Data Binding -->
       <DxDataGrid
-        name="proDxDataGrid"
-        v-show="this.ProgramData.eventName != ''"
+        name="mcrDxDataGrid"
+        v-show="this.EventData.id != ''"
         style="height:208px;"
-        :data-source="ProgramData"
+        :data-source="EventData"
         :selection="{ mode: 'single' }"
         :show-borders="true"
         :hover-state-enabled="true"
-        key-expr="productId"
+        key-expr="id"
         :allow-column-resizing="true"
         :column-auto-width="true"
         no-data-text="No Data"
         @row-click="onRowClick"
       >
-        <DxColumn data-field="eventName" caption="이벤트 명" />
-        <DxColumn :width="60" data-field="eventType" caption="타입" />
-        <DxColumn data-field="productId" caption="프로그램 ID" />
-        <DxColumn data-field="onairTime" caption="방송 시간" />
-        <DxColumn data-field="durationSec" caption="편성 분량" />
+        <DxColumn data-field="name" caption="이벤트 명" />
+        <DxColumn data-field="id" caption="이벤트 ID" />
       </DxDataGrid>
     </div>
     <!-- 프로그램 -->
     <div
-      v-show="!isActive && this.ProgramSelected.eventName != ''"
-      style="width: 550px; height:140px; margin-top:280px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
+      v-show="!isActive && EventSelected.id != ''"
+      style="width: 550px; height:110px; margin-top:280px; padding-top:10px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
     >
       <div style="width:180px; float:left;">
         <b-form-group
@@ -121,7 +116,7 @@
           <b-form-input
             style="width:180px;"
             class="editTask"
-            v-model="this.ProgramSelected.eventName"
+            v-model="EventSelected.name"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -130,55 +125,14 @@
       </div>
       <div style="width:170px; margin-left:20px; float:left;">
         <b-form-group
-          label="프로그램 ID"
+          label="이벤트 ID"
           class="has-float-label"
           style="margin-top:20px;"
         >
           <b-form-input
             style="width:170px;"
             class="editTask"
-            v-model="this.ProgramSelected.productId"
-            readonly
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-      <div style="width:120px; margin-left:400px;">
-        <b-form-group
-          label="이벤트 타입"
-          class="has-float-label"
-          style="margin-top:20px;"
-        >
-          <b-form-input
-            style="width:120px;"
-            class="editTask"
-            v-model="this.ProgramSelected.eventType"
-            readonly
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-
-      <div style="width:200px; float:left;">
-        <b-form-group label="방송 시간" class="has-float-label">
-          <b-form-input
-            style="width:200px;"
-            class="editTask"
-            v-model="this.ProgramSelected.onairTime"
-            readonly
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-      <div style="width:200px; margin-left:20px; float:left;">
-        <b-form-group label="편성 분량" class="has-float-label">
-          <b-form-input
-            style="width:120px;"
-            class="editTask"
-            v-model="this.ProgramSelected.durationSec"
+            v-model="EventSelected.id"
             readonly
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -191,34 +145,16 @@
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
+import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import axios from "axios";
 export default {
   components: {
     CommonVueSelect
   },
   mixins: [CommonFileFunction, MixinBasicPage],
-  data() {
-    return {
-      proMedia: "A"
-    };
-  },
   created() {
-    this.reset();
     this.getEditorForPd();
-    this.resetFileMediaOptions();
-    axios.get("/api/categories/media").then(res => {
-      res.data.resultObject.data.forEach(e => {
-        this.setFileMediaOptions({
-          value: e.id,
-          text: e.name
-        });
-      });
-    });
-    this.proMedia = "A";
-    this.setMediaSelected("A");
   },
   computed: {
     ...mapState("FileIndexStore", {
@@ -227,7 +163,7 @@ export default {
       MetaData: state => state.MetaData,
       vueTableData: state => state.vueTableData,
       ProgramData: state => state.ProgramData,
-      ProgramSelected: state => state.ProgramSelected,
+      EventData: state => state.EventData,
       isActive: state => state.isActive,
       processing: state => state.processing,
       fileUploading: state => state.fileUploading
@@ -248,9 +184,6 @@ export default {
     ...mapMutations("FileIndexStore", ["setEditor"]),
     inputEditor(v) {
       this.setEditor(v.id);
-    },
-    mediaChange(v) {
-      this.setMediaSelected(v);
     }
   }
 };

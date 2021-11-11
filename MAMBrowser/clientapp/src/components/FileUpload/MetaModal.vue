@@ -151,16 +151,15 @@
         </h4>
 
         <h3 slot="footer">
-          <!-- 로그 버튼 -->
-          <!-- <b-button
-            variant="outline-success"
-            @click="log"
-            style="margin-left:0px;"
-          >
-            <span class="label">확인</span>
-          </b-button> -->
-
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
+            <!-- 로그 버튼 -->
+            <b-button
+              variant="outline-success"
+              @click="log"
+              style="margin-left:-80px;"
+            >
+              <span class="label">확인</span>
+            </b-button>
             <b-button variant="outline-danger" @click="resetEvent">
               초기화
             </b-button>
@@ -319,7 +318,7 @@ export default {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
           memo: this.MetaData.memo,
-          media: this.MetaData.proMediaSelected,
+          media: this.MetaData.mediaSelected,
           productId: this.ProgramSelected.productId,
           onairTime: this.ProgramSelected.onairTime,
           editor: this.MetaData.editor
@@ -328,7 +327,7 @@ export default {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
           memo: this.MetaData.memo,
-          media: this.MetaData.mcrMediaSelected,
+          media: this.MetaData.mediaSelected,
           productId: this.EventSelected.id,
           onairTime: this.date,
           editor: this.MetaData.editor
@@ -341,7 +340,7 @@ export default {
           usage: this.MetaData.usage,
           advertiser: this.MetaData.advertiser,
           editor: this.MetaData.editor,
-          media: this.MetaData.proMediaSelected,
+          media: this.MetaData.mediaSelected,
           onairTime: this.date
         };
       }
@@ -407,7 +406,7 @@ export default {
           var data = {
             memo: this.MetaData.memo,
             UserId: sessionStorage.getItem("user_id"),
-            media: this.MetaData.proMediaSelected,
+            media: this.MetaData.mediaSelected,
             productId: this.ProgramSelected.productId,
             onairTime: this.ProgramSelected.onairTime,
             editor: this.MetaData.editor
@@ -416,7 +415,7 @@ export default {
           var data = {
             memo: this.MetaData.memo,
             UserId: sessionStorage.getItem("user_id"),
-            media: this.MetaData.mcrMediaSelected,
+            media: this.MetaData.mediaSelected,
             productId: this.EventSelected,
             onairTime: this.date,
             editor: this.MetaData.editor
@@ -429,7 +428,7 @@ export default {
             usage: this.MetaData.usage,
             advertiser: this.MetaData.advertiser,
             editor: this.MetaData.editor,
-            media: this.MetaData.proMediaSelected,
+            media: this.MetaData.mediaSelected,
             onairTime: this.date
           };
         }
