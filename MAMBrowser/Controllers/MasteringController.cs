@@ -305,25 +305,39 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="startDt"></param>
-        /// <param name="endDt"></param>
-        /// <param name="workStatus"></param>
-        /// <param name="bll"></param>
-        /// <returns></returns>
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="bll"></param>
+      /// <returns></returns>
         [HttpGet("mastering-status")]
-        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus([FromQuery] string startDt, [FromQuery] string endDt, [FromQuery] string workStatus, [FromServices] APIBll bll)
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus([FromServices] APIBll bll)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
             result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
-            result.ResultObject.Data = bll.GetMasteringStatus(startDt, endDt, workStatus);
+            result.ResultObject.Data = bll.GetMasteringStatus();
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
+        }
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="startDt"></param>
+      /// <param name="endDt"></param>
+      /// <param name="bll"></param>
+      /// <returns></returns>
+        [HttpGet("mastering-logs")]
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus2([FromQuery] string startDt, [FromQuery] string endDt, [FromServices] APIBll bll)
+        {
+            
+            DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
+            result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
+            result.ResultObject.Data = bll.GetMasteringLogs(startDt, endDt);
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
 
-       
+
         void CheckFileExtensionValid(string fileName)
         {
             fileName = fileName.ToLower();
