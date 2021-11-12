@@ -34,7 +34,8 @@
             <b-input-group-append>
               <b-form-datepicker
                 style="height:33px;"
-                v-model="fileSDate"
+                :value="fileSDate"
+                @input="eventSInput"
                 button-only
                 button-variant="outline-primary"
                 right
@@ -61,7 +62,8 @@
             <b-input-group-append>
               <b-form-datepicker
                 style="height:33px;"
-                v-model="fileEDate"
+                :value="fileEDate"
+                @input="eventEInput"
                 button-only
                 button-variant="outline-primary"
                 right
@@ -88,7 +90,11 @@ export default {
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
-    return { staticMedia: "" };
+    return {
+      staticMedia: "",
+      sdate: "",
+      edate: ""
+    };
   },
   created() {
     this.reset();
@@ -104,6 +110,45 @@ export default {
     });
     this.staticMedia = "A";
     this.setMediaSelected(this.staticaMedia);
+
+    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+
+    console.log(today);
+    this.edate = today;
+    this.setFileEDate(today);
+
+    var newDate = new Date();
+    var dayOfMonth = newDate.getDate();
+    newDate.setDate(dayOfMonth - 14);
+    newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+
+    this.sdate = newDate;
+    this.setFileSDate(newDate);
+  },
+  watch: {
+    sdate() {
+      console.log(this.sdate);
+      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+      const replaceAllFileEDate = this.edate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다."
+        });
+      }
+    },
+    edate() {
+      console.log(this.edate);
+      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+      const replaceAllFileEDate = this.edate.replace(/-/g, "");
+      if (replaceAllFileEDate < replaceAllFileSDate) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다."
+        });
+      }
+    }
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -112,6 +157,72 @@ export default {
     },
     changeMedia(v) {
       this.setMediaSelected(v);
+    },
+    eventSInput(value) {
+      this.sdate = value;
+      this.setFileSDate(value);
+    },
+    eventEInput(value) {
+      this.edate = value;
+      this.setFileEDate(value);
+    },
+    onsInput(event) {
+      if (event.target.value != null) {
+        const targetValue = event.target.value;
+        if (targetValue == "") {
+          this.sdate = "";
+          this.resetFileSDate();
+          return;
+        }
+        const replaceAllTargetValue = targetValue.replace(/-/g, "");
+        if (!isNaN(replaceAllTargetValue)) {
+          if (replaceAllTargetValue.length === 8) {
+            const convertDate = this.convertDateSTH(replaceAllTargetValue);
+            this.sdate = convertDate;
+            this.setFileSDate(convertDate);
+          }
+        } else if (targetValue == "-") {
+          const replaceAllTargetValue = targetValue.replace(/-/g, "");
+          if (replaceAllTargetValue.length === 8) {
+            const convertDate = this.convertDateSTH(replaceAllTargetValue);
+            this.sdate = convertDate;
+            this.setFileSDate(convertDate);
+          }
+        } else {
+          this.sdate = "";
+          this.resetFileSDate();
+          this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+        }
+      }
+    },
+    oneInput(event) {
+      if (event.target.value != null) {
+        const targetValue = event.target.value;
+        if (targetValue == "") {
+          this.edate = "";
+          this.resetFileEDate();
+          return;
+        }
+        const replaceAllTargetValue = targetValue.replace(/-/g, "");
+        if (!isNaN(replaceAllTargetValue)) {
+          if (replaceAllTargetValue.length === 8) {
+            const convertDate = this.convertDateSTH(replaceAllTargetValue);
+            this.edate = convertDate;
+            this.setFileEDate(convertDate);
+          }
+        } else if (targetValue == "-") {
+          const replaceAllTargetValue = targetValue.replace(/-/g, "");
+          if (replaceAllTargetValue.length === 8) {
+            const convertDate = this.convertDateSTH(replaceAllTargetValue);
+            this.edate = convertDate;
+            this.setFileEDate(convertDate);
+          }
+        } else {
+          this.edate = "";
+          this.resetFileEDate();
+          this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+        }
+      }
     }
   }
 };

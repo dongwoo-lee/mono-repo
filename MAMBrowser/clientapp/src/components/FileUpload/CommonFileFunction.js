@@ -208,6 +208,8 @@ export default {
       "titleState",
       "memoState",
       "editorState",
+      "usageState",
+      "advertiserState",
       "metaValid"
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),
@@ -248,6 +250,8 @@ export default {
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setDate",
+      "setFileSDate",
+      "setFileEDate",
       "setProgramData",
       "setEventData",
       "setProgramState",
@@ -259,6 +263,8 @@ export default {
       "setProgramSelected",
       "setEventSelected",
       "resetDate",
+      "resetFileSDate",
+      "resetFileEDate",
       "resetTitle",
       "resetMemo",
       "resetEditor",

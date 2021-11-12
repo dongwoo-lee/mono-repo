@@ -348,7 +348,13 @@ export default {
           media: this.MetaData.mediaSelected,
           onairTime: this.date
         };
+      } else if (this.MetaData.typeSelected == "static-spot") {
+        var data = {
+          SDate: this.fileSDate,
+          EDate: this.fileEDate
+        };
       }
+
       console.log(data);
     },
     ...mapMutations("FileIndexStore", [

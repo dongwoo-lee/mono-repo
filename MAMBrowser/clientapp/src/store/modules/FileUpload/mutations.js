@@ -5,6 +5,12 @@ export default {
   setDate(state, payload) {
     state.date = payload;
   },
+  setFileSDate(state, payload) {
+    state.fileSDate = payload;
+  },
+  setFileEDate(state, payload) {
+    state.fileEDate = payload;
+  },
   setIsActive(state, payload) {
     state.isActive = payload;
   },
@@ -55,6 +61,12 @@ export default {
   },
   resetDate(state) {
     state.date = "";
+  },
+  resetFileSDate(state) {
+    state.fileSDate = "";
+  },
+  resetFileEDate(state) {
+    state.fileEDate = "";
   },
   resetLocalFiles(state) {
     state.localFiles = [];
