@@ -24,6 +24,8 @@ namespace MAMBrowser.DTO
         }
         public string FileToken { get; set; }
         public bool ExistFile { get; set; }
-  
+
+        public int IntDuration { get; set; }
+
     }
 }

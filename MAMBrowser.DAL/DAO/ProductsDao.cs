@@ -82,7 +82,7 @@ namespace MAMBrowser.DAL
 
             DTO_RESULT_PAGE_LIST <DTO_PGM_INFO> returnData = new DTO_RESULT_PAGE_LIST<DTO_PGM_INFO>();
             var builder = new SqlBuilder();
-            var querySource = builder.AddTemplate(@"SELECT MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE
+            var querySource = builder.AddTemplate(@"SELECT MEDIANAME, EVENTNAME, ONAIRDATE, ONAIRTIME, STATENAME, MILLISEC, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE, LENGTH
                      FROM
                      M30_VW_PROGRAM /**where**/");
             var param = new {
@@ -142,7 +142,8 @@ namespace MAMBrowser.DAL
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Define.DTM19),
                     ReqCompleteDtm = row.REQTIME != null ? ((DateTime)row.REQTIME).ToString(Define.DTM19) : null,
-                    FilePath = row.MASTERFILE
+                    FilePath = row.MASTERFILE,
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -171,7 +172,7 @@ namespace MAMBrowser.DAL
                 LAST_NO = lastNo,
             });
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_SPOT_SUB /**where**/");
-            builder.Select("MEDIA, MEDIANAME, SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME");
+            builder.Select("MEDIA, MEDIANAME, SPOTNAME, CODENAME, MILLISEC, EDITFORMAT, ONAIRDATE, EVENTNAME, MASTERTIME, MASTERFILE, EDITOR, EDITORNAME, EDITTIME, LENGTH");
             builder.Where("MEDIA=:MEDIA");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(name))
@@ -232,6 +233,7 @@ namespace MAMBrowser.DAL
                     FilePath = row.MASTERFILE,
                     EditorName = row.EDITORNAME,
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Define.DTM19),
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -261,7 +263,7 @@ namespace MAMBrowser.DAL
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_REPORT /**where**/");
-            builder.Select("REPORTNAME, CODENAME, REPORTER, PRODUCTID, EVENTNAME, ONAIRDATE, MILLISEC, EDITFORMAT, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE");
+            builder.Select("REPORTNAME, CODENAME, REPORTER, PRODUCTID, EVENTNAME, ONAIRDATE, MILLISEC, EDITFORMAT, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE, LENGTH");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(cate))
             {
@@ -325,6 +327,7 @@ namespace MAMBrowser.DAL
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Define.DTM19),
                     MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Define.DTM19),
                     FilePath = row.MASTERFILE,
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -354,7 +357,7 @@ namespace MAMBrowser.DAL
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_PROAUDIOFILE /**where**/");
-            builder.Select("AUDIOID, AUDIONAME, CODENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, TYPENAME, MASTERFILE");
+            builder.Select("AUDIOID, AUDIONAME, CODENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, TYPENAME, MASTERFILE, LENGTH");
             builder.Where("(MASTERTIME >= :START_DT AND MASTERTIME <=  TO_DATE(:END_DT,'YYYYMMDD')+1 )");
             //if (!string.IsNullOrEmpty(media))  //DB단 매체 필드가 없어서 조건으로 넣을 수 없음.
             //{
@@ -423,6 +426,7 @@ namespace MAMBrowser.DAL
                     MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Define.DTM19),
                     ProType = row.TYPENAME,
                     FilePath = row.MASTERFILE,
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -521,6 +525,7 @@ namespace MAMBrowser.DAL
                     Length = row.CLIPSEC,
                     FilePath = row.MASTERFILE,
                     Format = "",
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -631,7 +636,8 @@ namespace MAMBrowser.DAL
                     CodingUserName = row.REGISTERNAME,
                     CodingDT = row.REGISTDATE,
                     Format = row.FORMAT,
-                    FilePath = row.MASTERFILE
+                    FilePath = row.MASTERFILE,
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -661,7 +667,7 @@ namespace MAMBrowser.DAL
             });
 
             var querySource = builder.AddTemplate(@"SELECT /**select**/ FROM M30_VW_SPOT_MAIN /**where**/");
-            builder.Select(@"MEDIANAME, SPOTID, SPOTNAME, ONAIRDATE, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE");
+            builder.Select(@"MEDIANAME, SPOTID, SPOTNAME, ONAIRDATE, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERFILE, LENGTH");
             builder.Where("(ONAIRDATE >= :START_DT AND ONAIRDATE <= :END_DT)");
             if (!string.IsNullOrEmpty(media))
             {
@@ -712,6 +718,7 @@ namespace MAMBrowser.DAL
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Define.DTM19),
                     ReqCompleteDtm = ((DateTime)row.REQTIME).ToString(Define.DTM19),
                     FilePath = row.MASTERFILE,
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -739,7 +746,7 @@ namespace MAMBrowser.DAL
             });
 
             var querySource = builder.AddTemplate($"SELECT /**select**/ FROM {viewName} /**where**/");
-            builder.Select(@"FILLERID, FILLERNAME, CODEID, CODENAME, ENDDATE, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE");
+            builder.Select(@"FILLERID, FILLERNAME, CODEID, CODENAME, ENDDATE, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, MASTERTIME, MASTERFILE, LENGTH");
             builder.Where("ENDDATE >= :BRD_DT");
             if (!string.IsNullOrEmpty(cate))
             {
@@ -795,6 +802,7 @@ namespace MAMBrowser.DAL
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Define.DTM19),
                     MasteringDtm = row.MASTERTIME == null ? "" : ((DateTime)row.MASTERTIME).ToString(Define.DTM19),
                     FilePath = row.MASTERFILE,
+                    IntDuration = row.LENGTH
                 };
             });
 
@@ -824,7 +832,7 @@ namespace MAMBrowser.DAL
             });
 
             var querySource = builder.AddTemplate($"SELECT /**select**/ FROM M30_VW_FILLER_TIME /**where**/");
-            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, ONAIRDATE, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE");
+            builder.Select(@"MEDIA, MEDIANAME, SPOTID, SPOTNAME, ONAIRDATE, STARTDATE, ENDDATE, STATEID, STATENAME, MILLISEC, EDITFORMAT, EDITOR, EDITORNAME, EDITTIME, REQTIME, MASTERTIME, MASTERFILE, LENGTH");
             builder.Where("MEDIA=:MEDIA");
             builder.Where(":START_DT <= ONAIRDATE AND ONAIRDATE <= :END_DT");
             if (!string.IsNullOrEmpty(cate))
@@ -887,7 +895,8 @@ namespace MAMBrowser.DAL
                     EditDtm = ((DateTime)row.EDITTIME).ToString(Define.DTM19),
                     MasteringDtm = row.MASTERTIME != null ? ((DateTime)row.MASTERTIME).ToString(Define.DTM19) : null,
                     FilePath = row.MASTERFILE,
-                    FileName = Path.GetFileName(row.MASTERFILE)
+                    FileName = Path.GetFileName(row.MASTERFILE),
+                    IntDuration = row.LENGTH
                 };
             });
 
