@@ -98,8 +98,9 @@ export default {
   },
   created() {
     this.reset();
-    this.getEditorForPd();
-    this.resetFileMediaOptions();
+    this.getEditorForPd(); //제작자
+    this.resetFileMediaOptions(); //매체 초기화
+    //매체 생성
     axios.get("/api/categories/media").then(res => {
       res.data.resultObject.data.forEach(e => {
         this.setFileMediaOptions({
@@ -108,18 +109,17 @@ export default {
         });
       });
     });
-    this.staticMedia = "A";
-    this.setMediaSelected(this.staticaMedia);
+    this.staticMedia = "A"; //매체 초기 값 설정
+    this.setMediaSelected(this.staticaMedia); //매체 초기값 store 설정
 
+    // 시작/종료일 초기값 설정
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-
-    console.log(today);
     this.edate = today;
     this.setFileEDate(today);
 
     var newDate = new Date();
     var dayOfMonth = newDate.getDate();
-    newDate.setDate(dayOfMonth - 14);
+    newDate.setDate(dayOfMonth - 7);
     newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
 
     this.sdate = newDate;
@@ -127,7 +127,6 @@ export default {
   },
   watch: {
     sdate() {
-      console.log(this.sdate);
       const replaceAllFileSDate = this.sdate.replace(/-/g, "");
       const replaceAllFileEDate = this.edate.replace(/-/g, "");
       if (
@@ -140,7 +139,6 @@ export default {
       }
     },
     edate() {
-      console.log(this.edate);
       const replaceAllFileSDate = this.sdate.replace(/-/g, "");
       const replaceAllFileEDate = this.edate.replace(/-/g, "");
       if (replaceAllFileEDate < replaceAllFileSDate) {
