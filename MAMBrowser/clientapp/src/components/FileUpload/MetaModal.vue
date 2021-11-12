@@ -54,25 +54,25 @@
                   trim
                 />
               </div>
+              <div style="width:300px;">
+                <h3 style="color:#008ECC;">
+                  소재 유형
+                </h3>
+                <b-form-select
+                  style="width:350px;"
+                  id="filetype"
+                  v-model="MetaData.typeSelected"
+                  :options="typeOptions"
+                  :state="typeState"
+                  @change="resetMemo"
+                  required
+                ></b-form-select>
+              </div>
             </div>
+
             <div :class="[isActive ? 'date-modal' : 'file-modal']">
               <div>
                 <div style="position:relative; ">
-                  <div style="width:300px; height:80px;  margin-bottom:10px;">
-                    <h3 style="color:#008ECC;">
-                      소재 유형
-                    </h3>
-                    <b-form-select
-                      style="width:350px;"
-                      id="filetype"
-                      v-model="MetaData.typeSelected"
-                      :options="typeOptions"
-                      :state="typeState"
-                      @change="resetMemo"
-                      required
-                    ></b-form-select>
-                  </div>
-
                   <h3 style="color:#008ECC; ">
                     메타 데이터
                   </h3>
@@ -100,31 +100,34 @@
                         ></b-icon>
                       </button>
                     </div>
-                  </div>
 
-                  <div style="height:50px;">
-                    <b-form-input
-                      class="editTask"
-                      v-model="MetaData.memo"
-                      :state="memoState"
-                      aria-describedby="input-live-help input-live-feedback"
-                      placeholder="설명"
-                      trim
-                    />
+                    <div style="height:50px;">
+                      <b-form-input
+                        class="editTask"
+                        v-model="MetaData.memo"
+                        :state="memoState"
+                        aria-describedby="input-live-help input-live-feedback"
+                        placeholder="설명"
+                        trim
+                      />
 
-                    <button
-                      v-show="memoState"
-                      style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
-                    >
-                      <b-icon
-                        icon="x-circle"
-                        font-scale="1"
-                        style="position:relative; top:0px; right:0px; z-index:999;"
-                        variant="secondary"
-                        @click="resetMemo"
-                      ></b-icon>
-                    </button>
+                      <button
+                        v-show="memoState"
+                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                      >
+                        <b-icon
+                          icon="x-circle"
+                          font-scale="1"
+                          style="position:relative; top:0px; right:0px; z-index:999;"
+                          variant="secondary"
+                          @click="resetMemo"
+                        ></b-icon>
+                      </button>
+                    </div>
                   </div>
+                  <scr-spot
+                    v-if="this.MetaData.typeSelected == 'scr-spot'"
+                  ></scr-spot>
                 </div>
               </div>
             </div>
@@ -142,12 +145,14 @@
                   v-if="this.MetaData.typeSelected == 'mcr-spot'"
                 ></mcr-spot>
                 <!-- scr-spot -->
-                <scr-spot
-                  v-if="this.MetaData.typeSelected == 'scr-spot'"
-                ></scr-spot>
+
                 <static-spot
                   v-if="this.MetaData.typeSelected == 'static-spot'"
                 ></static-spot>
+                <var-spot v-if="this.MetaData.typeSelected == 'var-spot'">
+                </var-spot>
+                <report v-if="this.MetaData.typeSelected == 'report'"> </report>
+                <filler v-if="this.MetaData.typeSelected == 'filler'"></filler>
               </div>
             </transition>
           </div>
@@ -212,12 +217,15 @@
 
 <script>
 import CommonMetaModal from "../Modal/CommonMetaModal";
+import MixinBasicPage from "../../mixin/MixinBasicPage";
+import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
 import scrSpot from "./MetaData/scr-spot.vue";
 import staticSpot from "./MetaData/static-spot.vue";
-import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
-import MixinBasicPage from "../../mixin/MixinBasicPage";
+import varSpot from "./MetaData/var-spot.vue";
+import report from "./MetaData/coverage.vue";
+import filler from "./MetaData/filler";
 import axios from "axios";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
@@ -241,7 +249,10 @@ export default {
     mcrSpot,
     scrSpot,
     staticSpot,
-    CommonVueSelect
+    CommonVueSelect,
+    varSpot,
+    report,
+    filler
   },
   mixins: [MixinBasicPage],
   data() {
@@ -267,6 +278,8 @@ export default {
     ...mapState("FileIndexStore", {
       MetaModalTitle: state => state.MetaModalTitle,
       date: state => state.date,
+      fileSDate: state => state.fileSDate,
+      fileEDate: state => state.fileEDate,
       localFiles: state => state.localFiles,
       MetaData: state => state.MetaData,
       vueTableData: state => state.vueTableData,
@@ -322,36 +335,41 @@ export default {
       } else if (this.MetaData.typeSelected == "program") {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
           media: this.MetaData.mediaSelected,
           productId: this.ProgramSelected.productId,
           onairTime: this.ProgramSelected.onairTime,
-          editor: this.MetaData.editor
+          editor: this.MetaData.editor,
+          memo: this.MetaData.memo
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
           media: this.MetaData.mediaSelected,
           productId: this.EventSelected.id,
           onairTime: this.date,
-          editor: this.MetaData.editor
+          editor: this.MetaData.editor,
+          memo: this.MetaData.memo,
+          advertiser: this.MetaData.advertiser
         };
       } else if (this.MetaData.typeSelected == "scr-spot") {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
           memo: this.MetaData.memo,
-          usage: this.MetaData.usage,
           advertiser: this.MetaData.advertiser,
           editor: this.MetaData.editor,
-          media: this.MetaData.mediaSelected,
-          onairTime: this.date
+          media: this.MetaData.mediaSelected
         };
       } else if (this.MetaData.typeSelected == "static-spot") {
         var data = {
+          UserId: sessionStorage.getItem("user_id"),
+          media: this.MetaData.mediaSelected,
+          productId: this.EventSelected.id,
           SDate: this.fileSDate,
-          EDate: this.fileEDate
+          EDate: this.fileEDate,
+          editor: this.MetaData.editor,
+          memo: this.MetaData.memo,
+          advertiser: this.MetaData.advertiser
         };
       }
 
@@ -436,11 +454,15 @@ export default {
             UserId: sessionStorage.getItem("user_id"),
             title: this.MetaData.title,
             memo: this.MetaData.memo,
-            usage: this.MetaData.usage,
             advertiser: this.MetaData.advertiser,
             editor: this.MetaData.editor,
-            media: this.MetaData.mediaSelected,
-            onairTime: this.date
+            media: this.MetaData.mediaSelected
+          };
+        } else if (this.MetaData.typeSelected == "static-spot") {
+          var data = {
+            SDate: this.fileSDate,
+            EDate: this.fileEDate,
+            media: this.MetaData.mediaSelected
           };
         }
         console.log(data);

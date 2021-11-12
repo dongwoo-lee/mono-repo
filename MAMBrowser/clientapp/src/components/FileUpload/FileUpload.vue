@@ -580,7 +580,6 @@ export default {
 @import "./FileUploadCSS.css";
 </style>
 <style scoped>
-/* //TODO: vueTable height 조절 */
 .myTableHeader {
   margin-left: 100px !important;
   height: 400px !important;

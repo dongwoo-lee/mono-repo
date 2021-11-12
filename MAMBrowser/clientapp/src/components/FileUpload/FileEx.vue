@@ -264,7 +264,6 @@
                     >
                   </div>
                   <div v-show="isActive" class="data-grid-div">
-                    <!-- //TODO: Data Binding -->
                     <DxDataGrid
                       :data-source="this.vtData"
                       :selection="{ mode: 'single' }"
@@ -944,7 +943,6 @@ export default {
           this.fileselect = true;
           this.fileuploading = true;
         } else {
-          //TODO: 얼럿 창 예쁜 모달로 변경
           alert("업로드 할 수 없는 파일 형식입니다.");
           this.fileupload.removeFile(0);
           this.fileselect = false;

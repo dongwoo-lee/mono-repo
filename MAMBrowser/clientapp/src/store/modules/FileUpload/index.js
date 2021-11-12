@@ -10,6 +10,8 @@ export default {
     isActive: false,
     typeOptions: [{ value: "null", text: "소재 유형" }],
     fileMediaOptions: [],
+    timeToneOptions: [],
+    reqStatusOptions: [],
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
@@ -26,6 +28,8 @@ export default {
       categoryCD: "",
       typeSelected: "null",
       mediaSelected: "A",
+      timeToneSelected: "TU",
+      reqStatusSelected: "R",
       duration: "",
       audioFormat: ""
     },

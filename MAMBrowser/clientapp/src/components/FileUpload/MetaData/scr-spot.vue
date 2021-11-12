@@ -1,43 +1,5 @@
 <template>
   <div>
-    <b-form-group
-      label="방송일"
-      class="has-float-label"
-      style="margin-top:20px; margin-bottom:0px;"
-    >
-      <b-input-group class="mb-3" style="width:300px; float:left;">
-        <input
-          id="dateinput"
-          type="text"
-          class="form-control input-picker date-input"
-          :value="date"
-          @input="onInput"
-        />
-        <b-input-group-append>
-          <b-form-datepicker
-            v-model="date"
-            button-only
-            button-variant="outline-primary"
-            right
-            aria-controls="example-input"
-            @context="onContext"
-          ></b-form-datepicker>
-        </b-input-group-append>
-      </b-input-group>
-    </b-form-group>
-    <button
-      v-show="!isActive"
-      style="position:absolute; right:330px; top:50px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
-    >
-      <b-icon
-        icon="x-circle"
-        font-scale="1"
-        style="position:absolute; z-index:9999;"
-        variant="secondary"
-        @click="resetDate"
-      ></b-icon>
-    </button>
-
     <b-form-group label="매체" class="has-float-label">
       <b-form-select
         id="program-media"
@@ -86,28 +48,6 @@
     <div style="height:50px;">
       <b-form-input
         class="editTask"
-        v-model="MetaData.usage"
-        :state="usageState"
-        aria-describedby="input-live-help input-live-feedback"
-        placeholder="사용처 명"
-        trim
-      />
-      <button
-        v-show="usageState"
-        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
-      >
-        <b-icon
-          icon="x-circle"
-          font-scale="1"
-          style="position:relative; top:0px; right:0px; z-index:999;"
-          variant="secondary"
-          @click="resetUsage"
-        ></b-icon>
-      </button>
-    </div>
-    <div style="height:50px;">
-      <b-form-input
-        class="editTask"
         v-model="MetaData.advertiser"
         :state="advertiserState"
         aria-describedby="input-live-help input-live-feedback"
@@ -124,6 +64,29 @@
           style="position:relative; top:0px; right:0px; z-index:999;"
           variant="secondary"
           @click="resetAdvertiser"
+        ></b-icon>
+      </button>
+    </div>
+    <div style="height:50px;">
+      <b-form-input
+        class="editTask"
+        v-model="MetaData.memo"
+        :state="memoState"
+        aria-describedby="input-live-help input-live-feedback"
+        placeholder="설명"
+        trim
+      />
+
+      <button
+        v-show="memoState"
+        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+      >
+        <b-icon
+          icon="x-circle"
+          font-scale="1"
+          style="position:relative; top:0px; right:0px; z-index:999;"
+          variant="secondary"
+          @click="resetMemo"
         ></b-icon>
       </button>
     </div>
@@ -149,7 +112,8 @@ export default {
   created() {
     this.getEditorForPd();
     this.resetFileMediaOptions();
-    axios.get("/api/categories/media").then(res => {
+    axios.get("/api/categories/scr/spot").then(res => {
+      console.log(res.data.resultObject.data);
       res.data.resultObject.data.forEach(e => {
         this.setFileMediaOptions({
           value: e.id,
@@ -157,7 +121,7 @@ export default {
         });
       });
     });
-    this.scrMedia = "A";
+    this.scrMedia = "ST01";
     this.setMediaSelected(this.scrMedia);
   },
   methods: {

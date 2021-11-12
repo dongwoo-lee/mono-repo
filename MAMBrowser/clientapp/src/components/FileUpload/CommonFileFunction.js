@@ -231,15 +231,14 @@ export default {
     MetaData: {
       deep: true,
       handler(v) {
-        if (v.typeSelected == "program" || v.typeSelected == "scr-spot") {
-          this.setIsActive(false);
-        } else if (v.typeSelected == "mcr-spot") {
-          this.setIsActive(false);
-        } else if (v.typeSelected == "static-spot") {
-          this.setIsActive(false);
-        } else {
-          this.watch = v.typeSelected;
+        if (
+          v.typeSelected == "my-disk" ||
+          v.typeSelected == "null" ||
+          v.typeSelected == "scr-spot"
+        ) {
           this.setIsActive(true);
+        } else {
+          this.setIsActive(false);
         }
       }
     }
@@ -287,16 +286,19 @@ export default {
         this.setProgramSelected(v.data);
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.setEventSelected(v.data);
+      } else if (this.MetaData.typeSelected == "static-spot") {
+        this.setEventSelected(v.data);
       }
     },
     getPro() {
-      const replaceVal = this.date.replace(/-/g, "");
-      const yyyy = replaceVal.substring(0, 4);
-      const mm = replaceVal.substring(4, 6);
-      const dd = replaceVal.substring(6, 8);
-      var date = yyyy + "" + mm + "" + dd;
-
       if (this.MetaData.typeSelected == "program") {
+        const replaceVal = this.date.replace(/-/g, "");
+        const yyyy = replaceVal.substring(0, 4);
+        const mm = replaceVal.substring(4, 6);
+        const dd = replaceVal.substring(6, 8);
+        var date = yyyy + "" + mm + "" + dd;
+
+        this.resetProgramData();
         axios
           .get(
             `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
@@ -310,14 +312,47 @@ export default {
             this.setProgramData(res.data.resultObject.data);
           });
       } else if (this.MetaData.typeSelected == "mcr-spot") {
+        const replaceVal = this.date.replace(/-/g, "");
+        const yyyy = replaceVal.substring(0, 4);
+        const mm = replaceVal.substring(4, 6);
+        const dd = replaceVal.substring(6, 8);
+        var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
         axios
-          .get(`/api/Categories/mcr/spot?media=${this.MetaData.mediaSelected}`)
+          .get(
+            `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=MS`
+          )
           .then(res => {
+            this.setEventData(res.data.resultObject.data);
+          });
+      } else if (this.MetaData.typeSelected == "static-spot") {
+        const replaceVal = this.fileSDate.replace(/-/g, "");
+        const yyyy = replaceVal.substring(0, 4);
+        const mm = replaceVal.substring(4, 6);
+        const dd = replaceVal.substring(6, 8);
+        var date = yyyy + "" + mm + "" + dd;
+        this.resetEventData();
+        axios
+          .get(
+            `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TT`
+          )
+          .then(res => {
+            var value = res.data.resultObject.data;
+            value.forEach(e => {
+              e.duration = this.getDurationSec(e.duration);
+              e.startDate = this.getStartDate(e.startDate);
+            });
             this.setEventData(res.data.resultObject.data);
           });
       }
     },
+    getStartDate(date) {
+      var y = date.substring(0, 4);
+      var d = date.substring(4, 6);
+      var m = date.substring(6, 8);
+      return y + "-" + d + "- " + m;
+    },
+
     getOnAirTime(date) {
       var d = date.substring(0, 10);
       var t = date.substring(11, 19);
