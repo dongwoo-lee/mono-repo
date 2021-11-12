@@ -88,7 +88,7 @@
         </template>
         <DxColumn
           css-class="durationTime"
-          data-field="duration"
+          data-field="usedtime"
           caption="사용시간"
           alignment="center"
           edit-cell-template="duration_Template"
@@ -217,8 +217,8 @@ export default {
         rowNum: 0,
         code: "",
         contents: "",
-        duration: "",
-        starttime: "",
+        usedtime: 0,
+        starttime: 0,
         etc: "",
       },
       code_list: [
@@ -239,12 +239,12 @@ export default {
   },
   mounted() {
     if (this.printArr.length > 0) {
-      this.rowData.rowNum = this.printArr.length;
+      this.rowData.rowNum = this.printArr.length + 1;
     }
   },
   created() {
     eventBus.$on("printDataSet", (val) => {
-      this.rowData.rowNum = this.printArr.length;
+      this.rowData.rowNum = this.printArr.length + 1;
     });
     eventBus.$on("exportGo", (val) => {
       switch (val) {
@@ -446,6 +446,7 @@ export default {
       }
       this.SET_PRINTARR(arrData);
       // e.fromComponent.clearSelection();
+      console.log(arrData);
     },
     onReorderPrint(e) {
       var arrData = this.printArr;
@@ -634,7 +635,6 @@ export default {
     exportWord() {
       const rows = [];
       var num = 1;
-      console.log(this.printArr);
       this.printArr.forEach((i) => {
         var code = this.exportCode(i.code);
         if (code == "M") {

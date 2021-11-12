@@ -149,14 +149,15 @@ export default {
       options: {
         id: "Trim",
         start: 0,
+        end: 0,
         loop: false,
         drag: false,
         color: "hsla(200, 50%, 70%, 0.4)",
       },
       som: 0,
       eom: 0,
-      somTime: "00:00:00.0",
-      eomTime: "00:00:00.0",
+      somTime: "00:00:00",
+      eomTime: "00:00:00",
       fadeOptions: [
         {
           text: "Fade In",
@@ -201,6 +202,7 @@ export default {
         wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
       );
       this.somTime = this.somTime.toISOString().substr(11, 10);
+      this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
     },
     eomClick() {
       this.options.start = wavesurfer.regions.list.Trim.start;
@@ -211,6 +213,7 @@ export default {
         wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
       );
       this.eomTime = this.eomTime.toISOString().substr(11, 10);
+      this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
     },
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
@@ -270,7 +273,19 @@ export default {
         vm.LoadAudioInfo();
         vm.Play();
         //처음에 정한 som / eom 에 따라 지역 그려주는거 이쪽에서 해야함 지금은 우선 전체로 되어잇음 if로 나눠주기
-        vm.options.end = wavesurfer.getDuration();
+        // console.log(this.startPoint);
+        // console.log(this.endPoint);
+
+        if (this.startPoint != 0) {
+          vm.options.start = this.startPoint / 1000;
+        }
+
+        //vm.options.end = wavesurfer.getDuration();
+
+        console.log("this.endPoint");
+        console.log(this.endPoint / 1000);
+        vm.options.end = this.endPoint / 1000;
+
         wavesurfer.addRegion(vm.options);
 
         vm.eom = wavesurfer.getDuration();
@@ -282,13 +297,14 @@ export default {
       wavesurfer.on("region-updated", (obj) => {
         vm.eom = obj.end;
         vm.som = obj.start;
-        console.log(obj.start);
         vm.eomTime = new Date(obj.end.toFixed(2) * 1000)
           .toISOString()
           .substr(11, 10);
         vm.somTime = new Date(obj.start.toFixed(2) * 1000)
           .toISOString()
           .substr(11, 10);
+        this.$emit("startPosition", obj.start);
+        this.$emit("endPosition", obj.end);
       });
       wavesurfer.on("pause", function () {
         vm.LoadAudioInfo();
@@ -465,10 +481,8 @@ export default {
       type: String,
       default: () => {},
     },
-    // duration: {
-    //   type: String,
-    //   default: () => {},
-    // },
+    startPoint: Number,
+    endPoint: Number,
   },
 };
 </script>

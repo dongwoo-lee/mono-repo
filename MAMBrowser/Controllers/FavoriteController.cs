@@ -37,7 +37,8 @@ namespace MAMBrowser.Controllers
         {
             try
             {
-                return _bll.SaveUserFavorites(personid, pram.favConParam);
+               var result = _bll.SaveUserFavorites(personid, pram.favConParam);
+                return result;
             }
             catch
             {

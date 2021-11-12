@@ -12,7 +12,8 @@ namespace MAMBrowser.Entiies
         public IEnumerable<string> tagParams { get; set; }
         public IEnumerable<PrintParamDTO> printParams { get; set; }
         public IEnumerable<AttachmentParamDTO> attParams { get; set; }
-        
+        public int[] delParams { get; set; }
+
         //기본큐시트
         public IEnumerable<string> defParams { get; set; }
 
@@ -27,7 +28,6 @@ namespace MAMBrowser.Entiies
     {
         public List<ViewCueSheetConDTO> abCartCon { get; set; }
         public List<List<ViewCueSheetConDTO>> cCartCon { get; set; }
-        public List<ViewCueSheetConDTO> favCartCon { get; set; }
     }
 
     public class ViewCueSheetConDTO 
@@ -50,6 +50,7 @@ namespace MAMBrowser.Entiies
         public List<string> FilePath_test { get; set; } = new List<string>();
         public List<string> FileToken { get; set; } = new List<string>();
         public string FilePath { get; set; }
+
         public bool Editting { get; set; }
     }
 

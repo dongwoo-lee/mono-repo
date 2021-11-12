@@ -130,7 +130,7 @@
               :pressed.sync="btn.state"
               :disabled="btn.disable"
               class="m-2 p-3"
-              style="font-size: 16px"
+              style="font-size: 16px; border-radius: 20% !important"
               variant="outline-primary"
             >
               {{ btn.caption }}
@@ -185,13 +185,13 @@ export default {
         selectPage: 1,
       },
       weekButtons: [
-        { caption: "월", value: "MON", state: false, disable: false },
-        { caption: "화", value: "TUE", state: false, disable: false },
-        { caption: "수", value: "WED", state: false, disable: false },
-        { caption: "목", value: "THU", state: false, disable: false },
-        { caption: "금", value: "FRI", state: false, disable: false },
-        { caption: "토", value: "SAT", state: false, disable: false },
-        { caption: "일", value: "SUN", state: false, disable: false },
+        { caption: "월", value: "MON", state: false, disable: true },
+        { caption: "화", value: "TUE", state: false, disable: true },
+        { caption: "수", value: "WED", state: false, disable: true },
+        { caption: "목", value: "THU", state: false, disable: true },
+        { caption: "금", value: "FRI", state: false, disable: true },
+        { caption: "토", value: "SAT", state: false, disable: true },
+        { caption: "일", value: "SUN", state: false, disable: true },
       ],
       cuesheetData: {
         edittime: "",
@@ -306,7 +306,7 @@ export default {
       this.cuesheetData.productid = "";
       this.weekButtons.forEach((ele) => {
         ele.state = false;
-        ele.disable = false;
+        ele.disable = true;
       });
       this.$refs["modal-add"].show();
     },
@@ -322,6 +322,9 @@ export default {
     },
     // 요일확인 및 목록 가져오기 (modal)
     async getWeekList(e) {
+      this.weekButtons.forEach((week) => {
+        week.state = false;
+      });
       await axios
         .get(`/api/DefCueSheet/GetDefList?productids=` + e)
         .then((res) => {

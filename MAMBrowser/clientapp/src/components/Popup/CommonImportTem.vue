@@ -324,7 +324,7 @@ export default {
                       type: "channel_" + (channelNum + 1),
                       value: cDataResult,
                     });
-                    eventBus.$emit("channel_" + (channelNum + 1));
+                    eventBus.$emit("update_channel_" + (channelNum + 1));
                   }
                 }
                 //추가정보들 가지고올꺼도 추가해야함

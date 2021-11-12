@@ -32,10 +32,10 @@ namespace MAMBrowser.BLL
             return result;
         }
         //기본큐시트 생성 & 업데이트
-        public bool SaveDefaultCueSheet(CueSheetParamDTO cueParam, IEnumerable<string> defParams, IEnumerable<CueSheetConParamDTO> conParams, IEnumerable<string> tagParams, IEnumerable<PrintParamDTO> printParams, IEnumerable<AttachmentParamDTO> attParams)
+        public bool SaveDefaultCueSheet(CueSheetParamDTO cueParam, IEnumerable<string> defParams, IEnumerable<CueSheetConParamDTO> conParams, IEnumerable<string> tagParams, IEnumerable<PrintParamDTO> printParams, IEnumerable<AttachmentParamDTO> attParams, int[] delParams)
         {
             //int[] delid = { 797, 798 };
-            var result = _factory.CueSheetRepository.SaveDefaultCueSheet(cueParam, defParams, conParams, tagParams, printParams, attParams);
+            var result = _factory.CueSheetRepository.SaveDefaultCueSheet(cueParam, defParams, conParams, tagParams, printParams, attParams, delParams);
             return result.IsSuccess;
         }
         //기본큐시트 삭제

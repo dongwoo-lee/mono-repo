@@ -12,7 +12,15 @@
                 <h1>{{ cueInfo.eventname }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
-              <div class="subtitle">
+              <div class="subtitle ml-2">
+                <span class="sub_text">
+                  <span class="subtitle_css">●</span>
+                  적용요일 :
+                  <span style="display: inline-block">
+                    <common-weeks :rowData="cueInfo" :edit="true">
+                    </common-weeks>
+                  </span>
+                </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   매체 :
@@ -33,14 +41,6 @@
                   <span>{{
                     $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
-                </span>
-                <span class="sub_text">
-                  <span class="subtitle_css">●</span>
-                  적용요일 :
-                  <span style="display: inline-block">
-                    <common-weeks :rowData="cueInfo" :edit="true">
-                    </common-weeks>
-                  </span>
                 </span>
                 <span class="autosave">
                   <b-form-checkbox-group
@@ -168,7 +168,7 @@ export default {
   data() {
     return {
       type: "B",
-      options: [{ text: "자동저장", value: false }],
+      options: [{ text: "자동저장", value: true }],
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
@@ -248,10 +248,10 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  width: 280px;
+  /* width: 316px; */
   height: 30px;
   position: absolute;
-  top: 10px;
+  top: 0px;
   right: 0px;
 }
 

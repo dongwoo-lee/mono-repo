@@ -12,7 +12,7 @@
                 <h1>{{ cueInfo.detail[0].tmptitle }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
-              <div class="subtitle">
+              <div class="subtitle ml-2">
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   생성일 :
@@ -230,10 +230,10 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  width: 280px;
+  /* width: 280px; */
   height: 30px;
   position: absolute;
-  top: 10px;
+  top: 0px;
   right: 0px;
 }
 

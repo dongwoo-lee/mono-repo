@@ -62,7 +62,7 @@ namespace MAMBrowser.Controllers
             {
                 //pram.defParams.Skip(2);
                 //var def = pram.defParams.Skip(2);
-                return _bll.SaveDefaultCueSheet(pram.cueParam, pram.defParams, pram.conParams, pram.tagParams, pram.printParams, pram.attParams);
+                return _bll.SaveDefaultCueSheet(pram.cueParam, pram.defParams, pram.conParams, pram.tagParams, pram.printParams, pram.attParams, pram.delParams);
             }
             catch (Exception ex)
             {

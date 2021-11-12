@@ -23,6 +23,199 @@ export default {
         abCartArr: [], //ab 카트
         cChannelData: [], //c 카트
         cueFavorites: [], //즐겨찾기
+        printTem: [{
+            code: "",
+            contents: "---------- 1부  ----------",
+            usedtime: 0,
+            etc: "",
+            rowNum: 1,
+            starttime: "",
+        },
+        {
+            code: "CSGP01",
+            contents: "<오프닝>",
+            usedtime: 0,
+            etc: "",
+            rowNum: 2,
+            starttime: "",
+        },
+        {
+            code: "CSGP07",
+            contents: "음원  Play",
+            usedtime: 0,
+            etc: "",
+            rowNum: 3,
+            starttime: "",
+        },
+        {
+            code: "CSGP02",
+            contents: "1부 CM",
+            usedtime: 0,
+            etc: "",
+            rowNum: 4,
+            starttime: "",
+        },
+        {
+            code: "CSGP09",
+            contents: "코너",
+            usedtime: 0,
+            etc: "",
+            rowNum: 5,
+            starttime: "",
+        },
+        {
+            code: "CSGP07",
+            contents: "음원  Play",
+            usedtime: 0,
+            etc: "",
+            rowNum: 6,
+            starttime: "",
+        },
+        {
+            code: "CSGP03",
+            contents: "SB + 상품소개",
+            usedtime: 0,
+            etc: "",
+            rowNum: 7,
+            starttime: "",
+        },
+        {
+            code: "CSGP09",
+            contents: "코너",
+            usedtime: 0,
+            etc: "",
+            rowNum: 8,
+            starttime: "",
+        },
+        {
+            code: "CSGP07",
+            contents: "음원  Play",
+            usedtime: 0,
+            etc: "",
+            rowNum: 9,
+            starttime: "",
+        },
+        {
+            code: "CSGP02",
+            contents: "2부 CM",
+            usedtime: 0,
+            etc: "",
+            rowNum: 10,
+            starttime: "",
+        },
+        {
+            code: "",
+            contents: "예비",
+            usedtime: 0,
+            etc: "",
+            rowNum: 11,
+            starttime: "",
+        },
+        {
+            code: "",
+            contents: "---------- 3부  ----------",
+            usedtime: 0,
+            etc: "",
+            rowNum: 12,
+            starttime: "",
+        },
+        {
+            code: "CSGP06",
+            contents: "로고송",
+            usedtime: 0,
+            etc: "",
+            rowNum: 13,
+            starttime: "",
+        },
+        {
+            code: "CSGP05",
+            contents: "코너",
+            usedtime: 0,
+            etc: "",
+            rowNum: 14,
+            starttime: "",
+        },
+        {
+            code: "CSGP08",
+            contents: "",
+            usedtime: 0,
+            etc: "",
+            rowNum: 15,
+            starttime: "",
+        },
+        {
+            code: "CSGP02",
+            contents: "3부 CM",
+            usedtime: 0,
+            etc: "",
+            rowNum: 16,
+            starttime: "",
+        },
+        {
+            code: "CSGP09",
+            contents: "코너",
+            usedtime: 0,
+            etc: "",
+            rowNum: 17,
+            starttime: "",
+        },
+        {
+            code: "CSGP07",
+            contents: "음원  Play",
+            usedtime: 0,
+            etc: "",
+            rowNum: 18,
+            starttime: "",
+        },
+        {
+            code: "CSGP07",
+            contents: "음원  Play",
+            usedtime: 0,
+            etc: "",
+            rowNum: 19,
+            starttime: "",
+        },
+        {
+            code: "CSGP03",
+            contents: "SB + 캠페인",
+            usedtime: 0,
+            etc: "",
+            rowNum: 20,
+            starttime: "",
+        },
+        {
+            code: "",
+            contents: "---------- 4부  ----------",
+            usedtime: 0,
+            etc: "",
+            rowNum: 21,
+            starttime: "",
+        },
+        {
+            code: "CSGP09",
+            contents: "코너",
+            usedtime: 0,
+            etc: "",
+            rowNum: 22,
+            starttime: "",
+        },
+        {
+            code: "CSGP07",
+            contents: "음원  Play",
+            usedtime: 0,
+            etc: "",
+            rowNum: 23,
+            starttime: "",
+        },
+        {
+            code: "CSGP02",
+            contents: "4부 CM",
+            usedtime: 0,
+            etc: "",
+            rowNum: 24,
+            starttime: "",
+        },
+        ]
     },
     getters: {
         cuesheetListArr: state => state.cuesheetListArr,
@@ -38,6 +231,7 @@ export default {
         abCartArr: state => state.abCartArr,
         cChannelData: state => state.cChannelData,
         cueFavorites: state => state.cueFavorites,
+        printTem: state => state.printTem,
     },
     mutations: {
         SET_CUESHEETLISTARR(state, payload) {
@@ -198,6 +392,8 @@ export default {
                 },
             })
                 .then((res) => {
+                    // console.log("일일큐시트목록가져오기");
+                    // console.log(res);
                     commit('SET_CUESHEETLISTARR', res);
                 })
                 .catch((err => {
@@ -205,8 +401,8 @@ export default {
                 }));
         },
         // 기본 큐시트 목록 전체 가져오기
-        getcuesheetListArrDef({ state, commit, dispatch }, payload) {
-            axios.get(`/api/DefCueSheet/GetDefList`, {
+        async getcuesheetListArrDef({ state, commit, dispatch }, payload) {
+            await axios.get(`/api/DefCueSheet/GetDefList`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);
@@ -298,9 +494,9 @@ export default {
                 `/api/Favorite/GetFavorites?personid=${payload}`)
                 .then((res) => {
                     var favResult = [];
+                    var rowNum_fav = 0;
                     for (var i = 0; 16 > i; i++) {
                         var row = {};
-                        var rowNum_fav = 0;
                         for (var index = 0; res.data.length > index; index++) {
                             if (res.data[index].seqnum == i + 1) {
                                 row = res.data[index];
@@ -341,9 +537,13 @@ export default {
                     var newInfo = state.cueInfo
                     newInfo.detail[0].cueid = res.data.cueID
                     commit('SET_CUEINFO', newInfo)
+                    alert("저장완료");
+
                 })
                 .catch((err => {
                     console.log("saveDayCue" + err);
+                    alert("오류발생");
+
                 }));
 
         },
@@ -351,21 +551,27 @@ export default {
         async saveDefCue({ state, dispatch }) {
             //디렉터가 라디오기술부로 저장됨 왜이럼
             var pram = await dispatch('setCueConFav_save', true)
+            var cueInfoData = { ...state.cueInfo }
+            if (cueInfoData.newdetail) {
+                cueInfoData.detail = cueInfoData.newdetail
+                pram.delParams = cueInfoData.delId
+            }
             var defParams = [];
-            state.cueInfo.detail.forEach((ele) => {
+            cueInfoData.detail.forEach((ele) => {
                 defParams.push(ele.week);
             });
             pram.defParams = defParams;
-            pram.cueParam = state.cueInfo;
+            pram.cueParam = cueInfoData;
             pram.cueParam.cueid = -1
             await axios
                 .post(`/api/defCueSheet/SavedefCue`, pram)
                 .then(async (res) => {
                     await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram);
-                    console.log("저장완료")
+                    alert("저장완료");
                 })
                 .catch((err => {
                     console.log("saveDefCue" + err);
+                    alert("오류발생");
                 }));
         },
         //템플릿 저장
@@ -378,10 +584,13 @@ export default {
                 .post(`/api/TempCueSheet/SaveTempCue`, pram)
                 .then(async (res) => {
                     await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram);
-                    console.log("저장완료")
+                    alert("저장완료");
+
                 })
                 .catch((err => {
                     console.log("saveTempCue" + err);
+                    alert("오류발생");
+
                 }));
         },
         productFilter({ }, arr) {
@@ -438,11 +647,11 @@ export default {
         setCueConData({ commit, dispatch }, payload) {
             //출력용
             var printData = [];
-            payload.conData.data.prints.forEach((ele, index) => {
+            payload.data.prints.forEach((ele, index) => {
                 printData[index] = Object.assign({}, ele);
                 printData[index].rowNum = index;
                 printData[index].code = ele.code.trim();
-                printData[index].duration = ""
+                printData[index].usedtime = ele.usedtime;
                 ele.contents == null ? printData[index].contents = "" : printData[index].contents = ele.contents;
                 ele.etc == null ? printData[index].etc = "" : printData[index].etc = ele.etc;
                 ele.starttime == null ? printData[index].starttime = "" : printData[index].starttime = ele.starttime;
@@ -453,7 +662,7 @@ export default {
                 delete printData[index].seqnum;
             });
 
-            const cueSheetCons = payload.conData.data.cueSheetCons;
+            const cueSheetCons = payload.data.cueSheetCons;
             var rowNum_ab = 0;
             var rowNum_c = 0;
             var filePath = []; //그룹 소재의 경우 여러개 , 나중에 이부분 수정 필요함
@@ -464,9 +673,10 @@ export default {
                     ele.rowNum = rowNum_ab;
                     ele.filePath = ele.cons[0].p_MASTERFILE
                     rowNum_ab = rowNum_ab + 1;
-                    ele.duration = moment(ele.endposition)
-                        .add(-9, "hours")
-                        .format("HH:mm:ss.SS");
+                    ele.duration = ele.cons[0].p_DURATION
+                    // ele.duration = moment(ele.endposition)
+                    //     .add(-9, "hours")
+                    //     .format("HH:mm:ss.SS");
                     dispatch('productFilter', ele);
                     //this.productFilter(ele);
                     return ele;
@@ -479,9 +689,10 @@ export default {
                     ele.filePath = ele.cons[0].p_MASTERFILE
                     ele.editTarget = true;
                     rowNum_c = rowNum_c + 1;
-                    ele.duration = moment(ele.endposition)
-                        .add(-9, "hours")
-                        .format("HH:mm:ss.SS");
+                    ele.duration = ele.cons[0].p_DURATION
+                    // ele.duration = moment(ele.endposition)
+                    //     .add(-9, "hours")
+                    //     .format("HH:mm:ss.SS");
                     dispatch('productFilter', ele);
                     //   this.productFilter(ele);
                     return ele;
@@ -489,7 +700,6 @@ export default {
             });
 
             //C채널 - 카트별
-
             var cDataResult = [];
             var row = {};
             for (var channelNum = 0; 4 > channelNum; channelNum++) {
@@ -515,7 +725,6 @@ export default {
             }
             commit('SET_PRINTARR', printData);
             commit('SET_ABCARTARR', abData);
-            commit('SET_CUEINFO', payload.cueData);
         },
         //con + 출력용 가공 (저장), 이거 나중에 즐겨찾기를 따로 빼기 즐찾 가공이랑 즐찾 저장이랑 2개로 나누기
         setCueConFav_save({ state }, fav) {
@@ -528,7 +737,7 @@ export default {
             printData.forEach((ele, index) => {
                 printResult[index] = Object.assign({}, ele);
                 printResult[index].seqnum = index + 1;
-                printResult[index].starttime = ele.duration;
+                printResult[index].usedtime = ele.usedtime;
                 delete printResult[index].rowNum;
                 if (ele.code == "") {
                     printResult[index].code = "CSGP10";
@@ -581,10 +790,11 @@ export default {
             return pram
         },
         //con 모두 지우기
-        setclearCon({ commit }, payload) {
-            commit('SET_PRINTARR', [])
+        setclearCon({ state, commit }) {
+            const printTemplate = [...state.printTem]
+            commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
-            commit('SET_CUEINFO', payload)
+            // commit('SET_CUEINFO', payload)
             for (var c = 0; 4 > c; c++) {
                 var arr = [];
                 for (var i = 0; 16 > i; i++) {
@@ -604,6 +814,13 @@ export default {
                 favArr.push({})
             }
             commit('SET_CUEFAVORITES', favArr)
-        }
+        },
+        //시간 string > milliseconds
+        millisecondsFuc({ }, payload) {
+            var itemTime = moment(payload, "HH:mm:ss.SSS");
+            var defTime = moment("00:00:00.0", "HH:mm:ss.SSS");
+            var result = moment.duration(itemTime.diff(defTime)).asMilliseconds();
+            return result
+        },
     }
 }

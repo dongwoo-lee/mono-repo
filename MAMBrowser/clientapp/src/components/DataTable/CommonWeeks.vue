@@ -64,7 +64,7 @@
       >일</span
     >
 
-    <button v-if="edit" class="ml-1">변경</button>
+    <!-- <button v-if="edit" class="ml-1">변경</button> -->
   </div>
 </template>
 <script>
@@ -93,14 +93,15 @@ export default {
 </script>
 <style>
 .common-weeks > span {
-  border: solid 1px #009eef;
-  color: #009eef;
-  font-size: 12px;
+  border-radius: 20%;
+  border: solid 1px #008ecc;
+  color: #008ecc;
+  font-size: 10px;
   padding: 3px;
-  margin: 1px;
+  margin: 0.3px;
 }
 .common-weeks-active {
-  background-color: #009eef !important;
+  background-color: #008ecc !important;
   color: white !important;
 }
 

@@ -28,7 +28,8 @@ namespace MAMBrowser.BLL
         // 즐겨찾기 저장
         public SaveResultDTO SaveUserFavorites(string personid, IEnumerable<FavConParamDTO> favConParam)
         {
-            return _factory.UserRepository.SaveUserFavorites(personid, favConParam);
+            var result = _factory.UserRepository.SaveUserFavorites(personid, favConParam);
+            return result;
         }
 
         // 즐겨찾기 삭제

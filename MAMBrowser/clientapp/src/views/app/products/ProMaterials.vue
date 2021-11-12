@@ -242,7 +242,6 @@ export default {
       this.$http
         .get(`/api/products/old_pro`, { params: this.searchItems })
         .then((res) => {
-          console.log("dddddddddddddddddddd");
           console.log(this.searchItems);
           console.log(res);
 

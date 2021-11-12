@@ -41,6 +41,14 @@
         v-if="!fav"
       />
       <DxButton
+        icon="checklist"
+        type="default"
+        styling-mode="outlined"
+        hint="적용요일 변경"
+        v-if="type == 'B'"
+        @click="editWeekListClick"
+      />
+      <DxButton
         icon="save"
         type="default"
         v-b-modal.modal-save
@@ -280,6 +288,56 @@
         </div>
       </div>
     </b-modal>
+
+    <!-- 기본큐시트 요일 변경 -->
+    <b-modal
+      ref="modal-editWeek"
+      size="lg"
+      centered
+      title="적용요일 변경"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="editWeekOk"
+    >
+      <div id="modelDiv" class="d-block text-center">
+        <!-- <div class="mb-4" style="font-size: 20px">
+          <div>변경할 요일을 선택하세요.</div>
+        </div> -->
+        <div class="modal_search">
+          <b-form-group label="매체" class="has-float-label">
+            <b-form-select
+              style="width: 150px"
+              v-model="cueInfo.media"
+              :options="mediasOption"
+              disabled
+            />
+          </b-form-group>
+          <b-form-group label="프로그램명" class="has-float-label ml-3">
+            <b-form-select
+              style="width: 400px"
+              v-model="cueInfo.productid"
+              :options="userProOption"
+              disabled
+            />
+          </b-form-group>
+        </div>
+        <div class="modal_week_form">
+          <b-button-group size="sm">
+            <b-button
+              v-for="(btn, idx) in weekButtons"
+              :key="idx"
+              :pressed.sync="btn.state"
+              :disabled="btn.disable"
+              class="m-2 p-3"
+              style="font-size: 16px; border-radius: 20% !important"
+              variant="outline-primary"
+            >
+              {{ btn.caption }}
+            </b-button>
+          </b-button-group>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -333,6 +391,15 @@ export default {
         "이전 큐시트 가져오기",
       ],
       downloaditem: [".zip", ".pdf", ".docx", ".excel"],
+      weekButtons: [
+        { caption: "월", value: "MON", state: false, disable: false },
+        { caption: "화", value: "TUE", state: false, disable: false },
+        { caption: "수", value: "WED", state: false, disable: false },
+        { caption: "목", value: "THU", state: false, disable: false },
+        { caption: "금", value: "FRI", state: false, disable: false },
+        { caption: "토", value: "SAT", state: false, disable: false },
+        { caption: "일", value: "SUN", state: false, disable: false },
+      ],
     };
   },
   mounted() {
@@ -365,12 +432,42 @@ export default {
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["cueFavorites"]),
     ...mapGetters("cueList", ["cueInfo"]),
+
+    ...mapGetters("cueList", ["mediasOption"]),
+    ...mapGetters("cueList", ["userProOption"]),
+
+    btnWeekStates() {
+      var result = this.weekButtons.map((btn) => {
+        if (btn.state == true) {
+          return btn.value;
+        }
+      });
+      return result.filter((ele) => {
+        return ele !== undefined;
+      });
+    },
+  },
+  created() {
+    if (this.type == "B") {
+      this.weekButtons.forEach((week) => {
+        if (this.cueInfo.productWeekList[0].weekList.includes(week.value)) {
+          if (this.cueInfo.activeWeekList.includes(week.value)) {
+            week.state = true;
+          } else {
+            week.disable = true;
+          }
+        } else {
+          week.disable = false;
+        }
+      });
+    }
   },
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
+    ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["saveTempCue"]),
@@ -378,6 +475,7 @@ export default {
     ...mapActions("cueList", ["addTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
+    ...mapActions("cueList", ["getuserProOption"]),
 
     //테스트중
     ...mapActions("cueList", ["exportZip"]),
@@ -407,19 +505,19 @@ export default {
           cData.push({});
         }
         if (this.cartSelected.includes("c1")) {
-          this.SET_CCHANNELDATA({ type: "channel_1", value: cData });
+          // this.SET_CCHANNELDATA({ type: "channel_1", value: cData });
           eventBus.$emit("channel_1");
         }
         if (this.cartSelected.includes("c2")) {
-          this.SET_CCHANNELDATA({ type: "channel_2", value: cData });
+          // this.SET_CCHANNELDATA({ type: "channel_2", value: cData });
           eventBus.$emit("channel_2");
         }
         if (this.cartSelected.includes("c3")) {
-          this.SET_CCHANNELDATA({ type: "channel_3", value: cData });
+          // this.SET_CCHANNELDATA({ type: "channel_3", value: cData });
           eventBus.$emit("channel_3");
         }
         if (this.cartSelected.includes("c4")) {
-          this.SET_CCHANNELDATA({ type: "channel_4", value: cData });
+          // this.SET_CCHANNELDATA({ type: "channel_4", value: cData });
           eventBus.$emit("channel_4");
         }
       }
@@ -455,7 +553,7 @@ export default {
       if (e.itemData == ".zip" || e.itemData == ".wav") {
         this.$refs["modal-export-zip-wave"].show();
       } else {
-        eventBus.$emit("export", e.itemData);
+        eventBus.$emit("exportGo", e.itemData);
       }
       // eventBus.$emit("exportGo", e.itemData);
     },
@@ -509,10 +607,14 @@ export default {
           var pram = {
             favConParam: favDataResult,
           };
-          await axios.post(
-            `/api/Favorite/SetFavorites?personid=${userId}`,
-            pram
-          );
+          await axios
+            .post(`/api/Favorite/SetFavorites?personid=${userId}`, pram)
+            .then((res) => {
+              alert("저장완료");
+            })
+            .catch((err) => {
+              alert("오류발생");
+            });
           break;
         default:
           break;
@@ -521,8 +623,9 @@ export default {
     // zip 파일 다운로드
     async exportZipWave() {
       var cuesheetpram = await this.setCueConFav_save(false);
+      console.log(cuesheetpram.conParams);
       await axios
-        .post(`/api/CueAttachments/exportZipFile`, cuesheetpram.conParams)
+        .post(`/api/CueAttachments/exportZipFile`, [])
         .then((response) => {
           const link = document.createElement("a");
           link.href = "/api/CueAttachments/exportZipFileDownload";
@@ -532,6 +635,71 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+    },
+    async editWeekListClick() {
+      var pram = { personid: this.cueInfo.personid, media: this.cueInfo.media };
+      var proOption = await this.getuserProOption(pram);
+
+      this.$refs["modal-editWeek"].show();
+    },
+    //적용요일 변경
+    editWeekOk() {
+      var cueData = { ...this.cueInfo };
+      var weekList = [];
+      var activeWeekList = [];
+      var pushList = [];
+      var delId = [];
+      this.weekButtons.forEach((week, index) => {
+        if (week.state) {
+          weekList.push({ week: week.value });
+          activeWeekList.push(week.value);
+        }
+      });
+      cueData.detail.forEach((v) => {
+        // weekList.forEach((value) => {
+        //   if (value.week == v.week) {
+        //     value.cueid = v.cueid;
+        //   }
+        // });
+        if (!activeWeekList.includes(v.week)) {
+          delId.push(v.cueid);
+        }
+      });
+      cueData.productWeekList[0].weekList.forEach((week) => {
+        if (!cueData.activeWeekList.includes(week)) {
+          pushList.push(week);
+        }
+      });
+      cueData.productWeekList[0].weekList = pushList.concat(activeWeekList);
+
+      cueData.newdetail = weekList;
+      cueData.activeWeekList = activeWeekList;
+      cueData.delId = delId;
+
+      this.SET_CUEINFO(cueData);
+      console.log(cueData);
+
+      // var weekList = [];
+      // var activeWeekList = [];
+      // var pushList = [];
+      // var delId = [];
+      // this.weekButtons.forEach((week, index) => {
+      //   if (week.state) {
+      //     weekList.push({ week: week.value });
+      //     activeWeekList.push(week.value);
+      //   }
+      // });
+      // cueData.productWeekList[0].weekList.forEach((week) => {
+      //   if (!cueData.activeWeekList.includes(week)) {
+      //     pushList.push(week);
+      //   }
+      // });
+      // cueData.productWeekList[0].weekList = pushList.concat(activeWeekList);
+      // cueData.detail = weekList;
+      // cueData.activeWeekList = activeWeekList;
+      // cueData.delId = delId;
+
+      // this.SET_CUEINFO(cueData);
     },
   },
 };

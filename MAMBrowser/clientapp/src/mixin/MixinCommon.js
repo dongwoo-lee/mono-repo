@@ -184,8 +184,6 @@ let mixinCommon = {
             this.$refs.scrollPaging.initSelectedIds();
         },
         onPreview(item) {
-            console.log("item");
-            console.log(item);
             this.soundItem = item;
             this.showPlayerPopup = true;
         },

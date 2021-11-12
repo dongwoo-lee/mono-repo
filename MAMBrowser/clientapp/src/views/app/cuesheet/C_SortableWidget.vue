@@ -79,14 +79,22 @@
                 v-if="fileData[index - 1].productType == 'MCR_SPOT'"
               ></b-icon>
             </div>
-            <div>
+            <div v-if="fileData[index - 1].startposition > 0">
               <b-icon icon="star"></b-icon>
             </div>
-            <div>
+            <div
+              v-if="
+                fileData[index - 1].duration > fileData[index - 1].endposition
+              "
+            >
               <b-icon icon="star"></b-icon>
             </div>
             <div class="actionBtn">
-              <b-icon icon="play-circle" class="btnIcon"></b-icon>
+              <b-icon
+                icon="play-circle"
+                class="btnIcon"
+                @click="onPreview(fileData[index - 1])"
+              ></b-icon>
               <b-icon
                 icon="x-circle"
                 class="btnIcon"
@@ -124,7 +132,14 @@
               {{ fileData[index - 1].subtitle }}
             </div>
             <div class="bottom_item" style="font-size: 10px">
-              {{ fileData[index - 1].duration }}
+              {{
+                $moment(
+                  fileData[index - 1].endposition -
+                    fileData[index - 1].startposition
+                )
+                  | moment("subtract", "9 hours")
+                  | moment("HH:mm:ss")
+              }}
             </div>
           </div>
         </div>
@@ -133,6 +148,21 @@
         </div>
       </div>
     </DxSortable>
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.maintitle"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      :rowNum="soundItem.rowNum"
+      :type="channelKey"
+      :startPoint="soundItem.startposition"
+      :endPoint="soundItem.endposition"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
+    </PlayerPopup>
   </div>
 </template>
 
@@ -142,10 +172,14 @@ import { DxSortable } from "devextreme-vue/sortable";
 import DxButton from "devextreme-vue/button";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { eventBus } from "@/eventBus";
+import MixinCommon from "../../../mixin/MixinCommon";
+
 import "moment/locale/ko";
 const moment = require("moment");
 
 export default {
+  mixins: [MixinCommon],
+
   props: {
     widgetIndex: Number,
     searchToggleSwitch: Boolean,
@@ -182,6 +216,7 @@ export default {
       //즐겨찾기
       await this.getCueDayFav(userId);
       this.fileData = this.cueFavorites;
+      this.rowData.rowNum = this.cueFavorites.length + 1;
     } else {
       // 일반 C카트
       this.fileData = this.cChannelData[this.channelKey];
@@ -189,7 +224,19 @@ export default {
     }
 
     eventBus.$on(this.channelKey, (val) => {
+      var cData = [];
+      for (var i = 0; i < 16; i++) {
+        cData.push({});
+      }
+      this.SET_CCHANNELDATA({ type: this.channelKey, value: cData });
+      // this.fileData = this.cChannelData[this.channelKey];
+      this.fileData = cData;
+      this.rowData.rowNum = cData.length;
+    });
+    eventBus.$on("update_" + this.channelKey, (val) => {
+      // this.SET_CCHANNELDATA({ type: this.channelKey, value: cData });
       this.fileData = this.cChannelData[this.channelKey];
+      // this.fileData = cData;
       this.rowData.rowNum = this.cChannelData[this.channelKey].length;
     });
     eventBus.$on("clearFav", (val) => {
@@ -254,14 +301,14 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C013";
                   break;
                 case "SCR_SB":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.pgmName;
                   row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = search_row.length;
+                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -271,14 +318,14 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.pgmName;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C010";
                   break;
                 case "PGM_CM":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
                   row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = search_row.length;
+                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -288,7 +335,7 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
                   row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = search_row.length;
+                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -298,14 +345,14 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.pgmName;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C012";
                   break;
                 case "FILLER_PR":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C021";
                   break;
@@ -313,7 +360,7 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C022";
                   break;
@@ -321,7 +368,7 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C023";
                   break;
@@ -329,7 +376,7 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C024";
                   break;
@@ -337,14 +384,14 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C009";
                   break;
                 case "MCR_SB":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.id;
                   row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = search_row.length;
+                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -354,7 +401,7 @@ export default {
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.brdDT;
                   row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = search_row.duration;
+                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C020";
                   break;
@@ -382,6 +429,7 @@ export default {
             row.editTarget = true;
           } else {
             row.productType = this.searchListData.productType;
+            row.fileToken = search_row.fileToken;
             switch (this.searchListData.productType) {
               case "PUBLIC_FILE":
                 row.maintitle = search_row.title;
@@ -392,14 +440,14 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C013";
                 break;
               case "SCR_SB":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.pgmName;
                 row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = search_row.length;
+                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -409,14 +457,14 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.pgmName;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C010";
                 break;
               case "PGM_CM":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
                 row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = search_row.length;
+                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -426,7 +474,7 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
                 row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = search_row.length;
+                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -436,14 +484,14 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.pgmName;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C012";
                 break;
               case "FILLER_PR":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C021";
                 break;
@@ -451,7 +499,7 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C022";
                 break;
@@ -459,7 +507,7 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C023";
                 break;
@@ -467,7 +515,7 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C024";
                 break;
@@ -475,14 +523,14 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C009";
                 break;
               case "MCR_SB":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.id;
                 row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = search_row.length;
+                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -492,7 +540,7 @@ export default {
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.brdDT;
                 row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = search_row.duration;
+                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C020";
                 break;
@@ -613,8 +661,8 @@ export default {
     },
     //시간 string > milliseconds
     millisecondsFuc(duration) {
-      var itemTime = moment(duration, "HH:mm:ss.SSS");
-      var defTime = moment("00:00:00.0", "HH:mm:ss.SSS");
+      var itemTime = moment(duration, "HH:mm:ss.SS");
+      var defTime = moment("00:00:00.0", "HH:mm:ss.SS");
       return moment.duration(itemTime.diff(defTime)).asMilliseconds();
     },
   },
