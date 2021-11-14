@@ -58,7 +58,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("my-disk")]
-        public ActionResult<DTO_RESULT> MyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string title, [FromForm] string memo)
+        public ActionResult<DTO_RESULT> RegMyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string title, [FromForm] string memo)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -124,7 +124,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPost("program")]
-        public ActionResult<DTO_RESULT> Program([FromForm] IFormFile file, [FromForm] string chunkMetadata,
+        public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,
             [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string onairTime, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -195,7 +195,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPost("mcr-spot")]
-        public ActionResult<DTO_RESULT> McrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
+        public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
             [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string onairTime, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -265,7 +265,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("scr-spot")]
-        public ActionResult<DTO_RESULT> ScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
+        public ActionResult<DTO_RESULT> RegScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
             [FromForm] string UserId, [FromForm] string title, [FromForm] string memo, [FromForm] string usage, [FromForm] string advertiser, [FromForm] string editor, 
             [FromForm] string media, [FromForm] string onairTime)
         {
@@ -338,7 +338,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("static-spot")]
-        public ActionResult<DTO_RESULT> StaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
+        public ActionResult<DTO_RESULT> RegStaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
             [FromForm] string UserId, [FromForm] string title, [FromForm] string memo, [FromForm] string usage, [FromForm] string advertiser, [FromForm] string editor, 
             [FromForm] string media, [FromForm] string onairTime)
         {
@@ -411,41 +411,202 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("var-spot")]
-        public ActionResult<DTO_RESULT> VarSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        public ActionResult<DTO_RESULT> RegVarSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {
             DTO_RESULT result = new DTO_RESULT();
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
         [HttpPost("report")]
-        public ActionResult<DTO_RESULT> Report([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {
             DTO_RESULT result = new DTO_RESULT();
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
         [HttpPost("filler")]
-        public ActionResult<DTO_RESULT> Filler([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {
             DTO_RESULT result = new DTO_RESULT();
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
-        }
-        
-       
+        }      
         [HttpPost("pro")]
-        public ActionResult<DTO_RESULT> Pro([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        public ActionResult<DTO_RESULT> RegPro([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
         {
             DTO_RESULT result = new DTO_RESULT();
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
 
-      /// <summary>
-      /// 
-      /// </summary>
-      /// <param name="bll"></param>
-      /// <returns></returns>
+        [HttpPatch("my-disk")]
+        public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if(jsonObject==null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("program")]
+        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("mcr-spot")]
+        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("scr-spot")]
+        public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("static-spot")]
+        public ActionResult<DTO_RESULT> UpdateStaticSpot([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("var-spot")]
+        public ActionResult<DTO_RESULT> UpdateVarSpot([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("report")]
+        public ActionResult<DTO_RESULT> UpdateReport([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("filler")]
+        public ActionResult<DTO_RESULT> UpdateFiller([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+        [HttpPatch("pro")]
+        public ActionResult<DTO_RESULT> UpdatePro([FromBody] object jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bll"></param>
+        /// <returns></returns>
         [HttpGet("mastering-status")]
         public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus([FromServices] APIBll bll)
         {
