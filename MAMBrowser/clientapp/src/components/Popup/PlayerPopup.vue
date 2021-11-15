@@ -117,13 +117,14 @@ export default {
         var rowData = [...this.abCartArr];
         rowData = this.setTime(rowData);
         this.SET_ABCARTARR(rowData);
-        console.log(rowData);
       } else if (this.type == "channel_my") {
         var rowData = [...this.cueFavorites];
         this.setTime(rowData);
         this.SET_CUEFAVORITES(rowData);
         eventBus.$emit("clearFav");
       }
+      this.startPosition = 0;
+      this.endPosition = 0;
       this.show = false;
       //이거 나중에 C 도 추가해야하는데 C는 따로 해야함
     },
@@ -133,7 +134,7 @@ export default {
       rowData.forEach((ele) => {
         if (ele.rowNum == this.rowNum) {
           startTime = Math.floor(this.startPosition * 1000);
-          if (this.endPosition * 1000 > ele.duration) {
+          if (this.endPosition * 1000 + 1 > ele.duration) {
             endTime = ele.duration;
           } else {
             endTime = Math.floor(this.endPosition * 1000);

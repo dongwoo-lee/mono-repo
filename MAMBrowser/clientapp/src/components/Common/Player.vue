@@ -201,7 +201,7 @@ export default {
       this.somTime = new Date(
         wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
       );
-      this.somTime = this.somTime.toISOString().substr(11, 10);
+      this.somTime = this.somTime.toISOString().substr(11, 8);
       this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
     },
     eomClick() {
@@ -212,7 +212,7 @@ export default {
       this.eomTime = new Date(
         wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
       );
-      this.eomTime = this.eomTime.toISOString().substr(11, 10);
+      this.eomTime = this.eomTime.toISOString().substr(11, 8);
       this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
     },
     InjectWaveSurfer() {
@@ -273,36 +273,29 @@ export default {
         vm.LoadAudioInfo();
         vm.Play();
         //처음에 정한 som / eom 에 따라 지역 그려주는거 이쪽에서 해야함 지금은 우선 전체로 되어잇음 if로 나눠주기
-        // console.log(this.startPoint);
-        // console.log(this.endPoint);
-
-        if (this.startPoint != 0) {
+        if (this.startPoint > 0) {
           vm.options.start = this.startPoint / 1000;
         }
-
         //vm.options.end = wavesurfer.getDuration();
-
-        console.log("this.endPoint");
-        console.log(this.endPoint / 1000);
         vm.options.end = this.endPoint / 1000;
 
         wavesurfer.addRegion(vm.options);
 
         vm.eom = wavesurfer.getDuration();
-        vm.eomTime = new Date(vm.eom.toFixed(2) * 1000);
-        vm.eomTime = vm.eomTime.toISOString().substr(11, 10);
-        vm.somTime = new Date(vm.som.toFixed(2) * 1000);
-        vm.somTime = vm.somTime.toISOString().substr(11, 10);
+        vm.eomTime = new Date(vm.options.end.toFixed(2) * 1000);
+        vm.eomTime = vm.eomTime.toISOString().substr(11, 8);
+        vm.somTime = new Date(vm.options.start.toFixed(2) * 1000);
+        vm.somTime = vm.somTime.toISOString().substr(11, 8);
       });
       wavesurfer.on("region-updated", (obj) => {
         vm.eom = obj.end;
         vm.som = obj.start;
         vm.eomTime = new Date(obj.end.toFixed(2) * 1000)
           .toISOString()
-          .substr(11, 10);
+          .substr(11, 8);
         vm.somTime = new Date(obj.start.toFixed(2) * 1000)
           .toISOString()
-          .substr(11, 10);
+          .substr(11, 8);
         this.$emit("startPosition", obj.start);
         this.$emit("endPosition", obj.end);
       });

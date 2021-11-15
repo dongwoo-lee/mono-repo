@@ -358,8 +358,6 @@ export default {
   methods: {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     onAddChannelAB(e) {
-      console.log(e.itemData);
-      console.log(this.millisecondsFuc(208849));
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -371,6 +369,10 @@ export default {
               row.memo = search_row.contents;
             } else {
               row.productType = this.searchListData.productType;
+              row.fileToken = search_row.fileToken;
+              row.filePath = search_row.filePath;
+              row.endposition = search_row.intDuration;
+              row.duration = search_row.intDuration;
               switch (this.searchListData.productType) {
                 case "PUBLIC_FILE":
                   row.maintitle = search_row.title;
@@ -380,15 +382,12 @@ export default {
                 case "OLD_PRO":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
+
                   row.cartcode = "S01G01C013";
                   break;
                 case "SCR_SB":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.pgmName;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -397,15 +396,11 @@ export default {
                 case "SCR_SPOT":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.pgmName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C010";
                   break;
                 case "PGM_CM":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -414,8 +409,6 @@ export default {
                 case "CM":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -424,54 +417,40 @@ export default {
                 case "REPOTE":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.pgmName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C012";
                   break;
                 case "FILLER_PR":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C021";
                   break;
                 case "FILLER_MT":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C022";
                   break;
                 case "FILLER_TIME":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C023";
                   break;
                 case "FILLER_ETC":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C024";
                   break;
                 case "PGM":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartcode = "S01G01C009";
                   break;
                 case "MCR_SB":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.id;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
                   row.groupflag = "Y";
                   row.onairdate = search_row.brdDT;
                   row.cartid = search_row.id;
@@ -480,8 +459,6 @@ export default {
                 case "MCR_SPOT":
                   row.maintitle = search_row.name;
                   row.subtitle = search_row.brdDT;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
                   row.cartid = search_row.id;
                   row.cartcode = "S01G01C020";
                   break;
@@ -501,7 +478,9 @@ export default {
           } else {
             row.productType = this.searchListData.productType;
             row.fileToken = search_row.fileToken;
-            // row.filePath = search_row.filePath;
+            row.filePath = search_row.filePath;
+            row.endposition = search_row.intDuration;
+            row.duration = search_row.intDuration;
             switch (this.searchListData.productType) {
               case "PUBLIC_FILE":
                 row.maintitle = search_row.title;
@@ -511,15 +490,11 @@ export default {
               case "OLD_PRO":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C013";
                 break;
               case "SCR_SB":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.pgmName;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -528,15 +503,11 @@ export default {
               case "SCR_SPOT":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.pgmName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C010";
                 break;
               case "PGM_CM":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -545,8 +516,6 @@ export default {
               case "CM":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -555,54 +524,40 @@ export default {
               case "REPOTE":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.pgmName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C012";
                 break;
               case "FILLER_PR":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C021";
                 break;
               case "FILLER_MT":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C022";
                 break;
               case "FILLER_TIME":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C023";
                 break;
               case "FILLER_ETC":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C024";
                 break;
               case "PGM":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartcode = "S01G01C009";
                 break;
               case "MCR_SB":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.id;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
                 row.groupflag = "Y";
                 row.onairdate = search_row.brdDT;
                 row.cartid = search_row.id;
@@ -611,8 +566,6 @@ export default {
               case "MCR_SPOT":
                 row.maintitle = search_row.name;
                 row.subtitle = search_row.brdDT;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
                 row.cartid = search_row.id;
                 row.cartcode = "S01G01C020";
                 break;
