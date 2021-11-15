@@ -4,19 +4,30 @@
       <CommonMetaModal
         v-show="this.MetaModal"
         @close="MetaModalOff"
-        style="font-family: MBC 새로움 M;"
+        style="font-family: MBC 새로움 M"
         :isActive="this.isActive"
       >
-        <h3 slot="header">
-          파일 업로드 메타 데이터 입력
-        </h3>
+        <h3 slot="header">파일 업로드 메타 데이터 입력</h3>
         <h4 slot="body">
-          <div style="width:1000px; height:500px; float:left;">
+          <div style="width: 1000px; height: 500px; float: left">
             <div
-              style="width:350px; height:70px; position:relative; top:15px; left:20px; margin-bottom:20px; "
+              style="
+                width: 350px;
+                height: 70px;
+                position: relative;
+                top: 15px;
+                left: 20px;
+                margin-bottom: 20px;
+              "
             >
               <p
-                style=" font-size:16px; width:350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                style="
+                  font-size: 16px;
+                  width: 350px;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
               >
                 파일 명 : {{ this.MetaModalTitle }}
               </p>
@@ -34,7 +45,7 @@
                 ></b-progress-bar
               ></b-progress>
 
-              <div style="height:50px;  margin-top : 20px;">
+              <div style="height: 50px; margin-top: 20px">
                 <b-form-input
                   class="editTask"
                   v-model="MetaData.duration"
@@ -44,7 +55,7 @@
                   trim
                 />
               </div>
-              <div style="height:50px;  margin-top : 10px;">
+              <div style="height: 50px; margin-top: 10px">
                 <b-form-input
                   class="editTask"
                   v-model="MetaData.audioFormat"
@@ -54,12 +65,10 @@
                   trim
                 />
               </div>
-              <div style="width:300px;">
-                <h3 style="color:#008ECC;">
-                  소재 유형
-                </h3>
+              <div style="width: 300px">
+                <h3 style="color: #008ecc">소재 유형</h3>
                 <b-form-select
-                  style="width:350px;"
+                  style="width: 350px"
                   id="filetype"
                   v-model="MetaData.typeSelected"
                   :options="typeOptions"
@@ -72,13 +81,11 @@
 
             <div :class="[isActive ? 'date-modal' : 'file-modal']">
               <div>
-                <div style="position:relative; ">
-                  <h3 style="color:#008ECC; ">
-                    메타 데이터
-                  </h3>
+                <div style="position: relative">
+                  <h3 style="color: #008ecc">메타 데이터</h3>
 
                   <div v-show="this.MetaData.typeSelected == 'my-disk'">
-                    <div style="height:50px;  margin-top : 10px;">
+                    <div style="height: 50px; margin-top: 10px">
                       <b-form-input
                         class="editTask"
                         v-model="MetaData.title"
@@ -89,19 +96,34 @@
 
                       <button
                         v-show="titleState"
-                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                        style="
+                          position: relative;
+                          left: 315px;
+                          top: -27px;
+                          z-index: 99;
+                          width: 3px;
+                          heigth: 3px;
+                          background-color: #ffffff;
+                          border: 0;
+                          outline: 0;
+                        "
                       >
                         <b-icon
                           icon="x-circle"
                           font-scale="1"
-                          style="position:relative; top:0px; right:0px; z-index:999;"
+                          style="
+                            position: relative;
+                            top: 0px;
+                            right: 0px;
+                            z-index: 999;
+                          "
                           variant="secondary"
                           @click="resetTitle"
                         ></b-icon>
                       </button>
                     </div>
 
-                    <div style="height:50px;">
+                    <div style="height: 50px">
                       <b-form-input
                         class="editTask"
                         v-model="MetaData.memo"
@@ -113,12 +135,27 @@
 
                       <button
                         v-show="memoState"
-                        style="position:relative; left:315px; top:-27px; z-index:99; width:3px; heigth:3px; background-color:#FFFFFF; border:0; outline:0;"
+                        style="
+                          position: relative;
+                          left: 315px;
+                          top: -27px;
+                          z-index: 99;
+                          width: 3px;
+                          heigth: 3px;
+                          background-color: #ffffff;
+                          border: 0;
+                          outline: 0;
+                        "
                       >
                         <b-icon
                           icon="x-circle"
                           font-scale="1"
-                          style="position:relative; top:0px; right:0px; z-index:999;"
+                          style="
+                            position: relative;
+                            top: 0px;
+                            right: 0px;
+                            z-index: 999;
+                          "
                           variant="secondary"
                           @click="resetMemo"
                         ></b-icon>
@@ -133,9 +170,7 @@
             </div>
             <transition name="slide-fade">
               <div v-show="!isActive" class="date-div">
-                <h3 style="color:#008ECC; ">
-                  프로그램 선택
-                </h3>
+                <h3 style="color: #008ecc">프로그램 선택</h3>
                 <!-- program -->
                 <program
                   v-if="this.MetaData.typeSelected == 'program'"
@@ -164,7 +199,7 @@
             <b-button
               variant="outline-success"
               @click="log"
-              style="margin-left:-80px;"
+              style="margin-left: -80px"
             >
               <span class="label">확인</span>
             </b-button>
@@ -181,7 +216,7 @@
             </b-button>
             <b-button
               variant="outline-success"
-              style="margin-right:10px;"
+              style="margin-right: 10px"
               v-show="!processing && fileUploading"
             >
               <b-spinner small type="grow"></b-spinner>
@@ -191,7 +226,7 @@
               <b-button
                 variant="outline-success"
                 @click="uploadfile()"
-                style="margin-left:28px;"
+                style="margin-left: 28px"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
@@ -202,7 +237,7 @@
                 variant="success"
                 disabled
                 @click="uploadfile()"
-                style="margin-left:28px;"
+                style="margin-left: 28px"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
@@ -232,16 +267,16 @@ export default {
   props: {
     fileState: {
       type: String,
-      default: ""
+      default: "",
     },
     percent: {
       type: Number,
-      default: 0
+      default: 0,
     },
     MetaModal: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: {
     CommonMetaModal,
@@ -252,23 +287,23 @@ export default {
     CommonVueSelect,
     varSpot,
     report,
-    filler
+    filler,
   },
   mixins: [MixinBasicPage],
   data() {
     return {
-      cancel: false
+      cancel: false,
     };
   },
   created() {
-    axios.get("/api/Mastering/mastering-status").then(res => {
-      res.data.resultObject.data.forEach(e => {
+    axios.get("/api/Mastering/mastering-status").then((res) => {
+      res.data.resultObject.data.forEach((e) => {
         var vueTableData = {
           title: e.title,
           type: this.getCategory(e.category),
           user_id: e.regUserId,
           date: e.regDtm,
-          step: e.workStatus
+          step: e.workStatus,
         };
         this.setVueTableData(vueTableData);
       });
@@ -276,32 +311,32 @@ export default {
   },
   computed: {
     ...mapState("FileIndexStore", {
-      MetaModalTitle: state => state.MetaModalTitle,
-      date: state => state.date,
-      fileSDate: state => state.fileSDate,
-      fileEDate: state => state.fileEDate,
-      localFiles: state => state.localFiles,
-      MetaData: state => state.MetaData,
-      vueTableData: state => state.vueTableData,
-      ProgramData: state => state.ProgramData,
-      ProgramSelected: state => state.ProgramSelected,
-      EventSelected: state => state.EventSelected,
-      isActive: state => state.isActive,
-      processing: state => state.processing,
-      fileUploading: state => state.fileUploading,
-      typeOptions: state => state.typeOptions
+      MetaModalTitle: (state) => state.MetaModalTitle,
+      date: (state) => state.date,
+      fileSDate: (state) => state.fileSDate,
+      fileEDate: (state) => state.fileEDate,
+      localFiles: (state) => state.localFiles,
+      MetaData: (state) => state.MetaData,
+      vueTableData: (state) => state.vueTableData,
+      ProgramData: (state) => state.ProgramData,
+      ProgramSelected: (state) => state.ProgramSelected,
+      EventSelected: (state) => state.EventSelected,
+      isActive: (state) => state.isActive,
+      processing: (state) => state.processing,
+      fileUploading: (state) => state.fileUploading,
+      typeOptions: (state) => state.typeOptions,
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
       "titleState",
       "memoState",
       "editorState",
-      "metaValid"
+      "metaValid",
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),
     getVariant() {
       return this.isActive ? "outline-dark" : "outline-primary";
-    }
+    },
   },
   watch: {
     fileState(v) {
@@ -322,7 +357,7 @@ export default {
           this.typeOptionsByRole(this.getMenuGrpName);
         }
       }
-    }
+    },
   },
   methods: {
     log() {
@@ -330,7 +365,7 @@ export default {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
-          memo: this.MetaData.memo
+          memo: this.MetaData.memo,
         };
       } else if (this.MetaData.typeSelected == "program") {
         var data = {
@@ -339,7 +374,7 @@ export default {
           productId: this.ProgramSelected.productId,
           onairTime: this.ProgramSelected.onairTime,
           editor: this.MetaData.editor,
-          memo: this.MetaData.memo
+          memo: this.MetaData.memo,
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         var data = {
@@ -349,7 +384,7 @@ export default {
           onairTime: this.date,
           editor: this.MetaData.editor,
           memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser
+          advertiser: this.MetaData.advertiser,
         };
       } else if (this.MetaData.typeSelected == "scr-spot") {
         var data = {
@@ -358,7 +393,7 @@ export default {
           memo: this.MetaData.memo,
           advertiser: this.MetaData.advertiser,
           editor: this.MetaData.editor,
-          media: this.MetaData.mediaSelected
+          media: this.MetaData.mediaSelected,
         };
       } else if (this.MetaData.typeSelected == "static-spot") {
         var data = {
@@ -369,7 +404,28 @@ export default {
           EDate: this.fileEDate,
           editor: this.MetaData.editor,
           memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser
+          advertiser: this.MetaData.advertiser,
+        };
+      } else if (this.MetaData.typeSelected == "var-spot") {
+        var data = {
+          UserId: sessionStorage.getItem("user_id"),
+          media: this.MetaData.mediaSelected,
+          productId: this.EventSelected.id,
+          SDate: this.fileSDate,
+          EDate: this.fileEDate,
+          editor: this.MetaData.editor,
+          memo: this.MetaData.memo,
+          advertiser: this.MetaData.advertiser,
+        };
+      } else if (this.MetaData.typeSelected == "report") {
+        var data = {
+          UserId: sessionStorage.getItem("user_id"),
+          meida: this.MetaData.mediaSelected,
+          ProductId: this.EventSelected.id,
+          date: this.date,
+          editor: this.MetaData.editor,
+          memo: this.MetaData.memo,
+          reporter: this.MetaData.reporter,
         };
       }
 
@@ -384,7 +440,7 @@ export default {
       "resetTitle",
       "resetMemo",
       "resetEditor",
-      "resetType"
+      "resetType",
     ]),
     resetEvent() {
       this.$emit("reset");
@@ -429,7 +485,7 @@ export default {
           var data = {
             UserId: sessionStorage.getItem("user_id"),
             title: this.MetaData.title,
-            memo: this.MetaData.memo
+            memo: this.MetaData.memo,
           };
         } else if (this.MetaData.typeSelected == "program") {
           var data = {
@@ -438,7 +494,7 @@ export default {
             media: this.MetaData.mediaSelected,
             productId: this.ProgramSelected.productId,
             onairTime: this.ProgramSelected.onairTime,
-            editor: this.MetaData.editor
+            editor: this.MetaData.editor,
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
           var data = {
@@ -447,7 +503,7 @@ export default {
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected,
             onairTime: this.date,
-            editor: this.MetaData.editor
+            editor: this.MetaData.editor,
           };
         } else if (this.MetaData.typeSelected == "scr-spot") {
           var data = {
@@ -456,13 +512,39 @@ export default {
             memo: this.MetaData.memo,
             advertiser: this.MetaData.advertiser,
             editor: this.MetaData.editor,
-            media: this.MetaData.mediaSelected
+            media: this.MetaData.mediaSelected,
           };
         } else if (this.MetaData.typeSelected == "static-spot") {
           var data = {
+            UserId: sessionStorage.getItem("user_id"),
+            media: this.MetaData.mediaSelected,
+            productId: this.EventSelected.id,
             SDate: this.fileSDate,
             EDate: this.fileEDate,
-            media: this.MetaData.mediaSelected
+            editor: this.MetaData.editor,
+            memo: this.MetaData.memo,
+            advertiser: this.MetaData.advertiser,
+          };
+        } else if (this.MetaData.typeSelected == "var-spot") {
+          var data = {
+            UserId: sessionStorage.getItem("user_id"),
+            media: this.MetaData.mediaSelected,
+            productId: this.EventSelected.id,
+            SDate: this.fileSDate,
+            EDate: this.fileEDate,
+            editor: this.MetaData.editor,
+            memo: this.MetaData.memo,
+            advertiser: this.MetaData.advertiser,
+          };
+        } else if (this.MetaData.typeSelected == "report") {
+          var data = {
+            UserId: sessionStorage.getItem("user_id"),
+            meida: this.MetaData.mediaSelected,
+            ProductId: this.EventSelected.id,
+            date: this.date,
+            editor: this.MetaData.editor,
+            memo: this.MetaData.memo,
+            reporter: this.MetaData.reporter,
           };
         }
         console.log(data);
@@ -521,8 +603,8 @@ export default {
       } else if (role == "TD") {
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

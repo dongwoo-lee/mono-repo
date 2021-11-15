@@ -5,15 +5,13 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.MAMDto
 {
-    public class StaticSpotMeta : MasteringMetaBase
+    public class ReportMeta : MasteringMetaBase
     {
         public string Media { get; set; }
-        public string SDate { get; set; }
-        public string EDate { get; set; }
-        public string Advertiser { get; set; }
+        public string OnAirTime { get; set; }
+        public string Reporter { get; set; }
         public string Editor { get; set; }
         public string Memo { get; set; }
         public string ProductId { get; set; }
-
     }
 }

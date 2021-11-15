@@ -83,6 +83,9 @@ export default {
   resetEditor(state) {
     state.MetaData.editor = "";
   },
+  resetReporter(state) {
+    state.MetaData.reporter = "";
+  },
   resetUsage(state) {
     state.MetaData.usage = "";
   },
@@ -102,8 +105,8 @@ export default {
         eventType: "",
         productId: "",
         onairTime: "",
-        durationSec: ""
-      }
+        durationSec: "",
+      },
     ];
   },
   resetProgramSelected(state) {
@@ -112,28 +115,28 @@ export default {
       eventType: "",
       productId: "",
       onairTime: "",
-      durationSec: ""
+      durationSec: "",
     };
   },
   resetEventSelected(state) {
     state.EventSelected = {
       id: "",
-      name: ""
+      name: "",
     };
   },
   resetEventData(state) {
     state.EventData = [
       {
         name: "",
-        id: ""
-      }
+        id: "",
+      },
     ];
   },
   forEachVueTableData(state, payload) {
-    state.vueTableData.forEach(element => {
+    state.vueTableData.forEach((element) => {
       if (payload.title == element.title) {
         element.step = payload.step;
       }
     });
-  }
+  },
 };

@@ -3,7 +3,12 @@ export default {
     return state.MetaData.typeSelected != "null" ? true : false;
   },
   dateState(state) {
-    return state.date.length == 8 ? true : false;
+    return state.date.length == 10 ? true : false;
+  },
+  SEDateState(state) {
+    return state.fileSDate.length == 10 && state.fileEDate.length == 10
+      ? true
+      : false;
   },
   titleState(state) {
     return state.MetaData.title.length >= 1 ? true : false;
@@ -13,6 +18,9 @@ export default {
   },
   editorState(state) {
     return state.MetaData.editor.length >= 1 ? true : false;
+  },
+  reporterState(state) {
+    return state.MetaData.reporter.length >= 1 ? true : false;
   },
   usageState(state) {
     return state.MetaData.usage.length >= 1 ? true : false;
@@ -24,9 +32,10 @@ export default {
     return state.programState ? true : false;
   },
   eventState(state) {
-    return state.EventData.id != "" ? true : false;
+    return state.EventSelected.id != "" ? true : false;
   },
   metaValid(state, getters) {
+    // TODO: dateState 추가
     if (state.MetaData.typeSelected == "my-disk") {
       if (getters.typeState && getters.titleState && getters.memoState)
         return true;
@@ -48,11 +57,39 @@ export default {
       ) {
         return true;
       }
+    } else if (state.MetaData.typeSelected == "static-spot") {
+      if (
+        getters.memoState &&
+        getters.eventState &&
+        getters.advertiserState &&
+        getters.editorState &&
+        getters.SEDateState
+      ) {
+        return true;
+      }
+    } else if (state.MetaData.typeSelected == "var-spot") {
+      if (
+        getters.memoState &&
+        getters.eventState &&
+        getters.advertiserState &&
+        getters.editorState &&
+        getters.SEDateState
+      ) {
+        return true;
+      }
+    } else if (state.MetaData.typeSelected == "report") {
+      if (
+        getters.memoState &&
+        getters.eventState &&
+        getters.reporterState &&
+        getters.editorState
+      ) {
+        return true;
+      }
     }
-
     return false;
   },
   getBadge(state) {
     return state.vueTableData.length;
-  }
+  },
 };

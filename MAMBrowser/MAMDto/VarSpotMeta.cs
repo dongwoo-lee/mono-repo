@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.MAMDto
 {
-    public class StaticSpotMeta : MasteringMetaBase
+    public class VarSpotMeta : MasteringMetaBase
     {
         public string Media { get; set; }
         public string SDate { get; set; }

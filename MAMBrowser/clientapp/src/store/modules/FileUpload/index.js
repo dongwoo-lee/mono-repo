@@ -22,6 +22,7 @@ export default {
       title: "",
       memo: "",
       editor: "",
+      reporter: "",
       usage: "",
       advertiser: "",
       mediaCD: "",
@@ -31,7 +32,7 @@ export default {
       timeToneSelected: "TU",
       reqStatusSelected: "R",
       duration: "",
-      audioFormat: ""
+      audioFormat: "",
     },
     vueTableData: [],
     ProgramData: [
@@ -40,30 +41,30 @@ export default {
         eventType: "",
         productId: "",
         onairTime: "",
-        durationSec: ""
-      }
+        durationSec: "",
+      },
     ],
     ProgramSelected: {
       eventName: "",
       eventType: "",
       productId: "",
       onairTime: "",
-      durationSec: ""
+      durationSec: "",
     },
     programState: false,
     EventData: [
       {
         name: "",
-        id: ""
-      }
+        id: "",
+      },
     ],
     EventSelected: {
       id: "",
-      name: ""
+      name: "",
     },
-    FileUploadProgress: {}
+    FileUploadProgress: {},
   },
   getters,
   mutations,
-  actions
+  actions,
 };

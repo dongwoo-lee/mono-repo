@@ -4,21 +4,42 @@
       id="dropzone-external"
       class="dropzone"
       v-show="dropzone"
-      style="position: fixed; z-index: 9800; top: -80px; left: -80px; width: 2000px; height: 120%; background-color: rgba(0, 0, 0, 0.5); display: table;"
+      style="
+        position: fixed;
+        z-index: 9800;
+        top: -80px;
+        left: -80px;
+        width: 2000px;
+        height: 120%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: table;
+      "
       :class="[
         isDropZoneActive
           ? 'dx-theme-accent-as-border-color dropzone-active'
-          : 'dx-theme-border-color'
+          : 'dx-theme-border-color',
       ]"
     >
       <p
-        style="margin-top:500px; margin-left:200px; text-align:center;color:white; font-size:48px;"
+        style="
+          margin-top: 500px;
+          margin-left: 200px;
+          text-align: center;
+          color: white;
+          font-size: 48px;
+        "
       >
         음원 파일 업로드
       </p>
-      <div id="dropzone-text" class="flex-box" style="margin-top:80px;">
+      <div id="dropzone-text" class="flex-box" style="margin-top: 80px">
         <span
-          style="position:absolute; z-index:1; color:white;  margin-top:700px;font-size:48px;"
+          style="
+            position: absolute;
+            z-index: 1;
+            color: white;
+            margin-top: 700px;
+            font-size: 48px;
+          "
         >
         </span>
       </div>
@@ -27,11 +48,19 @@
       class="btn btn-outline-primary btn-sm default cutom-label mr-2"
       id="fileuploadbutton"
       @click="openFileModal"
-      style="position:absolute; top:-80px; right:570px; z-index:1030; border-color:#008ECC; color:#008ECC; background-color:white;"
+      style="
+        position: absolute;
+        top: -80px;
+        right: 570px;
+        z-index: 1030;
+        border-color: #008ecc;
+        color: #008ecc;
+        background-color: white;
+      "
     >
       <b-icon
         icon="file-earmark-music"
-        style="margin-right:15px;"
+        style="margin-right: 15px"
         aria-hidden="true"
       >
       </b-icon>
@@ -39,8 +68,16 @@
     </b-button>
     <b-badge
       v-show="getBadge != 0"
-      style="position:absolute; top:-90px; right:570px; z-index:1030; 
-      bordercolor:red; color:red; background-color:white;  border-radius:80%"
+      style="
+        position: absolute;
+        top: -90px;
+        right: 570px;
+        z-index: 1030;
+        bordercolor: red;
+        color: red;
+        background-color: white;
+        border-radius: 80%;
+      "
       variant="outline-danger"
       >{{ getBadge }}</b-badge
     >
@@ -48,11 +85,9 @@
       <CommonFileModal
         v-show="FileModal"
         @close="closeFileModal"
-        style="font-family: 'Times New Roman', Times, serif; font-weight:bold;"
+        style="font-family: 'Times New Roman', Times, serif; font-weight: bold"
       >
-        <h2 slot="header">
-          마스터링
-        </h2>
+        <h2 slot="header">마스터링</h2>
         <h4 slot="body">
           <DxFileUploader
             :chunk-size="200000"
@@ -86,17 +121,30 @@
               </p> -->
 
             <b-button
-              style="position:absolute; top:115px; right:45px;  border-color:#008ECC; color:#008ECC; background-color:white; z-index:9999;"
+              style="
+                position: absolute;
+                top: 115px;
+                right: 45px;
+                border-color: #008ecc;
+                color: #008ecc;
+                background-color: white;
+                z-index: 9999;
+              "
               class="btn btn-outline-primary btn-sm default cutom-label mr-2"
               id="addFile"
             >
               파일 업로드
             </b-button>
             <!-- </span> -->
-            <b-card style="color: #008ECC;" title="마스터링 작업목록">
+            <b-card style="color: #008ecc" title="마스터링 작업목록">
               <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
               <div
-                style="width:1300px; margin-left:auto; margin-right:auto; font-size:14px;"
+                style="
+                  width: 1300px;
+                  margin-left: auto;
+                  margin-right: auto;
+                  font-size: 14px;
+                "
               >
                 <vuetable
                   v-show="this.role == 'ADMIN'"
@@ -108,7 +156,7 @@
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="title" scope="props">
-                    <div style="font-size:14px;">
+                    <div style="font-size: 14px">
                       {{ props.rowData.title }}
                     </div>
                     <!-- <b-button @click="getProps(props)">확인</b-button> -->
@@ -129,7 +177,7 @@
                     </div>
                   </template>
                   <template slot="step" scope="props">
-                    <div style="width:220px; height:20px;">
+                    <div style="width: 220px; height: 20px">
                       <vue-step-progress-indicator
                         :steps="[
                           '대기 중',
@@ -137,13 +185,13 @@
                           '리샘플링',
                           '노말라이즈',
                           '스토리지 저장',
-                          '완료'
+                          '완료',
                         ]"
                         :active-step="props.rowData.step"
                         :is-reactive="false"
                         :styles="styleData"
                         :colors="successColorData"
-                        style="margin-left:30px; width:680px;"
+                        style="margin-left: 30px; width: 680px"
                       />
                     </div>
                   </template>
@@ -158,7 +206,7 @@
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="title" scope="props">
-                    <div style="font-size:14px;">
+                    <div style="font-size: 14px">
                       {{ props.rowData.title }}
                     </div>
                   </template>
@@ -173,7 +221,7 @@
                     </div>
                   </template>
                   <template slot="step" scope="props">
-                    <div style="width:220px; height:20px;">
+                    <div style="width: 220px; height: 20px">
                       <vue-step-progress-indicator
                         :steps="[
                           '대기 중',
@@ -181,13 +229,13 @@
                           '리샘플링',
                           '노말라이즈',
                           '스토리지 저장',
-                          '완료'
+                          '완료',
                         ]"
                         :active-step="props.rowData.step"
                         :is-reactive="false"
                         :styles="styleData"
                         :colors="successColorData"
-                        style="margin-left:30px; width:680px;"
+                        style="margin-left: 30px; width: 680px"
                       />
                     </div>
                   </template>
@@ -195,18 +243,28 @@
               </div>
             </b-card>
 
-            <b-card style="color: #008ECC;" title="마스터링 로그">
+            <b-card style="color: #008ecc" title="마스터링 로그">
               <div
-                style="position:absolute; top:22px; left: 160px; font-size:14px;"
+                style="
+                  position: absolute;
+                  top: 22px;
+                  left: 160px;
+                  font-size: 14px;
+                "
               >
                 <b-form-group
                   label="시작일"
                   class="has-float-label"
-                  style="width:200px; float:left; margin-left:20px; margin-right:20px;"
+                  style="
+                    width: 200px;
+                    float: left;
+                    margin-left: 20px;
+                    margin-right: 20px;
+                  "
                 >
-                  <b-input-group class="mb-3" style="width:200px; float:left;">
+                  <b-input-group class="mb-3" style="width: 200px; float: left">
                     <input
-                      style="height:33px; font-size:13px;"
+                      style="height: 33px; font-size: 13px"
                       id="sdateinput"
                       type="text"
                       class="form-control input-picker date-input"
@@ -215,7 +273,7 @@
                     />
                     <b-input-group-append>
                       <b-form-datepicker
-                        style="height:33px;"
+                        style="height: 33px"
                         v-model="logSDate"
                         button-only
                         button-variant="outline-primary"
@@ -229,11 +287,11 @@
                 <b-form-group
                   label="종료일"
                   class="has-float-label"
-                  style="width:200px;"
+                  style="width: 200px"
                 >
-                  <b-input-group class="mb-3" style="width:200px; float:left;">
+                  <b-input-group class="mb-3" style="width: 200px; float: left">
                     <input
-                      style="height:33px; font-size:13px;"
+                      style="height: 33px; font-size: 13px"
                       id="edateinput"
                       type="text"
                       class="form-control input-picker date-input"
@@ -242,7 +300,7 @@
                     />
                     <b-input-group-append>
                       <b-form-datepicker
-                        style="height:33px;"
+                        style="height: 33px"
                         v-model="logEDate"
                         button-only
                         button-variant="outline-primary"
@@ -256,7 +314,12 @@
               </div>
 
               <div
-                style="width:1300px; margin-left:auto; margin-right:auto; font-size:14px;"
+                style="
+                  width: 1300px;
+                  margin-left: auto;
+                  margin-right: auto;
+                  font-size: 14px;
+                "
               >
                 <vuetable
                   v-show="this.role == 'ADMIN'"
@@ -272,7 +335,7 @@
                   </template>
 
                   <template slot="title" scope="props">
-                    <div style="font-size:14px;">
+                    <div style="font-size: 14px">
                       {{ props.rowData.title }}
                     </div>
                   </template>
@@ -303,7 +366,7 @@
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="title" scope="props">
-                    <div style="font-size:14px;">
+                    <div style="font-size: 14px">
                       {{ props.rowData.title }}
                     </div>
                   </template>
@@ -354,12 +417,12 @@ export default {
   props: {
     DragFileModalState: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: {
     CommonFileModal,
-    MetaModal
+    MetaModal,
   },
   data() {
     return {
@@ -374,25 +437,25 @@ export default {
       fileState: "",
       percent: 0,
       logSDate: "",
-      logEDate: ""
+      logEDate: "",
     };
   },
   watch: {
     DragFileModalState(v) {
       this.dropzone = v;
-    }
+    },
   },
   computed: {
-    fileupload: function() {
+    fileupload: function () {
       return this.$refs[dxfu].instance;
     },
     ...mapGetters("user", ["diskAvailable"]),
     ...mapGetters("FileIndexStore", ["getBadge"]),
     ...mapState("FileIndexStore", {
-      uploaderCustomData: state => state.uploaderCustomData,
-      localFiles: state => state.localFiles,
-      vueTableData: state => state.vueTableData,
-      MetaData: state => state.MetaData
+      uploaderCustomData: (state) => state.uploaderCustomData,
+      localFiles: (state) => state.localFiles,
+      vueTableData: (state) => state.vueTableData,
+      MetaData: (state) => state.MetaData,
     }),
     getUrl() {
       if (this.MetaData.typeSelected == null) {
@@ -400,7 +463,7 @@ export default {
       } else {
         return `/api/Mastering/${this.MetaData.typeSelected}`;
       }
-    }
+    },
   },
   methods: {
     getProps(props) {
@@ -454,7 +517,7 @@ export default {
       "setVueTableData",
       "setDuration",
       "setAudioFormat",
-      "forEachVueTableData"
+      "forEachVueTableData",
     ]),
     //#region 파일 조작
     upload() {
@@ -474,11 +537,12 @@ export default {
             event.value[0].type == "audio/wav" ||
             event.value[0].type == "image/jpeg"
           ) {
-            var blob = event.value[0].slice(0, 1000);
+            // var blob = event.value[0].slice(0, 1000);
             var formData = new FormData();
-            formData.append("file", blob);
+            // formData.append("file", blob);
+            formData.append("file", event.value[0]);
             formData.append("fileExt", event.value[0].name);
-            axios.post("/api/Mastering/Validation", formData).then(res => {
+            axios.post("/api/Mastering/Validation", formData).then((res) => {
               if (
                 res.data.resultObject.duration == null ||
                 res.data.resultObject.audioFormatInfo == null
@@ -571,9 +635,9 @@ export default {
         this.dropzone = false;
         this.$emit("dropZoneLeave");
       }
-    }
+    },
     //#endregion
-  }
+  },
 };
 </script>
 <style>
