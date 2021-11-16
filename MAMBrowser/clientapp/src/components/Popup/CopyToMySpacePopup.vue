@@ -83,7 +83,7 @@ export default {
       },
       set(v) {
         if (!v) {
-          this.typeReset();
+          this.reset();
           this.$emit("close");
         }
       }

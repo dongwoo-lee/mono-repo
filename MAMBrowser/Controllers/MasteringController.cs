@@ -633,7 +633,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("my-disk")]
-        public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -651,7 +651,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPatch("program")]
-        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -669,7 +669,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPatch("mcr-spot")]
-        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -687,7 +687,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPatch("scr-spot")]
-        public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -704,33 +704,30 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        [HttpPatch("static-spot")]
-        public ActionResult<DTO_RESULT> UpdateStaticSpot([FromBody] object jsonObject)
+        [HttpPatch("filler-time")]
+        public ActionResult<DTO_RESULT> UpdateFillerTime([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
             try
             {
                 if (jsonObject == null)
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+                {
 
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            return result;
-        }
-        [HttpPatch("var-spot")]
-        public ActionResult<DTO_RESULT> UpdateVarSpot([FromBody] object jsonObject)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-
-            try
-            {
-                if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+                }
+                else
+                {
+                    string AudioType = jsonObject.AudioFileID.Substring(0, 2);
+
+                    if (AudioType == "TS")
+                    {
+                        Console.WriteLine("변동소재");
+                    }else if(AudioType == "TT")
+                    {
+                        Console.WriteLine("고정소재");
+                    }
+                }
 
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -741,10 +738,11 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPatch("report")]
-        public ActionResult<DTO_RESULT> UpdateReport([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdateReport([FromBody] AudioFileMetaBase jsonObject)
+        
         {
             DTO_RESULT result = new DTO_RESULT();
-
+            
             try
             {
                 if (jsonObject == null)
@@ -759,7 +757,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPatch("filler")]
-        public ActionResult<DTO_RESULT> UpdateFiller([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdateFiller([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -777,7 +775,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPatch("pro")]
-        public ActionResult<DTO_RESULT> UpdatePro([FromBody] object jsonObject)
+        public ActionResult<DTO_RESULT> UpdatePro([FromBody] AudioFileMetaBase jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 

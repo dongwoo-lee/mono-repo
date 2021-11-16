@@ -118,9 +118,12 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @delete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -154,6 +157,7 @@
 import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import axios from "axios";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinFillerPage],
@@ -266,7 +270,7 @@ export default {
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "10%"
         }
       ]
     };
@@ -316,6 +320,18 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDate}_${rowData.endDT}_${rowData.id}`;
       return tmpName;
+    },
+    onDeleteConfirm(rowData) {
+      console.log(rowData);
+    },
+    onMetaModifyPopup(rowData) {
+      var body = {
+        AudioFileID: rowData.id,
+        Title: rowData.name
+      };
+      axios.patch("/api/Mastering/filler-time", body).then(res => {
+        console.log(res);
+      });
     }
   }
 };

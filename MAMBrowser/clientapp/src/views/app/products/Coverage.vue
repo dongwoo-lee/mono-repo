@@ -115,9 +115,12 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @delete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -151,6 +154,7 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import axios from "axios";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinBasicPage],
@@ -252,7 +256,7 @@ export default {
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "7%"
+          width: "10%"
         }
       ]
     };
@@ -288,6 +292,18 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.pgmName}_${rowData.brdDT}_${rowData.name}`;
       return tmpName;
+    },
+    onMetaModifyPopup(rowData) {
+      var body = {
+        AudioFileID: rowData.id,
+        Title: rowData.name
+      };
+      axios.patch("/api/Mastering/report", body).then(res => {
+        console.log(res);
+      });
+    },
+    onDeleteConfirm(rowData) {
+      console.log(rowData);
     }
   }
 };

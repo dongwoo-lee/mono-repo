@@ -147,6 +147,7 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import MetaDataPrivateModifyPopup from "../../../components/Popup/MetaDataPrivateModifyPopup";
 import { mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
+import axios from "axios";
 
 export default {
   mixins: [MixinBasicPage],
@@ -349,10 +350,17 @@ export default {
         });
     },
     onMetaModifyPopup(rowData) {
-      console.log(rowData);
-      this.$refs.refMetaDataModifyPopup.setData(rowData);
-      this.metaDataModifyPopup = true;
+      var body = {
+        AudioFileID: rowData.id,
+        Title: rowData.title
+      };
+      axios.patch("/api/Mastering/my-disk", body).then(res => {
+        console.log(res);
+      });
+      // this.$refs.refMetaDataModifyPopup.setData(rowData);
+      // this.metaDataModifyPopup = true;
     },
+
     onEditSuccess() {
       this.getData();
     },

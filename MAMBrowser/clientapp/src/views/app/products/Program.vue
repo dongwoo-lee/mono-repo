@@ -113,6 +113,7 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import axios from "axios";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinBasicPage],
@@ -321,7 +322,13 @@ export default {
         });
     },
     onMetaModifyPopup(rowData) {
-      console.log(rowData);
+      var body = {
+        AudioFileID: rowData.id,
+        Title: rowData.name
+      };
+      axios.patch("/api/Mastering/program", body).then(res => {
+        console.log(res);
+      });
     },
     onEditSuccess() {
       this.getData();
