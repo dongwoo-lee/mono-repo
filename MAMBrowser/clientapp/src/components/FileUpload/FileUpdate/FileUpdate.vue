@@ -1,7 +1,7 @@
 <template>
   <common-update-modal @close="MetaModalOff">
     <h3 slot="header">메타 데이터 수정</h3>
-    <h4 slot="body">
+    <h4 slot="body" style="margin-left:20px; margin-top:20px;">
       <h6>
         제목
       </h6>
@@ -13,7 +13,7 @@
         placeholder="제목"
         trim
       />
-      <h6>
+      <h6 style="margin-top:20px;">
         메모
       </h6>
       <b-form-input
@@ -81,10 +81,26 @@ export default {
       this.$emit("UpdateModalClose");
     },
     updateFile() {
-      var update = {
-        title: this.title,
-        memo: this.memo
-      };
+      if (this.screenName == "private") {
+        var update = {
+          title: this.title,
+          memo: this.memo
+        };
+      } else if (this.screenName == "scr-spot") {
+        var update = {
+          title: this.title,
+          advertiser: this.advertiser
+        };
+      } else if (this.screenName == "report") {
+        var update = {
+          title: this.title,
+          reporter: this.reporter
+        };
+      } else if (this.screenName == "pr") {
+        var update = {
+          title: this.title
+        };
+      }
       this.$emit("updateFile", update);
     },
     changeTitle(v) {

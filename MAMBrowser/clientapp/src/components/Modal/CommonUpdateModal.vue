@@ -7,7 +7,7 @@
             <slot name="header">
               default header
             </slot>
-            <button class="modal-default-button" @click="$emit('close')">
+            <button class="update-modal-default-button" @click="$emit('close')">
               <p class="h4 mb-2">
                 <b-icon icon="x" class="icon" variant="danger"></b-icon>
               </p>
@@ -20,8 +20,10 @@
             </slot>
           </div>
 
-          <div class="modal-footer">
-            <slot name="footer"> </slot>
+          <div class="update-modal-footer">
+            <slot name="footer">
+              default footer
+            </slot>
           </div>
         </div>
       </div>
@@ -52,7 +54,7 @@ export default {};
 
 .update-modal-container {
   position: fixed;
-  right: 200px;
+  right: 730px;
   width: 400px;
   height: 300px;
   margin-top: -400px;
@@ -63,7 +65,7 @@ export default {};
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.modal-header h2 {
+.update-modal-header h2 {
   margin-top: 10px;
   color: #008ecc;
   font-weight: bolder;
@@ -73,7 +75,7 @@ export default {};
   height: 200px;
 }
 
-.modal-default-button {
+.update-modal-default-button {
   float: right;
   position: absolute;
   top: 25px;
@@ -82,7 +84,24 @@ export default {};
   outline: 0;
   background-color: white;
 }
-
+.update-modal-footer {
+  width: 400px;
+  height: 83px;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+}
 .modal-enter {
   opacity: 0;
 }
@@ -95,10 +114,5 @@ export default {};
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
-}
-.modal-footer {
-  width: 400px;
-  height: 83px;
-  background-color: white;
 }
 </style>
