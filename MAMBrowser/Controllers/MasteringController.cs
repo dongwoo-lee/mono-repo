@@ -397,7 +397,7 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        //RabbitMQ(staticSpot, (byte)userPriority);
+                        RabbitMQ(staticSpot, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -470,7 +470,7 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        //RabbitMQ(varSpot, (byte)userPriority);
+                        RabbitMQ(varSpot, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -541,7 +541,7 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        //RabbitMQ(report, (byte)userPriority);
+                        RabbitMQ(report, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -555,10 +555,73 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("filler")]
-        public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [ModelBinder(BinderType = typeof(JsonModelBinder))] MyDiskMeta meta)
+        public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string title,
+            [FromForm] string memo, [FromForm] string onairTime, [FromForm] string editor, [FromForm] string media)
         {
             DTO_RESULT result = new DTO_RESULT();
-            result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            try
+            {
+                //1. 임시파일 쓰기
+                if (!string.IsNullOrEmpty(chunkMetadata))
+                {
+                    var metaDataObject = JsonConvert.DeserializeObject<ChunkMetadata>(chunkMetadata);
+
+                    string clientIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                    //파일 확장자
+                    CheckFileExtensionValid(metaDataObject.FileName);
+
+                    var tempPath = @"D:\Temp";
+
+                    string date = DateTime.Now.ToString(Define.DTM8);
+                    string newFileName = date + "_" + title + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+
+                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    if (!Directory.Exists(tempPath))
+                    {
+                        Directory.CreateDirectory(tempPath);
+                    }
+
+                    //청크 파일 어펜드
+                    AppendContentToFile(tempFilePath, file);
+
+                    //파일 업로드
+                    if (metaDataObject.index == (metaDataObject.TotalCount - 1))
+                    {
+                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+
+                        FillerMeta Filler = new FillerMeta();
+
+                        Filler.UserId = UserId;
+                        Filler.Title = title;
+                        Filler.Memo = memo;
+                        Filler.Media = media;
+                        Filler.Editor = editor;
+                        Filler.OnAirTime = onairTime;
+                        Filler.FilePath = newFilePath;
+                        Filler.RegDtm = DateTime.Now.ToString(Define.DTM19);
+                        Filler.SoundType = SoundDataTypes.SCR_SPOT;
+
+                        //2. 우선순위 확인 (ip, user, brdDtm)           
+                        //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
+                        var users = Startup.AppSetting.MasteringPriorities["Users"] as Dictionary<string, int>;
+                        var userPriority = Convert.ToInt32(users["S01G04C001"]);
+
+
+                        //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
+                        //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
+                        RabbitMQ(Filler, (byte)userPriority);
+                    }
+                }
+                //4. 작업결과 리턴하기
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, "파일 업로드 실패");
+            }
             return result;
         }      
         [HttpPost("pro")]
@@ -812,7 +875,7 @@ namespace MAMBrowser.Controllers
         {
             var factory = new ConnectionFactory
             {
-                Uri = new Uri("amqp://guest:guest@192.168.1.109:5672")
+                Uri = new Uri("amqp://guest:guest@localhost:5672")
             };
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();

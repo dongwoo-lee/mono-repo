@@ -86,10 +86,19 @@ export default {
       ) {
         return true;
       }
+    } else if (state.MetaData.typeSelected == "filler") {
+      if (
+        getters.titleState &&
+        getters.memoState &&
+        getters.editorState &&
+        getters.dateState
+      ) {
+        return true;
+      }
     }
     return false;
   },
   getBadge(state) {
     return state.vueTableData.length;
-  },
+  }
 };

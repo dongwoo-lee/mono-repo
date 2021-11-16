@@ -17,7 +17,7 @@ export default {
     DxTextBox,
     DxValidator,
     Vuetable,
-    VueStepProgressIndicator,
+    VueStepProgressIndicator
   },
   data() {
     return {
@@ -32,29 +32,29 @@ export default {
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%",
+          width: "6%"
         },
         {
           name: "__slot:type",
           title: "소재유형",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "__slot:date",
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "__slot:step",
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "20%",
-        },
+          width: "20%"
+        }
       ],
       adminFields: [
         {
@@ -62,47 +62,47 @@ export default {
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%",
+          width: "6%"
         },
         {
           name: "__slot:type",
           title: "소재유형",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "__slot:user_id",
           title: "등록자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "__slot:date",
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%",
+          width: "8%"
         },
         {
           name: "__slot:step",
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "20%",
-        },
+          width: "20%"
+        }
       ],
       styleData: {
         progress__block: {
           display: "flex",
-          alignItems: "center",
+          alignItems: "center"
         },
         progress__bridge: {
           backgroundColor: "grey",
           height: "2px",
           flexGrow: "1",
-          width: "20px",
+          width: "20px"
         },
         progress__bubble: {
           margin: "0",
@@ -116,92 +116,92 @@ export default {
           borderRadius: "10%",
           backgroundColor: "transparent",
           border: "2px grey solid",
-          textAlign: "center",
+          textAlign: "center"
         },
         progress__label: {
           margin: "0 0.8rem",
-          font: "14px;",
-        },
+          font: "14px;"
+        }
       },
       successColorData: {
         progress__bubble: {
           active: {
             color: "#fff",
             backgroundColor: "#27ae60",
-            borderColor: "#27ae60",
+            borderColor: "#27ae60"
           },
           inactive: {
             color: "#fff",
             backgroundColor: "#EF5350",
-            borderColor: "#EF5350",
+            borderColor: "#EF5350"
           },
           completed: {
             color: "#fff",
             borderColor: "#27ae60",
-            backgroundColor: "#27ae60",
-          },
+            backgroundColor: "#27ae60"
+          }
         },
         progress__label: {
           active: {
-            color: "#27ae60",
+            color: "#27ae60"
           },
           inactive: {
-            color: "#EF5350",
+            color: "#EF5350"
           },
           completed: {
-            color: "#27ae60",
-          },
-        },
+            color: "#27ae60"
+          }
+        }
       },
       failColorData: {
         progress__bubble: {
           active: {
             color: "#fff",
             backgroundColor: "#e74c3c",
-            borderColor: "#e74c3c",
+            borderColor: "#e74c3c"
           },
           inactive: {
             color: "#fff",
             backgroundColor: "#e74c3c",
-            borderColor: "#e74c3c",
+            borderColor: "#e74c3c"
           },
           completed: {
             color: "#fff",
             borderColor: "#e74c3c",
-            backgroundColor: "#e74c3c",
-          },
+            backgroundColor: "#e74c3c"
+          }
         },
         progress__label: {
           active: {
-            color: "#e74c3c",
+            color: "#e74c3c"
           },
           inactive: {
-            color: "#e74c3c",
+            color: "#e74c3c"
           },
           completed: {
-            color: "#e74c3c",
-          },
-        },
-      },
+            color: "#e74c3c"
+          }
+        }
+      }
     };
   },
   computed: {
     ...mapState("FileIndexStore", {
-      MetaModalTitle: (state) => state.MetaModalTitle,
-      localFiles: (state) => state.localFiles,
-      date: (state) => state.date,
-      fileSDate: (state) => state.fileSDate,
-      fileEDate: (state) => state.fileEDate,
-      MetaData: (state) => state.MetaData,
-      fileMediaOptions: (state) => state.fileMediaOptions,
-      vueTableData: (state) => state.vueTableData,
-      ProgramData: (state) => state.ProgramData,
-      ProgramSelected: (state) => state.ProgramSelected,
-      EventData: (state) => state.EventData,
-      EventSelected: (state) => state.EventSelected,
-      isActive: (state) => state.isActive,
-      processing: (state) => state.processing,
-      fileUploading: (state) => state.fileUploading,
+      MetaModalTitle: state => state.MetaModalTitle,
+      localFiles: state => state.localFiles,
+      date: state => state.date,
+      fileSDate: state => state.fileSDate,
+      fileEDate: state => state.fileEDate,
+      MetaData: state => state.MetaData,
+      fileMediaOptions: state => state.fileMediaOptions,
+      vueTableData: state => state.vueTableData,
+      ProgramData: state => state.ProgramData,
+      ProgramSelected: state => state.ProgramSelected,
+      EventData: state => state.EventData,
+      EventSelected: state => state.EventSelected,
+      isActive: state => state.isActive,
+      processing: state => state.processing,
+      fileUploading: state => state.fileUploading
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
@@ -214,7 +214,7 @@ export default {
       "eventState",
       "SEDateState",
       "advertiserState",
-      "metaValid",
+      "metaValid"
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),
     getVariant() {
@@ -223,7 +223,7 @@ export default {
     ...mapGetters("menu", ["getMenuType"]),
     programState() {
       return this.ProgramSelected.productId != "" ? true : false;
-    },
+    }
   },
   created() {
     this.role = sessionStorage.getItem("authority");
@@ -244,8 +244,8 @@ export default {
         } else {
           this.setIsActive(false);
         }
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -280,7 +280,7 @@ export default {
       "resetProgramData",
       "resetProgramSelected",
       "resetEventData",
-      "resetEventSelected",
+      "resetEventSelected"
     ]),
     fileStateFalse() {
       this.setProcessing(false);
@@ -312,9 +312,9 @@ export default {
           .get(
             `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
           )
-          .then((res) => {
+          .then(res => {
             var value = res.data.resultObject.data;
-            value.forEach((e) => {
+            value.forEach(e => {
               e.durationSec = this.getDurationSec(e.durationSec);
               e.onairTime = this.getOnAirTime(e.onairTime);
             });
@@ -331,7 +331,7 @@ export default {
           .get(
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=MS`
           )
-          .then((res) => {
+          .then(res => {
             this.setEventData(res.data.resultObject.data);
           });
       } else if (this.MetaData.typeSelected == "static-spot") {
@@ -345,9 +345,9 @@ export default {
           .get(
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TT`
           )
-          .then((res) => {
+          .then(res => {
             var value = res.data.resultObject.data;
-            value.forEach((e) => {
+            value.forEach(e => {
               e.duration = this.getDurationSec(e.duration);
               e.startDate = this.getStartDate(e.startDate);
             });
@@ -364,9 +364,9 @@ export default {
           .get(
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TS`
           )
-          .then((res) => {
+          .then(res => {
             var value = res.data.resultObject.data;
-            value.forEach((e) => {
+            value.forEach(e => {
               e.duration = this.getDurationSec(e.duration);
               e.startDate = this.getStartDate(e.startDate);
             });
@@ -379,11 +379,9 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
-        console.log(date);
-        console.log(this.MetaData.mediaSelected);
         axios
           .get(`/api/categories/pgmcodes?brd_dt=${date}&media=A`)
-          .then((res) => {
+          .then(res => {
             this.setEventData(res.data.resultObject.data);
           });
       }
@@ -496,6 +494,6 @@ export default {
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });
       }
-    },
-  },
+    }
+  }
 };

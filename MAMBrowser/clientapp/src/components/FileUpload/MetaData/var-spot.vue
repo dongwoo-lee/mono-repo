@@ -115,7 +115,7 @@
                 @input="eventSInput"
                 button-only
                 button-variant="outline-primary"
-                right
+                left
                 aria-controls="example-input"
                 @context="onContext"
               ></b-form-datepicker>
@@ -334,14 +334,14 @@ import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
 export default {
   components: {
-    CommonVueSelect,
+    CommonVueSelect
   },
   mixins: [CommonFileFunction, MixinBasicPage, mixinFillerPage],
   data() {
     return {
       staticMedia: "",
       sdate: "",
-      edate: "",
+      edate: ""
     };
   },
   created() {
@@ -349,11 +349,11 @@ export default {
     this.getEditorForMd(); //제작자
     this.resetFileMediaOptions(); //매체 초기화
     //매체 생성
-    axios.get("/api/categories/media").then((res) => {
-      res.data.resultObject.data.forEach((e) => {
+    axios.get("/api/categories/media").then(res => {
+      res.data.resultObject.data.forEach(e => {
         this.setFileMediaOptions({
           value: e.id,
-          text: e.name,
+          text: e.name
         });
       });
     });
@@ -387,7 +387,7 @@ export default {
         replaceAllFileEDate != ""
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
+          message: "시작 날짜가 종료 날짜보다 큽니다."
         });
       }
     },
@@ -396,10 +396,10 @@ export default {
       const replaceAllFileEDate = this.edate.replace(/-/g, "");
       if (replaceAllFileEDate < replaceAllFileSDate) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
+          message: "시작 날짜가 종료 날짜보다 큽니다."
         });
       }
-    },
+    }
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -475,8 +475,8 @@ export default {
         }
       }
     },
-    getData() {},
-  },
+    getData() {}
+  }
 };
 </script>
 

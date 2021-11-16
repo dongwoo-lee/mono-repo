@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top:20px;">
     <b-form-group label="매체" class="has-float-label">
       <b-form-select
         id="program-media"
