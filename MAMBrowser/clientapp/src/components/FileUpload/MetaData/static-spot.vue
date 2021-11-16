@@ -480,4 +480,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.date-input:focus {
+  border: 1px solid #4475c4 !important;
+}
+.date-input {
+  border: 1px solid #008ecc !important;
+}
+</style>
