@@ -2,7 +2,7 @@
   <div>
     <transition name="fade">
       <div
-        style="position:absolute; top:310px; left:-400px; z-index:9999; font-size:16px;"
+        style="position:absolute; top:360px; left:-400px; z-index:9999; font-size:16px;"
       >
         <b-form-input
           class="editTask"
@@ -32,7 +32,7 @@
         <b-form-group
           label="제작자"
           class="has-float-label"
-          style="position:absolute; top:380px; left:-400px; z-index:9999; font-size:16px;"
+          style="position:absolute; top:430px; left:-400px; z-index:9999; font-size:16px;"
         >
           <common-vue-select
             style="font-size:14px; width:200px; border: 1px solid #008ecc;"
@@ -136,7 +136,7 @@
     <!-- 프로그램 -->
     <div
       v-show="!isActive && this.ProgramSelected.eventName != ''"
-      style="width: 550px; height:140px; margin-top:280px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
+      style="width: 550px; height:150px; margin-top:280px; padding-left:10px; padding-right:10px; float:left; border:1px solid #008ecc;"
     >
       <div style="width:180px; float:left;">
         <b-form-group
@@ -187,7 +187,7 @@
         </b-form-group>
       </div>
 
-      <div style="width:200px; float:left;">
+      <div style="width:200px; float:left; margin-top:10px;">
         <b-form-group label="방송 시간" class="has-float-label">
           <b-form-input
             style="width:200px;"
@@ -199,7 +199,7 @@
           />
         </b-form-group>
       </div>
-      <div style="width:200px; margin-left:20px; float:left;">
+      <div style="width:200px; margin-left:20px; float:left; margin-top:10px;">
         <b-form-group label="편성 분량" class="has-float-label">
           <b-form-input
             style="width:120px;"

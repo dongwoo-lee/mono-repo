@@ -68,7 +68,7 @@ export default {
   position: fixed;
   right: 450px;
   width: 1000px;
-  height: 650px;
+  height: 700px;
   margin-top: -400px;
   background-color: white;
   border-radius: 2px;
@@ -81,7 +81,7 @@ export default {
   position: fixed;
   right: 720px;
   width: 400px;
-  height: 650px;
+  height: 700px;
   margin-top: -400px;
   background-color: white;
   border-radius: 2px;
@@ -97,7 +97,7 @@ export default {
 
 .meta-modal-body {
   width: 400px;
-  height: 500px;
+  height: 550px;
   background-color: white;
 }
 

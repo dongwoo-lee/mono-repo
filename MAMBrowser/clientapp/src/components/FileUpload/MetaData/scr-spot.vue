@@ -1,10 +1,14 @@
 <template>
   <div style="margin-top:20px;">
-    <b-form-group label="매체" class="has-float-label">
+    <b-form-group
+      label="매체"
+      class="has-float-label"
+      style="float:left; margin-right:20px;"
+    >
       <b-form-select
         id="program-media"
         class="media-select"
-        style=" width:200px; height:37px;"
+        style=" width:180px; "
         :value="scrMedia"
         :options="fileMediaOptions"
         @input="mediaChange"
@@ -17,7 +21,7 @@
       style="margin-top:20px;"
     >
       <common-vue-select
-        style="font-size:14px; width:200px; border: 1px solid #008ecc;"
+        style="font-size:14px; width:150px; border: 1px solid #008ecc;"
         :suggestions="editorOptions"
         @inputEvent="inputEditor"
       ></common-vue-select>

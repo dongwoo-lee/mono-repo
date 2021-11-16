@@ -40,16 +40,16 @@
     width: 220px;
     position: relative;
     top: 20px;
-    right: -765px;
+    right: -845px;
 }
 .date-modal-button {
     width: 220px;
     position: relative;
     top: 20px;
-    right: -170px;
+    right: -250px;
 }
 .file-modal {
-    margin-top: 200px;
+    margin-top: 260px;
     width: 400px;
     height: 280px;
     float: left;
@@ -60,7 +60,7 @@
     display: none;
 }
 .date-modal {
-    margin-top: 200px;
+    margin-top: 260px;
     width: 380px;
     height: 190px;
     float: left;

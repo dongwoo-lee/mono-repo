@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <div style="position:absolute; top:310px; left:-400px; z-index:9999; ">
+      <div style="position:absolute; top:360px; left:-400px; z-index:9999; ">
         <b-form-input
           class="editTask"
           v-model="MetaData.memo"
@@ -28,7 +28,7 @@
     <transition name="fade">
       <div>
         <b-form-input
-          style="position:absolute; top:360px; left:-400px; z-index:9999; "
+          style="position:absolute; top:410px; left:-400px; z-index:9999; "
           class="editTask"
           v-model="MetaData.advertiser"
           :state="advertiserState"
@@ -55,7 +55,7 @@
         <b-form-group
           label="제작자"
           class="has-float-label"
-          style="position:absolute; top:430px; left:-400px; z-index:9999; font-size:16px;"
+          style="position:absolute; top:480px; left:-400px; z-index:9999; font-size:16px;"
         >
           <common-vue-select
             style="font-size:14px; width:200px; border: 1px solid #008ecc;"

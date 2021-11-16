@@ -7,7 +7,7 @@
         style="font-family: MBC 새로움 M"
         :isActive="this.isActive"
       >
-        <h3 slot="header">파일 업로드 메타 데이터 입력</h3>
+        <h3 slot="header">메타 데이터 입력</h3>
         <h4 slot="body">
           <div style="width: 1000px; height: 500px; float: left">
             <div
@@ -20,52 +20,57 @@
                 margin-bottom: 20px;
               "
             >
-              <p
-                style="
+              <h3 style="color: #008ecc">파일 정보</h3>
+              <div style="padding:10px; border:1px solid #008ecc;">
+                <p
+                  style="
                   font-size: 16px;
                   width: 350px;
                   white-space: nowrap;
                   overflow: hidden;
                   text-overflow: ellipsis;
                 "
-              >
-                파일 명 : {{ this.MetaModalTitle }}
-              </p>
-              <b-progress
-                class="w-100"
-                variant="success"
-                :max="100"
-                height="16px"
-              >
-                <b-progress-bar
+                >
+                  {{ this.MetaModalTitle }}
+                </p>
+                <b-progress
+                  class="w-100"
+                  variant="success"
                   :max="100"
-                  :value="percent"
-                  :label="`${percent} %`"
-                  show-progress
-                ></b-progress-bar
-              ></b-progress>
+                  height="16px"
+                >
+                  <b-progress-bar
+                    :max="100"
+                    :value="percent"
+                    :label="`${percent} %`"
+                    show-progress
+                  ></b-progress-bar
+                ></b-progress>
 
-              <div style="height: 50px; margin-top: 20px">
-                <b-form-input
-                  class="editTask"
-                  v-model="MetaData.duration"
-                  readonly
-                  aria-describedby="input-live-help input-live-feedback"
-                  placeholder="duration"
-                  trim
-                />
+                <div style="height: 50px; margin-top: 20px">
+                  <b-form-input
+                    style="width:330px;"
+                    class="editTask"
+                    v-model="MetaData.duration"
+                    readonly
+                    aria-describedby="input-live-help input-live-feedback"
+                    placeholder="duration"
+                    trim
+                  />
+                </div>
+                <div style="height: 50px; margin-top: 10px">
+                  <b-form-input
+                    style="width:330px;"
+                    class="editTask"
+                    v-model="MetaData.audioFormat"
+                    readonly
+                    aria-describedby="input-live-help input-live-feedback"
+                    placeholder="audioFormat"
+                    trim
+                  />
+                </div>
               </div>
-              <div style="height: 50px; margin-top: 10px">
-                <b-form-input
-                  class="editTask"
-                  v-model="MetaData.audioFormat"
-                  readonly
-                  aria-describedby="input-live-help input-live-feedback"
-                  placeholder="audioFormat"
-                  trim
-                />
-              </div>
-              <div style="width: 300px">
+              <div style="width:300px; margin-top:15px;">
                 <h3 style="color: #008ecc">소재 유형</h3>
                 <b-form-select
                   style="width: 350px"
@@ -192,27 +197,31 @@
         <h3 slot="footer">
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <!-- 로그 버튼 -->
-            <b-button
+            <!-- <b-button
               variant="outline-success"
               @click="log"
               style="margin-left: -80px"
             >
               <span class="label">확인</span>
-            </b-button>
-            <b-button variant="outline-danger" @click="resetEvent">
+            </b-button> -->
+            <!-- <b-button
+              class="defaultButton"
+              variant="outline-danger"
+              @click="resetEvent"
+            >
               초기화
-            </b-button>
+            </b-button> -->
 
-            <b-button
+            <!-- <b-button
+              class="defaultButton"
               variant="outline-success"
               v-show="processing && !fileUploading"
             >
               <b-spinner small type="grow"></b-spinner>
               <span class="label">확인중...</span>
-            </b-button>
+            </b-button> -->
             <b-button
-              variant="outline-success"
-              style="margin-right: 10px"
+              variant="outline-primary"
               v-show="!processing && fileUploading"
             >
               <b-spinner small type="grow"></b-spinner>
@@ -220,9 +229,9 @@
             </b-button>
             <span v-show="metaValid">
               <b-button
-                variant="outline-success"
+                variant="outline-primary"
                 @click="uploadfile()"
-                style="margin-left: 28px"
+                style="margin-left:45px;"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
@@ -230,10 +239,9 @@
             </span>
             <span v-show="!metaValid">
               <b-button
-                variant="success"
+                variant="primary"
                 disabled
-                @click="uploadfile()"
-                style="margin-left: 28px"
+                style="margin-left:45px;"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>

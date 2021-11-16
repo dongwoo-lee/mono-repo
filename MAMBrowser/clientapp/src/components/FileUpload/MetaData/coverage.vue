@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <div style="position: absolute; top: 310px; left: -400px; z-index: 9999">
+      <div style="position: absolute; top: 360px; left: -400px; z-index: 9999">
         <b-form-input
           class="editTask"
           v-model="MetaData.memo"
@@ -39,7 +39,7 @@
     <transition name="fade">
       <div>
         <b-form-input
-          style="position: absolute; top: 360px; left: -400px; z-index: 9999"
+          style="position: absolute; top: 410px; left: -400px; z-index: 9999"
           class="editTask"
           v-model="MetaData.reporter"
           :state="reporterState"
@@ -78,7 +78,7 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 430px;
+            top: 480px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
@@ -250,12 +250,12 @@ import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
 export default {
   components: {
-    CommonVueSelect,
+    CommonVueSelect
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
-      coverageMedia: "",
+      coverageMedia: ""
     };
   },
   created() {
@@ -263,11 +263,11 @@ export default {
     this.getEditorForReporter();
     this.resetFileMediaOptions();
 
-    axios.get("/api/categories/report").then((res) => {
-      res.data.resultObject.data.forEach((e) => {
+    axios.get("/api/categories/report").then(res => {
+      res.data.resultObject.data.forEach(e => {
         this.setFileMediaOptions({
           value: e.id,
-          text: e.name,
+          text: e.name
         });
       });
     });
@@ -281,8 +281,8 @@ export default {
     },
     mediaChange(v) {
       this.setMediaSelected(v);
-    },
-  },
+    }
+  }
 };
 </script>
 
