@@ -525,7 +525,7 @@ namespace MAMBrowser.DAL
                     Length = row.CLIPSEC,
                     FilePath = row.MASTERFILE,
                     Format = "",
-                    IntDuration = row.LENGTH
+                    IntDuration = row.CLIPLENGTH
                 };
             });
 
@@ -637,7 +637,7 @@ namespace MAMBrowser.DAL
                     CodingDT = row.REGISTDATE,
                     Format = row.FORMAT,
                     FilePath = row.MASTERFILE,
-                    IntDuration = row.LENGTH
+                    IntDuration = row.CLIPLENGTH
                 };
             });
 
