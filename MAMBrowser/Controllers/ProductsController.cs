@@ -9,6 +9,7 @@ using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
+using MAMBrowser.MAMDto;
 using MAMBrowser.Models;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -468,8 +469,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
-        /// <summary>
+                /// <summary>
         /// 일반 소재 - 다운로드
         /// </summary>
         /// <param name="token"></param>
@@ -491,18 +491,20 @@ namespace MAMBrowser.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
         /// <summary>
-        /// 일반소재 - 병합 다운로드 요청
+        /// 일반소재 - 그룹소재 병합파일 요청
         /// </summary>
         /// <returns></returns>
-        [HttpGet("request-concatenate-files")]
-        public ActionResult<DTO_RESULT<DTO_RESULT_OBJECT<string>>> ConcatenateDownload([FromQuery] string grpType, [FromQuery] string brd_Dt, [FromQuery] string grpId, [FromQuery] string downloadName, [FromQuery] string inline = "N")
+        [HttpGet("concatenate-files-request")]
+        public ActionResult<DTO_RESULT<DTO_RESULT_OBJECT<AudioGroupInfo>>> ConcatenateRequest([FromQuery] string grpType, [FromQuery] string brd_Dt, [FromQuery] string grpId)
         {
             //grpType : sb or cm
             try
             {
-                DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-                result.ResultObject = new DTO_RESULT_OBJECT<string>();
+                DTO_RESULT<DTO_RESULT_OBJECT<AudioGroupInfo>> result = new DTO_RESULT<DTO_RESULT_OBJECT<AudioGroupInfo>>();
+                result.ResultObject = new DTO_RESULT_OBJECT<AudioGroupInfo>();
+                result.ResultObject.Data = new AudioGroupInfo();
 
 
                 if (string.IsNullOrEmpty(grpType))
@@ -510,6 +512,7 @@ namespace MAMBrowser.Controllers
 
                 List<string> filePathList = new List<string>();
                 string decodedFilePath = "";
+                int startTime = 0;
                 if (grpType.ToUpper() == "SB")
                 {
                     var sbfiles = FindSBContents(brd_Dt, grpId);
@@ -519,6 +522,9 @@ namespace MAMBrowser.Controllers
                         {
                             filePathList.Add(decodedFilePath);
                             decodedFilePath = "";
+
+                            result.ResultObject.Data.GroupData.Add(new AudioGroupData { Title = sbFile.Name, StartTime = startTime, EndTime = startTime + (sbFile.IntDuration / 1000) });
+                            startTime = startTime + (sbFile.IntDuration / 1000);
                         }
                         else
                             return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
@@ -534,6 +540,9 @@ namespace MAMBrowser.Controllers
                         {
                             filePathList.Add(decodedFilePath);
                             decodedFilePath = "";
+
+                            result.ResultObject.Data.GroupData.Add(new AudioGroupData { Title = sbFile.Name, StartTime = startTime, EndTime = startTime + (sbFile.IntDuration / 1000 )});
+                            startTime = startTime + (sbFile.IntDuration / 1000);
                         }
                         else
                             return StatusCode(StatusCodes.Status403Forbidden, "invalid token");
@@ -550,23 +559,8 @@ namespace MAMBrowser.Controllers
                 var firstFileExt = Path.GetExtension(filePathList.First()).ToUpper();
                 mergeType = filePathList.All(filePath => Path.GetExtension(filePath).ToUpper() == firstFileExt) ? firstFileExt : mergeType;
                 _logger.LogDebug($"mergeType : {mergeType}");
-                string downloadFileName = downloadName + mergeType;
+                string downloadFileName = $"{grpType}_{grpId}_{brd_Dt}{mergeType}";
 
-                var fileExtProvider = new FileExtensionContentTypeProvider();
-                string contentType;
-                if (!fileExtProvider.TryGetContentType(firstFileExt, out contentType))
-                {
-                    contentType = "application/octet-stream";
-                }
-                System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
-                {
-                    FileName = Uri.EscapeDataString(downloadFileName),
-                    Inline = inline == "Y" ? true : false
-                };
-                Response.Headers.Add("Content-Disposition", cd.ToString());
-
-
-          
                 // 일단 메모리 스트림. 
                 // 
                 byte[] buffer = new byte[10240];
@@ -628,7 +622,7 @@ namespace MAMBrowser.Controllers
                         }
                     }
                 }
-                result.ResultObject.Data = downloadFileName;
+                result.ResultObject.Data.FileName = downloadFileName;
                 return result;
             }
             catch (Exception ex)
@@ -636,21 +630,23 @@ namespace MAMBrowser.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-
         /// <summary>
-        /// 일반소재 - 병합 다운로드
+        /// 일반소재 - 그룹소재 병합파일 다운로드
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="downloadName"> </param>
-        /// /// <param name="inline"> </param>
+        /// <param name="fileName"></param>
+        /// <param name="downloadName"></param>
         /// <returns></returns>
         [HttpGet("concatenate-files")]
-        public IActionResult ConcatenateDownload([FromQuery] string userId, [FromQuery] string downloadName, [FromQuery] string inline = "N")
+        public IActionResult ConcatenateDownload([FromQuery] string userId, [FromQuery] string fileName, [FromQuery] string downloadName)
         {
             try
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, downloadName);
+                //string userId = HttpContext.Items[Define.USER_ID] as string;
+                //링크로 보내주기때문에 헤더에 토큰값이 없음.
+
+                var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
                 var fileExtProvider = new FileExtensionContentTypeProvider();
                 string contentType;
                 if (!fileExtProvider.TryGetContentType(downloadName, out contentType))
@@ -660,7 +656,7 @@ namespace MAMBrowser.Controllers
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
                     FileName = Uri.EscapeDataString(downloadName),
-                    Inline = inline == "Y" ? true : false
+                    Inline = false
                 };
                 Response.Headers.Add("Content-Disposition", cd.ToString());
 
@@ -669,6 +665,46 @@ namespace MAMBrowser.Controllers
             catch (Exception ex)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        /// <summary>
+        /// 일반소재 - 그룹소재 병합파일 스트리밍
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [HttpGet("concatenate-files-streaming")]
+        public IActionResult ConcatenateStreaming([FromQuery] string userId, [FromQuery] string fileName)
+        {
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                //string userId = HttpContext.Items[Define.USER_ID] as string;
+                return _fileHelper.StreamingFromFilePath(fileName, userId, remoteIp);
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+        }
+        /// <summary>
+        /// 일반소재 - 그룹소재 병합파일 파형 요청
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [HttpGet("concatenate-files-waveform")]
+        public ActionResult<List<float>> ConcatenateWaveForm([FromQuery] string fileName)
+        {
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                string userId = HttpContext.Items[Define.USER_ID] as string;
+                //var tempFilePath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+                return _fileHelper.GetWaveformFromPath(fileName, userId, remoteIp);
+
+            }
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
             }
         }
 

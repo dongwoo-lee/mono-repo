@@ -86,6 +86,12 @@
                     })">
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
+                <b-button variant="outline-primary default" @click="showGrpPlayerPopup({
+                    grpType : 'cm',
+                    brd_Dt : searchItems.brd_dt,
+                    grpId : data.item.id,
+                    title : data.item.name
+                  })">그룹미리듣기 팝업</b-button>
               </template>
               <!-- ID Tooltip -->
               <template v-slot:cell(name)="data">
@@ -137,6 +143,15 @@
         </b-row>
       </template>
     </common-form>
+
+     <CMGroupPlayerPopup 
+    :showPlayerPopup="showGrpPlayer"
+    :title="grpParam.title"
+    :grpType="grpParam.grpType"
+    :brd_Dt="grpParam.brd_Dt"
+    :grpId="grpParam.grpId"
+    @closePlayer="closeGrpPlayerPopup">
+    </CMGroupPlayerPopup>
 
     <PlayerPopup 
     :showPlayerPopup="showPlayerPopup"
@@ -191,7 +206,9 @@ export default {
         { key: 'codingUserName', label: '제작자', tdClass: 'text-muted' },
         { key: 'codingDT', label: '제작일', tdClass: 'text-muted' },
         { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
-      ]
+      ],
+      showGrpPlayer : false,
+      grpParam : {},
     }
   },
   methods: {
@@ -215,6 +232,13 @@ export default {
         return `${this.selectName} 상세 내역`;
       }
       return '상세 내역';
+    },
+    showGrpPlayerPopup(data){
+      this.grpParam = data;
+      this.showGrpPlayer = true;
+    },
+    closeGrpPlayerPopup(){
+      this.showGrpPlayer = false;
     }
   }
 }

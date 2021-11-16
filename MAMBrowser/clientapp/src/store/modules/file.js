@@ -201,17 +201,16 @@ export default {
                 brd_Dt: item.brd_Dt,
                 grpId: item.grpId,
                 downloadName: item.downloadName,
-                inline: 'N',
             }
 
-            $http.get(`/api/Products/request-concatenate-files`, {
+            $http.get(`/api/Products/concatenate-files-request`, {
                 params: params,
                 timeout: 120000
             }).then(res => {
                 if (res.data && res.data.resultCode === 0) {
                     const userId = encodeURIComponent(sessionStorage.getItem(USER_ID));
-                    const fileName = encodeURIComponent(res.data.resultObject.data);
-                    const src = `/api/products/concatenate-files?userId=${userId}&downloadName=${fileName}`;
+                    const fileName = encodeURIComponent(res.data.resultObject.data.fileName);
+                    const src = `/api/products/concatenate-files?userId=${userId}&fileName=${fileName}&downloadName=${params.downloadName}`;
                     state.downloadIframe.setAttribute('src', src);
                 }
             })
