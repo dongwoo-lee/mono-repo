@@ -100,7 +100,7 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
-              :etcData="['delete', 'modify']"
+              :etcData="getEtc"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
@@ -238,6 +238,11 @@ export default {
   },
   created() {
     this.getOptions();
+  },
+  computed: {
+    getEtc() {
+      return this.screenName == "pr" ? ["delete", "modify"] : ["delete"];
+    }
   },
   methods: {
     getData() {

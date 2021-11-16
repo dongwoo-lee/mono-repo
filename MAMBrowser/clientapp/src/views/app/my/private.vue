@@ -126,7 +126,15 @@
         </meta-data-private-modify-popup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :screenName="screenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.title"
@@ -145,15 +153,19 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import MetaDataPrivateModifyPopup from "../../../components/Popup/MetaDataPrivateModifyPopup";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import { mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
 import axios from "axios";
 
 export default {
   mixins: [MixinBasicPage],
-  components: { MetaDataPrivateModifyPopup },
+  components: { MetaDataPrivateModifyPopup, FileUpdate },
   data() {
     return {
+      metaUpdate: false,
+      rowData: "",
+      screenName: "",
       streamingUrl: "/api/products/workspace/private/streaming",
       waveformUrl: "/api/products/workspace/private/waveform",
       tempDownloadUrl: "/api/products/workspace/private/temp-download",
@@ -350,17 +362,25 @@ export default {
         });
     },
     onMetaModifyPopup(rowData) {
-      var body = {
-        AudioFileID: rowData.id,
-        Title: rowData.title
-      };
-      axios.patch("/api/Mastering/my-disk", body).then(res => {
-        console.log(res);
-      });
+      this.metaUpdate = true;
+      this.screenName = "private";
+      this.rowData = rowData;
+      // var body = {
+      //   AudioFileID: rowData.id,
+      //   Title: rowData.title
+      // };
+
       // this.$refs.refMetaDataModifyPopup.setData(rowData);
       // this.metaDataModifyPopup = true;
     },
-
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/my-disk", e).then(res => {
+        console.log(res);
+      });
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
     onEditSuccess() {
       this.getData();
     },
