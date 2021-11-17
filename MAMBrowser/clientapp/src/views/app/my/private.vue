@@ -365,10 +365,6 @@ export default {
       this.metaUpdate = true;
       this.updateScreenName = "private";
       this.rowData = rowData;
-      // var body = {
-      //   AudioFileID: rowData.id,
-      //   Title: rowData.title
-      // };
 
       // this.$refs.refMetaDataModifyPopup.setData(rowData);
       // this.metaDataModifyPopup = true;

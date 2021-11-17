@@ -87,14 +87,20 @@
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
               @modify="onMetaModifyPopup"
-              @delete="onDeleteConfirm"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
-
+    <common-confirm
+      id="programRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -119,6 +125,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteId: "",
       vSelectProps: {},
       searchItems: {
         media: "A",
@@ -288,38 +295,21 @@ export default {
     },
     onDeleteConfirm(rowData) {
       console.log(rowData);
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("programRemove");
+      }
     },
-
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
     // 휴지통 보내기
     onDelete() {
-      const userId = sessionStorage.getItem(USER_ID);
-      let ids = this.selectedIds;
-
-      if (this.singleSelectedId !== null) {
-        ids = [];
-        ids.push(this.singleSelectedId);
-        this.singleSelectedId = null;
-        this.selectedIds = [];
-      }
-
-      this.$http
-        .delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
-        .then(res => {
-          if (res.status === 200 && !res.data.errorMsg) {
-            this.$fn.notify("primary", {
-              message: "휴지통으로 이동되었습니다."
-            });
-            this.$bvModal.hide("modalRemove");
-            setTimeout(() => {
-              this.initSelectedIds();
-              this.getData();
-            }, 0);
-          } else {
-            this.$fn.notify("error", {
-              message: "휴지통 이동 실패: " + res.data.errorMsg
-            });
-          }
-        });
+      axios.delete(`/api/Mastering/program/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
     },
     onMetaModifyPopup(rowData) {
       var body = {

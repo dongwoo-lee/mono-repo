@@ -650,42 +650,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        [HttpPatch("program")]
-        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] AudioFileMetaBase jsonObject)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-
-            try
-            {
-                if (jsonObject == null)
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
-
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            return result;
-        }
-        [HttpPatch("mcr-spot")]
-        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] AudioFileMetaBase jsonObject)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-
-            try
-            {
-                if (jsonObject == null)
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
-
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            return result;
-        }
+        
         [HttpPatch("scr-spot")]
         public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] AudioFileMetaBase jsonObject)
         {
@@ -704,39 +669,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        [HttpPatch("filler-time")]
-        public ActionResult<DTO_RESULT> UpdateFillerTime([FromBody] AudioFileMetaBase jsonObject)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-
-            try
-            {
-                if (jsonObject == null)
-                {
-
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
-                }
-                else
-                {
-                    string AudioType = jsonObject.AudioFileID.Substring(0, 2);
-
-                    if (AudioType == "TS")
-                    {
-                        Console.WriteLine("변동소재");
-                    }else if(AudioType == "TT")
-                    {
-                        Console.WriteLine("고정소재");
-                    }
-                }
-
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            return result;
-        }
+        
         [HttpPatch("report")]
         public ActionResult<DTO_RESULT> UpdateReport([FromBody] AudioFileMetaBase jsonObject)
         
@@ -756,6 +689,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
         [HttpPatch("filler")]
         public ActionResult<DTO_RESULT> UpdateFiller([FromBody] AudioFileMetaBase jsonObject)
         {
@@ -774,6 +708,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
         [HttpPatch("pro")]
         public ActionResult<DTO_RESULT> UpdatePro([FromBody] AudioFileMetaBase jsonObject)
         {
@@ -782,6 +717,158 @@ namespace MAMBrowser.Controllers
             try
             {
                 if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("program/{id}")]
+        public ActionResult<DTO_RESULT> DeleteProgram(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("scr-spot/{id}")]
+        public ActionResult<DTO_RESULT> DeleteScrSpot(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("pro/{id}")]
+        public ActionResult<DTO_RESULT> DeletePro(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("report/{id}")]
+        public ActionResult<DTO_RESULT> DeleteReport(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("mcr-spot/{id}")]
+        public ActionResult<DTO_RESULT> DeleteMcrSpot(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("filler/{id}")]
+        public ActionResult<DTO_RESULT> DeleteFiller(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("filler-time/{id}")]
+        public ActionResult<DTO_RESULT> DeleteFillerTime(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpDelete("dl/{id}")]
+        public ActionResult<DTO_RESULT> DeleteDL(string id)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -807,13 +894,13 @@ namespace MAMBrowser.Controllers
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
-      /// <summary>
-      /// 
-      /// </summary>
-      /// <param name="startDt"></param>
-      /// <param name="endDt"></param>
-      /// <param name="bll"></param>
-      /// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startDt"></param>
+        /// <param name="endDt"></param>
+        /// <param name="bll"></param>
+        /// <returns></returns>
         [HttpGet("mastering-logs")]
         public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus2([FromQuery] string startDt, [FromQuery] string endDt, [FromServices] APIBll bll)
         {
