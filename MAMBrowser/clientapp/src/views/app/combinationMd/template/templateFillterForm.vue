@@ -120,7 +120,15 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -139,13 +147,17 @@
 import MixinFillerPage from "../../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate },
   mixins: [MixinFillerPage],
   props: ["heading", "screenName"],
   data() {
     return {
+      metaUpdate: false,
+      rowData: "",
+      updateScreenName: "",
       searchItems: {
         brd_dt: "", // 방송일
         cate: "", // 분류
@@ -287,11 +299,15 @@ export default {
       console.log(rowData);
     },
     onMetaModifyPopup(rowData) {
-      var body = {
-        AudioFileID: rowData.id,
-        Title: rowData.name
-      };
-      axios.patch("/api/Mastering/filler", body).then(res => {
+      this.metaUpdate = true;
+      this.updateScreenName = "pr";
+      this.rowData = rowData;
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/filler", e).then(res => {
         console.log(res);
       });
     }

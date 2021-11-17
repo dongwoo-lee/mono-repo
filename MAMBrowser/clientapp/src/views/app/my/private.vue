@@ -130,7 +130,7 @@
       <file-update
         v-if="metaUpdate"
         :rowData="rowData"
-        :screenName="screenName"
+        :updateScreenName="updateScreenName"
         @updateFile="masteringUpdate"
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
@@ -165,7 +165,7 @@ export default {
     return {
       metaUpdate: false,
       rowData: "",
-      screenName: "",
+      updateScreenName: "",
       streamingUrl: "/api/products/workspace/private/streaming",
       waveformUrl: "/api/products/workspace/private/waveform",
       tempDownloadUrl: "/api/products/workspace/private/temp-download",
@@ -363,7 +363,7 @@ export default {
     },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;
-      this.screenName = "private";
+      this.updateScreenName = "private";
       this.rowData = rowData;
       // var body = {
       //   AudioFileID: rowData.id,

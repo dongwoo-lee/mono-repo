@@ -93,9 +93,12 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @delete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -110,7 +113,15 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -129,11 +140,16 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate },
   mixins: [MixinBasicPage],
   data() {
     return {
+      metaUpdate: false,
+      rowData: "",
+      updateScreenName: "",
       searchItems: {
         media: "A", // 매체
         cate: "", // 분류
@@ -218,7 +234,7 @@ export default {
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "7%"
+          width: "10%"
         }
       ]
     };
@@ -272,6 +288,23 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.categoryName}`;
       return tmpName;
+    },
+    onDeleteConfirm(rowData) {
+      confirm("ㅇ");
+      console.log(rowData);
+    },
+    onMetaModifyPopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "pro";
+      this.rowData = rowData;
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/pro", e).then(res => {
+        console.log(res);
+      });
     }
   }
 };
