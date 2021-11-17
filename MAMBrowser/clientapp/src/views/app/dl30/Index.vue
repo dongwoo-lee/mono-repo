@@ -105,9 +105,11 @@
                 <common-actions
                   :rowData="data.item"
                   :behaviorData="behaviorList"
+                  :etcData="['delete']"
                   @preview="onPreview"
                   @download="onDownloadDl30"
                   @mydiskCopy="onCopyToMySpacePopup"
+                  @MasteringDelete="onDeleteConfirm"
                 />
               </template>
             </b-table>
@@ -115,7 +117,14 @@
         </b-row>
       </template>
     </common-form>
-
+    <!-- 삭제 -->
+    <common-confirm
+      id="dlRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <CopyToMySpacePopup
       ref="refCopyToMySpacePopup"
       :show="copyToMySpacePopup"
@@ -146,6 +155,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteId: "",
       streamingUrl: "/api/Products/dl30-streaming",
       waveformUrl: "/api/Products/dl30-waveform",
       tempDownloadUrl: "/api/Products/dl30-temp-download",
@@ -235,6 +245,23 @@ export default {
     this.getDlDeviceOptions();
   },
   methods: {
+    onDeleteConfirm(rowData) {
+      console.log(rowData);
+      this.deleteId = rowData.id;
+      var role = sessionStorage.getItem("authority");
+      if (role == "ADMIN") {
+        this.$bvModal.show("fillerTimeRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/dl/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
+    },
     searchCheck() {
       if (this.searchItems.dlDeviceSeq != 0) {
         this.onSearch();

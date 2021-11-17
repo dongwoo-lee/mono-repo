@@ -123,7 +123,7 @@
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
               @modify="onMetaModifyPopup"
-              @delete="onDeleteConfirm"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -138,7 +138,14 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
+    <!-- 삭제 -->
+    <common-confirm
+      id="fillerTimeRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -163,6 +170,7 @@ export default {
   mixins: [MixinFillerPage],
   data() {
     return {
+      deleteId: "",
       searchItems: {
         media: "A", // 매체
         start_dt: "", // 시작일
@@ -323,6 +331,21 @@ export default {
     },
     onDeleteConfirm(rowData) {
       console.log(rowData);
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("fillerTimeRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/filler-time/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
     },
     onMetaModifyPopup(rowData) {
       var body = {

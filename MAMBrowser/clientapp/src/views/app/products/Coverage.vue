@@ -120,7 +120,7 @@
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
               @modify="onMetaModifyPopup"
-              @delete="onDeleteConfirm"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -135,6 +135,7 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
+
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -144,6 +145,14 @@
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
     </transition>
+    <!-- 삭제 -->
+    <common-confirm
+      id="reportRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -169,6 +178,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteId: "",
       metaUpdate: false,
       rowData: "",
       updateScreenName: "",
@@ -306,8 +316,22 @@ export default {
       return tmpName;
     },
     onDeleteConfirm(rowData) {
-      confirm("ㅇ");
       console.log(rowData);
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("reportRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/report/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
     },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;

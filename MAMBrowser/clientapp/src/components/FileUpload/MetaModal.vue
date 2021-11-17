@@ -10,6 +10,9 @@
         <h3 slot="header">메타 데이터 입력</h3>
         <h4 slot="body">
           <div style="width: 1000px; height: 500px; float: left">
+            <!-- <div
+              style="margin-left:10px; margin-right:20px;width:380px; height:540px; position:absolute; border: 1px solid #008ecc;"
+            ></div> -->
             <div
               style="
                 width: 350px;
@@ -73,13 +76,11 @@
               <div style="width:300px; margin-top:15px;">
                 <h3 style="color: #008ecc">소재 유형</h3>
                 <b-form-select
-                  style="width: 350px"
+                  style="width: 350px; border-color: #008eca;"
                   id="filetype"
                   v-model="MetaData.typeSelected"
                   :options="typeOptions"
-                  :state="typeState"
                   @change="resetMemo"
-                  required
                 ></b-form-select>
               </div>
             </div>
@@ -91,10 +92,19 @@
 
                   <div v-show="this.MetaData.typeSelected == 'my-disk'">
                     <div style="height: 50px; margin-top: 10px">
+                      <!-- <common-input-text-max-length
+                        style="width:320px;"
+                        label="제목"
+                        labelfor="input-title"
+                        v-model="MetaData.title"
+                        :state="titleState"
+                      >
+                      </common-input-text-max-length> -->
                       <b-form-input
                         class="editTask"
                         v-model="MetaData.title"
                         :state="titleState"
+                        :maxLength="200"
                         placeholder="제목"
                         trim
                       />
@@ -126,6 +136,12 @@
                           @click="resetTitle"
                         ></b-icon>
                       </button>
+                      <p
+                        v-show="titleState"
+                        style=" position: absolute;left: 310px; top: 65px; z-index: 9999; width:30px; margin-right:0px;"
+                      >
+                        {{ MetaData.title.length }}/200
+                      </p>
                     </div>
 
                     <div style="height: 50px">
@@ -133,7 +149,6 @@
                         class="editTask"
                         v-model="MetaData.memo"
                         :state="memoState"
-                        aria-describedby="input-live-help input-live-feedback"
                         placeholder="설명"
                         trim
                       />

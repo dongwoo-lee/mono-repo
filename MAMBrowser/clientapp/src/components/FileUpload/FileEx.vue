@@ -1072,7 +1072,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.7);
 }
 .is-valid {
-  border-color: #28a745 !important;
+  border-color: #008ecc !important;
   height: 36px !important;
 }
 .is-invalid {

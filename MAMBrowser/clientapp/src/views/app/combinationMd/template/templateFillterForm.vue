@@ -105,7 +105,7 @@
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
               @modify="onMetaModifyPopup"
-              @delete="onDeleteConfirm"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -129,6 +129,14 @@
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
     </transition>
+    <!-- 삭제 -->
+    <common-confirm
+      id="fillerRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -155,6 +163,7 @@ export default {
   props: ["heading", "screenName"],
   data() {
     return {
+      deleteId: "",
       metaUpdate: false,
       rowData: "",
       updateScreenName: "",
@@ -297,6 +306,21 @@ export default {
     },
     onDeleteConfirm(rowData) {
       console.log(rowData);
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("fillerRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/filler/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
     },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;
