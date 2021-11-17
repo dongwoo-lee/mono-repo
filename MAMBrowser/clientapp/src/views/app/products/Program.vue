@@ -82,11 +82,10 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
-              :etcData="['delete', 'modify']"
+              :etcData="['delete']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
-              @modify="onMetaModifyPopup"
               @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
@@ -307,15 +306,6 @@ export default {
     // 휴지통 보내기
     onDelete() {
       axios.delete(`/api/Mastering/program/${this.deleteId}`).then(res => {
-        console.log(res);
-      });
-    },
-    onMetaModifyPopup(rowData) {
-      var body = {
-        AudioFileID: rowData.id,
-        Title: rowData.name
-      };
-      axios.patch("/api/Mastering/program", body).then(res => {
         console.log(res);
       });
     },
