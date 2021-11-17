@@ -246,7 +246,6 @@ export default {
   },
   methods: {
     onDeleteConfirm(rowData) {
-      console.log(rowData);
       this.deleteId = rowData.id;
       var role = sessionStorage.getItem("authority");
       if (role == "ADMIN") {

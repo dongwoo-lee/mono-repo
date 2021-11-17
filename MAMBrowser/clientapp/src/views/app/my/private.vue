@@ -314,7 +314,6 @@ export default {
     },
     // 단일 휴지통 보내기 확인창
     onDeleteConfirm(rowData) {
-      console.log(rowData);
       this.singleSelectedId = rowData.seq;
       this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNames(
         rowData.title

@@ -316,7 +316,6 @@ export default {
       return tmpName;
     },
     onDeleteConfirm(rowData) {
-      console.log(rowData);
       this.deleteId = rowData.id;
       var user = sessionStorage.getItem("user_id");
       var role = sessionStorage.getItem("authority");

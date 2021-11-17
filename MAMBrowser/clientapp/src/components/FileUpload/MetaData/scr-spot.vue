@@ -117,7 +117,6 @@ export default {
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/scr/spot").then(res => {
-      console.log(res.data.resultObject.data);
       res.data.resultObject.data.forEach(e => {
         this.setFileMediaOptions({
           value: e.id,
