@@ -27,19 +27,21 @@
         <b-icon
           icon="x-circle"
           font-scale="1"
-          style="
-            position: relative;
-            top: 0px;
-            right: 0px;
-            z-index: 999;
-          "
+          style="position: relative; top: 0px; right: 0px; z-index: 999"
           variant="secondary"
           @click="resetTitle"
         ></b-icon>
       </button>
       <p
         v-show="titleState"
-        style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+        style="
+          position: relative;
+          left: 310px;
+          top: -20px;
+          z-index: 9999;
+          width: 30px;
+          margin-right: 0px;
+        "
       >
         {{ MetaData.title.length }}/200
       </p>
@@ -72,19 +74,21 @@
         <b-icon
           icon="x-circle"
           font-scale="1"
-          style="
-            position: relative;
-            top: 0px;
-            right: 0px;
-            z-index: 999;
-          "
+          style="position: relative; top: 0px; right: 0px; z-index: 999"
           variant="secondary"
           @click="resetMemo"
         ></b-icon>
       </button>
       <p
         v-show="memoState"
-        style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+        style="
+          position: relative;
+          left: 310px;
+          top: -20px;
+          z-index: 9999;
+          width: 30px;
+          margin-right: 0px;
+        "
       >
         {{ MetaData.memo.length }}/200
       </p>
@@ -103,7 +107,7 @@ export default {
   created() {
     this.reset();
   },
-  methods: {}
+  methods: {},
 };
 </script>
 

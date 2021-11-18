@@ -1,11 +1,9 @@
 <template>
   <common-update-modal @close="MetaModalOff">
     <h3 slot="header">메타 데이터 수정</h3>
-    <h4 slot="body" style="margin-left:20px; margin-top:20px;">
+    <h4 slot="body" style="margin-left: 20px; margin-top: 20px">
       <div v-if="rowData.name == null">
-        <h6>
-          제목
-        </h6>
+        <h6>제목</h6>
         <b-form-input
           class="editTask"
           :value="rowData.title"
@@ -16,9 +14,7 @@
         />
       </div>
       <div v-if="rowData.title == null">
-        <h6>
-          소재명
-        </h6>
+        <h6>소재명</h6>
         <b-form-input
           class="editTask"
           :value="rowData.name"
@@ -29,9 +25,7 @@
         />
       </div>
       <div v-if="updateScreenName == 'private'">
-        <h6 style="margin-top:20px;">
-          메모
-        </h6>
+        <h6 style="margin-top: 20px">메모</h6>
         <b-form-input
           class="editTask"
           :value="rowData.memo"
@@ -55,9 +49,7 @@
         />
       </div> -->
       <div v-if="updateScreenName == 'report'">
-        <h6 style="margin-top:20px;">
-          취재인
-        </h6>
+        <h6 style="margin-top: 20px">취재인</h6>
         <b-form-input
           class="editTask"
           :value="rowData.reporter"
@@ -72,7 +64,7 @@
       <b-button
         variant="outline-primary"
         @click="updateFile"
-        style="margin-left:45px;"
+        style="margin-left: 45px"
       >
         <span class="label">수정</span>
       </b-button>
@@ -86,24 +78,24 @@ export default {
   props: {
     rowData: {
       type: [],
-      default: ""
+      default: "",
     },
     updateScreenName: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data() {
     return {
       title: this.rowData.title,
       fileName: this.rowData.name,
       memo: this.rowData.memo,
-      reporter: this.rowData.reporter
+      reporter: this.rowData.reporter,
       // advertiser: this.rowData.advertiser
     };
   },
   components: {
-    CommonUpdateModal
+    CommonUpdateModal,
   },
   methods: {
     MetaModalOff() {
@@ -113,20 +105,20 @@ export default {
       if (this.updateScreenName == "private") {
         var update = {
           title: this.title,
-          memo: this.memo
+          memo: this.memo,
         };
       } else if (this.updateScreenName == "report") {
         var update = {
           fileName: this.fileName,
-          reporter: this.reporter
+          reporter: this.reporter,
         };
       } else if (this.updateScreenName == "pr") {
         var update = {
-          fileName: this.fileName
+          fileName: this.fileName,
         };
       } else if (this.updateScreenName == "pro") {
         var update = {
-          fileName: this.fileName
+          fileName: this.fileName,
         };
       }
       // else if (this.updateScreenName == "scr-spot") {
@@ -151,8 +143,8 @@ export default {
     // },
     changeMemo(v) {
       this.memo = v;
-    }
-  }
+    },
+  },
 };
 </script>
 

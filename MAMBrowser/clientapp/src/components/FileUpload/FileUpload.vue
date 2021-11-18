@@ -17,7 +17,7 @@
       :class="[
         isDropZoneActive
           ? 'dx-theme-accent-as-border-color dropzone-active'
-          : 'dx-theme-border-color'
+          : 'dx-theme-border-color',
       ]"
     >
       <p
@@ -185,7 +185,7 @@
                           '리샘플링',
                           '노말라이즈',
                           '스토리지 저장',
-                          '완료'
+                          '완료',
                         ]"
                         :active-step="props.rowData.step"
                         :is-reactive="false"
@@ -229,7 +229,7 @@
                           '리샘플링',
                           '노말라이즈',
                           '스토리지 저장',
-                          '완료'
+                          '완료',
                         ]"
                         :active-step="props.rowData.step"
                         :is-reactive="false"
@@ -417,12 +417,12 @@ export default {
   props: {
     DragFileModalState: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: {
     CommonFileModal,
-    MetaModal
+    MetaModal,
   },
   data() {
     return {
@@ -437,25 +437,25 @@ export default {
       fileState: "",
       percent: 0,
       logSDate: "",
-      logEDate: ""
+      logEDate: "",
     };
   },
   watch: {
     DragFileModalState(v) {
       this.dropzone = v;
-    }
+    },
   },
   computed: {
-    fileupload: function() {
+    fileupload: function () {
       return this.$refs[dxfu].instance;
     },
     ...mapGetters("user", ["diskAvailable"]),
     ...mapGetters("FileIndexStore", ["getBadge"]),
     ...mapState("FileIndexStore", {
-      uploaderCustomData: state => state.uploaderCustomData,
-      localFiles: state => state.localFiles,
-      vueTableData: state => state.vueTableData,
-      MetaData: state => state.MetaData
+      uploaderCustomData: (state) => state.uploaderCustomData,
+      localFiles: (state) => state.localFiles,
+      vueTableData: (state) => state.vueTableData,
+      MetaData: (state) => state.MetaData,
     }),
     getUrl() {
       if (this.MetaData.typeSelected == null) {
@@ -463,7 +463,7 @@ export default {
       } else {
         return `/api/Mastering/${this.MetaData.typeSelected}`;
       }
-    }
+    },
   },
   methods: {
     getProps(props) {
@@ -517,7 +517,7 @@ export default {
       "setVueTableData",
       "setDuration",
       "setAudioFormat",
-      "forEachVueTableData"
+      "forEachVueTableData",
     ]),
     //#region 파일 조작
     upload() {
@@ -542,7 +542,7 @@ export default {
             formData.append("file", blob);
             // formData.append("file", event.value[0]);
             formData.append("fileExt", event.value[0].name);
-            axios.post("/api/Mastering/Validation", formData).then(res => {
+            axios.post("/api/Mastering/Validation", formData).then((res) => {
               if (
                 res.data.resultObject.duration == null ||
                 res.data.resultObject.audioFormatInfo == null
@@ -635,9 +635,9 @@ export default {
         this.dropzone = false;
         this.$emit("dropZoneLeave");
       }
-    }
+    },
     //#endregion
-  }
+  },
 };
 </script>
 <style>

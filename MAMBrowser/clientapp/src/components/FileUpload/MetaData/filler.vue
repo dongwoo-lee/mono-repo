@@ -7,6 +7,7 @@
           class="editTask"
           v-model="MetaData.title"
           :state="titleState"
+          :maxLength="200"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="소재 명"
           trim
@@ -31,11 +32,18 @@
             style="position: relative; top: 0px; right: 0px; z-index: 9999"
             variant="secondary"
             @click="resetTitle"
-          ></b-icon>
+          />
         </button>
         <p
           v-show="titleState"
-          style=" position: relative;left: -90px; top: 350px; z-index: 9999; width:30px; margin-right:0px;"
+          style="
+            position: relative;
+            left: -90px;
+            top: 350px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
         >
           {{ MetaData.title.length }}/200
         </p>
@@ -47,6 +55,7 @@
           class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
+          :maxLength="200"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="설명"
           trim
@@ -72,11 +81,18 @@
             style="position: relative; top: 0px; right: 0px; z-index: 999"
             variant="secondary"
             @click="resetMemo"
-          ></b-icon>
+          />
         </button>
         <p
           v-show="memoState"
-          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+          style="
+            position: relative;
+            left: 310px;
+            top: -20px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
         >
           {{ MetaData.memo.length }}/200
         </p>
@@ -104,13 +120,13 @@
         </b-form-group>
       </div>
     </transition>
-    <div style="position:absolute; top:40px;">
+    <div style="position: absolute; top: 40px">
       <b-form-group
         label="방송일"
         class="has-float-label"
-        style="position:absolute; z-index:9989; font-color:black;"
+        style="position: absolute; z-index: 9989; font-color: black"
       >
-        <b-input-group class="mb-3" style="width:300px; float:left;">
+        <b-input-group class="mb-3" style="width: 300px; float: left">
           <input
             :disabled="isActive"
             id="dateinput"
@@ -121,7 +137,8 @@
           />
           <b-input-group-append>
             <b-form-datepicker
-              v-model="date"
+              :value="date"
+              @input="eventInput"
               button-only
               :disabled="isActive"
               :button-variant="getVariant"
@@ -134,12 +151,21 @@
       </b-form-group>
       <button
         v-show="!isActive"
-        style="position:absolute; right:-220px; top:7px;  z-index:9999; width:3px;  background-color:#FFFFFF; border:0; outline:0;"
+        style="
+          position: absolute;
+          right: -220px;
+          top: 7px;
+          z-index: 9999;
+          width: 3px;
+          background-color: #ffffff;
+          border: 0;
+          outline: 0;
+        "
       >
         <b-icon
           icon="x-circle"
           font-scale="1"
-          style="position:absolute; z-index:9999;"
+          style="position: absolute; z-index: 9999"
           variant="secondary"
           @click="resetDate"
         ></b-icon>
@@ -148,13 +174,13 @@
       <b-form-group
         label="1차 분류"
         class="has-float-label"
-        style="position:absolute; margin-left:320px; z-index:9999;"
+        style="position: absolute; margin-left: 320px; z-index: 9999"
       >
         <b-form-select
           :disabled="isActive"
           id="program-media"
           class="media-select"
-          style=" width:230px; height:37px;"
+          style="width: 230px; height: 37px"
           :value="fillerMedia"
           :options="fillerOptions"
           @input="getSecondMedia"
@@ -163,12 +189,12 @@
       <b-form-group
         label="2차 분류"
         class="has-float-label"
-        style="position:absolute; top:60px;  z-index:999;"
+        style="position: absolute; top: 60px; z-index: 999"
       >
         <b-form-select
           id="program-media"
           class="media-select"
-          style=" width:200px; height:37px;"
+          style="width: 200px; height: 37px"
           :value="selectedFillerMedia"
           :options="fileMediaOptions"
           @input="mediaChange"
@@ -186,7 +212,7 @@ import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
 export default {
   components: {
-    CommonVueSelect
+    CommonVueSelect,
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
@@ -194,29 +220,32 @@ export default {
       fillerOptions: [
         { value: "pr", text: "Filler(PR)" },
         { value: "general", text: "Filler(일반)" },
-        { value: "etc", text: "Filler(기타)" }
+        { value: "etc", text: "Filler(기타)" },
       ],
       fillerMedia: "pr",
       prMedia: "",
       generallMedia: "",
       etcMedia: "",
-      selectedFillerMedia: ""
+      selectedFillerMedia: "",
     };
   },
   created() {
     this.reset();
     this.getEditorForPd();
     this.resetFileMediaOptions();
-    axios.get("/api/categories/filler/pro").then(res => {
-      res.data.resultObject.data.forEach(e => {
+    axios.get("/api/categories/filler/pro").then((res) => {
+      res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
-          text: e.name
+          text: e.name,
         });
       });
     });
     this.selectedFillerMedia = "FC05";
     this.setMediaSelected(this.selectedFillerMedia);
+
+    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+    this.setDate(today);
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -229,38 +258,38 @@ export default {
     getSecondMedia(v) {
       this.resetFileMediaOptions();
       if (v == "pr") {
-        axios.get("/api/categories/filler/pro").then(res => {
-          res.data.resultObject.data.forEach(e => {
+        axios.get("/api/categories/filler/pro").then((res) => {
+          res.data.resultObject.data.forEach((e) => {
             this.setFileMediaOptions({
               value: e.id,
-              text: e.name
+              text: e.name,
             });
           });
         });
         this.selectedFillerMedia = "FC05";
       } else if (v == "general") {
-        axios.get("/api/categories/filler/general").then(res => {
-          res.data.resultObject.data.forEach(e => {
+        axios.get("/api/categories/filler/general").then((res) => {
+          res.data.resultObject.data.forEach((e) => {
             this.setFileMediaOptions({
               value: e.id,
-              text: e.name
+              text: e.name,
             });
           });
         });
         this.selectedFillerMedia = "FC01";
       } else if (v == "etc") {
-        axios.get("/api/categories/filler/etc").then(res => {
-          res.data.resultObject.data.forEach(e => {
+        axios.get("/api/categories/filler/etc").then((res) => {
+          res.data.resultObject.data.forEach((e) => {
             this.setFileMediaOptions({
               value: e.id,
-              text: e.name
+              text: e.name,
             });
           });
         });
         this.selectedFillerMedia = "FC20";
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

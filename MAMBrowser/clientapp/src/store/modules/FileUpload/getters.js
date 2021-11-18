@@ -100,5 +100,5 @@ export default {
   },
   getBadge(state) {
     return state.vueTableData.length;
-  }
+  },
 };

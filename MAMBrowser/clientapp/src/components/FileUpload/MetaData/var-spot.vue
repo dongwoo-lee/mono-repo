@@ -6,6 +6,7 @@
           class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
+          :maxLength="200"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="설명"
           trim
@@ -35,7 +36,14 @@
         </button>
         <p
           v-show="memoState"
-          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+          style="
+            position: relative;
+            left: 310px;
+            top: -20px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
         >
           {{ MetaData.memo.length }}/200
         </p>
@@ -48,6 +56,7 @@
           class="editTask"
           v-model="MetaData.advertiser"
           :state="advertiserState"
+          :maxLength="50"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="광고주 명"
           trim
@@ -56,7 +65,7 @@
           v-show="advertiserState"
           style="
             position: relative;
-             left: -86px;
+            left: -86px;
             top: 398px;
             z-index: 9999;
             width: 3px;
@@ -76,9 +85,16 @@
         </button>
         <p
           v-show="advertiserState"
-          style=" position: relative;left: -90px; top: 405px; z-index: 9999; width:30px; margin-right:0px;"
+          style="
+            position: relative;
+            left: -90px;
+            top: 405px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
         >
-          {{ MetaData.advertiser.length }}/200
+          {{ MetaData.advertiser.length }}/50
         </p>
       </div>
     </transition>
@@ -253,6 +269,7 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
+        <DxPager :visible="false" />
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
         <DxColumn data-field="startDate" caption="시작일" />
@@ -344,17 +361,19 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import mixinFillerPage from "../../../mixin/MixinFillerPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import { DxPager } from "devextreme-vue/data-grid";
 import axios from "axios";
 export default {
   components: {
-    CommonVueSelect
+    CommonVueSelect,
+    DxPager,
   },
   mixins: [CommonFileFunction, MixinBasicPage, mixinFillerPage],
   data() {
     return {
       staticMedia: "",
       sdate: "",
-      edate: ""
+      edate: "",
     };
   },
   created() {
@@ -362,11 +381,11 @@ export default {
     this.getEditorForMd(); //제작자
     this.resetFileMediaOptions(); //매체 초기화
     //매체 생성
-    axios.get("/api/categories/media").then(res => {
-      res.data.resultObject.data.forEach(e => {
+    axios.get("/api/categories/media").then((res) => {
+      res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
-          text: e.name
+          text: e.name,
         });
       });
     });
@@ -400,7 +419,7 @@ export default {
         replaceAllFileEDate != ""
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
       }
     },
@@ -409,10 +428,10 @@ export default {
       const replaceAllFileEDate = this.edate.replace(/-/g, "");
       if (replaceAllFileEDate < replaceAllFileSDate) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
       }
-    }
+    },
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -488,8 +507,8 @@ export default {
         }
       }
     },
-    getData() {}
-  }
+    getData() {},
+  },
 };
 </script>
 

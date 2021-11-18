@@ -6,6 +6,7 @@
           class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
+          :maxLength="200"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="설명"
           trim
@@ -36,7 +37,14 @@
         </button>
         <p
           v-show="memoState"
-          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+          style="
+            position: relative;
+            left: 310px;
+            top: -20px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
         >
           {{ MetaData.memo.length }}/200
         </p>
@@ -49,6 +57,7 @@
           class="editTask"
           v-model="MetaData.reporter"
           :state="reporterState"
+          :maxLength="50"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="취재인 명"
           trim
@@ -77,9 +86,16 @@
         </button>
         <p
           v-show="reporterState"
-          style=" position: relative; left: -90px; top: 405px; z-index: 9999; width:30px; margin-right:0px;"
+          style="
+            position: relative;
+            left: -90px;
+            top: 405px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
         >
-          {{ MetaData.reporter.length }}/200
+          {{ MetaData.reporter.length }}/50
         </p>
       </div>
     </transition>
@@ -122,7 +138,8 @@
           />
           <b-input-group-append>
             <b-form-datepicker
-              v-model="date"
+              :value="date"
+              @input="eventInput"
               button-only
               :disabled="isActive"
               :button-variant="getVariant"
@@ -210,7 +227,7 @@
     <div
       v-show="!isActive && EventSelected.id != ''"
       style="
-        width: 550px; 
+        width: 550px;
         height: 110px;
         margin-top: 280px;
         padding-top: 10px;
@@ -266,12 +283,12 @@ import axios from "axios";
 export default {
   components: {
     CommonVueSelect,
-    DxPager
+    DxPager,
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
-      coverageMedia: ""
+      coverageMedia: "",
     };
   },
   created() {
@@ -279,16 +296,19 @@ export default {
     this.getEditorForReporter();
     this.resetFileMediaOptions();
 
-    axios.get("/api/categories/report").then(res => {
-      res.data.resultObject.data.forEach(e => {
+    axios.get("/api/categories/report").then((res) => {
+      res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
-          text: e.name
+          text: e.name,
         });
       });
     });
     this.coverageMedia = "RC07";
     this.setMediaSelected(this.coverageMedia);
+
+    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+    this.setDate(today);
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -297,8 +317,8 @@ export default {
     },
     mediaChange(v) {
       this.setMediaSelected(v);
-    }
-  }
+    },
+  },
 };
 </script>
 
