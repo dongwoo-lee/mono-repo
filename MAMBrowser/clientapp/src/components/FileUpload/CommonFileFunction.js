@@ -470,6 +470,7 @@ export default {
       this.resetEventSelected();
       this.resetUsage();
       this.resetAdvertiser();
+      this.resetReporter();
       this.watch = "";
       this.fileSelect = false;
       if (this.processing) {

@@ -16,7 +16,7 @@
           style="
             position: relative;
             left: -85px;
-            top: 294px;
+            top: 343px;
             z-index: 9999;
             width: 3px;
             heigth: 3px;
@@ -33,10 +33,16 @@
             @click="resetTitle"
           ></b-icon>
         </button>
+        <p
+          v-show="titleState"
+          style=" position: relative;left: -90px; top: 350px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.title.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
-      <div style="position: absolute; top: 410px; left: -400px; z-index: 9999">
+      <div style="position: absolute; top: 415px; left: -400px; z-index: 9999">
         <b-form-input
           class="editTask"
           v-model="MetaData.memo"
@@ -68,6 +74,12 @@
             @click="resetMemo"
           ></b-icon>
         </button>
+        <p
+          v-show="memoState"
+          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.memo.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
@@ -85,6 +97,7 @@
         >
           <common-vue-select
             style="font-size: 14px; width: 200px; border: 1px solid #008ecc"
+            class="h105"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>
@@ -191,6 +204,7 @@ export default {
     };
   },
   created() {
+    this.reset();
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/filler/pro").then(res => {

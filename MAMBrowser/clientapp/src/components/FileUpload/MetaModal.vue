@@ -89,99 +89,9 @@
               <div>
                 <div style="position: relative">
                   <h3 style="color: #008ecc">메타 데이터</h3>
-
-                  <div v-show="this.MetaData.typeSelected == 'my-disk'">
-                    <div style="height: 50px; margin-top: 10px">
-                      <!-- <common-input-text-max-length
-                        style="width:320px;"
-                        label="제목"
-                        labelfor="input-title"
-                        v-model="MetaData.title"
-                        :state="titleState"
-                      >
-                      </common-input-text-max-length> -->
-                      <b-form-input
-                        class="editTask"
-                        v-model="MetaData.title"
-                        :state="titleState"
-                        :maxLength="200"
-                        placeholder="제목"
-                        trim
-                      />
-
-                      <button
-                        v-show="titleState"
-                        style="
-                          position: relative;
-                          left: 315px;
-                          top: -27px;
-                          z-index: 99;
-                          width: 3px;
-                          heigth: 3px;
-                          background-color: #ffffff;
-                          border: 0;
-                          outline: 0;
-                        "
-                      >
-                        <b-icon
-                          icon="x-circle"
-                          font-scale="1"
-                          style="
-                            position: relative;
-                            top: 0px;
-                            right: 0px;
-                            z-index: 999;
-                          "
-                          variant="secondary"
-                          @click="resetTitle"
-                        ></b-icon>
-                      </button>
-                      <p
-                        v-show="titleState"
-                        style=" position: absolute;left: 310px; top: 65px; z-index: 9999; width:30px; margin-right:0px;"
-                      >
-                        {{ MetaData.title.length }}/200
-                      </p>
-                    </div>
-
-                    <div style="height: 50px">
-                      <b-form-input
-                        class="editTask"
-                        v-model="MetaData.memo"
-                        :state="memoState"
-                        placeholder="설명"
-                        trim
-                      />
-
-                      <button
-                        v-show="memoState"
-                        style="
-                          position: relative;
-                          left: 315px;
-                          top: -27px;
-                          z-index: 99;
-                          width: 3px;
-                          heigth: 3px;
-                          background-color: #ffffff;
-                          border: 0;
-                          outline: 0;
-                        "
-                      >
-                        <b-icon
-                          icon="x-circle"
-                          font-scale="1"
-                          style="
-                            position: relative;
-                            top: 0px;
-                            right: 0px;
-                            z-index: 999;
-                          "
-                          variant="secondary"
-                          @click="resetMemo"
-                        ></b-icon>
-                      </button>
-                    </div>
-                  </div>
+                  <my-disk
+                    v-if="this.MetaData.typeSelected == 'my-disk'"
+                  ></my-disk>
                   <scr-spot
                     v-if="this.MetaData.typeSelected == 'scr-spot'"
                   ></scr-spot>
@@ -273,6 +183,7 @@
 import CommonMetaModal from "../Modal/CommonMetaModal";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
+import myDisk from "./MetaData/my-disk.vue";
 import program from "./MetaData/program.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
 import scrSpot from "./MetaData/scr-spot.vue";
@@ -299,6 +210,7 @@ export default {
   },
   components: {
     CommonMetaModal,
+    myDisk,
     program,
     mcrSpot,
     scrSpot,

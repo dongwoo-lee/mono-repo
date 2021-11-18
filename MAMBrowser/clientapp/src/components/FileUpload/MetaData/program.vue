@@ -8,6 +8,7 @@
           class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
+          :maxLength="200"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="설명"
           trim
@@ -25,6 +26,12 @@
             @click="resetMemo"
           ></b-icon>
         </button>
+        <p
+          v-show="memoState"
+          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.memo.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
@@ -35,8 +42,8 @@
           style="position:absolute; top:430px; left:-400px; z-index:9999; font-size:16px;"
         >
           <common-vue-select
-            style="font-size:14px; width:200px; border: 1px solid #008ecc;"
-            deselectFromDropdown
+            class="h145"
+            style="font-size:14px; width:200px; border: 1px solid #008ecc; "
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>

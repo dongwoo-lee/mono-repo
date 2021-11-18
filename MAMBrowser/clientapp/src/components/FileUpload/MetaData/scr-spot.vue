@@ -8,7 +8,7 @@
       <b-form-select
         id="program-media"
         class="media-select"
-        style=" width:180px; "
+        style=" width:170px; "
         :value="scrMedia"
         :options="fileMediaOptions"
         @input="mediaChange"
@@ -18,10 +18,11 @@
     <b-form-group
       label="제작자"
       class="has-float-label"
-      style="margin-top:20px;"
+      style="margin-top:10px; margin-bottom:20px;"
     >
       <common-vue-select
-        style="font-size:14px; width:150px; border: 1px solid #008ecc;"
+        style="font-size:14px; width:160px; border: 1px solid #008ecc;"
+        class="h105"
         :suggestions="editorOptions"
         @inputEvent="inputEditor"
       ></common-vue-select>
@@ -48,6 +49,12 @@
           @click="resetTitle"
         ></b-icon>
       </button>
+      <p
+        v-show="titleState"
+        style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+      >
+        {{ MetaData.title.length }}/200
+      </p>
     </div>
     <div style="height:50px;">
       <b-form-input
@@ -70,6 +77,12 @@
           @click="resetAdvertiser"
         ></b-icon>
       </button>
+      <p
+        v-show="advertiserState"
+        style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+      >
+        {{ MetaData.advertiser.length }}/200
+      </p>
     </div>
     <div style="height:50px;">
       <b-form-input
@@ -93,6 +106,12 @@
           @click="resetMemo"
         ></b-icon>
       </button>
+      <p
+        v-show="memoState"
+        style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+      >
+        {{ MetaData.memo.length }}/200
+      </p>
     </div>
   </div>
 </template>
@@ -114,6 +133,7 @@ export default {
     };
   },
   created() {
+    this.reset();
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/scr/spot").then(res => {

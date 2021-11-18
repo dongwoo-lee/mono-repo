@@ -34,12 +34,18 @@
             @click="resetMemo"
           ></b-icon>
         </button>
+        <p
+          v-show="memoState"
+          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.memo.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
       <div>
         <b-form-input
-          style="position: absolute; top: 410px; left: -400px; z-index: 9999"
+          style="position: absolute; top: 415px; left: -400px; z-index: 9999"
           class="editTask"
           v-model="MetaData.reporter"
           :state="reporterState"
@@ -52,7 +58,7 @@
           style="
             position: relative;
             left: -86px;
-            top: 345px;
+            top: 398px;
             z-index: 9999;
             width: 3px;
             heigth: 3px;
@@ -69,6 +75,12 @@
             @click="resetReporter"
           ></b-icon>
         </button>
+        <p
+          v-show="reporterState"
+          style=" position: relative; left: -90px; top: 405px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.reporter.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
@@ -86,6 +98,7 @@
         >
           <common-vue-select
             style="font-size: 14px; width: 200px; border: 1px solid #008ecc"
+            class="h105"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>
@@ -188,6 +201,7 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
+        <DxPager :visible="false" />
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
       </DxDataGrid>
@@ -196,7 +210,7 @@
     <div
       v-show="!isActive && EventSelected.id != ''"
       style="
-        width: 550px;
+        width: 550px; 
         height: 110px;
         margin-top: 280px;
         padding-top: 10px;
@@ -247,10 +261,12 @@ import CommonFileFunction from "../CommonFileFunction";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import { DxPager } from "devextreme-vue/data-grid";
 import axios from "axios";
 export default {
   components: {
-    CommonVueSelect
+    CommonVueSelect,
+    DxPager
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {

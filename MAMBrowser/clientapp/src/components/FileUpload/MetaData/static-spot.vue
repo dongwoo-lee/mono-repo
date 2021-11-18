@@ -17,7 +17,7 @@
             position: relative;
             left: 315px;
             top: -27px;
-            z-index: 99;
+            z-index: 9999;
             width: 3px;
             heigth: 3px;
             background-color: #ffffff;
@@ -33,12 +33,18 @@
             @click="resetMemo"
           ></b-icon>
         </button>
+        <p
+          v-show="memoState"
+          style=" position: relative;left: 310px; top: -20px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.memo.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
       <div>
         <b-form-input
-          style="position: absolute; top: 410px; left: -400px; z-index: 9999"
+          style="position: absolute; top: 415px; left: -400px; z-index: 9999"
           class="editTask"
           v-model="MetaData.advertiser"
           :state="advertiserState"
@@ -51,7 +57,7 @@
           style="
             position: relative;
             left: -86px;
-            top: 345px;
+            top: 398px;
             z-index: 9999;
             width: 3px;
             heigth: 3px;
@@ -68,6 +74,12 @@
             @click="resetAdvertiser"
           ></b-icon>
         </button>
+        <p
+          v-show="advertiserState"
+          style=" position: relative;left: -90px; top: 405px; z-index: 9999; width:30px; margin-right:0px;"
+        >
+          {{ MetaData.advertiser.length }}/200
+        </p>
       </div>
     </transition>
     <transition name="fade">
@@ -85,6 +97,7 @@
         >
           <common-vue-select
             style="font-size: 14px; width: 200px; border: 1px solid #008ecc"
+            class="h105"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>
