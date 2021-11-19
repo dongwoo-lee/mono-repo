@@ -1,6 +1,32 @@
 <template>
   <div id="file-container">
     <div
+      v-show="processing"
+      style="
+        position: fixed;
+        z-index: 9800;
+        top: -80px;
+        left: -80px;
+        width: 2000px;
+        height: 120%;
+        background-color: rgba(0, 0, 0, 0.4);
+        display: table;
+      "
+    >
+      <div
+        style="
+          margin-top: 500px;
+          margin-left: 140px;
+          text-align: center;
+          color: white;
+          font-size: 48px;
+        "
+      >
+        <b-spinner large type="grow"></b-spinner>
+        <span class="label">파일 확인 중</span>
+      </div>
+    </div>
+    <div
       id="dropzone-external"
       class="dropzone"
       v-show="dropzone"
@@ -110,16 +136,6 @@
             @progress="onUploadProgress($event)"
           />
           <div>
-            <!-- <b-card no-body>
-              <b-tabs pills>
-                <b-tab title="알림" active> -->
-            <!-- <span>
-              <p
-                style="color: #008ecc; font-size:22px; margin-top:20px; margin-left: 20px;"
-              >
-                알림
-              </p> -->
-
             <b-button
               style="
                 position: absolute;
@@ -135,9 +151,7 @@
             >
               파일 업로드
             </b-button>
-            <!-- </span> -->
             <b-card style="color: #008ecc" title="마스터링 작업목록">
-              <!-- <hr style="width:99%; height:1px; background-color:#008ecc;" /> -->
               <div
                 style="
                   width: 1300px;
@@ -151,15 +165,14 @@
                   :table-height="vueTableWidth"
                   ref="vuetable-scrollable"
                   :api-mode="false"
-                  :fields="adminFields"
-                  :data="vueTableData"
+                  :fields="adminListFields"
+                  :data="masteringListData"
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="title" scope="props">
                     <div style="font-size: 14px">
                       {{ props.rowData.title }}
                     </div>
-                    <!-- <b-button @click="getProps(props)">확인</b-button> -->
                   </template>
                   <template slot="type" scope="props">
                     <div>
@@ -185,7 +198,6 @@
                           '리샘플링',
                           '노말라이즈',
                           '스토리지 저장',
-                          '완료',
                         ]"
                         :active-step="props.rowData.step"
                         :is-reactive="false"
@@ -201,8 +213,8 @@
                   :table-height="vueTableWidth"
                   ref="vuetable-scrollable"
                   :api-mode="false"
-                  :fields="userFields"
-                  :data="vueTableData"
+                  :fields="userListFields"
+                  :data="masteringListData"
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="title" scope="props">
@@ -229,7 +241,6 @@
                           '리샘플링',
                           '노말라이즈',
                           '스토리지 저장',
-                          '완료',
                         ]"
                         :active-step="props.rowData.step"
                         :is-reactive="false"
@@ -289,7 +300,7 @@
                   class="has-float-label"
                   style="width: 200px"
                 >
-                  <b-input-group class="mb-3" style="width: 200px; float: left">
+                  <b-input-group class="mb-3" style="width: 200px">
                     <input
                       style="height: 33px; font-size: 13px"
                       id="edateinput"
@@ -311,6 +322,27 @@
                     </b-input-group-append>
                   </b-input-group>
                 </b-form-group>
+                <b-button
+                  style="
+                    position: absolute;
+                    top: 0px;
+                    right: -85px;
+                    z-index: 9999;
+                    border-color: #008ecc;
+                    color: #008ecc;
+                    background-color: white;
+                    height: 33px;
+                  "
+                  class="
+                    btn btn-outline-primary btn-sm
+                    default
+                    cutom-label
+                    mr-2
+                  "
+                  @click="logSearch"
+                >
+                  검색
+                </b-button>
               </div>
 
               <div
@@ -326,8 +358,8 @@
                   :table-height="vueTableWidth"
                   ref="vuetable-scrollable"
                   :api-mode="false"
-                  :fields="adminFields"
-                  :data="vueTableData"
+                  :fields="adminLogFields"
+                  :data="masteringLogData"
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="rowNO" scope="props">
@@ -344,14 +376,47 @@
                       {{ props.rowData.type }}
                     </div>
                   </template>
-                  <template slot="user_id" scope="props">
+                  <template slot="user" scope="props">
                     <div>
-                      {{ props.rowData.user_id }}
+                      {{ props.rowData.user }}
                     </div>
                   </template>
                   <template slot="date" scope="props">
                     <div>
                       {{ props.rowData.date }}
+                    </div>
+                  </template>
+                  <template slot="status" scope="props">
+                    <div>
+                      {{ props.rowData.status }}
+                    </div>
+                  </template>
+                  <template slot="silence" scope="props">
+                    <div>
+                      {{ props.rowData.silence }}
+                    </div>
+                  </template>
+                  <template slot="worker" scope="props">
+                    <div>
+                      {{ props.rowData.worker }}
+                    </div>
+                  </template>
+                  <template slot="actions" scope="props">
+                    <div>
+                      <b-button
+                        class="icon-buton"
+                        style="
+                          background-color: transparent;
+                          border: 0;
+                          outlilne: 0;
+                        "
+                        @click="removeLog(props)"
+                        ><b-icon
+                          icon="trash"
+                          class="icon"
+                          variant="danger"
+                        ></b-icon
+                      ></b-button>
                     </div>
                   </template>
                 </vuetable>
@@ -361,8 +426,8 @@
                   :table-height="vueTableWidth"
                   ref="vuetable-scrollable"
                   :api-mode="false"
-                  :fields="userFields"
-                  :data="vueTableData"
+                  :fields="userListFields"
+                  :data="masteringListData"
                   no-data-template="데이터가 없습니다."
                 >
                   <template slot="title" scope="props">
@@ -375,14 +440,29 @@
                       {{ props.rowData.type }}
                     </div>
                   </template>
-                  <template slot="user_id" scope="props">
+                  <template slot="user" scope="props">
                     <div>
-                      {{ props.rowData.user_id }}
+                      {{ props.rowData.user }}
                     </div>
                   </template>
                   <template slot="date" scope="props">
                     <div>
                       {{ props.rowData.date }}
+                    </div>
+                  </template>
+                  <template slot="status" scope="props">
+                    <div>
+                      {{ props.rowData.status }}
+                    </div>
+                  </template>
+                  <template slot="silence" scope="props">
+                    <div>
+                      {{ props.rowData.silence }}
+                    </div>
+                  </template>
+                  <template slot="worker" scope="props">
+                    <div>
+                      {{ props.rowData.worker }}
                     </div>
                   </template>
                 </vuetable>
@@ -392,7 +472,6 @@
         </h4>
       </CommonFileModal>
     </transition>
-
     <MetaModal
       @upload="upload"
       @reset="reset"
@@ -436,14 +515,51 @@ export default {
       fileSelect: false,
       fileState: "",
       percent: 0,
-      logSDate: "",
-      logEDate: "",
+      logSDate: "2021-11-10",
+      logEDate: "2021-11-10",
     };
   },
   watch: {
     DragFileModalState(v) {
       this.dropzone = v;
     },
+  },
+  created() {
+    axios.get("/api/Mastering/mastering-status").then((res) => {
+      var masteringListData = [];
+      res.data.resultObject.data.forEach((e) => {
+        var data = {
+          title: e.title,
+          type: this.getCategory(e.category),
+          user_id: e.regUserId,
+          date: e.regDtm,
+          step: e.workStatus,
+        };
+        masteringListData.push(data);
+      });
+      this.setMasteringListData(masteringListData);
+    });
+
+    var sdt = this.logSDate.replace(/-/g, "");
+    var edt = this.logEDate.replace(/-/g, "");
+    axios
+      .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
+      .then((res) => {
+        var masteringLogData = [];
+        res.data.resultObject.data.forEach((e) => {
+          var data = {
+            title: e.title,
+            type: this.getCategory(e.category),
+            user: e.regUserName,
+            date: e.regDtm,
+            status: e.workStatus,
+            silence: e.silenceCount,
+            worker: e.workerName,
+          };
+          masteringLogData.push(data);
+        });
+        this.setMasteringLogData(masteringLogData);
+      });
   },
   computed: {
     fileupload: function () {
@@ -454,7 +570,7 @@ export default {
     ...mapState("FileIndexStore", {
       uploaderCustomData: (state) => state.uploaderCustomData,
       localFiles: (state) => state.localFiles,
-      vueTableData: (state) => state.vueTableData,
+      masteringListData: (state) => state.masteringListData,
       MetaData: (state) => state.MetaData,
     }),
     getUrl() {
@@ -466,6 +582,42 @@ export default {
     },
   },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "addLocalFiles",
+      "resetLocalFiles",
+      "setFileUploading",
+      "setMetaModalTitle",
+      "setMasteringListData",
+      "setMasteringLogData",
+      "setDuration",
+      "setAudioFormat",
+    ]),
+
+    logSearch() {
+      var sdt = this.logSDate.replace(/-/g, "");
+      var edt = this.logEDate.replace(/-/g, "");
+      axios
+        .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
+        .then((res) => {
+          var masteringLogData = [];
+          res.data.resultObject.data.forEach((e) => {
+            var data = {
+              title: e.title,
+              type: this.getCategory(e.category),
+              user: e.regUserName,
+              date: e.regDtm,
+              status: e.workStatus,
+              silence: e.silenceCount,
+              worker: e.workerName,
+            };
+            masteringLogData.push(data);
+          });
+          this.setMasteringLogData(masteringLogData);
+        });
+    },
+    removeLog(props) {
+      console.log(props.rowData);
+    },
     getProps(props) {
       console.log(props);
     },
@@ -509,22 +661,13 @@ export default {
         this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
-    ...mapMutations("FileIndexStore", [
-      "addLocalFiles",
-      "resetLocalFiles",
-      "setFileUploading",
-      "setMetaModalTitle",
-      "setVueTableData",
-      "setDuration",
-      "setAudioFormat",
-      "forEachVueTableData",
-    ]),
     //#region 파일 조작
     upload() {
       this.fileState = "업로드 시작";
       this.fileupload.upload(0);
     },
     valueChanged(event) {
+      this.setProcessing(true);
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
@@ -534,14 +677,18 @@ export default {
         if (this.notDiskAvailable(event.value[0].size)) {
           if (
             event.value[0].type == "audio/mpeg" ||
-            event.value[0].type == "audio/wav" ||
-            event.value[0].type == "image/jpeg"
+            event.value[0].type == "audio/wav"
           ) {
-            var blob = event.value[0].slice(0, 1000);
             var formData = new FormData();
-            formData.append("file", blob);
-            // formData.append("file", event.value[0]);
-            formData.append("fileExt", event.value[0].name);
+            if (event.value[0].type == "audio/mpeg") {
+              formData.append("file", event.value[0]);
+              formData.append("fileExt", event.value[0].name);
+            } else if (event.value[0].type == "audio/wav") {
+              var blob = event.value[0].slice(0, 1152);
+              formData.append("file", blob);
+              formData.append("fileExt", event.value[0].name);
+            }
+
             axios.post("/api/Mastering/Validation", formData).then((res) => {
               if (
                 res.data.resultObject.duration == null ||
@@ -555,6 +702,7 @@ export default {
               this.openFileModal();
               this.MetaModal = true;
               this.fileSelect = true;
+              this.setProcessing(false);
               // this.setFileUploading(true);
             });
           } else {
@@ -562,12 +710,15 @@ export default {
             alert("업로드 할 수 없는 파일 형식입니다.");
             this.fileupload.removeFile(0);
             this.fileselect = false;
+            this.setProcessing(false);
           }
         } else {
           this.$fn.notify("error", { title: "디스크 공간이 부족합니다." });
+          this.setProcessing(false);
         }
       } else if (event.value.length == 0) {
         this.fileselect = false;
+        this.setProcessing(false);
       }
     },
     notDiskAvailable(files) {
@@ -610,7 +761,7 @@ export default {
     },
     uploadAborted() {
       this.fileselect = false;
-      // this.percent = 0;
+      this.percent = 0;
       // this.$fn.notify("error", { message: "파일 업로드 취소" });
     },
     onUploadProgress(e) {
@@ -637,6 +788,27 @@ export default {
       }
     },
     //#endregion
+    getCategory(v) {
+      if (v == 0) {
+        return "My 디스크";
+      } else if (v == 1) {
+        return "프로소재";
+      } else if (v == 2) {
+        return "프로그램";
+      } else if (v == 3) {
+        return "주조SPOT";
+      } else if (v == 4) {
+        return "부조SPOT";
+      } else if (v == 5) {
+        return "FILLER";
+      } else if (v == 6) {
+        return "취재물";
+      } else if (v == 7) {
+        return "고정소재";
+      } else if (v == 8) {
+        return "변동소재";
+      }
+    },
   },
 };
 </script>
@@ -649,7 +821,7 @@ export default {
   height: 400px !important;
 }
 .progress__wrapper {
-  width: 600px !important;
+  width: 520px !important;
   /* margin-left: 20px !important; */
   margin: 0px !important;
 }

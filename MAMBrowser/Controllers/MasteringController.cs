@@ -904,7 +904,6 @@ namespace MAMBrowser.Controllers
         [HttpGet("mastering-logs")]
         public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus2([FromQuery] string startDt, [FromQuery] string endDt, [FromServices] APIBll bll)
         {
-            
             DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
             result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
             result.ResultObject.Data = bll.GetMasteringLogs(startDt, endDt);

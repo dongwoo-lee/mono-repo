@@ -34,7 +34,8 @@ export default {
       duration: "",
       audioFormat: "",
     },
-    vueTableData: [],
+    masteringListData: [],
+    masteringLogData: [],
     ProgramData: [
       {
         eventName: "",

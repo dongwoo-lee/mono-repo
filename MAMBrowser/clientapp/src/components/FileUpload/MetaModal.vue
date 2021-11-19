@@ -10,9 +10,6 @@
         <h3 slot="header">메타 데이터 입력</h3>
         <h4 slot="body">
           <div style="width: 1000px; height: 500px; float: left">
-            <!-- <div
-              style="margin-left:10px; margin-right:20px;width:380px; height:540px; position:absolute; border: 1px solid #008ecc;"
-            ></div> -->
             <div
               style="
                 width: 350px;
@@ -226,20 +223,6 @@ export default {
       cancel: false,
     };
   },
-  created() {
-    axios.get("/api/Mastering/mastering-status").then((res) => {
-      res.data.resultObject.data.forEach((e) => {
-        var vueTableData = {
-          title: e.title,
-          type: this.getCategory(e.category),
-          user_id: e.regUserId,
-          date: e.regDtm,
-          step: e.workStatus,
-        };
-        this.setVueTableData(vueTableData);
-      });
-    });
-  },
   computed: {
     ...mapState("FileIndexStore", {
       MetaModalTitle: (state) => state.MetaModalTitle,
@@ -248,7 +231,7 @@ export default {
       fileEDate: (state) => state.fileEDate,
       localFiles: (state) => state.localFiles,
       MetaData: (state) => state.MetaData,
-      vueTableData: (state) => state.vueTableData,
+      masteringListData: (state) => state.masteringListData,
       ProgramData: (state) => state.ProgramData,
       ProgramSelected: (state) => state.ProgramSelected,
       EventSelected: (state) => state.EventSelected,
@@ -374,7 +357,7 @@ export default {
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setEditor",
-      "setVueTableData",
+      "setMasteringListData",
       "setProcessing",
       "setFileUploading",
       "resetTitle",
@@ -384,27 +367,6 @@ export default {
     ]),
     resetEvent() {
       this.$emit("reset");
-    },
-    getCategory(v) {
-      if (v == 0) {
-        return "My 디스크";
-      } else if (v == 1) {
-        return "프로소재";
-      } else if (v == 2) {
-        return "프로그램";
-      } else if (v == 3) {
-        return "주조SPOT";
-      } else if (v == 4) {
-        return "부조SPOT";
-      } else if (v == 5) {
-        return "FILLER";
-      } else if (v == 6) {
-        return "취재물";
-      } else if (v == 7) {
-        return "고정소재";
-      } else if (v == 8) {
-        return "변동소재";
-      }
     },
     inputEditor(v) {
       this.setEditor(v.id);
@@ -496,14 +458,6 @@ export default {
         }
         console.log(data);
         this.setUploaderCustomData(data);
-        this.setProcessing(true);
-        // this.verifyMeta({
-        //   type: this.MetaData.typeSelected,
-        //   title: this.MetaData.title,
-        //   files: this.localFiles,
-        //   categoryCD: this.MetaData.categoryCD
-        // }).then(res => {
-        this.setProcessing(false);
         if (this.cancel) {
           this.cancel = false;
           return;
@@ -511,7 +465,6 @@ export default {
           this.setFileUploading(true);
           this.$emit("upload");
         }
-        // });
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
       }

@@ -26,7 +26,7 @@ export default {
       formatted: "",
       dateSelected: "",
       vueTableWidth: "195px",
-      userFields: [
+      userListFields: [
         {
           name: "__slot:title",
           title: "제목",
@@ -56,13 +56,13 @@ export default {
           width: "20%",
         },
       ],
-      adminFields: [
+      adminListFields: [
         {
           name: "__slot:title",
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%",
+          width: "12%",
         },
         {
           name: "__slot:type",
@@ -91,6 +91,64 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "20%",
+        },
+      ],
+      adminLogFields: [
+        {
+          name: "__slot:title",
+          title: "제목",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "20%",
+        },
+        {
+          name: "__slot:type",
+          title: "소재유형",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "15%",
+        },
+        {
+          name: "__slot:user",
+          title: "등록자",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "18%",
+        },
+        {
+          name: "__slot:date",
+          title: "등록일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "20%",
+        },
+        {
+          name: "__slot:status",
+          title: "상태",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "20%",
+        },
+        {
+          name: "__slot:silence",
+          title: "무음",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%",
+        },
+        {
+          name: "__slot:worker",
+          title: "서버",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "7%",
+        },
+        {
+          name: "__slot:actions",
+          title: "추가 작업",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "14%",
         },
       ],
       styleData: {
@@ -194,7 +252,8 @@ export default {
       fileEDate: (state) => state.fileEDate,
       MetaData: (state) => state.MetaData,
       fileMediaOptions: (state) => state.fileMediaOptions,
-      vueTableData: (state) => state.vueTableData,
+      masteringListData: (state) => state.masteringListData,
+      masteringLogData: (state) => state.masteringLogData,
       ProgramData: (state) => state.ProgramData,
       ProgramSelected: (state) => state.ProgramSelected,
       EventData: (state) => state.EventData,

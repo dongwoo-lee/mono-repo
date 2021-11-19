@@ -26,8 +26,11 @@ export default {
   setUploaderCustomData(state, payload) {
     state.uploaderCustomData = payload;
   },
-  setVueTableData(state, payload) {
-    state.vueTableData.push(payload);
+  setMasteringListData(state, payload) {
+    state.masteringListData = payload;
+  },
+  setMasteringLogData(state, payload) {
+    state.masteringLogData = payload;
   },
   setFileMediaOptions(state, payload) {
     state.fileMediaOptions.push(payload);
@@ -131,12 +134,5 @@ export default {
         id: "",
       },
     ];
-  },
-  forEachVueTableData(state, payload) {
-    state.vueTableData.forEach((element) => {
-      if (payload.title == element.title) {
-        element.step = payload.step;
-      }
-    });
   },
 };

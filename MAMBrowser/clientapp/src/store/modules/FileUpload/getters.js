@@ -99,6 +99,6 @@ export default {
     return false;
   },
   getBadge(state) {
-    return state.vueTableData.length;
+    return state.masteringListData.length;
   },
 };
