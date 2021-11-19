@@ -426,10 +426,14 @@
                   :table-height="vueTableWidth"
                   ref="vuetable-scrollable"
                   :api-mode="false"
-                  :fields="userListFields"
-                  :data="masteringListData"
+                  :fields="userLogFields"
+                  :data="masteringLogData"
                   no-data-template="데이터가 없습니다."
                 >
+                  <template slot="rowNO" scope="props">
+                    <div>{{ props.rowIndex + 1 }}</div>
+                  </template>
+
                   <template slot="title" scope="props">
                     <div style="font-size: 14px">
                       {{ props.rowData.title }}
@@ -438,11 +442,6 @@
                   <template slot="type" scope="props">
                     <div>
                       {{ props.rowData.type }}
-                    </div>
-                  </template>
-                  <template slot="user" scope="props">
-                    <div>
-                      {{ props.rowData.user }}
                     </div>
                   </template>
                   <template slot="date" scope="props">
@@ -463,6 +462,24 @@
                   <template slot="worker" scope="props">
                     <div>
                       {{ props.rowData.worker }}
+                    </div>
+                  </template>
+                  <template slot="actions" scope="props">
+                    <div>
+                      <b-button
+                        class="icon-buton"
+                        style="
+                          background-color: transparent;
+                          border: 0;
+                          outlilne: 0;
+                        "
+                        @click="removeLog(props)"
+                        ><b-icon
+                          icon="trash"
+                          class="icon"
+                          variant="danger"
+                        ></b-icon
+                      ></b-button>
                     </div>
                   </template>
                 </vuetable>
@@ -490,6 +507,7 @@ import CommonFileFunction from "./CommonFileFunction";
 import MetaModal from "./MetaModal";
 import axios from "axios";
 const dxfu = "my-fileupload";
+var background;
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   mixins: [CommonFileFunction],
@@ -525,20 +543,9 @@ export default {
     },
   },
   created() {
-    axios.get("/api/Mastering/mastering-status").then((res) => {
-      var masteringListData = [];
-      res.data.resultObject.data.forEach((e) => {
-        var data = {
-          title: e.title,
-          type: this.getCategory(e.category),
-          user_id: e.regUserId,
-          date: e.regDtm,
-          step: e.workStatus,
-        };
-        masteringListData.push(data);
-      });
-      this.setMasteringListData(masteringListData);
-    });
+    background = setInterval(() => {
+      this.masteringStatus();
+    }, 1000);
 
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
@@ -560,6 +567,9 @@ export default {
         });
         this.setMasteringLogData(masteringLogData);
       });
+  },
+  beforeDestroy() {
+    clearInterval(background);
   },
   computed: {
     fileupload: function () {
@@ -592,7 +602,22 @@ export default {
       "setDuration",
       "setAudioFormat",
     ]),
-
+    masteringStatus() {
+      axios.get("/api/Mastering/mastering-status").then((res) => {
+        var masteringListData = [];
+        res.data.resultObject.data.forEach((e) => {
+          var data = {
+            title: e.title,
+            type: this.getCategory(e.category),
+            user_id: e.regUserId,
+            date: e.regDtm,
+            step: e.workStatus,
+          };
+          masteringListData.push(data);
+        });
+        this.setMasteringListData(masteringListData);
+      });
+    },
     logSearch() {
       var sdt = this.logSDate.replace(/-/g, "");
       var edt = this.logEDate.replace(/-/g, "");
