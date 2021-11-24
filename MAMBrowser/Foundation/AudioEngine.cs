@@ -558,7 +558,7 @@ namespace MAMBrowser.Foundation
             MemoryStream ms = new MemoryStream();
             while (true)
             {
-                if (totalRead >= totalHeadLength)
+                if (totalRead >= totalHeadLength || totalRead >= stream.Length)
                     break;
 
                 var read = stream.Read(buffer, 0, buffer.Length);
