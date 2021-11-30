@@ -1,5 +1,4 @@
 import axios from "axios";
-
 const qs = require("qs");
 import "moment/locale/ko";
 const moment = require("moment");
@@ -28,7 +27,7 @@ export default {
             contents: "---------- 1부  ----------",
             usedtime: 0,
             etc: "",
-            rowNum: 1,
+            rownum: 1,
             starttime: "",
         },
         {
@@ -36,7 +35,7 @@ export default {
             contents: "<오프닝>",
             usedtime: 0,
             etc: "",
-            rowNum: 2,
+            rownum: 2,
             starttime: "",
         },
         {
@@ -44,7 +43,7 @@ export default {
             contents: "음원  Play",
             usedtime: 0,
             etc: "",
-            rowNum: 3,
+            rownum: 3,
             starttime: "",
         },
         {
@@ -52,7 +51,7 @@ export default {
             contents: "1부 CM",
             usedtime: 0,
             etc: "",
-            rowNum: 4,
+            rownum: 4,
             starttime: "",
         },
         {
@@ -60,7 +59,7 @@ export default {
             contents: "코너",
             usedtime: 0,
             etc: "",
-            rowNum: 5,
+            rownum: 5,
             starttime: "",
         },
         {
@@ -68,7 +67,7 @@ export default {
             contents: "음원  Play",
             usedtime: 0,
             etc: "",
-            rowNum: 6,
+            rownum: 6,
             starttime: "",
         },
         {
@@ -76,7 +75,7 @@ export default {
             contents: "SB + 상품소개",
             usedtime: 0,
             etc: "",
-            rowNum: 7,
+            rownum: 7,
             starttime: "",
         },
         {
@@ -84,7 +83,7 @@ export default {
             contents: "코너",
             usedtime: 0,
             etc: "",
-            rowNum: 8,
+            rownum: 8,
             starttime: "",
         },
         {
@@ -92,7 +91,7 @@ export default {
             contents: "음원  Play",
             usedtime: 0,
             etc: "",
-            rowNum: 9,
+            rownum: 9,
             starttime: "",
         },
         {
@@ -100,7 +99,7 @@ export default {
             contents: "2부 CM",
             usedtime: 0,
             etc: "",
-            rowNum: 10,
+            rownum: 10,
             starttime: "",
         },
         {
@@ -108,7 +107,7 @@ export default {
             contents: "예비",
             usedtime: 0,
             etc: "",
-            rowNum: 11,
+            rownum: 11,
             starttime: "",
         },
         {
@@ -116,7 +115,7 @@ export default {
             contents: "---------- 3부  ----------",
             usedtime: 0,
             etc: "",
-            rowNum: 12,
+            rownum: 12,
             starttime: "",
         },
         {
@@ -124,7 +123,7 @@ export default {
             contents: "로고송",
             usedtime: 0,
             etc: "",
-            rowNum: 13,
+            rownum: 13,
             starttime: "",
         },
         {
@@ -132,7 +131,7 @@ export default {
             contents: "코너",
             usedtime: 0,
             etc: "",
-            rowNum: 14,
+            rownum: 14,
             starttime: "",
         },
         {
@@ -140,7 +139,7 @@ export default {
             contents: "",
             usedtime: 0,
             etc: "",
-            rowNum: 15,
+            rownum: 15,
             starttime: "",
         },
         {
@@ -148,7 +147,7 @@ export default {
             contents: "3부 CM",
             usedtime: 0,
             etc: "",
-            rowNum: 16,
+            rownum: 16,
             starttime: "",
         },
         {
@@ -156,7 +155,7 @@ export default {
             contents: "코너",
             usedtime: 0,
             etc: "",
-            rowNum: 17,
+            rownum: 17,
             starttime: "",
         },
         {
@@ -164,7 +163,7 @@ export default {
             contents: "음원  Play",
             usedtime: 0,
             etc: "",
-            rowNum: 18,
+            rownum: 18,
             starttime: "",
         },
         {
@@ -172,7 +171,7 @@ export default {
             contents: "음원  Play",
             usedtime: 0,
             etc: "",
-            rowNum: 19,
+            rownum: 19,
             starttime: "",
         },
         {
@@ -180,7 +179,7 @@ export default {
             contents: "SB + 캠페인",
             usedtime: 0,
             etc: "",
-            rowNum: 20,
+            rownum: 20,
             starttime: "",
         },
         {
@@ -188,7 +187,7 @@ export default {
             contents: "---------- 4부  ----------",
             usedtime: 0,
             etc: "",
-            rowNum: 21,
+            rownum: 21,
             starttime: "",
         },
         {
@@ -196,7 +195,7 @@ export default {
             contents: "코너",
             usedtime: 0,
             etc: "",
-            rowNum: 22,
+            rownum: 22,
             starttime: "",
         },
         {
@@ -204,7 +203,7 @@ export default {
             contents: "음원  Play",
             usedtime: 0,
             etc: "",
-            rowNum: 23,
+            rownum: 23,
             starttime: "",
         },
         {
@@ -212,7 +211,7 @@ export default {
             contents: "4부 CM",
             usedtime: 0,
             etc: "",
-            rowNum: 24,
+            rownum: 24,
             starttime: "",
         },
         ]
@@ -268,27 +267,28 @@ export default {
             state.abCartArr = payload;
         },
         SET_CCHANNELDATA(state, payload) {
-            switch (payload.type) {
-                case "channel_1":
-                    state.cChannelData.channel_1 = payload.value;
-                    break;
+            state.cChannelData = payload;
+            // switch (payload.type) {
+            //     case "channel_1":
+            //         state.cChannelData.channel_1 = payload.value;
+            //         break;
 
-                case "channel_2":
-                    state.cChannelData.channel_2 = payload.value;
-                    break;
+            //     case "channel_2":
+            //         state.cChannelData.channel_2 = payload.value;
+            //         break;
 
-                case "channel_3":
-                    state.cChannelData.channel_3 = payload.value;
-                    break;
+            //     case "channel_3":
+            //         state.cChannelData.channel_3 = payload.value;
+            //         break;
 
-                case "channel_4":
-                    state.cChannelData.channel_4 = payload.value;
-                    break;
+            //     case "channel_4":
+            //         state.cChannelData.channel_4 = payload.value;
+            //         break;
 
-                default:
-                    state.cChannelData = [];
-                    break;
-            }
+            //     default:
+            //         state.cChannelData = [];
+            //         break;
+            // }
         },
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
@@ -384,49 +384,53 @@ export default {
                 }));
         },
         // 일일 큐시트 목록 전체 가져오기
-        async getcuesheetListArr({ commit }, payload) {
-            await axios.get(`/api/daycuesheet/Getdaycuelist`, {
+        getcuesheetListArr({ commit }, payload) {
+            return axios.get(`/api/daycuesheet/Getdaycuelist`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);
                 },
             })
                 .then((res) => {
-                    // console.log("일일큐시트목록가져오기");
-                    // console.log(res);
-                    commit('SET_CUESHEETLISTARR', res);
+                    console.log(res);
+                    commit('SET_CUESHEETLISTARR', res.data.resultObject);
+                    return res;
                 })
                 .catch((err => {
                     console.log("getcuesheetListArr" + err);
                 }));
         },
         // 기본 큐시트 목록 전체 가져오기
-        async getcuesheetListArrDef({ state, commit, dispatch }, payload) {
-            await axios.get(`/api/DefCueSheet/GetDefList`, {
+        getcuesheetListArrDef({ commit, dispatch }, payload) {
+            return axios.get(`/api/DefCueSheet/GetDefList`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);
                 },
             })
                 .then(async (res) => {
-                    var productWeekList = await dispatch('disableList', res.data);
+                    var productWeekList = await dispatch('disableList', res.data.resultObject.data);
                     var seqnum = 0;
-                    res.data.forEach((ele) => {
+                    res.data.resultObject.data.forEach((ele) => {
                         var activeWeekList = [];
                         var cueids = [];
+                        var weeks = [];
                         ele.productWeekList = productWeekList.filter((week) => {
                             return week.productid == ele.productid;
                         });
                         ele.detail.forEach((activeWeek) => {
                             activeWeekList.push(activeWeek.week);
                             cueids.push(activeWeek.cueid);
+                            weeks.push(activeWeek.week)
                         });
                         ele.activeWeekList = activeWeekList;
+                        ele.weeks = weeks;
                         ele.cueid = cueids;
                         ele.seq = seqnum;
                         seqnum = seqnum + 1;
                     });
-                    commit('SET_DEFCUESHEETLISTARR', res);
+                    commit('SET_DEFCUESHEETLISTARR', res.data.resultObject);
+                    return res;
                 })
                 .catch((err => {
                     console.log("getcuesheetListArrDef" + err);
@@ -434,14 +438,15 @@ export default {
         },
         // 템플릿 목록 전체 가져오기
         getcuesheetListArrTemp({ commit }, payload) {
-            axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.temptitle}`)
+            return axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.temptitle}`)
                 .then((res) => {
                     var seqnum = 0;
-                    res.data.forEach((ele) => {
+                    res.data.resultObject.data.forEach((ele) => {
                         ele.seq = seqnum;
                         seqnum = seqnum + 1;
                     });
-                    commit('SET_TEMPCUESHEETLISTARR', res);
+                    commit('SET_TEMPCUESHEETLISTARR', res.data.resultObject);
+                    return res;
                 })
                 .catch((err => {
                     console.log("getcuesheetListArrTemp" + err);
@@ -487,34 +492,39 @@ export default {
         async addTemplate({ }, payload) {
             await axios
                 .post(`/api/TempCueSheet/SaveTempCue`, payload)
+                .then((res) => {
+                    console.log(res)
+                    alert("템플릿 추가완료")
+                })
         },
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
             await axios.get(
                 `/api/Favorite/GetFavorites?personid=${payload}`)
                 .then((res) => {
-                    var favResult = [];
-                    var rowNum_fav = 0;
-                    for (var i = 0; 16 > i; i++) {
-                        var row = {};
-                        for (var index = 0; res.data.length > index; index++) {
-                            if (res.data[index].seqnum == i + 1) {
-                                row = res.data[index];
-                                row.rowNum = rowNum_fav;
-                                row.transtype = "N";
-                                row.filePath = res.data[index].cons[0].p_MASTERFILE
-                                row.editTarget = true;
-                                rowNum_fav = rowNum_fav + 1;
-                                row.duration = moment(row.endposition)
-                                    .add(-9, "hours")
-                                    .format("HH:mm:ss.SS");
-                                dispatch('productFilter', row);
+                    // var favResult = [];
+                    // var rowNum_fav = 0;
+                    // for (var i = 0; 16 > i; i++) {
+                    //     var row = {};
+                    //     for (var index = 0; res.data.length > index; index++) {
+                    //         if (res.data[index].seqnum == i + 1) {
+                    //             row = res.data[index];
+                    //             row.rowNum = rowNum_fav;
+                    //             row.transtype = "N";
+                    //             row.filePath = res.data[index].cons[0].p_MASTERFILE
+                    //             row.editTarget = true;
+                    //             rowNum_fav = rowNum_fav + 1;
+                    //             row.duration = moment(row.endposition)
+                    //                 .add(-9, "hours")
+                    //                 .format("HH:mm:ss.SS");
+                    //             dispatch('productFilter', row);
 
-                            }
-                        }
-                        favResult.push(row);
-                    }
-                    commit('SET_CUEFAVORITES', favResult);
+                    //         }
+                    //     }
+                    //     favResult.push(row);
+                    // }
+                    // commit('SET_CUEFAVORITES', favResult);
+                    commit('SET_CUEFAVORITES', res.data);
                 })
                 .catch((err => {
                     console.log("getCueDayFav" + err);
@@ -523,50 +533,83 @@ export default {
         //일일큐시트 저장
         async saveDayCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
-            var dayData = {
-                brddate: state.cueInfo.detail[0].brddate,
-                brdtime: state.cueInfo.detail[0].brdtime,
-            };
-            pram.cueParam = state.cueInfo;
-            pram.cueParam.cueid = state.cueInfo.detail[0].cueid
-            pram.dayParam = dayData;
+            pram.CueSheetDTO = state.cueInfo;
+            console.log("pram")
+            console.log(pram)
             await axios
-                .post(`/api/dayCueSheet/SavedayCue`, pram)
+                .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram);
-                    var newInfo = state.cueInfo
-                    newInfo.detail[0].cueid = res.data.cueID
-                    commit('SET_CUEINFO', newInfo)
+                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    var newInfo = { ...state.cueInfo }
+                    var params = { productid: newInfo.productid, cueid: res.data }
+                    await axios.get(`/api/daycuesheet/GetdayCue`, {
+                        params: params,
+                        paramsSerializer: (params) => {
+                            return qs.stringify(params);
+                        },
+                    }).then((cueRes) => {
+                        newInfo.detail[0].cueid = res.data
+                        newInfo.edittime = cueRes.data.cueSheetDTO.edittime
+                        delete newInfo.cueid
+                        commit('SET_CUEINFO', newInfo)
+                        sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
+                    })
                     alert("저장완료");
-
                 })
                 .catch((err => {
-                    console.log("saveDayCue" + err);
+                    console.log("saveDayCue" + err.message);
                     alert("오류발생");
-
                 }));
-
         },
         //기본큐시트 저장
-        async saveDefCue({ state, dispatch }) {
-            //디렉터가 라디오기술부로 저장됨 왜이럼
+        async saveDefCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             var cueInfoData = { ...state.cueInfo }
-            if (cueInfoData.newdetail) {
-                cueInfoData.detail = cueInfoData.newdetail
+            if (Object.keys(cueInfoData).includes("newdetail")) {
+                cueInfoData.detail.forEach((ele) => {
+                    cueInfoData.newdetail.forEach((newItem) => {
+                        if (ele.week == newItem.week) {
+                            newItem.cueid = ele.cueid
+                        }
+                    })
+                })
+                cueInfoData.detail = cueInfoData.newdetail;
                 pram.delParams = cueInfoData.delId
             }
-            var defParams = [];
+
+            var daycue = [];
             cueInfoData.detail.forEach((ele) => {
-                defParams.push(ele.week);
-            });
-            pram.defParams = defParams;
-            pram.cueParam = cueInfoData;
-            pram.cueParam.cueid = -1
+                var cueItem = { ...cueInfoData }
+                cueItem.detail = [ele];
+                if (!Object.keys(cueItem.detail[0]).includes("cueid")) {
+                    cueItem.detail[0].cueid = -1
+                }
+                daycue.push(cueItem);
+            })
+            pram.DefCueSheetDTO = daycue;
+
             await axios
                 .post(`/api/defCueSheet/SavedefCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram);
+                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    var params = {
+                        productid: cueInfoData.productid,
+                        week: cueInfoData.activeWeekList,
+                    };
+                    await axios.get(`/api/defcuesheet/GetdefCue`, {
+                        params: params,
+                        paramsSerializer: (params) => {
+                            return qs.stringify(params);
+                        },
+                    })
+                        .then((cueRes) => {
+                            // 새로 cueid채워주려면 우선 볼러올 cueid를 알아야함 불가능
+                            // cue가 아닌 요일 정보로 가져오던가 하나의 cueid만 넘겨도 포함된 모든 cueid를 주도록 해야할듯?
+                            cueInfoData.detail = cueRes.data.cueSheetDTO.detail
+                            cueInfoData.edittime = cueRes.data.cueSheetDTO.edittime
+                            commit('SET_CUEINFO', cueInfoData)
+                            sessionStorage.setItem("USER_INFO", JSON.stringify(cueInfoData));
+                        });
                     alert("저장완료");
                 })
                 .catch((err => {
@@ -575,15 +618,29 @@ export default {
                 }));
         },
         //템플릿 저장
-        async saveTempCue({ state, dispatch }) {
+        async saveTempCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
-            pram.temParam = state.cueInfo;
-            pram.temParam.cueid = state.cueInfo.detail[0].cueid
-            pram.temParam.tmptitle = state.cueInfo.detail[0].tmptitle
+            pram.CueSheetDTO = state.cueInfo;
             await axios
                 .post(`/api/TempCueSheet/SaveTempCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram);
+                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    var newInfo = { ...state.cueInfo }
+                    var params = {
+                        cueid: res.data
+                    };
+                    await axios.get(`/api/tempcuesheet/GettempCue`, {
+                        params: params,
+                        paramsSerializer: (params) => {
+                            return qs.stringify(params);
+                        },
+                    })
+                        .then((cueRes) => {
+                            newInfo.edittime = cueRes.data.cueSheetDTO.edittime
+                            commit('SET_CUEINFO', newInfo)
+                            sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
+                        });
+                    console.log(state.cueInfo);
                     alert("저장완료");
 
                 })
@@ -643,89 +700,174 @@ export default {
             }
             return arr;
         },
-        //con + 출력용 가공 (가져오기)
-        setCueConData({ commit, dispatch }, payload) {
-            //출력용
-            var printData = [];
-            payload.data.prints.forEach((ele, index) => {
-                printData[index] = Object.assign({}, ele);
-                printData[index].rowNum = index;
-                printData[index].code = ele.code.trim();
-                printData[index].usedtime = ele.usedtime;
-                ele.contents == null ? printData[index].contents = "" : printData[index].contents = ele.contents;
-                ele.etc == null ? printData[index].etc = "" : printData[index].etc = ele.etc;
-                ele.starttime == null ? printData[index].starttime = "" : printData[index].starttime = ele.starttime;
+        //AB, C 필터
+        cartCodeFilter({ }, payload) {
+            switch (payload.row.cartcode) {
+                case "S01G01C011":
+                    payload.row.maintitle = payload.search_row.title;
+                    payload.row.subtitle = payload.search_row.categoryName;
+                    break;
+                case "S01G01C013":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.categoryName;
+                    break;
+                case "S01G01C017":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.pgmName;
+                    payload.row.onairdate = payload.search_row.brdDT;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C010":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.pgmName;
+                    break;
+                case "S01G01C018":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.status;
+                    payload.row.onairdate = payload.search_row.brdDT;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C019":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.status;
+                    payload.row.onairdate = payload.search_row.brdDT;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C012":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.pgmName;
+                    break;
+                case "S01G01C021":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.categoryName;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C022":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.categoryName;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C023":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.status;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C024":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.categoryName;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C009":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.status;
+                    break;
+                case "S01G01C016":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.id;
+                    payload.row.onairdate = payload.search_row.brdDT;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
+                case "S01G01C020":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.brdDT;
+                    payload.row.cartid = payload.search_row.id;
+                    break;
 
-                // printData[index].contents = ele.contents;
-                // printData[index].etc = ele.etc;
-                // printData[index].starttime = ele.starttime;
-                delete printData[index].seqnum;
-            });
-
-            const cueSheetCons = payload.data.cueSheetCons;
-            var rowNum_ab = 0;
-            var rowNum_c = 0;
-            var filePath = []; //그룹 소재의 경우 여러개 , 나중에 이부분 수정 필요함
-
-            //AB채널
-            var abData = cueSheetCons.filter((ele) => {
-                if (ele.channeltype == "N") {
-                    ele.rowNum = rowNum_ab;
-                    ele.filePath = ele.cons[0].p_MASTERFILE
-                    rowNum_ab = rowNum_ab + 1;
-                    ele.duration = ele.cons[0].p_DURATION
-                    // ele.duration = moment(ele.endposition)
-                    //     .add(-9, "hours")
-                    //     .format("HH:mm:ss.SS");
-                    dispatch('productFilter', ele);
-                    //this.productFilter(ele);
-                    return ele;
-                }
-            });
-            //C채널 -그룹
-            var cDataGroup = cueSheetCons.filter((ele) => {
-                if (ele.channeltype == "I") {
-                    ele.rowNum = rowNum_c;
-                    ele.filePath = ele.cons[0].p_MASTERFILE
-                    ele.editTarget = true;
-                    rowNum_c = rowNum_c + 1;
-                    ele.duration = ele.cons[0].p_DURATION
-                    // ele.duration = moment(ele.endposition)
-                    //     .add(-9, "hours")
-                    //     .format("HH:mm:ss.SS");
-                    dispatch('productFilter', ele);
-                    //   this.productFilter(ele);
-                    return ele;
-                }
-            });
-
-            //C채널 - 카트별
-            var cDataResult = [];
-            var row = {};
-            for (var channelNum = 0; 4 > channelNum; channelNum++) {
-                cDataResult = [];
-                for (var i = 0; 16 > i; i++) {
-                    for (var index = 0; cDataGroup.length > index; index++) {
-                        if (
-                            cDataGroup[index].seqnum ==
-                            i + 16 * channelNum + 1
-                        ) {
-                            row = cDataGroup[index];
-                            break;
-                        } else {
-                            row = {};
-                        }
-                    }
-                    cDataResult.push(row);
-                }
-                commit('SET_CCHANNELDATA', {
-                    type: "channel_" + (channelNum + 1),
-                    value: cDataResult,
-                })
+                default:
+                    break;
             }
-            commit('SET_PRINTARR', printData);
-            commit('SET_ABCARTARR', abData);
+            return payload.row
         },
+        //DTO 하는중
+        setCueConData({ commit }, payload) {
+            // commit('SET_CUEINFO', payload.cue)
+            commit('SET_ABCARTARR', payload.normalCon);
+            commit('SET_CCHANNELDATA', payload.instanceCon)
+            commit('SET_PRINTARR', payload.printDTO);
+        },
+        //con + 출력용 가공 (가져오기)
+        // setCueConData({ commit, dispatch }, payload) {
+        //     //출력용
+        //     var printData = [];
+        //     payload.data.prints.forEach((ele, index) => {
+        //         printData[index] = Object.assign({}, ele);
+        //         printData[index].rowNum = index;
+        //         printData[index].code = ele.code.trim();
+        //         printData[index].usedtime = ele.usedtime;
+        //         ele.contents == null ? printData[index].contents = "" : printData[index].contents = ele.contents;
+        //         ele.etc == null ? printData[index].etc = "" : printData[index].etc = ele.etc;
+        //         ele.starttime == null ? printData[index].starttime = "" : printData[index].starttime = ele.starttime;
+
+        //         // printData[index].contents = ele.contents;
+        //         // printData[index].etc = ele.etc;
+        //         // printData[index].starttime = ele.starttime;
+        //         delete printData[index].seqnum;
+        //     });
+
+        //     const cueSheetCons = payload.data.cueSheetCons;
+        //     var rowNum_ab = 0;
+        //     var rowNum_c = 0;
+        //     var filePath = []; //그룹 소재의 경우 여러개 , 나중에 이부분 수정 필요함
+
+        //     //AB채널
+        //     var abData = cueSheetCons.filter((ele) => {
+        //         if (ele.channeltype == "N") {
+        //             ele.rowNum = rowNum_ab;
+        //             ele.filePath = ele.cons[0].p_MASTERFILE
+        //             rowNum_ab = rowNum_ab + 1;
+        //             ele.duration = ele.cons[0].p_DURATION
+        //             // ele.duration = moment(ele.endposition)
+        //             //     .add(-9, "hours")
+        //             //     .format("HH:mm:ss.SS");
+        //             dispatch('productFilter', ele);
+        //             //this.productFilter(ele);
+        //             return ele;
+        //         }
+        //     });
+        //     //C채널 -그룹
+        //     var cDataGroup = cueSheetCons.filter((ele) => {
+        //         if (ele.channeltype == "I") {
+        //             ele.rowNum = rowNum_c;
+        //             ele.filePath = ele.cons[0].p_MASTERFILE
+        //             ele.editTarget = true;
+        //             rowNum_c = rowNum_c + 1;
+        //             ele.duration = ele.cons[0].p_DURATION
+        //             // ele.duration = moment(ele.endposition)
+        //             //     .add(-9, "hours")
+        //             //     .format("HH:mm:ss.SS");
+        //             dispatch('productFilter', ele);
+        //             //   this.productFilter(ele);
+        //             return ele;
+        //         }
+        //     });
+
+        //     //C채널 - 카트별
+        //     var cDataResult = [];
+        //     var row = {};
+        //     for (var channelNum = 0; 4 > channelNum; channelNum++) {
+        //         cDataResult = [];
+        //         for (var i = 0; 16 > i; i++) {
+        //             for (var index = 0; cDataGroup.length > index; index++) {
+        //                 if (
+        //                     cDataGroup[index].seqnum ==
+        //                     i + 16 * channelNum + 1
+        //                 ) {
+        //                     row = cDataGroup[index];
+        //                     break;
+        //                 } else {
+        //                     row = {};
+        //                 }
+        //             }
+        //             cDataResult.push(row);
+        //         }
+        //         commit('SET_CCHANNELDATA', {
+        //             type: "channel_" + (channelNum + 1),
+        //             value: cDataResult,
+        //         })
+        //     }
+        //     commit('SET_PRINTARR', printData);
+        //     commit('SET_ABCARTARR', abData);
+        // },
         //con + 출력용 가공 (저장), 이거 나중에 즐겨찾기를 따로 빼기 즐찾 가공이랑 즐찾 저장이랑 2개로 나누기
         setCueConFav_save({ state }, fav) {
             var printData = state.printArr
@@ -736,9 +878,9 @@ export default {
             var printResult = [];
             printData.forEach((ele, index) => {
                 printResult[index] = Object.assign({}, ele);
-                printResult[index].seqnum = index + 1;
+                printResult[index].rownum = index + 1;
                 printResult[index].usedtime = ele.usedtime;
-                delete printResult[index].rowNum;
+                //delete printResult[index].rowNum;
                 if (ele.code == "") {
                     printResult[index].code = "CSGP10";
                 }
@@ -748,63 +890,39 @@ export default {
             abData.forEach((ele, index) => {
                 abDataResult[index] = Object.assign({}, ele);
                 abDataResult[index].channeltype = "N";
-                abDataResult[index].seqnum = index + 1;
+                abDataResult[index].rownum = index + 1;
             });
-            //C채널
-            var cDataGroup = [];
-            var seqnum = 1;
-            for (let i = 0; i <= 3; i++) {
-                cData[Object.keys(cData)[i]].forEach((ele) => {
-                    cDataGroup.push(Object.assign({}, ele));
-                });
-            }
-            var cDataResult = [];
-            cDataGroup.forEach((ele, index) => {
-                if (Object.keys(ele).length !== 0) {
-                    ele.channeltype = "I";
-                    ele.seqnum = index + 1;
-                    cDataResult.push(ele);
-                }
-                seqnum = seqnum + 1;
-            });
-            var conParams = abDataResult.concat(cDataResult);
+
             var pram = {
-                conParams: conParams,
-                printParams: printResult,
-                // favConParam: favDataResult,
+                //CueSheetDTO: conParams,
+                PrintDTO: printResult,
+                NormalCon: abDataResult,
+                InstanceCon: cData
             };
             if (fav) {
-                var favDataResult = [];
-                var favSeqnum = 1;
-                favData.forEach((ele) => {
-                    if (Object.keys(ele).length !== 0) {
-                        ele.seqnum = favSeqnum;
-                        //불방처리부분 개발되면 변경하기 우선 Y로 해놓음
-                        ele.useflag = "Y";
-                        favDataResult.push(ele);
-                    }
-                    favSeqnum = favSeqnum + 1;
-                });
-                pram.favConParam = favDataResult
+                pram.favConParam = favData
             }
             return pram
         },
         //con 모두 지우기
         setclearCon({ state, commit }) {
             const printTemplate = [...state.printTem]
+            var insData = {}
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
             // commit('SET_CUEINFO', payload)
             for (var c = 0; 4 > c; c++) {
                 var arr = [];
                 for (var i = 0; 16 > i; i++) {
-                    arr.push({})
+                    arr.push({ rownum: i + 1 })
                 }
-                commit('SET_CCHANNELDATA', {
-                    type: "channel_" + (c + 1),
-                    value: arr,
-                })
+                insData["channel_" + (c + 1)] = arr
+                // commit('SET_CCHANNELDATA', {
+                //     type: "channel_" + (c + 1),
+                //     value: arr,
+                // })
             }
+            commit('SET_CCHANNELDATA', insData)
 
         },
         //즐겨찾기 모두 지우기

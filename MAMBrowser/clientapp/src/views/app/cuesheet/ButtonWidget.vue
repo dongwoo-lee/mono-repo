@@ -300,9 +300,6 @@
       @ok="editWeekOk"
     >
       <div id="modelDiv" class="d-block text-center">
-        <!-- <div class="mb-4" style="font-size: 20px">
-          <div>변경할 요일을 선택하세요.</div>
-        </div> -->
         <div class="modal_search">
           <b-form-group label="매체" class="has-float-label">
             <b-form-select
@@ -484,8 +481,24 @@ export default {
     async addtemClick() {
       const userId = sessionStorage.getItem(USER_ID);
       var cueCon = await this.setCueConFav_save(false);
-      var temParam = { personid: userId, tmptitle: this.tmpTitleTextBoxValue };
-      cueCon.temParam = temParam;
+      // var temParam = { personid: userId, tmptitle: this.tmpTitleTextBoxValue };
+      // cueCon.temParam = temParam;
+      var tempItem = {
+        personid: userId,
+        detail: [{ cueid: -1 }],
+        title: this.tmpTitleTextBoxValue,
+        djname: this.cueInfo.djname,
+        directorname: this.cueInfo.directorname,
+        membername: this.cueInfo.membername,
+        headertitle: this.cueInfo.headertitle,
+        footertitle: this.cueInfo.footertitle,
+        memo: this.cueInfo.memo,
+      };
+
+      // var pram = {
+      //   CueSheetDTO: tempItem,
+      // };
+      cueCon.CueSheetDTO = tempItem;
 
       await this.addTemplate(cueCon);
     },
@@ -500,26 +513,7 @@ export default {
         }
       }
       if (this.cartSelected.length > 0) {
-        var cData = [];
-        for (var i = 0; i < 16; i++) {
-          cData.push({});
-        }
-        if (this.cartSelected.includes("c1")) {
-          // this.SET_CCHANNELDATA({ type: "channel_1", value: cData });
-          eventBus.$emit("channel_1");
-        }
-        if (this.cartSelected.includes("c2")) {
-          // this.SET_CCHANNELDATA({ type: "channel_2", value: cData });
-          eventBus.$emit("channel_2");
-        }
-        if (this.cartSelected.includes("c3")) {
-          // this.SET_CCHANNELDATA({ type: "channel_3", value: cData });
-          eventBus.$emit("channel_3");
-        }
-        if (this.cartSelected.includes("c4")) {
-          // this.SET_CCHANNELDATA({ type: "channel_4", value: cData });
-          eventBus.$emit("channel_4");
-        }
+        eventBus.$emit("clearCData", this.cartSelected);
       }
     },
     //즐겨찾기 비우기
@@ -591,24 +585,11 @@ export default {
 
         case "F":
           const userId = sessionStorage.getItem(USER_ID);
-          var favData = this.cueFavorites;
-          var favDataResult = [];
-          var favSeqnum = 1;
-
-          favData.forEach((ele) => {
-            if (Object.keys(ele).length !== 0) {
-              ele.seqnum = favSeqnum;
-              //불방처리부분 개발되면 변경하기 우선 Y로 해놓음
-              ele.useflag = "Y";
-              favDataResult.push(ele);
-            }
-            favSeqnum = favSeqnum + 1;
-          });
-          var pram = {
-            favConParam: favDataResult,
-          };
           await axios
-            .post(`/api/Favorite/SetFavorites?personid=${userId}`, pram)
+            .post(
+              `/api/Favorite/SetFavorites?personid=${userId}`,
+              this.cueFavorites
+            )
             .then((res) => {
               alert("저장완료");
             })
@@ -623,7 +604,6 @@ export default {
     // zip 파일 다운로드
     async exportZipWave() {
       var cuesheetpram = await this.setCueConFav_save(false);
-      console.log(cuesheetpram.conParams);
       await axios
         .post(`/api/CueAttachments/exportZipFile`, [])
         .then((response) => {
@@ -637,7 +617,8 @@ export default {
         });
     },
     async editWeekListClick() {
-      var pram = { personid: this.cueInfo.personid, media: this.cueInfo.media };
+      const userId = sessionStorage.getItem(USER_ID);
+      var pram = { personid: userId, media: this.cueInfo.media };
       var proOption = await this.getuserProOption(pram);
 
       this.$refs["modal-editWeek"].show();
@@ -677,7 +658,6 @@ export default {
       cueData.delId = delId;
 
       this.SET_CUEINFO(cueData);
-      console.log(cueData);
 
       // var weekList = [];
       // var activeWeekList = [];

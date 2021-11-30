@@ -14,7 +14,7 @@
         :showColumnLines="false"
         :show-borders="true"
         :showRowLines="true"
-        keyExpr="rowNum"
+        keyExpr="rownum"
         @selection-changed="onSelectionChanged"
         @toolbar-preparing="onToolbarPreparing($event)"
         :customize-columns="customizeColumns"
@@ -49,62 +49,62 @@
         </template>
         <DxColumn :width="30" cell-template="product_Template" />
         <template #product_Template="{ data }">
-          <div v-if="data.data.subtitle != ''">
+          <div v-if="data.data.subTitle != ''">
             <b-icon
               icon="box-seam"
-              v-if="data.data.productType == 'PUBLIC_FILE'"
+              v-if="data.data.cartcode == 'S01G01C011'"
             ></b-icon>
             <b-icon
               icon="trophy"
-              v-if="data.data.productType == 'OLD_PRO'"
+              v-if="data.data.cartcode == 'S01G01C013'"
             ></b-icon>
             <b-icon
               icon="shield-check"
-              v-if="data.data.productType == 'SCR_SB'"
+              v-if="data.data.cartcode == 'S01G01C017'"
             ></b-icon>
             <b-icon
               icon="shield-lock"
-              v-if="data.data.productType == 'SCR_SPOT'"
+              v-if="data.data.cartcode == 'S01G01C010'"
             ></b-icon>
             <b-icon
               icon="shield-shaded"
-              v-if="data.data.productType == 'PGM_CM'"
+              v-if="data.data.cartcode == 'S01G01C018'"
             ></b-icon>
             <b-icon
               icon="shield-plus"
-              v-if="data.data.productType == 'CM'"
+              v-if="data.data.cartcode == 'S01G01C019'"
             ></b-icon>
             <b-icon
               icon="camera2"
-              v-if="data.data.productType == 'REPOTE'"
+              v-if="data.data.cartcode == 'S01G01C012'"
             ></b-icon>
             <b-icon
               icon="hourglass"
-              v-if="data.data.productType == 'FILLER_PR'"
+              v-if="data.data.cartcode == 'S01G01C021'"
             ></b-icon>
             <b-icon
               icon="hourglass-bottom"
-              v-if="data.data.productType == 'FILLER_MT'"
+              v-if="data.data.cartcode == 'S01G01C022'"
             ></b-icon>
             <b-icon
               icon="hourglass-split"
-              v-if="data.data.productType == 'FILLER_TIME'"
+              v-if="data.data.cartcode == 'S01G01C023'"
             ></b-icon>
             <b-icon
               icon="hourglass-top"
-              v-if="data.data.productType == 'FILLER_ETC'"
+              v-if="data.data.cartcode == 'S01G01C024'"
             ></b-icon>
             <b-icon
               icon="camera-reels"
-              v-if="data.data.productType == 'PGM'"
+              v-if="data.data.cartcode == 'S01G01C009'"
             ></b-icon>
             <b-icon
               icon="alarm"
-              v-if="data.data.productType == 'MCR_SB'"
+              v-if="data.data.cartcode == 'S01G01C016'"
             ></b-icon>
             <b-icon
               icon="clock"
-              v-if="data.data.productType == 'MCR_SPOT'"
+              v-if="data.data.cartcode == 'S01G01C020'"
             ></b-icon>
           </div>
         </template>
@@ -259,11 +259,11 @@
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.maintitle"
-      :fileKey="soundItem.fileToken"
+      :fileKey="soundItem.filetoken"
       :streamingUrl="streamingUrl"
       :waveformUrl="waveformUrl"
       :tempDownloadUrl="tempDownloadUrl"
-      :rowNum="soundItem.rowNum"
+      :rowNum="soundItem.rownum"
       :startPoint="soundItem.startposition"
       :endPoint="soundItem.endposition"
       type="A"
@@ -305,7 +305,6 @@ export default {
         onairdate: "",
         cartid: "", // 소재ID
         cartcode: "", //그룹코드
-        groupflag: "N", // Y:그룹, N:아이템
         startposition: 0,
         endposition: 0, //millisecond
         fadeintime: 0,
@@ -314,17 +313,18 @@ export default {
         maintitle: "",
         subtitle: "",
         memo: "", //바뀔수도있음
-        rowNum: 0,
-        productType: "",
-        fileToken: "", //미리듣기 때문 바뀔수도있음
-        duration: "", //string
+        rownum: 1,
+        filetoken: [], //미리듣기 때문 바뀔수도있음
+        filepath: [],
+        duration: 0, //string
+        useFlag: "Y",
       },
       selectedItemKeys: [],
     };
   },
   mounted() {
     if (this.abCartArr.length > 0) {
-      this.rowData.rowNum = this.abCartArr.length + 1;
+      this.rowData.rownum = this.abCartArr.length + 1;
     }
   },
   created() {
@@ -333,8 +333,7 @@ export default {
     //   this.SET_ABCARTARR([]);
     // }
     eventBus.$on("abDataSet", (val) => {
-      // this.channelAB = val;
-      this.rowData.rowNum = this.abCartArr.length + 1;
+      this.rowData.rownum = this.abCartArr.length + 1;
     });
   },
   components: {
@@ -356,7 +355,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("cueList", ["SET_ABCARTARR"]),
+    //...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapActions("cueList", ["cartCodeFilter"]),
     onAddChannelAB(e) {
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
@@ -368,107 +368,18 @@ export default {
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
-              row.productType = this.searchListData.productType;
-              row.fileToken = search_row.fileToken;
-              row.filePath = search_row.filePath;
+              row.filetoken.push(search_row.fileToken);
+              row.filepath.push(search_row.filePath);
               row.endposition = search_row.intDuration;
               row.duration = search_row.intDuration;
-              switch (this.searchListData.productType) {
-                case "PUBLIC_FILE":
-                  row.maintitle = search_row.title;
-                  row.subtitle = search_row.categoryName;
-                  row.cartcode = "S01G01C011";
-                  break;
-                case "OLD_PRO":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-
-                  row.cartcode = "S01G01C013";
-                  break;
-                case "SCR_SB":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.pgmName;
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C017";
-                  break;
-                case "SCR_SPOT":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.pgmName;
-                  row.cartcode = "S01G01C010";
-                  break;
-                case "PGM_CM":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C018";
-                  break;
-                case "CM":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C019";
-                  break;
-                case "REPOTE":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.pgmName;
-                  row.cartcode = "S01G01C012";
-                  break;
-                case "FILLER_PR":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C021";
-                  break;
-                case "FILLER_MT":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C022";
-                  break;
-                case "FILLER_TIME":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C023";
-                  break;
-                case "FILLER_ETC":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C024";
-                  break;
-                case "PGM":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.cartcode = "S01G01C009";
-                  break;
-                case "MCR_SB":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.id;
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C016";
-                  break;
-                case "MCR_SPOT":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C020";
-                  break;
-
-                default:
-                  break;
-              }
+              row.cartcode = this.searchListData.cartcode;
+              this.cartCodeFilter({
+                row: row,
+                search_row: search_row,
+              });
             }
             arrData.splice(e.toIndex + index, 0, row);
-            this.rowData.rowNum = this.rowData.rowNum + 1;
+            this.rowData.rownum = this.rowData.rownum + 1;
           });
         } else {
           var row = { ...this.rowData };
@@ -476,119 +387,31 @@ export default {
           if (Object.keys(search_row).includes("contents")) {
             row.memo = search_row.contents;
           } else {
-            row.productType = this.searchListData.productType;
-            row.fileToken = search_row.fileToken;
-            row.filePath = search_row.filePath;
+            row.filetoken.push(search_row.fileToken);
+            row.filepath.push(search_row.filePath);
             row.endposition = search_row.intDuration;
             row.duration = search_row.intDuration;
-            switch (this.searchListData.productType) {
-              case "PUBLIC_FILE":
-                row.maintitle = search_row.title;
-                row.subtitle = search_row.categoryName;
-                row.cartcode = "S01G01C011";
-                break;
-              case "OLD_PRO":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.cartcode = "S01G01C013";
-                break;
-              case "SCR_SB":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.pgmName;
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C017";
-                break;
-              case "SCR_SPOT":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.pgmName;
-                row.cartcode = "S01G01C010";
-                break;
-              case "PGM_CM":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C018";
-                break;
-              case "CM":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C019";
-                break;
-              case "REPOTE":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.pgmName;
-                row.cartcode = "S01G01C012";
-                break;
-              case "FILLER_PR":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C021";
-                break;
-              case "FILLER_MT":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C022";
-                break;
-              case "FILLER_TIME":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C023";
-                break;
-              case "FILLER_ETC":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C024";
-                break;
-              case "PGM":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.cartcode = "S01G01C009";
-                break;
-              case "MCR_SB":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.id;
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C016";
-                break;
-              case "MCR_SPOT":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C020";
-                break;
-
-              default:
-                break;
-            }
+            row.cartcode = this.searchListData.cartcode;
+            this.cartCodeFilter({
+              row: row,
+              search_row: search_row,
+            });
           }
           arrData.splice(e.toIndex, 0, row);
-          this.rowData.rowNum = this.rowData.rowNum + 1;
+          this.rowData.rownum = this.rowData.rownum + 1;
         }
       } else if (e.fromData.subtitle !== undefined) {
         var search_row = e.fromData;
         var row = { ...search_row };
-        row.rowNum = this.rowData.rowNum;
+        row.rownum = this.rowData.rownum;
+        row.transtype = "N";
         delete row.editTarget;
         arrData.splice(e.toIndex, 0, row);
-        this.rowData.rowNum = this.rowData.rowNum + 1;
+        this.rowData.rownum = this.rowData.rownum + 1;
       }
+      console.log(this.abCartArr);
       // e.fromComponent.clearSelection();
-      this.SET_ABCARTARR(arrData);
-      console.log("arrData");
-      console.log(arrData);
+      //this.SET_ABCARTARR(arrData);
     },
     onReorderChannelAB(e) {
       var arrData = this.abCartArr;
@@ -634,7 +457,7 @@ export default {
         arrData.splice(e.toIndex, 0, e.itemData);
       }
       //e.component.clearSelection();
-      this.SET_ABCARTARR(arrData);
+      //this.SET_ABCARTARR(arrData);
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -654,21 +477,21 @@ export default {
         return selectedRowsData;
       } else {
         selectedRowsData.forEach((selectindex) => {
-          var index = e.fromComponent.getRowIndexByKey(selectindex.rowNum);
-          selectindex.rowNum = index;
+          var index = e.fromComponent.getRowIndexByKey(selectindex.rownum);
+          selectindex.rownum = index;
         });
         selectedRowsData.sort(function (a, b) {
-          if (a.rowNum > b.rowNum) {
+          if (a.rownum > b.rownum) {
             return 1;
           }
-          if (a.rowNum < b.rowNum) {
+          if (a.rownum < b.rownum) {
             return -1;
           }
           return 0;
         });
         selectedRowsData.forEach((selectindex) => {
-          var index = e.fromComponent.getKeyByRowIndex(selectindex.rowNum);
-          selectindex.rowNum = index;
+          var index = e.fromComponent.getKeyByRowIndex(selectindex.rownum);
+          selectindex.rownum = index;
         });
         if (selectedRowsKey.length != 0) {
           selectedRowsKey.sort((a, b) => {
@@ -688,33 +511,33 @@ export default {
       let b = this.selectedItemKeys;
       for (let i = 0; i < b.length; i++) {
         for (let j = 0; j < a.length; j++) {
-          if (b[i].rowNum == a[j].rowNum) {
+          if (b[i].rownum == a[j].rownum) {
             a.splice(j, 1);
             break;
           }
         }
         arrData = a;
       }
-      this.SET_ABCARTARR(arrData);
+      //this.SET_ABCARTARR(arrData);
     },
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
       selectedRowsData.forEach((selectindex) => {
-        var index = e.component.getRowIndexByKey(selectindex.rowNum);
-        selectindex.rowNum = index;
+        var index = e.component.getRowIndexByKey(selectindex.rownum);
+        selectindex.rownum = index;
       });
       selectedRowsData.sort(function (a, b) {
-        if (a.rowNum > b.rowNum) {
+        if (a.rownum > b.rownum) {
           return 1;
         }
-        if (a.rowNum < b.rowNum) {
+        if (a.rownum < b.rownum) {
           return -1;
         }
         return 0;
       });
       selectedRowsData.forEach((selectindex) => {
-        var index = e.component.getKeyByRowIndex(selectindex.rowNum);
-        selectindex.rowNum = index;
+        var index = e.component.getKeyByRowIndex(selectindex.rownum);
+        selectindex.rownum = index;
       });
       this.selectedItemKeys = selectedRowsData;
       //this.selectedItemKeys = e.selectedRowsData;
@@ -734,15 +557,15 @@ export default {
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
               var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
-              row.rowNum = this.rowData.rowNum;
+              row.rownum = this.rowData.rownum;
               if (rastkey != -1) {
                 var index = this.dataGrid.getRowIndexByKey(rastkey);
                 arrData.splice(index + 1, 0, row);
               } else {
                 arrData.splice(1, 0, row);
               }
-              this.rowData.rowNum = this.rowData.rowNum + 1;
-              this.SET_ABCARTARR(arrData);
+              this.rowData.rownum = this.rowData.rownum + 1;
+              //this.SET_ABCARTARR(arrData);
             },
           };
         }
@@ -760,6 +583,8 @@ export default {
     },
     onValueChanged_memoText(value, cellInfo) {
       cellInfo.data.memo = value.value;
+      console.log("this.abCartArr");
+      console.log(this.abCartArr);
     },
     iconClick(e) {
       switch (e.data.transtype) {

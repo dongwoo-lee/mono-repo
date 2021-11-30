@@ -68,7 +68,7 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="defCuesheetListArr.data"
+          :rows="responseData.data"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -285,8 +285,11 @@ export default {
       }
       var params = {
         productids: this.searchItems.productid,
+        row_per_page: this.searchItems.rowPerPage,
+        select_page: this.searchItems.selectPage,
       };
-      await this.getcuesheetListArrDef(params);
+      var arrListResult = await this.getcuesheetListArrDef(params);
+      this.setResponseData(arrListResult);
       this.addScrollClass();
       this.isTableLoading = false;
       this.isScrollLodaing = false;
@@ -312,10 +315,24 @@ export default {
     },
     // 기본큐시트 추가 (modal)
     async addWeekCue() {
-      this.cuesheetData.personid = userId;
+      var result = [];
+      this.btnWeekStates.forEach((ele) => {
+        var cueItem = {
+          personid: userId,
+          detail: [{ cueid: -1, week: ele }],
+          media: this.cuesheetData.media,
+          productid: this.cuesheetData.productid,
+          djname: "",
+          directorname: "",
+          membername: "",
+          headertitle: "",
+          footertitle: "",
+          memo: "",
+        };
+        result.push(cueItem);
+      });
       var pram = {
-        cueParam: this.cuesheetData,
-        defParams: this.btnWeekStates,
+        DefCueSheetDTO: result,
       };
       await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {});
       this.getData();
@@ -326,10 +343,19 @@ export default {
         week.state = false;
       });
       await axios
-        .get(`/api/DefCueSheet/GetDefList?productids=` + e)
+        .get(`/api/DefCueSheet/GetDefList`, {
+          params: {
+            productids: e,
+            row_per_page: this.searchItems.rowPerPage,
+            select_page: this.searchItems.selectPage,
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        })
         .then((res) => {
           var weekArr = [];
-          res.data.forEach((ele) => {
+          res.data.resultObject.data.forEach((ele) => {
             ele.detail.forEach((week) => {
               weekArr.push(week.week);
             });

@@ -14,7 +14,7 @@
     >
       <div style="height: 100%; border-radius: 10px">
         <div
-          v-if="Object.keys(fileData[index - 1]).length != 0"
+          v-if="fileData[index - 1].duration > 0"
           style="height: 100%; cursor: pointer"
         >
           <div class="top">
@@ -24,59 +24,59 @@
             <div>
               <b-icon
                 icon="box-seam"
-                v-if="fileData[index - 1].productType == 'PUBLIC_FILE'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C011'"
               ></b-icon>
               <b-icon
                 icon="trophy"
-                v-if="fileData[index - 1].productType == 'OLD_PRO'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C013'"
               ></b-icon>
               <b-icon
                 icon="shield-check"
-                v-if="fileData[index - 1].productType == 'SCR_SB'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C017'"
               ></b-icon>
               <b-icon
                 icon="shield-lock"
-                v-if="fileData[index - 1].productType == 'SCR_SPOT'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C010'"
               ></b-icon>
               <b-icon
                 icon="shield-shaded"
-                v-if="fileData[index - 1].productType == 'PGM_CM'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C018'"
               ></b-icon>
               <b-icon
                 icon="shield-plus"
-                v-if="fileData[index - 1].productType == 'CM'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C019'"
               ></b-icon>
               <b-icon
                 icon="camera2"
-                v-if="fileData[index - 1].productType == 'REPOTE'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C012'"
               ></b-icon>
               <b-icon
                 icon="hourglass"
-                v-if="fileData[index - 1].productType == 'FILLER_PR'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C021'"
               ></b-icon>
               <b-icon
                 icon="hourglass-bottom"
-                v-if="fileData[index - 1].productType == 'FILLER_MT'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C022'"
               ></b-icon>
               <b-icon
                 icon="hourglass-split"
-                v-if="fileData[index - 1].productType == 'FILLER_TIME'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C023'"
               ></b-icon>
               <b-icon
                 icon="hourglass-top"
-                v-if="fileData[index - 1].productType == 'FILLER_ETC'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C024'"
               ></b-icon>
               <b-icon
                 icon="camera-reels"
-                v-if="fileData[index - 1].productType == 'PGM'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C009'"
               ></b-icon>
               <b-icon
                 icon="alarm"
-                v-if="fileData[index - 1].productType == 'MCR_SB'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C016'"
               ></b-icon>
               <b-icon
                 icon="clock"
-                v-if="fileData[index - 1].productType == 'MCR_SPOT'"
+                v-if="fileData[index - 1].cartcode == 'S01G01C020'"
               ></b-icon>
             </div>
             <div v-if="fileData[index - 1].startposition > 0">
@@ -106,13 +106,13 @@
             <div
               class="bottom_item maintitle"
               @dblclick="onTextEdit(index)"
-              v-if="fileData[index - 1].editTarget"
+              v-if="fileData[index - 1].edittarget"
             >
               {{ fileData[index - 1].maintitle }}
             </div>
             <div
               class="bottom_item"
-              v-if="fileData[index - 1].editTarget == false"
+              v-if="fileData[index - 1].edittarget == false"
             >
               <b-form-input
                 :value="fileData[index - 1].maintitle"
@@ -151,11 +151,11 @@
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.maintitle"
-      :fileKey="soundItem.fileToken"
+      :fileKey="soundItem.filetoken"
       :streamingUrl="streamingUrl"
       :waveformUrl="waveformUrl"
       :tempDownloadUrl="tempDownloadUrl"
-      :rowNum="soundItem.rowNum"
+      :rowNum="soundItem.rownum"
       :type="channelKey"
       :startPoint="soundItem.startposition"
       :endPoint="soundItem.endposition"
@@ -189,23 +189,23 @@ export default {
     return {
       fileData: [],
       rowData: {
-        onairdate: "",
-        cartid: "", // 소재ID
         cartcode: "", //그룹코드
-        groupflag: "N", // Y:그룹, N:아이템
-        startposition: 0,
+        cartid: "", // 소재ID
+        duration: "", //string
+        edittarget: true,
         endposition: 0, //millisecond
         fadeintime: 0,
         fadeouttime: 0,
-        transtype: "N",
+        filetoken: [], //미리듣기 때문 바뀔수도있음
+        filepath: [],
         maintitle: "",
-        subtitle: "",
         memo: "", //바뀔수도있음
-        rowNum: 0,
-        productType: "",
-        fileToken: "", //미리듣기 때문 바뀔수도있음
-        duration: "", //string
-        editTarget: true,
+        onairdate: "",
+        //rownum: 0,
+        startposition: 0,
+        subtitle: "",
+        transtype: "N",
+        useflag: "Y",
       },
     };
   },
@@ -216,28 +216,86 @@ export default {
       //즐겨찾기
       await this.getCueDayFav(userId);
       this.fileData = this.cueFavorites;
-      this.rowData.rowNum = this.cueFavorites.length + 1;
     } else {
       // 일반 C카트
       this.fileData = this.cChannelData[this.channelKey];
-      this.rowData.rowNum = this.cChannelData[this.channelKey].length;
     }
+    eventBus.$on("clearCData", (val) => {
+      var arr = [];
+      var resultData = { ...this.cChannelData };
 
-    eventBus.$on(this.channelKey, (val) => {
-      var cData = [];
       for (var i = 0; i < 16; i++) {
-        cData.push({});
+        arr.push({ rownum: i + 1 });
       }
-      this.SET_CCHANNELDATA({ type: this.channelKey, value: cData });
-      // this.fileData = this.cChannelData[this.channelKey];
-      this.fileData = cData;
-      this.rowData.rowNum = cData.length;
+      val.forEach((item) => {
+        switch (item) {
+          case "c1":
+            resultData["channel_1"] = arr;
+            if (this.channelKey == "channel_1") {
+              this.fileData = arr;
+            }
+            break;
+          case "c2":
+            resultData["channel_2"] = arr;
+            if (this.channelKey == "channel_2") {
+              this.fileData = arr;
+            }
+            break;
+          case "c3":
+            resultData["channel_3"] = arr;
+            if (this.channelKey == "channel_3") {
+              this.fileData = arr;
+            }
+            break;
+          case "c4":
+            resultData["channel_4"] = arr;
+            if (this.channelKey == "channel_4") {
+              this.fileData = arr;
+            }
+            break;
+
+          default:
+            break;
+        }
+      });
+      this.SET_CCHANNELDATA(resultData);
+      //eventBus.$off("clearCData");
     });
-    eventBus.$on("update_" + this.channelKey, (val) => {
-      // this.SET_CCHANNELDATA({ type: this.channelKey, value: cData });
-      this.fileData = this.cChannelData[this.channelKey];
-      // this.fileData = cData;
-      this.rowData.rowNum = this.cChannelData[this.channelKey].length;
+
+    eventBus.$on("updateCData", (val) => {
+      var resultData = { ...this.cChannelData };
+      val.items.forEach((item) => {
+        switch (item) {
+          case "c1":
+            resultData["channel_1"] = val.data["channel_1"];
+            if (this.channelKey == "channel_1") {
+              this.fileData = val.data["channel_1"];
+            }
+            break;
+          case "c2":
+            resultData["channel_2"] = val.data["channel_2"];
+            if (this.channelKey == "channel_2") {
+              this.fileData = val.data["channel_2"];
+            }
+            break;
+          case "c3":
+            resultData["channel_3"] = val.data["channel_3"];
+            if (this.channelKey == "channel_3") {
+              this.fileData = val.data["channel_3"];
+            }
+            break;
+          case "c4":
+            resultData["channel_4"] = val.data["channel_4"];
+            if (this.channelKey == "channel_4") {
+              this.fileData = val.data["channel_4"];
+            }
+            break;
+          default:
+            break;
+        }
+      });
+      this.SET_CCHANNELDATA(resultData);
+      //eventBus.$off("updateCData");
     });
     eventBus.$on("clearFav", (val) => {
       this.fileData = this.cueFavorites;
@@ -254,19 +312,19 @@ export default {
         return {
           backColor_1:
             this.channelKey == "channel_1" &&
-            Object.keys(this.fileData[index - 1]).length != 0,
+            this.fileData[index - 1].duration > 0,
           backColor_2:
             this.channelKey == "channel_2" &&
-            Object.keys(this.fileData[index - 1]).length != 0,
+            this.fileData[index - 1].duration > 0,
           backColor_3:
             this.channelKey == "channel_3" &&
-            Object.keys(this.fileData[index - 1]).length != 0,
+            this.fileData[index - 1].duration > 0,
           backColor_4:
             this.channelKey == "channel_4" &&
-            Object.keys(this.fileData[index - 1]).length != 0,
+            this.fileData[index - 1].duration > 0,
           backColor_my:
             this.channelKey == "channel_my" &&
-            Object.keys(this.fileData[index - 1]).length != 0,
+            this.fileData[index - 1].duration > 0,
         };
       };
     },
@@ -275,6 +333,8 @@ export default {
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     ...mapActions("cueList", ["getCueDayFav"]),
+    ...mapActions("cueList", ["cartCodeFilter"]),
+    ...mapActions("cueList", ["setInstanceCon"]),
     onAdd(e, totalIndex) {
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
@@ -287,131 +347,23 @@ export default {
                 return;
               }
               row = { ...search_row };
-              row.rowNum = this.rowData.rowNum;
-              row.editTarget = true;
+              row.rownum = totalIndex + index;
+              row.edittarget = true;
             } else {
-              row.productType = this.searchListData.productType;
-              switch (this.searchListData.productType) {
-                case "PUBLIC_FILE":
-                  row.maintitle = search_row.title;
-                  row.subtitle = search_row.categoryName;
-                  row.cartcode = "S01G01C011";
-                  break;
-                case "OLD_PRO":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartcode = "S01G01C013";
-                  break;
-                case "SCR_SB":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.pgmName;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C017";
-                  break;
-                case "SCR_SPOT":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.pgmName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartcode = "S01G01C010";
-                  break;
-                case "PGM_CM":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C018";
-                  break;
-                case "CM":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C019";
-                  break;
-                case "REPOTE":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.pgmName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartcode = "S01G01C012";
-                  break;
-                case "FILLER_PR":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C021";
-                  break;
-                case "FILLER_MT":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C022";
-                  break;
-                case "FILLER_TIME":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C023";
-                  break;
-                case "FILLER_ETC":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.categoryName;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C024";
-                  break;
-                case "PGM":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.status;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartcode = "S01G01C009";
-                  break;
-                case "MCR_SB":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.id;
-                  row.endposition = this.millisecondsFuc(search_row.length);
-                  row.duration = this.millisecondsFuc(search_row.length);
-                  row.groupflag = "Y";
-                  row.onairdate = search_row.brdDT;
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C016";
-                  break;
-                case "MCR_SPOT":
-                  row.maintitle = search_row.name;
-                  row.subtitle = search_row.brdDT;
-                  row.endposition = this.millisecondsFuc(search_row.duration);
-                  row.duration = this.millisecondsFuc(search_row.duration);
-                  row.cartid = search_row.id;
-                  row.cartcode = "S01G01C020";
-                  break;
-
-                default:
-                  break;
-              }
+              row.rownum = totalIndex + index;
+              row.filetoken = [];
+              row.filetoken.push(search_row.fileToken);
+              row.filepath = [];
+              row.filepath.push(search_row.filePath);
+              row.endposition = search_row.intDuration;
+              row.duration = search_row.intDuration;
+              row.cartcode = this.searchListData.cartcode;
+              this.cartCodeFilter({
+                row: row,
+                search_row: search_row,
+              });
             }
             this.fileData.splice(totalIndex - 1 + index, 1, row);
-            this.rowData.rowNum = this.rowData.rowNum + 1;
           });
           this.fileData = this.fileData.slice(0, 16);
         } else {
@@ -425,141 +377,41 @@ export default {
               return;
             }
             row = { ...search_row };
-            row.rowNum = this.rowData.rowNum;
-            row.editTarget = true;
+            row.rownum = this.fileData[totalIndex - 1].rownum;
+            row.edittarget = true;
           } else {
-            row.productType = this.searchListData.productType;
-            row.fileToken = search_row.fileToken;
-            switch (this.searchListData.productType) {
-              case "PUBLIC_FILE":
-                row.maintitle = search_row.title;
-                row.subtitle = search_row.categoryName;
-                row.cartcode = "S01G01C011";
-                break;
-              case "OLD_PRO":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartcode = "S01G01C013";
-                break;
-              case "SCR_SB":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.pgmName;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C017";
-                break;
-              case "SCR_SPOT":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.pgmName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartcode = "S01G01C010";
-                break;
-              case "PGM_CM":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C018";
-                break;
-              case "CM":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C019";
-                break;
-              case "REPOTE":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.pgmName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartcode = "S01G01C012";
-                break;
-              case "FILLER_PR":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C021";
-                break;
-              case "FILLER_MT":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C022";
-                break;
-              case "FILLER_TIME":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C023";
-                break;
-              case "FILLER_ETC":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.categoryName;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C024";
-                break;
-              case "PGM":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.status;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartcode = "S01G01C009";
-                break;
-              case "MCR_SB":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.id;
-                row.endposition = this.millisecondsFuc(search_row.length);
-                row.duration = this.millisecondsFuc(search_row.length);
-                row.groupflag = "Y";
-                row.onairdate = search_row.brdDT;
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C016";
-                break;
-              case "MCR_SPOT":
-                row.maintitle = search_row.name;
-                row.subtitle = search_row.brdDT;
-                row.endposition = this.millisecondsFuc(search_row.duration);
-                row.duration = this.millisecondsFuc(search_row.duration);
-                row.cartid = search_row.id;
-                row.cartcode = "S01G01C020";
-                break;
-
-              default:
-                break;
-            }
+            row.rownum = this.fileData[totalIndex - 1].rownum;
+            row.filetoken.push(search_row.fileToken);
+            row.filepath.push(search_row.filePath);
+            row.endposition = search_row.intDuration;
+            row.duration = search_row.intDuration;
+            row.cartcode = this.searchListData.cartcode;
+            this.cartCodeFilter({
+              row: row,
+              search_row: search_row,
+            });
           }
           this.fileData.splice(totalIndex - 1, 1, row);
-          this.rowData.rowNum = this.rowData.rowNum + 1;
         }
       } else {
+        e.fromData.rownum = this.fileData[totalIndex - 1].rownum;
         this.fileData.splice(totalIndex - 1, 1, e.fromData);
       }
 
       if (this.channelKey == "channel_my") {
         this.SET_CUEFAVORITES(this.fileData);
       } else {
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+        var resultData = { ...this.cChannelData };
+        resultData[this.channelKey] = this.fileData;
+        this.SET_CCHANNELDATA(resultData);
+        // this.setInstanceCon({
+        //   fileData: this.fileData,
+        //   channelKey: this.channelKey,
+        // });
+        // var cChannelDataArr = this.cChannelData;
+        // cChannelDataArr[this.channelKey] = this.fileData;
+        // // this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+        // //this.SET_CCHANNELDATA(cChannelDataArr);
       }
     },
     sortSelectedRowsData(e) {
@@ -579,29 +431,31 @@ export default {
         return selectedRowsData;
       } else {
         selectedRowsData.forEach((selectindex) => {
-          var index = e.fromComponent.getRowIndexByKey(selectindex.rowNum);
-          selectindex.rowNum = index;
+          var index = e.fromComponent.getRowIndexByKey(selectindex.rownum);
+          selectindex.rownum = index;
         });
         selectedRowsData.sort(function (a, b) {
-          if (a.rowNum > b.rowNum) {
+          if (a.rownum > b.rownum) {
             return 1;
           }
-          if (a.rowNum < b.rowNum) {
+          if (a.rownum < b.rownum) {
             return -1;
           }
           return 0;
         });
         selectedRowsData.forEach((selectindex) => {
-          var index = e.fromComponent.getKeyByRowIndex(selectindex.rowNum);
-          selectindex.rowNum = index;
+          var index = e.fromComponent.getKeyByRowIndex(selectindex.rownum);
+          selectindex.rownum = index;
         });
         return selectedRowsData;
       }
     },
     onRemove($event, index) {
       if ($event.toData != undefined) {
-        this.fileData.splice(index - 1, 1, {});
+        // var rowData = { rownum: this.fileData[index - 1].rownum };
+        this.fileData.splice(index - 1, 1, { rownum: index });
       }
+
       //AB채널에 넣을때 복사되게하려고
       // if ($event.dropInsideItem) {
       //   if (Object.keys($event.toData).includes("subtitle")) {
@@ -610,54 +464,54 @@ export default {
       //     this.fileData.splice(index - 1, 1, {});
       //   }
       // }
-      if (this.channelKey == "channel_my") {
-        //즐겨찾기 부분
-        this.SET_CUEFAVORITES(this.fileData);
-      } else {
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      }
+      // if (this.channelKey == "channel_my") {
+      //   //즐겨찾기 부분
+      //   this.SET_CUEFAVORITES(this.fileData);
+      // } else {
+      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+      // }
     },
     onTextEdit(index) {
-      this.fileData[index - 1].editTarget = false;
+      this.fileData[index - 1].edittarget = false;
       this.$nextTick(() => {
         this.$refs.inputText[0].focus();
       });
-      if (this.channelKey == "channel_my") {
-        //즐겨찾기 부분
-        this.SET_CUEFAVORITES(this.fileData);
-      } else {
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      }
+      // if (this.channelKey == "channel_my") {
+      //   //즐겨찾기 부분
+      //   this.SET_CUEFAVORITES(this.fileData);
+      // } else {
+      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+      // }
     },
     onValueChange($event, index, data) {
       this.fileData[index - 1].maintitle = $event.target.value;
       if (this.fileData[index - 1].maintitle == "") {
         this.fileData[index - 1].maintitle = data;
       }
-      this.fileData[index - 1].editTarget = true;
-      if (this.channelKey == "channel_my") {
-        //즐겨찾기 부분
-      } else {
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      }
+      this.fileData[index - 1].edittarget = true;
+      // if (this.channelKey == "channel_my") {
+      //   //즐겨찾기 부분
+      // } else {
+      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+      // }
     },
     onValueBlur(index) {
-      this.fileData[index - 1].editTarget = true;
-      if (this.channelKey == "channel_my") {
-        //즐겨찾기 부분
-        this.SET_CUEFAVORITES(this.fileData);
-      } else {
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      }
+      this.fileData[index - 1].edittarget = true;
+      // if (this.channelKey == "channel_my") {
+      //   //즐겨찾기 부분
+      //   this.SET_CUEFAVORITES(this.fileData);
+      // } else {
+      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+      // }
     },
     arrdelete(index) {
-      this.fileData.splice(index - 1, 1, {});
-      if (this.channelKey == "channel_my") {
-        //즐겨찾기 부분
-        this.SET_CUEFAVORITES(this.fileData);
-      } else {
-        this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      }
+      this.fileData.splice(index - 1, 1, { rownum: index });
+      // if (this.channelKey == "channel_my") {
+      //   //즐겨찾기 부분
+      //   this.SET_CUEFAVORITES(this.fileData);
+      // } else {
+      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
+      // }
     },
     //시간 string > milliseconds
     millisecondsFuc(duration) {

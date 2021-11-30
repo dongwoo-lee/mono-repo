@@ -166,7 +166,7 @@ const routes = [
       /**
       * CueSheet
       */
-      {
+       {
         // 일일 큐시트 리스트
         name: 'cuesheet-day-list',
         path: "cuesheet/day/list",
@@ -180,12 +180,17 @@ const routes = [
         beforeEnter: (async (to, from, next) => {
           const userId = sessionStorage.getItem(USER_ID);
           var cueDataObj = { ...store.getters['cueList/cueInfo'] }
+          if (Object.keys(cueDataObj).length === 0) {
+            cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+          }
           if (cueDataObj.cueid != -1) {
             //큐시트 수정
-            var params = {
-              productid: cueDataObj.productid,
-              cueid: cueDataObj.cueid,
-            };
+            var params = { productid: cueDataObj.productid };
+            if (Object.keys(cueDataObj).includes("detail")) {
+              params.cueid = cueDataObj.detail[0].cueid
+            } else {
+              params.cueid = cueDataObj.cueid
+            }
             await axios.get(`/api/daycuesheet/GetdayCue`, {
               params: params,
               paramsSerializer: (params) => {
@@ -193,19 +198,21 @@ const routes = [
               },
             })
               .then(async (res) => {
-
-                cueDataObj = res.data.cueSheet
-                await store.dispatch('cueList/setCueConData', res);
+                console.log("res")
+                console.log(res);
+                cueDataObj = res.data.cueSheetDTO
+                await store.dispatch('cueList/setCueConData', res.data);
                 store.dispatch('cueList/getProUserList', cueDataObj.productid);
               });
           } else {
             //큐시트 작성
             cueDataObj.detail = [{
-              brddate: cueDataObj.day,
-              brdtime: cueDataObj.r_ONAIRTIME,
               cueid: cueDataObj.cueid
             }]
-            cueDataObj.personid = userId
+            cueDataObj.brddate = cueDataObj.day;
+            cueDataObj.brdtime = cueDataObj.r_ONAIRTIME;
+            cueDataObj.cuetype = "D"
+            cueDataObj.title = cueDataObj.eventname
 
             //작성된 기본큐시트가 있는지 확인
             var defCueId = [];
@@ -215,7 +222,7 @@ const routes = [
             var defCueList = store.getters['cueList/defCuesheetListArr'];
             defCueList.data.forEach((ele) => {
               var result = ele.detail.filter((v) => {
-                return v.week == moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DD'T'HH:mm:ss").lang("en").format("ddd").toUpperCase()
+                return v.week == moment(cueDataObj.brdtime, "YYYY-MM-DD'T'HH:mm:ss").lang("en").format("ddd").toUpperCase()
               })
               if (result.length > 0) {
                 defCueId = result
@@ -223,10 +230,10 @@ const routes = [
             });
             if (defCueId.length > 0) {
               //기본큐시트 작성 내용 가져오기
-
               var params = {
                 productid: cueDataObj.productid,
-                cueid: defCueId[0].cueid,
+                //cueid: defCueId[0].cueid,
+                week: defCueId[0].week,
               };
               await axios.get(`/api/defcuesheet/GetdefCue`, {
                 params: params,
@@ -235,7 +242,7 @@ const routes = [
                 },
               })
                 .then((res) => {
-                  var defcueData = res.data.cueSheet
+                  var defcueData = res.data.cueSheetDTO
                   cueDataObj.directorname = defcueData.directorname;
                   cueDataObj.djname = defcueData.djname;
                   cueDataObj.footertitle = defcueData.footertitle;
@@ -244,7 +251,7 @@ const routes = [
                   cueDataObj.memo = defcueData.memo;
                   //나중에 여기에 태그도 추가되어야함
 
-                  store.dispatch('cueList/setCueConData', res);
+                  store.dispatch('cueList/setCueConData', res.data);
                 });
 
             } else {
@@ -255,29 +262,27 @@ const routes = [
           store.dispatch('cueList/setclearFav');
           if (
             !cueDataObj.directorname ||
-            cueDataObj.directorname == "" ||
-            cueDataObj.directorname == null || cueDataObj.directorname == "라디오기술부"
+            cueDataObj.directorname == ""
           ) {
             cueDataObj.directorname = store.getters['cueList/proUserList'];
           }
           if (
             !cueDataObj.headertitle ||
-            cueDataObj.headertitle == "" ||
-            cueDataObj.headertitle == null
+            cueDataObj.headertitle == ""
           ) {
-            cueDataObj.headertitle = cueDataObj.servicename;
+            cueDataObj.headertitle = cueDataObj.title;
           }
           if (
             !cueDataObj.footertitle ||
-            cueDataObj.footertitle == "" ||
-            cueDataObj.footertitle == null
+            cueDataObj.footertitle == ""
           ) {
             cueDataObj.footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
           }
+          cueDataObj.personid = userId;
           store.commit('cueList/SET_CUEINFO', cueDataObj)
+          sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
           next();
-        }
-        )
+        })
       },
       {
         // 기본 큐시트 리스트
@@ -291,11 +296,16 @@ const routes = [
         path: "cuesheet/week/detail",
         component: () => import("./views/app/cuesheet/cuesheetWeekDetail"),
         beforeEnter: (async (to, from, next) => {
+          const userId = sessionStorage.getItem(USER_ID);
           var cueDataObj = { ...store.getters['cueList/cueInfo'] }
+          if (Object.keys(cueDataObj).length === 0) {
+            cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+          }
           var params = {
             productid: cueDataObj.productid,
-            cueid: cueDataObj.cueid,
+            week: cueDataObj.weeks,
           };
+
           await axios.get(`/api/defcuesheet/GetdefCue`, {
             params: params,
             paramsSerializer: (params) => {
@@ -303,12 +313,15 @@ const routes = [
             },
           })
             .then((res) => {
-              var cueData = res.data.cueSheet
+              console.log("res")
+              console.log(res)
+              var cueData = res.data.cueSheetDTO
               cueData.activeWeekList = cueDataObj.activeWeekList
               cueData.cueid = cueDataObj.cueid
+              cueData.weeks = cueDataObj.weeks
               cueData.productWeekList = cueDataObj.productWeekList
               cueDataObj = cueData
-              store.dispatch('cueList/setCueConData', res);
+              store.dispatch('cueList/setCueConData', res.data);
               store.dispatch('cueList/getProUserList', cueDataObj.productid);
             });
           store.dispatch('cueList/setclearFav');
@@ -325,7 +338,7 @@ const routes = [
             cueDataObj.headertitle == "" ||
             cueDataObj.headertitle == null
           ) {
-            cueDataObj.headertitle = cueDataObj.servicename;
+            cueDataObj.headertitle = cueDataObj.title;
           }
           if (
             !cueDataObj.footertitle ||
@@ -334,7 +347,9 @@ const routes = [
           ) {
             cueDataObj.footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
           }
+          cueDataObj.personid = userId;
           store.commit('cueList/SET_CUEINFO', cueDataObj)
+          sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
           next();
         }
         )
@@ -351,10 +366,17 @@ const routes = [
         path: "cuesheet/template/detail",
         component: () => import("./views/app/cuesheet/cuesheetTemplateDetail"),
         beforeEnter: (async (to, from, next) => {
+          const userId = sessionStorage.getItem(USER_ID);
           var cueDataObj = { ...store.getters['cueList/cueInfo'] }
-          var params = {
-            cueid: cueDataObj.cueid,
-          };
+          if (Object.keys(cueDataObj).length === 0) {
+            cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+          }
+          var params = {};
+          if (Object.keys(cueDataObj).includes("detail")) {
+            params.cueid = cueDataObj.detail[0].cueid
+          } else {
+            params.cueid = cueDataObj.cueid
+          }
           await axios.get(`/api/tempcuesheet/GettempCue`, {
             params: params,
             paramsSerializer: (params) => {
@@ -362,8 +384,9 @@ const routes = [
             },
           })
             .then((res) => {
-              cueDataObj = res.data.template
-              store.dispatch('cueList/setCueConData', res);
+              console.log(res)
+              cueDataObj = res.data.cueSheetDTO
+              store.dispatch('cueList/setCueConData', res.data);
             });
           store.dispatch('cueList/setclearFav');
 
@@ -372,7 +395,7 @@ const routes = [
             cueDataObj.headertitle == "" ||
             cueDataObj.headertitle == null || cueDataObj.headertitle == undefined
           ) {
-            cueDataObj.headertitle = cueDataObj.detail[0].tmptitle;
+            cueDataObj.headertitle = cueDataObj.title;
 
           }
           if (
@@ -382,7 +405,9 @@ const routes = [
           ) {
             cueDataObj.footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
           }
+          cueDataObj.personid = userId;
           store.commit('cueList/SET_CUEINFO', cueDataObj)
+          sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
           next();
         }
         )

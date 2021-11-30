@@ -9,7 +9,7 @@
                 <piaf-breadcrumb />
               </div>
               <div class="MainTilte">
-                <h1>{{ cueInfo.eventname }}</h1>
+                <h1>{{ cueInfo.title }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
               <div class="subtitle ml-2">
@@ -51,7 +51,7 @@
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget :type="type" />
+                <ButtonWidget :type="cueInfo.cuetype" />
               </div>
             </div>
             <div class="left_bottom">
@@ -152,8 +152,13 @@ import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
+import { eventBus } from "@/eventBus";
 
 export default {
+  beforeRouteLeave(to, from, next) {
+    eventBus.$off();
+    next();
+  },
   components: {
     SearchWidget,
     ButtonWidget,
@@ -167,7 +172,7 @@ export default {
   },
   data() {
     return {
-      type: "B",
+      //type: "B",
       options: [{ text: "자동저장", value: true }],
       searchToggleSwitch: true,
       printHeight: 560,

@@ -149,6 +149,7 @@ let searchMenuList = {
           {
             num: 1,
             id: "PUBLIC_FILE",
+            cartcode: "S01G01C011",
             name: "공유소재",
             options: [
               {
@@ -214,6 +215,7 @@ let searchMenuList = {
           {
             num: 2,
             id: "OLD_PRO",
+            cartcode: "S01G01C013",
             name: "(구)프로소재",
             options: [
               {
@@ -274,6 +276,7 @@ let searchMenuList = {
           {
             num: 3,
             id: "SCR_SB",
+            cartcode: "S01G01C017",
             name: "부조SB",
             options: [
               {
@@ -312,6 +315,7 @@ let searchMenuList = {
           {
             num: 4,
             id: "SCR_SPOT",
+            cartcode: "S01G01C010",
             name: "부조SPOT",
             options: [
               {
@@ -368,6 +372,7 @@ let searchMenuList = {
           {
             num: 5,
             id: "PGM_CM",
+            cartcode: "S01G01C018",
             name: "프로그램CM",
             options: [
               {
@@ -402,6 +407,7 @@ let searchMenuList = {
           {
             num: 6,
             id: "CM",
+            cartcode: "S01G01C019",
             name: "CM",
             options: [
               {
@@ -446,6 +452,7 @@ let searchMenuList = {
           {
             num: 7,
             id: "REPOTE",
+            cartcode: "S01G01C012",
             name: "취재물",
             options: [
               {
@@ -547,6 +554,7 @@ let searchMenuList = {
           {
             num: 9,
             id: "FILLER_PR",
+            cartcode: "S01G01C021",
             name: "Filler(PR)",
             options: [
               {
@@ -594,6 +602,7 @@ let searchMenuList = {
           {
             num: 10,
             id: "FILLER_MT",
+            cartcode: "S01G01C022",
             name: "Filler(소재)",
             options: [
               {
@@ -642,6 +651,7 @@ let searchMenuList = {
           {
             num: 11,
             id: "FILLER_TIME",
+            cartcode: "S01G01C023",
             name: "Filler(시간)",
             options: [
               {
@@ -708,6 +718,7 @@ let searchMenuList = {
           {
             num: 12,
             id: "FILLER_ETC",
+            cartcode: "S01G01C024",
             name: "Filler(기타)",
             options: [
               {
@@ -763,6 +774,7 @@ let searchMenuList = {
           {
             num: 14,
             id: "PGM",
+            cartcode: "S01G01C009",
             name: "프로그램",
             options: [
               {
@@ -821,6 +833,7 @@ let searchMenuList = {
           {
             num: 16,
             id: "MCR_SB",
+            cartcode: "S01G01C016",
             name: "주조SB",
             options: [
               {
@@ -852,6 +865,7 @@ let searchMenuList = {
           {
             num: 17,
             id: "MCR_SPOT",
+            cartcode: "S01G01C020",
             name: "주조SPOT",
             options: [
               {

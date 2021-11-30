@@ -237,7 +237,7 @@ export default {
       };
     },
     // 큐시트 관련 CueInfo Setting
-    async getCueData(V) {
+    getCueData(V) {
       this.SET_CUEINFO(this.rowData);
       this.$router.push({ path: "/app/cuesheet/" + V + "/detail" });
     },

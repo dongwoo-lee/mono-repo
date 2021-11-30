@@ -9,7 +9,7 @@
                 <piaf-breadcrumb />
               </div>
               <div class="MainTilte">
-                <h1>{{ cueInfo.detail[0].tmptitle }}</h1>
+                <h1>{{ cueInfo.title }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
               <div class="subtitle ml-2">
@@ -17,7 +17,7 @@
                   <span class="subtitle_css">●</span>
                   생성일 :
                   <span>{{
-                    $moment(cueInfo.detail[0].createtime).format("YYYY-MM-DD")
+                    $moment(cueInfo.createtime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
                 <span class="sub_text">
@@ -36,7 +36,7 @@
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget :type="type" />
+                <ButtonWidget :type="cueInfo.cuetype" />
               </div>
             </div>
             <div class="left_bottom">
@@ -136,8 +136,13 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
+import { eventBus } from "@/eventBus";
 
 export default {
+  beforeRouteLeave(to, from, next) {
+    eventBus.$off();
+    next();
+  },
   components: {
     SearchWidget,
     ButtonWidget,
@@ -150,7 +155,7 @@ export default {
   },
   data() {
     return {
-      type: "T",
+      //type: "T",
       options: [{ text: "자동저장", value: false }],
       searchToggleSwitch: true,
       printHeight: 560,

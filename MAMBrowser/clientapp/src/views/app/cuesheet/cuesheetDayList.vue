@@ -56,7 +56,7 @@
           ref="scrollPaging"
           tableHeight="525px"
           :fields="fields"
-          :rows="cuesheetListArr.data"
+          :rows="responseData.data"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -203,8 +203,11 @@ export default {
         start_dt: this.searchItems.start_dt,
         end_dt: this.searchItems.end_dt,
         products: this.searchItems.productid,
+        row_per_page: this.searchItems.rowPerPage,
+        select_page: this.searchItems.selectPage,
       };
-      await this.getcuesheetListArr(params);
+      var arrListResult = await this.getcuesheetListArr(params);
+      this.setResponseData(arrListResult);
       this.addScrollClass();
       this.isTableLoading = false;
       this.isScrollLodaing = false;

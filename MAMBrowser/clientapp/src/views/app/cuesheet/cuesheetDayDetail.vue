@@ -9,7 +9,7 @@
                 <piaf-breadcrumb />
               </div>
               <div class="MainTilte">
-                <h1>{{ cueInfo.eventname }}</h1>
+                <h1>{{ cueInfo.title }}</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
               <div class="subtitle ml-2">
@@ -17,7 +17,7 @@
                   <span class="subtitle_css">●</span>
                   방송 예정일 :
                   <span>{{
-                    $moment(cueInfo.detail[0].brdtime).format("YYYY-MM-DD")
+                    $moment(cueInfo.brdtime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
                 <span class="sub_text">
@@ -38,8 +38,11 @@
                   <span class="subtitle_css">●</span>
                   수정일 :
                   <span>{{
-                    $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                    cueInfo.edittime == null
+                      ? ""
+                      : $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
+                  <!-- <span>{{ cueInfo.edittime }}</span> -->
                 </span>
                 <span class="autosave">
                   <b-form-checkbox-group
@@ -50,7 +53,7 @@
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget :type="type" />
+                <ButtonWidget :type="cueInfo.cuetype" />
               </div>
             </div>
             <div class="left_bottom">
@@ -150,6 +153,7 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
+import { eventBus } from "@/eventBus";
 
 //새로고침 감지
 // window.onbeforeunload = function (e) {
@@ -159,6 +163,15 @@ import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 // };
 
 export default {
+  beforeRouteLeave(to, from, next) {
+    const answer = window.confirm(
+      "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+    );
+    if (answer) {
+      eventBus.$off();
+      next();
+    }
+  },
   components: {
     SearchWidget,
     ButtonWidget,
@@ -172,9 +185,9 @@ export default {
 
   data() {
     return {
-      brdDate: "",
-      editData: "",
-      type: "D",
+      // brdDate: "",
+      //editData: "",
+      //type: "D",
       options: [{ text: "자동저장", value: false }],
       searchToggleSwitch: true,
       printHeight: 560,
@@ -190,6 +203,9 @@ export default {
     ...mapGetters("cueList", ["proUserList"]),
   },
   methods: {
+    nextOk() {
+      this.nextgo = true;
+    },
     onTextEdit() {
       this.$refs.inputText.focus();
     },

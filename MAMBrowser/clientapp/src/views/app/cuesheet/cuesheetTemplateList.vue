@@ -54,7 +54,7 @@
         <common-data-table-scroll-paging
           ref="scrollPaging"
           :fields="fields"
-          :rows="tempCuesheetListArr.data"
+          :rows="responseData.data"
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
@@ -219,18 +219,37 @@ export default {
       var params = {
         personid: userId,
         temptitle: this.searchTemptitle,
+        row_per_page: this.searchItems.rowPerPage,
+        select_page: this.searchItems.selectPage,
       };
-      await this.getcuesheetListArrTemp(params);
+      var arrListResult = await this.getcuesheetListArrTemp(params);
+      this.setResponseData(arrListResult);
       this.addScrollClass();
       this.isTableLoading = false;
       this.isScrollLodaing = false;
     },
     // 템플릿 추가 (modal)
     async addTemCue() {
-      var params = {
-        temParam: { personid: userId, tmptitle: this.tmpTitleTextBoxValue },
+      var tempItem = {
+        personid: userId,
+        detail: [{ cueid: -1 }],
+        title: this.tmpTitleTextBoxValue,
+        djname: "",
+        directorname: "",
+        membername: "",
+        headertitle: "",
+        footertitle: "",
+        memo: "",
       };
-      await this.addTemplate(params);
+
+      var pram = {
+        CueSheetDTO: tempItem,
+      };
+
+      // var params = {
+      //   temParam: { personid: userId, tmptitle: this.tmpTitleTextBoxValue },
+      // };
+      await this.addTemplate(pram);
       this.getData();
     },
     //템플릿 삭제

@@ -4,6 +4,8 @@
     ref="importTem"
     size="xl"
     title="템플릿 가져오기"
+    @hide="state = false"
+    @show="state = true"
   >
     <div class="d-block text-center">
       <common-form
@@ -77,6 +79,7 @@ import { eventBus } from "@/eventBus";
 import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
+const qs = require("qs");
 
 export default {
   mixins: [MixinBasicPage],
@@ -88,6 +91,7 @@ export default {
   },
   data() {
     return {
+      state: false,
       temtitle: "",
       searchItems: {
         rowPerPage: 30,
@@ -154,7 +158,7 @@ export default {
     };
   },
   watch: {
-    id: function (val) {
+    state: function (val) {
       this.getData();
     },
     selectedIds: function (val) {
@@ -171,30 +175,42 @@ export default {
     },
   },
   computed: {
+    ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["tempCuesheetListArr"]),
   },
   methods: {
+    ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_TEMPCUESHEETLISTARR"]),
+
     async getData() {
-      if (this.id != "") {
+      if (this.state) {
         this.isTableLoading = this.isScrollLodaing ? false : true;
         await axios
-          .get(
-            `/api/TempCueSheet/GetTempList?personid=${this.id}&title=${this.temtitle}`
-          )
+          .get(`/api/TempCueSheet/GetTempList`, {
+            params: {
+              personid: this.id,
+              title: this.temtitle,
+              row_per_page: this.searchItems.rowPerPage,
+              select_page: this.searchItems.selectPage,
+            },
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
           .then((res) => {
             var seqnum = 0;
-            res.data.forEach((ele) => {
+            res.data.resultObject.data.forEach((ele) => {
               ele.tabletype = "modal";
               ele.seq = seqnum;
               seqnum = seqnum + 1;
             });
-            this.SET_TEMPCUESHEETLISTARR(res);
+            this.SET_TEMPCUESHEETLISTARR(res.data.resultObject);
+            this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
             this.isScrollLodaing = false;
@@ -206,8 +222,10 @@ export default {
         alert("템플릿을 선택하세요.");
       } else {
         var rowNum_ab = 0;
-        var rowNum_c = 0;
         var rowNum_print = 0;
+
+        var rowNum_c = 0;
+
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
@@ -217,7 +235,7 @@ export default {
               Math.max.apply(
                 Math,
                 beforePrintData.map((i) => {
-                  return i.rowNum;
+                  return i.rownum;
                 })
               ) + 1;
           }
@@ -227,7 +245,7 @@ export default {
               Math.max.apply(
                 Math,
                 beforeAbData.map((i) => {
-                  return i.rowNum;
+                  return i.rownum;
                 })
               ) + 1;
           }
@@ -240,95 +258,105 @@ export default {
           await axios
             .get(`/api/tempcuesheet/GettempCue?cueid=${cueid}`)
             .then((res) => {
-              const cueSheetCons = res.data.cueSheetCons;
+              //const cueSheetCons = res.data.cueSheetCons;
               if (this.MenuSelected.includes("print")) {
-                //출력용
-                var printData = [];
-                res.data.prints.forEach((ele, index) => {
-                  printData[index] = Object.assign({}, ele);
-                  printData[index].rowNum = rowNum_print;
-                  rowNum_print = rowNum_print + 1;
-                  printData[index].code = ele.code.trim();
-                  printData[index].contents = ele.contents;
-                  printData[index].etc = ele.etc;
-                  printData[index].starttime = ele.starttime;
-                  delete printData[index].seqnum;
-                });
+                if (beforePrintData.length > 0) {
+                  res.data.printDTO.forEach((ele) => {
+                    ele.rownum = ele.rownum + beforePrintData.length;
+                  });
+                }
+                var oldCueInfo = { ...this.cueInfo };
+                oldCueInfo.directorname = res.data.cueSheetDTO.directorname;
+                oldCueInfo.djname = res.data.cueSheetDTO.djname;
+                oldCueInfo.footertitle = res.data.cueSheetDTO.footertitle;
+                oldCueInfo.headertitle = res.data.cueSheetDTO.headertitle;
+                oldCueInfo.membername = res.data.cueSheetDTO.membername;
+                oldCueInfo.memo = res.data.cueSheetDTO.memo;
 
-                var resultPrintData = beforePrintData.concat(printData);
+                var resultPrintData = beforePrintData.concat(res.data.printDTO);
                 this.SET_PRINTARR(resultPrintData);
+                this.SET_CUEINFO(oldCueInfo);
                 eventBus.$emit("printDataSet");
               }
               if (this.MenuSelected.includes("ab")) {
-                //AB채널
-                var abData = cueSheetCons.filter((ele) => {
-                  if (ele.channeltype == "N") {
-                    ele.rowNum = rowNum_ab;
-                    rowNum_ab = rowNum_ab + 1;
-                    ele.duration = moment(ele.endposition)
-                      .add(-9, "hours")
-                      .format("HH:mm:ss.SS");
-                    this.productFilter(ele);
-                    return ele;
-                  }
-                });
-
-                var resultABData = beforeAbData.concat(abData);
+                if (beforeAbData.length > 0) {
+                  res.data.normalCon.forEach((ele) => {
+                    ele.rownum = ele.rownum + beforeAbData.length;
+                  });
+                }
+                var resultABData = beforeAbData.concat(res.data.normalCon);
                 this.SET_ABCARTARR(resultABData);
                 eventBus.$emit("abDataSet");
               }
-              if (
-                this.MenuSelected.includes("c1") ||
-                this.MenuSelected.includes("c2") ||
-                this.MenuSelected.includes("c3") ||
-                this.MenuSelected.includes("c4")
-              ) {
-                //C채널 -그룹
-                var cDataGroup = cueSheetCons.filter((ele) => {
-                  if (ele.channeltype == "I") {
-                    ele.rowNum = rowNum_c;
-                    ele.editTarget = true;
-                    rowNum_c = rowNum_c + 1;
-                    ele.duration = moment(ele.endposition)
-                      .add(-9, "hours")
-                      .format("HH:mm:ss.SS");
-                    this.productFilter(ele);
-                    return ele;
-                  }
-                });
-                //C채널 - 카트별
-                var cDataResult = [];
-                var row = {};
-                for (var channelNum = 0; 4 > channelNum; channelNum++) {
-                  cDataResult = [];
-                  var cartNum = "c" + (channelNum + 1);
-                  var setResult = false;
-                  for (var i = 0; 16 > i; i++) {
-                    for (var index = 0; cDataGroup.length > index; index++) {
-                      if (cDataGroup[index].seqnum == i + 16 * channelNum + 1) {
-                        row = cDataGroup[index];
-                        break;
-                      } else {
-                        row = {};
-                      }
-                    }
-                    cDataResult.push(row);
-                  }
-                  this.MenuSelected.forEach((cart) => {
-                    if (cart == cartNum) {
-                      return (setResult = true);
-                    }
-                  });
-                  if (setResult) {
-                    this.SET_CCHANNELDATA({
-                      type: "channel_" + (channelNum + 1),
-                      value: cDataResult,
-                    });
-                    eventBus.$emit("update_channel_" + (channelNum + 1));
-                  }
-                }
-                //추가정보들 가지고올꺼도 추가해야함
-              }
+              var pram = {
+                data: res.data.instanceCon,
+                items: this.MenuSelected,
+              };
+              eventBus.$emit("updateCData", pram);
+              // if (this.MenuSelected.includes("c1")) {
+              //   eventBus.$emit("update_channel_1", res.data.instanceCon["channel_1"]);
+              // }
+              // if (this.MenuSelected.includes("c2")) {
+              //   eventBus.$emit("channel_2", res.data.instanceCon["channel_2"]);
+              // }
+              // if (this.MenuSelected.includes("c3")) {
+              //   eventBus.$emit("channel_3", res.data.instanceCon["channel_3"]);
+              // }
+              // if (this.MenuSelected.includes("c4")) {
+              //   eventBus.$emit("channel_4", res.data.instanceCon["channel_4"]);
+              // }
+
+              // if (
+              //   this.MenuSelected.includes("c1") ||
+              //   this.MenuSelected.includes("c2") ||
+              //   this.MenuSelected.includes("c3") ||
+              //   this.MenuSelected.includes("c4")
+              //) {
+              // //C채널 -그룹
+              // var cDataGroup = cueSheetCons.filter((ele) => {
+              //   if (ele.channeltype == "I") {
+              //     ele.rowNum = rowNum_c;
+              //     ele.editTarget = true;
+              //     rowNum_c = rowNum_c + 1;
+              //     ele.duration = moment(ele.endposition)
+              //       .add(-9, "hours")
+              //       .format("HH:mm:ss.SS");
+              //     this.productFilter(ele);
+              //     return ele;
+              //   }
+              // });
+              // //C채널 - 카트별
+              // var cDataResult = [];
+              // var row = {};
+              // for (var channelNum = 0; 4 > channelNum; channelNum++) {
+              //   cDataResult = [];
+              //   var cartNum = "c" + (channelNum + 1);
+              //   var setResult = false;
+              //   for (var i = 0; 16 > i; i++) {
+              //     for (var index = 0; cDataGroup.length > index; index++) {
+              //       if (cDataGroup[index].seqnum == i + 16 * channelNum + 1) {
+              //         row = cDataGroup[index];
+              //         break;
+              //       } else {
+              //         row = {};
+              //       }
+              //     }
+              //     cDataResult.push(row);
+              //   }
+              //   this.MenuSelected.forEach((cart) => {
+              //     if (cart == cartNum) {
+              //       return (setResult = true);
+              //     }
+              //   });
+              //   if (setResult) {
+              //     this.SET_CCHANNELDATA({
+              //       type: "channel_" + (channelNum + 1),
+              //       value: cDataResult,
+              //     });
+              //     eventBus.$emit("update_channel_" + (channelNum + 1));
+              //   }
+              // }
+              //}
               this.$refs["importTem"].hide();
             });
         }

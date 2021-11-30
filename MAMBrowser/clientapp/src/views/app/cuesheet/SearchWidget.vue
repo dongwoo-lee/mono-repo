@@ -183,7 +183,7 @@ export default {
         columns: [],
       },
       searchtable_data: {
-        productType: "",
+        cartcode: "",
         columns: [],
       },
       searchtable_columns: [],
@@ -409,7 +409,7 @@ export default {
       await axios(`/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`, {
         params: result,
       }).then((res) => {
-        this.searchtable_data.productType = this.searchDataList.id;
+        this.searchtable_data.cartcode = this.searchDataList.cartcode;
         this.searchtable_data.columns = res.data.result.data;
         this.searchtable_columns = this.searchDataList.columns;
         this.SET_SEARCHLISTDATA(this.searchtable_data);

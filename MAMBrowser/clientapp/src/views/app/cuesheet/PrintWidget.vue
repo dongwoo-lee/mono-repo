@@ -14,7 +14,7 @@
         :showRowLines="true"
         @selection-changed="onSelectionChanged"
         @toolbar-preparing="viewtableOnToolbarPreparing($event)"
-        keyExpr="rowNum"
+        keyExpr="rownum"
         noDataText="데이터가 없습니다."
       >
         <DxEditing
@@ -97,7 +97,7 @@
         <template #duration_Template="{ data: cellInfo }">
           <div>
             <DxTextBox
-              :value="cellInfo.data.duration"
+              :value="cellInfo.data.usedtime"
               :on-value-changed="
                 (value) => onValueChanged_duration(value, cellInfo)
               "
@@ -214,7 +214,7 @@ export default {
     return {
       selectedItemKeys: [],
       rowData: {
-        rowNum: 0,
+        rownum: 1,
         code: "",
         contents: "",
         usedtime: 0,
@@ -239,12 +239,12 @@ export default {
   },
   mounted() {
     if (this.printArr.length > 0) {
-      this.rowData.rowNum = this.printArr.length + 1;
+      this.rowData.rownum = this.printArr.length + 1;
     }
   },
   created() {
     eventBus.$on("printDataSet", (val) => {
-      this.rowData.rowNum = this.printArr.length + 1;
+      this.rowData.rownum = this.printArr.length + 1;
     });
     eventBus.$on("exportGo", (val) => {
       switch (val) {
@@ -286,7 +286,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("cueList", ["SET_PRINTARR"]),
+    //...mapMutations("cueList", ["SET_PRINTARR"]),
     onAddPrint(e) {
       var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -302,69 +302,15 @@ export default {
               row.duration = search_row.duration;
             }
           } else {
-            switch (this.searchListData.productType) {
-              case "PUBLIC_FILE":
-                row.contents = search_row.title;
-                break;
-              case "OLD_PRO":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "SCR_SB":
-                row.contents = search_row.name;
-                row.duration = search_row.length;
-                break;
-              case "SCR_SPOT":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "PGM_CM":
-                row.contents = search_row.name;
-                row.duration = search_row.length;
-                break;
-              case "CM":
-                row.contents = search_row.name;
-                row.duration = search_row.length;
-                break;
-              case "REPOTE":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "FILLER_PR":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "FILLER_MT":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "FILLER_TIME":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "FILLER_ETC":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "PGM":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-              case "MCR_SB":
-                row.contents = search_row.name;
-                row.duration = search_row.length;
-                break;
-              case "MCR_SPOT":
-                row.contents = search_row.name;
-                row.duration = search_row.duration;
-                break;
-
-              default:
-                break;
+            row.usedtime = search_row.intDuration;
+            if (this.searchListData.cartcode == "S01G01C011") {
+              row.contents = search_row.title;
+            } else {
+              row.contents = search_row.name;
             }
           }
           arrData.splice(e.toIndex + index, 0, row);
-          this.rowData.rowNum = this.rowData.rowNum + 1;
+          this.rowData.rownum = this.rowData.rownum + 1;
         });
       } else {
         var row = { ...this.rowData };
@@ -380,73 +326,18 @@ export default {
             row.duration = search_row.duration;
           }
         } else {
-          switch (this.searchListData.productType) {
-            case "PUBLIC_FILE":
-              row.contents = search_row.title;
-              break;
-            case "OLD_PRO":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "SCR_SB":
-              row.contents = search_row.name;
-              row.duration = search_row.length;
-              break;
-            case "SCR_SPOT":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "PGM_CM":
-              row.contents = search_row.name;
-              row.duration = search_row.length;
-              break;
-            case "CM":
-              row.contents = search_row.name;
-              row.duration = search_row.length;
-              break;
-            case "REPOTE":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "FILLER_PR":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "FILLER_MT":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "FILLER_TIME":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "FILLER_ETC":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "PGM":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-            case "MCR_SB":
-              row.contents = search_row.name;
-              row.duration = search_row.length;
-              break;
-            case "MCR_SPOT":
-              row.contents = search_row.name;
-              row.duration = search_row.duration;
-              break;
-
-            default:
-              break;
+          row.usedtime = search_row.intDuration;
+          if (this.searchListData.cartcode == "S01G01C011") {
+            row.contents = search_row.title;
+          } else {
+            row.contents = search_row.name;
           }
         }
         arrData.splice(e.toIndex, 0, row);
-        this.rowData.rowNum = this.rowData.rowNum + 1;
+        this.rowData.rownum = this.rowData.rownum + 1;
       }
-      this.SET_PRINTARR(arrData);
+      //this.SET_PRINTARR(arrData);
       // e.fromComponent.clearSelection();
-      console.log(arrData);
     },
     onReorderPrint(e) {
       var arrData = this.printArr;
@@ -491,7 +382,7 @@ export default {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
       }
-      this.SET_PRINTARR(arrData);
+      //this.SET_PRINTARR(arrData);
 
       //e.component.clearSelection();
     },
@@ -501,14 +392,14 @@ export default {
       let b = this.selectedItemKeys;
       for (let i = 0; i < b.length; i++) {
         for (let j = 0; j < a.length; j++) {
-          if (b[i].rowNum == a[j].rowNum) {
+          if (b[i].rownum == a[j].rownum) {
             a.splice(j, 1);
             break;
           }
         }
         arrData = a;
       }
-      this.SET_PRINTARR(arrData);
+      //this.SET_PRINTARR(arrData);
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -528,21 +419,21 @@ export default {
         return selectedRowsData;
       } else {
         selectedRowsData.forEach((selectindex) => {
-          var index = e.fromComponent.getRowIndexByKey(selectindex.rowNum);
-          selectindex.rowNum = index;
+          var index = e.fromComponent.getRowIndexByKey(selectindex.rownum);
+          selectindex.rownum = index;
         });
         selectedRowsData.sort(function (a, b) {
-          if (a.rowNum > b.rowNum) {
+          if (a.rownum > b.rownum) {
             return 1;
           }
-          if (a.rowNum < b.rowNum) {
+          if (a.rownum < b.rownum) {
             return -1;
           }
           return 0;
         });
         selectedRowsData.forEach((selectindex) => {
-          var index = e.fromComponent.getKeyByRowIndex(selectindex.rowNum);
-          selectindex.rowNum = index;
+          var index = e.fromComponent.getKeyByRowIndex(selectindex.rownum);
+          selectindex.rownum = index;
         });
         if (selectedRowsKey.length != 0) {
           selectedRowsKey.sort((a, b) => {
@@ -559,21 +450,21 @@ export default {
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
       selectedRowsData.forEach((selectindex) => {
-        var index = e.component.getRowIndexByKey(selectindex.rowNum);
-        selectindex.rowNum = index;
+        var index = e.component.getRowIndexByKey(selectindex.rownum);
+        selectindex.rownum = index;
       });
       selectedRowsData.sort(function (a, b) {
-        if (a.rowNum > b.rowNum) {
+        if (a.rownum > b.rownum) {
           return 1;
         }
-        if (a.rowNum < b.rowNum) {
+        if (a.rownum < b.rownum) {
           return -1;
         }
         return 0;
       });
       selectedRowsData.forEach((selectindex) => {
-        var index = e.component.getKeyByRowIndex(selectindex.rowNum);
-        selectindex.rowNum = index;
+        var index = e.component.getKeyByRowIndex(selectindex.rownum);
+        selectindex.rownum = index;
       });
       this.selectedItemKeys = selectedRowsData;
       //this.selectedItemKeys = e.selectedRowsData;
@@ -605,15 +496,15 @@ export default {
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
               var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
-              row.rowNum = this.rowData.rowNum;
+              row.rownum = this.rowData.rownum;
               if (rastkey != -1) {
                 var index = this.dataGrid.getRowIndexByKey(rastkey);
                 arrData.splice(index + 1, 0, row);
               } else {
                 arrData.splice(1, 0, row);
               }
-              this.rowData.rowNum = this.rowData.rowNum + 1;
-              this.SET_PRINTARR(arrData);
+              this.rowData.rownum = this.rowData.rownum + 1;
+              //this.SET_PRINTARR(arrData);
             },
           };
         }
