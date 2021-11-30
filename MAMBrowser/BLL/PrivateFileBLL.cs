@@ -1,16 +1,17 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.DAL;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using M30.AudioFile.DAL.Dao;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.Common;
 
 namespace MAMBrowser.BLL
 {
@@ -25,7 +26,7 @@ namespace MAMBrowser.BLL
         {
             _dao = dao;
             _apiDao = apiDao;
-            _fileProtocol = sr("PrivateWorkConnection");
+            _fileProtocol = sr(MAMDefine.PrivateWorkConnection).FileSystem;
         }
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PRIVATE_SPACE metaData)
         {

@@ -1,5 +1,12 @@
 <template>
-  <div id="app-container" :class="getMenuType">
+  <div
+    id="app-container"
+    :class="getMenuType"
+    @dragstart="FileDragStart"
+    @dragenter="dropzoneon"
+    @dragend="FileDragEnd"
+    @drop="dropzoneoff"
+  >
     <topnav />
     <sidebar />
     <main>
@@ -18,7 +25,7 @@ import { mapGetters } from "vuex";
 export default {
   components: {
     topnav: Topnav,
-    sidebar: Sidebar,
+    sidebar: Sidebar
   },
   data() {
     return {
@@ -26,12 +33,26 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('menu', ["getMenuType"])
+    ...mapGetters("menu", ["getMenuType"])
   },
   mounted() {
     setTimeout(() => {
       document.body.classList.add("default-transition");
     }, 100);
+  },
+  methods: {
+    FileDragStart() {
+      this.$emit("FileDragStart");
+    },
+    FileDragEnd() {
+      this.$emit("FileDragEnd");
+    },
+    dropzoneoff() {
+      this.$emit("FileDrop");
+    },
+    dropzoneon() {
+      this.$emit("FileDragEnter");
+    }
   }
 };
 </script>

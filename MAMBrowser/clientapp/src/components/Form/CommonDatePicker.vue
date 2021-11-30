@@ -8,6 +8,7 @@
         :placeholder="placeHolder"
         :value="inputValue | yyyyMMdd"
         @input="onInput"
+        @blur="inputBlurEvent"
       />
       <!-- 데이터 피커 -->
       <b-input-group-append>
@@ -22,6 +23,7 @@
           :hide-header="hideHeader"
           :size="size"
           :max="maxDate"
+          @input="binput"
         />
       </b-input-group-append>
     </b-input-group>
@@ -35,59 +37,63 @@ export default {
   props: {
     value: {
       type: String,
-      default: "",
+      default: ""
     },
     groupClass: {
       type: String,
-      default: "",
+      default: ""
     },
     hideHeader: {
       type: Boolean,
-      default: true,
+      default: true
     },
     placeHolder: {
       type: String,
-      default: "YYYY-MM-DD",
+      default: "YYYY-MM-DD"
     },
     labelNextMonth: {
       type: String,
-      default: "다음달",
+      default: "다음달"
     },
     size: {
       type: String,
-      default: "sm",
+      default: "sm"
     },
     isCurrentDate: {
       type: Boolean,
-      default: true,
+      default: true
     },
     yearAgo: {
       type: Number,
-      defaut: 0,
+      defaut: 0
     },
     monthAgo: {
       type: Number,
-      defaut: 0,
+      defaut: 0
     },
     dayAgo: {
       type: Number,
-      defaut: 0,
+      defaut: 0
     },
     required: {
       type: Boolean,
-      default: false,
+      default: false
     },
     checkMinValue: {
       type: Boolean,
-      default: false,
+      default: false
     },
-    maxDate: null,
+    maxDate: null
   },
   data() {
     return {
+      maxDateChanged: false,
+      pageSelect: false,
+      selected: false,
+      tempDate: "",
       date: "",
       inputValue: "",
-      validBeforeDate: this.getValidBeforeDate(),
+      validBeforeDate: this.getValidBeforeDate()
       // minDate: MINIMUM_DATE,
       // maxDate: this.$fn.getMaxDate()
     };
@@ -119,23 +125,51 @@ export default {
         this.$emit("input", formatValue);
         if (v) this.validBeforeDate = formatValue;
         this.inputValue = formatValue;
+        this.tempDate = formatValue;
       }
     },
     value(v) {
       if (v) this.validBeforeDate = v;
       this.inputValue = v;
     },
+    maxDate(v) {
+      if (v) this.maxDateChanged = true;
+    }
   },
   methods: {
+    binput() {
+      this.selected = true;
+    },
+    inputBlurEvent(e) {
+      if (!this.required && this.tempDate == "") {
+        e.target.value = "";
+        if (this.selected) {
+          this.$emit("commonDateEvent");
+          this.selected = false;
+        }
+      } else {
+        if (this.maxDate != null && this.maxDateChanged) {
+          var maxDate = this.$fn.formatDate(this.maxDate);
+          if (maxDate < this.tempDate) {
+            var y = maxDate.substring(0, 4);
+            var m = maxDate.substring(4, 6);
+            var d = maxDate.substring(6, 8);
+            e.target.value = y + "-" + m + "-" + d;
+            this.maxDateChanged = false;
+            this.tempDate = maxDate;
+            return;
+          }
+        }
+        var y = this.tempDate.substring(0, 4);
+        var m = this.tempDate.substring(4, 6);
+        var d = this.tempDate.substring(6, 8);
+        e.target.value = y + "-" + m + "-" + d;
+      }
+    },
     onInput(event) {
       const targetValue = event.target.value;
       // 필수 입력값 & 데이터가 없을 경우 체크
       if (this.required && (!targetValue || !/^[\d-]+$/.test(targetValue))) {
-        const convertDate = this.convertDateStringToHaipun(
-          this.validBeforeDate
-        );
-        event.target.value = convertDate;
-        this.date = convertDate;
         return;
       }
 
@@ -168,14 +202,14 @@ export default {
 
         // 검색 가능 최대일 확인
         const inputDate = new Date(Date.parse(convertDate));
-        if (inputDate > this.maxDate) {
+        if (this.maxDate != "" && inputDate > this.maxDate) {
           return this.revertDate(event);
         }
-
         // 값 업데이트
         event.target.value = convertDate;
         this.validBeforeDate = convertDate;
         this.date = convertDate;
+        this.selected = true;
       }
     },
     validDateType(value) {
@@ -209,7 +243,7 @@ export default {
       );
       event.target.value = convertBeforeDate;
       this.date = convertBeforeDate;
-    },
-  },
+    }
+  }
 };
 </script>

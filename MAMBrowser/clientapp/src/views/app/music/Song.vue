@@ -18,23 +18,26 @@
           <div class="form-row">
             <span class="bv-no-focus-ring col-form-label">대분류: </span>
 
-             <b-form-checkbox class="custom-checkbox-group"  style="margin-right:10px"
+            <b-form-checkbox
+              class="custom-checkbox-group"
+              style="margin-right:10px"
               v-model="allSelected"
               :indeterminate="indeterminate"
               aria-describedby="selectedSearchType1"
               aria-controls="selectedSearchType1"
               @change="toggleAll"
-              >
-             All
+            >
+              All
             </b-form-checkbox>
 
-
-            <b-form-checkbox-group class="custom-checkbox-group" 
-            v-model="selectedSearchType1" 
-            :options="searchTypes1"
-            value-field="code"
-            text-field="label">
-            </b-form-checkbox-group>  
+            <b-form-checkbox-group
+              class="custom-checkbox-group"
+              v-model="selectedSearchType1"
+              :options="searchTypes1"
+              value-field="code"
+              text-field="label"
+            >
+            </b-form-checkbox-group>
           </div>
         </fieldset>
         <!-- 소분류 (단일 선택)-->
@@ -44,26 +47,34 @@
             v-model="searchItems.searchType2"
             :options="searchTypes2"
             value-field="code"
-            text-field="label" />
+            text-field="label"
+          />
         </b-form-group>
         <!-- 검색옵션 -->
         <fieldset class="form-group">
           <div class="form-row">
             <span class="bv-no-focus-ring col-form-label">검색옵션: </span>
-            <b-form-checkbox-group class="custom-checkbox-group" 
-            v-model="selectedGradeType"
-            :options="gradeTypes"
-            value-field="code"
-            text-field="label" />
+            <b-form-checkbox-group
+              class="custom-checkbox-group"
+              v-model="selectedGradeType"
+              :options="gradeTypes"
+              value-field="code"
+              text-field="label"
+            />
           </div>
         </fieldset>
         <!-- 검색어 -->
-         <b-form-group label="검색어" class="has-float-label">
-            <common-input-text v-model="searchItems.searchText"/>
-          </b-form-group>
+        <b-form-group label="검색어" class="has-float-label">
+          <common-input-text
+            v-model="searchItems.searchText"
+            @inputEnterEvent="onSearch"
+          />
+        </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
         </b-form-group>
       </template>
       <!-- 테이블 페이지 -->
@@ -92,92 +103,98 @@
               :behaviorData="behaviorList"
               @preview="onPreview"
               @download="onDownloadMusic"
-             @mydiskCopy="onCopyToMySpacePopup"
+              @mydiskCopy="onCopyToMySpacePopup"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
 
-         <CopyToMySpacePopup
+        <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           @ok="onMyDiskCopyFromMusic"
-          @close="copyToMySpacePopup = false">
+          @close="copyToMySpacePopup = false"
+        >
         </CopyToMySpacePopup>
       </template>
     </common-form>
-   <MusicPlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :music="soundItem"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="token"
-    @closePlayer="onClosePlayer">
+    <MusicPlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :music="soundItem"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
     </MusicPlayerPopup>
-    
-    <sound-copyright-popup :show="soundCopyrightPopup" @close="soundCopyrightPopup = false" @agree="onAgree"/>
+
+    <sound-copyright-popup
+      :show="soundCopyrightPopup"
+      @close="soundCopyrightPopup = false"
+      @agree="onAgree"
+    />
   </div>
 </template>
 
 <script>
-import MixinMusicPage from '../../../mixin/MixinMusicPage';
-import SoundCopyrightPopup from '@/components/Popup/SoundCopyrightPopup';
+import MixinMusicPage from "../../../mixin/MixinMusicPage";
+import SoundCopyrightPopup from "@/components/Popup/SoundCopyrightPopup";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 
 export default {
-  mixins: [ MixinMusicPage ],
-  components: { SoundCopyrightPopup,CopyToMySpacePopup},
+  mixins: [MixinMusicPage],
+  components: { SoundCopyrightPopup, CopyToMySpacePopup },
   data() {
     return {
-      streamingUrl : '/api/musicsystem/streaming',
-      waveformUrl : '/api/musicsystem/waveform',
-      tempDownloadUrl : '/api/musicsystem/temp-download',
+      streamingUrl: "/api/musicsystem/streaming",
+      waveformUrl: "/api/musicsystem/waveform",
+      tempDownloadUrl: "/api/musicsystem/temp-download",
       allSelected: false,
       indeterminate: false,
 
       searchItems: {
         searchType1: 0,
-        searchType2: 'song_idx',
+        searchType2: "song_idx",
         gradeType: 0,
-        searchText: '',
+        searchText: "",
         rowPerPage: 30,
         selectPage: 1,
-        sortKey: '',
-        sortValue: '',
+        sortKey: "",
+        sortValue: ""
       },
       selectedSearchType1: [],
       selectedGradeType: [],
       soundCopyrightPopup: false,
       copyrightItem: null,
       searchTypes1: [
-        { label: '국내', code: 1 },
-        { label: '국외', code: 2 },
-        { label: '클래식', code: 4 },
+        { label: "국내", code: 1 },
+        { label: "국외", code: 2 },
+        { label: "클래식", code: 4 }
       ],
       searchTypes2: [
-        { label: '전체', code: 'song_idx' },
-        { label: '곡명', code: 'song_name_idx'},
-        { label: '곡명/아티스트', code: 'songname_artist_idx'},
-        { label: '아티스트', code: 'song_artist_idx'},
-        { label: '배열번호', code: 'song_disc_arr_num_idx' },
-        { label: '국가명', code: 'song_country_name_idx' },
+        { label: "전체", code: "song_idx" },
+        { label: "곡명", code: "song_name_idx" },
+        { label: "곡명/아티스트", code: "songname_artist_idx" },
+        { label: "아티스트", code: "song_artist_idx" },
+        { label: "배열번호", code: "song_disc_arr_num_idx" },
+        { label: "국가명", code: "song_country_name_idx" }
       ],
       gradeTypes: [
-      { label: '히트', code: 1 },
-        { label: '금지', code: 2 },
-        { label: '주의', code: 4},
-        { label: '청소년 유해', code: 8},
+        { label: "히트", code: 1 },
+        { label: "금지", code: 2 },
+        { label: "주의", code: 4 },
+        { label: "청소년 유해", code: 8 }
       ],
       isTableLoading: false,
       fields: [
         {
-          name: 'rowNO',
-          title: '순서',
+          name: "rowNO",
+          title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '5%',
+          width: "5%"
         },
         {
           name: "name",
@@ -205,7 +222,7 @@ export default {
           title: "음반명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '15%',
+          width: "15%"
         },
         {
           name: "releaseDate",
@@ -236,23 +253,23 @@ export default {
           width: "10%"
         },
         {
-          name: '__slot:actions',
-          title: '추가작업',
+          name: "__slot:actions",
+          title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%"
         }
-      ],
-    }
+      ]
+    };
   },
-  
+
   methods: {
-    ...mapActions('file', ['downloadMusic']),
+    ...mapActions("file", ["downloadMusic"]),
     getData() {
-      this.isTableLoading = this.isScrollLodaing ? false: true;
+      this.isTableLoading = this.isScrollLodaing ? false : true;
       var params = this.searchItems;
-      params.searchType1 =0;
-      params.gradeType =0;
+      params.searchType1 = 0;
+      params.gradeType = 0;
       this.selectedSearchType1.forEach(element => {
         params.searchType1 += element;
       });
@@ -261,30 +278,34 @@ export default {
         params.gradeType += element;
       });
 
-      this.$http.get(`/api/MusicSystem/music`, { params: this.searchItems })
+      this.$http
+        .get(`/api/MusicSystem/music`, { params: this.searchItems })
         .then(res => {
-            this.setResponseData(res);
-            this.addScrollClass();
-            this.isTableLoading = false;
-            this.isScrollLodaing = false;
-      });
+          this.setResponseData(res);
+          this.addScrollClass();
+          this.isTableLoading = false;
+          this.isScrollLodaing = false;
+        });
     },
     toggleAll(checked) {
-        this.selectedSearchType1 = checked ? [1,2,4] : []
+      this.selectedSearchType1 = checked ? [1, 2, 4] : [];
     },
     onDownloadMusic(item) {
-        this.soundCopyrightPopup = true;
-        this.copyrightItem = item;
+      this.soundCopyrightPopup = true;
+      this.copyrightItem = item;
     },
     onAgree() {
-        this.downloadMusic({item:this.copyrightItem,downloadName:this.downloadName(this.copyrightItem)});
-        this.soundCopyrightPopup = false;
+      this.downloadMusic({
+        item: this.copyrightItem,
+        downloadName: this.downloadName(this.copyrightItem)
+      });
+      this.soundCopyrightPopup = false;
     },
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.artistName}_${rowData.sequenceNO}`;
       return tmpName;
-    },
-  },
+    }
+  }
   // watch: {
   //   selectedSearchType1(newVal, oldVal) {
   //     // Handle changes in individual flavour checkboxes
@@ -300,5 +321,5 @@ export default {
   //     }
   //   }
   // }
-}
+};
 </script>

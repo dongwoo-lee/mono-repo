@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
 import app from '../main'
 import menu from './modules/menu'
@@ -9,7 +9,8 @@ import cuesheet from './modules/cuesheet'
 import cueList from './modules/cueList'
 import createPersistedState from 'vuex-persistedstate';
 
-Vue.use(Vuex)
+import FileIndexStore from "./modules/FileUpload/index";
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
@@ -36,7 +37,8 @@ const store = new Vuex.Store({
     file,
     cuesheet,
     cueList,
+    FileIndexStore
   }
-})
+});
 
-export default store
+export default store;

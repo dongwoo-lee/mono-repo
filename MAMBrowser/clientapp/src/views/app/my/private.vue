@@ -19,14 +19,23 @@
           :endDate.sync="searchItems.end_dt"
           :required="false"
           :isCurrentDate="false"
+          @SEDateEvent="onSearch"
+          @SDateError="SDateErrorLog"
         />
         <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
-          <common-input-text v-model="searchItems.title" />
+          <common-input-text
+            v-model="searchItems.title"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 메모 -->
         <b-form-group label="메모" class="has-float-label">
-          <common-input-text class-string="memo" v-model="searchItems.memo" />
+          <common-input-text
+            class-string="memo"
+            v-model="searchItems.memo"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -117,7 +126,15 @@
         </meta-data-private-modify-popup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.title"
@@ -136,14 +153,19 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import MetaDataPrivateModifyPopup from "../../../components/Popup/MetaDataPrivateModifyPopup";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import { mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
+import axios from "axios";
 
 export default {
   mixins: [MixinBasicPage],
-  components: { MetaDataPrivateModifyPopup },
+  components: { MetaDataPrivateModifyPopup, FileUpdate },
   data() {
     return {
+      metaUpdate: false,
+      rowData: "",
+      updateScreenName: "",
       streamingUrl: "/api/products/workspace/private/streaming",
       waveformUrl: "/api/products/workspace/private/waveform",
       tempDownloadUrl: "/api/products/workspace/private/temp-download",
@@ -156,7 +178,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: "",
+        sortValue: ""
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
@@ -174,21 +196,21 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "title",
+          sortField: "title"
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "memo",
+          sortField: "memo"
         },
         {
           name: "fileExt",
@@ -204,9 +226,9 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "fileSize",
           width: "8%",
-          callback: (v) => {
+          callback: v => {
             return this.$fn.formatBytes(v);
-          },
+          }
         },
         {
           name: "audioFormat",
@@ -214,7 +236,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "audioFormat",
-          width: "10%",
+          width: "10%"
         },
         {
           name: "editedDtm",
@@ -222,7 +244,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "editedDtm",
-          width: "12%",
+          width: "12%"
         },
         {
           name: "__slot:actions",
@@ -232,11 +254,22 @@ export default {
           width: "8%",
         },
       ],
-      USER_ID,
+      USER_ID
     };
+  },
+  created() {
+    this.$nextTick(() => {
+      this.getData();
+    });
   },
   methods: {
     ...mapActions("file", ["open_popup"]),
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(
@@ -245,7 +278,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
+          message: "시작 날짜가 종료 날짜보다 큽니다."
         });
         this.hasErrorClass = true;
         return;
@@ -257,9 +290,9 @@ export default {
 
       this.$http
         .get(`/api/products/workspace/private/meta/${userId}`, {
-          params: this.searchItems,
+          params: this.searchItems
         })
-        .then((res) => {
+        .then(res => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -290,11 +323,10 @@ export default {
     // 선택항목 휴지통 보내기 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames =
-        this.getInnerHtmlSelectdFileNamesFromMulti(
-          this.selectedIds,
-          this.responseData.data
-        );
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
+        this.selectedIds,
+        this.responseData.data
+      );
       this.$bvModal.show("modalRemove");
     },
     // 휴지통 보내기
@@ -311,10 +343,10 @@ export default {
 
       this.$http
         .delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
-        .then((res) => {
+        .then(res => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify("primary", {
-              message: "휴지통으로 이동되었습니다.",
+              message: "휴지통으로 이동되었습니다."
             });
             this.$bvModal.hide("modalRemove");
             setTimeout(() => {
@@ -323,14 +355,26 @@ export default {
             }, 0);
           } else {
             this.$fn.notify("error", {
-              message: "휴지통 이동 실패: " + res.data.errorMsg,
+              message: "휴지통 이동 실패: " + res.data.errorMsg
             });
           }
         });
     },
     onMetaModifyPopup(rowData) {
-      this.$refs.refMetaDataModifyPopup.setData(rowData);
-      this.metaDataModifyPopup = true;
+      this.metaUpdate = true;
+      this.updateScreenName = "private";
+      this.rowData = rowData;
+
+      // this.$refs.refMetaDataModifyPopup.setData(rowData);
+      // this.metaDataModifyPopup = true;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/my-disk", e).then(res => {
+        console.log(res);
+      });
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
     },
     onEditSuccess() {
       this.getData();
@@ -340,7 +384,7 @@ export default {
     },
     getMoveRecyclebinMsg() {
       return this.innerHtmlSelectedFileNames + "휴지통으로 이동하시겠습니까?";
-    },
-  },
+    }
+  }
 };
 </script>

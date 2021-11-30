@@ -11,7 +11,7 @@
             :class="{
               active:
                 (selectedParentMenu === item.id && viewingParentMenu === '') ||
-                viewingParentMenu === item.id,
+                viewingParentMenu === item.id
             }"
             :key="`parent_${item.id}`"
             :data-flag="item.id"
@@ -19,10 +19,10 @@
             <a
               v-if="
                 item.children &&
-                item.children.length > 0 &&
-                item.visible === 'Y'
+                  item.children.length > 0 &&
+                  item.visible === 'Y'
               "
-              @click.prevent="openSubMenu($event, item)"
+              @click="openSubMenu($event, item)"
               :href="`#${getTo(item.to)}`"
             >
               <i :class="item.icon" />
@@ -52,7 +52,7 @@
             'list-unstyled': true,
             'd-block':
               (selectedParentMenu === item.id && viewingParentMenu === '') ||
-              viewingParentMenu === item.id,
+              viewingParentMenu === item.id
           }"
           :data-parent="item.id"
           :key="`sub_${item.id}`"
@@ -78,14 +78,14 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import {
   menuHiddenBreakpoint,
-  subHiddenBreakpoint,
+  subHiddenBreakpoint
 } from "../../constants/config";
 
 export default {
   data() {
     return {
       selectedParentMenu: "",
-      viewingParentMenu: "",
+      viewingParentMenu: ""
     };
   },
   mounted() {
@@ -102,12 +102,12 @@ export default {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
       "addMenuClassname",
-      "changeSelectedMenuHasSubItems",
+      "changeSelectedMenuHasSubItems"
     ]),
     selectMenu() {
       const currentParentUrl = this.$route.path
         .split("/")
-        .filter((x) => x !== "")[1];
+        .filter(x => x !== "")[1];
       if (currentParentUrl !== undefined || currentParentUrl !== null) {
         this.selectedParentMenu = currentParentUrl.toLowerCase();
       } else {
@@ -117,7 +117,7 @@ export default {
     },
     isCurrentMenuHasSubItem() {
       const menuItem = this.menuList.find(
-        (x) => x.id === this.selectedParentMenu
+        x => x.id === this.selectedParentMenu
       );
       const isCurrentMenuHasSubItem =
         menuItem && menuItem.subs && menuItem.subs.length > 0 ? true : false;
@@ -126,13 +126,13 @@ export default {
           this.changeSideMenuStatus({
             step: 0,
             classNames: this.menuType,
-            selectedMenuHasSubItems: false,
+            selectedMenuHasSubItems: false
           });
         } else {
           this.changeSideMenuStatus({
             step: 0,
             classNames: this.menuType,
-            selectedMenuHasSubItems: true,
+            selectedMenuHasSubItems: true
           });
         }
       }
@@ -147,11 +147,15 @@ export default {
       this.changeSideMenuStatus({
         step: 0,
         classNames: this.menuType,
-        selectedMenuHasSubItems: false,
+        selectedMenuHasSubItems: false
       });
     },
 
     openSubMenu(e, menuItem) {
+      if (this.viewingParentMenu == menuItem.id) {
+        this.handleDocumentClick();
+        return;
+      }
       const selectedParent = menuItem.id;
       const hasSubMenu =
         menuItem.children &&
@@ -164,7 +168,7 @@ export default {
         this.toggle();
       } else {
         const currentClasses = this.menuType
-          ? this.menuType.split(" ").filter((x) => x !== "")
+          ? this.menuType.split(" ").filter(x => x !== "")
           : "";
 
         if (!currentClasses.includes("menu-mobile")) {
@@ -175,7 +179,7 @@ export default {
             this.changeSideMenuStatus({
               step: 3,
               classNames: this.menuType,
-              selectedMenuHasSubItems: hasSubMenu,
+              selectedMenuHasSubItems: hasSubMenu
             });
           } else if (
             currentClasses.includes("menu-hidden") &&
@@ -184,7 +188,7 @@ export default {
             this.changeSideMenuStatus({
               step: 2,
               classNames: this.menuType,
-              selectedMenuHasSubItems: hasSubMenu,
+              selectedMenuHasSubItems: hasSubMenu
             });
           } else if (
             currentClasses.includes("menu-default") &&
@@ -194,13 +198,13 @@ export default {
             this.changeSideMenuStatus({
               step: 0,
               classNames: this.menuType,
-              selectedMenuHasSubItems: hasSubMenu,
+              selectedMenuHasSubItems: hasSubMenu
             });
           }
         } else {
           this.addMenuClassname({
             classname: "sub-show-temporary",
-            currentClasses: this.menuType,
+            currentClasses: this.menuType
           });
         }
         this.viewingParentMenu = selectedParent;
@@ -212,7 +216,7 @@ export default {
       this.toggle();
     },
     toggle() {
-      const currentClasses = this.menuType.split(" ").filter((x) => x !== "");
+      const currentClasses = this.menuType.split(" ").filter(x => x !== "");
       if (
         currentClasses.includes("menu-sub-hidden") &&
         this.menuClickCount === 3
@@ -220,7 +224,7 @@ export default {
         this.changeSideMenuStatus({
           step: 2,
           classNames: this.menuType,
-          selectedMenuHasSubItems: this.selectedMenuHasSubItems,
+          selectedMenuHasSubItems: this.selectedMenuHasSubItems
         });
       } else if (
         currentClasses.includes("menu-hidden") ||
@@ -230,7 +234,7 @@ export default {
           this.changeSideMenuStatus({
             step: 0,
             classNames: this.menuType,
-            selectedMenuHasSubItems: this.selectedMenuHasSubItems,
+            selectedMenuHasSubItems: this.selectedMenuHasSubItems
           });
         }
       }
@@ -244,17 +248,17 @@ export default {
       this.changeSideMenuStatus({
         step: 0,
         classNames: nextClasses.join(" "),
-        selectedMenuHasSubItems: this.selectedMenuHasSubItems,
+        selectedMenuHasSubItems: this.selectedMenuHasSubItems
       });
     },
     getMenuClassesForResize(classes) {
-      let nextClasses = classes.split(" ").filter((x) => x !== "");
+      let nextClasses = classes.split(" ").filter(x => x !== "");
       const windowWidth = window.innerWidth;
 
       if (windowWidth < menuHiddenBreakpoint) {
         nextClasses.push("menu-mobile");
       } else if (windowWidth < subHiddenBreakpoint) {
-        nextClasses = nextClasses.filter((x) => x !== "menu-mobile");
+        nextClasses = nextClasses.filter(x => x !== "menu-mobile");
         if (
           nextClasses.includes("menu-default") &&
           !nextClasses.includes("menu-sub-hidden")
@@ -262,48 +266,48 @@ export default {
           nextClasses.push("menu-sub-hidden");
         }
       } else {
-        nextClasses = nextClasses.filter((x) => x !== "menu-mobile");
+        nextClasses = nextClasses.filter(x => x !== "menu-mobile");
         if (
           nextClasses.includes("menu-default") &&
           nextClasses.includes("menu-sub-hidden")
         ) {
-          nextClasses = nextClasses.filter((x) => x !== "menu-sub-hidden");
+          nextClasses = nextClasses.filter(x => x !== "menu-sub-hidden");
         }
       }
       return nextClasses;
     },
     getTo(to) {
       return to ? to : "";
-    },
+    }
   },
   computed: {
     ...mapGetters("menu", {
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",
-      selectedMenuHasSubItems: "getSelectedMenuHasSubItems",
+      selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
     }),
-    ...mapGetters("user", ["menuList"]),
+    ...mapGetters("user", ["menuList"])
   },
   watch: {
     $route(to, from) {
       if (to.path !== from.path) {
-        const toParentUrl = to.path.split("/").filter((x) => x !== "")[1];
+        const toParentUrl = to.path.split("/").filter(x => x !== "")[1];
         if (toParentUrl !== undefined || toParentUrl !== null) {
           this.selectedParentMenu = toParentUrl.toLowerCase();
         } else {
           this.selectedParentMenu = "dashboards";
         }
+        this.viewingParentMenu = "";
         this.selectMenu();
         this.toggle();
         this.changeSideMenuStatus({
           step: 0,
           classNames: this.menuType,
-          selectedMenuHasSubItems: this.selectedMenuHasSubItems,
+          selectedMenuHasSubItems: this.selectedMenuHasSubItems
         });
-
         window.scrollTo(0, top);
       }
-    },
-  },
+    }
+  }
 };
 </script>

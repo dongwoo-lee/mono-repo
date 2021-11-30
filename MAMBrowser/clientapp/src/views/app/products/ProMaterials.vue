@@ -18,10 +18,13 @@
           startDateLabel="시작일(마스터링)"
           endDateLabel="종료일(마스터링)"
           :startDate.sync="searchItems.start_dt"
-          :startMonthAgo="3"
-          :maxPeriodMonth="3"
           :endDate.sync="searchItems.end_dt"
-          :required="true"
+          :startMonthAgo="3"
+          :required="false"
+          :isCurrentDate="true"
+          @SEDateNullEvent="onSearch"
+          @SEDateEvent="onSearch"
+          @SDateError="SDateErrorLog"
         />
         <!-- 구분 -->
         <b-form-group label="구분" class="has-float-label">
@@ -31,28 +34,32 @@
             :options="[
               { value: '', text: '선택해주세요.' },
               { value: 'Y', text: '방송중' },
-              { value: 'N', text: '폐지' },
+              { value: 'N', text: '폐지' }
             ]"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
-          <common-dropdown-menu-input
-            classString="width-220"
+          <common-vue-select
+            style="width:220px;"
             :suggestions="proOptions"
-            @selected="onProSelected"
-          />
+            @inputEvent="onProSelected"
+          ></common-vue-select>
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input
+          <common-vue-select
             :suggestions="editorOptions"
-            @selected="onEditorSelected"
-          />
+            @inputEvent="onEditorSelected"
+          ></common-vue-select>
         </b-form-group>
         <!-- 소재명 -->
         <b-form-group label="소재명" class="has-float-label">
-          <common-input-text v-model="searchItems.name" />
+          <common-input-text
+            v-model="searchItems.name"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -86,9 +93,12 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -103,7 +113,23 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
+    <!-- 삭제 -->
+    <common-confirm
+      id="proRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -121,11 +147,18 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate },
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteId: "",
+      metaUpdate: false,
+      rowData: "",
+      updateScreenName: "",
       searchItems: {
         media: "A", // 매체
         cate: "", // 분류
@@ -137,7 +170,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: "",
+        sortValue: ""
       },
       proOptions: [],
       fields: [
@@ -146,21 +179,21 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name",
+          sortField: "name"
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "categoryName",
+          sortField: "categoryName"
         },
         {
           name: "duration",
@@ -169,7 +202,7 @@ export default {
           dataClass: "center aligned text-center",
           width: "6%",
           sortField: "duration",
-          callback: (v) => {
+          callback: v => {
             return this.$fn.splitFirst(v);
           },
         },
@@ -179,7 +212,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "8%",
-          sortField: "editorName",
+          sortField: "editorName"
         },
         {
           name: "editDtm",
@@ -187,7 +220,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "editDtm",
+          sortField: "editDtm"
         },
         {
           name: "masteringDtm",
@@ -195,7 +228,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "12%",
-          sortField: "masteringDtm",
+          sortField: "masteringDtm"
         },
         {
           name: "proType",
@@ -203,16 +236,16 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "proType",
+          sortField: "proType"
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "7%",
-        },
-      ],
+          width: "10%"
+        }
+      ]
     };
   },
   created() {
@@ -222,8 +255,18 @@ export default {
     this.getEditorOptions();
     // (구)프로 목록 조회
     this.getProOptions();
+
+    this.$nextTick(() => {
+      this.getData();
+    });
   },
   methods: {
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(
@@ -232,7 +275,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
+          message: "시작 날짜가 종료 날짜보다 큽니다."
         });
         this.hasErrorClass = true;
         return;
@@ -241,10 +284,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       this.$http
         .get(`/api/products/old_pro`, { params: this.searchItems })
-        .then((res) => {
-          console.log(this.searchItems);
-          console.log(res);
-
+        .then(res => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -258,6 +298,36 @@ export default {
       var tmpName = `${rowData.name}_${rowData.categoryName}`;
       return tmpName;
     },
-  },
+    onDeleteConfirm(rowData) {
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("proRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/pro/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
+    },
+    onMetaModifyPopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "pro";
+      this.rowData = rowData;
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/pro", e).then(res => {
+        console.log(res);
+      });
+    }
+  }
 };
 </script>

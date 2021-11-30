@@ -1,0 +1,118 @@
+<template>
+  <transition name="modal" appear>
+    <div id="update-modal-mask">
+      <div class="update-modal-wrapper">
+        <div class="update-modal-container">
+          <div class="modal-header">
+            <slot name="header">
+              default header
+            </slot>
+            <button class="update-modal-default-button" @click="$emit('close')">
+              <p class="h4 mb-2">
+                <b-icon icon="x" class="icon" variant="danger"></b-icon>
+              </p>
+            </button>
+          </div>
+
+          <div class="update-modal-body">
+            <slot name="body">
+              default body
+            </slot>
+          </div>
+
+          <div class="update-modal-footer">
+            <slot name="footer">
+              default footer
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style>
+#update-modal-mask {
+  position: fixed;
+  z-index: 9600;
+  top: -80px;
+  left: -80px;
+  width: 2000px;
+  height: 120%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+}
+
+.update-modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.update-modal-container {
+  position: fixed;
+  right: 730px;
+  width: 400px;
+  height: 300px;
+  margin-top: -400px;
+  background-color: white;
+  border-radius: 2px;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
+  transition: all 0.3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.update-modal-header h2 {
+  margin-top: 10px;
+  color: #008ecc;
+  font-weight: bolder;
+}
+
+.update-modal-body {
+  height: 200px;
+}
+
+.update-modal-default-button {
+  float: right;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  border: 0;
+  outline: 0;
+  background-color: white;
+}
+.update-modal-footer {
+  width: 400px;
+  height: 83px;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+}
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+</style>

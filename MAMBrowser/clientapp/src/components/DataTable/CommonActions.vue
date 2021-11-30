@@ -192,9 +192,11 @@ export default {
       this.$emit("download", this.rowData, this.downloadName);
     },
     onDelete() {
+      this.$emit("MasteringDelete", this.rowData);
       if (!this.isPossibleDelete || !this.isSystemTopAdmin) {
         return;
       }
+
       this.$emit("delete", this.rowData);
     },
     onMetaModify() {

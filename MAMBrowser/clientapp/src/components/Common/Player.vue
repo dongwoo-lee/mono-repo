@@ -1,11 +1,11 @@
 <template>
   <div>
     <div>
-      <div class="text-center" v-if="spinnerFlag">
-        <b-spinner
-          style="width: 4rem; height: 4rem"
-          variant="primary"
-        ></b-spinner>
+      <div v-if="errorMsg">
+        {{errorMsg}}
+      </div>
+      <div class="text-center" v-if="spinnerFlag" >
+        <b-spinner style="width: 4rem; height: 4rem;" variant="primary"></b-spinner>
       </div>
       <div>
         <b-container class="bv-example-row" v-if="isSuccess">
@@ -145,7 +145,8 @@ export default {
       zoomMax: 160,
       zoomInterval: 20,
       zoomSliderValue: 0,
-
+      errorMsg:'',
+      
       options: {
         id: "Trim",
         start: 0,
@@ -346,40 +347,61 @@ export default {
       httpClient
         .get(downloadUrl, {
           cancelToken: source.token,
-          headers: {
-            "X-Csrf-Token": sessionStorage.getItem(ACCESS_TOKEN),
-          },
-        })
-        .then((res) => {
-          console.info("tempdownload status", res.status);
-          if (res.status == 200) {
-            httpClient
-              .get(waveformUrl, {
-                cancelToken: source.token,
-              })
-              .then((res) => {
-                wavesurfer.load(fileUrl, res.data);
-                this.spinnerFlag = false;
-                this.isSuccess = true;
-              })
-              .catch((error) => {
-                console.debug("httpClient", error);
-                if (error.response) {
-                  this.$notify(
-                    "error",
-                    `${error.response.status} : ${error.response.statusText}`,
-                    error.response.data,
-                    {
-                      duration: 10000,
-                      permanent: false,
-                    }
-                  );
-                } else {
-                  console.debug("httpClient.get url:", waveformUrl, error);
-                }
+          }).then(res=>{
+            if(res.status == 200){
+              httpClient.get(waveformUrl, {
+              cancelToken: source.token,
+            }).then(res=>{
+            if(res.status == 200){
+              wavesurfer.load(fileUrl, res.data);
+              this.spinnerFlag = false;
+              this.isSuccess = true;
+            }else{
+              this.$notify("error", `${res.status} : ${res.statusText}` , res.data, {
+                  duration: 10000,
+                  permanent: false
               });
-          }
-        });
+               this.spinnerFlag = false;
+               this.isSuccess = false;
+               this.errorMsg = res.data;
+            }
+          }).catch(error=>{
+              console.debug('httpClient', error)
+              if (error.response){
+                this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+                    duration: 10000,
+                    permanent: false
+                });
+              } else {
+                console.debug('httpClient.get url:', waveformUrl, error);
+              }
+              this.spinnerFlag = false;
+              this.isSuccess = false;
+              this.errorMsg = error.response.data;
+          });
+        }else{
+          this.$notify("error", `${res.status} : ${res.statusText}` , res.data, {
+              duration: 10000,
+              permanent: false
+          });
+          this.spinnerFlag = false;
+          this.isSuccess = false;
+          this.errorMsg = res.data;
+        }
+      }).catch(error=>{
+              console.debug('httpClient', error)
+              if (error.response){
+                this.$notify("error", `${error.response.status} : ${error.response.statusText}` , error.response.data, {
+                    duration: 10000,
+                    permanent: false
+                });
+              } else {
+                console.debug('httpClient.get url:', waveformUrl, error);
+              }
+          this.spinnerFlag = false;
+          this.isSuccess = false;
+          this.errorMsg = error.response.data;
+          });
     },
     LoadDirect(waveformUrl, fileUrl) {
       httpClient

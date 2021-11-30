@@ -4,17 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>MAMBrowser</RootNamespace>
     <UserSecretsId>e3e68b19-222d-49f7-bc96-d2329e75f809</UserSecretsId>
-    <Platforms>AnyCPU;x86</Platforms>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
-    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,34 +31,21 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.11.1" />
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="NAudio.Lame" Version="1.1.6" />
     <PackageReference Include="NLayer.NAudioSupport" Version="1.1.0" />
     <PackageReference Include="ODP.NetCore" Version="2.0.12" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.110" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.5.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MAMBrowser.Common\MAMBrowser.Common.csproj" />
-    <ProjectReference Include="..\MAMBrowser.DAL\MAMBrowser.DAL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Oracle.DataAccess">
-      <HintPath>C:\Oracle\odac32\odp.net\bin\4\Oracle.DataAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.Entity">
-      <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Data.Entity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.EnterpriseServices">
-      <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.EnterpriseServices.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -82,7 +63,20 @@
     </None>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="RefFiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="M30.AudioFile.Common">
+      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="M30.AudioFile.DAL">
+      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 
 </Project>

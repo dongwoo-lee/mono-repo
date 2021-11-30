@@ -1,10 +1,8 @@
 ﻿using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -18,6 +16,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.Common.DTO;
 
 namespace MAMBrowser.Controllers
 {
@@ -25,7 +25,7 @@ namespace MAMBrowser.Controllers
     [Route("api/products/workspace/public")]
     public class PublicFileController : ControllerBase
     {
-        private readonly IFileProtocol _fileService;
+        private readonly IFileProtocol _fileSystem;
         private readonly IOptions<AppSettings> _appSesstings;
         private readonly PublicFileBll _bll;
         private readonly WebServerFileHelper _fileHelper;
@@ -36,7 +36,7 @@ namespace MAMBrowser.Controllers
             _appSesstings = appSesstings;
             _bll = bll;
             _logBll = logger;
-            _fileService = sr("PublicWorkConnection");
+            _fileSystem = sr(MAMDefine.PublicWorkConnection).FileSystem;
             _fileHelper = fileHelper;
         }
         /// <summary>
@@ -163,7 +163,7 @@ namespace MAMBrowser.Controllers
                 string fileName = Path.GetFileName(fileData.FilePath);
                 var startIdx = fileName.IndexOf('_');
                 var downloadName = fileName.Substring(startIdx + 1, fileName.Length - startIdx - 1);
-                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileService, inline);
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileSystem, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -233,7 +233,7 @@ namespace MAMBrowser.Controllers
             string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileService);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileSystem);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
@@ -258,7 +258,7 @@ namespace MAMBrowser.Controllers
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
+                    using (var stream = _fileSystem.GetFileStream(fileData.FilePath, 0))
                     {
                         stream.CopyTo(ms);
                     }

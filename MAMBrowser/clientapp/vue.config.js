@@ -1,30 +1,29 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-
   pages: {
     index: {
-      entry: 'src/index.js',
-      template: 'public/index.html',
-      filename: 'index.html'
+      entry: "src/index.js",
+      template: "public/index.html",
+      filename: "index.html"
     }
   },
   devServer: {
+    headers: { "Cache-Control": "no-cache, no-store" },
     proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
+      "/api": {
+        target: "http://localhost:8000",
         ws: true,
-        changeOrigin: true,
+        changeOrigin: true
       }
     },
-    // clientLogLevel: 'warning',
-    hot: true,
+    hot: true
     // contentBase: 'dist',
     // compress: true,
     // open: true,
-    // overlay: { warnings: false, errors: true },
+
     // publicPath: '/',
-    // quiet: true,
+
     // watchOptions: {
     //   poll: false,
     //   ignored: /node_modules/
@@ -41,13 +40,13 @@ module.exports = {
         })
   },
   productionSourceMap: false,
-  assetsDir: './assets/',
+  assetsDir: "./assets/",
   configureWebpack: {
     plugins: [
       new CopyWebpackPlugin([
-        { from: 'src/assets/img', to: 'assets/img' },
-        { from: 'src/assets/fonts', to: 'assets/fonts' }
+        { from: "src/assets/img", to: "assets/img" },
+        { from: "src/assets/fonts", to: "assets/fonts" }
       ])
     ]
   }
-}
+};

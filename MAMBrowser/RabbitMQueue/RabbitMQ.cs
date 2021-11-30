@@ -1,0 +1,39 @@
+﻿using Newtonsoft.Json;
+using RabbitMQ.Client;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MAMBrowser.RabbitMQueue
+{
+    public class RabbitMQ
+    {
+        public RabbitMQ()
+        {
+
+            var factory = new ConnectionFactory
+            {
+                Uri = new Uri("amqp://guest:guest@loaclhost:5672")
+            };
+
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
+
+            Dictionary<string, object> props = new Dictionary<string, object>();
+
+            props.Add("x-max-priority", 10);
+            channel.QueueDeclare("message",
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: props);
+
+            var properties = channel.CreateBasicProperties();
+            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("value"));
+            channel.BasicPublish("", "message", properties, body);
+
+        }
+    }
+}

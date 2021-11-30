@@ -19,26 +19,30 @@
           :maxPeriodMonth="3"
           :endDate.sync="searchItems.end_dt"
           :required="true"
+          @SEDateEvent="onSearch"
+          @SDateError="SDateErrorLog"
         />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
             class="width-120"
             v-model="searchItems.media"
-            :options="mediaOptions"
+            :options="mcrSpotMediaOptions"
             value-field="id"
             text-field="name"
-            @change="onChangeMedia()"
+            @change="mediaReset"
           />
         </b-form-group>
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
-          <common-dropdown-menu-input
-            classString="width-220"
-            :isLoadingClass="isLoadingClass"
+          <common-vue-select
+            style="width:220px"
             :suggestions="spotOptions"
-            @selected="onSpotSelected"
-          />
+            :vSelectProps="vSelectProps"
+            :vChangedProps="vChangedProps"
+            @inputEvent="onSpotSelected"
+            @propsChanged="propsChanged"
+          ></common-vue-select>
         </b-form-group>
         <!-- 상태 -->
         <!-- <b-form-group label="상태" class="has-float-label">
@@ -56,11 +60,11 @@
         </b-form-group> -->
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input
-            classString="width-180"
+          <common-vue-select
+            style="width:180px"
             :suggestions="editorOptions"
-            @selected="onEditorSelected"
-          />
+            @inputEvent="onEditorSelected"
+          ></common-vue-select>
         </b-form-group>
         <!-- 검색버튼 -->
         <b-form-group>
@@ -92,9 +96,11 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
@@ -109,7 +115,14 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
+    <!-- 삭제 -->
+    <common-confirm
+      id="mcrRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -127,11 +140,16 @@
 <script>
 import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup },
+  components: { CopyToMySpacePopup, CommonVueSelect },
   mixins: [MixinFillerPage],
   data() {
     return {
+      deleteId: "",
+      vSelectProps: {},
+      vChangedProps: false,
       searchItems: {
         media: "A", // 매체
         cate: "", // 분류
@@ -144,7 +162,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: "",
+        sortValue: ""
       },
       isTableLoading: false,
       fields: [
@@ -153,14 +171,14 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name",
+          sortField: "name"
         },
         {
           name: "brdDT",
@@ -169,9 +187,9 @@ export default {
           dataClass: "center aligned text-center bold",
           width: "10%",
           sortField: "brdDT",
-          callback: (v) => {
+          callback: v => {
             return this.$fn.dateStringTohaipun(v);
-          },
+          }
         },
         {
           name: "status",
@@ -179,7 +197,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "6%",
-          sortField: "status",
+          sortField: "status"
         },
         {
           name: "duration",
@@ -187,7 +205,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "duration",
+          sortField: "duration"
         },
         {
           name: "editorName",
@@ -195,7 +213,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "editorName",
+          sortField: "editorName"
         },
         {
           name: "editDtm",
@@ -203,7 +221,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "editDtm",
+          sortField: "editDtm"
         },
         {
           name: "reqCompleteDtm",
@@ -211,28 +229,45 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "14%",
-          sortField: "reqCompleteDtm",
+          sortField: "reqCompleteDtm"
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "7%",
-        },
-      ],
+          width: "10%"
+        }
+      ]
     };
   },
 
   created() {
-    // 매체목록 조회
-    this.getMediaOptions();
     // 제작자(Md) 목록 조회
     this.getEditorForMd();
     // 주조 spot 분류 목록 조회
     this.getSpotOptions(this.searchItems.media);
+    // 주조SPOT 매체 목록 조회
+    this.getmcrSpotMediaOptions();
   },
   methods: {
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
+    propsChanged() {
+      this.vChangedProps = false;
+    },
+    mediaReset() {
+      this.getSpotOptions(this.searchItems.media);
+      this.searchItems.spotId = null;
+      this.searchItems.spotName = null;
+      this.vSelectProps = { id: null, name: null };
+      this.vChangedProps = true;
+      this.onSearch();
+    },
     getData() {
       if (
         this.$fn.checkGreaterStartDate(
@@ -241,7 +276,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
+          message: "시작 날짜가 종료 날짜보다 큽니다."
         });
         this.hasErrorClass = true;
       }
@@ -251,21 +286,34 @@ export default {
 
       this.$http
         .get(`/api/products/spot/mcr/${media}`, { params: this.searchItems })
-        .then((res) => {
-          console.log(this.searchItems);
+        .then(res => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
           this.isScrollLodaing = false;
         });
     },
-    onChangeMedia() {
-      this.getSpotOptions(this.searchItems.media);
-    },
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.mediaName}_${rowData.id}`;
       return tmpName;
     },
-  },
+    onDeleteConfirm(rowData) {
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("mcrRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/mcr-spot/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
+    }
+  }
 };
 </script>

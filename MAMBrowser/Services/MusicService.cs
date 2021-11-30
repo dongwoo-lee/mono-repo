@@ -1,7 +1,5 @@
 ﻿using MAMBrowser.Helper;
-using MAMBrowser.Common;
-using MAMBrowser.DTO;
-using MAMBrowser.ExternalDTO;
+using M30.AudioFile.Common;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using Microsoft.Extensions.Logging;
@@ -14,50 +12,40 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Xml.Serialization;
-using MAMBrowser.Common.Foundation;
+using Microsoft.Extensions.Configuration;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser.Services
 {
     public class MusicService 
     {
-        public string Host
-        {
-            get
-            {
-                return MbcDomain;
-            }
-        }
-
-        public string MbcDomain { get; set; }
-        public string AuthorKey { get; set; }
-        public string SearchDomain { get; set; }
-        public string SearchSongUrl { get; set; }
-        public string SearchEffectUrl { get; set; }
-        public string SearchLyricsUrl { get; set; }
-        public string ImageListUrl { get; set; }
-        public string FileUrl { get; set; }
+        public ExternalStorage Info { get; set; }
 
         public int ExpireMusicTokenHour { get; set; }
-
-        private readonly IDictionary<string,object> _storageMap;
         private readonly ILogger<MusicService> _logger;
         private readonly WebServerFileHelper _fileHelper;
+        public IDictionary<string, object> StorageMaps;
 
-
-
-        public MusicService(IOptions<AppSettings> appSesstings, IOptions<StorageConnections> connection, IOptions<StorageMaps> storageMap, ILogger<MusicService> logger, WebServerFileHelper fileHelper)
+        public MusicService(ILogger<MusicService> logger, IConfiguration config, WebServerFileHelper fileHelper)
         {
-            _storageMap = storageMap.Value.Map;
-            MbcDomain = connection.Value.MusicConnection["MbcDomain"].ToString();
-            AuthorKey = connection.Value.MusicConnection["AuthorKey"].ToString();
-            SearchDomain = connection.Value.MusicConnection["SearchDomain"].ToString();
-            SearchSongUrl = connection.Value.MusicConnection["SearchSongUrl"].ToString();
-            SearchEffectUrl = connection.Value.MusicConnection["SearchEffectUrl"].ToString();
-            SearchLyricsUrl = connection.Value.MusicConnection["SearchLyricsUrl"].ToString();
-            ImageListUrl = connection.Value.MusicConnection["ImageListUrl"].ToString();
-            FileUrl = connection.Value.MusicConnection["FileUrl"].ToString();
+            //var externalInfo = config.GetSection("StorageConnections:External:MusicConnection");
+            Info = config.GetSection("StorageConnections:External:MusicConnection").Get<ExternalStorage>();
+            StorageMaps = config.GetSection("StorageConnections:External:MusicConnection:StorageMaps:Map").Get< Dictionary<string, object>>();
 
-            ExpireMusicTokenHour = appSesstings.Value.ExpireMusicTokenHour;
+
+            //var musicCon = externalInfo.Value.MusicConnection;
+            //_storageMap = externalInfo.Value.StorageMaps;
+            //MbcDomain = musicCon["MbcDomain"].ToString();
+            //AuthorKey = musicCon["AuthorKey"].ToString();
+            //SearchDomain = musicCon["SearchDomain"].ToString();
+            //SearchSongUrl = musicCon["SearchSongUrl"].ToString();
+            //SearchEffectUrl = musicCon["SearchEffectUrl"].ToString();
+            //SearchLyricsUrl = musicCon["SearchLyricsUrl"].ToString();
+            //ImageListUrl = musicCon["ImageListUrl"].ToString();
+            //FileUrl = musicCon["FileUrl"].ToString();
+
+            ExpireMusicTokenHour = Startup.AppSetting.ExpireMusicTokenHour;
             _logger = logger;
             _fileHelper = fileHelper;
         }
@@ -129,8 +117,8 @@ namespace MAMBrowser.Services
         }
         public IList<DTO_SONG> SearchSong(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
-            var builder = new UriBuilder("http", SearchDomain, 80, SearchSongUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={10}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
+            var builder = new UriBuilder("http", Info.SearchDomain, 80, Info.SearchSongUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(Info.AuthorKey)}&strSearch={WebUtility.UrlEncode(searchText)}&viewRow={rowPerPage}&pageCnt={selectPage}&fsort={10}&query={WebUtility.UrlEncode(GetMusicParam(searchType, searchType2, gradeType))}";
             builder.Query = param;
             
             HttpClient client = new HttpClient();
@@ -157,8 +145,8 @@ namespace MAMBrowser.Services
         }
         public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)
         {
-            var builder = new UriBuilder("http", SearchDomain, 80, SearchEffectUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}";
+            var builder = new UriBuilder("http", Info.SearchDomain, 80, Info.SearchEffectUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(Info.AuthorKey)}&strSearch={WebUtility.UrlEncode(text)}";
             builder.Query = param;
 
             HttpClient client = new HttpClient();
@@ -185,8 +173,8 @@ namespace MAMBrowser.Services
         }
         public string SearchLyrics(string lyricsSeq)
         {
-            var builder = new UriBuilder("http", SearchDomain, 80, SearchLyricsUrl);
-            string param = $"authorKey={WebUtility.UrlEncode(AuthorKey)}&strWordSeq={lyricsSeq}";
+            var builder = new UriBuilder("http", Info.SearchDomain, 80, Info.SearchLyricsUrl);
+            string param = $"authorKey={WebUtility.UrlEncode(Info.AuthorKey)}&strWordSeq={lyricsSeq}";
             builder.Query = param;
 
             HttpClient client = new HttpClient();
@@ -223,7 +211,7 @@ namespace MAMBrowser.Services
             _logger.LogDebug($"img path : {imgPath}");
 
             var host = MAMUtility.GetHost(wavPath).ToUpper();
-            var domainAndPort = _storageMap[host] as string;
+            var domainAndPort = StorageMaps[host.ToUpper()] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
@@ -232,12 +220,12 @@ namespace MAMBrowser.Services
             var imgRelativePath = MAMUtility.GetRelativePath(imgPath);
             string imgFullUri = imgRelativePath.Replace(@"\", @"/");
 
-            string downloadImageUri = $"http://{imgDomain}.{MbcDomain}/{imgFullUri}";
+            string downloadImageUri = $"http://{imgDomain}.{Info.MbcDomain}/{imgFullUri}";
             _logger.LogDebug($"image streaming uri : {downloadImageUri}");
 
             //이미지 목록 검색
             StringContent sc = new StringContent(jsonImgInfo, Encoding.UTF8, "application/json");   //euc-kr 인지 확인 필요.
-            var builder = new UriBuilder("http", domain, port, ImageListUrl);
+            var builder = new UriBuilder("http", domain, port, Info.ImageListUrl);
             _logger.LogDebug($"Image file name list uri : {builder.ToString()}");
 
             HttpClient client = new HttpClient();
@@ -294,7 +282,7 @@ namespace MAMBrowser.Services
       
         public Stream GetFileStream(string domain, int port, string jsonRequestContent, out long fileSize)
         {
-            var builder = new UriBuilder("http", domain, port, FileUrl);
+            var builder = new UriBuilder("http", domain, port, Info.FileUrl);
             HttpClient client = new HttpClient();
             StringContent sc = new StringContent(jsonRequestContent, Encoding.UTF8, "application/json");
             var response = client.PostAsync(builder.ToString(), sc).Result;
@@ -325,7 +313,7 @@ namespace MAMBrowser.Services
             var jsonEgyInfo = TokenGenerator.GetJsonRequestContentFromPath(egyPath, DateTime.Now.AddHours(ExpireMusicTokenHour));
             
             var host = MAMUtility.GetHost(wavPath);
-            var domainAndPort = _storageMap[host] as string;
+            var domainAndPort = StorageMaps[host.ToUpper()] as string;
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
 
@@ -351,7 +339,7 @@ namespace MAMBrowser.Services
         /// <param name="path"></param>
         public void TempDownloadCore(string domain, int port, string jsonRequestContent ,string targetSoundPath)
         {
-            var builder = new UriBuilder("http", domain, port, FileUrl);
+            var builder = new UriBuilder("http", domain, port, Info.FileUrl);
             HttpClient client = new HttpClient();
             StringContent sc = new StringContent(jsonRequestContent, Encoding.UTF8, "application/json");
             var response = client.PostAsync(builder.ToString(), sc).Result;
@@ -379,7 +367,7 @@ namespace MAMBrowser.Services
             var encodedFilePath = musicInfo[Define.MUSIC_FILEPATH];
             var filePath =  MusicSeedWrapper.SeedDecrypt(encodedFilePath);
             var host = MAMUtility.GetHost(filePath);
-            var domainAndPort = _storageMap[host] as string;        // 뮤직서비스에 구현.
+            var domainAndPort = StorageMaps[host.ToUpper()] as string;        // 뮤직서비스에 구현.
             var domain = domainAndPort.Split(":").First();
             var port = Convert.ToInt32(domainAndPort.Split(":").Last());
             var fileName = Path.GetFileName(filePath);

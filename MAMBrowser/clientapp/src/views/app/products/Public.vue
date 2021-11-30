@@ -19,6 +19,7 @@
           :endDate.sync="searchItems.end_dt"
           :required="false"
           :isCurrentDate="false"
+          @SEDateEvent="onSearch"
         />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -28,6 +29,7 @@
             :options="mediaPrimaryOptions"
             value-field="id"
             text-field="name"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 분류 -->
@@ -39,22 +41,30 @@
             value-field="id"
             text-field="name"
             :disabled="publicCodesOptions.length === 0"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input
+          <common-vue-select
             :suggestions="editorOptions"
-            @selected="onEditorSelected"
-          />
+            @inputEvent="onEditorSelected"
+            @blurEvent="onSearch"
+          ></common-vue-select>
         </b-form-group>
         <!-- 제목 -->
         <b-form-group label="제목" class="has-float-label">
-          <common-input-text v-model="searchItems.title" />
+          <common-input-text
+            v-model="searchItems.title"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 메모 -->
         <b-form-group label="메모" class="has-float-label">
-          <common-input-text v-model="searchItems.memo" />
+          <common-input-text
+            v-model="searchItems.memo"
+            @inputEnterEvent="onSearch"
+          />
         </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -177,10 +187,15 @@ import MetaDataSharedModifyPopup from "../../../components/Popup/MetaDataSharedM
 import { mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 
 export default {
   mixins: [MixinBasicPage],
-  components: { MetaDataSharedModifyPopup, CopyToMySpacePopup },
+  components: {
+    MetaDataSharedModifyPopup,
+    CopyToMySpacePopup,
+    CommonVueSelect
+  },
   data() {
     return {
       streamingUrl: "/api/products/workspace/public/streaming",
@@ -200,7 +215,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: "",
+        sortValue: ""
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
@@ -218,14 +233,14 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%",
+          width: "4%"
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "12%",
+          width: "12%"
           // sortField: 'categoryName'
         },
         {
@@ -233,21 +248,21 @@ export default {
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "title",
+          sortField: "title"
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "memo",
+          sortField: "memo"
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%",
+          width: "5%"
         },
         {
           name: "fileSize",
@@ -256,9 +271,9 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "fileSize",
           width: "8%",
-          callback: (v) => {
+          callback: v => {
             return this.$fn.formatBytes(v);
-          },
+          }
         },
         {
           name: "audioFormat",
@@ -266,7 +281,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "audioFormat",
+          sortField: "audioFormat"
         },
         {
           name: "userName",
@@ -274,7 +289,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%",
-          sortField: "userName",
+          sortField: "userName"
         },
         {
           name: "editedDtm",
@@ -282,7 +297,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "14%",
-          sortField: "editedDtm",
+          sortField: "editedDtm"
         },
         {
           name: "__slot:actions",
@@ -292,7 +307,7 @@ export default {
           width: "10%",
         },
       ],
-      USER_ID,
+      USER_ID
     };
   },
   watch: {
@@ -318,7 +333,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
+          message: "시작 날짜가 종료 날짜보다 큽니다."
         });
         this.hasErrorClass = true;
         return;
@@ -327,12 +342,11 @@ export default {
       this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false : true;
       const { media, cate } = this.searchItems;
-
       this.$http
         .get(`/api/products/workspace/public/meta/${media}/${cate}`, {
-          params: this.searchItems,
+          params: this.searchItems
         })
-        .then((res) => {
+        .then(res => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -362,11 +376,10 @@ export default {
     // 선택항목 영구 삭제 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames =
-        this.getInnerHtmlSelectdFileNamesFromMulti(
-          this.selectedIds,
-          this.responseData.data
-        );
+      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
+        this.selectedIds,
+        this.responseData.data
+      );
       this.$bvModal.show("modalRemove");
     },
     // 영구 삭제
@@ -379,13 +392,13 @@ export default {
         this.singleSelectedId = null;
       }
 
-      ids.forEach((seq) => {
+      ids.forEach(seq => {
         this.$http
           .delete(`/api/products/workspace/public/meta/${seq}`)
-          .then((res) => {
+          .then(res => {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify("primary", {
-                message: "파일을 삭제 하였습니다.",
+                message: "파일을 삭제 하였습니다."
               });
               this.$bvModal.hide("modalRemove");
               setTimeout(() => {
@@ -416,7 +429,7 @@ export default {
     },
     isPossibleDelete(userId) {
       return sessionStorage.getItem(USER_ID) === userId;
-    },
-  },
+    }
+  }
 };
 </script>

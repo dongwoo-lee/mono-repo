@@ -1,4 +1,4 @@
-﻿using MAMBrowser.Common;
+﻿using M30.AudioFile.Common;
 using MAMBrowser.Foundation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace MAMBrowser.Helpers
 {
+    [Obsolete("FTP 다이렉트 스트리밍은 더이상 사용되지 않습니다", true)]
     public class PushStreamResult : IActionResult
     {
         private readonly Action<ActionContext,Stream> _onStreamAvailabe;

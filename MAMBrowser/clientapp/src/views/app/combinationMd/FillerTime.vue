@@ -11,14 +11,16 @@
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->
-      <template slot="form-search-area">        
+      <template slot="form-search-area">
         <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker 
+        <common-start-end-date-picker
           :startDate.sync="searchItems.start_dt"
           :startDayAgo="7"
           :maxPeriodMonth="3"
           :endDate.sync="searchItems.end_dt"
           :required="true"
+          @SEDateEvent="onSearch"
+          @SDateError="SDateErrorLog"
         />
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
@@ -28,6 +30,7 @@
             :options="mediaOptions"
             value-field="id"
             text-field="name"
+            @change="onSearch"
           />
         </b-form-group>
         <!-- 분류 -->
@@ -39,10 +42,15 @@
             :disabled="timetoneOptions.length === 0"
             value-field="id"
             text-field="name"
+            @change="onSearch"
           >
             <template v-slot:first>
-              <b-form-select-option v-if="timetoneOptions.length > 0" value="">선택해주세요.</b-form-select-option>
-              <b-form-select-option v-else value="">값이 존재하지 않습니다.</b-form-select-option>
+              <b-form-select-option v-if="timetoneOptions.length > 0" value=""
+                >선택해주세요.</b-form-select-option
+              >
+              <b-form-select-option v-else value=""
+                >값이 존재하지 않습니다.</b-form-select-option
+              >
             </template>
           </b-form-select>
         </b-form-group>
@@ -54,18 +62,25 @@
             :options="reqStatusOptions"
             value-field="id"
             text-field="name"
+            @change="onSearch"
           >
             <template v-slot:first>
-              <b-form-select-option value="">선택해주세요.</b-form-select-option>
+              <b-form-select-option value=""
+                >선택해주세요.</b-form-select-option
+              >
             </template>
           </b-form-select>
         </b-form-group>
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
-          <common-dropdown-menu-input :suggestions="editorOptions" @selected="onEditorSelected" />
+          <common-vue-select
+            style="width:220px;"
+            :suggestions="editorOptions"
+            @inputEvent="onEditorSelected"
+          ></common-vue-select>
         </b-form-group>
         <!-- 방송 종료일이 남은 소재만 보기 -->
-         <!-- <b-form-checkbox class="custom-checkbox-group-non-align"
+        <!-- <b-form-checkbox class="custom-checkbox-group-non-align"
           v-model="searchItems.isAvailable"
           value="Y"
           unchecked-value="N"
@@ -75,7 +90,9 @@
           </b-form-checkbox> -->
         <!-- 검색 버튼 -->
         <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch">검색</b-button>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
         </b-form-group>
       </template>
       <!-- 테이블 페이지 -->
@@ -101,84 +118,98 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete']"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @MasteringDelete="onDeleteConfirm"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
 
-           <CopyToMySpacePopup
+        <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           @ok="onMyDiskCopyFromProduct"
-          @close="copyToMySpacePopup = false">
+          @close="copyToMySpacePopup = false"
+        >
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
-     <PlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.name"
-    :fileKey="soundItem.fileToken"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="token"
-    @closePlayer="onClosePlayer">
+    <!-- 삭제 -->
+    <common-confirm
+      id="fillerTimeRemove"
+      title="삭제?"
+      :message="getRemove()"
+      submitBtn="이동"
+      @ok="onDelete()"
+    />
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.name"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
     </PlayerPopup>
   </div>
 </template>
 
 <script>
-import MixinFillerPage from '../../../mixin/MixinFillerPage';
+import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import axios from "axios";
 export default {
-  components:{CopyToMySpacePopup},
-  mixins: [ MixinFillerPage ],
+  components: { CopyToMySpacePopup, CommonVueSelect },
+  mixins: [MixinFillerPage],
   data() {
     return {
+      deleteId: "",
       searchItems: {
-          media: 'A',                // 매체
-          start_dt: '',              // 시작일
-          end_dt: '',                // 종료일
-          cate: '',                  // 분류
-          status: '',                // 상태
-          editor: '',                // 사용자
-          editorName: '',            // 사용자 이름
-          // isAvailable: 'Y',
-          rowPerPage: 30,
-          selectPage: 1,
-          sortKey: '',
-          sortValue: '',
+        media: "A", // 매체
+        start_dt: "", // 시작일
+        end_dt: "", // 종료일
+        cate: "", // 분류
+        status: "", // 상태
+        editor: "", // 사용자
+        editorName: "", // 사용자 이름
+        // isAvailable: 'Y',
+        rowPerPage: 30,
+        selectPage: 1,
+        sortKey: "",
+        sortValue: ""
       },
       isTableLoading: false,
       fields: [
         {
-          name: 'rowNO',
-          title: '순서',
+          name: "rowNO",
+          title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '4%',
+          width: "4%"
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '6%',
-          sortField: 'name',
+          width: "6%",
+          sortField: "name"
         },
         {
           name: "brdDate",
           title: "방송개시일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '8%',
-          sortField: 'brdDate',
-          callback: (v) => {
-              return this.$fn.dateStringTohaipun(v)
+          width: "8%",
+          sortField: "brdDate",
+          callback: v => {
+            return this.$fn.dateStringTohaipun(v);
           }
         },
         {
@@ -186,10 +217,10 @@ export default {
           title: "방송종료일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: '8%',
-          sortField: 'endDT',
-          callback: (v) => {
-              return this.$fn.dateStringTohaipun(v)
+          width: "8%",
+          sortField: "endDT",
+          callback: v => {
+            return this.$fn.dateStringTohaipun(v);
           }
         },
         {
@@ -197,59 +228,59 @@ export default {
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '6%',
-          sortField: 'status',
+          width: "6%",
+          sortField: "status"
         },
         {
           name: "duration",
           title: "길이(초)",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '8%',
-          sortField: 'duration',
+          width: "8%",
+          sortField: "duration"
         },
         {
           name: "editorName",
           title: "편집자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '7%',
-          sortField: 'editorName',
+          width: "7%",
+          sortField: "editorName"
         },
         {
           name: "editDtm",
           title: "최종편집일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '12%',
-          sortField: 'editDtm',
+          width: "12%",
+          sortField: "editDtm"
         },
         {
           name: "fileName",
           title: "파일명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '10%',
-          sortField: 'fileName',
+          width: "10%",
+          sortField: "fileName"
         },
-        
+
         {
           name: "masteringDtm",
           title: "마스터링일자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: '12%',
-          sortField: 'masteringDtm',
+          width: "12%",
+          sortField: "masteringDtm"
         },
         {
-          name: '__slot:actions',
-          title: '추가작업',
+          name: "__slot:actions",
+          title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
+          width: "10%"
         }
-      ],
-    }
+      ]
+    };
   },
   created() {
     // 매체목록 조회
@@ -260,30 +291,60 @@ export default {
     this.getReqStatusOptions();
     // 제작자(Md) 목록 조회
     this.getEditorForMd();
-    this.getData();
   },
   methods: {
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다."
+      });
+      this.hasErrorClass = true;
+    },
     getData() {
-      if (this.$fn.checkGreaterStartDate(this.searchItems.start_dt, this.searchItems.end_dt)) {
-        this.$fn.notify('error', { message: '시작 날짜가 종료 날짜보다 큽니다.' });
+      if (
+        this.$fn.checkGreaterStartDate(
+          this.searchItems.start_dt,
+          this.searchItems.end_dt
+        )
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다."
+        });
         this.hasErrorClass = true;
       }
 
-      this.isTableLoading = this.isScrollLodaing ? false: true;
+      this.isTableLoading = this.isScrollLodaing ? false : true;
       const media = this.searchItems.media;
 
-      this.$http.get(`/api/products/filler/time/${media}`, { params: this.searchItems })
-          .then(res => {
+      this.$http
+        .get(`/api/products/filler/time/${media}`, { params: this.searchItems })
+        .then(res => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
           this.isScrollLodaing = false;
-      });
+        });
     },
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDate}_${rowData.endDT}_${rowData.id}`;
       return tmpName;
     },
+    onDeleteConfirm(rowData) {
+      this.deleteId = rowData.id;
+      var user = sessionStorage.getItem("user_id");
+      var role = sessionStorage.getItem("authority");
+      if (user === rowData.editorID || role == "ADMIN") {
+        this.$bvModal.show("fillerTimeRemove");
+      }
+    },
+    getRemove() {
+      return "삭제하시겠습니까?";
+    },
+    // 휴지통 보내기
+    onDelete() {
+      axios.delete(`/api/Mastering/filler-time/${this.deleteId}`).then(res => {
+        console.log(res);
+      });
+    }
   }
-}
+};
 </script>

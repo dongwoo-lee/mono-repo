@@ -1,5 +1,6 @@
-﻿using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+﻿using M30.AudioFile.Common.DTO;
+using M30.AudioFile.DAL;
+using M30.AudioFile.DAL.Dao;
 using System;
 using System.Collections.Generic;
 using System.Linq;

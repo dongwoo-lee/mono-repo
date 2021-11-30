@@ -1,8 +1,17 @@
-import $http from '@/http.js'
-import $fn from '../../utils/CommonFunctions';
-import url from '@/constants/url';
+import $http from "@/http.js";
+import $fn from "../../utils/CommonFunctions";
+import url from "@/constants/url";
 import jwt_decode from "jwt-decode";
-import { USER_ID, ROLE, ACCESS_TOKEN, AUTHORITY, SYSTEM_MANAGEMENT_CODE, AUTHORITY_ADMIN, AUTHORITY_MANAGER, SYSTEM_TOP_ADMIN_CODE } from '@/constants/config';
+import {
+  USER_ID,
+  ROLE,
+  ACCESS_TOKEN,
+  AUTHORITY,
+  SYSTEM_MANAGEMENT_CODE,
+  AUTHORITY_ADMIN,
+  AUTHORITY_MANAGER,
+  SYSTEM_TOP_ADMIN_CODE
+} from "@/constants/config";
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
 const getAddUrlAndIconMenuList = (menuList, roleList) => {
@@ -43,33 +52,35 @@ const getAddUrlAndIconMenuList = (menuList, roleList) => {
 };
 
 // 시스템 권한 유무 가져오기
-const getAuthority = (behaviorList) => {
-  const findIndex = behaviorList.findIndex(behavior => behavior.id === SYSTEM_MANAGEMENT_CODE);
-  if (findIndex > -1 && behaviorList[findIndex].visible === 'Y') {
+const getAuthority = behaviorList => {
+  const findIndex = behaviorList.findIndex(
+    behavior => behavior.id === SYSTEM_MANAGEMENT_CODE
+  );
+  if (findIndex > -1 && behaviorList[findIndex].visible === "Y") {
     return AUTHORITY_ADMIN;
   }
   return AUTHORITY_MANAGER;
-}
+};
 
-const getRole = (menu) => {
+const getRole = menu => {
   return {
-    parentID: menu.parentID
-    , id: menu.id
-    , visible: menu.visible
-    , enable: menu.enable
-    , to: menu.to
-  }
-}
+    parentID: menu.parentID,
+    id: menu.id,
+    visible: menu.visible,
+    enable: menu.enable,
+    to: menu.to
+  };
+};
 
 export default {
   namespaced: true,
   state: {
     currentUser: {
-      name: '',
-      menuGrpName: '',
+      name: "",
+      menuGrpName: "",
       diskMax: 0,
       diskAvailable: 0,
-      diskUsed: 0,
+      diskUsed: 0
     },
     menuList: [],
     behaviorList: [],
@@ -78,22 +89,26 @@ export default {
     callLoginAuthTryCnt: 0,
     tokenExpires: 0,
     timerProccessing: false,
-    authority: AUTHORITY_MANAGER,
+    authority: AUTHORITY_MANAGER
   },
   getters: {
+    getMenuGrpName: state => state.currentUser.menuGrpName,
     menuList: state => state.menuList,
     roleList: state => state.roleList,
     behaviorList: state => state.behaviorList,
     currentUser: state => state.currentUser,
     processing: state => state.processing,
     diskAvailable: state => state.currentUser.diskAvailable,
-    isAuth: () => sessionStorage.getItem(ACCESS_TOKEN) != null && sessionStorage.getItem(USER_ID) != null,
+    isAuth: () =>
+      sessionStorage.getItem(ACCESS_TOKEN) != null &&
+      sessionStorage.getItem(USER_ID) != null,
     userId: () => sessionStorage.getItem(USER_ID),
     tokenExpires: state => state.tokenExpires,
     timerProccessing: state => state.timerProccessing,
     conDBName: state => state.currentUser.conDBName,
     conNetworkName: state => state.currentUser.conNetworkName,
-    isSystemTopAdmin: state => state.currentUser.authorCD === SYSTEM_TOP_ADMIN_CODE,
+    isSystemTopAdmin: state =>
+      state.currentUser.authorCD === SYSTEM_TOP_ADMIN_CODE
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -141,7 +156,7 @@ export default {
       sessionStorage.removeItem(ACCESS_TOKEN);
     },
     SET_PROCESSING(state, payload) {
-      state.processing = payload
+      state.processing = payload;
     },
     SET_MENU(state, payload) {
       state.menuList = payload;
@@ -159,8 +174,8 @@ export default {
   },
   actions: {
     async login({ commit }, payload) {
-      commit('SET_PROCESSING', true);
-      commit('SET_CALL_LOGIN_AUTH_TRY_CNT');
+      commit("SET_PROCESSING", true);
+      commit("SET_CALL_LOGIN_AUTH_TRY_CNT");
 
       const params = {
         UserID: payload.userId,
@@ -168,36 +183,40 @@ export default {
       };
 
       try {
-        const response = await $http.post('/api/Authenticate', params);
+        const response = await $http.post("/api/Authenticate", params);
         const { resultCode, resultObject, token } = response.data;
         if (resultObject && resultCode === 0) {
-          commit('SET_TOKEN', token);
-          commit('SET_AUTH', resultObject);
+          commit("SET_TOKEN", token);
+          commit("SET_AUTH", resultObject);
         }
-        commit('SET_PROCESSING', false);
+        commit("SET_PROCESSING", false);
         return response;
       } catch (error) {
         return error;
       }
     },
     async renewal({ state, commit }) {
-      if (state.callLoginAuthTryCnt > 0) { return; }
-      commit('SET_INIT_TOKEN_TIMER', false);
+      if (state.callLoginAuthTryCnt > 0) {
+        return;
+      }
+      commit("SET_INIT_TOKEN_TIMER", false);
 
       const params = {
         UserID: sessionStorage.getItem(USER_ID),
-        Pass: 'undefined',
+        Pass: "undefined"
       };
 
       try {
-        const response = await $http.post('/api/Renewal', params);
+        const response = await $http.post("/api/Renewal", params);
         const { resultCode, resultObject, token } = response.data;
 
         if (resultObject && resultCode === 0) {
-          commit('SET_TOKEN', token);
-          commit('SET_AUTH', resultObject);
+          commit("SET_TOKEN", token);
+          commit("SET_AUTH", resultObject);
         } else {
-          $fn.notify('error', { message: '사용자 정보 조회 실패: ' + data.errorMsg })
+          $fn.notify("error", {
+            message: "사용자 정보 조회 실패: " + data.errorMsg
+          });
         }
         return response;
       } catch (error) {
@@ -207,22 +226,26 @@ export default {
     },
     async reissue({ commit }, from) {
       // 페이지 이동 조건
-      if (!from.name || from.path == '/') { return; }
-      commit('SET_INIT_TOKEN_TIMER', false);
+      if (!from.name || from.path == "/") {
+        return;
+      }
+      commit("SET_INIT_TOKEN_TIMER", false);
 
       const params = {
         UserID: sessionStorage.getItem(USER_ID),
-        Pass: 'undefined',
+        Pass: "undefined"
       };
 
       try {
-        const response = await $http.post('/api/Reissue', params);
+        const response = await $http.post("/api/Reissue", params);
         const { resultCode, token } = response.data;
 
         if (resultCode === 0) {
-          commit('SET_TOKEN', token);
+          commit("SET_TOKEN", token);
         } else {
-          $fn.notify('error', { message: '사용자 인증에 실패: ' + data.errorMsg })
+          $fn.notify("error", {
+            message: "사용자 인증에 실패: " + data.errorMsg
+          });
         }
 
         return response.data.resultCode;
@@ -235,17 +258,17 @@ export default {
       $http.get(`/api/users/summary/${getters.userId}`).then(response => {
         const { resultCode, resultObject } = response.data;
         if (resultObject && resultCode === 0) {
-          commit('SET_SUMMARY_USER', resultObject);
+          commit("SET_SUMMARY_USER", resultObject);
         }
-      })
+      });
     },
     getMenu({ commit }, userId) {
       $http.get(`/api/users/${userId}/menu`).then(response => {
         const { status, data } = response;
         if (status === 200 && data.resultObject && data.resultCode === 0) {
-          commit('SET_MENU', data.resultObject.data);
+          commit("SET_MENU", data.resultObject.data);
         }
-      })
+      });
     }
   }
-}
+};

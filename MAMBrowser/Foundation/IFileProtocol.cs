@@ -4,7 +4,6 @@ namespace MAMBrowser.Foundation
 {
     public interface IFileProtocol : IFileDownloadProtocol
     {
-        string Name { get; set; }
         string TmpUploadFolder { get; set; }
         string UploadFolder { get; set; }
         void MakeDirectory(string directoryPath);

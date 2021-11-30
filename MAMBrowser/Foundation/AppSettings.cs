@@ -1,4 +1,4 @@
-﻿using MAMBrowser.DTO;
+﻿using M30.AudioFile.Common.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -13,7 +13,6 @@ namespace MAMBrowser.Helpers
         public string TokenSignature { get; set; }
         public string ConnectionString { get; set; }
         public List<DTO_NAMEVALUE> DiskScope { get; set; } = new List<DTO_NAMEVALUE>();
-        public Dictionary<string, string> RolExt { get; set; } = new Dictionary<string, string>();
         public string TempDownloadPath { get; set; }
         public int SessionTimeout { get; set; }
 
@@ -21,6 +20,6 @@ namespace MAMBrowser.Helpers
         public string BroadcastStartNetwork { get; set; }
         public string BroadcastEndNetwork { get; set; }
         public int ExpireMusicTokenHour { get; set; }
-        
+        public Dictionary<string, Dictionary<string, int>> MasteringPriorities { get; set; } = new Dictionary<string, Dictionary<string, int>>();
     }
 }

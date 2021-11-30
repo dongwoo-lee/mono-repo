@@ -2,8 +2,10 @@
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
       <clock className="system ml-2" style="font-weight:500;"></clock>
-      <div class="system " style="color:darkblue;opacity: .8;">{{conNetworkName}}</div>
-      <div class="system" :style="getConDBNameStyle()">{{conDBName}}</div>
+      <div class="system " style="color:darkblue;opacity: .8;">
+        {{ conNetworkName }}
+      </div>
+      <div class="system" :style="getConDBNameStyle()">{{ conDBName }}</div>
       <!-- 메뉴 네비 -->
       <!-- <a
         href="#"
@@ -27,22 +29,39 @@
     </router-link>
 
     <div class="navbar-right">
-      <b-row style="justify-content: flex-end;">     
+      <b-row style="justify-content: flex-end;">
         <div class="user d-inline-block">
           <table class="topnav-right-table">
             <tr>
+              <td rowspan="2"></td>
               <!-- 타이머 -->
               <td rowspan="2">
-                <timer 
-                  :timerProccessing="timerProccessing" 
-                  :expires="tokenExpires" 
-                  @resetTimer="resetTimer">
+                <timer
+                  :timerProccessing="timerProccessing"
+                  :expires="tokenExpires"
+                  @resetTimer="resetTimer"
+                >
                 </timer>
               </td>
               <!-- 디스크 용량 정보 -->
               <td>
-                <span class="current"> {{$fn.formatMBBytes(currentUser.diskUsed)}} / {{(currentUser.diskMax)}} GB</span>
-                <span :class="currentUser.diskAvailable<=(1000*1000*100) ? 'free-space-red' : 'free-space-blue'" >여유 {{ $fn.formatMBBytes(currentUser.diskAvailable, 1048000) }}</span>
+                <div>
+                  <span class="current">
+                    {{ $fn.formatMBBytes(currentUser.diskUsed) }} /
+                    {{ currentUser.diskMax }} GB</span
+                  >
+                  <span
+                    :class="
+                      currentUser.diskAvailable <= 1000 * 1000 * 100
+                        ? 'free-space-red'
+                        : 'free-space-blue'
+                    "
+                    >여유
+                    {{
+                      $fn.formatMBBytes(currentUser.diskAvailable, 1048000)
+                    }}</span
+                  >
+                </div>
               </td>
               <!-- 사용자 정보 -->
               <td rowspan="2">
@@ -55,15 +74,26 @@
                   no-caret
                 >
                   <template slot="button-content">
-                    <span class="name mr-1">
-                      {{currentUser.name}}({{currentUser.menuGrpName}})
+                    <div style="margin-top:6px">
                       <i class="iconsminds-administrator"></i>
+                      <span class="name mr-1">
+                        {{ currentUser.name }}({{ currentUser.menuGrpName }})
                       </span>
-
+                    </div>
+                    <div
+                      style="float:right; color:red; font-size:12px; margin-right:6px"
+                    >
+                      v1.0.211020
+                    </div>
                   </template>
                   <div v-if="isDisplaySetting()">
-                    <b-dropdown-item @click="$router.push({ path: '/app/log' })">사용자 로그보기</b-dropdown-item>
-                    <b-dropdown-item @click="$router.push({ path: '/app/config' })">설정</b-dropdown-item>
+                    <b-dropdown-item @click="$router.push({ path: '/app/log' })"
+                      >사용자 로그보기</b-dropdown-item
+                    >
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/config' })"
+                      >설정</b-dropdown-item
+                    >
                     <b-dropdown-divider />
                   </div>
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
@@ -73,11 +103,12 @@
             <tr>
               <td>
                 <!-- 디스크 용량 프로그래스바 -->
-                <b-progress 
+                <b-progress
                   class=""
                   :value="currentUser.diskUsed"
-                  :max="(currentUser.diskMax * (1024*1024*1024))"
-                  animated>
+                  :max="currentUser.diskMax * (1024 * 1024 * 1024)"
+                  animated
+                >
                 </b-progress>
               </td>
             </tr>
@@ -101,8 +132,8 @@ export default {
   },
   data() {
     return {
-      SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE,
-    }
+      SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE
+    };
   },
   created() {
     this.renewal();
@@ -112,40 +143,44 @@ export default {
       "changeSideMenuStatus",
       "changeSideMenuForMobile"
     ]),
-    ...mapActions("user", ["setLang", "signOut", 'renewal']),
-    ...mapMutations('user', ['SET_INIT_CALL_LOGIN_AUTH_TRY_CNT', 'SET_LOGOUT']),
+    ...mapActions("user", ["setLang", "signOut", "renewal"]),
+    ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
     logout() {
       this.SET_LOGOUT();
       this.$router.push("/user/Login");
     },
     isDisplaySetting() {
-      return this.behaviorList.some(item => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === 'Y');
+      return this.behaviorList.some(
+        item => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === "Y"
+      );
     },
     getTo() {
       if (this.roleList) {
-        const firstVisibleIndex = this.roleList.findIndex(role => role.visible === 'Y' );
+        const firstVisibleIndex = this.roleList.findIndex(
+          role => role.visible === "Y"
+        );
         if (this.roleList[firstVisibleIndex]) {
-          return this.roleList[firstVisibleIndex].to;  
+          return this.roleList[firstVisibleIndex].to;
         }
       }
 
-      return '';
+      return "";
     },
     resetTimer() {
       this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
       this.renewal().then(res => {
         if (res && res.data && res.data.resultCode === 0) {
-            this.$notify('primary', '로그인 연장되었습니다.');
+          this.$notify("primary", "로그인 연장되었습니다.");
         }
       });
     },
     getConDBNameStyle() {
-      if(!this.conDBName) return {};
-      if (this.conDBName.indexOf('운영') > -1) { 
-        return { color: 'darkblue', opacity: .8 }
+      if (!this.conDBName) return {};
+      if (this.conDBName.indexOf("운영") > -1) {
+        return { color: "darkblue", opacity: 0.8 };
       }
 
-      return { color: 'darkred', opacity: .8 };
+      return { color: "darkred", opacity: 0.8 };
     }
   },
   computed: {
@@ -154,15 +189,15 @@ export default {
       menuClickCount: "getMenuClickCount",
       selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
     }),
-    ...mapGetters("user", 
-      ['currentUser'
-        , 'behaviorList'
-        , 'roleList'
-        , 'timerProccessing'
-        , 'tokenExpires'
-        , 'conDBName'
-        , 'conNetworkName'
-    ]),
+    ...mapGetters("user", [
+      "currentUser",
+      "behaviorList",
+      "roleList",
+      "timerProccessing",
+      "tokenExpires",
+      "conDBName",
+      "conNetworkName"
+    ])
   },
   watch: {
     "$i18n.locale"(to, from) {
@@ -170,18 +205,18 @@ export default {
         this.$router.go(this.$route.path);
       }
     }
-  },
+  }
 };
 </script>
 <style scoped>
-.free-space-blue{
+.free-space-blue {
   color: darkblue;
   font-weight: 600;
-  margin-left:20px;
+  margin-left: 20px;
 }
-.free-space-red{
+.free-space-red {
   color: red;
   font-weight: 600;
-  margin-left:20px;
+  margin-left: 20px;
 }
 </style>
