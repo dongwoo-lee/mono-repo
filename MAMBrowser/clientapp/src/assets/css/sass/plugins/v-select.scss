@@ -139,20 +139,6 @@
 
     &:active,
     &:focus,
-    &:hover 
-    {
-      color: $theme-color-1 !important;
-    }
-    }
-  }
-
-  .vs__actions,
-  &.vs--open .vs__actions {
-    outline: initial;
-    box-shadow: initial;
-
-    &:active,
-    &:focus,
     &:hover {
       color: $theme-color-1 !important;
     }

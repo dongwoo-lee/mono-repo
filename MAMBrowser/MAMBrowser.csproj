@@ -22,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DAP3.CueSheetCommon" Version="1.0.19" />
-    <PackageReference Include="DAP3.CueSheetDAL" Version="1.0.30" />
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
     <PackageReference Include="FluentFTP" Version="33.0.2" />
@@ -73,6 +71,9 @@
     </Reference>
     <Reference Include="M30.AudioFile.DAL">
       <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
+    </Reference>
+    <Reference Include="M30_CueSheetDAO">
+      <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -171,7 +171,6 @@
       </template>
     </common-form>
 
-<<<<<<< HEAD
      <CMGroupPlayerPopup 
     :showPlayerPopup="showGrpPlayer"
     :title="grpParam.title"
@@ -190,18 +189,6 @@
     :tempDownloadUrl="tempDownloadUrl"
     requestType="token"
     @closePlayer="onClosePlayer">
-=======
-    <PlayerPopup
-      :showPlayerPopup="showPlayerPopup"
-      :title="soundItem.name"
-      :fileKey="soundItem.fileToken"
-      :streamingUrl="streamingUrl"
-      :waveformUrl="waveformUrl"
-      :tempDownloadUrl="tempDownloadUrl"
-      requestType="token"
-      @closePlayer="onClosePlayer"
-    >
->>>>>>> dev2
     </PlayerPopup>
   </div>
 </template>
@@ -259,7 +246,6 @@ export default {
         { key: "actions", label: "추가작업", tdClass: "text-muted" }
       ],
       fieldsContents: [
-<<<<<<< HEAD
         { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
         { key: 'advertiser', label: '광고주', tdClass: 'text-muted', thStyle: { width: '20%' } },
         { key: 'name', label: '소재명', tdClass: 'text-muted' },
@@ -271,22 +257,6 @@ export default {
       showGrpPlayer : false,
       grpParam : {},
     }
-=======
-        { key: "rowNO", label: "순서", tdClass: "list-item-heading" },
-        {
-          key: "advertiser",
-          label: "광고주",
-          tdClass: "text-muted",
-          thStyle: { width: "20%" }
-        },
-        { key: "name", label: "소재명", tdClass: "text-muted" },
-        { key: "length", label: "길이(초)", tdClass: "text-muted" },
-        { key: "codingUserName", label: "제작자", tdClass: "text-muted" },
-        { key: "codingDT", label: "제작일", tdClass: "text-muted" },
-        { key: "actions", label: "추가작업", tdClass: "text-muted" }
-      ]
-    };
->>>>>>> dev2
   },
   methods: {
     rowCustomClass(data) {
@@ -311,7 +281,6 @@ export default {
       if (this.selectName) {
         return `${this.selectName} 상세 내역`;
       }
-<<<<<<< HEAD
       return '상세 내역';
     },
     showGrpPlayerPopup(data){
@@ -320,9 +289,6 @@ export default {
     },
     closeGrpPlayerPopup(){
       this.showGrpPlayer = false;
-=======
-      return "상세 내역";
->>>>>>> dev2
     }
   }
 };
