@@ -1,41 +1,45 @@
-﻿using DAP3.CueSheetCommon.DTO.Param;
-using DAP3.CueSheetCommon.DTO.Result;
-using DAP3.CueSheetDAL.Factories.Web;
-using Dapper;
-using M30.AudioFile.DAL;
+﻿using M30_CueSheetDAO;
+using M30_CueSheetDAO.DAO;
+using M30_CueSheetDAO.Entity;
+using M30_CueSheetDAO.Interfaces;
+using M30_CueSheetDAO.ParamEntity;
 using MAMBrowser.DTO;
+using MAMBrowser.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.BLL
 {
     public class FavoriteBll
     {
-        private readonly WebCueSheetFactory _factory;
-        public FavoriteBll(WebCueSheetFactory factory)
-        {
-            _factory = factory;
-        }
+        private readonly IFavoritesDAO _dao;
 
-        // 즐겨찾기 가져오기 
-        public List<UserFavDTO> GetUserFavorites(string personid)
+        public FavoriteBll(IFavoritesDAO dao)
         {
-            return _factory.UserRepository.GetUserFavorites(personid).ToList();
+            _dao = dao;
+        }
+        // 즐겨찾기 가져오기 
+        public IEnumerable<CueSheetConDTO> GetUserFavorites(string personid)
+        {
+            return _dao.GetUserFavorites(personid)?.Converting();
         }
 
         // 즐겨찾기 저장
-        public SaveResultDTO SaveUserFavorites(string personid, IEnumerable<FavConParamDTO> favConParam)
+        public int SaveUserFavorites(string personid, List<CueSheetConDTO> pram)
         {
-            var result = _factory.UserRepository.SaveUserFavorites(personid, favConParam);
-            return result;
-        }
+            var paramData = pram.FavToEntity();
+            List<UserFavCreateParam> param = new List<UserFavCreateParam>();
+            foreach (var item in paramData)
+            {
+                var paramItem = new UserFavCreateParam();
+                paramItem = item;
+                paramItem.p_personid = personid;
+                param.Add(paramItem);
+            }
 
-        // 즐겨찾기 삭제
-        public bool DeleteUserFavorites(string personid)
-        {
-            return _factory.UserRepository.DeleteUserFavorites(personid);
+            return _dao.CreateFavorites(param);
         }
     }
 }

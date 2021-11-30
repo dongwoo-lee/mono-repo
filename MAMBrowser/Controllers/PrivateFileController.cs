@@ -1,8 +1,10 @@
 ﻿using MAMBrowser.BLL;
-using M30.AudioFile.Common;
+using MAMBrowser.Common;
+using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
+using MAMBrowser.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +16,6 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using M30.AudioFile.Common.Models;
-using M30.AudioFile.Common.DTO;
 
 namespace MAMBrowser.Controllers
 {
@@ -26,7 +26,7 @@ namespace MAMBrowser.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly PrivateFileBll _bll;
         private readonly WebServerFileHelper _fileHelper;
-        private readonly IFileProtocol _fileSystem;
+        private readonly IFileProtocol _fileProtocol;
         private readonly HttpContextDBLogger _logBll;
 
         public PrivateFileController(IHostingEnvironment hostingEnvironment, PrivateFileBll bll, HttpContextDBLogger logger, ServiceResolver sr, WebServerFileHelper fileHelper)
@@ -36,7 +36,7 @@ namespace MAMBrowser.Controllers
             
             _hostingEnvironment = hostingEnvironment;
             _fileHelper = fileHelper;
-            _fileSystem = sr(MAMDefine.PrivateWorkConnection).FileSystem;
+            _fileProtocol = sr("PrivateWorkConnection");
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace MAMBrowser.Controllers
                 string fileName = Path.GetFileName(fileData.FilePath);
                 var startIdx = fileName.IndexOf('_');
                 var downloadName = fileName.Substring(startIdx+1, fileName.Length - startIdx -1);
-                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileSystem, inline);
+                return _fileHelper.DownloadFromPath(downloadName, fileData.FilePath, Response, _fileProtocol, inline);
             }
             catch (HttpStatusErrorException ex)
             {
@@ -195,7 +195,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.ToString());
             }
         }
         /// <summary>
@@ -257,16 +257,12 @@ namespace MAMBrowser.Controllers
             string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
-                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileSystem);
+                _fileHelper.TempDownloadFromPath(fileData.FilePath, userId, remoteIp, _fileProtocol);
                 return Ok();
             }
             catch (HttpStatusErrorException ex)
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

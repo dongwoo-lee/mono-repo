@@ -1,16 +1,16 @@
-﻿using DAP3.CueSheetCommon.DTO.Param;
-using DAP3.CueSheetCommon.DTO.Result;
-using MAMBrowser.BLL;
-using MAMBrowser.Entiies;
+﻿using MAMBrowser.BLL;
+using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FavoriteController : ControllerBase
+    public class FavoriteController : Controller
     {
         private readonly FavoriteBll _bll;
 
@@ -20,43 +20,31 @@ namespace MAMBrowser.Controllers
         }
         //즐겨찾기 가져오기
         [HttpGet("GetFavorites")]
-        public List<UserFavDTO> GetFavorites([FromQuery] string personid)
+        public IEnumerable<CueSheetConDTO> GetFavorites([FromQuery] string personid)
         {
             try
             {
-                return _bll.GetUserFavorites(personid).ToList();
+                return _bll.GetUserFavorites(personid);
             }
             catch
             {
                 throw;
             }
         }
-        //즐겨찾기 저장 (테스트 필요)
+        //즐겨찾기 저장
         [HttpPost("SetFavorites")]
-        public SaveResultDTO SetFavorites([FromQuery] string personid, [FromBody] CueData pram)
+        public int SetFavorites([FromQuery] string personid, [FromBody] List<CueSheetConDTO> pram)
         {
             try
             {
-               var result = _bll.SaveUserFavorites(personid, pram.favConParam);
+                var result = _bll.SaveUserFavorites(personid, pram);
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
                 throw;
             }
         }
-        //즐겨찾기 삭제
-        [HttpDelete("DelFavorites")]
-        public bool DelFavorites([FromBody] string personid)
-        {
-            try
-            {
-                return _bll.DeleteUserFavorites(personid);
-            }
-            catch
-            {
-                throw;
-            }
-        }
+
     }
 }

@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using M30.AudioFile.Common.DTO;
-using M30.AudioFile.Common.Models;
-using M30.AudioFile.DAL;
-using M30.AudioFile.DAL.Dao;
+using MAMBrowser.DAL;
+using MAMBrowser.DTO;
+using MAMBrowser.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,41 +72,5 @@ namespace MAMBrowser.BLL
         {
             return _dao.UpdateRole(updateDtoList);
         }
-
-        public void SetOptions(string optionGrpCd, List<DTO_NAMEVALUE> options)
-        {
-            var selectOptions = _dao.GetOptions(optionGrpCd);
-            if (selectOptions == null || selectOptions.Count == 0)
-                _dao.InsertOptions(optionGrpCd, options);
-            else if (selectOptions.Count!= options.Count)
-            {
-                _dao.DeleteOptions(optionGrpCd);
-                _dao.InsertOptions(optionGrpCd, options);
-            }
-            else
-                _dao.UpdateOptions(optionGrpCd, options);
-        }
-        public IList<DTO_NAMEVALUE> GetOptions(string optionGrpCd)
-        {
-            return _dao.GetOptions(optionGrpCd);
-        }
-        public IList<DTO_MASTERING_INFO> GetMasteringStatus()
-        {
-            List<string> workStatus = new List<string>();
-            workStatus.Add("0");
-            workStatus.Add("1");
-            workStatus.Add("2");
-            workStatus.Add("3");
-            workStatus.Add("4");
-            return _dao.GetMasteringStatus(null, null, workStatus);
-        }
-        public IList<DTO_MASTERING_INFO> GetMasteringLogs(string startDt, string endDt)
-        {
-            List<string> workStatus = new List<string>();
-            workStatus.Add("5");
-            workStatus.Add("6");
-            return _dao.GetMasteringStatus(startDt, endDt, workStatus);
-        }
-       
     }
 }

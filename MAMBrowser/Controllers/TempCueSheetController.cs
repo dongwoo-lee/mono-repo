@@ -1,14 +1,17 @@
-﻿using DAP3.CueSheetCommon.DTO.Result;
-using MAMBrowser.BLL;
-using MAMBrowser.Entiies;
+﻿using MAMBrowser.BLL;
+using MAMBrowser.Common;
+using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TempCueSheetController : ControllerBase
+    public class TempCueSheetController : Controller
     {
         private readonly TemplateBll _bll;
 
@@ -19,22 +22,27 @@ namespace MAMBrowser.Controllers
 
         // 템플릿 목록 가져오기
         [HttpGet("GetTempList")]
-        public List<TemplateListDTO> GetTempList([FromQuery] string personid, string title)
+        public TempCueList_Result GetTempList([FromQuery] string personid, string title, int row_per_page, int select_page)
         {
             try
             {
-                return _bll.GetPersonIDWithTitleTemplateList(personid, title);
+                var result = new TempCueList_Result();
+                result.ResultObject = new TempCueList_Page();
+                result.ResultObject = _bll.GetPersonIDWithTitleTemplateList(personid, title, row_per_page, select_page);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                return result;
+
             }
             catch
             {
                 throw;
             }
-            
+
         }
 
         //템플릿 상세내용 가져오기
         [HttpGet("GetTempCue")]
-        public TemplateCollectionDTO GetTempCue([FromQuery] int cueid)
+        public CueSheetCollectionDTO GetTempCue([FromQuery] int cueid)
         {
             try
             {
@@ -45,13 +53,14 @@ namespace MAMBrowser.Controllers
                 throw;
             }
         }
+
         //템플릿 생성 & 업데이트 (테스트필요)
         [HttpPost("SaveTempCue")]
-        public bool SaveTempCue([FromBody] CueData pram)
+        public int SaveTempCue([FromBody] CueSheetCollectionDTO pram)
         {
             try
             {
-                return _bll.SaveTemplate(pram.temParam, pram.conParams, pram.tagParams, pram.printParams, pram.attParams);
+                return _bll.SaveTemplate(pram);
             }
             catch
             {
@@ -72,5 +81,6 @@ namespace MAMBrowser.Controllers
                 throw;
             }
         }
+
     }
 }

@@ -1,31 +1,40 @@
-﻿using DAP3.CueSheetCommon.DTO.Result;
-using DAP3.CueSheetDAL.Factories.Web;
-using Dapper;
-using M30.AudioFile.DAL;
+﻿using M30_CueSheetDAO;
+using M30_CueSheetDAO.DAO;
+using M30_CueSheetDAO.Entity;
+using M30_CueSheetDAO.Interfaces;
+using M30_CueSheetDAO.ParamEntity;
 using MAMBrowser.DTO;
+using MAMBrowser.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.BLL
 {
     public class CueUserInfoBll
     {
-        private readonly WebCueSheetFactory _factory;
-        public CueUserInfoBll(WebCueSheetFactory factory)
+        private readonly ICommonDAO _dao;
+
+        public CueUserInfoBll(ICommonDAO dao)
         {
-            _factory = factory;
+            _dao = dao;
         }
 
-        public List<PgmListDTO> GetUserPgmList(string personid, string media)
+        public IEnumerable<PgmListDTO> GetUserPgmList(string personid, char media)
         {
-            return _factory.InformationRepository.GetPgmList(personid, media).ToList();
-        }
+            ProgramListParam param = new ProgramListParamBuilder()
+                .SetMedia(media)
+                .SetPersonid(personid)
+                .Build();
 
+            return _dao.GetProgramList(param)?.Converting();
+        }
         public string GetDirectorList(string productid)
         {
-            return _factory.CueSheetRepository.GetCueSheetDirectorName(productid);
+            return _dao.GetCueSheetDirectorName(productid);
         }
+
+
     }
 }

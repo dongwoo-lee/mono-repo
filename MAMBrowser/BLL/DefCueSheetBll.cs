@@ -1,48 +1,82 @@
-﻿using DAP3.CueSheetCommon.DTO.Param;
-using DAP3.CueSheetCommon.DTO.Result;
-using DAP3.CueSheetDAL.Factories.Web;
-using Dapper;
-using M30.AudioFile.DAL;
+﻿using M30_CueSheetDAO;
+using M30_CueSheetDAO.DAO;
+using M30_CueSheetDAO.Entity;
+using M30_CueSheetDAO.Interfaces;
+using M30_CueSheetDAO.ParamEntity;
 using MAMBrowser.DTO;
+using MAMBrowser.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.BLL
 {
     public class DefCueSheetBll
     {
-        private readonly WebCueSheetFactory _factory;
-        public DefCueSheetBll(WebCueSheetFactory factory)
+        private readonly ICueSheetDAO _dao;
+
+        public DefCueSheetBll(ICueSheetDAO dao)
         {
-            _factory = factory;
+            _dao = dao;
         }
         // 기본큐시트 목록 가져오기
-        public List<DefaultCueSheetListDTO> GetDefCueList(string[] productids)
+        public DefCueList_Page GetDefCueList(List<string> productids, int row_per_page, int select_page)
         {
-            var result = _factory.CueSheetRepository.GetDefaultCueSheetList(productids).ToList();
+            var result = new DefCueList_Page();
+            DefCueSheetListParam param = new DefCueSheetListParamBuilder()
+                .SetProductIDs(productids)
+                .SetRowPage(row_per_page)
+                .SetSelectPage(select_page)
+                .Build();
+
+            var data = _dao.GetDefCueSheetList(param);
+            result.RowPerPage = row_per_page;
+            result.SelectPage = select_page;
+            result.TotalRowCount = data.TotalCount;
+            result.Data = data.DefCueSheetListEntity?.Converting();
             return result;
+
         }
         // 기본큐시트 상세내용 가져오기
-        public CueSheetCollectionDTO GetDefCue(string productid, int[] cueid)
+        public CueSheetCollectionDTO GetDefCue(string productid, List<string> week)
         {
-            var result = _factory.CueSheetRepository.GetDefultCueSheet(productid, cueid);
-            return result;
+            DefCueSheetInfoParam param = new DefCueSheetInfoParamBuilder()
+                .SetWeeks(week)
+                .SetProductID(productid)
+                .SetRequestType(RequestType.Web)
+                .Build();
+
+            return _dao.GetDefCueSheet(param)?.DefConverting();
         }
         //기본큐시트 생성 & 업데이트
-        public bool SaveDefaultCueSheet(CueSheetParamDTO cueParam, IEnumerable<string> defParams, IEnumerable<CueSheetConParamDTO> conParams, IEnumerable<string> tagParams, IEnumerable<PrintParamDTO> printParams, IEnumerable<AttachmentParamDTO> attParams, int[] delParams)
+        public int SaveDefaultCueSheet(CueSheetCollectionDTO pram)
         {
-            //int[] delid = { 797, 798 };
-            var result = _factory.CueSheetRepository.SaveDefaultCueSheet(cueParam, defParams, conParams, tagParams, printParams, attParams, delParams);
-            return result.IsSuccess;
+            var paramData = pram.DefToEntity();
+            DefCueSheetCreateParam param = new DefCueSheetCreateParamBuilder()
+                .SetCueSheetConParams(paramData.CueSheetConParams)
+                .SetDefCueSheetParam(paramData.DefCueSheetParam)
+                .SetPrintParams(paramData.PrintParams)
+                .Build();
+
+            param.DelDefCueParams = new List<DefDeleteParam>();
+            param.DelDefCueParams = paramData.DelDefCueParams;
+
+            return _dao.CreateDefCueSheet(param);
         }
+
         //기본큐시트 삭제
         public bool DeleteDefaultCueSheet(int[] delParams)
         {
-            var result = _factory.CueSheetRepository.DeleteDefaultCueSheet(delParams);
-            return result;
+            var param = new List<DefDeleteParam>();
+            for (int i = 0; i < delParams.Length; i++)
+            {
+                var delParam = new DefDeleteParam();
+                delParam.p_del_cueid = delParams[i];
+                param.Add(delParam);
+            }
+            return _dao.DeleteDefCueSheet(param);
         }
+
     }
 }

@@ -14,7 +14,7 @@ using System.IO;
 using System.Threading.Tasks;
 using MAMBrowser.Services;
 using System.Linq;
-using M30.AudioFile.DAL;
+using MAMBrowser.DAL;
 using MAMBrowser.BLL;
 using MAMBrowser.Middleware;
 using Microsoft.Extensions.Options;
@@ -22,14 +22,17 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using MAMBrowser.Foundation;
+using MAMBrowser.Common.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.DAL.Expand.Factories;
 using MAMBrowser.DAL.Expand.Factories.Web;
-using DAP3.CueSheetDAL.Factories.Web;
+using M30_CueSheetDAO.DAO;
+using M30_CueSheetDAO.Interfaces;
+using M30_CueSheetDAO;
 
 namespace MAMBrowser
 {
-    public delegate StorageManager ServiceResolver(string key);
+    public delegate IFileProtocol ServiceResolver(string key);
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -46,6 +49,7 @@ namespace MAMBrowser
         {
 
 
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
@@ -58,14 +62,12 @@ namespace MAMBrowser
                 c.IncludeXmlComments(xmlPath);
                 c.SchemaFilter<EnumSchemaFilter>();
             });
-            string value = Configuration.GetSection("ConnectionString").Value;
-            WebCueSheetFactory.Instance.SetConnectionString(value);
+            
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp";
             });
-
 
 
             StorageFactorySetting(services);
@@ -81,10 +83,11 @@ namespace MAMBrowser
                 }
             }
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, ILoggerFactory logFactory, IOptions<AppSettings> appSettings)
         {
+
+
             app.UseFileServer();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -131,127 +134,163 @@ namespace MAMBrowser
      
         private void DISetting(IServiceCollection services)
         { 
-            //ï¿½É¼ï¿½ DI
+            //¿É¼Ç DI
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
 
-            //ï¿½Û·Î¹ï¿½ ï¿½ï¿½ï¿½ï¿½
+            
+            //±Û·Î¹ú ¼ÂÆÃ
             AppSetting = optionSection.Get<AppSettings>();
-            QueryHelper.ConnectionString = AppSetting.ConnectionString;
-            TokenGenerator.UseToken = true;
+            Repository.ConnectionString = AppSetting.ConnectionString;
             TokenGenerator.ExpireHour = AppSetting.ExpireMusicTokenHour;
             TokenGenerator.TokenIssuer = AppSetting.TokenIssuer;
             TokenGenerator.TokenSignature = AppSetting.TokenSignature;
 
+
+            //Å¥½ÃÆ® °ü·Ã DI µî·Ï
+            services.AddTransient<ICueSheetDAO, CueSheetDAO>();
+            services.AddTransient<ICommonDAO, CommonDAO>();
+            services.AddTransient<ITemplateDAO, TemplateDAO>();
+            services.AddTransient<IFavoritesDAO, FavoritesDAO>();
+            services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
+
+
+
+
             //
             services.AddTransient<WebServerFileHelper>();
-            //services.AddTransient<TransactionRepository>();
-            services.AddTransient<QueryHelper>();
+            services.AddTransient<TransactionRepository>();
+            services.AddTransient<Repository>();
             services.AddTransient<HttpContextDBLogger>();
             
 
-            //DAL ï¿½ï¿½ï¿½
+            //DAL µî·Ï
             services.AddTransient<APIDao>();
             services.AddTransient<CategoriesDao>();
             services.AddTransient<PrivateFileDao>();
             services.AddTransient<ProductsDao>();
             services.AddTransient<PublicFileDao>();
             services.AddTransient<LogDao>();
-            services.AddTransient<WebCueSheetFactory>();
+            
             
 
-            //BLL ï¿½ï¿½ï¿½
+            //BLL µî·Ï
             services.AddTransient<APIBll>();
             services.AddTransient<CategoriesBll>();
             services.AddTransient<PrivateFileBll>();
             services.AddTransient<ProductsBll>();
             services.AddTransient<PublicFileBll>();
             services.AddTransient<LogBll>();
-
             services.AddTransient<CueUserInfoBll>();
             services.AddTransient<DayCueSheetBll>();
             services.AddTransient<DefCueSheetBll>();
             services.AddTransient<TemplateBll>();
             services.AddTransient<FavoriteBll>();
 
-            //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+
+            //¼­ºñ½º µî·Ï
             services.AddScoped<IUserService, UserService>();
+
+            //±âÅ¸ µî·Ï
+            services.Configure<StorageMaps>(Configuration.GetSection("StorageMaps"));
+            
+
+            
+            MAMWebFactory.Instance.Setting(AppSetting.ConnectionString, AppSetting.ExpireMusicTokenHour, GetIP(), AppSetting.TokenIssuer,
+                AppSetting.TokenSignature);
+        }
+
+        //´ë±â
+        private string GetIP()
+        {
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return null;
         }
 
         private void StorageFactorySetting(IServiceCollection services)
         {
-            //ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½
-            //services.AddTransient(serviceProvider =>
-            //{
-            //    var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
-            //    var musicService = storagesSection.Get<MusicService>();
-            //    return musicService;
-            //});
+            //½ºÅä¸®Áö ¿¬°áÁ¤º¸ ÆÑÅä¸®±¸¼º
+            var storagesSection = Configuration.GetSection("StorageConnections");
+            var storage = storagesSection.Get<StorageConnections>();
+            services.Configure<StorageConnections>(storagesSection);
 
+            services.AddTransient<IFileProtocol, NetDriveProtocol>(serviceProvider =>
+            {
+                return new NetDriveProtocol
+                {
+                    Name = "MirosConnection",
+                    UploadHost = storage.MirosConnection["UploadHost"].ToString(),
+                    UserId = storage.MirosConnection["UserId"].ToString(),
+                    UserPass = storage.MirosConnection["UserPass"].ToString(),
+                };
+            });
             services.AddTransient<MusicService>();
-            services.AddTransient(serviceProvider =>
+            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
             {
-                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
-                var storage = storagesSection.Get<StorageManager>();
-                storage.FileSystem = GetProtocol(storage);
-                return storage;
+                return new FTPProtocol
+                {
+                    Name = "PrivateWorkConnection",
+                    UploadHost = storage.PrivateWorkConnection["UploadHost"].ToString(),
+                    UserId = storage.PrivateWorkConnection["UserId"].ToString(),
+                    UserPass = storage.PrivateWorkConnection["UserPass"].ToString(),
+                    TmpUploadFolder = storage.PrivateWorkConnection["TmpUploadFolder"].ToString(),
+                    UploadFolder = storage.PrivateWorkConnection["UploadFolder"].ToString(),
+                    EncodingType = Convert.ToInt32(storage.PrivateWorkConnection["EncodingType"]),
+                };
             });
-            
-            services.AddTransient(serviceProvider =>
+            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
             {
-                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PublicWorkConnection");
-                var storage = storagesSection.Get<StorageManager>();
-                storage.FileSystem = GetProtocol(storage);
-                return storage;
+                return new FTPProtocol
+                {
+                    Name = "PublicWorkConnection",
+                    UploadHost = storage.PublicWorkConnection["UploadHost"].ToString(),
+                    UserId = storage.PublicWorkConnection["UserId"].ToString(),
+                    UserPass = storage.PublicWorkConnection["UserPass"].ToString(),
+                    TmpUploadFolder = storage.PublicWorkConnection["TmpUploadFolder"].ToString(),
+                    UploadFolder = storage.PublicWorkConnection["UploadFolder"].ToString(),
+                    EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
+                };
             });
-            services.AddTransient(serviceProvider =>
+            services.AddTransient<IFileProtocol, FTPProtocol>(serviceProvider =>
             {
-                var storagesSection = Configuration.GetSection("StorageConnections:Internal:MirosConnection");
-                var storage = storagesSection.Get<StorageManager>();
-                storage.FileSystem = GetProtocol(storage);
-                return storage;
-            });
-            services.AddTransient(serviceProvider =>
-            {
-                var storagesSection = Configuration.GetSection("StorageConnections:Internal:DLArchiveConnection");
-                var storage = storagesSection.Get<StorageManager>();
-                storage.FileSystem = GetProtocol(storage);
-                return storage;
+                return new FTPProtocol
+                {
+                    Name = "DLArchiveConnection",
+                    UploadHost = storage.DLArchiveConnection["UploadHost"].ToString(),
+                    UserId = storage.DLArchiveConnection["UserId"].ToString(),
+                    UserPass = storage.DLArchiveConnection["UserPass"].ToString(),
+                    EncodingType = Convert.ToInt32(storage.PublicWorkConnection["EncodingType"]),
+                };
             });
             services.AddTransient<ServiceResolver>(serviceProvider => key =>
             {
                 switch (key)
                 {
-                    case MAMDefine.PrivateWorkConnection:
-                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
-                    case MAMDefine.PublicWorkConnection:
-                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
-                    case MAMDefine.MirosConnection:
-                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
-                    case MAMDefine.DLArchiveConnection:
-                        return serviceProvider.GetServices<StorageManager>().First(impl => impl.Name == key);
+                    case "PrivateWorkConnection":
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
+                    case "PublicWorkConnection":
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
+                    case "MirosConnection":
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
+                    case "DLArchiveConnection":
+                        return serviceProvider.GetServices<IFileProtocol>().First(impl => impl.Name == key);
                     default:
                         throw new Exception("KeyNotFoundException"); // or maybe return null, up to you
                 }
             });
         }
-        private IFileProtocol GetProtocol(StorageManager sm)
-        {
-            switch (sm.Protocol)
-            {
-                case MAMDefine.FTP:
-                    return new FTPProtocol(sm.UploadHost, sm.UserId, sm.UserPass, sm.TmpUploadFolder, sm.UploadFolder, sm.EncodingType);
-                case MAMDefine.SMB:
-                    return new NetDriveProtocol(sm.UploadHost, sm.UserId, sm.UserPass, sm.TmpUploadFolder, sm.UploadFolder);
-                default:
-                    return null;
-            }
-        }
     }
 }
 
 
-//ï¿½ï¿½ï¿½
+//´ë±â
 //private string GetIP()
 //{
 //    IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
@@ -264,6 +303,6 @@ namespace MAMBrowser
 //    }
 //    return null;
 //}
-//ï¿½ï¿½ï¿½
+//´ë±â
 //MAMWebFactory.Instance.Setting(AppSetting.ConnectionString, AppSetting.ExpireMusicTokenHour, GetIP(), AppSetting.TokenIssuer,
 //    AppSetting.TokenSignature);

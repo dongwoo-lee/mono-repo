@@ -1,22 +1,17 @@
-﻿using DAP3.CueSheetCommon.DTO.Result;
-using MAMBrowser.BLL;
-using MAMBrowser.Entiies;
-using MAMBrowser.Foundation;
-using MAMBrowser.Helper;
-using MAMBrowser.Helpers;
-using Microsoft.AspNetCore.Hosting;
+﻿using MAMBrowser.BLL;
+using MAMBrowser.Common;
+using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DefCueSheetController : ControllerBase
+    public class DefCueSheetController : Controller
     {
         private readonly DefCueSheetBll _bll;
 
@@ -24,28 +19,33 @@ namespace MAMBrowser.Controllers
         {
             _bll = bll;
         }
+
         // 기본큐시트 목록 가져오기
         [HttpGet("GetDefList")]
-        public List<DefaultCueSheetListDTO> GetDefList([FromQuery] string[] productids)
+        public DefCueList_Result GetDefList([FromQuery] List<string> productids, int row_per_page, int select_page)
         {
-
             try
             {
-                var result = _bll.GetDefCueList(productids);
+                DefCueList_Result result = new DefCueList_Result();
+                result.ResultObject = new DefCueList_Page();
+                result.ResultObject = _bll.GetDefCueList(productids, row_per_page, select_page);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
                 return result;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
         }
+
+
         // 기본큐시트 상세내용 가져오기
         [HttpGet("GetDefCue")]
-        public CueSheetCollectionDTO GetDefCue([FromQuery]string productid, [FromQuery] int[] cueid)
+        public CueSheetCollectionDTO GetDefCue([FromQuery] string productid, [FromQuery] List<string> week)
         {
             try
             {
-                var result = _bll.GetDefCue(productid, cueid);
+                var result = _bll.GetDefCue(productid, week);
                 return result;
             }
             catch (Exception ex)
@@ -54,20 +54,20 @@ namespace MAMBrowser.Controllers
             }
         }
 
-        // 기본큐시트 저장 (테스트필요)
+        //기본큐시트 생성 & 업데이트
         [HttpPost("SaveDefCue")]
-        public bool SaveDefCue([FromBody]CueData pram)
+        public int SaveDefCue([FromBody] CueSheetCollectionDTO pram)
         {
             try
             {
-                //pram.defParams.Skip(2);
-                //var def = pram.defParams.Skip(2);
-                return _bll.SaveDefaultCueSheet(pram.cueParam, pram.defParams, pram.conParams, pram.tagParams, pram.printParams, pram.attParams, pram.delParams);
+                var result = _bll.SaveDefaultCueSheet(pram);
+                return result;
             }
             catch (Exception ex)
             {
                 throw;
             }
+
         }
 
         //기본큐시트 삭제
