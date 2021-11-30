@@ -46,21 +46,24 @@
     <PackageReference Include="NLayer.NAudioSupport" Version="1.1.0" />
     <PackageReference Include="ODP.NetCore" Version="2.0.12" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.130" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
     <PackageReference Include="SqlBatis.DataMapper" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.5.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\MAMBrowser.Common\MAMBrowser.Common.csproj" />
-    <ProjectReference Include="..\MAMBrowser.DAL\MAMBrowser.DAL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Reference Include="M30.AudioFile.Common">
+      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="M30.AudioFile.DAL">
+      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
+    </Reference>
     <Reference Include="M30_CueSheetDAO">
       <HintPath>M30_CueSheetDAO.dll</HintPath>
     </Reference>
@@ -81,7 +84,7 @@
     </None>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 
 </Project>

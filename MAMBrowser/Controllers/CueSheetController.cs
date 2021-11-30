@@ -1,14 +1,13 @@
 ﻿using Dapper;
 using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.Common.Foundation;
+using M30.AudioFile.Common;
 using M30.AudioFile.DAL;
 using MAMBrowser.DTO;
 using MAMBrowser.Entiies;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
+using M30.AudioFile.Common.Models;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;

@@ -3,12 +3,13 @@ using M30_CueSheetDAO.DAO;
 using M30_CueSheetDAO.Entity;
 using M30_CueSheetDAO.Interfaces;
 using M30_CueSheetDAO.ParamEntity;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common.DTO;
 using MAMBrowser.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MAMBrowser.DTO;
 
 namespace MAMBrowser.BLL
 {

@@ -1,8 +1,8 @@
-﻿using MAMBrowser.Common.Expand.Builder;
-using MAMBrowser.Common.Expand.CommonType;
-using MAMBrowser.Common.Expand.Menus;
-using MAMBrowser.Common.Expand.Result;
-using MAMBrowser.DAL.Expand.Factories.Web;
+﻿using M30.AudioFile.Common.Expand.Builder;
+using M30.AudioFile.Common.Expand.CommonType;
+using M30.AudioFile.Common.Expand.Menus;
+using M30.AudioFile.Common.Expand.Result;
+using M30.AudioFile.DAL.Expand.Factories.Web;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MAMBrowser.Controllers
@@ -156,8 +156,7 @@ namespace MAMBrowser.Controllers
         public ReportResultDTO GetRepoter([FromQuery] Pram pram)
         {
             var a = new ReportSearchOptionBuilder()
-                .SetStartDate(pram.startDate)
-                .SetEndDate(pram.endDate)
+                .SetBrdDate(pram.brddate)
                 .SetCate(pram.cate)
                 .SetPgmName(pram.pgmname)
                 .SetReporterName(pram.reporterName)

@@ -1,6 +1,7 @@
 ﻿using Dapper;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.DAL;
+using M30.AudioFile.DAL.Dao;
 using System;
 using System.IO;
 
@@ -21,9 +22,9 @@ namespace MAMBrowser.BLL
         {
             return _dao.FindSCRSpot(media, start_dt, end_dt, pgmName, editor, name, rowPerPage, selectPage, sortKey, sortValue);
         }
-        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string start_dt, string end_dt, string isMastering, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        public DTO_RESULT_PAGE_LIST<DTO_REPORT> FindReport(string cate, string brd_dt, string isMastering, string pgmName, string editor, string reporterName, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {
-            return _dao.FindReport(cate, start_dt, end_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+            return _dao.FindReport(cate, brd_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
         }
         public DTO_RESULT_PAGE_LIST<DTO_PRO> FindOldPro(string media, string cate, string start_dt, string end_dt, string type, string editor, string name, int rowPerPage, int selectPage, string sortKey, string sortValue)
         {

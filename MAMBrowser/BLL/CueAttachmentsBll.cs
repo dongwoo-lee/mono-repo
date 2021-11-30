@@ -1,6 +1,5 @@
 ﻿using Dapper;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.DAL;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -80,34 +80,31 @@ namespace MAMBrowser.Helper
             string filePath = "";
             if (TokenGenerator.ValidateFileToken(token, ref filePath))
             {
-                string fileName = Path.GetFileName(filePath);
-                fileName = Path.GetExtension(fileName).ToUpper() == Define.MP2 ? fileName.ToUpper().Replace(Define.MP2, Define.WAV) : fileName;
-                //if (direct.ToUpper() == "Y")
-                //{
-                //    int fileSize = 0;
-                //    return new PushStreamResult(filePath, fileName, fileSize, fileProtocol);
-                //}
-                //else
-                //{
-                var provider = new FileExtensionContentTypeProvider();
-                string contentType;
-                if (!provider.TryGetContentType(fileName, out contentType))
-                {
-                    contentType = "application/octet-stream";
-                }
-                string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
-                var result = new PhysicalFileResult(tempDownloadedPath, contentType);
-                result.EnableRangeProcessing = true;
-                return result;
-                //}
+                return StreamingFromFileName(filePath, userId, remoteIp);
             }
             else
                 throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
         }
+        public IActionResult StreamingFromFilePath(string filePath, string userId, string remoteIp)
+        {
+            string fileName = Path.GetFileName(filePath);
+            fileName = Path.GetExtension(fileName).ToUpper() == Define.MP2 ? fileName.ToUpper().Replace(Define.MP2, Define.WAV) : fileName;
+
+            var provider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!provider.TryGetContentType(fileName, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            var result = new PhysicalFileResult(tempDownloadedPath, contentType);
+            result.EnableRangeProcessing = true;
+            return result;
+        }
 
         public FileStreamResult DownloadFromPath(string downloadName, string filePath, HttpResponse response, IFileProtocol fileProtocol, string inline)
         {
-            
+
             var fileExtProvider = new FileExtensionContentTypeProvider();
             string contentType;
             if (!fileExtProvider.TryGetContentType(filePath, out contentType))

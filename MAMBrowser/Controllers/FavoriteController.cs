@@ -1,10 +1,11 @@
 ﻿using MAMBrowser.BLL;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MAMBrowser.DTO;
 
 namespace MAMBrowser.Controllers
 {

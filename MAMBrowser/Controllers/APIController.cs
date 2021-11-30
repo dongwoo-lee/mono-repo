@@ -1,10 +1,8 @@
 ﻿using MAMBrowser.BLL;
-using MAMBrowser.Common;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
+using M30.AudioFile.Common;
+using M30.AudioFile.DAL;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
-using MAMBrowser.Models;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MAMBrowser.Controllers
 {
@@ -50,7 +51,7 @@ namespace MAMBrowser.Controllers
                 }
                 else
                 {
-                    
+
                     if (!_bll.Authenticate(account))
                     {
                         result.ErrorMsg = "비밀번호가 틀립니다.";
@@ -132,7 +133,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        
+
         /// <summary>
         /// 사용자 목록 조회
         /// </summary>
@@ -434,7 +435,7 @@ namespace MAMBrowser.Controllers
         /// <param name="description">내용</param>
         /// <returns></returns>
         [HttpGet("Logs")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices]LogBll logBll )
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices] LogBll logBll)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>>();
             try
@@ -463,6 +464,63 @@ namespace MAMBrowser.Controllers
             {
                 result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
                 result.ResultObject.Data = _appSesstings.DiskScope;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+
+        ///// <summary>
+        ///// 마스터링 옵션 목록 반환
+        ///// </summary>
+        ///// <param name="optionGrpCd">옵션그룹코드</param>
+        ///// <returns></returns>
+        [HttpGet("options/{optionGrpCd}")]
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>> GetOptions(string optionGrpCd)
+        {
+            if (string.IsNullOrEmpty(optionGrpCd))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
+            string systemCode = optionGrpCd.ToUpper();
+            DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
+                result.ResultObject.Data = _bll.GetOptions(optionGrpCd);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        ///// <summary>
+        ///// 마스터링 옵션 목록 저장
+        ///// </summary>
+        ///// <param name="optionGrpCd">옵션그룹코드</param>
+        ///// <param name="options">옵션 데이터 목록</param>
+        ///// <returns></returns>
+        [HttpPost("options/{optionGrpCd}")]
+        public ActionResult<DTO_RESULT> SetOptions(string optionGrpCd, [FromBody] List<DTO_NAMEVALUE> options)
+        {
+            if (string.IsNullOrEmpty(optionGrpCd))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
+            if (options == null)
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 2 is empty");
+            if (options.Count <=0)
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 2 count : 0");
+
+            string systemCode = optionGrpCd.ToUpper();
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                _bll.SetOptions(optionGrpCd, options);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

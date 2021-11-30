@@ -1,8 +1,10 @@
 ﻿using Dapper;
-using MAMBrowser.DAL;
-using MAMBrowser.DTO;
-using MAMBrowser.Models;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Models;
+using M30.AudioFile.DAL;
+using M30.AudioFile.DAL.Dao;
 using System;
+using System.Collections.Generic;
 
 namespace MAMBrowser.BLL
 {
@@ -34,6 +36,11 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetMedia();
         }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpotMedia()
+        {
+            return _dao.GetMcrSpotMedia();
+        }
+        
         public DTO_RESULT_LIST<DTO_CATEGORY> GetReport()
         {
             return _dao.GetReport();
@@ -49,6 +56,10 @@ namespace MAMBrowser.BLL
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpot(string media)
         {
             return _dao.GetMcrSpot(media);
+        }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetScrSpot()
+        {
+            return _dao.GetScrSpot();
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetFillerPr()
         {
@@ -105,5 +116,26 @@ namespace MAMBrowser.BLL
             _dao.InsertUserToPublicCategory();
         }
 
+        /// <summary>
+        /// 프로그램 목록 반환(PGM)
+        /// </summary>
+        /// <param name="media">매체ID</param>
+        /// <param name="date">시작일자</param>
+        /// <returns></returns>
+        public IList<DTO_BrdSch> GetPgmSch(string media, string date)
+        {
+            return _dao.GetPgmSch(media, date, "P", "PM");
+        }
+        /// <summary>
+        /// 프로그램 목록 반환(주조SPOT, 변동소재, 고정소재)
+        /// </summary>
+        /// <param name="media">매체ID</param>
+        /// <param name="date">시작일자</param>
+        /// <param name="spotType">MS : 주조SPOT , TS : 변동소재, TT : 고정소재</param>
+        /// <returns></returns>
+        public IList<DTO_BrdSpot> GetSpotSch(string media, string date, string spotType)
+        {
+            return _dao.GetSpotSch(media, date, spotType);
+        }
     }
 }

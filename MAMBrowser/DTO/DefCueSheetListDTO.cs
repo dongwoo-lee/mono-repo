@@ -1,4 +1,4 @@
-﻿using MAMBrowser.Common;
+﻿using M30.AudioFile.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
