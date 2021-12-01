@@ -677,7 +677,7 @@ namespace MAMBrowser.Controllers
             {
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
                 //string userId = HttpContext.Items[Define.USER_ID] as string;
-                return _fileHelper.StreamingFromFilePath(fileName, userId, remoteIp);
+                return _fileHelper.StreamingFromFileName(fileName, userId, remoteIp);
             }
             catch (HttpStatusErrorException ex)
             {

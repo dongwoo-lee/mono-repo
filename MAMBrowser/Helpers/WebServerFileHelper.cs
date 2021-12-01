@@ -80,7 +80,7 @@ namespace MAMBrowser.Helper
             string filePath = "";
             if (TokenGenerator.ValidateFileToken(token, ref filePath))
             {
-                return StreamingFromFileName(filePath, userId, remoteIp);
+                return StreamingFromFilePath(filePath, userId, remoteIp);
             }
             else
                 throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
