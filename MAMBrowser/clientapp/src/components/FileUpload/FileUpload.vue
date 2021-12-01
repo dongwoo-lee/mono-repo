@@ -333,12 +333,7 @@
                     background-color: white;
                     height: 33px;
                   "
-                  class="
-                    btn btn-outline-primary btn-sm
-                    default
-                    cutom-label
-                    mr-2
-                  "
+                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                   @click="logSearch"
                 >
                   검색
@@ -543,9 +538,9 @@ export default {
     },
   },
   created() {
-    background = setInterval(() => {
-      this.masteringStatus();
-    }, 1000);
+    // background = setInterval(() => {
+    this.masteringStatus();
+    // }, 1000);
 
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
@@ -568,9 +563,9 @@ export default {
         this.setMasteringLogData(masteringLogData);
       });
   },
-  beforeDestroy() {
-    clearInterval(background);
-  },
+  // beforeDestroy() {
+  //   clearInterval(background);
+  // },
   computed: {
     fileupload: function () {
       return this.$refs[dxfu].instance;
