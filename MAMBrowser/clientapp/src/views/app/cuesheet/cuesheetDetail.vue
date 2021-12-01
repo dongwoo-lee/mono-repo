@@ -102,17 +102,6 @@
                       </div>
                     </template>
                   </DxItem>
-                  <DxItem title="즐겨찾기">
-                    <template #default>
-                      <div>
-                        <SortableWidget
-                          :widgetIndex="16"
-                          :searchToggleSwitch="searchToggleSwitch"
-                          channelKey="channel_my"
-                        />
-                      </div>
-                    </template>
-                  </DxItem>
                 </DxTabPanel>
               </div>
             </div>

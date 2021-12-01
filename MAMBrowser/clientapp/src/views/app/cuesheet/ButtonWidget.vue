@@ -157,6 +157,7 @@
     <!-- 가져오기 -->
     <common-import-tem :id="id" />
     <common-import-def :proid="proid" :type="type" />
+    <common-import-archive />
 
     <!-- 내보내기 -->
     <b-modal
@@ -232,26 +233,38 @@
       centered
       title="추가설정"
       ok-title="저장"
-      cancel-title="취소"
+      cancel-title="닫기"
     >
       <div class="settingDiv">
         <div class="dx-fieldset">
           <div class="dx-field">
             <div class="dx-field-label" style="font-size: 15px">DJ 명 :</div>
             <div class="dx-field-value">
-              <DxTextBox width="320px" v-model="cueInfo.djname" />
+              <DxTextBox
+                width="320px"
+                v-model="cueInfo.djname"
+                :disabled="cueInfo.cuetype == 'A'"
+              />
             </div>
           </div>
           <div class="dx-field">
             <div class="dx-field-label" style="font-size: 15px">구성 :</div>
             <div class="dx-field-value">
-              <DxTextBox width="320px" v-model="cueInfo.membername" />
+              <DxTextBox
+                width="320px"
+                v-model="cueInfo.membername"
+                :disabled="cueInfo.cuetype == 'A'"
+              />
             </div>
           </div>
           <div class="dx-field">
             <div class="dx-field-label" style="font-size: 15px">연출 :</div>
             <div class="dx-field-value">
-              <DxTextBox width="320px" v-model="cueInfo.directorname" />
+              <DxTextBox
+                width="320px"
+                v-model="cueInfo.directorname"
+                :disabled="cueInfo.cuetype == 'A'"
+              />
             </div>
           </div>
           <div class="dx-field">
@@ -261,6 +274,7 @@
                 :height="50"
                 width="320px"
                 v-model="cueInfo.headertitle"
+                :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
           </div>
@@ -271,11 +285,32 @@
                 :height="100"
                 width="320px"
                 v-model="cueInfo.footertitle"
+                :disabled="cueInfo.cuetype == 'A'"
+              />
+            </div>
+          </div>
+          <div class="dx-field">
+            <div class="dx-field-label" style="font-size: 15px">메모 :</div>
+            <div class="dx-field-value">
+              <DxTextArea
+                :height="100"
+                width="350px"
+                v-model="cueInfo.memo"
+                :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
           </div>
         </div>
       </div>
+      <template #modal-footer="{ cancel, ok }">
+        <b-button variant="secondary" @click="cancel()">닫기 </b-button>
+        <b-button
+          variant="secondary"
+          @click="ok()"
+          v-if="cueInfo.cuetype != 'A'"
+          >저장
+        </b-button>
+      </template>
     </b-modal>
 
     <!-- ExportZip -->
@@ -349,13 +384,13 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import DxTextArea from "devextreme-vue/text-area";
+import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
+import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
+import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
 import { USER_ID } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
-
-import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
-import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 
 export default {
   props: {
@@ -425,12 +460,13 @@ export default {
     }
   },
   components: {
+    CommonImportDef,
+    CommonImportTem,
+    CommonImportArchive,
     DxButton,
     DxDropDownButton,
     DxTextBox,
     DxTextArea,
-    CommonImportDef,
-    CommonImportTem,
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
@@ -571,7 +607,7 @@ export default {
           this.$bvModal.show("commonImportDef");
           break;
         case "이전 큐시트 가져오기":
-          // this.$bvModal.show("commonCueimport");
+          this.$bvModal.show("CommonImportArchive");
           break;
         default:
           break;
