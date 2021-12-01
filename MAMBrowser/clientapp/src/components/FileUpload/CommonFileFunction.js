@@ -496,6 +496,10 @@ export default {
           });
       }
     },
+    validDateType(value) {
+      const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
+      return !dateRegex.test(value);
+    },
     getStartDate(date) {
       var y = date.substring(0, 4);
       var d = date.substring(4, 6);
@@ -533,20 +537,18 @@ export default {
       const targetValue = event.target.value;
 
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        event.target.value = targetValue.slice(0, -1);
+        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
+        return;
+      }
+
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.setDate(convertDate);
         }
-      } else if (targetValue == "-") {
-        const replaceAllTargetValue = targetValue.replace(/-/g, "");
-        if (replaceAllTargetValue.length === 8) {
-          const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.setDate(convertDate);
-        }
-      } else {
-        this.resetDate();
-        this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
     convertDateSTH(value) {

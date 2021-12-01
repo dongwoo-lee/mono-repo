@@ -447,60 +447,40 @@ export default {
       this.setFileEDate(value);
     },
     onsInput(event) {
-      if (event.target.value != null) {
-        const targetValue = event.target.value;
-        if (targetValue == "") {
-          this.sdate = "";
-          this.resetFileSDate();
-          return;
-        }
-        const replaceAllTargetValue = targetValue.replace(/-/g, "");
-        if (!isNaN(replaceAllTargetValue)) {
-          if (replaceAllTargetValue.length === 8) {
-            const convertDate = this.convertDateSTH(replaceAllTargetValue);
-            this.sdate = convertDate;
-            this.setFileSDate(convertDate);
-          }
-        } else if (targetValue == "-") {
-          const replaceAllTargetValue = targetValue.replace(/-/g, "");
-          if (replaceAllTargetValue.length === 8) {
-            const convertDate = this.convertDateSTH(replaceAllTargetValue);
-            this.sdate = convertDate;
-            this.setFileSDate(convertDate);
-          }
-        } else {
-          this.sdate = "";
-          this.resetFileSDate();
-          this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        event.target.value = targetValue.slice(0, -1);
+        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          this.sdate = convertDate;
+          this.setFileSDate(convertDate);
         }
       }
     },
     oneInput(event) {
-      if (event.target.value != null) {
-        const targetValue = event.target.value;
-        if (targetValue == "") {
-          this.edate = "";
-          this.resetFileEDate();
-          return;
-        }
-        const replaceAllTargetValue = targetValue.replace(/-/g, "");
-        if (!isNaN(replaceAllTargetValue)) {
-          if (replaceAllTargetValue.length === 8) {
-            const convertDate = this.convertDateSTH(replaceAllTargetValue);
-            this.edate = convertDate;
-            this.setFileEDate(convertDate);
-          }
-        } else if (targetValue == "-") {
-          const replaceAllTargetValue = targetValue.replace(/-/g, "");
-          if (replaceAllTargetValue.length === 8) {
-            const convertDate = this.convertDateSTH(replaceAllTargetValue);
-            this.edate = convertDate;
-            this.setFileEDate(convertDate);
-          }
-        } else {
-          this.edate = "";
-          this.resetFileEDate();
-          this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        event.target.value = targetValue.slice(0, -1);
+        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          this.edate = convertDate;
+          this.setFileEDate(convertDate);
         }
       }
     },
