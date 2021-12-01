@@ -40,7 +40,9 @@ namespace MAMBrowser.BLL
                 param.Add(paramItem);
             }
 
-            return _dao.CreateFavorites(param);
+            if (param?.Any() == true)
+                return _dao.CreateFavorites(param);
+            return 0;
         }
     }
 }

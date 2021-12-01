@@ -22,6 +22,7 @@
           mode="cell"
           :allow-updating="true"
           start-edit-action="dblClick"
+          v-if="cueInfo.cuetype != 'A'"
         />
         <DxSelection mode="multiple" showCheckBoxesMode="none" />
         <DxRowDragging
@@ -31,6 +32,7 @@
           :on-add="onAddPrint"
           :on-reorder="onReorderPrint"
           group="tasksGroup"
+          v-if="cueInfo.cuetype != 'A'"
         />
         <DxColumn
           width="13%"
@@ -159,6 +161,7 @@
               :disabled="!selectedItemKeys.length"
               icon="trash"
               hint="선택 행 삭제"
+              v-if="cueInfo.cuetype != 'A'"
             />
           </div>
         </template>

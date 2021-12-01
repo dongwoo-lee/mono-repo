@@ -9,6 +9,8 @@ export default {
         cuesheetListArr: [], //일일큐시트 리스트 목록
         defCuesheetListArr: [], //기본큐시트 리스트 목록
         tempCuesheetListArr: [], //템플릿 리스트 목록
+        archiveCuesheetListArr: [], //이전 큐시트 리스트 목록
+
 
         userProOption: [], //리스트 옵션 - 프로그램명
         mediasOption: [], //리스트 옵션 - 매체
@@ -220,6 +222,7 @@ export default {
         cuesheetListArr: state => state.cuesheetListArr,
         defCuesheetListArr: state => state.defCuesheetListArr,
         tempCuesheetListArr: state => state.tempCuesheetListArr,
+        archiveCuesheetListArr: state => state.archiveCuesheetListArr,
         userProOption: state => state.userProOption,
         mediasOption: state => state.mediasOption,
         userProList: state => state.userProList,
@@ -241,6 +244,9 @@ export default {
         },
         SET_TEMPCUESHEETLISTARR(state, payload) {
             state.tempCuesheetListArr = payload;
+        },
+        SET_ARCHIVECUESHEETLISTARR(state, payload) {
+            state.archiveCuesheetListArr = payload
         },
         SET_USERPROOPTION(state, payload) {
             state.userProOption = payload;
@@ -409,6 +415,7 @@ export default {
                 },
             })
                 .then(async (res) => {
+                    console.log(res)
                     var productWeekList = await dispatch('disableList', res.data.resultObject.data);
                     var seqnum = 0;
                     res.data.resultObject.data.forEach((ele) => {
@@ -451,6 +458,24 @@ export default {
                 .catch((err => {
                     console.log("getcuesheetListArrTemp" + err);
                 }));
+        },
+        //이전 큐시트 목록 가져오기
+        getarchiveCuesheetListArr({ commit }, payload) {
+            return axios.get(`/api/ArchiveCueSheet/GetArchiveCueList`, {
+                params: payload,
+                paramsSerializer: (params) => {
+                    return qs.stringify(params);
+                },
+            })
+                .then((res) => {
+                    console.log(res);
+                    commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
+                    return res;
+                })
+                .catch((err => {
+                    console.log("getarchiveCuesheetListArr" + err);
+                }));
+
         },
         //프로그램별 요일 확인
         disableList({ commit }, payload) {

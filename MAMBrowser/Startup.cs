@@ -177,6 +177,7 @@ namespace MAMBrowser
             services.AddTransient<DefCueSheetBll>();
             services.AddTransient<TemplateBll>();
             services.AddTransient<FavoriteBll>();
+            services.AddTransient<ArchiveCueSheetBll>();
 
             //서비스 등록
             services.AddScoped<IUserService, UserService>();

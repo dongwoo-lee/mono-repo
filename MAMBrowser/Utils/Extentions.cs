@@ -91,6 +91,29 @@ namespace MAMBrowser.Utils
             return dto;
         }
 
+        //이전 큐시트 Entity TO DTO로 변환 -List
+        public static IEnumerable<ArchiveCueSheetListDTO> Converting(this List<ArchiveCueSheetListEntity> entity)
+        {
+            List<ArchiveCueSheetListDTO> dto = new List<ArchiveCueSheetListDTO>();
+
+            foreach (var item in entity)
+            {
+                dto.Add(new ArchiveCueSheetListDTO()
+                {
+                    CUEID = item.CUEID,
+                    PRODUCTID = item.PRODUCTID,
+                    TITLE = item.TITLE,
+                    MEDIA = item.MEDIA,
+                    BRDDATE = item.BRDDATE,
+                    BRDTIME = item.BRDTIME,
+                    CUETYPE = "A",
+                    
+                });
+            }
+
+            return dto;
+        }
+
         //일일 큐시트 Entity TO DTO로 변환 - 상세내용
         public static CueSheetCollectionDTO DayConverting(this CueSheetCollectionEntity entity)
         {
@@ -564,7 +587,151 @@ namespace MAMBrowser.Utils
             return collectionDTO;
         }
 
-        // Entity TO DTO로 변환 - 유저당 프로그램 목록 
+        //이전 큐시트 Entity TO DTO로 변환 - 상세내용
+        public static CueSheetCollectionDTO ArchiveConverting(this ArchiveCueSheetCollectionEntity entity)
+        {
+            CueSheetCollectionDTO collectionDTO = new CueSheetCollectionDTO();
+            collectionDTO.CueSheetDTO = new CueSheetDTO();
+            collectionDTO.NormalCon = new List<CueSheetConDTO>();
+            collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
+            collectionDTO.PrintDTO = new List<PrintDTO>();
+
+            var InstanceConList = new List<CueSheetConDTO>();
+
+            collectionDTO.CueSheetDTO.CUETYPE = "A";
+            collectionDTO.CueSheetDTO.PRODUCTID = entity.ArchiveCueSheetEntity.PRODUCTID;
+            collectionDTO.CueSheetDTO.PERSONID = entity.ArchiveCueSheetEntity.PERSONID;
+            collectionDTO.CueSheetDTO.MEDIA = entity.ArchiveCueSheetEntity.MEDIA.ToString();
+            collectionDTO.CueSheetDTO.EDITTIME = entity.ArchiveCueSheetEntity.EDITTIME;
+            collectionDTO.CueSheetDTO.DJNAME = entity.ArchiveCueSheetEntity.DJNAME ?? "";
+            collectionDTO.CueSheetDTO.DIRECTORNAME = entity.ArchiveCueSheetEntity.DIRECTORNAME ?? "";
+            collectionDTO.CueSheetDTO.MEMBERNAME = entity.ArchiveCueSheetEntity.MEMBERNAME ?? "";
+            collectionDTO.CueSheetDTO.HEADERTITLE = entity.ArchiveCueSheetEntity.HEADERTITLE ?? "";
+            collectionDTO.CueSheetDTO.FOOTERTITLE = entity.ArchiveCueSheetEntity.FOTTERTITLE ?? "";
+            collectionDTO.CueSheetDTO.MEMO = entity.ArchiveCueSheetEntity.MEMO ?? "";
+            collectionDTO.CueSheetDTO.BRDTIME = entity.ArchiveCueSheetEntity.BRDTIME;
+            collectionDTO.CueSheetDTO.BRDDATE = entity.ArchiveCueSheetEntity.BRDDATE ?? "";
+            collectionDTO.CueSheetDTO.TITLE = entity.ArchiveCueSheetEntity.TITLE;
+
+            var detailArr = new List<ViewDetail>();
+            var detailItem = new ViewDetail();
+            detailItem.CUEID = entity.ArchiveCueSheetEntity.CUEID;
+            detailArr.Add(detailItem);
+            collectionDTO.CueSheetDTO.DETAIL = detailArr;
+            
+
+            //AB가공
+            foreach (var item in entity.CueSheetConEntities)
+            {
+                var con = new CueSheetConDTO();
+                con.CARTCODE = item.CARTCODE ?? "";
+                con.CHANNELTYPE = item.CHANNELTYPE ?? "";
+                con.ONAIRDATE = item.ONAIRDATE ?? "";
+                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
+                {
+                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
+
+                }
+                con.CARTID = item.CARTID ?? "";
+                con.MEMO = item.MEMO ?? "";
+                con.STARTPOSITION = item.STARTPOSITION;
+                con.ENDPOSITION = item.ENDPOSITION;
+                con.FADEINTIME = item.FADEINTIME;
+                con.FADEOUTTIME = item.FADEOUTTIME;
+                con.MAINTITLE = item.MAINTITLE ?? "";
+                con.SUBTITLE = item.SUBTITLE ?? "";
+                con.TRANSTYPE = item.TRANSTYPE;
+                con.USEFLAG = item.USEFLAG ?? "Y";
+                con.EDITTARGET = true;
+
+                if (item.AUDIOS.Count != 0)
+                {
+                    foreach (var con_i in item.AUDIOS)
+                    {
+                        con.FILEPATH = con_i.P_MASTERFILE;
+                    }
+                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+                }
+                if (item.CHANNELTYPE == "N")
+                {
+                    con.ROWNUM = item.SEQNUM;
+                    collectionDTO.NormalCon.Add(con);
+                }
+                if (item.CHANNELTYPE == "I")
+                {
+                    con.ROWNUM = item.SEQNUM;
+                    InstanceConList.Add(con);
+                }
+
+            }
+
+            //C가공
+            for (var channelNum = 0; 4 > channelNum; channelNum++)
+            {
+                var cartData = new List<CueSheetConDTO>();
+                for (var i = 0; 16 > i; i++)
+                {
+                    var row = new CueSheetConDTO();
+                    if (InstanceConList.Count != 0)
+                    {
+                        for (var itemIndex = 0; InstanceConList.Count > itemIndex; itemIndex++)
+                        {
+                            if (InstanceConList[itemIndex].ROWNUM == i + 16 * channelNum + 1)
+                            {
+                                row = InstanceConList[itemIndex];
+                                row.ROWNUM = i + 1;
+                                break;
+                            }
+                            else
+                            {
+                                row.ROWNUM = i + 1;
+                                row.EDITTARGET = true;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        row.ROWNUM = i + 1;
+                        row.EDITTARGET = true;
+                    }
+                    cartData.Add(row);
+                }
+                switch (channelNum)
+                {
+                    case 0:
+                        collectionDTO.InstanceCon["channel_1"] = cartData;
+                        break;
+                    case 1:
+                        collectionDTO.InstanceCon["channel_2"] = cartData;
+                        break;
+                    case 2:
+                        collectionDTO.InstanceCon["channel_3"] = cartData;
+                        break;
+                    case 3:
+                        collectionDTO.InstanceCon["channel_4"] = cartData;
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            //print 가공
+            foreach (var item in entity.PrintEntities)
+            {
+                var printItem = new PrintDTO();
+                printItem.ROWNUM = item.SEQNUM;
+                printItem.CODE = item.CODE.TrimEnd();
+                printItem.CONTENTS = item.CONTENTS ?? "";
+                printItem.ETC = item.ETC ?? "";
+                printItem.USEDTIME = item.USEDTIME;
+                collectionDTO.PrintDTO.Add(printItem);
+            }
+            return collectionDTO;
+        }
+
+        //Entity TO DTO로 변환 - 유저당 프로그램 목록 
         public static IEnumerable<PgmListDTO> Converting(this List<ProgramListEntity> entity)
         {
             List<PgmListDTO> dto = new List<PgmListDTO>();
@@ -608,7 +775,6 @@ namespace MAMBrowser.Utils
                 favItem.MAINTITLE = item.MAINTITLE ?? "";
                 favItem.SUBTITLE = item.SUBTITLE ?? "";
                 favItem.MEMO = item.MEMO ?? "";
-                favItem.USEFLAG = item.USEFLAG ?? "Y";
                 favItem.EDITTARGET = true;
 
                 if (item.AUDIOS.Count != 0)
@@ -703,7 +869,7 @@ namespace MAMBrowser.Utils
                 obj.p_onairdate = item.ONAIRDATE;
                 obj.p_cartid = item.CARTID;
                 obj.p_cartcode = item.CARTCODE;
-                obj.p_useflag = char.Parse(item.USEFLAG);
+                obj.p_useflag = (item.USEFLAG == null) ? 'Y' : char.Parse(item.USEFLAG);
                 obj.p_startposition = item.STARTPOSITION;
                 obj.p_endposition = item.ENDPOSITION;
                 obj.p_fadeintime = item.FADEINTIME;
@@ -728,7 +894,7 @@ namespace MAMBrowser.Utils
                         obj.p_onairdate = item.ONAIRDATE;
                         obj.p_cartid = item.CARTID;
                         obj.p_cartcode = item.CARTCODE;
-                        obj.p_useflag = char.Parse(item.USEFLAG);
+                        obj.p_useflag = 'Y';
                         obj.p_startposition = item.STARTPOSITION;
                         obj.p_endposition = item.ENDPOSITION;
                         obj.p_fadeintime = item.FADEINTIME;
@@ -963,7 +1129,6 @@ namespace MAMBrowser.Utils
                     favItem.p_onairdate = item.ONAIRDATE;
                     favItem.p_cartid = item.CARTID;
                     favItem.p_cartcode = item.CARTCODE;
-                    favItem.p_useflag = char.Parse(item.USEFLAG);
                     favItem.p_startposition = item.STARTPOSITION;
                     favItem.p_endposition = item.ENDPOSITION;
                     favItem.p_fadeintime = item.FADEINTIME;
@@ -973,12 +1138,12 @@ namespace MAMBrowser.Utils
                     favItem.p_memo = item.MEMO;
                     result.Add(favItem);
                 }
-
             }
             return result;
 
         }
 
+        // DTO TO Entity - 구 DB
         public static PDPQSParam PDPQSToEntity(this CueSheetDTO dto, char type)
         {
             var result = new PDPQSParam();

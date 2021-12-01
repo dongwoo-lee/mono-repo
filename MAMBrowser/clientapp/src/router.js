@@ -418,15 +418,45 @@ const routes = [
       },
       {
         // 큐시트 조회 리스트
-        name: 'cuesheet-list',
-        path: "cuesheet/list",
+        name: 'cuesheet-previous-list',
+        path: "cuesheet/previous/list",
         component: () => import("./views/app/cuesheet/cuesheetList"),
       },
       {
         // 큐시트 조회
-        name: 'cuesheet-detail',
-        path: "cuesheet/detail",
+        name: 'cuesheet-previous-detail',
+        path: "cuesheet/previous/detail",
         component: () => import("./views/app/cuesheet/cuesheetDetail"),
+        beforeEnter: (async (to, from, next) => {
+          const userId = sessionStorage.getItem(USER_ID);
+          var cueDataObj = { ...store.getters['cueList/cueInfo'] }
+          if (Object.keys(cueDataObj).length === 0) {
+            cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+          }
+          var params = {};
+          if (Object.keys(cueDataObj).includes("detail")) {
+            params.cueid = cueDataObj.detail[0].cueid
+          } else {
+            params.cueid = cueDataObj.cueid
+          }
+          await axios.get(`/api/ArchiveCueSheet/GetArchiveCue`, {
+            params: params,
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+            .then((res) => {
+              console.log(res)
+              cueDataObj = res.data.cueSheetDTO
+              store.dispatch('cueList/setCueConData', res.data);
+            });
+          store.dispatch('cueList/setclearFav');
+          cueDataObj.personid = userId;
+          store.commit('cueList/SET_CUEINFO', cueDataObj)
+          sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
+          next();
+        }
+        )
       },
       {
         // 즐겨찾기

@@ -9,7 +9,12 @@
         hint="목록으로"
         v-if="!fav"
       />
-      <DxButton icon="doc" v-b-modal.modal-clear hint="새큐시트" v-if="!fav" />
+      <DxButton
+        icon="doc"
+        v-b-modal.modal-clear
+        hint="새큐시트"
+        v-if="!fav && type != 'A'"
+      />
       <DxButton
         icon="trash"
         v-b-modal.modal-favDel
@@ -29,7 +34,7 @@
         :showArrowIcon="false"
         hint="가져오기"
         @item-click="onActivefolderItemClick"
-        v-if="!fav"
+        v-if="!fav && type != 'A'"
       />
       <DxDropDownButton
         :items="downloaditem"
@@ -54,6 +59,7 @@
         v-b-modal.modal-save
         hint="저장"
         text="저장"
+        v-if="type != 'A'"
       />
     </div>
 
@@ -409,6 +415,9 @@ export default {
         break;
       case "T":
         this.goBackPoint = "template";
+        break;
+      case "A":
+        this.goBackPoint = "previous";
         break;
 
       default:

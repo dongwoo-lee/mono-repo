@@ -164,7 +164,12 @@ const data = [
       {
         icon: "iconsminds-notepad",
         label: "menu.cuesheet-list", // 이전 큐시트 목록
-        to: "/app/cuesheet/list",
+        to: "/app/cuesheet/previous/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-list", // 이전 큐시트 목록
+        to: "/app/cuesheet/previous/detail",
       },
       {
         icon: "iconsminds-notepad",

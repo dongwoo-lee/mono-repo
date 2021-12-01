@@ -7,7 +7,7 @@ namespace MAMBrowser.DTO
 {
     public class CueSheetCollectionDTO
     {
-        public CueSheetCollectionDTO pram { get; set; }
+        //public CueSheetCollectionDTO pram { get; set; }
         //큐시트 정보
         public CueSheetDTO CueSheetDTO { get; set; }
         //기본큐시트 정보

@@ -183,13 +183,13 @@ const url = [
     {
         // 이전 큐시트 조회
         id: "S01G01C029",
-        to: "/app/cuesheet/list",
+        to: "/app/cuesheet/previous/list",
         icon: "iconsminds-testimonal",
     },
     {
         // 이전 큐시트
         id: "S01G01C025",
-        to: "/app/cuesheet/detail",
+        to: "/app/cuesheet/previous/detail",
         icon: "iconsminds-testimonal",
     },
     {

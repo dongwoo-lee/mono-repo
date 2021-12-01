@@ -27,7 +27,7 @@ namespace MAMBrowser.Controllers
             {
                 return _bll.GetUserFavorites(personid);
             }
-            catch
+            catch(Exception ex)
             {
                 throw;
             }

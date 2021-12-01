@@ -49,6 +49,8 @@
     "day": "일일 큐시트",
     "list": "목록",
     "template": "템플릿",
-    "detail": "작성"
+    "previous": "이전 큐시트",
+    "detail": "상세내용",
+    "favorite": "즐겨찾기"
   }
 }

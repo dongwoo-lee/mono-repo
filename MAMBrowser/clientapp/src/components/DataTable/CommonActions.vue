@@ -82,10 +82,10 @@
       >템플릿 작성</b-button
     >
     <b-button
-      v-if="rowData.broadcastStatus"
+      v-if="rowData.cuetype == 'A'"
       id="cueBtn"
       variant="outline-primary"
-      @click="$router.push({ path: '/app/cuesheet/detail' })"
+      @click="getCueData('previous')"
       >큐시트 조회</b-button
     >
   </div>
