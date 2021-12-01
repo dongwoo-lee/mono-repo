@@ -196,15 +196,15 @@ export default {
         endposition: 0, //millisecond
         fadeintime: 0,
         fadeouttime: 0,
-        filetoken: [], //미리듣기 때문 바뀔수도있음
-        filepath: [],
+        filetoken: "", //미리듣기 때문 바뀔수도있음
+        filepath: "",
         maintitle: "",
         memo: "", //바뀔수도있음
         onairdate: "",
         //rownum: 0,
         startposition: 0,
         subtitle: "",
-        transtype: "N",
+        transtype: "S",
         useflag: "Y",
       },
     };
@@ -351,10 +351,12 @@ export default {
               row.edittarget = true;
             } else {
               row.rownum = totalIndex + index;
-              row.filetoken = [];
-              row.filetoken.push(search_row.fileToken);
-              row.filepath = [];
-              row.filepath.push(search_row.filePath);
+              //row.filetoken = [];
+              // row.filetoken.push(search_row.fileToken);
+              // row.filepath = [];
+              // row.filepath.push(search_row.filePath);
+              row.filetoken = search_row.fileToken;
+              row.filepath = search_row.filePath;
               row.endposition = search_row.intDuration;
               row.duration = search_row.intDuration;
               row.cartcode = this.searchListData.cartcode;
@@ -381,8 +383,8 @@ export default {
             row.edittarget = true;
           } else {
             row.rownum = this.fileData[totalIndex - 1].rownum;
-            row.filetoken.push(search_row.fileToken);
-            row.filepath.push(search_row.filePath);
+            row.filetoken = search_row.fileToken;
+            row.filepath = search_row.filePath;
             row.endposition = search_row.intDuration;
             row.duration = search_row.intDuration;
             row.cartcode = this.searchListData.cartcode;

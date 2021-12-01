@@ -175,6 +175,7 @@ export default {
   mounted() {
     this.searchItems.start_dt = toDay;
     this.searchItems.end_dt = endDay;
+    this.getData();
   },
   methods: {
     ...mapActions("cueList", ["getcuesheetListArr"]),

@@ -1,21 +1,16 @@
-﻿using DAP3.CueSheetCommon.DTO.Param;
-using DAP3.CueSheetCommon.DTO.Result;
-using MAMBrowser.DTO;
-using MAMBrowser.Entiies;
-using MAMBrowser.Foundation;
-using MAMBrowser.Helpers;
+﻿using MAMBrowser.BLL;
+using M30.AudioFile.Common.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Linq;
 using System.Threading.Tasks;
+using MAMBrowser.DTO;
+using MAMBrowser.Foundation;
+using MAMBrowser.Helpers;
+using Microsoft.AspNetCore.StaticFiles;
+using System.IO;
 using System.Xml.Serialization;
-
 
 namespace MAMBrowser.Controllers
 {
@@ -26,11 +21,11 @@ namespace MAMBrowser.Controllers
         private readonly IFileProtocol _fileService;
         public CueAttachmentsController(ServiceResolver sr)
         {
-            _fileService = sr("MirosConnection");
+            _fileService = sr(MAMDefine.MirosConnection).FileSystem;
         }
         //zip파일 내보내기
         [HttpPost("exportZipFile")]
-        public bool ExportZipFile([FromBody] List<ViewCueSheetConDTO> pram)
+        public bool ExportZipFile([FromBody] List<CueSheetConDTO> pram)
         {
             try
             {
@@ -40,13 +35,13 @@ namespace MAMBrowser.Controllers
                 {
                     di.Create();
                 }
-                foreach (ViewCueSheetConDTO ele in pram)
+                foreach (CueSheetConDTO ele in pram)
                 {
-                    ele.FilePath = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
-                    var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FilePath));
+                    ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
+                    var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FILEPATH));
                     using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
-                        using (var inStream = _fileService.GetFileStream(ele.FilePath, 0))
+                        using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
                         {
                             inStream.CopyTo(outFileStream);
                         }
@@ -55,7 +50,7 @@ namespace MAMBrowser.Controllers
                 }
                 using (var FileStream = new StreamWriter(filePath))
                 {
-                    XmlSerializer serialiser = new XmlSerializer(typeof(List<ViewCueSheetConDTO>));
+                    XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConDTO>));
                     serialiser.Serialize(FileStream, pram);
                 }
 

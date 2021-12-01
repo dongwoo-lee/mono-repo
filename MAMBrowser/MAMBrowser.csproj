@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\2CueSheetController.cs" />
-    <Compile Remove="Controllers\CueAttachmentsController.cs" />
     <Compile Remove="Entiies\CueData.cs" />
   </ItemGroup>
 

@@ -1,12 +1,11 @@
-﻿using M30_CueSheetDAO.Entity;
+﻿using M30.AudioFile.Common.Foundation;
+using M30_CueSheetDAO.Entity;
 using M30_CueSheetDAO.ParamEntity;
-using M30.AudioFile.Common.DTO;
+using MAMBrowser.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MAMBrowser.DTO;
-using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser.Utils
 {
@@ -136,7 +135,7 @@ namespace MAMBrowser.Utils
                 con.ONAIRDATE = item.ONAIRDATE ?? "";
                 if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
                 {
-                con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
+                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
 
                 }
                 con.CARTID = item.CARTID ?? "";
@@ -153,19 +152,11 @@ namespace MAMBrowser.Utils
 
                 if (item.AUDIOS.Count != 0)
                 {
-                    List<string> filepath = new List<string>();
                     foreach (var con_i in item.AUDIOS)
                     {
-                        filepath.Add(con_i.P_MASTERFILE);
+                        con.FILEPATH = con_i.P_MASTERFILE;
                     }
-                    con.FILEPATH = filepath;
-                    List<string> filetoken = new List<string>();
-                    foreach (var path in con.FILEPATH)
-                    {
-                        var token = TokenGenerator.GenerateMusicToken(path);
-                        filetoken.Add(token);
-                    }
-                    con.FILETOKEN = filetoken;
+                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -307,20 +298,28 @@ namespace MAMBrowser.Utils
 
                 if (item.AUDIOS.Count != 0)
                 {
-                    List<string> filepath = new List<string>();
                     foreach (var con_i in item.AUDIOS)
                     {
-                        filepath.Add(con_i.P_MASTERFILE);
+                        con.FILEPATH = con_i.P_MASTERFILE;
                     }
-                    con.FILEPATH = filepath;
-                    List<string> filetoken = new List<string>();
-                    foreach (var path in con.FILEPATH)
-                    {
-                        var token = TokenGenerator.GenerateMusicToken(path);
-                        filetoken.Add(token);
-                    }
-                    con.FILETOKEN = filetoken;
+                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
                 }
+                //if (item.AUDIOS.Count != 0)
+                //{
+                //    List<string> filepath = new List<string>();
+                //    foreach (var con_i in item.AUDIOS)
+                //    {
+                //        filepath.Add(con_i.P_MASTERFILE);
+                //    }
+                //    con.FILEPATH = filepath;
+                //    List<string> filetoken = new List<string>();
+                //    foreach (var path in con.FILEPATH)
+                //    {
+                //        var token = TokenGenerator.GenerateMusicToken(path);
+                //        filetoken.Add(token);
+                //    }
+                //    con.FILETOKEN = filetoken;
+                //}
                 if (item.CHANNELTYPE == "N")
                 {
                     con.ROWNUM = item.SEQNUM;
@@ -463,20 +462,28 @@ namespace MAMBrowser.Utils
 
                 if (item.AUDIOS.Count != 0)
                 {
-                    List<string> filepath = new List<string>();
                     foreach (var con_i in item.AUDIOS)
                     {
-                        filepath.Add(con_i.P_MASTERFILE);
+                        con.FILEPATH = con_i.P_MASTERFILE;
                     }
-                    con.FILEPATH = filepath;
-                    List<string> filetoken = new List<string>();
-                    foreach (var path in con.FILEPATH)
-                    {
-                        var token = TokenGenerator.GenerateMusicToken(path);
-                        filetoken.Add(token);
-                    }
-                    con.FILETOKEN = filetoken;
+                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
                 }
+                //if (item.AUDIOS.Count != 0)
+                //{
+                //    List<string> filepath = new List<string>();
+                //    foreach (var con_i in item.AUDIOS)
+                //    {
+                //        filepath.Add(con_i.P_MASTERFILE);
+                //    }
+                //    con.FILEPATH = filepath;
+                //    List<string> filetoken = new List<string>();
+                //    foreach (var path in con.FILEPATH)
+                //    {
+                //        var token = TokenGenerator.GenerateMusicToken(path);
+                //        filetoken.Add(token);
+                //    }
+                //    con.FILETOKEN = filetoken;
+                //}
                 if (item.CHANNELTYPE == "N")
                 {
                     con.ROWNUM = item.SEQNUM;
@@ -606,20 +613,28 @@ namespace MAMBrowser.Utils
 
                 if (item.AUDIOS.Count != 0)
                 {
-                    List<string> filepath = new List<string>();
                     foreach (var con_i in item.AUDIOS)
                     {
-                        filepath.Add(con_i.P_MASTERFILE);
+                        favItem.FILEPATH = con_i.P_MASTERFILE;
                     }
-                    favItem.FILEPATH = filepath;
-                    List<string> filetoken = new List<string>();
-                    foreach (var path in favItem.FILEPATH)
-                    {
-                        var token = TokenGenerator.GenerateMusicToken(path);
-                        filetoken.Add(token);
-                    }
-                    favItem.FILETOKEN = filetoken;
+                    favItem.FILETOKEN = TokenGenerator.GenerateFileToken(favItem.FILEPATH);
                 }
+                //if (item.AUDIOS.Count != 0)
+                //{
+                //    List<string> filepath = new List<string>();
+                //    foreach (var con_i in item.AUDIOS)
+                //    {
+                //        filepath.Add(con_i.P_MASTERFILE);
+                //    }
+                //    favItem.FILEPATH = filepath;
+                //    List<string> filetoken = new List<string>();
+                //    foreach (var path in favItem.FILEPATH)
+                //    {
+                //        var token = TokenGenerator.GenerateMusicToken(path);
+                //        filetoken.Add(token);
+                //    }
+                //    favItem.FILETOKEN = filetoken;
+                //}
                 favList.Add(favItem);
             }
 
@@ -980,6 +995,6 @@ namespace MAMBrowser.Utils
 
             return result;
         }
-        
+
     }
 }

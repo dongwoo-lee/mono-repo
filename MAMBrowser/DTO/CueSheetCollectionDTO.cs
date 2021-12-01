@@ -79,9 +79,11 @@ namespace MAMBrowser.DTO
         public string MEMO { get; set; }
         public string TRANSTYPE { get; set; }
         public string USEFLAG { get; set; }
-        public List<string> FILEPATH { get; set; } = new List<string>();
-        public List<string> FILETOKEN { get; set; } = new List<string>();
-        
+        //public List<string> FILEPATH { get; set; } = new List<string>();
+        //public List<string> FILETOKEN { get; set; } = new List<string>();
+        public string FILEPATH { get; set; }
+        public string FILETOKEN { get; set; }
+
         // C
         public bool EDITTARGET { get; set; }
 
