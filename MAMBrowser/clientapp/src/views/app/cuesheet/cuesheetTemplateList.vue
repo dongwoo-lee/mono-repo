@@ -210,6 +210,7 @@ export default {
 
   mounted() {
     this.selectedIds = [];
+    this.getData();
   },
   methods: {
     ...mapActions("cueList", ["getcuesheetListArrTemp"]),

@@ -28,6 +28,7 @@ using M30.AudioFile.Common.Foundation;
 using M30_CueSheetDAO.DAO;
 using M30_CueSheetDAO.Interfaces;
 using M30_CueSheetDAO;
+using M30.AudioFile.DAL.Expand.Factories.Web;
 
 namespace MAMBrowser
 {
@@ -149,6 +150,7 @@ namespace MAMBrowser
             services.AddTransient<ITemplateDAO, TemplateDAO>();
             services.AddTransient<IFavoritesDAO, FavoritesDAO>();
             services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
+            MAMWebFactory.Instance.Setting(AppSetting.ConnectionString);
 
             services.AddTransient<WebServerFileHelper>();
             //services.AddTransient<TransactionRepository>();

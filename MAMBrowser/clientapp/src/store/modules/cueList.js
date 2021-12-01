@@ -28,7 +28,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 1,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP01",
@@ -36,7 +36,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 2,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP07",
@@ -44,7 +44,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 3,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP02",
@@ -52,7 +52,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 4,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP09",
@@ -60,7 +60,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 5,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP07",
@@ -68,7 +68,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 6,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP03",
@@ -76,7 +76,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 7,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP09",
@@ -84,7 +84,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 8,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP07",
@@ -92,7 +92,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 9,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP02",
@@ -100,7 +100,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 10,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "",
@@ -108,7 +108,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 11,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "",
@@ -116,7 +116,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 12,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP06",
@@ -124,7 +124,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 13,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP05",
@@ -132,7 +132,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 14,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP08",
@@ -140,7 +140,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 15,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP02",
@@ -148,7 +148,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 16,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP09",
@@ -156,7 +156,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 17,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP07",
@@ -164,7 +164,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 18,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP07",
@@ -172,7 +172,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 19,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP03",
@@ -180,7 +180,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 20,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "",
@@ -188,7 +188,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 21,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP09",
@@ -196,7 +196,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 22,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP07",
@@ -204,7 +204,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 23,
-            starttime: "",
+            starttime: 0,
         },
         {
             code: "CSGP02",
@@ -212,7 +212,7 @@ export default {
             usedtime: 0,
             etc: "",
             rownum: 24,
-            starttime: "",
+            starttime: 0,
         },
         ]
     },
@@ -779,10 +779,30 @@ export default {
             return payload.row
         },
         //DTO 하는중
-        setCueConData({ commit }, payload) {
+        setCueConData({ state, commit }, payload) {
             // commit('SET_CUEINFO', payload.cue)
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)
+            if (payload.printDTO.length > 0) {
+                var cueDataObj = { ...state.cueInfo }
+                if (Object.keys(cueDataObj).length === 0) {
+                    cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+                }
+                payload.printDTO.forEach((ele) => {
+                    if (ele.rownum == 1) {
+                        if (cueDataObj.r_ONAIRTIME == undefined) {
+                            ele.starttime = moment(cueDataObj.brdtime, "YYYY-MM-DDHH:mm:ss").valueOf();
+                        } else {
+                            ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
+                        }
+                        // var time1 = moment("00:00:00", "HH:mm:ss");
+                        // var time2 = moment(cueDataObj.brdtime, "YYYY-MM-DDTHH:mm:ss");
+                        // ele.starttime = moment
+                        //     .duration(time2.diff(time1))
+                        //     .asMilliseconds();
+                    }
+                })
+            }
             commit('SET_PRINTARR', payload.printDTO);
         },
         //con + 출력용 가공 (가져오기)
@@ -908,6 +928,25 @@ export default {
         setclearCon({ state, commit }) {
             const printTemplate = [...state.printTem]
             var insData = {}
+            var cueDataObj = { ...state.cueInfo }
+            if (Object.keys(cueDataObj).length === 0) {
+                cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+            }
+            printTemplate.forEach((ele) => {
+                if (ele.rownum == 1) {
+                    console.log(cueDataObj.r_ONAIRTIME)
+                    ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
+                    // var time1 = moment("00:00:00", "HH:mm:ss");
+                    // var time2 = moment(cueDataObj.brdtime, "YYYY-MM-DDTHH:mm:ss");
+                    // ele.starttime = moment
+                    //     .duration(time2.diff(time1))
+                    //     .asMilliseconds();
+                }
+            })
+            console.log("state.printTem");
+            console.log(state.printTem);
+            console.log("printTemplate");
+            console.log(printTemplate);
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
             // commit('SET_CUEINFO', payload)

@@ -83,7 +83,7 @@ namespace MAMBrowser.BLL
                     resultItem.ExtroTime_in = 0;
                     resultItem.IntroTime_in = 0;
                     resultItem.MainTitle_in = item.p_maintitle;
-                    resultItem.TransType_in = Char.ToLower(item.p_transtype);
+                    resultItem.TransType_in = item.p_transtype;
                     resultItem.SOM_in = item.p_startposition;
                     resultItem.CartType_in = setCartType(item.p_cartid);
                     resultItem.CartID_in = item.p_cartid;
@@ -120,7 +120,7 @@ namespace MAMBrowser.BLL
                     resultItem.ExtroTime_in = 0;
                     resultItem.IntroTime_in = 0;
                     resultItem.MainTitle_in = item.p_maintitle;
-                    resultItem.TransType_in = Char.ToLower(item.p_transtype);
+                    resultItem.TransType_in = item.p_transtype;
                     resultItem.SOM_in = item.p_startposition;
                     resultItem.CartType_in = setCartType(item.p_cartid);
                     resultItem.CartID_in = item.p_cartid;

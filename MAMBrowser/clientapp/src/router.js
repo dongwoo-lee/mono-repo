@@ -166,7 +166,7 @@ const routes = [
       /**
       * CueSheet
       */
-       {
+      {
         // 일일 큐시트 리스트
         name: 'cuesheet-day-list',
         path: "cuesheet/day/list",
@@ -198,9 +198,13 @@ const routes = [
               },
             })
               .then(async (res) => {
-                console.log("res")
-                console.log(res);
-                cueDataObj = res.data.cueSheetDTO
+                var newInfo = { ...res.data.cueSheetDTO }
+                newInfo.day = cueDataObj.day
+                newInfo.liveflag = cueDataObj.liveflag
+                newInfo.onairday = cueDataObj.onairday
+                newInfo.seqnum = cueDataObj.seqnum
+                newInfo.startdate = cueDataObj.startdate
+                cueDataObj = newInfo
                 await store.dispatch('cueList/setCueConData', res.data);
                 store.dispatch('cueList/getProUserList', cueDataObj.productid);
               });

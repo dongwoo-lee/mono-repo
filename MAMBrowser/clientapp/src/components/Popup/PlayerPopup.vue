@@ -36,7 +36,6 @@
       >
         편집 저장</b-button
       >
-      <!-- 여기에다가 편집 저장 버튼 추가해야함 그리고 거기에 Click이벤트로 SOM, EOM 찍히는지 확인하기 -->
     </template>
   </b-modal>
 </template>
@@ -113,26 +112,61 @@ export default {
       this.$emit("closePlayer");
     },
     editOK() {
-      if (this.type == "A") {
-        var rowData = [...this.abCartArr];
-        rowData = this.setTime(rowData);
-        this.SET_ABCARTARR(rowData);
-      } else if (this.type == "channel_my") {
-        var rowData = [...this.cueFavorites];
-        this.setTime(rowData);
-        this.SET_CUEFAVORITES(rowData);
-        eventBus.$emit("clearFav");
+      // if (this.type == "A") {
+      //   var rowData = [...this.abCartArr];
+      //   rowData = this.setTime(rowData);
+      //   this.SET_ABCARTARR(rowData);
+      // } else if (this.type == "channel_my") {
+      //   var rowData = [...this.cueFavorites];
+      //   this.setTime(rowData);
+      //   this.SET_CUEFAVORITES(rowData);
+      //   eventBus.$emit("clearFav");
+      // }
+      // console.log("this.type");
+      // console.log(this.type);
+      switch (this.type) {
+        case "A":
+          var rowData = [...this.abCartArr];
+          rowData = this.setTime(rowData);
+          this.SET_ABCARTARR(rowData);
+          break;
+        case "channel_my":
+          var rowData = [...this.cueFavorites];
+          this.setTime(rowData);
+          this.SET_CUEFAVORITES(rowData);
+          break;
+        case "channel_1":
+          var rowData = { ...this.cChannelData };
+          this.setTime(rowData[this.type]);
+          this.SET_CCHANNELDATA(rowData);
+          break;
+        case "channel_2":
+          var rowData = { ...this.cChannelData };
+          this.setTime(rowData[this.type]);
+          this.SET_CCHANNELDATA(rowData);
+          break;
+        case "channel_3":
+          var rowData = { ...this.cChannelData };
+          this.setTime(rowData[this.type]);
+          this.SET_CCHANNELDATA(rowData);
+          break;
+        case "channel_4":
+          var rowData = { ...this.cChannelData };
+          this.setTime(rowData[this.type]);
+          this.SET_CCHANNELDATA(rowData);
+          break;
+        default:
+          break;
       }
       this.startPosition = 0;
       this.endPosition = 0;
       this.show = false;
-      //이거 나중에 C 도 추가해야하는데 C는 따로 해야함
     },
     setTime(rowData) {
       var startTime = 0;
       var endTime = 0;
       rowData.forEach((ele) => {
-        if (ele.rowNum == this.rowNum) {
+        if (ele.rownum == this.rowNum) {
           startTime = Math.floor(this.startPosition * 1000);
           if (this.endPosition * 1000 + 1 > ele.duration) {
             endTime = ele.duration;

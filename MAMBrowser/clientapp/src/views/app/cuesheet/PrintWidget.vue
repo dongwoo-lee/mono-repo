@@ -91,18 +91,27 @@
           data-field="usedtime"
           caption="사용시간"
           alignment="center"
-          edit-cell-template="duration_Template"
           :width="105"
+          :calculate-cell-value="calculateSalesAmount"
+          edit-cell-template="etc_usedtime_Template"
+          cell-template="usedtime_Template"
         />
-        <template #duration_Template="{ data: cellInfo }">
-          <div>
-            <DxTextBox
-              :value="cellInfo.data.usedtime"
-              :on-value-changed="
-                (value) => onValueChanged_duration(value, cellInfo)
-              "
-            />
+        <template #usedtime_Template="{ data }">
+          <div v-if="data.data.usedtime != ''">
+            {{
+              $moment(data.data.usedtime)
+                | moment("subtract", "9 hours")
+                | moment("HH:mm:ss")
+            }}
           </div>
+        </template>
+        <template #etc_usedtime_Template="{ data: cellInfo }">
+          <DxTextBox
+            :value="cellInfo.data.usedtime_text"
+            :on-value-changed="
+              (value) => onValueChanged_usedtime(value, cellInfo)
+            "
+          />
         </template>
         <DxColumn
           css-class="durationTime"
@@ -110,7 +119,20 @@
           caption="시작시간"
           alignment="center"
           :width="105"
+          cell-template="starttime_Template"
+          edit-cell-template="etc_starttime_Template"
         />
+        <template #starttime_Template="{ data }">
+          <div v-if="data.data.starttime > 0">
+            {{ $moment(data.data.starttime) | moment("HH:mm:ss") }}
+          </div>
+        </template>
+        <template #etc_starttime_Template="{ data }">
+          <div v-if="data.data.starttime > 0">
+            {{ $moment(data.data.starttime) | moment("HH:mm:ss") }}
+          </div>
+        </template>
+
         <DxColumn
           caption="비고"
           :width="130"
@@ -286,6 +308,32 @@ export default {
     },
   },
   methods: {
+    calculateSalesAmount(rowData) {
+      rowData.usedtime_text = moment(rowData.usedtime)
+        .subtract(9, "hour")
+        .format("HH:mm:ss");
+      //var userTime = { ...rowData.usedtime };
+      if (rowData.usedtime > 0) {
+        // var test = new Date(userTime);
+        // console.log(moment(test).subtract(9, "hour"));
+        // console.log("rowData");
+        // console.log(rowData);
+        // console.log(Number(rowData.usedtime));
+        var time = 0;
+        this.printArr.forEach((ele) => {
+          if (ele.rownum < rowData.rownum) {
+            //var test1 = moment(ele.starttime);
+            //console.log(test1);
+            //time = ele.usedtime + ele.starttime;
+            time = ele.usedtime + ele.starttime;
+            //console.log(ele.starttime)
+          }
+        });
+        // console.log("time");
+        // console.log(time);
+        rowData.starttime = time;
+      }
+    },
     //...mapMutations("cueList", ["SET_PRINTARR"]),
     onAddPrint(e) {
       var arrData = this.printArr;
@@ -299,7 +347,7 @@ export default {
               row.contents = search_row.memo;
             } else {
               row.contents = search_row.maintitle;
-              row.duration = search_row.duration;
+              row.usedtime = search_row.endposition - search_row.startposition;
             }
           } else {
             row.usedtime = search_row.intDuration;
@@ -323,7 +371,7 @@ export default {
             row.contents = search_row.memo;
           } else {
             row.contents = search_row.maintitle;
-            row.duration = search_row.duration;
+            row.usedtime = search_row.endposition - search_row.startposition;
           }
         } else {
           row.usedtime = search_row.intDuration;
@@ -336,6 +384,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      console.log(this.printArr);
       //this.SET_PRINTARR(arrData);
       // e.fromComponent.clearSelection();
     },
@@ -475,8 +524,13 @@ export default {
     onValueChanged_contentsText(value, cellInfo) {
       cellInfo.data.contents = value.value;
     },
-    onValueChanged_duration(value, cellInfo) {
-      cellInfo.data.duration = value.value;
+    onValueChanged_usedtime(value, cellInfo) {
+      cellInfo.data.usedtime_text = value.value;
+      var time1 = moment("00:00:00", "HH:mm:ss");
+      var time2 = moment(value.value, "HH:mm:ss");
+      cellInfo.data.usedtime = moment
+        .duration(time2.diff(time1))
+        .asMilliseconds();
     },
     onValueChanged_etcText(value, cellInfo) {
       cellInfo.data.etc = value.value;
