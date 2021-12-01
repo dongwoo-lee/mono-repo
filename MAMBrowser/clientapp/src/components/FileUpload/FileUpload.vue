@@ -528,8 +528,8 @@ export default {
       fileSelect: false,
       fileState: "",
       percent: 0,
-      logSDate: "2021-11-10",
-      logEDate: "2021-11-10",
+      logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
+      logEDate: "2021-11-10", //TODO: 오늘 날짜로 설정
     };
   },
   watch: {
@@ -616,6 +616,12 @@ export default {
     logSearch() {
       var sdt = this.logSDate.replace(/-/g, "");
       var edt = this.logEDate.replace(/-/g, "");
+      if (edt < sdt) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      }
       axios
         .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
         .then((res) => {
@@ -645,40 +651,36 @@ export default {
       const targetValue = event.target.value;
 
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        event.target.value = targetValue.slice(0, -1);
+        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
+        return;
+      }
+
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.sdate = convertDate;
+          this.logSDate = convertDate;
         }
-      } else if (targetValue == "-") {
-        const replaceAllTargetValue = targetValue.replace(/-/g, "");
-        if (replaceAllTargetValue.length === 8) {
-          const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.sdate = convertDate;
-        }
-      } else {
-        this.sdate = "";
-        this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
     oneInput(event) {
       const targetValue = event.target.value;
 
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        event.target.value = targetValue.slice(0, -1);
+        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
+        return;
+      }
+
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.edate = convertDate;
+          this.logEDate = convertDate;
         }
-      } else if (targetValue == "-") {
-        const replaceAllTargetValue = targetValue.replace(/-/g, "");
-        if (replaceAllTargetValue.length === 8) {
-          const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          this.edate = convertDate;
-        }
-      } else {
-        this.edate = "";
-        this.$fn.notify("error", { message: "숫자만 입력 가능 합니다." });
       }
     },
     //#region 파일 조작
