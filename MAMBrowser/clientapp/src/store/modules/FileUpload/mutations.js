@@ -2,6 +2,9 @@ export default {
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
   },
+  setFileModal(state, payload) {
+    state.FileModal = payload;
+  },
   setDate(state, payload) {
     state.date = payload;
   },

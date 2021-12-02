@@ -5,6 +5,7 @@ import actions from "./actions.js";
 export default {
   namespaced: true,
   state: {
+    FileModal: false,
     processing: false,
     fileUploading: false,
     isActive: false,

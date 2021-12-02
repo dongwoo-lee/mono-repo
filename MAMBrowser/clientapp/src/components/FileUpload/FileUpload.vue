@@ -70,43 +70,6 @@
         </span>
       </div>
     </div>
-    <b-button
-      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
-      id="fileuploadbutton"
-      @click="openFileModal"
-      style="
-        position: absolute;
-        top: -80px;
-        right: 570px;
-        z-index: 1030;
-        border-color: #008ecc;
-        color: #008ecc;
-        background-color: white;
-      "
-    >
-      <b-icon
-        icon="file-earmark-music"
-        style="margin-right: 15px"
-        aria-hidden="true"
-      >
-      </b-icon>
-      마스터링
-    </b-button>
-    <b-badge
-      v-show="getBadge != 0"
-      style="
-        position: absolute;
-        top: -90px;
-        right: 570px;
-        z-index: 1030;
-        bordercolor: red;
-        color: red;
-        background-color: white;
-        border-radius: 80%;
-      "
-      variant="outline-danger"
-      >{{ getBadge }}</b-badge
-    >
     <transition name="slide-fade">
       <CommonFileModal
         v-show="FileModal"
@@ -520,7 +483,6 @@ export default {
     return {
       role: "",
       dxfu,
-      FileModal: false,
       MetaModal: false,
       dropzone: false,
       isDropZoneActive: false,
@@ -571,12 +533,12 @@ export default {
       return this.$refs[dxfu].instance;
     },
     ...mapGetters("user", ["diskAvailable"]),
-    ...mapGetters("FileIndexStore", ["getBadge"]),
     ...mapState("FileIndexStore", {
       uploaderCustomData: (state) => state.uploaderCustomData,
       localFiles: (state) => state.localFiles,
       masteringListData: (state) => state.masteringListData,
       MetaData: (state) => state.MetaData,
+      FileModal: (state) => state.FileModal,
     }),
     getUrl() {
       if (this.MetaData.typeSelected == null) {
@@ -596,6 +558,7 @@ export default {
       "setMasteringLogData",
       "setDuration",
       "setAudioFormat",
+      "setFileModal",
     ]),
     masteringStatus() {
       axios.get("/api/Mastering/mastering-status").then((res) => {
@@ -792,10 +755,10 @@ export default {
     //#endregion
     //#region 모달 조작
     openFileModal() {
-      this.FileModal = true;
+      this.setFileModal(true);
     },
     closeFileModal() {
-      this.FileModal = false;
+      this.setFileModal(false);
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {
