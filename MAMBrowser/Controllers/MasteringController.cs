@@ -25,7 +25,6 @@ namespace MAMBrowser.Controllers
     {
         public MasteringController()
         {
-
         }
         public class ChunkMetadata
         {
@@ -105,11 +104,12 @@ namespace MAMBrowser.Controllers
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
                         var users = Startup.AppSetting.MasteringPriorities["Users"] as Dictionary<string, int>;
                         var userPriority = Convert.ToInt32(users["S01G04C001"]);
-                        
+
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(MyDisk, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(MyDisk, (byte)userPriority);
                     }
                 }
             //4. 작업결과 리턴하기
@@ -177,10 +177,10 @@ namespace MAMBrowser.Controllers
                         var users = Startup.AppSetting.MasteringPriorities["Users"] as Dictionary<string, int>;
                         var userPriority = Convert.ToInt32(users["S01G04C001"]);
 
-
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(Program, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(Program, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -251,7 +251,8 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(mcr, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(mcr, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -324,7 +325,8 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(scr, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(scr, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -397,7 +399,8 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(staticSpot, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(staticSpot, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -470,7 +473,8 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(varSpot, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(varSpot, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -541,7 +545,8 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(report, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(report, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -611,7 +616,8 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQ(Filler, (byte)userPriority);
+                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        rb.Enqueue(Filler, (byte)userPriority);
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -953,31 +959,6 @@ namespace MAMBrowser.Controllers
             // check if the uploaded file is a valid image
             System.IO.File.Copy(tempFilePath, newFilePath);
             return newFilePath;
-        }
-
-        void RabbitMQ(object value, byte priority)
-        {
-            var factory = new ConnectionFactory
-            {
-                Uri = new Uri("amqp://guest:guest@localhost:5672")
-            };
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
-
-            Dictionary<string, object> props = new Dictionary<string, object>();
-            props.Add("x-max-priority", 10);
-            channel.QueueDeclare("message",
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: props);
-
-            var properties = channel.CreateBasicProperties();
-            properties.Priority = priority;
-
-            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value));
-            channel.BasicPublish("", "message", properties, body);
-
         }
     }
 }

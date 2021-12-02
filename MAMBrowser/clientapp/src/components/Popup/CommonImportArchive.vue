@@ -1,9 +1,9 @@
 <template>
   <b-modal
-    id="commonImportTem"
-    ref="importTem"
+    id="CommonImportArchive"
+    ref="importArchive"
     size="xl"
-    title="템플릿 가져오기"
+    title="이전큐시트 가져오기"
     @hide="state = false"
     @show="state = true"
   >
@@ -15,9 +15,31 @@
       >
         <!-- 검색 -->
         <template slot="form-search-area">
-          <!-- 템플릿 이름 -->
-          <b-form-group label="템플릿 이름" class="has-float-label">
-            <common-input-text v-model="temtitle" />
+          <!-- 시작일 ~ 종료일 -->
+          <common-start-end-date-picker
+            startDateLabel="방송 시작일"
+            endDateLabel="방송 종료일"
+            :startDate.sync="searchItems.start_dt"
+            :endDate.sync="searchItems.end_dt"
+            :required="false"
+            :isCurrentDate="false"
+          />
+          <!-- 매체 -->
+          <b-form-group label="매체" class="has-float-label">
+            <b-form-select
+              style="width: 100px"
+              v-model="searchItems.media"
+              :options="mediasOption"
+              @change="eventClick($event)"
+            />
+          </b-form-group>
+          <!-- 프로그램명 -->
+          <b-form-group label="프로그램명" class="has-float-label">
+            <b-form-select
+              style="width: 400px"
+              v-model="searchItems.productid"
+              :options="programList"
+            />
           </b-form-group>
           <!-- 검색 버튼 -->
           <b-form-group>
@@ -77,23 +99,40 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
+import { USER_ID } from "@/constants/config";
+const userId = sessionStorage.getItem(USER_ID);
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
+const date = new Date();
 
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var endDay = get_date_str(date);
+
+date.setDate(date.getDate() - 60); //2달
+var startDay = get_date_str(date);
 export default {
   mixins: [MixinBasicPage],
-  props: {
-    id: {
-      type: String,
-      default: "",
-    },
-  },
   data() {
     return {
       state: false,
-      temtitle: "",
+      date,
+      programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
+        start_dt: "", // 시작일
+        end_dt: "", // 종료일
+        media: "", // 매체
+        productid: "", // 프로그램명
         rowPerPage: 30,
         selectPage: 1,
       },
@@ -105,39 +144,51 @@ export default {
           width: "3%",
         },
         {
-          name: "createtime",
-          title: "생성일",
+          name: "brdtime",
+          title: "방송완료일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "20%",
+          width: "15%",
           callback: (value) => {
             return value === null
               ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
+              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
           },
         },
-
         {
-          name: "edittime",
-          title: "수정일",
+          name: "title",
+          title: "프로그램명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "20%",
+          sortField: "title",
+        },
+        {
+          name: "media",
+          title: "매체",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          sortField: "media",
+          width: "15%",
+          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
+        },
+        {
+          name: "brdtime",
+          title: "방송시간",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "15%",
           callback: (value) => {
             return value === null
               ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
+              : moment(value, "YYYY-MM-DD'T'HH:mm:ss").format("HH:mm");
           },
         },
         {
-          name: "tmptitle",
-          title: "템플릿 이름",
+          name: "__slot:actions",
+          title: "",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
+          dataClass: "center aligned text-center",
+          width: "10%",
         },
       ],
       allCheck: true,
@@ -178,23 +229,51 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["printArr"]),
-    ...mapGetters("cueList", ["tempCuesheetListArr"]),
+    ...mapGetters("cueList", ["archiveCuesheetListArr"]),
+    ...mapGetters("cueList", ["userProOption"]),
+    ...mapGetters("cueList", ["mediasOption"]),
+    ...mapGetters("cueList", ["userProList"]),
+  },
+  mounted() {
+    this.searchItems.start_dt = startDay;
+    this.searchItems.end_dt = endDay;
+    //this.getData();
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_PRINTARR"]),
-    ...mapMutations("cueList", ["SET_TEMPCUESHEETLISTARR"]),
+    ...mapMutations("cueList", ["SET_ARCHIVECUESHEETLISTARR"]),
+    ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
+    ...mapActions("cueList", ["getMediasOption"]),
+    ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
       if (this.state) {
         this.isTableLoading = this.isScrollLodaing ? false : true;
+        if (
+          this.$fn.checkGreaterStartDate(
+            this.searchItems.start_dt,
+            this.searchItems.end_dt
+          )
+        ) {
+          this.$fn.notify("error", {
+            message: "시작 날짜가 종료 날짜보다 큽니다.",
+          });
+          this.hasErrorClass = true;
+          return;
+        }
+        if (this.searchItems.productid == "") {
+          await this.getMediasOption(userId);
+          this.searchItems.productid = this.userProList;
+        }
         await axios
-          .get(`/api/TempCueSheet/GetTempList`, {
+          .get(`/api/ArchiveCueSheet/GetArchiveCueList`, {
             params: {
-              personid: this.id,
-              title: this.temtitle,
+              start_dt: this.searchItems.start_dt,
+              end_dt: this.searchItems.end_dt,
+              products: this.searchItems.productid,
               row_per_page: this.searchItems.rowPerPage,
               select_page: this.searchItems.selectPage,
             },
@@ -203,13 +282,15 @@ export default {
             },
           })
           .then((res) => {
+            console.log("res");
+            console.log(res);
             var seqnum = 0;
             res.data.resultObject.data.forEach((ele) => {
               ele.tabletype = "modal";
               ele.seq = seqnum;
               seqnum = seqnum + 1;
             });
-            this.SET_TEMPCUESHEETLISTARR(res.data.resultObject);
+            this.SET_ARCHIVECUESHEETLISTARR(res.data.resultObject);
             this.setResponseData(res);
             this.addScrollClass();
             this.isTableLoading = false;
@@ -217,9 +298,15 @@ export default {
           });
       }
     },
+    //매체 선택시 프로그램 목록 가져오기
+    async eventClick(e) {
+      var pram = { personid: userId, media: e };
+      var proOption = await this.getuserProOption(pram);
+      this.programList = this.userProOption;
+    },
     async ok() {
       if (this.selectedIds.length == 0) {
-        alert("템플릿을 선택하세요.");
+        alert("큐시트를 선택하세요.");
       } else {
         var rowNum_ab = 0;
         var rowNum_print = 0;
@@ -254,9 +341,16 @@ export default {
           alert("가져오기할 항목들을 선택하세요.");
         } else {
           var seqnum = this.selectedIds[0];
-          var cueid = this.tempCuesheetListArr.data[seqnum].cueid;
+          var cueid = this.archiveCuesheetListArr.data[seqnum].cueid;
           await axios
-            .get(`/api/tempcuesheet/GettempCue?cueid=${cueid}`)
+            .get(`/api/ArchiveCueSheet/GetArchiveCue`, {
+              params: {
+                cueid: cueid,
+              },
+              paramsSerializer: (params) => {
+                return qs.stringify(params);
+              },
+            })
             .then((res) => {
               //const cueSheetCons = res.data.cueSheetCons;
               if (this.MenuSelected.includes("print")) {
@@ -357,60 +451,10 @@ export default {
               //   }
               // }
               //}
-              this.$refs["importTem"].hide();
+              this.$refs["importArchive"].hide();
             });
         }
       }
-    },
-    productFilter(arr) {
-      switch (arr.cartcode) {
-        case "S01G01C011":
-          arr.productType = "PUBLIC_FILE";
-          break;
-        case "S01G01C013":
-          arr.productType = "OLD_PRO";
-          break;
-        case "S01G01C017":
-          arr.productType = "SCR_SB";
-          break;
-        case "S01G01C010":
-          arr.productType = "SCR_SPOT";
-          break;
-        case "S01G01C018":
-          arr.productType = "PGM_CM";
-          break;
-        case "S01G01C019":
-          arr.productType = "CM";
-          break;
-        case "S01G01C012":
-          arr.productType = "REPOTE";
-          break;
-        case "S01G01C021":
-          arr.productType = "FILLER_PR";
-          break;
-        case "S01G01C022":
-          arr.productType = "FILLER_MT";
-          break;
-        case "S01G01C023":
-          arr.productType = "FILLER_TIME";
-          break;
-        case "S01G01C024":
-          arr.productType = "FILLER_ETC";
-          break;
-        case "S01G01C009":
-          arr.productType = "PGM";
-          break;
-        case "S01G01C016":
-          arr.productType = "MCR_SB";
-          break;
-        case "S01G01C020":
-          arr.productType = "MCR_SPOT";
-          break;
-
-        default:
-          break;
-      }
-      return arr;
     },
   },
 };

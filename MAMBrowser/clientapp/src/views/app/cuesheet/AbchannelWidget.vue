@@ -2,7 +2,13 @@
   <div>
     <div class="abchannel_view">
       <div class="abchannel_title mt-2 ml-1">DAP (A,B)</div>
-      <div class="abchannel_total_num mt-2 ml-1">
+      <div
+        class="mt-2 ml-1"
+        :class="{
+          abchannel_total_num: cueInfo.cuetype != 'A',
+          abchannel_total_num_xs: cueInfo.cuetype == 'A',
+        }"
+      >
         전체 : {{ abCartArr.length }}개
       </div>
       <DxDataGrid
@@ -28,12 +34,14 @@
           :on-reorder="onReorderChannelAB"
           :show-drag-icons="false"
           group="tasksGroup"
+          v-if="cueInfo.cuetype != 'A'"
         />
         <DxEditing
           :allow-adding="true"
           :allow-updating="true"
           mode="cell"
           start-edit-action="dblClick"
+          v-if="cueInfo.cuetype != 'A'"
         />
         <DxSelection mode="multiple" showCheckBoxesMode="none" />
         <DxColumn
@@ -251,6 +259,7 @@
               @click="selectionDel"
               :disabled="!selectedItemKeys.length"
               hint="선택 행 삭제"
+              v-if="cueInfo.cuetype != 'A'"
             />
           </div>
         </template>
@@ -590,6 +599,9 @@ export default {
       console.log(this.abCartArr);
     },
     iconClick(e) {
+      if (this.cueInfo.cuetype == "A") {
+        return;
+      }
       switch (e.data.transtype) {
         case "S":
           e.data.transtype = "C";
@@ -636,6 +648,13 @@ export default {
 }
 .abchannel_total_num {
   right: 100px;
+  padding: 0;
+  position: absolute;
+  color: white;
+  z-index: 1;
+}
+.abchannel_total_num_xs {
+  right: 20px;
   padding: 0;
   position: absolute;
   color: white;

@@ -1,7 +1,13 @@
 <template>
   <div class="TabDiv">
     <div>
-      <div class="print_total_num mt-2 ml-1">
+      <div
+        class="mt-2 ml-1"
+        :class="{
+          print_total_num: cueInfo.cuetype != 'A',
+          print_total_num_xs: cueInfo.cuetype == 'A',
+        }"
+      >
         전체 : {{ printArr.length }}개
       </div>
       <DxDataGrid
@@ -899,6 +905,12 @@ export default {
 }
 .print_total_num {
   right: 180px;
+  padding: 0;
+  position: absolute;
+  z-index: 1;
+}
+.print_total_num_xs {
+  right: 105px;
   padding: 0;
   position: absolute;
   z-index: 1;

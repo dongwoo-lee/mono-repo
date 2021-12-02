@@ -10,19 +10,22 @@ namespace MAMBrowser.RabbitMQueue
 {
     public class RabbitMQ
     {
-        public RabbitMQ()
+        public void Enqueue(object value, byte priority)
         {
+            var Id = Startup.AppSetting.RabbitMQInfo["Id"] as string;
+            var Pass = Startup.AppSetting.RabbitMQInfo["Pass"] as string;
+            var Ip = Startup.AppSetting.RabbitMQInfo["Ip"] as string;
+            var Port = Startup.AppSetting.RabbitMQInfo["Port"] as string;
+
 
             var factory = new ConnectionFactory
             {
-                Uri = new Uri("amqp://guest:guest@loaclhost:5672")
+                Uri = new Uri($"amqp://{Id}:{Pass}@{Ip}:{Port}")
             };
-
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
 
             Dictionary<string, object> props = new Dictionary<string, object>();
-
             props.Add("x-max-priority", 10);
             channel.QueueDeclare("message",
                 durable: true,
@@ -31,7 +34,9 @@ namespace MAMBrowser.RabbitMQueue
                 arguments: props);
 
             var properties = channel.CreateBasicProperties();
-            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("value"));
+            properties.Priority = priority;
+
+            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value));
             channel.BasicPublish("", "message", properties, body);
 
         }

@@ -99,6 +99,7 @@
                 icon="x-circle"
                 class="btnIcon"
                 @click="arrdelete(index)"
+                v-if="cueInfo.cuetype != 'A'"
               ></b-icon>
             </div>
           </div>
@@ -307,6 +308,7 @@ export default {
     ...mapGetters("cueList", ["cChannelData"]),
     ...mapGetters("cueList", ["cueFavorites"]),
     ...mapGetters("cueList", ["proUserList"]),
+    ...mapGetters("cueList", ["cueInfo"]),
     sortableColor() {
       return (index) => {
         return {
@@ -336,6 +338,9 @@ export default {
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
     onAdd(e, totalIndex) {
+      if (this.cueInfo.cuetype == "A") {
+        return;
+      }
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
         if (selectedRowsData.length > 1) {
@@ -453,6 +458,9 @@ export default {
       }
     },
     onRemove($event, index) {
+      if (this.cueInfo.cuetype == "A") {
+        return;
+      }
       if ($event.toData != undefined) {
         // var rowData = { rownum: this.fileData[index - 1].rownum };
         this.fileData.splice(index - 1, 1, { rownum: index });
@@ -474,6 +482,9 @@ export default {
       // }
     },
     onTextEdit(index) {
+      if (this.cueInfo.cuetype == "A") {
+        return;
+      }
       this.fileData[index - 1].edittarget = false;
       this.$nextTick(() => {
         this.$refs.inputText[0].focus();
