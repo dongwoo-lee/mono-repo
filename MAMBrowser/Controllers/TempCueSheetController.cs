@@ -42,11 +42,11 @@ namespace MAMBrowser.Controllers
 
         //템플릿 상세내용 가져오기
         [HttpGet("GetTempCue")]
-        public CueSheetCollectionDTO GetTempCue([FromQuery] int cueid)
+        public CueSheetCollectionDTO GetTempCue([FromQuery] int cueid, string pgmcode, string brd_dt)
         {
             try
             {
-                return _bll.GetTemplate(cueid);
+                return _bll.GetTemplate(cueid, pgmcode, brd_dt);
             }
             catch
             {

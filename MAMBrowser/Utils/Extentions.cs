@@ -107,7 +107,7 @@ namespace MAMBrowser.Utils
                     BRDDATE = item.BRDDATE,
                     BRDTIME = item.BRDTIME,
                     CUETYPE = "A",
-                    
+
                 });
             }
 
@@ -173,13 +173,20 @@ namespace MAMBrowser.Utils
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
 
-                if (item.AUDIOS.Count != 0)
+                if (item.AUDIOS.Count != 1)
                 {
-                    foreach (var con_i in item.AUDIOS)
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
+                }
+                else
+                {
+                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
+                    if (con.FILEPATH != "")
                     {
-                        con.FILEPATH = con_i.P_MASTERFILE;
+                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+
                     }
-                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -319,30 +326,21 @@ namespace MAMBrowser.Utils
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
 
-                if (item.AUDIOS.Count != 0)
+                if (item.AUDIOS.Count != 1)
                 {
-                    foreach (var con_i in item.AUDIOS)
-                    {
-                        con.FILEPATH = con_i.P_MASTERFILE;
-                    }
-                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
                 }
-                //if (item.AUDIOS.Count != 0)
-                //{
-                //    List<string> filepath = new List<string>();
-                //    foreach (var con_i in item.AUDIOS)
-                //    {
-                //        filepath.Add(con_i.P_MASTERFILE);
-                //    }
-                //    con.FILEPATH = filepath;
-                //    List<string> filetoken = new List<string>();
-                //    foreach (var path in con.FILEPATH)
-                //    {
-                //        var token = TokenGenerator.GenerateMusicToken(path);
-                //        filetoken.Add(token);
-                //    }
-                //    con.FILETOKEN = filetoken;
-                //}
+                else
+                {
+                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
+                    if (con.FILEPATH != "")
+                    {
+                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+
+                    }
+
+                }
                 if (item.CHANNELTYPE == "N")
                 {
                     con.ROWNUM = item.SEQNUM;
@@ -483,30 +481,21 @@ namespace MAMBrowser.Utils
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
 
-                if (item.AUDIOS.Count != 0)
+                if (item.AUDIOS.Count != 1)
                 {
-                    foreach (var con_i in item.AUDIOS)
-                    {
-                        con.FILEPATH = con_i.P_MASTERFILE;
-                    }
-                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
                 }
-                //if (item.AUDIOS.Count != 0)
-                //{
-                //    List<string> filepath = new List<string>();
-                //    foreach (var con_i in item.AUDIOS)
-                //    {
-                //        filepath.Add(con_i.P_MASTERFILE);
-                //    }
-                //    con.FILEPATH = filepath;
-                //    List<string> filetoken = new List<string>();
-                //    foreach (var path in con.FILEPATH)
-                //    {
-                //        var token = TokenGenerator.GenerateMusicToken(path);
-                //        filetoken.Add(token);
-                //    }
-                //    con.FILETOKEN = filetoken;
-                //}
+                else
+                {
+                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
+                    if (con.FILEPATH != "")
+                    {
+                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+
+                    }
+
+                }
                 if (item.CHANNELTYPE == "N")
                 {
                     con.ROWNUM = item.SEQNUM;
@@ -618,7 +607,7 @@ namespace MAMBrowser.Utils
             detailItem.CUEID = entity.ArchiveCueSheetEntity.CUEID;
             detailArr.Add(detailItem);
             collectionDTO.CueSheetDTO.DETAIL = detailArr;
-            
+
 
             //AB가공
             foreach (var item in entity.CueSheetConEntities)
@@ -643,14 +632,20 @@ namespace MAMBrowser.Utils
                 con.TRANSTYPE = item.TRANSTYPE;
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
-
-                if (item.AUDIOS.Count != 0)
+                if (item.AUDIOS.Count != 1)
                 {
-                    foreach (var con_i in item.AUDIOS)
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
+                }
+                else
+                {
+                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
+                    if (con.FILEPATH != "")
                     {
-                        con.FILEPATH = con_i.P_MASTERFILE;
+                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+
                     }
-                    con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -756,6 +751,74 @@ namespace MAMBrowser.Utils
 
         }
 
+        //Entity TO DTO로 변환 - CM 광고 가져오기
+        public static IEnumerable<CueSheetConDTO> SponsorConverting(this SponsorCollectionEntity entity)
+        {
+            List<CueSheetConDTO> collectionDTO = new List<CueSheetConDTO>();
+            if (entity.CM?.Any() == true)
+            {
+                var rownum = 1;
+                foreach (var item in entity.CM)
+                {
+                    var itemResult = new CueSheetConDTO();
+                    itemResult.ROWNUM = rownum;
+                    itemResult.CHANNELTYPE = "N";
+                    itemResult.CARTCODE = "S01G01C018";
+                    itemResult.TRANSTYPE = "S";
+                    itemResult.USEFLAG = "Y";
+                    itemResult.CARTID = item.CMGROUPID ?? "";
+                    itemResult.ONAIRDATE = item.ONAIRDATE ?? "";
+                    itemResult.STARTPOSITION = 0;
+                    itemResult.FADEINTIME = 0;
+                    itemResult.FADEOUTTIME = 0;
+                    itemResult.MAINTITLE = item.CMGROUPNAME ?? "";
+                    itemResult.SUBTITLE = item.STATENAME ?? "";
+                    itemResult.MEMO = "";
+                    itemResult.EDITTARGET = true;
+                    itemResult.CARTTYPE = "CM";
+                    var duration = 0;
+                    foreach (var clip in item.Clips)
+                    {
+                        duration = duration + clip.LENGTH;
+                    }
+                    itemResult.DURATION = duration;
+                    itemResult.ENDPOSITION = duration;
+                    collectionDTO.Add(itemResult);
+                    rownum++;
+                }
+
+            }
+            //이거 제외시켜도됨
+            if (entity.SB?.Any() == true)
+            {
+                foreach (var item in entity.SB)
+                {
+                    var itemResult = new CueSheetConDTO();
+                    itemResult.ONAIRDATE = item.ONAIRDATE ?? "";
+                    itemResult.CARTID = item.GROUPCONTENTID ?? "";
+                    itemResult.STARTPOSITION = 0;
+                    itemResult.FADEINTIME = 0;
+                    itemResult.FADEOUTTIME = 0;
+                    itemResult.MAINTITLE = item.NAME ?? "";
+                    itemResult.SUBTITLE = item.ID ?? "";
+                    itemResult.MEMO = "";
+                    itemResult.EDITTARGET = true;
+                    itemResult.CARTTYPE = "FC";
+                    var duration = 0;
+                    foreach (var clip in item.Clips)
+                    {
+                        duration = duration + clip.LENGTH;
+
+                    }
+                    itemResult.DURATION = duration;
+                    itemResult.ENDPOSITION = duration;
+                    collectionDTO.Add(itemResult);
+                }
+            }
+
+            return collectionDTO;
+        }
+
         //Entity TO DTO로 변환 - 즐겨찾기
         public static IEnumerable<CueSheetConDTO> Converting(this List<UserFavConEntity> entity)
         {
@@ -777,30 +840,21 @@ namespace MAMBrowser.Utils
                 favItem.MEMO = item.MEMO ?? "";
                 favItem.EDITTARGET = true;
 
-                if (item.AUDIOS.Count != 0)
+                if (item.AUDIOS.Count != 1)
                 {
-                    foreach (var con_i in item.AUDIOS)
-                    {
-                        favItem.FILEPATH = con_i.P_MASTERFILE;
-                    }
-                    favItem.FILETOKEN = TokenGenerator.GenerateFileToken(favItem.FILEPATH);
+                    favItem.FILEPATH = "";
+                    favItem.FILETOKEN = "";
                 }
-                //if (item.AUDIOS.Count != 0)
-                //{
-                //    List<string> filepath = new List<string>();
-                //    foreach (var con_i in item.AUDIOS)
-                //    {
-                //        filepath.Add(con_i.P_MASTERFILE);
-                //    }
-                //    favItem.FILEPATH = filepath;
-                //    List<string> filetoken = new List<string>();
-                //    foreach (var path in favItem.FILEPATH)
-                //    {
-                //        var token = TokenGenerator.GenerateMusicToken(path);
-                //        filetoken.Add(token);
-                //    }
-                //    favItem.FILETOKEN = filetoken;
-                //}
+                else
+                {
+                    favItem.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
+                    if (favItem.FILEPATH != "")
+                    {
+                    favItem.FILETOKEN = TokenGenerator.GenerateFileToken(favItem.FILEPATH);
+
+                    }
+                    
+                }
                 favList.Add(favItem);
             }
 
@@ -946,7 +1000,7 @@ namespace MAMBrowser.Utils
                     result.DelDefCueParams.Add(delParm);
                 }
             }
-            if (dto.PrintDTO != null)
+            if (dto.PrintDTO != null&& dto.PrintDTO.Count!=0)
             {
                 //print
                 result.PrintParams = new List<PrintParam>();
@@ -1160,6 +1214,68 @@ namespace MAMBrowser.Utils
 
             return result;
         }
+
+        //상세내용 가져오기 시 광고 업데이트
+        public static List<CueSheetConEntity> SetSponsor(this SponsorCollectionEntity spons, List<CueSheetConEntity> entity)
+        {
+            if (spons.CM?.Any() == true)
+            {
+                foreach (var item in spons.CM)
+                {
+                    var cartId = item.CMGROUPID.Substring(2);
+                    foreach (var cueItem in entity)
+                    {
+                        if (cueItem.CARTID.Contains(cartId))
+                        {
+                            cueItem.ONAIRDATE = item.ONAIRDATE;
+                            cueItem.STARTPOSITION = 0;
+                            var duration = 0;
+                            foreach (var clip in item.Clips)
+                            {
+                                duration = duration + clip.LENGTH;
+
+                            }
+                            cueItem.ENDPOSITION = duration;
+                            cueItem.FADEINTIME = 0;
+                            cueItem.FADEOUTTIME = 0;
+                            cueItem.MAINTITLE = item.CMGROUPNAME;
+                            cueItem.SUBTITLE = item.STATENAME;
+
+                        }
+                    }
+                }
+            }
+            if (spons.SB?.Any() == true)
+            {
+                foreach (var item in spons.SB)
+                {
+                    var cartId = item.GROUPCONTENTID.Substring(2);
+                    foreach (var cueItem in entity)
+                    {
+                        if (cueItem.CARTID.Contains(cartId))
+                        {
+                            cueItem.ONAIRDATE = item.ONAIRDATE;
+                            cueItem.STARTPOSITION = 0;
+                            var duration = 0;
+                            foreach (var clip in item.Clips)
+                            {
+                                duration = duration + clip.LENGTH;
+
+                            }
+                            cueItem.ENDPOSITION = duration;
+                            cueItem.FADEINTIME = 0;
+                            cueItem.FADEOUTTIME = 0;
+                            cueItem.MAINTITLE = item.NAME;
+                            cueItem.SUBTITLE = item.ID;
+
+                        }
+                    }
+                }
+            }
+            return entity;
+        }
+
+
 
     }
 }

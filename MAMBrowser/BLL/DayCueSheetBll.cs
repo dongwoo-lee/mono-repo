@@ -16,11 +16,14 @@ namespace MAMBrowser.BLL
     public class DayCueSheetBll
     {
         private readonly ICueSheetDAO _dao;
+        private readonly ICommonDAO _common_dao;
 
-        public DayCueSheetBll(ICueSheetDAO dao)
+        public DayCueSheetBll(ICueSheetDAO dao, ICommonDAO common_dao)
         {
             _dao = dao;
+            _common_dao = common_dao;
         }
+
         // 일일큐시트 목록 가져오기
         public DayCueList_Page GetDayCueSheetList(List<string> products, List<string> dates, int row_per_page, int select_page)
         {
@@ -41,15 +44,24 @@ namespace MAMBrowser.BLL
         }
 
         // 일일큐시트 상세내용 가져오기 
-        public CueSheetCollectionDTO GetDayCueSheet(string productid, int cueid)
+        public CueSheetCollectionDTO GetDayCueSheet(string productid, int cueid, string pgmcode, string brd_dt)
         {
             DayCueSheetInfoParam param = new DayCueSheetInfoParamBuilder()
                 .SetCueID(cueid)
                 .SetProductID(productid)
                 .SetRequestType(RequestType.Web)
                 .Build();
+            var result = _dao.GetDayCueSheet(param);
+            if (pgmcode!=null&& brd_dt != null)
+            {
+            SponsorParam spon_param = new SponsorParam();
+            spon_param.BrdDate = brd_dt;
+            spon_param.PgmCode = pgmcode;
+            result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsor(_dao.GetDayCueSheet(param).CueSheetConEntities);
+            }
 
-            return _dao.GetDayCueSheet(param)?.DayConverting();
+            return result?.DayConverting();
+
         }
 
         //일일큐시트 저장
@@ -167,7 +179,7 @@ namespace MAMBrowser.BLL
         public static string setCartType(string cartid)
         {
             var front = cartid.Substring(0, 2);
-            var back = cartid.Substring(8, 2);
+            var back = cartid[cartid.Length - 2];
             var result = "";
             switch (front)
             {
@@ -196,7 +208,7 @@ namespace MAMBrowser.BLL
                     result = "ST";
                     break;
                 case "PM":
-                    if (back == "NA")
+                    if (back.ToString() == "NA")
                     {
                         result = "AR";
                     }

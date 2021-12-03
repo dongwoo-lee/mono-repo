@@ -41,11 +41,11 @@ namespace MAMBrowser.Controllers
 
         // 기본큐시트 상세내용 가져오기
         [HttpGet("GetDefCue")]
-        public CueSheetCollectionDTO GetDefCue([FromQuery] string productid, [FromQuery] List<string> week)
+        public CueSheetCollectionDTO GetDefCue([FromQuery] string productid, [FromQuery] List<string> week, string pgmcode, string brd_dt)
         {
             try
             {
-                var result = _bll.GetDefCue(productid, week);
+                var result = _bll.GetDefCue(productid, week, pgmcode, brd_dt);
                 return result;
             }
             catch (Exception ex)

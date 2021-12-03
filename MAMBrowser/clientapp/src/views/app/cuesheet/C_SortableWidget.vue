@@ -14,7 +14,7 @@
     >
       <div style="height: 100%; border-radius: 10px">
         <div
-          v-if="fileData[index - 1].duration > 0"
+          v-if="fileData[index - 1].cartcode != null"
           style="height: 100%; cursor: pointer"
         >
           <div class="top">
@@ -314,19 +314,19 @@ export default {
         return {
           backColor_1:
             this.channelKey == "channel_1" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_2:
             this.channelKey == "channel_2" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_3:
             this.channelKey == "channel_3" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_4:
             this.channelKey == "channel_4" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_my:
             this.channelKey == "channel_my" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
         };
       };
     },
@@ -337,6 +337,7 @@ export default {
     ...mapActions("cueList", ["getCueDayFav"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
+    ...mapActions("cueList", ["sponsorDataFun"]),
     onAdd(e, totalIndex) {
       if (this.cueInfo.cuetype == "A") {
         return;
@@ -362,8 +363,14 @@ export default {
               // row.filepath.push(search_row.filePath);
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
-              row.endposition = search_row.intDuration;
-              row.duration = search_row.intDuration;
+              if (!search_row.intDuration) {
+                row.endposition = 0;
+                row.duration = 0;
+              } else {
+                row.endposition = search_row.intDuration;
+                row.duration = search_row.intDuration;
+              }
+              row.cartid = search_row.id;
               row.cartcode = this.searchListData.cartcode;
               this.cartCodeFilter({
                 row: row,
@@ -390,8 +397,14 @@ export default {
             row.rownum = this.fileData[totalIndex - 1].rownum;
             row.filetoken = search_row.fileToken;
             row.filepath = search_row.filePath;
-            row.endposition = search_row.intDuration;
-            row.duration = search_row.intDuration;
+            if (!search_row.intDuration) {
+              row.endposition = 0;
+              row.duration = 0;
+            } else {
+              row.endposition = search_row.intDuration;
+              row.duration = search_row.intDuration;
+            }
+            row.cartid = search_row.id;
             row.cartcode = this.searchListData.cartcode;
             this.cartCodeFilter({
               row: row,
@@ -404,13 +417,14 @@ export default {
         e.fromData.rownum = this.fileData[totalIndex - 1].rownum;
         this.fileData.splice(totalIndex - 1, 1, e.fromData);
       }
-
       if (this.channelKey == "channel_my") {
         this.SET_CUEFAVORITES(this.fileData);
       } else {
         var resultData = { ...this.cChannelData };
         resultData[this.channelKey] = this.fileData;
         this.SET_CCHANNELDATA(resultData);
+        console.log("this.cChannelData");
+        console.log(this.cChannelData);
         // this.setInstanceCon({
         //   fileData: this.fileData,
         //   channelKey: this.channelKey,

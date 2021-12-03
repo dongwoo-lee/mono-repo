@@ -47,5 +47,19 @@ namespace MAMBrowser.Controllers
             }
         }
 
+        //광고 목록 가져오기
+        [HttpGet("GetSponsorList")]
+        public IEnumerable<CueSheetConDTO> GetSponsorList([FromQuery] string pgmcode, [FromQuery] string brd_dt)
+        {
+            try
+            {
+                return _bll.GetSponsorList(pgmcode, brd_dt);
+            }
+            catch (Exception exp)
+            {
+                throw;
+            }
+        }
+
     }
 }

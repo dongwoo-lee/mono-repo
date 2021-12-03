@@ -326,7 +326,7 @@ export default {
         filetoken: "", //미리듣기 때문 바뀔수도있음
         filepath: "",
         duration: 0, //string
-        useFlag: "Y",
+        useflag: "Y",
       },
       selectedItemKeys: [],
     };
@@ -367,6 +367,7 @@ export default {
     //...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     onAddChannelAB(e) {
+      console.log("e.itemData");
       console.log(e.itemData);
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
@@ -378,13 +379,18 @@ export default {
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
-              //row.filetoken.push(search_row.fileToken);
-              //row.filepath.push(search_row.filePath);
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
-              row.endposition = search_row.intDuration;
-              row.duration = search_row.intDuration;
+              if (!search_row.intDuration) {
+                row.endposition = 0;
+                row.duration = 0;
+              } else {
+                row.endposition = search_row.intDuration;
+                row.duration = search_row.intDuration;
+              }
+              row.cartid = search_row.id;
               row.cartcode = this.searchListData.cartcode;
+
               this.cartCodeFilter({
                 row: row,
                 search_row: search_row,
@@ -401,8 +407,14 @@ export default {
           } else {
             row.filetoken = search_row.fileToken;
             row.filepath = search_row.filePath;
-            row.endposition = search_row.intDuration;
-            row.duration = search_row.intDuration;
+            if (!search_row.intDuration) {
+              row.endposition = 0;
+              row.duration = 0;
+            } else {
+              row.endposition = search_row.intDuration;
+              row.duration = search_row.intDuration;
+            }
+            row.cartid = search_row.id;
             row.cartcode = this.searchListData.cartcode;
             this.cartCodeFilter({
               row: row,
@@ -421,7 +433,6 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      console.log(this.abCartArr);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },

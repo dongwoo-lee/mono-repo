@@ -16,10 +16,13 @@ namespace MAMBrowser.BLL
     public class DefCueSheetBll
     {
         private readonly ICueSheetDAO _dao;
+        private readonly ICommonDAO _common_dao;
 
-        public DefCueSheetBll(ICueSheetDAO dao)
+
+        public DefCueSheetBll(ICueSheetDAO dao, ICommonDAO common_dao)
         {
             _dao = dao;
+            _common_dao = common_dao;
         }
         // 기본큐시트 목록 가져오기
         public DefCueList_Page GetDefCueList(List<string> productids, int row_per_page, int select_page)
@@ -40,15 +43,24 @@ namespace MAMBrowser.BLL
 
         }
         // 기본큐시트 상세내용 가져오기
-        public CueSheetCollectionDTO GetDefCue(string productid, List<string> week)
+        public CueSheetCollectionDTO GetDefCue(string productid, List<string> week, string pgmcode, string brd_dt)
         {
             DefCueSheetInfoParam param = new DefCueSheetInfoParamBuilder()
                 .SetWeeks(week)
                 .SetProductID(productid)
                 .SetRequestType(RequestType.Web)
                 .Build();
+            var result = _dao.GetDefCueSheet(param);
+            if (pgmcode != null && brd_dt != null)
+            {
+                SponsorParam spon_param = new SponsorParam();
+                spon_param.BrdDate = brd_dt;
+                spon_param.PgmCode = pgmcode;
+                var result2 = _common_dao.GetSponsor(spon_param);
+                result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsor(_dao.GetDefCueSheet(param).CueSheetConEntities);
+            }
 
-            return _dao.GetDefCueSheet(param)?.DefConverting();
+            return result?.DefConverting();
         }
         //기본큐시트 생성 & 업데이트
         public int SaveDefaultCueSheet(CueSheetCollectionDTO pram)
