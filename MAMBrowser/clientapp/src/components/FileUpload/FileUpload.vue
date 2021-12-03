@@ -525,9 +525,6 @@ export default {
         this.setMasteringLogData(masteringLogData);
       });
   },
-  // beforeDestroy() {
-  //   clearInterval(background);
-  // },
   computed: {
     fileupload: function () {
       return this.$refs[dxfu].instance;
@@ -559,6 +556,8 @@ export default {
       "setDuration",
       "setAudioFormat",
       "setFileModal",
+      "startDBConnection",
+      "stopDBConnection",
     ]),
     masteringStatus() {
       axios.get("/api/Mastering/mastering-status").then((res) => {
@@ -756,9 +755,13 @@ export default {
     //#region 모달 조작
     openFileModal() {
       this.setFileModal(true);
+      //TODO: DB 폴링 START 메소드
+      this.startDBConnection();
     },
     closeFileModal() {
       this.setFileModal(false);
+      //TODO: DB 폴링 STOP 메소드
+      this.stopDBConnection();
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {
