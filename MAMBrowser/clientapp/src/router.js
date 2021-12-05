@@ -226,7 +226,7 @@ const routes = [
               productids: cueDataObj.productid,
               row_per_page: 30,
               select_page: 1
-            });
+            })
 
             var defCueList = store.getters['cueList/defCuesheetListArr'];
             defCueList.data.forEach((ele) => {
@@ -239,7 +239,6 @@ const routes = [
             });
             if (defCueId.length > 0) {
               //기본큐시트 작성 내용 가져오기
-
               var params = { productid: cueDataObj.productid, week: defCueId[0].week, pgmcode: cueDataObj.pgmcode };
               if (Object.keys(cueDataObj).includes("detail")) {
                 params.brd_dt = cueDataObj.brddate

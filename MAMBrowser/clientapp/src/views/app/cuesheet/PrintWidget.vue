@@ -116,6 +116,7 @@
         <template #etc_usedtime_Template="{ data: cellInfo }">
           <DxTextBox
             :value="cellInfo.data.usedtime_text"
+            mask="00:00:00"
             :on-value-changed="
               (value) => onValueChanged_usedtime(value, cellInfo)
             "
@@ -266,6 +267,7 @@ export default {
       ],
       dataGridRef,
       selectBoxRef,
+      brdDate: 0,
     };
   },
   mounted() {
@@ -318,30 +320,72 @@ export default {
   },
   methods: {
     calculateSalesAmount(rowData) {
-      rowData.usedtime_text = moment(rowData.usedtime)
-        .subtract(9, "hour")
-        .format("HH:mm:ss");
-      //var userTime = { ...rowData.usedtime };
-      if (rowData.usedtime > 0) {
-        // var test = new Date(userTime);
-        // console.log(moment(test).subtract(9, "hour"));
-        // console.log("rowData");
-        // console.log(rowData);
-        // console.log(Number(rowData.usedtime));
-        var time = 0;
+      if (this.dataGrid.getRowIndexByKey(rowData.rownum) == 0) {
+        if (this.cueInfo.r_ONAIRTIME == undefined) {
+          rowData.starttime = moment(
+            this.cueInfo.brdtime,
+            "YYYY-MM-DDHH:mm:ss"
+          ).valueOf();
+        } else {
+          rowData.starttime = moment(
+            this.cueInfo.r_ONAIRTIME,
+            "YYYY-MM-DDHH:mm:ss"
+          ).valueOf();
+        }
+        this.brdDate = rowData.starttime;
+      } else if (rowData.usedtime == 0) {
+        rowData.starttime = 0;
+      } else {
+        var startTime = 0;
         this.printArr.forEach((ele) => {
-          if (ele.rownum < rowData.rownum) {
-            //var test1 = moment(ele.starttime);
-            //console.log(test1);
-            //time = ele.usedtime + ele.starttime;
-            time = ele.usedtime + ele.starttime;
-            //console.log(ele.starttime)
+          if (
+            ele.usedtime != 0 &&
+            this.dataGrid.getRowIndexByKey(ele.rownum) <
+              this.dataGrid.getRowIndexByKey(rowData.rownum)
+          ) {
+            startTime = startTime + ele.usedtime;
           }
         });
-        // console.log("time");
-        // console.log(time);
-        rowData.starttime = time;
+        //console.log(this.brdDate);
+        rowData.starttime = this.brdDate + startTime;
       }
+      if (
+        this.dataGrid.getRowIndexByKey(rowData.rownum) ==
+        this.printArr.length - 1
+      ) {
+        var startTime = 0;
+        this.printArr.forEach((ele) => {
+          if (ele.usedtime != 0) {
+            startTime = startTime + ele.usedtime;
+          }
+        });
+        //console.log(this.brdDate);
+        rowData.starttime = this.brdDate + startTime;
+      }
+      // rowData.usedtime_text = moment(rowData.usedtime)
+      //   .subtract(9, "hour")
+      //   .format("HH:mm:ss");
+      // //var userTime = { ...rowData.usedtime };
+      // if (rowData.usedtime > 0) {
+      //   // var test = new Date(userTime);
+      //   // console.log(moment(test).subtract(9, "hour"));
+      //   // console.log("rowData");
+      //   // console.log(rowData);
+      //   // console.log(Number(rowData.usedtime));
+      //   var time = 0;
+      //   this.printArr.forEach((ele) => {
+      //     if (ele.rownum < rowData.rownum) {
+      //       //var test1 = moment(ele.starttime);
+      //       //console.log(test1);
+      //       //time = ele.usedtime + ele.starttime;
+      //       time = ele.usedtime + ele.starttime;
+      //       //console.log(ele.starttime)
+      //     }
+      //   });
+      //   // console.log("time");
+      //   // console.log(time);
+      //   rowData.starttime = time;
+      // }
     },
     //...mapMutations("cueList", ["SET_PRINTARR"]),
     onAddPrint(e) {
@@ -393,7 +437,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      console.log(this.printArr);
+      //console.log(this.printArr);
       //this.SET_PRINTARR(arrData);
       // e.fromComponent.clearSelection();
     },
@@ -534,12 +578,16 @@ export default {
       cellInfo.data.contents = value.value;
     },
     onValueChanged_usedtime(value, cellInfo) {
-      cellInfo.data.usedtime_text = value.value;
-      var time1 = moment("00:00:00", "HH:mm:ss");
-      var time2 = moment(value.value, "HH:mm:ss");
-      cellInfo.data.usedtime = moment
-        .duration(time2.diff(time1))
-        .asMilliseconds();
+      if (value.value != "") {
+        cellInfo.data.usedtime_text = value.value;
+        var time1 = moment("00:00:00", "HH:mm:ss");
+        var time2 = moment(value.value, "HH:mm:ss");
+        cellInfo.data.usedtime = moment
+          .duration(time2.diff(time1))
+          .asMilliseconds();
+      } else {
+        cellInfo.data.usedtime = 0;
+      }
     },
     onValueChanged_etcText(value, cellInfo) {
       cellInfo.data.etc = value.value;

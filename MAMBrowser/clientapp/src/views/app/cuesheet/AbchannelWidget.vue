@@ -186,7 +186,14 @@
         <template #text_Template="{ data }">
           <div>
             <div v-if="data.data.subtitle != ''">
-              <div>
+              <div
+                :class="{
+                  maintitle_red:
+                    data.data.onairdate != '' &&
+                    (data.data.onairdate != cueInfo.day ||
+                      data.data.onairdate != cueInfo.brddate),
+                }"
+              >
                 {{ data.data.maintitle }}
               </div>
               <div style="color: #959595; font-size: 12px">
@@ -242,13 +249,30 @@
         </template>
         <DxColumn :width="60" cell-template="play_Template" />
         <template #play_Template="{ data }">
-          <div v-if="data.data.subtitle != ''">
-            <DxButton
-              icon="music"
-              type="default"
-              hint="미리듣기/음원편집"
-              @click="onPreview(data.data)"
-            />
+          <div>
+            <div v-if="data.data.subtitle != '' && data.data.onairdate == ''">
+              <DxButton
+                icon="music"
+                type="default"
+                hint="미리듣기/음원편집"
+                @click="onPreview(data.data)"
+              />
+            </div>
+            <div v-if="data.data.subtitle != '' && data.data.onairdate != ''">
+              <DxButton
+                icon="music"
+                type="success"
+                hint="그룹 미리듣기"
+                @click="
+                  showGrpPlayerPopup({
+                    grpType: 'cm',
+                    brd_Dt: data.data.onairdate,
+                    grpId: data.data.cartid,
+                    title: data.data.maintitle,
+                  })
+                "
+              />
+            </div>
           </div>
         </template>
         <DxScrolling mode="infinite" />
@@ -265,6 +289,16 @@
         </template>
       </DxDataGrid>
     </div>
+    <CMGroupPlayerPopup
+      :showPlayerPopup="showGrpPlayer"
+      :title="grpParam.title"
+      :grpType="grpParam.grpType"
+      :brd_Dt="grpParam.brd_Dt"
+      :grpId="grpParam.grpId"
+      @closePlayer="closeGrpPlayerPopup"
+    >
+    </CMGroupPlayerPopup>
+
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.maintitle"
@@ -310,6 +344,8 @@ export default {
   data() {
     return {
       dataGridRef,
+      showGrpPlayer: false,
+      grpParam: {},
       rowData: {
         onairdate: "",
         cartid: "", // 소재ID
@@ -366,6 +402,15 @@ export default {
   methods: {
     //...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
+
+    showGrpPlayerPopup(data) {
+      this.grpParam = data;
+      this.showGrpPlayer = true;
+    },
+    closeGrpPlayerPopup() {
+      this.showGrpPlayer = false;
+    },
+
     onAddChannelAB(e) {
       console.log("e.itemData");
       console.log(e.itemData);
@@ -433,6 +478,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      console.log(this.abCartArr);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },
@@ -676,5 +722,8 @@ export default {
 }
 .editTemplateSubTitle {
   color: #2a4878;
+}
+.maintitle_red {
+  color: red;
 }
 </style>

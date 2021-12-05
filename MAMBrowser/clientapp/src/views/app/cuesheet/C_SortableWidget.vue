@@ -106,6 +106,12 @@
           <div class="bottom">
             <div
               class="bottom_item maintitle"
+              :class="{
+                maintitle_red:
+                  fileData[index - 1].onairdate != '' &&
+                  (fileData[index - 1].onairdate != cueInfo.day ||
+                    fileData[index - 1].onairdate != cueInfo.brddate),
+              }"
               @dblclick="onTextEdit(index)"
               v-if="fileData[index - 1].edittarget"
             >
@@ -716,5 +722,8 @@ export default {
 .btnIcon:hover {
   color: #2a4878;
   cursor: pointer;
+}
+.maintitle_red {
+  color: red;
 }
 </style>

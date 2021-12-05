@@ -322,18 +322,33 @@ export default {
           alert("가져오기할 항목들을 선택하세요.");
         } else {
           var seqnum = this.selectedIds[0];
-          var cueid = this.defCuesheetListArr.data[seqnum].cueid;
+          //var cueid = this.defCuesheetListArr.data[seqnum].cueid;
+          var params = {
+            productid: this.searchItems.productid,
+            week: this.defCuesheetListArr.data[seqnum].weeks,
+            pgmcode: this.cueInfo.pgmcode,
+          };
+          if (this.cueInfo.cuetype == "D") {
+            if (Object.keys(this.cueInfo).includes("detail")) {
+              params.brd_dt = this.cueInfo.brddate;
+            } else {
+              params.brd_dt = this.cueInfo.day;
+            }
+          } else if (this.cueInfo.cuetype == "B") {
+            params.brd_dt = toDay;
+          }
+          console.log("params");
+          console.log(params);
           await axios
             .get(`/api/defcuesheet/GetdefCue`, {
-              params: {
-                productid: this.searchItems.productid,
-                cueid: cueid,
-              },
+              params: params,
               paramsSerializer: (params) => {
                 return qs.stringify(params);
               },
             })
             .then((res) => {
+              console.log("res");
+              console.log(res);
               if (this.MenuSelected.includes("print")) {
                 if (beforePrintData.length > 0) {
                   res.data.printDTO.forEach((ele) => {
