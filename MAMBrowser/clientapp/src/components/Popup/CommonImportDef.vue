@@ -337,8 +337,6 @@ export default {
           } else if (this.cueInfo.cuetype == "B") {
             params.brd_dt = toDay;
           }
-          console.log("params");
-          console.log(params);
           await axios
             .get(`/api/defcuesheet/GetdefCue`, {
               params: params,
@@ -347,8 +345,6 @@ export default {
               },
             })
             .then((res) => {
-              console.log("res");
-              console.log(res);
               if (this.MenuSelected.includes("print")) {
                 if (beforePrintData.length > 0) {
                   res.data.printDTO.forEach((ele) => {
@@ -366,6 +362,7 @@ export default {
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
                 this.SET_PRINTARR(resultPrintData);
                 this.SET_CUEINFO(oldCueInfo);
+                this.$emit("settings", oldCueInfo);
                 eventBus.$emit("printDataSet");
               }
               if (this.MenuSelected.includes("ab")) {

@@ -187,6 +187,7 @@
           <div>
             <div v-if="data.data.subtitle != ''">
               <div
+                style="text-overflow: ellipsis; overflow: hidden"
                 :class="{
                   maintitle_red:
                     data.data.onairdate != '' &&
@@ -196,13 +197,15 @@
               >
                 {{ data.data.maintitle }}
               </div>
-              <div style="color: #959595; font-size: 12px">
+              <div
+                style="color: #959595; font-size: 12px text-overflow: ellipsis; overflow: hidden"
+              >
                 {{ data.data.subtitle }}
               </div>
             </div>
 
             <div v-else>
-              <div>
+              <div style="text-overflow: ellipsis; overflow: hidden">
                 {{ data.data.memo }}
               </div>
             </div>
@@ -410,10 +413,7 @@ export default {
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
     },
-
     onAddChannelAB(e) {
-      console.log("e.itemData");
-      console.log(e.itemData);
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -478,7 +478,6 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      console.log(this.abCartArr);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },
@@ -652,8 +651,6 @@ export default {
     },
     onValueChanged_memoText(value, cellInfo) {
       cellInfo.data.memo = value.value;
-      console.log("this.abCartArr");
-      console.log(this.abCartArr);
     },
     iconClick(e) {
       if (this.cueInfo.cuetype == "A") {

@@ -317,10 +317,12 @@ const routes = [
           if (Object.keys(cueDataObj).length === 0) {
             cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
           }
-          var params = {
-            productid: cueDataObj.productid,
-            week: cueDataObj.weeks,
-          };
+          var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode };
+          if (Object.keys(cueDataObj).includes("detail")) {
+            params.brd_dt = cueDataObj.brddate
+          } else {
+            params.brd_dt = cueDataObj.day
+          }
           await axios.get(`/api/defcuesheet/GetdefCue`, {
             params: params,
             paramsSerializer: (params) => {

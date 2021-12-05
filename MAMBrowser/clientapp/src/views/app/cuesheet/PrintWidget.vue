@@ -359,35 +359,9 @@ export default {
             startTime = startTime + ele.usedtime;
           }
         });
-        //console.log(this.brdDate);
         rowData.starttime = this.brdDate + startTime;
       }
-      // rowData.usedtime_text = moment(rowData.usedtime)
-      //   .subtract(9, "hour")
-      //   .format("HH:mm:ss");
-      // //var userTime = { ...rowData.usedtime };
-      // if (rowData.usedtime > 0) {
-      //   // var test = new Date(userTime);
-      //   // console.log(moment(test).subtract(9, "hour"));
-      //   // console.log("rowData");
-      //   // console.log(rowData);
-      //   // console.log(Number(rowData.usedtime));
-      //   var time = 0;
-      //   this.printArr.forEach((ele) => {
-      //     if (ele.rownum < rowData.rownum) {
-      //       //var test1 = moment(ele.starttime);
-      //       //console.log(test1);
-      //       //time = ele.usedtime + ele.starttime;
-      //       time = ele.usedtime + ele.starttime;
-      //       //console.log(ele.starttime)
-      //     }
-      //   });
-      //   // console.log("time");
-      //   // console.log(time);
-      //   rowData.starttime = time;
-      // }
     },
-    //...mapMutations("cueList", ["SET_PRINTARR"]),
     onAddPrint(e) {
       var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -437,9 +411,6 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      //console.log(this.printArr);
-      //this.SET_PRINTARR(arrData);
-      // e.fromComponent.clearSelection();
     },
     onReorderPrint(e) {
       var arrData = this.printArr;
@@ -708,10 +679,14 @@ export default {
             },
             children: [
               new Paragraph({
-                text: moment(
-                  this.cueInfo.detail[0].brdtime,
-                  "YYYY-MM-DD'T'HH:mm:ss"
-                ).format("YYYY년 MM월 DD일 (ddd)"),
+                text: Object.keys(this.cueInfo).includes("detail")
+                  ? moment(
+                      this.cueInfo.brdtime,
+                      "YYYY-MM-DD'T'HH:mm:ss"
+                    ).format("YYYY년 MM월 DD일 (ddd)")
+                  : moment(this.cueInfo.day, "YYYY-MM-DD'T'HH:mm:ss").format(
+                      "YYYY년 MM월 DD일 (ddd)"
+                    ),
                 alignment: AlignmentType.RIGHT,
               }),
               new Paragraph({

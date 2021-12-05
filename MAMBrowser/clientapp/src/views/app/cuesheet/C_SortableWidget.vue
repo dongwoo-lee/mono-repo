@@ -350,6 +350,9 @@ export default {
       }
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
+        selectedRowsData = selectedRowsData.filter((ele) => {
+          return ele.cartcode != null && ele.cartcode != "";
+        });
         if (selectedRowsData.length > 1) {
           selectedRowsData.forEach((data, index) => {
             var row = { ...this.rowData };
@@ -363,10 +366,6 @@ export default {
               row.edittarget = true;
             } else {
               row.rownum = totalIndex + index;
-              //row.filetoken = [];
-              // row.filetoken.push(search_row.fileToken);
-              // row.filepath = [];
-              // row.filepath.push(search_row.filePath);
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
               if (!search_row.intDuration) {
@@ -429,8 +428,6 @@ export default {
         var resultData = { ...this.cChannelData };
         resultData[this.channelKey] = this.fileData;
         this.SET_CCHANNELDATA(resultData);
-        console.log("this.cChannelData");
-        console.log(this.cChannelData);
         // this.setInstanceCon({
         //   fileData: this.fileData,
         //   channelKey: this.channelKey,
@@ -481,25 +478,13 @@ export default {
       if (this.cueInfo.cuetype == "A") {
         return;
       }
-      if ($event.toData != undefined) {
-        // var rowData = { rownum: this.fileData[index - 1].rownum };
+      if (!$event.toData.cartcode) {
         this.fileData.splice(index - 1, 1, { rownum: index });
+      } else {
+        var data = $event.toData;
+        data.rownum = index;
+        this.fileData.splice(index - 1, 1, data);
       }
-
-      //AB채널에 넣을때 복사되게하려고
-      // if ($event.dropInsideItem) {
-      //   if (Object.keys($event.toData).includes("subtitle")) {
-      //     this.fileData[index - 1] = $event.toData;
-      //   } else {
-      //     this.fileData.splice(index - 1, 1, {});
-      //   }
-      // }
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      //   this.SET_CUEFAVORITES(this.fileData);
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
     },
     onTextEdit(index) {
       if (this.cueInfo.cuetype == "A") {
@@ -509,12 +494,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.inputText[0].focus();
       });
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      //   this.SET_CUEFAVORITES(this.fileData);
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
     },
     onValueChange($event, index, data) {
       this.fileData[index - 1].maintitle = $event.target.value;

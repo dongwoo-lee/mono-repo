@@ -37,6 +37,7 @@ namespace MAMBrowser.Controllers
                 }
                 foreach (CueSheetConDTO ele in pram)
                 {
+
                     ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
                     var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FILEPATH));
                     using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -46,6 +47,7 @@ namespace MAMBrowser.Controllers
                             inStream.CopyTo(outFileStream);
                         }
                     }
+
 
                 }
                 using (var FileStream = new StreamWriter(filePath))

@@ -316,15 +316,4 @@ input {
   margin: 0;
   padding: 0;
 }
-/* 모달 CSS */
-#modal-setting .dx-field-label {
-  font-family: "MBC 새로움 M" !important;
-  text-align: end;
-  width: 28%;
-}
-#modal-setting
-  .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
-  font-family: "MBC 새로움 M" !important;
-  width: 65%;
-}
 </style>

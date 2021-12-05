@@ -514,9 +514,6 @@ export default {
         async addTemplate({ }, payload) {
             await axios
                 .post(`/api/TempCueSheet/SaveTempCue`, payload)
-                .then((res) => {
-                    alert("템플릿 추가완료")
-                })
         },
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
