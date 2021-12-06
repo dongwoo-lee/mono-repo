@@ -56,16 +56,15 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="C:\Users\kimeunbee\Desktop\M30_CueSheetDAO\M30_CueSheetDAO.csproj" />
-  </ItemGroup>
   <ItemGroup>
     <Reference Include="M30.AudioFile.Common">
-      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
+      <HintPath>C:\Users\kimeunbee\Desktop\m30library-master\M30.AudioFile\M30.AudioFile.Common\bin\Debug\netstandard2.0\M30.AudioFile.Common.dll</HintPath>
     </Reference>
     <Reference Include="M30.AudioFile.DAL">
-      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
+      <HintPath>C:\Users\kimeunbee\Desktop\m30library-master\M30.AudioFile\M30.AudioFile.DAL\bin\Debug\netstandard2.0\M30.AudioFile.DAL.dll</HintPath>
+    </Reference>
+    <Reference Include="M30_CueSheetDAO">
+      <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
     </Reference>
   </ItemGroup>
 

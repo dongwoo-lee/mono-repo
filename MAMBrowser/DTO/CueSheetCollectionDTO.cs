@@ -72,8 +72,8 @@ namespace MAMBrowser.DTO
         public int DURATION { get; set; }
         public int STARTPOSITION { get; set; }
         public int ENDPOSITION { get; set; }
-        public int FADEINTIME { get; set; }
-        public int FADEOUTTIME { get; set; }
+        public bool FADEINTIME { get; set; }
+        public bool FADEOUTTIME { get; set; }
         public string MAINTITLE { get; set; }
         public string SUBTITLE { get; set; }
         public string MEMO { get; set; }

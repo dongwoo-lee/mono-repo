@@ -15,8 +15,11 @@
         :direct="direct"
         :startPoint="startPoint"
         :endPoint="endPoint"
+        :fadeIn="fadeIn"
+        :fadeOut="fadeOut"
         @startPosition="(val) => (startPosition = val)"
         @endPosition="(val) => (endPosition = val)"
+        @fadeValue="(val) => (selected = val)"
       />
     </template>
     <template v-slot:modal-footer>
@@ -80,9 +83,12 @@ export default {
     type: String,
     startPoint: Number,
     endPoint: Number,
+    fadeIn: Boolean,
+    fadeOut: Boolean,
   },
   data() {
     return {
+      selected: [],
       startPosition: 0,
       endPosition: 0,
     };
@@ -174,12 +180,33 @@ export default {
             endTime = Math.floor(this.endPosition * 1000);
           }
           ele.startposition = startTime;
+          if (ele.startposition > 0) {
+            ele.fadeintime = true;
+          }
 
           if (endTime != 0) {
             ele.endposition = endTime;
+            ele.fadeouttime = true;
           }
+          this.selected.forEach((item) => {
+            console.log(item);
+            if (item["fadeIn"] == true) {
+              ele.fadeintime = true;
+            }
+            if (item["fadeOut"] == true) {
+              ele.fadeouttime = true;
+            }
+            // if (item.fadeIn) {
+            //   console.log("뭐");
+            //   ele.fadeintime = true;
+            // } else if (item.fadeOut) {
+            //   console.log("망햇어");
+            //   ele.fadeouttime = true;
+            // }
+          });
         }
       });
+      console.log(rowData);
       return rowData;
     },
   },
