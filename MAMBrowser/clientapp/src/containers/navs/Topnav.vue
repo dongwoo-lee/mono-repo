@@ -189,7 +189,7 @@ export default {
     ...mapMutations("FileIndexStore", ["setFileModal", "startDBConnection"]),
     openFileModal() {
       this.setFileModal(true);
-      //TODO: DB 폴링 하는 메소드
+      //NOTE: DB 폴링 하는 메소드
       this.startDBConnection();
     },
     logout() {
