@@ -16,11 +16,14 @@ namespace MAMBrowser.BLL
     public class DayCueSheetBll
     {
         private readonly ICueSheetDAO _dao;
+        private readonly ICommonDAO _common_dao;
 
-        public DayCueSheetBll(ICueSheetDAO dao)
+        public DayCueSheetBll(ICueSheetDAO dao, ICommonDAO common_dao)
         {
             _dao = dao;
+            _common_dao = common_dao;
         }
+
         // 일일큐시트 목록 가져오기
         public DayCueList_Page GetDayCueSheetList(List<string> products, List<string> dates, int row_per_page, int select_page)
         {
@@ -41,15 +44,24 @@ namespace MAMBrowser.BLL
         }
 
         // 일일큐시트 상세내용 가져오기 
-        public CueSheetCollectionDTO GetDayCueSheet(string productid, int cueid)
+        public CueSheetCollectionDTO GetDayCueSheet(string productid, int cueid, string pgmcode, string brd_dt)
         {
             DayCueSheetInfoParam param = new DayCueSheetInfoParamBuilder()
                 .SetCueID(cueid)
                 .SetProductID(productid)
                 .SetRequestType(RequestType.Web)
                 .Build();
+            var result = _dao.GetDayCueSheet(param);
+            if (pgmcode!=null&& brd_dt != null)
+            {
+            SponsorParam spon_param = new SponsorParam();
+            spon_param.BrdDate = brd_dt;
+            spon_param.PgmCode = pgmcode;
+            result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsor(_dao.GetDayCueSheet(param).CueSheetConEntities);
+            }
 
-            return _dao.GetDayCueSheet(param)?.DayConverting();
+            return result?.DayConverting();
+
         }
 
         //일일큐시트 저장
@@ -67,81 +79,90 @@ namespace MAMBrowser.BLL
             // 기존 구 DB 데이터 삭제
             DeletePDPQS(pram.CueSheetDTO, 'I');
             DeletePDPQS(pram.CueSheetDTO, 'N');
-            
-            var instacneValue = param.CueSheetConParams.Where(x => x.p_channeltype.Equals('I') && x.p_seqnum < 33).ToList();
-            if (instacneValue?.Any() == true)
-            {
-                var list = new List<PDPQSConParam>();
-                foreach (var item in instacneValue)
-                {
-                    var resultItem = new PDPQSConParam();
-                    resultItem.Description_in = item.p_memo;
-                    resultItem.LLevel_in = 0;
-                    resultItem.RLevel_in = 0;
-                    resultItem.FadeInTime_in = item.p_fadeintime;
-                    resultItem.FadeOutTime_in = item.p_fadeouttime;
-                    resultItem.ExtroTime_in = 0;
-                    resultItem.IntroTime_in = 0;
-                    resultItem.MainTitle_in = item.p_maintitle;
-                    resultItem.TransType_in = item.p_transtype;
-                    resultItem.SOM_in = item.p_startposition;
-                    resultItem.CartType_in = setCartType(item.p_cartid);
-                    resultItem.CartID_in = item.p_cartid;
-                    resultItem.SeqNum_in = item.p_seqnum;
-                    resultItem.PqsType_in = 'I';
-                    resultItem.OnAirDate_in = param.DayCueSheetParam.p_brddate;
-                    resultItem.ProductID_in = param.DayCueSheetParam.p_productid;
-                    resultItem.EOM_in = item.p_endposition;
-                    resultItem.SubTitle_in = item.p_subtitle;
-                    list.Add(resultItem);
-                }
-                var pqsData = pram.CueSheetDTO.PDPQSToEntity('I');
-                _dao.CreatePDPQS(new PDPQSCreateCollectionParam()
-                {
-                    PDPQSParam = pqsData,
-                    PDPQSConParam = new List<PDPQSConParam>(list)
-                });
-            }
 
-            var normalValue = param.CueSheetConParams.Where(x => 
-            x.p_channeltype.Equals('N') && x.p_cartid !=""&&
-            (!string.IsNullOrEmpty(x.p_memo) || !string.IsNullOrEmpty(x.p_maintitle))).ToList();
-            if (normalValue?.Any() == true)
-            {
-                var list = new List<PDPQSConParam>();
-                foreach (var item in normalValue)
-                {
-                    var resultItem = new PDPQSConParam();
-                    resultItem.Description_in = item.p_memo;
-                    resultItem.LLevel_in = 0;
-                    resultItem.RLevel_in = 0;
-                    resultItem.FadeInTime_in = item.p_fadeintime;
-                    resultItem.FadeOutTime_in = item.p_fadeouttime;
-                    resultItem.ExtroTime_in = 0;
-                    resultItem.IntroTime_in = 0;
-                    resultItem.MainTitle_in = item.p_maintitle;
-                    resultItem.TransType_in = item.p_transtype;
-                    resultItem.SOM_in = item.p_startposition;
-                    resultItem.CartType_in = setCartType(item.p_cartid);
-                    resultItem.CartID_in = item.p_cartid;
-                    resultItem.SeqNum_in = item.p_seqnum;
-                    resultItem.PqsType_in = 'N';
-                    resultItem.OnAirDate_in = param.DayCueSheetParam.p_brddate;
-                    resultItem.ProductID_in = param.DayCueSheetParam.p_productid;
-                    resultItem.EOM_in = item.p_endposition;
-                    resultItem.SubTitle_in = item.p_subtitle;
-                    list.Add(resultItem);
-                }
-                var pqsData = pram.CueSheetDTO.PDPQSToEntity('N');
-                _dao.CreatePDPQS(new PDPQSCreateCollectionParam()
-                {
-                    PDPQSParam = pqsData,
-                    PDPQSConParam = list
-                });
+            var instanceCon = pram.PDPQSToEntity('I');
+            var normalCon = pram.PDPQSToEntity('N');
+            if (instanceCon.PDPQSConParam?.Any() == true)
+                _dao.CreatePDPQS(instanceCon);
+            if (normalCon.PDPQSConParam?.Any() == true)
+                _dao.CreatePDPQS(normalCon);
 
-
-            }
             return _dao.CreateDayCueSheet(param);
+            //var instacneValue = param.CueSheetConParams.Where(x => x.p_channeltype.Equals('I') && x.p_seqnum < 33).ToList();
+            //if (instacneValue?.Any() == true)
+            //{
+            //    var list = new List<PDPQSConParam>();
+            //    foreach (var item in instacneValue)
+            //    {
+            //        var resultItem = new PDPQSConParam();
+            //        resultItem.Description_in = item.p_memo;
+            //        resultItem.LLevel_in = 0;
+            //        resultItem.RLevel_in = 0;
+            //        resultItem.FadeInTime_in = item.p_fadeintime;
+            //        resultItem.FadeOutTime_in = item.p_fadeouttime;
+            //        resultItem.ExtroTime_in = 0;
+            //        resultItem.IntroTime_in = 0;
+            //        resultItem.MainTitle_in = item.p_maintitle;
+            //        resultItem.TransType_in = item.p_transtype;
+            //        resultItem.SOM_in = item.p_startposition;
+            //        resultItem.CartType_in = setCartType(item.p_cartid);
+            //        resultItem.CartID_in = item.p_cartid;
+            //        resultItem.SeqNum_in = item.p_seqnum;
+            //        resultItem.PqsType_in = 'I';
+            //        resultItem.OnAirDate_in = param.DayCueSheetParam.p_brddate;
+            //        resultItem.ProductID_in = param.DayCueSheetParam.p_productid;
+            //        resultItem.EOM_in = item.p_endposition;
+            //        resultItem.SubTitle_in = item.p_subtitle;
+            //        list.Add(resultItem);
+            //    }
+            //    var pqsData = pram.CueSheetDTO.PDPQSToEntity('I');
+            //    _dao.CreatePDPQS(new PDPQSCreateCollectionParam()
+            //    {
+            //        PDPQSParam = pqsData,
+            //        PDPQSConParam = new List<PDPQSConParam>(list)
+            //    });
+            //}
+
+            //var normalValue = param.CueSheetConParams.Where(x => 
+            //x.p_channeltype.Equals('N') && x.p_cartid !=""&&
+            //(!string.IsNullOrEmpty(x.p_memo) || !string.IsNullOrEmpty(x.p_maintitle))).ToList();
+            //if (normalValue?.Any() == true)
+            //{
+            //    var list = new List<PDPQSConParam>();
+            //    foreach (var item in normalValue)
+            //    {
+            //        var resultItem = new PDPQSConParam();
+            //        resultItem.Description_in = item.p_memo;
+            //        resultItem.LLevel_in = 0;
+            //        resultItem.RLevel_in = 0;
+            //        resultItem.FadeInTime_in = item.p_fadeintime;
+            //        resultItem.FadeOutTime_in = item.p_fadeouttime;
+            //        resultItem.ExtroTime_in = 0;
+            //        resultItem.IntroTime_in = 0;
+            //        resultItem.MainTitle_in = item.p_maintitle;
+            //        resultItem.TransType_in = item.p_transtype;
+            //        resultItem.SOM_in = item.p_startposition;
+            //        resultItem.CartType_in = setCartType(item.p_cartid);
+            //        resultItem.CartID_in = item.p_cartid;
+            //        resultItem.SeqNum_in = item.p_seqnum;
+            //        resultItem.PqsType_in = 'N';
+            //        resultItem.OnAirDate_in = param.DayCueSheetParam.p_brddate;
+            //        resultItem.ProductID_in = param.DayCueSheetParam.p_productid;
+            //        resultItem.EOM_in = item.p_endposition;
+            //        resultItem.SubTitle_in = item.p_subtitle;
+            //        list.Add(resultItem);
+            //    }
+            //    var pqsData = pram.CueSheetDTO.PDPQSToEntity('N');
+            //    _dao.CreatePDPQS(new PDPQSCreateCollectionParam()
+            //    {
+            //        PDPQSParam = pqsData,
+            //        PDPQSConParam = list
+            //    });
+
+
+            //}
+
+
         }
 
 
@@ -167,7 +188,7 @@ namespace MAMBrowser.BLL
         public static string setCartType(string cartid)
         {
             var front = cartid.Substring(0, 2);
-            var back = cartid.Substring(8, 2);
+            var back = cartid[cartid.Length - 2];
             var result = "";
             switch (front)
             {
@@ -196,7 +217,7 @@ namespace MAMBrowser.BLL
                     result = "ST";
                     break;
                 case "PM":
-                    if (back == "NA")
+                    if (back.ToString() == "NA")
                     {
                         result = "AR";
                     }

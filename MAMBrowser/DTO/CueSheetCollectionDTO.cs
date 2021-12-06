@@ -83,6 +83,7 @@ namespace MAMBrowser.DTO
         //public List<string> FILETOKEN { get; set; } = new List<string>();
         public string FILEPATH { get; set; }
         public string FILETOKEN { get; set; }
+        public string CARTTYPE { get; set; }
 
         // C
         public bool EDITTARGET { get; set; }

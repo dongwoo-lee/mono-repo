@@ -14,7 +14,7 @@
     >
       <div style="height: 100%; border-radius: 10px">
         <div
-          v-if="fileData[index - 1].duration > 0"
+          v-if="fileData[index - 1].cartcode != null"
           style="height: 100%; cursor: pointer"
         >
           <div class="top">
@@ -106,6 +106,12 @@
           <div class="bottom">
             <div
               class="bottom_item maintitle"
+              :class="{
+                maintitle_red:
+                  fileData[index - 1].onairdate != '' &&
+                  (fileData[index - 1].onairdate != cueInfo.day ||
+                    fileData[index - 1].onairdate != cueInfo.brddate),
+              }"
               @dblclick="onTextEdit(index)"
               v-if="fileData[index - 1].edittarget"
             >
@@ -190,6 +196,7 @@ export default {
     return {
       fileData: [],
       rowData: {
+        carttype: "",
         cartcode: "", //그룹코드
         cartid: "", // 소재ID
         duration: "", //string
@@ -314,19 +321,19 @@ export default {
         return {
           backColor_1:
             this.channelKey == "channel_1" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_2:
             this.channelKey == "channel_2" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_3:
             this.channelKey == "channel_3" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_4:
             this.channelKey == "channel_4" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
           backColor_my:
             this.channelKey == "channel_my" &&
-            this.fileData[index - 1].duration > 0,
+            this.fileData[index - 1].cartcode != null,
         };
       };
     },
@@ -337,12 +344,16 @@ export default {
     ...mapActions("cueList", ["getCueDayFav"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
+    ...mapActions("cueList", ["sponsorDataFun"]),
     onAdd(e, totalIndex) {
       if (this.cueInfo.cuetype == "A") {
         return;
       }
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
+        selectedRowsData = selectedRowsData.filter((ele) => {
+          return ele.cartcode != null && ele.cartcode != "";
+        });
         if (selectedRowsData.length > 1) {
           selectedRowsData.forEach((data, index) => {
             var row = { ...this.rowData };
@@ -356,14 +367,16 @@ export default {
               row.edittarget = true;
             } else {
               row.rownum = totalIndex + index;
-              //row.filetoken = [];
-              // row.filetoken.push(search_row.fileToken);
-              // row.filepath = [];
-              // row.filepath.push(search_row.filePath);
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
-              row.endposition = search_row.intDuration;
-              row.duration = search_row.intDuration;
+              if (!search_row.intDuration) {
+                row.endposition = 0;
+                row.duration = 0;
+              } else {
+                row.endposition = search_row.intDuration;
+                row.duration = search_row.intDuration;
+              }
+              row.cartid = search_row.id;
               row.cartcode = this.searchListData.cartcode;
               this.cartCodeFilter({
                 row: row,
@@ -390,8 +403,14 @@ export default {
             row.rownum = this.fileData[totalIndex - 1].rownum;
             row.filetoken = search_row.fileToken;
             row.filepath = search_row.filePath;
-            row.endposition = search_row.intDuration;
-            row.duration = search_row.intDuration;
+            if (!search_row.intDuration) {
+              row.endposition = 0;
+              row.duration = 0;
+            } else {
+              row.endposition = search_row.intDuration;
+              row.duration = search_row.intDuration;
+            }
+            row.cartid = search_row.id;
             row.cartcode = this.searchListData.cartcode;
             this.cartCodeFilter({
               row: row,
@@ -404,7 +423,6 @@ export default {
         e.fromData.rownum = this.fileData[totalIndex - 1].rownum;
         this.fileData.splice(totalIndex - 1, 1, e.fromData);
       }
-
       if (this.channelKey == "channel_my") {
         this.SET_CUEFAVORITES(this.fileData);
       } else {
@@ -461,25 +479,13 @@ export default {
       if (this.cueInfo.cuetype == "A") {
         return;
       }
-      if ($event.toData != undefined) {
-        // var rowData = { rownum: this.fileData[index - 1].rownum };
+      if (!$event.toData.cartcode) {
         this.fileData.splice(index - 1, 1, { rownum: index });
+      } else {
+        var data = $event.toData;
+        data.rownum = index;
+        this.fileData.splice(index - 1, 1, data);
       }
-
-      //AB채널에 넣을때 복사되게하려고
-      // if ($event.dropInsideItem) {
-      //   if (Object.keys($event.toData).includes("subtitle")) {
-      //     this.fileData[index - 1] = $event.toData;
-      //   } else {
-      //     this.fileData.splice(index - 1, 1, {});
-      //   }
-      // }
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      //   this.SET_CUEFAVORITES(this.fileData);
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
     },
     onTextEdit(index) {
       if (this.cueInfo.cuetype == "A") {
@@ -489,12 +495,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.inputText[0].focus();
       });
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      //   this.SET_CUEFAVORITES(this.fileData);
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
     },
     onValueChange($event, index, data) {
       this.fileData[index - 1].maintitle = $event.target.value;
@@ -702,5 +702,8 @@ export default {
 .btnIcon:hover {
   color: #2a4878;
   cursor: pointer;
+}
+.maintitle_red {
+  color: red;
 }
 </style>

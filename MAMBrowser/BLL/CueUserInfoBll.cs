@@ -36,6 +36,14 @@ namespace MAMBrowser.BLL
             return _dao.GetCueSheetDirectorName(productid);
         }
 
+        public IEnumerable<CueSheetConDTO> GetSponsorList(string pgmcode, string brd_dt)
+        {
+            SponsorParam param = new SponsorParam();
+            param.BrdDate = brd_dt;
+            param.PgmCode = pgmcode;
+
+            return _dao.GetSponsor(param)?.SponsorConverting();
+        }
 
     }
 }

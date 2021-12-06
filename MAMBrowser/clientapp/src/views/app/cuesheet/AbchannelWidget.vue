@@ -186,16 +186,26 @@
         <template #text_Template="{ data }">
           <div>
             <div v-if="data.data.subtitle != ''">
-              <div>
+              <div
+                style="text-overflow: ellipsis; overflow: hidden"
+                :class="{
+                  maintitle_red:
+                    data.data.onairdate != '' &&
+                    (data.data.onairdate != cueInfo.day ||
+                      data.data.onairdate != cueInfo.brddate),
+                }"
+              >
                 {{ data.data.maintitle }}
               </div>
-              <div style="color: #959595; font-size: 12px">
+              <div
+                style="color: #959595; font-size: 12px text-overflow: ellipsis; overflow: hidden"
+              >
                 {{ data.data.subtitle }}
               </div>
             </div>
 
             <div v-else>
-              <div>
+              <div style="text-overflow: ellipsis; overflow: hidden">
                 {{ data.data.memo }}
               </div>
             </div>
@@ -242,13 +252,30 @@
         </template>
         <DxColumn :width="60" cell-template="play_Template" />
         <template #play_Template="{ data }">
-          <div v-if="data.data.subtitle != ''">
-            <DxButton
-              icon="music"
-              type="default"
-              hint="미리듣기/음원편집"
-              @click="onPreview(data.data)"
-            />
+          <div>
+            <div v-if="data.data.subtitle != '' && data.data.onairdate == ''">
+              <DxButton
+                icon="music"
+                type="default"
+                hint="미리듣기/음원편집"
+                @click="onPreview(data.data)"
+              />
+            </div>
+            <div v-if="data.data.subtitle != '' && data.data.onairdate != ''">
+              <DxButton
+                icon="music"
+                type="success"
+                hint="그룹 미리듣기"
+                @click="
+                  showGrpPlayerPopup({
+                    grpType: 'cm',
+                    brd_Dt: data.data.onairdate,
+                    grpId: data.data.cartid,
+                    title: data.data.maintitle,
+                  })
+                "
+              />
+            </div>
           </div>
         </template>
         <DxScrolling mode="infinite" />
@@ -265,7 +292,17 @@
         </template>
       </DxDataGrid>
     </div>
-    <PlayerPopup
+    <CMGroupPlayerPopup
+      :showPlayerPopup="showGrpPlayer"
+      :title="grpParam.title"
+      :grpType="grpParam.grpType"
+      :brd_Dt="grpParam.brd_Dt"
+      :grpId="grpParam.grpId"
+      @closePlayer="closeGrpPlayerPopup"
+    >
+    </CMGroupPlayerPopup>
+
+    <EditPlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.maintitle"
       :fileKey="soundItem.filetoken"
@@ -279,7 +316,7 @@
       requestType="token"
       @closePlayer="onClosePlayer"
     >
-    </PlayerPopup>
+    </EditPlayerPopup>
   </div>
 </template>
 
@@ -310,7 +347,10 @@ export default {
   data() {
     return {
       dataGridRef,
+      showGrpPlayer: false,
+      grpParam: {},
       rowData: {
+        carttype: "",
         onairdate: "",
         cartid: "", // 소재ID
         cartcode: "", //그룹코드
@@ -326,7 +366,7 @@ export default {
         filetoken: "", //미리듣기 때문 바뀔수도있음
         filepath: "",
         duration: 0, //string
-        useFlag: "Y",
+        useflag: "Y",
       },
       selectedItemKeys: [],
     };
@@ -367,7 +407,6 @@ export default {
     //...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     onAddChannelAB(e) {
-      console.log(e.itemData);
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -378,13 +417,18 @@ export default {
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
-              //row.filetoken.push(search_row.fileToken);
-              //row.filepath.push(search_row.filePath);
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
-              row.endposition = search_row.intDuration;
-              row.duration = search_row.intDuration;
+              if (!search_row.intDuration) {
+                row.endposition = 0;
+                row.duration = 0;
+              } else {
+                row.endposition = search_row.intDuration;
+                row.duration = search_row.intDuration;
+              }
+              row.cartid = search_row.id;
               row.cartcode = this.searchListData.cartcode;
+
               this.cartCodeFilter({
                 row: row,
                 search_row: search_row,
@@ -401,8 +445,14 @@ export default {
           } else {
             row.filetoken = search_row.fileToken;
             row.filepath = search_row.filePath;
-            row.endposition = search_row.intDuration;
-            row.duration = search_row.intDuration;
+            if (!search_row.intDuration) {
+              row.endposition = 0;
+              row.duration = 0;
+            } else {
+              row.endposition = search_row.intDuration;
+              row.duration = search_row.intDuration;
+            }
+            row.cartid = search_row.id;
             row.cartcode = this.searchListData.cartcode;
             this.cartCodeFilter({
               row: row,
@@ -421,7 +471,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      console.log(this.abCartArr);
+      console.log(e.itemData);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },
@@ -595,8 +645,6 @@ export default {
     },
     onValueChanged_memoText(value, cellInfo) {
       cellInfo.data.memo = value.value;
-      console.log("this.abCartArr");
-      console.log(this.abCartArr);
     },
     iconClick(e) {
       if (this.cueInfo.cuetype == "A") {
@@ -621,6 +669,13 @@ export default {
       var itemTime = moment(duration, "HH:mm:ss.SS");
       var defTime = moment("00:00:00.00", "HH:mm:ss.SS");
       return moment.duration(itemTime.diff(defTime)).asMilliseconds();
+    },
+    showGrpPlayerPopup(data) {
+      this.grpParam = data;
+      this.showGrpPlayer = true;
+    },
+    closeGrpPlayerPopup() {
+      this.showGrpPlayer = false;
     },
   },
 };
@@ -665,5 +720,8 @@ export default {
 }
 .editTemplateSubTitle {
   color: #2a4878;
+}
+.maintitle_red {
+  color: red;
 }
 </style>

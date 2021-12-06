@@ -186,9 +186,11 @@ export default {
     ]),
     ...mapActions("user", ["setLang", "signOut", "renewal"]),
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
-    ...mapMutations("FileIndexStore", ["setFileModal"]),
+    ...mapMutations("FileIndexStore", ["setFileModal", "startDBConnection"]),
     openFileModal() {
       this.setFileModal(true);
+      //NOTE: DB 폴링 하는 메소드
+      this.startDBConnection();
     },
     logout() {
       this.SET_LOGOUT();

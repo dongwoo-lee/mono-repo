@@ -465,7 +465,7 @@ import CommonFileFunction from "./CommonFileFunction";
 import MetaModal from "./MetaModal";
 import axios from "axios";
 const dxfu = "my-fileupload";
-var background;
+var DB;
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   mixins: [CommonFileFunction],
@@ -500,7 +500,7 @@ export default {
     },
   },
   created() {
-    // background = setInterval(() => {
+    // DB = setInterval(() => {
     this.masteringStatus();
     // }, 1000);
 
@@ -526,7 +526,7 @@ export default {
       });
   },
   // beforeDestroy() {
-  //   clearInterval(background);
+  //   clearInterval(DB);
   // },
   computed: {
     fileupload: function () {
@@ -559,6 +559,8 @@ export default {
       "setDuration",
       "setAudioFormat",
       "setFileModal",
+      "startDBConnection",
+      "stopDBConnection",
     ]),
     masteringStatus() {
       axios.get("/api/Mastering/mastering-status").then((res) => {
@@ -756,9 +758,13 @@ export default {
     //#region 모달 조작
     openFileModal() {
       this.setFileModal(true);
+      //NOTE: DB 폴링 START 메소드
+      this.startDBConnection();
     },
     closeFileModal() {
       this.setFileModal(false);
+      //NOTE: DB 폴링 STOP 메소드
+      this.stopDBConnection();
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {

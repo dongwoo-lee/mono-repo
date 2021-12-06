@@ -155,9 +155,13 @@
     </b-modal>
 
     <!-- 가져오기 -->
-    <common-import-tem :id="id" />
-    <common-import-def :proid="proid" :type="type" />
-    <common-import-archive />
+    <common-import-tem :id="id" @settings="(val) => (editOptions = val)" />
+    <common-import-def
+      :proid="proid"
+      :type="type"
+      @settings="(val) => (editOptions = val)"
+    />
+    <common-import-archive @settings="(val) => (editOptions = val)" />
 
     <!-- 내보내기 -->
     <b-modal
@@ -234,6 +238,8 @@
       title="추가설정"
       ok-title="저장"
       cancel-title="닫기"
+      @show="resetModal"
+      @hidden="resetModal"
     >
       <div class="settingDiv">
         <div class="dx-fieldset">
@@ -242,7 +248,7 @@
             <div class="dx-field-value">
               <DxTextBox
                 width="320px"
-                v-model="cueInfo.djname"
+                v-model="editOptions.djname"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
@@ -252,7 +258,7 @@
             <div class="dx-field-value">
               <DxTextBox
                 width="320px"
-                v-model="cueInfo.membername"
+                v-model="editOptions.membername"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
@@ -262,7 +268,7 @@
             <div class="dx-field-value">
               <DxTextBox
                 width="320px"
-                v-model="cueInfo.directorname"
+                v-model="editOptions.directorname"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
@@ -273,7 +279,7 @@
               <DxTextArea
                 :height="50"
                 width="320px"
-                v-model="cueInfo.headertitle"
+                v-model="editOptions.headertitle"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
@@ -284,7 +290,7 @@
               <DxTextArea
                 :height="100"
                 width="320px"
-                v-model="cueInfo.footertitle"
+                v-model="editOptions.footertitle"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
@@ -293,20 +299,20 @@
             <div class="dx-field-label" style="font-size: 15px">메모 :</div>
             <div class="dx-field-value">
               <DxTextArea
-                :height="100"
-                width="350px"
-                v-model="cueInfo.memo"
+                :height="200"
+                width="320px"
+                v-model="editOptions.memo"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
           </div>
         </div>
       </div>
-      <template #modal-footer="{ cancel, ok }">
-        <b-button variant="secondary" @click="cancel()">닫기 </b-button>
+      <template #modal-footer>
         <b-button
+          type="submit"
           variant="secondary"
-          @click="ok()"
+          @click="editOk()"
           v-if="cueInfo.cuetype != 'A'"
           >저장
         </b-button>
@@ -438,6 +444,14 @@ export default {
         { caption: "토", value: "SAT", state: false, disable: false },
         { caption: "일", value: "SUN", state: false, disable: false },
       ],
+      editOptions: {
+        djname: "",
+        membername: "",
+        directorname: "",
+        headertitle: "",
+        footertitle: "",
+        memo: "",
+      },
     };
   },
   mounted() {
@@ -458,6 +472,7 @@ export default {
       default:
         break;
     }
+    this.editOptions = { ...this.cueInfo };
   },
   components: {
     CommonImportDef,
@@ -703,28 +718,13 @@ export default {
       cueData.delId = delId;
 
       this.SET_CUEINFO(cueData);
-
-      // var weekList = [];
-      // var activeWeekList = [];
-      // var pushList = [];
-      // var delId = [];
-      // this.weekButtons.forEach((week, index) => {
-      //   if (week.state) {
-      //     weekList.push({ week: week.value });
-      //     activeWeekList.push(week.value);
-      //   }
-      // });
-      // cueData.productWeekList[0].weekList.forEach((week) => {
-      //   if (!cueData.activeWeekList.includes(week)) {
-      //     pushList.push(week);
-      //   }
-      // });
-      // cueData.productWeekList[0].weekList = pushList.concat(activeWeekList);
-      // cueData.detail = weekList;
-      // cueData.activeWeekList = activeWeekList;
-      // cueData.delId = delId;
-
-      // this.SET_CUEINFO(cueData);
+    },
+    editOk() {
+      this.SET_CUEINFO(this.editOptions);
+      this.$bvModal.hide("modal-setting");
+    },
+    resetModal() {
+      this.editOptions = { ...this.cueInfo };
     },
   },
 };
@@ -743,5 +743,16 @@ export default {
   padding-top: 20px;
   padding-bottom: 10px;
   margin: 0px 150px 0px 150px;
+}
+/* 모달 CSS */
+#modal-setting .dx-field-label {
+  font-family: "MBC 새로움 M" !important;
+  text-align: end;
+  width: 28%;
+}
+#modal-setting
+  .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+  font-family: "MBC 새로움 M" !important;
+  width: 65%;
 }
 </style>

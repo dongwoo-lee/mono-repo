@@ -1,3 +1,5 @@
+let db;
+import axios from "axios";
 export default {
   addLocalFiles(state, payload) {
     state.localFiles.push(payload);
@@ -137,5 +139,46 @@ export default {
         id: "",
       },
     ];
+  },
+  startDBConnection(state) {
+    clearInterval(db);
+    db = setInterval(() => {
+      axios.get("/api/Mastering/mastering-status").then((res) => {
+        var masteringListData = [];
+        res.data.resultObject.data.forEach((e) => {
+          if (e.category == 0) {
+            e.category = "My 디스크";
+          } else if (e.category == 1) {
+            e.category = "프로소재";
+          } else if (e.category == 2) {
+            e.category = "프로그램";
+          } else if (e.category == 3) {
+            e.category = "주조SPOT";
+          } else if (e.category == 4) {
+            e.category = "부조SPOT";
+          } else if (e.category == 5) {
+            e.category = "FILLER";
+          } else if (e.category == 6) {
+            e.category = "취재물";
+          } else if (e.category == 7) {
+            e.category = "고정소재";
+          } else if (e.category == 8) {
+            e.category = "변동소재";
+          }
+          var data = {
+            title: e.title,
+            type: e.category,
+            user_id: e.regUserId,
+            date: e.regDtm,
+            step: e.workStatus,
+          };
+          masteringListData.push(data);
+        });
+        state.masteringListData = masteringListData;
+      });
+    }, 1000);
+  },
+  stopDBConnection() {
+    clearInterval(db);
   },
 };

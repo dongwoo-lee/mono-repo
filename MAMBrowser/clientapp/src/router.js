@@ -8,6 +8,20 @@ const moment = require("moment");
 Vue.use(VueRouter);
 import axios from "axios";
 const qs = require("qs");
+const date = new Date();
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
 
 const routes = [
   {
@@ -185,11 +199,13 @@ const routes = [
           }
           if (cueDataObj.cueid != -1) {
             //큐시트 수정
-            var params = { productid: cueDataObj.productid };
+            var params = { productid: cueDataObj.productid, pgmcode: cueDataObj.pgmcode };
             if (Object.keys(cueDataObj).includes("detail")) {
               params.cueid = cueDataObj.detail[0].cueid
+              params.brd_dt = cueDataObj.brddate
             } else {
               params.cueid = cueDataObj.cueid
+              params.brd_dt = cueDataObj.day
             }
             await axios.get(`/api/daycuesheet/GetdayCue`, {
               params: params,
@@ -222,7 +238,10 @@ const routes = [
             var defCueId = [];
             await store.dispatch('cueList/getcuesheetListArrDef', {
               productids: cueDataObj.productid,
-            });
+              row_per_page: 30,
+              select_page: 1
+            })
+
             var defCueList = store.getters['cueList/defCuesheetListArr'];
             defCueList.data.forEach((ele) => {
               var result = ele.detail.filter((v) => {
@@ -234,11 +253,17 @@ const routes = [
             });
             if (defCueId.length > 0) {
               //기본큐시트 작성 내용 가져오기
-              var params = {
-                productid: cueDataObj.productid,
-                //cueid: defCueId[0].cueid,
-                week: defCueId[0].week,
-              };
+              var params = { productid: cueDataObj.productid, week: defCueId[0].week, pgmcode: cueDataObj.pgmcode };
+              if (Object.keys(cueDataObj).includes("detail")) {
+                params.brd_dt = cueDataObj.brddate
+              } else {
+                params.brd_dt = cueDataObj.day
+              }
+              // var params = {
+              //   productid: cueDataObj.productid,
+              //   //cueid: defCueId[0].cueid,
+              //   week: defCueId[0].week,
+              // };
               await axios.get(`/api/defcuesheet/GetdefCue`, {
                 params: params,
                 paramsSerializer: (params) => {
@@ -254,12 +279,12 @@ const routes = [
                   cueDataObj.membername = defcueData.membername;
                   cueDataObj.memo = defcueData.memo;
                   //나중에 여기에 태그도 추가되어야함
-
                   store.dispatch('cueList/setCueConData', res.data);
                 });
 
             } else {
               store.dispatch('cueList/setclearCon');
+              store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode, brd_dt: cueDataObj.brddate });
             }
             await store.dispatch('cueList/getProUserList', cueDataObj.productid);
           }
@@ -285,6 +310,7 @@ const routes = [
           cueDataObj.personid = userId;
           store.commit('cueList/SET_CUEINFO', cueDataObj)
           sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
+
           next();
         })
       },
@@ -305,11 +331,16 @@ const routes = [
           if (Object.keys(cueDataObj).length === 0) {
             cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
           }
-          var params = {
-            productid: cueDataObj.productid,
-            week: cueDataObj.weeks,
-          };
-
+          // var params = {
+          //   productid: cueDataObj.productid,
+          //   week: cueDataObj.weeks,
+          // };
+          var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode, brd_dt: toDay };
+          // if (Object.keys(cueDataObj).includes("detail")) {
+          //   params.brd_dt = cueDataObj.brddate
+          // } else {
+          //   params.brd_dt = cueDataObj.day
+          // }
           await axios.get(`/api/defcuesheet/GetdefCue`, {
             params: params,
             paramsSerializer: (params) => {
@@ -317,8 +348,6 @@ const routes = [
             },
           })
             .then((res) => {
-              console.log("res")
-              console.log(res)
               var cueData = res.data.cueSheetDTO
               cueData.activeWeekList = cueDataObj.activeWeekList
               cueData.cueid = cueDataObj.cueid
@@ -326,6 +355,19 @@ const routes = [
               cueData.productWeekList = cueDataObj.productWeekList
               cueDataObj = cueData
               store.dispatch('cueList/setCueConData', res.data);
+              var dataVal = false;
+              for (var i = 1; i < 5; i++) {
+                res.data.instanceCon["channel_" + i].forEach((ele) => {
+                  if (ele.cartcode != null) {
+                    dataVal = true;
+                    return
+                  }
+                })
+              }
+              if (res.data.normalCon.length == 0 && !dataVal) {
+                //이거 테스트해봐야함 (데이터가 없을경우 광고 자동 가져오기임)
+                store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode, brd_dt: toDay });
+              }
               store.dispatch('cueList/getProUserList', cueDataObj.productid);
             });
           store.dispatch('cueList/setclearFav');

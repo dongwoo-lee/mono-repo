@@ -16,10 +16,12 @@ namespace MAMBrowser.BLL
     public class TemplateBll
     {
         private readonly ITemplateDAO _dao;
+        private readonly ICommonDAO _common_dao;
 
-        public TemplateBll(ITemplateDAO dao)
+        public TemplateBll(ITemplateDAO dao, ICommonDAO common_dao)
         {
             _dao = dao;
+            _common_dao = common_dao;
         }
         // 템플릿 목록 가져오기
         public TempCueList_Page GetPersonIDWithTitleTemplateList(string personid, string title, int row_per_page, int select_page)
@@ -39,11 +41,21 @@ namespace MAMBrowser.BLL
 
         }
         // 템플릿 상세내용 가져오기
-        public CueSheetCollectionDTO GetTemplate(int cueid)
+        public CueSheetCollectionDTO GetTemplate(int cueid, string pgmcode, string brd_dt)
         {
             TemplateInfoParam param = new TemplateInfoParam();
             param.TemplateID = cueid;
-            return _dao.GetTemplate(param).TemConverting();
+
+            var result = _dao.GetTemplate(param);
+            if (pgmcode != null && brd_dt != null)
+            {
+                SponsorParam spon_param = new SponsorParam();
+                spon_param.BrdDate = brd_dt;
+                spon_param.PgmCode = pgmcode;
+                var result2 = _common_dao.GetSponsor(spon_param);
+                result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsor(_dao.GetTemplate(param).CueSheetConEntities);
+            }
+            return result?.TemConverting();
         }
         //템플릿 생성 & 업데이트 (해야함)
         public int SaveTemplate(CueSheetCollectionDTO pram)

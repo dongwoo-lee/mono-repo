@@ -80,13 +80,29 @@ import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
+const date = new Date();
 
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
 export default {
   mixins: [MixinBasicPage],
   props: {
     id: {
       type: String,
       default: "",
+    },
+    settings: {
+      type: Object,
     },
   },
   data() {
@@ -186,6 +202,7 @@ export default {
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_TEMPCUESHEETLISTARR"]),
+    ...mapActions("cueList", ["sponsorDataFun"]),
 
     async getData() {
       if (this.state) {
@@ -254,11 +271,28 @@ export default {
           alert("가져오기할 항목들을 선택하세요.");
         } else {
           var seqnum = this.selectedIds[0];
-          var cueid = this.tempCuesheetListArr.data[seqnum].cueid;
+          //var cueid = this.tempCuesheetListArr.data[seqnum].cueid;
+          var params = {
+            cueid: this.tempCuesheetListArr.data[seqnum].cueid,
+            pgmcode: this.cueInfo.pgmcode,
+          };
+          if (this.cueInfo.cuetype == "D") {
+            if (Object.keys(this.cueInfo).includes("detail")) {
+              params.brd_dt = this.cueInfo.brddate;
+            } else {
+              params.brd_dt = this.cueInfo.day;
+            }
+          } else if (this.cueInfo.cuetype == "B") {
+            params.brd_dt = toDay;
+          }
           await axios
-            .get(`/api/tempcuesheet/GettempCue?cueid=${cueid}`)
+            .get(`/api/tempcuesheet/GettempCue`, {
+              params: params,
+              paramsSerializer: (params) => {
+                return qs.stringify(params);
+              },
+            })
             .then((res) => {
-              //const cueSheetCons = res.data.cueSheetCons;
               if (this.MenuSelected.includes("print")) {
                 if (beforePrintData.length > 0) {
                   res.data.printDTO.forEach((ele) => {
@@ -276,6 +310,7 @@ export default {
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
                 this.SET_PRINTARR(resultPrintData);
                 this.SET_CUEINFO(oldCueInfo);
+                this.$emit("settings", oldCueInfo);
                 eventBus.$emit("printDataSet");
               }
               if (this.MenuSelected.includes("ab")) {

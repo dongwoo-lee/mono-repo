@@ -370,6 +370,7 @@ export default {
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
                 this.SET_PRINTARR(resultPrintData);
                 this.SET_CUEINFO(oldCueInfo);
+                this.$emit("settings", oldCueInfo);
                 eventBus.$emit("printDataSet");
               }
               if (this.MenuSelected.includes("ab")) {

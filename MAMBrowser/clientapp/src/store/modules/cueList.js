@@ -398,7 +398,6 @@ export default {
                 },
             })
                 .then((res) => {
-                    console.log(res);
                     commit('SET_CUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })
@@ -415,7 +414,6 @@ export default {
                 },
             })
                 .then(async (res) => {
-                    console.log(res)
                     var productWeekList = await dispatch('disableList', res.data.resultObject.data);
                     var seqnum = 0;
                     res.data.resultObject.data.forEach((ele) => {
@@ -468,7 +466,6 @@ export default {
                 },
             })
                 .then((res) => {
-                    console.log(res);
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })
@@ -518,8 +515,8 @@ export default {
             await axios
                 .post(`/api/TempCueSheet/SaveTempCue`, payload)
                 .then((res) => {
+                    console.log("res")
                     console.log(res)
-                    alert("템플릿 추가완료")
                 })
         },
         //상세내용 -즐겨찾기
@@ -527,28 +524,6 @@ export default {
             await axios.get(
                 `/api/Favorite/GetFavorites?personid=${payload}`)
                 .then((res) => {
-                    // var favResult = [];
-                    // var rowNum_fav = 0;
-                    // for (var i = 0; 16 > i; i++) {
-                    //     var row = {};
-                    //     for (var index = 0; res.data.length > index; index++) {
-                    //         if (res.data[index].seqnum == i + 1) {
-                    //             row = res.data[index];
-                    //             row.rowNum = rowNum_fav;
-                    //             row.transtype = "N";
-                    //             row.filePath = res.data[index].cons[0].p_MASTERFILE
-                    //             row.editTarget = true;
-                    //             rowNum_fav = rowNum_fav + 1;
-                    //             row.duration = moment(row.endposition)
-                    //                 .add(-9, "hours")
-                    //                 .format("HH:mm:ss.SS");
-                    //             dispatch('productFilter', row);
-
-                    //         }
-                    //     }
-                    //     favResult.push(row);
-                    // }
-                    // commit('SET_CUEFAVORITES', favResult);
                     commit('SET_CUEFAVORITES', res.data);
                 })
                 .catch((err => {
@@ -559,8 +534,6 @@ export default {
         async saveDayCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            console.log("pram")
-            console.log(pram)
             await axios
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
@@ -665,7 +638,6 @@ export default {
                             commit('SET_CUEINFO', newInfo)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                         });
-                    console.log(state.cueInfo);
                     alert("저장완료");
 
                 })
@@ -728,74 +700,119 @@ export default {
         //AB, C 필터
         cartCodeFilter({ }, payload) {
             switch (payload.row.cartcode) {
+                //공유소재
                 case "S01G01C011":
                     payload.row.maintitle = payload.search_row.title;
                     payload.row.subtitle = payload.search_row.categoryName;
                     break;
+                //(구)프로소재
                 case "S01G01C013":
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
+                    payload.row.carttype = "AC";
                     break;
+                //부조SB
                 case "S01G01C017":
                     payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.pgmName;
-                    payload.row.onairdate = payload.search_row.brdDT;
-                    payload.row.cartid = payload.search_row.id;
+                    if (payload.search_row.brdDT) {
+                        payload.row.subtitle = payload.search_row.pgmName;
+                        payload.row.onairdate = payload.search_row.brdDT;
+                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.carttype = "AS";
+                    } else {
+                        payload.row.subtitle = payload.search_row.categoryName;
+                        payload.row.carttype = payload.search_row.categoryID;
+                    }
                     break;
+                //부조 SPOT
                 case "S01G01C010":
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.pgmName;
+                    payload.row.carttype = "ST";
                     break;
+                //프로그램CM
                 case "S01G01C018":
                     payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.status;
-                    payload.row.onairdate = payload.search_row.brdDT;
-                    payload.row.cartid = payload.search_row.id;
+                    payload.row.carttype = "CM";
+                    if (payload.search_row.brdDT) {
+                        payload.row.subtitle = payload.search_row.status;
+                        payload.row.onairdate = payload.search_row.brdDT;
+                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                    } else {
+                        payload.row.subtitle = payload.search_row.advertiser;
+                    }
                     break;
+                //CM
                 case "S01G01C019":
                     payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.status;
-                    payload.row.onairdate = payload.search_row.brdDT;
-                    payload.row.cartid = payload.search_row.id;
+                    payload.row.carttype = "CM";
+                    if (payload.search_row.brdDT) {
+                        payload.row.subtitle = payload.search_row.status;
+                        payload.row.onairdate = payload.search_row.brdDT;
+                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                    } else {
+                        payload.row.subtitle = payload.search_row.advertiser;
+                    }
                     break;
+                //취재물
                 case "S01G01C012":
+                    payload.row.carttype = "RC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.pgmName;
                     break;
+                // Filler(PR)
                 case "S01G01C021":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.cartid = payload.search_row.id;
                     break;
+                // Filler(소재)
                 case "S01G01C022":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.cartid = payload.search_row.id;
                     break;
+                // Filler(시간)
                 case "S01G01C023":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.status;
                     payload.row.cartid = payload.search_row.id;
                     break;
+                // Filler(기타)
                 case "S01G01C024":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.cartid = payload.search_row.id;
                     break;
+                // 프로그램
                 case "S01G01C009":
+                    payload.row.carttype = "PM";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.status;
                     break;
+                // 주조SB
                 case "S01G01C016":
                     payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.id;
-                    payload.row.onairdate = payload.search_row.brdDT;
-                    payload.row.cartid = payload.search_row.id;
+                    if (payload.search_row.brdDT) {
+                        payload.row.subtitle = payload.search_row.id;
+                        payload.row.onairdate = payload.search_row.brdDT;
+                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.carttype = "AS";
+                    } else {
+                        payload.row.subtitle = payload.search_row.categoryName;
+                        payload.row.carttype = payload.search_row.categoryID;
+                    }
+
                     break;
+                // 주조SPOT
                 case "S01G01C020":
+                    payload.row.carttype = "MS";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.brdDT;
-                    payload.row.cartid = payload.search_row.id;
                     break;
 
                 default:
@@ -813,107 +830,84 @@ export default {
                 if (Object.keys(cueDataObj).length === 0) {
                     cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
                 }
-                payload.printDTO.forEach((ele) => {
-                    if (ele.rownum == 1) {
-                        if (cueDataObj.r_ONAIRTIME == undefined) {
-                            ele.starttime = moment(cueDataObj.brdtime, "YYYY-MM-DDHH:mm:ss").valueOf();
-                        } else {
-                            ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
-                        }
-                        // var time1 = moment("00:00:00", "HH:mm:ss");
-                        // var time2 = moment(cueDataObj.brdtime, "YYYY-MM-DDTHH:mm:ss");
-                        // ele.starttime = moment
-                        //     .duration(time2.diff(time1))
-                        //     .asMilliseconds();
-                    }
-                })
+                // payload.printDTO.forEach((ele) => {
+                //     if (ele.rownum == 1) {
+                //         if (cueDataObj.r_ONAIRTIME == undefined) {
+                //             ele.starttime = moment(cueDataObj.brdtime, "YYYY-MM-DDHH:mm:ss").valueOf();
+                //         } else {
+                //             ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
+                //         }
+                //     }
+                // })
             }
             commit('SET_PRINTARR', payload.printDTO);
         },
-        //con + 출력용 가공 (가져오기)
-        // setCueConData({ commit, dispatch }, payload) {
-        //     //출력용
-        //     var printData = [];
-        //     payload.data.prints.forEach((ele, index) => {
-        //         printData[index] = Object.assign({}, ele);
-        //         printData[index].rowNum = index;
-        //         printData[index].code = ele.code.trim();
-        //         printData[index].usedtime = ele.usedtime;
-        //         ele.contents == null ? printData[index].contents = "" : printData[index].contents = ele.contents;
-        //         ele.etc == null ? printData[index].etc = "" : printData[index].etc = ele.etc;
-        //         ele.starttime == null ? printData[index].starttime = "" : printData[index].starttime = ele.starttime;
+        async setSponsorList({ state, commit, dispatch }, payload) {
+            await axios.get(`/api/CueUserInfo/GetSponsorList`, {
+                params: payload,
+                paramsSerializer: (params) => {
+                    return qs.stringify(params);
+                },
+            })
+                .then(async (res) => {
+                    var abData = await dispatch('sponsorDataFun', { spnsorArr: res.data, cueData: state.abCartArr })
+                    commit('SET_ABCARTARR', abData);
+                })
+                .catch((err => {
+                    console.log("setSponsorList" + err);
+                }));
+        },
+        sponsorDataFun({ }, payload) {
+            var result = [];
+            const updatedArr = [...payload.cueData]
+            var sponsorArr = [];
+            //데이터가 있는지 확인하여 업데이트
+            payload.spnsorArr.forEach((ele) => {
+                var cartIdText = ele.cartid.substring(2)
+                const found = payload.cueData.filter(data => { return data.cartid != null && data.cartid.indexOf(cartIdText) != -1 })
+                if (found.length != 0) {
+                    //업데이트
+                    updatedArr.forEach((item) => {
+                        if (item.cartid != null && item.cartid.indexOf(cartIdText) != -1) {
+                            item.cartid = ele.cartid
+                            item.onairdate = ele.onairdate;
+                            item.duration = ele.duration;
+                            item.startposition = ele.startposition;
+                            item.endposition = ele.endposition;
+                            item.fadeintime = ele.fadeintime;
+                            item.fadeouttime = ele.fadeouttime;
+                            item.maintitle = ele.maintitle;
+                            item.subtitle = ele.subtitle;
+                            item.memo = ele.memo;
+                            item.transtype = "S";
+                            item.useflag = "Y";
+                            item.filepath = null;
+                            item.filetoken = null;
+                            item.carttype = ele.carttype;
+                        }
+                    })
+                } else {
+                    //새로추가할것들 변수로 담아둠
+                    if (ele.carttype == "CM") {
+                        sponsorArr.push(ele);
+                    }
+                }
+            })
 
-        //         // printData[index].contents = ele.contents;
-        //         // printData[index].etc = ele.etc;
-        //         // printData[index].starttime = ele.starttime;
-        //         delete printData[index].seqnum;
-        //     });
+            var index = 1;
+            sponsorArr.forEach((ele) => {
+                ele.rownum = index;
+                result.push(ele)
+                index++
+            })
+            updatedArr.forEach((ele) => {
+                ele.rownum = index;
+                result.push(ele)
+                index++
+            })
+            return result;
 
-        //     const cueSheetCons = payload.data.cueSheetCons;
-        //     var rowNum_ab = 0;
-        //     var rowNum_c = 0;
-        //     var filePath = []; //그룹 소재의 경우 여러개 , 나중에 이부분 수정 필요함
-
-        //     //AB채널
-        //     var abData = cueSheetCons.filter((ele) => {
-        //         if (ele.channeltype == "N") {
-        //             ele.rowNum = rowNum_ab;
-        //             ele.filePath = ele.cons[0].p_MASTERFILE
-        //             rowNum_ab = rowNum_ab + 1;
-        //             ele.duration = ele.cons[0].p_DURATION
-        //             // ele.duration = moment(ele.endposition)
-        //             //     .add(-9, "hours")
-        //             //     .format("HH:mm:ss.SS");
-        //             dispatch('productFilter', ele);
-        //             //this.productFilter(ele);
-        //             return ele;
-        //         }
-        //     });
-        //     //C채널 -그룹
-        //     var cDataGroup = cueSheetCons.filter((ele) => {
-        //         if (ele.channeltype == "I") {
-        //             ele.rowNum = rowNum_c;
-        //             ele.filePath = ele.cons[0].p_MASTERFILE
-        //             ele.editTarget = true;
-        //             rowNum_c = rowNum_c + 1;
-        //             ele.duration = ele.cons[0].p_DURATION
-        //             // ele.duration = moment(ele.endposition)
-        //             //     .add(-9, "hours")
-        //             //     .format("HH:mm:ss.SS");
-        //             dispatch('productFilter', ele);
-        //             //   this.productFilter(ele);
-        //             return ele;
-        //         }
-        //     });
-
-        //     //C채널 - 카트별
-        //     var cDataResult = [];
-        //     var row = {};
-        //     for (var channelNum = 0; 4 > channelNum; channelNum++) {
-        //         cDataResult = [];
-        //         for (var i = 0; 16 > i; i++) {
-        //             for (var index = 0; cDataGroup.length > index; index++) {
-        //                 if (
-        //                     cDataGroup[index].seqnum ==
-        //                     i + 16 * channelNum + 1
-        //                 ) {
-        //                     row = cDataGroup[index];
-        //                     break;
-        //                 } else {
-        //                     row = {};
-        //                 }
-        //             }
-        //             cDataResult.push(row);
-        //         }
-        //         commit('SET_CCHANNELDATA', {
-        //             type: "channel_" + (channelNum + 1),
-        //             value: cDataResult,
-        //         })
-        //     }
-        //     commit('SET_PRINTARR', printData);
-        //     commit('SET_ABCARTARR', abData);
-        // },
-        //con + 출력용 가공 (저장), 이거 나중에 즐겨찾기를 따로 빼기 즐찾 가공이랑 즐찾 저장이랑 2개로 나누기
+        },
         setCueConFav_save({ state }, fav) {
             var printData = state.printArr
             var abData = state.abCartArr
@@ -957,21 +951,16 @@ export default {
             if (Object.keys(cueDataObj).length === 0) {
                 cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
             }
-            printTemplate.forEach((ele) => {
-                if (ele.rownum == 1) {
-                    console.log(cueDataObj.r_ONAIRTIME)
-                    ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
-                    // var time1 = moment("00:00:00", "HH:mm:ss");
-                    // var time2 = moment(cueDataObj.brdtime, "YYYY-MM-DDTHH:mm:ss");
-                    // ele.starttime = moment
-                    //     .duration(time2.diff(time1))
-                    //     .asMilliseconds();
-                }
-            })
-            console.log("state.printTem");
-            console.log(state.printTem);
-            console.log("printTemplate");
-            console.log(printTemplate);
+            // printTemplate.forEach((ele) => {
+            //     if (ele.rownum == 1) {
+            //         ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
+            //         // var time1 = moment("00:00:00", "HH:mm:ss");
+            //         // var time2 = moment(cueDataObj.brdtime, "YYYY-MM-DDTHH:mm:ss");
+            //         // ele.starttime = moment
+            //         //     .duration(time2.diff(time1))
+            //         //     .asMilliseconds();
+            //     }
+            // })
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
             // commit('SET_CUEINFO', payload)
