@@ -352,7 +352,12 @@ export default {
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
         selectedRowsData = selectedRowsData.filter((ele) => {
-          return ele.cartcode != null && ele.cartcode != "";
+          if (Object.keys(ele).includes("cartcode")) {
+            console.log(ele);
+            return ele.cartcode != "";
+          } else {
+            return (ele = ele);
+          }
         });
         if (selectedRowsData.length > 1) {
           selectedRowsData.forEach((data, index) => {

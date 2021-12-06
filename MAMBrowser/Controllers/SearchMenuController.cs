@@ -236,7 +236,8 @@ namespace MAMBrowser.Controllers
                 .SetSortValue(pram.sortValue)
                 .Build();
 
-            return MAMWebFactory.Instance.Search<PgmCMResultDTO>(a);
+            var result=  MAMWebFactory.Instance.Search<PgmCMResultDTO>(a);
+            return result;
         }
         //CM
         [HttpGet("GetSearchTable/CM")]

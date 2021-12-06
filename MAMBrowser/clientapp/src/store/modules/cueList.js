@@ -534,6 +534,8 @@ export default {
         async saveDayCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
+            console.log("pram")
+            console.log(pram)
             await axios
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
@@ -930,6 +932,18 @@ export default {
                 abDataResult[index] = Object.assign({}, ele);
                 abDataResult[index].channeltype = "N";
                 abDataResult[index].rownum = index + 1;
+                if (ele.fadeintime) {
+                    abDataResult[index].fadeintime = 300;
+                } else {
+                    abDataResult[index].fadeintime = 0;
+
+                }
+                if (ele.fadeouttime) {
+                    abDataResult[index].fadeouttime = 300;
+                } else {
+                    abDataResult[index].fadeouttime = 0;
+
+                }
             });
 
             var pram = {

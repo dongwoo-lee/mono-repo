@@ -131,6 +131,8 @@
       ok-title="확인"
       cancel-title="취소"
       @ok="addtemClick"
+      @show="resetModal_tem"
+      @hidden="resetModal_tem"
     >
       <div id="modelDiv" class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
@@ -554,13 +556,16 @@ export default {
         footertitle: this.cueInfo.footertitle,
         memo: this.cueInfo.memo,
       };
-
+      this.tmpTitleTextBoxValue = "이름없는 템플릿";
       // var pram = {
       //   CueSheetDTO: tempItem,
       // };
       cueCon.CueSheetDTO = tempItem;
 
       await this.addTemplate(cueCon);
+    },
+    resetModal_tem() {
+      this.tmpTitleTextBoxValue = "이름없는 템플릿";
     },
     //이거 나중에 setclearCon 나눠서 변경해서 사용하는거로 바꾸기
     clearOk() {

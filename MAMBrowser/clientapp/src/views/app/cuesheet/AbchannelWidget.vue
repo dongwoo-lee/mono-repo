@@ -235,8 +235,13 @@
           cell-template="start_Template"
         />
         <template #start_Template="{ data }">
-          <div v-if="data.data.startposition > 0">
-            <b-icon icon="star"></b-icon>
+          <div>
+            <div v-if="data.data.startposition > 0">
+              <b-icon icon="screwdriver"></b-icon>
+            </div>
+            <div v-if="data.data.fadeintime">
+              <b-icon icon="wrench"></b-icon>
+            </div>
           </div>
         </template>
         <DxColumn
@@ -246,8 +251,13 @@
           cell-template="end_Template"
         />
         <template #end_Template="{ data }">
-          <div v-if="data.data.duration > data.data.endposition">
-            <b-icon icon="star"></b-icon>
+          <div>
+            <div v-if="data.data.duration > data.data.endposition">
+              <b-icon icon="screwdriver"></b-icon>
+            </div>
+            <div v-if="data.data.fadeouttime">
+              <b-icon icon="wrench"></b-icon>
+            </div>
           </div>
         </template>
         <DxColumn :width="60" cell-template="play_Template" />
@@ -312,6 +322,8 @@
       :rowNum="soundItem.rownum"
       :startPoint="soundItem.startposition"
       :endPoint="soundItem.endposition"
+      :fadeIn="soundItem.fadeintime"
+      :fadeOut="soundItem.fadeouttime"
       type="A"
       requestType="token"
       @closePlayer="onClosePlayer"
@@ -356,8 +368,8 @@ export default {
         cartcode: "", //그룹코드
         startposition: 0,
         endposition: 0, //millisecond
-        fadeintime: 0,
-        fadeouttime: 0,
+        fadeintime: false,
+        fadeouttime: false,
         transtype: "S",
         maintitle: "",
         subtitle: "",

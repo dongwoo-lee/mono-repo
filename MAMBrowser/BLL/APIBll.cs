@@ -25,6 +25,10 @@ namespace MAMBrowser.BLL
         {
             return _dao.UpdateUserDetail(updateDtoList);
         }
+        public int UpdateUserOption(M30_COMM_USER_EXT dto)
+        {
+            return _dao.UpdateUserOption(dto);
+        }
 
         public DTO_USER_DETAIL GetUserSummary(string id)
         {

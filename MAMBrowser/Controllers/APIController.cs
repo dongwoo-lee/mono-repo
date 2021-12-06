@@ -179,6 +179,30 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        /// <summary>
+        /// 사용자 옵션 업데이트
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPatch("user")]
+        public DTO_RESULT UpdateUserOption([FromBody] M30_COMM_USER_EXT dto)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                var updateCount = _bll.UpdateUserOption(dto);
+                if (updateCount > 0)
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                else
+                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
 
         /// <summary>
         /// 특정 사용자 조회(개요)

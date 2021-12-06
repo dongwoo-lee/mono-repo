@@ -25,10 +25,15 @@
               <p align="left" style="margin-top: 8px; margin-bootm: 0">
                 <b-form-checkbox-group
                   class="custom-checkbox-group"
-                  :options="fadeOptions"
-                  value-field="value"
-                  text-field="text"
-                />
+                  v-model="selected"
+                >
+                  <b-form-checkbox :value="{ fadeIn: true }"
+                    >Fade In</b-form-checkbox
+                  >
+                  <b-form-checkbox :value="{ fadeOutn: true }"
+                    >Fade Out</b-form-checkbox
+                  >
+                </b-form-checkbox-group>
               </p>
             </b-col>
             <b-col cols="5">
@@ -130,6 +135,7 @@ export default {
   },
   data() {
     return {
+      selected: [],
       isMute: false,
       wavesurfer: null,
       CurrentTime: "00:00:00",
@@ -184,6 +190,11 @@ export default {
         },
       ],
     };
+  },
+  watch: {
+    selected(val) {
+      this.$emit("fadeValue", val);
+    },
   },
   mounted() {
     cancelToken = axios.CancelToken;
@@ -526,6 +537,8 @@ export default {
     },
     startPoint: Number,
     endPoint: Number,
+    fadeIn: Boolean,
+    fadeOut: Boolean,
   },
 };
 </script>
