@@ -4,7 +4,6 @@ import commonFunction from "../../utils/CommonFunctions";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
-import VueStepProgressIndicator from "vue-step-progress-indicator";
 import Vuetable from "vuetable-2/src/components/Vuetable";
 import axios from "axios";
 
@@ -17,7 +16,6 @@ export default {
     DxTextBox,
     DxValidator,
     Vuetable,
-    VueStepProgressIndicator,
   },
   data() {
     return {
@@ -25,74 +23,9 @@ export default {
       role: "",
       formatted: "",
       dateSelected: "",
-      vueTableWidth: "195px",
-      userListFields: [
-        {
-          name: "__slot:title",
-          title: "제목",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "12%",
-        },
-        {
-          name: "__slot:type",
-          title: "소재유형",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "4%",
-        },
-        {
-          name: "__slot:date",
-          title: "등록일시",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "8%",
-        },
-        {
-          name: "__slot:step",
-          title: "상태",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%",
-        },
-      ],
-      adminListFields: [
-        {
-          name: "__slot:title",
-          title: "제목",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "12%",
-        },
-        {
-          name: "__slot:type",
-          title: "소재유형",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "4%",
-        },
-        {
-          name: "__slot:user_id",
-          title: "등록자",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "4%",
-        },
-        {
-          name: "__slot:date",
-          title: "등록일시",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "8%",
-        },
-        {
-          name: "__slot:step",
-          title: "상태",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%",
-        },
-      ],
+
+      logTableHeight: "480px",
+
       adminLogFields: [
         {
           name: "__slot:title",
@@ -202,96 +135,6 @@ export default {
           width: "14%",
         },
       ],
-      styleData: {
-        progress__block: {
-          display: "flex",
-          alignItems: "center",
-        },
-        progress__bridge: {
-          backgroundColor: "grey",
-          height: "2px",
-          flexGrow: "1",
-          width: "20px",
-        },
-        progress__bubble: {
-          margin: "0",
-          padding: "0",
-          lineHeight: "10px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "18px",
-          width: "18px",
-          borderRadius: "10%",
-          backgroundColor: "transparent",
-          border: "2px grey solid",
-          textAlign: "center",
-        },
-        progress__label: {
-          margin: "0 0.8rem",
-          font: "14px;",
-        },
-      },
-      successColorData: {
-        progress__bubble: {
-          active: {
-            color: "#fff",
-            backgroundColor: "#27ae60",
-            borderColor: "#27ae60",
-          },
-          inactive: {
-            color: "#fff",
-            backgroundColor: "#EF5350",
-            borderColor: "#EF5350",
-          },
-          completed: {
-            color: "#fff",
-            borderColor: "#27ae60",
-            backgroundColor: "#27ae60",
-          },
-        },
-        progress__label: {
-          active: {
-            color: "#27ae60",
-          },
-          inactive: {
-            color: "#EF5350",
-          },
-          completed: {
-            color: "#27ae60",
-          },
-        },
-      },
-      failColorData: {
-        progress__bubble: {
-          active: {
-            color: "#fff",
-            backgroundColor: "#e74c3c",
-            borderColor: "#e74c3c",
-          },
-          inactive: {
-            color: "#fff",
-            backgroundColor: "#e74c3c",
-            borderColor: "#e74c3c",
-          },
-          completed: {
-            color: "#fff",
-            borderColor: "#e74c3c",
-            backgroundColor: "#e74c3c",
-          },
-        },
-        progress__label: {
-          active: {
-            color: "#e74c3c",
-          },
-          inactive: {
-            color: "#e74c3c",
-          },
-          completed: {
-            color: "#e74c3c",
-          },
-        },
-      },
     };
   },
   computed: {

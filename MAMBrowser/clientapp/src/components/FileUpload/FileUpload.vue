@@ -102,8 +102,8 @@
             <b-button
               style="
                 position: absolute;
-                top: 115px;
-                right: 45px;
+                top: 85px;
+                right: 20px;
                 border-color: #008ecc;
                 color: #008ecc;
                 background-color: white;
@@ -114,335 +114,243 @@
             >
               파일 업로드
             </b-button>
-            <b-card style="color: #008ecc" title="마스터링 작업목록">
-              <div
-                style="
-                  width: 1300px;
-                  margin-left: auto;
-                  margin-right: auto;
-                  font-size: 14px;
-                "
-              >
-                <vuetable
-                  v-show="this.role == 'ADMIN'"
-                  :table-height="vueTableWidth"
-                  ref="vuetable-scrollable"
-                  :api-mode="false"
-                  :fields="adminListFields"
-                  :data="masteringListData"
-                  no-data-template="데이터가 없습니다."
-                >
-                  <template slot="title" scope="props">
-                    <div style="font-size: 14px">
-                      {{ props.rowData.title }}
-                    </div>
-                  </template>
-                  <template slot="type" scope="props">
-                    <div>
-                      {{ props.rowData.type }}
-                    </div>
-                  </template>
-                  <template slot="user_id" scope="props">
-                    <div>
-                      {{ props.rowData.user_id }}
-                    </div>
-                  </template>
-                  <template slot="date" scope="props">
-                    <div>
-                      {{ props.rowData.date }}
-                    </div>
-                  </template>
-                  <template slot="step" scope="props">
-                    <div style="width: 220px; height: 20px">
-                      <vue-step-progress-indicator
-                        :steps="[
-                          '대기 중',
-                          '디코딩',
-                          '리샘플링',
-                          '노말라이즈',
-                          '스토리지 저장',
-                        ]"
-                        :active-step="props.rowData.step"
-                        :is-reactive="false"
-                        :styles="styleData"
-                        :colors="successColorData"
-                        style="margin-left: 30px; width: 680px"
-                      />
-                    </div>
-                  </template>
-                </vuetable>
-                <vuetable
-                  v-show="this.role != 'ADMIN'"
-                  :table-height="vueTableWidth"
-                  ref="vuetable-scrollable"
-                  :api-mode="false"
-                  :fields="userListFields"
-                  :data="masteringListData"
-                  no-data-template="데이터가 없습니다."
-                >
-                  <template slot="title" scope="props">
-                    <div style="font-size: 14px">
-                      {{ props.rowData.title }}
-                    </div>
-                  </template>
-                  <template slot="type" scope="props">
-                    <div>
-                      {{ props.rowData.type }}
-                    </div>
-                  </template>
-                  <template slot="date" scope="props">
-                    <div>
-                      {{ props.rowData.date }}
-                    </div>
-                  </template>
-                  <template slot="step" scope="props">
-                    <div style="width: 220px; height: 20px">
-                      <vue-step-progress-indicator
-                        :steps="[
-                          '대기 중',
-                          '디코딩',
-                          '리샘플링',
-                          '노말라이즈',
-                          '스토리지 저장',
-                        ]"
-                        :active-step="props.rowData.step"
-                        :is-reactive="false"
-                        :styles="styleData"
-                        :colors="successColorData"
-                        style="margin-left: 30px; width: 680px"
-                      />
-                    </div>
-                  </template>
-                </vuetable>
-              </div>
-            </b-card>
+            <b-tabs content-class="mt-3">
+              <b-tab title="작업목록" active>
+                <b-card style="color: #008ecc">
+                  <list></list>
+                </b-card>
+              </b-tab>
+              <b-tab title="로그">
+                <b-card style="color: #008ecc" title="기간검색">
+                  <div
+                    style="
+                      position: absolute;
+                      top: 22px;
+                      left: 120px;
+                      font-size: 14px;
+                    "
+                  >
+                    <b-form-group
+                      label="시작일"
+                      class="has-float-label"
+                      style="
+                        width: 200px;
+                        float: left;
+                        margin-left: 20px;
+                        margin-right: 20px;
+                      "
+                    >
+                      <b-input-group
+                        class="mb-3"
+                        style="width: 200px; float: left"
+                      >
+                        <input
+                          style="height: 33px; font-size: 13px"
+                          id="sdateinput"
+                          type="text"
+                          class="form-control input-picker date-input"
+                          :value="logSDate"
+                          @input="onsInput"
+                        />
+                        <b-input-group-append>
+                          <b-form-datepicker
+                            style="height: 33px"
+                            v-model="logSDate"
+                            button-only
+                            button-variant="outline-primary"
+                            right
+                            aria-controls="example-input"
+                            @context="onContext"
+                          ></b-form-datepicker>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                    <b-form-group
+                      label="종료일"
+                      class="has-float-label"
+                      style="width: 200px"
+                    >
+                      <b-input-group class="mb-3" style="width: 200px">
+                        <input
+                          style="height: 33px; font-size: 13px"
+                          id="edateinput"
+                          type="text"
+                          class="form-control input-picker date-input"
+                          :value="logEDate"
+                          @input="oneInput"
+                        />
+                        <b-input-group-append>
+                          <b-form-datepicker
+                            style="height: 33px"
+                            v-model="logEDate"
+                            button-only
+                            button-variant="outline-primary"
+                            right
+                            aria-controls="example-input"
+                            @context="onContext"
+                          ></b-form-datepicker>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                    <b-button
+                      style="
+                        position: absolute;
+                        top: 0px;
+                        right: -85px;
+                        z-index: 9999;
+                        border-color: #008ecc;
+                        color: #008ecc;
+                        background-color: white;
+                        height: 33px;
+                      "
+                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                      @click="logSearch"
+                    >
+                      검색
+                    </b-button>
+                  </div>
 
-            <b-card style="color: #008ecc" title="마스터링 로그">
-              <div
-                style="
-                  position: absolute;
-                  top: 22px;
-                  left: 160px;
-                  font-size: 14px;
-                "
-              >
-                <b-form-group
-                  label="시작일"
-                  class="has-float-label"
-                  style="
-                    width: 200px;
-                    float: left;
-                    margin-left: 20px;
-                    margin-right: 20px;
-                  "
-                >
-                  <b-input-group class="mb-3" style="width: 200px; float: left">
-                    <input
-                      style="height: 33px; font-size: 13px"
-                      id="sdateinput"
-                      type="text"
-                      class="form-control input-picker date-input"
-                      :value="logSDate"
-                      @input="onsInput"
-                    />
-                    <b-input-group-append>
-                      <b-form-datepicker
-                        style="height: 33px"
-                        v-model="logSDate"
-                        button-only
-                        button-variant="outline-primary"
-                        right
-                        aria-controls="example-input"
-                        @context="onContext"
-                      ></b-form-datepicker>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-                <b-form-group
-                  label="종료일"
-                  class="has-float-label"
-                  style="width: 200px"
-                >
-                  <b-input-group class="mb-3" style="width: 200px">
-                    <input
-                      style="height: 33px; font-size: 13px"
-                      id="edateinput"
-                      type="text"
-                      class="form-control input-picker date-input"
-                      :value="logEDate"
-                      @input="oneInput"
-                    />
-                    <b-input-group-append>
-                      <b-form-datepicker
-                        style="height: 33px"
-                        v-model="logEDate"
-                        button-only
-                        button-variant="outline-primary"
-                        right
-                        aria-controls="example-input"
-                        @context="onContext"
-                      ></b-form-datepicker>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-                <b-button
-                  style="
-                    position: absolute;
-                    top: 0px;
-                    right: -85px;
-                    z-index: 9999;
-                    border-color: #008ecc;
-                    color: #008ecc;
-                    background-color: white;
-                    height: 33px;
-                  "
-                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
-                  @click="logSearch"
-                >
-                  검색
-                </b-button>
-              </div>
+                  <div
+                    style="
+                      width: 1300px;
+                      margin-left: auto;
+                      margin-right: auto;
+                      font-size: 14px;
+                    "
+                  >
+                    <vuetable
+                      v-show="this.role == 'ADMIN'"
+                      :table-height="logTableHeight"
+                      ref="vuetable-scrollable"
+                      :api-mode="false"
+                      :fields="adminLogFields"
+                      :data="masteringLogData"
+                      no-data-template="데이터가 없습니다."
+                    >
+                      <template slot="rowNO" scope="props">
+                        <div>{{ props.rowIndex + 1 }}</div>
+                      </template>
 
-              <div
-                style="
-                  width: 1300px;
-                  margin-left: auto;
-                  margin-right: auto;
-                  font-size: 14px;
-                "
-              >
-                <vuetable
-                  v-show="this.role == 'ADMIN'"
-                  :table-height="vueTableWidth"
-                  ref="vuetable-scrollable"
-                  :api-mode="false"
-                  :fields="adminLogFields"
-                  :data="masteringLogData"
-                  no-data-template="데이터가 없습니다."
-                >
-                  <template slot="rowNO" scope="props">
-                    <div>{{ props.rowIndex + 1 }}</div>
-                  </template>
+                      <template slot="title" scope="props">
+                        <div style="font-size: 14px">
+                          {{ props.rowData.title }}
+                        </div>
+                      </template>
+                      <template slot="type" scope="props">
+                        <div>
+                          {{ props.rowData.type }}
+                        </div>
+                      </template>
+                      <template slot="user" scope="props">
+                        <div>
+                          {{ props.rowData.user }}
+                        </div>
+                      </template>
+                      <template slot="date" scope="props">
+                        <div>
+                          {{ props.rowData.date }}
+                        </div>
+                      </template>
+                      <template slot="status" scope="props">
+                        <div>
+                          {{ props.rowData.status }}
+                        </div>
+                      </template>
+                      <template slot="silence" scope="props">
+                        <div>
+                          {{ props.rowData.silence }}
+                        </div>
+                      </template>
+                      <template slot="worker" scope="props">
+                        <div>
+                          {{ props.rowData.worker }}
+                        </div>
+                      </template>
+                      <template slot="actions" scope="props">
+                        <div>
+                          <b-button
+                            class="icon-buton"
+                            style="
+                              background-color: transparent;
+                              border: 0;
+                              outlilne: 0;
+                            "
+                            @click="removeLog(props)"
+                            ><b-icon
+                              icon="trash"
+                              class="icon"
+                              variant="danger"
+                            ></b-icon
+                          ></b-button>
+                        </div>
+                      </template>
+                    </vuetable>
 
-                  <template slot="title" scope="props">
-                    <div style="font-size: 14px">
-                      {{ props.rowData.title }}
-                    </div>
-                  </template>
-                  <template slot="type" scope="props">
-                    <div>
-                      {{ props.rowData.type }}
-                    </div>
-                  </template>
-                  <template slot="user" scope="props">
-                    <div>
-                      {{ props.rowData.user }}
-                    </div>
-                  </template>
-                  <template slot="date" scope="props">
-                    <div>
-                      {{ props.rowData.date }}
-                    </div>
-                  </template>
-                  <template slot="status" scope="props">
-                    <div>
-                      {{ props.rowData.status }}
-                    </div>
-                  </template>
-                  <template slot="silence" scope="props">
-                    <div>
-                      {{ props.rowData.silence }}
-                    </div>
-                  </template>
-                  <template slot="worker" scope="props">
-                    <div>
-                      {{ props.rowData.worker }}
-                    </div>
-                  </template>
-                  <template slot="actions" scope="props">
-                    <div>
-                      <b-button
-                        class="icon-buton"
-                        style="
-                          background-color: transparent;
-                          border: 0;
-                          outlilne: 0;
-                        "
-                        @click="removeLog(props)"
-                        ><b-icon
-                          icon="trash"
-                          class="icon"
-                          variant="danger"
-                        ></b-icon
-                      ></b-button>
-                    </div>
-                  </template>
-                </vuetable>
+                    <vuetable
+                      v-show="this.role != 'ADMIN'"
+                      :table-height="logTableHeight"
+                      ref="vuetable-scrollable"
+                      :api-mode="false"
+                      :fields="userLogFields"
+                      :data="masteringLogData"
+                      no-data-template="데이터가 없습니다."
+                    >
+                      <template slot="rowNO" scope="props">
+                        <div>{{ props.rowIndex + 1 }}</div>
+                      </template>
 
-                <vuetable
-                  v-show="this.role != 'ADMIN'"
-                  :table-height="vueTableWidth"
-                  ref="vuetable-scrollable"
-                  :api-mode="false"
-                  :fields="userLogFields"
-                  :data="masteringLogData"
-                  no-data-template="데이터가 없습니다."
-                >
-                  <template slot="rowNO" scope="props">
-                    <div>{{ props.rowIndex + 1 }}</div>
-                  </template>
-
-                  <template slot="title" scope="props">
-                    <div style="font-size: 14px">
-                      {{ props.rowData.title }}
-                    </div>
-                  </template>
-                  <template slot="type" scope="props">
-                    <div>
-                      {{ props.rowData.type }}
-                    </div>
-                  </template>
-                  <template slot="date" scope="props">
-                    <div>
-                      {{ props.rowData.date }}
-                    </div>
-                  </template>
-                  <template slot="status" scope="props">
-                    <div>
-                      {{ props.rowData.status }}
-                    </div>
-                  </template>
-                  <template slot="silence" scope="props">
-                    <div>
-                      {{ props.rowData.silence }}
-                    </div>
-                  </template>
-                  <template slot="worker" scope="props">
-                    <div>
-                      {{ props.rowData.worker }}
-                    </div>
-                  </template>
-                  <template slot="actions" scope="props">
-                    <div>
-                      <b-button
-                        class="icon-buton"
-                        style="
-                          background-color: transparent;
-                          border: 0;
-                          outlilne: 0;
-                        "
-                        @click="removeLog(props)"
-                        ><b-icon
-                          icon="trash"
-                          class="icon"
-                          variant="danger"
-                        ></b-icon
-                      ></b-button>
-                    </div>
-                  </template>
-                </vuetable>
-              </div>
-            </b-card>
+                      <template slot="title" scope="props">
+                        <div style="font-size: 14px">
+                          {{ props.rowData.title }}
+                        </div>
+                      </template>
+                      <template slot="type" scope="props">
+                        <div>
+                          {{ props.rowData.type }}
+                        </div>
+                      </template>
+                      <template slot="date" scope="props">
+                        <div>
+                          {{ props.rowData.date }}
+                        </div>
+                      </template>
+                      <template slot="status" scope="props">
+                        <div>
+                          {{ props.rowData.status }}
+                        </div>
+                      </template>
+                      <template slot="silence" scope="props">
+                        <div>
+                          {{ props.rowData.silence }}
+                        </div>
+                      </template>
+                      <template slot="worker" scope="props">
+                        <div>
+                          {{ props.rowData.worker }}
+                        </div>
+                      </template>
+                      <template slot="actions" scope="props">
+                        <div>
+                          <b-button
+                            class="icon-buton"
+                            style="
+                              background-color: transparent;
+                              border: 0;
+                              outlilne: 0;
+                            "
+                            @click="removeLog(props)"
+                            ><b-icon
+                              icon="trash"
+                              class="icon"
+                              variant="danger"
+                            ></b-icon
+                          ></b-button>
+                        </div>
+                      </template>
+                    </vuetable>
+                  </div> </b-card
+              ></b-tab>
+            </b-tabs>
           </div>
         </h4>
       </CommonFileModal>
@@ -463,6 +371,7 @@
 import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
 import MetaModal from "./MetaModal";
+import list from "./list.vue";
 import axios from "axios";
 const dxfu = "my-fileupload";
 var DB;
@@ -478,6 +387,7 @@ export default {
   components: {
     CommonFileModal,
     MetaModal,
+    list,
   },
   data() {
     return {
@@ -818,9 +728,9 @@ export default {
 }
 .card {
   width: 1350px;
-  height: 330px;
+  height: 620px;
   margin-left: 20px;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 .date-input:focus {
   border: 1px solid #4475c4 !important;
