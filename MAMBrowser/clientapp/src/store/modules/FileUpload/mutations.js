@@ -141,6 +141,7 @@ export default {
     ];
   },
   startDBConnection(state) {
+    clearInterval(db);
     db = setInterval(() => {
       axios.get("/api/Mastering/mastering-status").then((res) => {
         var masteringListData = [];
@@ -173,7 +174,6 @@ export default {
           };
           masteringListData.push(data);
         });
-        console.log(masteringListData);
         state.masteringListData = masteringListData;
       });
     }, 1000);
