@@ -165,13 +165,14 @@ namespace MAMBrowser.Utils
                 con.MEMO = item.MEMO ?? "";
                 con.STARTPOSITION = item.STARTPOSITION;
                 con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME;
-                con.FADEOUTTIME = item.FADEOUTTIME;
+                con.FADEINTIME = item.FADEINTIME>0?true:false;
+                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
                 con.MAINTITLE = item.MAINTITLE ?? "";
                 con.SUBTITLE = item.SUBTITLE ?? "";
                 con.TRANSTYPE = item.TRANSTYPE;
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
+                con.CARTTYPE = SetCartCode(item.CARTCODE);
 
                 if (item.AUDIOS.Count != 1)
                 {
@@ -317,14 +318,16 @@ namespace MAMBrowser.Utils
                 }
                 con.STARTPOSITION = item.STARTPOSITION;
                 con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME;
-                con.FADEOUTTIME = item.FADEOUTTIME;
+                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
+                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
                 con.MAINTITLE = item.MAINTITLE ?? "";
                 con.SUBTITLE = item.SUBTITLE ?? "";
                 con.MEMO = item.MEMO ?? "";
                 con.TRANSTYPE = item.TRANSTYPE;
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
+                con.CARTTYPE = SetCartCode(item.CARTCODE);
+
 
                 if (item.AUDIOS.Count != 1)
                 {
@@ -472,14 +475,16 @@ namespace MAMBrowser.Utils
                 }
                 con.STARTPOSITION = item.STARTPOSITION;
                 con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME;
-                con.FADEOUTTIME = item.FADEOUTTIME;
+                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
+                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
                 con.MAINTITLE = item.MAINTITLE ?? "";
                 con.SUBTITLE = item.SUBTITLE ?? "";
                 con.MEMO = item.MEMO ?? "";
                 con.TRANSTYPE = item.TRANSTYPE;
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
+                con.CARTTYPE = SetCartCode(item.CARTCODE);
+
 
                 if (item.AUDIOS.Count != 1)
                 {
@@ -625,13 +630,15 @@ namespace MAMBrowser.Utils
                 con.MEMO = item.MEMO ?? "";
                 con.STARTPOSITION = item.STARTPOSITION;
                 con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME;
-                con.FADEOUTTIME = item.FADEOUTTIME;
+                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
+                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
                 con.MAINTITLE = item.MAINTITLE ?? "";
                 con.SUBTITLE = item.SUBTITLE ?? "";
                 con.TRANSTYPE = item.TRANSTYPE;
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
+                con.CARTTYPE = SetCartCode(item.CARTCODE);
+
                 if (item.AUDIOS.Count != 1)
                 {
                     con.FILEPATH = "";
@@ -769,8 +776,8 @@ namespace MAMBrowser.Utils
                     itemResult.CARTID = item.CMGROUPID ?? "";
                     itemResult.ONAIRDATE = item.ONAIRDATE ?? "";
                     itemResult.STARTPOSITION = 0;
-                    itemResult.FADEINTIME = 0;
-                    itemResult.FADEOUTTIME = 0;
+                    itemResult.FADEINTIME = false;
+                    itemResult.FADEOUTTIME = false;
                     itemResult.MAINTITLE = item.CMGROUPNAME ?? "";
                     itemResult.SUBTITLE = item.STATENAME ?? "";
                     itemResult.MEMO = "";
@@ -797,8 +804,8 @@ namespace MAMBrowser.Utils
                     itemResult.ONAIRDATE = item.ONAIRDATE ?? "";
                     itemResult.CARTID = item.GROUPCONTENTID ?? "";
                     itemResult.STARTPOSITION = 0;
-                    itemResult.FADEINTIME = 0;
-                    itemResult.FADEOUTTIME = 0;
+                    itemResult.FADEINTIME = false;
+                    itemResult.FADEOUTTIME = false;
                     itemResult.MAINTITLE = item.NAME ?? "";
                     itemResult.SUBTITLE = item.ID ?? "";
                     itemResult.MEMO = "";
@@ -833,12 +840,14 @@ namespace MAMBrowser.Utils
                 favItem.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
                 favItem.STARTPOSITION = item.STARTPOSITION;
                 favItem.ENDPOSITION = item.ENDPOSITION;
-                favItem.FADEINTIME = item.FADEINTIME;
-                favItem.FADEOUTTIME = item.FADEOUTTIME;
+                favItem.FADEINTIME = item.FADEINTIME > 0 ? true : false;
+                favItem.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
                 favItem.MAINTITLE = item.MAINTITLE ?? "";
                 favItem.SUBTITLE = item.SUBTITLE ?? "";
                 favItem.MEMO = item.MEMO ?? "";
                 favItem.EDITTARGET = true;
+                favItem.CARTTYPE = SetCartCode(item.CARTCODE);
+
 
                 if (item.AUDIOS.Count != 1)
                 {
@@ -926,8 +935,8 @@ namespace MAMBrowser.Utils
                 obj.p_useflag = (item.USEFLAG == null) ? 'Y' : char.Parse(item.USEFLAG);
                 obj.p_startposition = item.STARTPOSITION;
                 obj.p_endposition = item.ENDPOSITION;
-                obj.p_fadeintime = item.FADEINTIME;
-                obj.p_fadeouttime = item.FADEOUTTIME;
+                obj.p_fadeintime = item.FADEINTIME? 300 : 0;
+                obj.p_fadeouttime = item.FADEOUTTIME? 300 : 0;
                 obj.p_transtype = char.Parse(item.TRANSTYPE);
                 obj.p_maintitle = item.MAINTITLE;
                 obj.p_subtitle = item.SUBTITLE;
@@ -951,8 +960,8 @@ namespace MAMBrowser.Utils
                         obj.p_useflag = 'Y';
                         obj.p_startposition = item.STARTPOSITION;
                         obj.p_endposition = item.ENDPOSITION;
-                        obj.p_fadeintime = item.FADEINTIME;
-                        obj.p_fadeouttime = item.FADEOUTTIME;
+                        obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                        obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                         obj.p_transtype = char.Parse(item.TRANSTYPE);
                         obj.p_maintitle = item.MAINTITLE;
                         obj.p_subtitle = item.SUBTITLE;
@@ -1032,8 +1041,8 @@ namespace MAMBrowser.Utils
                     obj.p_useflag = char.Parse(item.USEFLAG);
                     obj.p_startposition = item.STARTPOSITION;
                     obj.p_endposition = item.ENDPOSITION;
-                    obj.p_fadeintime = item.FADEINTIME;
-                    obj.p_fadeouttime = item.FADEOUTTIME;
+                    obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                    obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                     obj.p_transtype = char.Parse(item.TRANSTYPE);
                     obj.p_maintitle = item.MAINTITLE;
                     obj.p_subtitle = item.SUBTITLE;
@@ -1061,8 +1070,8 @@ namespace MAMBrowser.Utils
                             obj.p_useflag = char.Parse(item.USEFLAG);
                             obj.p_startposition = item.STARTPOSITION;
                             obj.p_endposition = item.ENDPOSITION;
-                            obj.p_fadeintime = item.FADEINTIME;
-                            obj.p_fadeouttime = item.FADEOUTTIME;
+                            obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                            obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                             obj.p_transtype = char.Parse(item.TRANSTYPE);
                             obj.p_maintitle = item.MAINTITLE;
                             obj.p_subtitle = item.SUBTITLE;
@@ -1125,8 +1134,8 @@ namespace MAMBrowser.Utils
                     obj.p_useflag = char.Parse(item.USEFLAG);
                     obj.p_startposition = item.STARTPOSITION;
                     obj.p_endposition = item.ENDPOSITION;
-                    obj.p_fadeintime = item.FADEINTIME;
-                    obj.p_fadeouttime = item.FADEOUTTIME;
+                    obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                    obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                     obj.p_transtype = char.Parse(item.TRANSTYPE);
                     obj.p_maintitle = item.MAINTITLE;
                     obj.p_subtitle = item.SUBTITLE;
@@ -1154,8 +1163,8 @@ namespace MAMBrowser.Utils
                             obj.p_useflag = char.Parse(item.USEFLAG);
                             obj.p_startposition = item.STARTPOSITION;
                             obj.p_endposition = item.ENDPOSITION;
-                            obj.p_fadeintime = item.FADEINTIME;
-                            obj.p_fadeouttime = item.FADEOUTTIME;
+                            obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                            obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                             obj.p_transtype = char.Parse(item.TRANSTYPE);
                             obj.p_maintitle = item.MAINTITLE;
                             obj.p_subtitle = item.SUBTITLE;
@@ -1185,8 +1194,8 @@ namespace MAMBrowser.Utils
                     favItem.p_cartcode = item.CARTCODE;
                     favItem.p_startposition = item.STARTPOSITION;
                     favItem.p_endposition = item.ENDPOSITION;
-                    favItem.p_fadeintime = item.FADEINTIME;
-                    favItem.p_fadeouttime = item.FADEOUTTIME;
+                    favItem.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                    favItem.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                     favItem.p_maintitle = item.MAINTITLE;
                     favItem.p_subtitle = item.SUBTITLE;
                     favItem.p_memo = item.MEMO;
@@ -1243,9 +1252,9 @@ namespace MAMBrowser.Utils
                     resultItem.Description_in = item.MEMO;
                     resultItem.LLevel_in = 0;
                     resultItem.RLevel_in = 0;
-                    resultItem.FadeInTime_in = item.FADEINTIME;
-                    resultItem.FadeOutTime_in = item.FADEOUTTIME;
-                    resultItem.ExtroTime_in = 0;
+                    resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
+                        resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
+                        resultItem.ExtroTime_in = 0;
                     resultItem.IntroTime_in = 0;
                     resultItem.MainTitle_in = item.MAINTITLE;
                     resultItem.TransType_in = char.Parse(item.TRANSTYPE);
@@ -1276,8 +1285,8 @@ namespace MAMBrowser.Utils
                             resultItem.Description_in = item.MEMO;
                             resultItem.LLevel_in = 0;
                             resultItem.RLevel_in = 0;
-                            resultItem.FadeInTime_in = item.FADEINTIME;
-                            resultItem.FadeOutTime_in = item.FADEOUTTIME;
+                            resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
+                            resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
                             resultItem.ExtroTime_in = 0;
                             resultItem.IntroTime_in = 0;
                             resultItem.MainTitle_in = item.MAINTITLE;
@@ -1360,5 +1369,54 @@ namespace MAMBrowser.Utils
             return entity;
         }
 
+        public static string SetCartCode(string code)
+        {
+            var result = "";
+            switch (code)
+            {
+                case "S01G01C013":
+                    result = "AC";
+                    break;
+                case "S01G01C017":
+                    result = "AS";
+                    break;
+                case "S01G01C010":
+                    result = "ST";
+                    break;
+                case "S01G01C018":
+                    result = "CM";
+                    break;
+                case "S01G01C019":
+                    result = "CM";
+                    break;
+                case "S01G01C012":
+                    result = "RC";
+                    break;
+                case "S01G01C021":
+                    result = "FC";
+                    break;
+                case "S01G01C022":
+                    result = "FC";
+                    break;
+                case "S01G01C023":
+                    result = "FC";
+                    break;
+                case "S01G01C024":
+                    result = "FC";
+                    break;
+                case "S01G01C009":
+                    result = "PM";
+                    break;
+                case "S01G01C016":
+                    result = "AS";
+                    break;
+                case "S01G01C020":
+                    result = "MS";
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
     }
 }
