@@ -302,7 +302,7 @@
     >
     </CMGroupPlayerPopup>
 
-    <PlayerPopup
+    <EditPlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.maintitle"
       :fileKey="soundItem.filetoken"
@@ -316,7 +316,7 @@
       requestType="token"
       @closePlayer="onClosePlayer"
     >
-    </PlayerPopup>
+    </EditPlayerPopup>
   </div>
 </template>
 
@@ -350,6 +350,7 @@ export default {
       showGrpPlayer: false,
       grpParam: {},
       rowData: {
+        carttype: "",
         onairdate: "",
         cartid: "", // 소재ID
         cartcode: "", //그룹코드
@@ -405,14 +406,6 @@ export default {
   methods: {
     //...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
-
-    showGrpPlayerPopup(data) {
-      this.grpParam = data;
-      this.showGrpPlayer = true;
-    },
-    closeGrpPlayerPopup() {
-      this.showGrpPlayer = false;
-    },
     onAddChannelAB(e) {
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
@@ -478,6 +471,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      console.log(e.itemData);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },
@@ -675,6 +669,13 @@ export default {
       var itemTime = moment(duration, "HH:mm:ss.SS");
       var defTime = moment("00:00:00.00", "HH:mm:ss.SS");
       return moment.duration(itemTime.diff(defTime)).asMilliseconds();
+    },
+    showGrpPlayerPopup(data) {
+      this.grpParam = data;
+      this.showGrpPlayer = true;
+    },
+    closeGrpPlayerPopup() {
+      this.showGrpPlayer = false;
     },
   },
 };

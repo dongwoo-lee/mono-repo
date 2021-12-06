@@ -8,6 +8,20 @@ const moment = require("moment");
 Vue.use(VueRouter);
 import axios from "axios";
 const qs = require("qs");
+const date = new Date();
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
 
 const routes = [
   {
@@ -317,12 +331,16 @@ const routes = [
           if (Object.keys(cueDataObj).length === 0) {
             cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
           }
-          var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode };
-          if (Object.keys(cueDataObj).includes("detail")) {
-            params.brd_dt = cueDataObj.brddate
-          } else {
-            params.brd_dt = cueDataObj.day
-          }
+          // var params = {
+          //   productid: cueDataObj.productid,
+          //   week: cueDataObj.weeks,
+          // };
+          var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode, brd_dt: toDay };
+          // if (Object.keys(cueDataObj).includes("detail")) {
+          //   params.brd_dt = cueDataObj.brddate
+          // } else {
+          //   params.brd_dt = cueDataObj.day
+          // }
           await axios.get(`/api/defcuesheet/GetdefCue`, {
             params: params,
             paramsSerializer: (params) => {
@@ -337,6 +355,19 @@ const routes = [
               cueData.productWeekList = cueDataObj.productWeekList
               cueDataObj = cueData
               store.dispatch('cueList/setCueConData', res.data);
+              var dataVal = false;
+              for (var i = 1; i < 5; i++) {
+                res.data.instanceCon["channel_" + i].forEach((ele) => {
+                  if (ele.cartcode != null) {
+                    dataVal = true;
+                    return
+                  }
+                })
+              }
+              if (res.data.normalCon.length == 0 && !dataVal) {
+                //이거 테스트해봐야함 (데이터가 없을경우 광고 자동 가져오기임)
+                store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode, brd_dt: toDay });
+              }
               store.dispatch('cueList/getProUserList', cueDataObj.productid);
             });
           store.dispatch('cueList/setclearFav');

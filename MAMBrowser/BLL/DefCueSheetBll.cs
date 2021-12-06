@@ -51,6 +51,7 @@ namespace MAMBrowser.BLL
                 .SetRequestType(RequestType.Web)
                 .Build();
             var result = _dao.GetDefCueSheet(param);
+
             if (pgmcode != null && brd_dt != null)
             {
                 SponsorParam spon_param = new SponsorParam();

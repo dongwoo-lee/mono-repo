@@ -1198,20 +1198,105 @@ namespace MAMBrowser.Utils
         }
 
         // DTO TO Entity - 구 DB
-        public static PDPQSParam PDPQSToEntity(this CueSheetDTO dto, char type)
-        {
-            var result = new PDPQSParam();
-            result.ProductID_in = dto.PRODUCTID;
-            result.OnairDate_in = dto.BRDDATE;
-            result.PQSType_in = type;
-            result.Media_in = Char.Parse(dto.MEDIA);
-            result.LiveFlag_in = dto.LIVEFLAG;
-            result.StateID_in = "P000";
-            result.Editor_in = dto.PERSONID;
-            result.OnairDay_in = dto.ONAIRDAY;
-            result.StartDate_in = dto.STARTDATE;
-            result.SeqNum_in = dto.SEQNUM;
+        //public static PDPQSParam PDPQSToEntity(this CueSheetDTO dto, char type)
+        //{
+        //    var result = new PDPQSParam();
+        //    result.ProductID_in = dto.PRODUCTID;
+        //    result.OnairDate_in = dto.BRDDATE;
+        //    result.PQSType_in = type;
+        //    result.Media_in = Char.Parse(dto.MEDIA);
+        //    result.LiveFlag_in = dto.LIVEFLAG;
+        //    result.StateID_in = "P000";
+        //    result.Editor_in = dto.PERSONID;
+        //    result.OnairDay_in = dto.ONAIRDAY;
+        //    result.StartDate_in = dto.STARTDATE;
+        //    result.SeqNum_in = dto.SEQNUM;
 
+        //    return result;
+        //}
+
+        // DTO TO Entity - 구 DB
+
+        public static PDPQSCreateCollectionParam PDPQSToEntity(this CueSheetCollectionDTO dto, char type)
+        {
+            var result = new PDPQSCreateCollectionParam();
+            result.PDPQSParam = new PDPQSParam();
+            result.PDPQSParam.ProductID_in = dto.CueSheetDTO.PRODUCTID;
+            result.PDPQSParam.OnairDate_in = dto.CueSheetDTO.BRDDATE;
+            result.PDPQSParam.PQSType_in = type;
+            result.PDPQSParam.Media_in = Char.Parse(dto.CueSheetDTO.MEDIA);
+            result.PDPQSParam.LiveFlag_in = dto.CueSheetDTO.LIVEFLAG;
+            result.PDPQSParam.StateID_in = "P000";
+            result.PDPQSParam.Editor_in = dto.CueSheetDTO.PERSONID;
+            result.PDPQSParam.OnairDay_in = dto.CueSheetDTO.ONAIRDAY;
+            result.PDPQSParam.StartDate_in = dto.CueSheetDTO.STARTDATE;
+            result.PDPQSParam.SeqNum_in = dto.CueSheetDTO.SEQNUM;
+
+            if (type == 'N')
+            {
+                //ab
+                foreach (var item in dto.NormalCon)
+                {
+                    if (item.CARTID != "" &&
+                    (!string.IsNullOrEmpty(item.MEMO) || !string.IsNullOrEmpty(item.MAINTITLE))){
+                    var resultItem = new PDPQSConParam();
+                    resultItem.Description_in = item.MEMO;
+                    resultItem.LLevel_in = 0;
+                    resultItem.RLevel_in = 0;
+                    resultItem.FadeInTime_in = item.FADEINTIME;
+                    resultItem.FadeOutTime_in = item.FADEOUTTIME;
+                    resultItem.ExtroTime_in = 0;
+                    resultItem.IntroTime_in = 0;
+                    resultItem.MainTitle_in = item.MAINTITLE;
+                    resultItem.TransType_in = char.Parse(item.TRANSTYPE);
+                    resultItem.SOM_in = item.STARTPOSITION;
+                    resultItem.CartType_in = item.CARTTYPE;
+                    resultItem.CartID_in = item.CARTID;
+                    resultItem.SeqNum_in = item.ROWNUM;
+                    resultItem.PqsType_in = 'N';
+                    resultItem.OnAirDate_in = dto.CueSheetDTO.BRDDATE;
+                    resultItem.ProductID_in = dto.CueSheetDTO.PRODUCTID;
+                    resultItem.EOM_in = item.ENDPOSITION;
+                    resultItem.SubTitle_in = item.SUBTITLE;
+                    result.PDPQSConParam.Add(resultItem);
+                    }
+                }
+            }
+            if (type == 'I')
+            {
+                var index = 0;
+                //c
+                foreach (var cData in dto.InstanceCon)
+                {
+                    foreach (var item in cData.Value)
+                    {
+                        if (item.CARTCODE != "" && item.CARTCODE != null && item.ROWNUM + (index * 16)<33)
+                        {
+                            var resultItem = new PDPQSConParam();
+                            resultItem.Description_in = item.MEMO;
+                            resultItem.LLevel_in = 0;
+                            resultItem.RLevel_in = 0;
+                            resultItem.FadeInTime_in = item.FADEINTIME;
+                            resultItem.FadeOutTime_in = item.FADEOUTTIME;
+                            resultItem.ExtroTime_in = 0;
+                            resultItem.IntroTime_in = 0;
+                            resultItem.MainTitle_in = item.MAINTITLE;
+                            resultItem.TransType_in = char.Parse(item.TRANSTYPE);
+                            resultItem.SOM_in = item.STARTPOSITION;
+                            resultItem.CartType_in = item.CARTTYPE;
+                            resultItem.CartID_in = item.CARTID;
+                            resultItem.SeqNum_in = item.ROWNUM + (index * 16);
+                            resultItem.PqsType_in = 'I';
+                            resultItem.OnAirDate_in = dto.CueSheetDTO.BRDDATE;
+                            resultItem.ProductID_in = dto.CueSheetDTO.PRODUCTID;
+                            resultItem.EOM_in = item.ENDPOSITION;
+                            resultItem.SubTitle_in = item.SUBTITLE;
+                            result.PDPQSConParam.Add(resultItem);
+                        }
+                    }
+                    index++;
+                }
+            }
             return result;
         }
 
@@ -1274,8 +1359,6 @@ namespace MAMBrowser.Utils
             }
             return entity;
         }
-
-
 
     }
 }

@@ -514,6 +514,10 @@ export default {
         async addTemplate({ }, payload) {
             await axios
                 .post(`/api/TempCueSheet/SaveTempCue`, payload)
+                .then((res) => {
+                    console.log("res")
+                    console.log(res)
+                })
         },
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
@@ -705,6 +709,7 @@ export default {
                 case "S01G01C013":
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
+                    payload.row.carttype = "AC";
                     break;
                 //부조SB
                 case "S01G01C017":
@@ -713,18 +718,22 @@ export default {
                         payload.row.subtitle = payload.search_row.pgmName;
                         payload.row.onairdate = payload.search_row.brdDT;
                         payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.carttype = "AS";
                     } else {
                         payload.row.subtitle = payload.search_row.categoryName;
+                        payload.row.carttype = payload.search_row.categoryID;
                     }
                     break;
                 //부조 SPOT
                 case "S01G01C010":
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.pgmName;
+                    payload.row.carttype = "ST";
                     break;
                 //프로그램CM
                 case "S01G01C018":
                     payload.row.maintitle = payload.search_row.name;
+                    payload.row.carttype = "CM";
                     if (payload.search_row.brdDT) {
                         payload.row.subtitle = payload.search_row.status;
                         payload.row.onairdate = payload.search_row.brdDT;
@@ -736,6 +745,7 @@ export default {
                 //CM
                 case "S01G01C019":
                     payload.row.maintitle = payload.search_row.name;
+                    payload.row.carttype = "CM";
                     if (payload.search_row.brdDT) {
                         payload.row.subtitle = payload.search_row.status;
                         payload.row.onairdate = payload.search_row.brdDT;
@@ -746,35 +756,41 @@ export default {
                     break;
                 //취재물
                 case "S01G01C012":
+                    payload.row.carttype = "RC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.pgmName;
                     break;
                 // Filler(PR)
                 case "S01G01C021":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.cartid = payload.search_row.id;
                     break;
                 // Filler(소재)
                 case "S01G01C022":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.cartid = payload.search_row.id;
                     break;
                 // Filler(시간)
                 case "S01G01C023":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.status;
                     payload.row.cartid = payload.search_row.id;
                     break;
                 // Filler(기타)
                 case "S01G01C024":
+                    payload.row.carttype = "FC";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.cartid = payload.search_row.id;
                     break;
                 // 프로그램
                 case "S01G01C009":
+                    payload.row.carttype = "PM";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.status;
                     break;
@@ -785,13 +801,16 @@ export default {
                         payload.row.subtitle = payload.search_row.id;
                         payload.row.onairdate = payload.search_row.brdDT;
                         payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.carttype = "AS";
                     } else {
                         payload.row.subtitle = payload.search_row.categoryName;
+                        payload.row.carttype = payload.search_row.categoryID;
                     }
 
                     break;
                 // 주조SPOT
                 case "S01G01C020":
+                    payload.row.carttype = "MS";
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.brdDT;
                     break;

@@ -196,6 +196,7 @@ export default {
     return {
       fileData: [],
       rowData: {
+        carttype: "",
         cartcode: "", //그룹코드
         cartid: "", // 소재ID
         duration: "", //string

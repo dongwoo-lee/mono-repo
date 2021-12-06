@@ -13,12 +13,26 @@
       <div>
         <b-container class="bv-example-row" v-if="isSuccess">
           <b-row>
-            <b-col> </b-col>
-            <b-col>
-              <div align="center"></div>
+            <b-col cols="3" class="p-0 mb-2">
+              <p align="left">
+                <b-button-group size="sm">
+                  <b-button @click="somClick"> Start Point </b-button>
+                  <b-button @click="eomClick"> End Point </b-button>
+                </b-button-group>
+              </p>
             </b-col>
-            <b-col>
-              <p align="right">
+            <b-col cols="4" class="pl-3">
+              <p align="left" style="margin-top: 8px; margin-bootm: 0">
+                <b-form-checkbox-group
+                  class="custom-checkbox-group"
+                  :options="fadeOptions"
+                  value-field="value"
+                  text-field="text"
+                />
+              </p>
+            </b-col>
+            <b-col cols="5">
+              <p align="right" style="margin-top: 8px; margin-bootm: 0">
                 <vue-slider
                   width="170px"
                   :min="zoomMin"
@@ -76,10 +90,18 @@
               <b-btn variant="outline-primary" size="sm" @click.prevent="Stop"
                 >■</b-btn
               >
+              <b-btn variant="outline-primary" size="sm" @click="editplay"
+                >영역 Play</b-btn
+              >
             </div>
           </b-col>
           <b-col>
-            <p align="right">{{ CurrentTime }} / {{ TotalTime }}</p>
+            <div>
+              <p align="right" class="m-0">{{ somTime }} / {{ eomTime }}</p>
+              <p align="right" class="m-0">
+                {{ CurrentTime }} / {{ TotalTime }}
+              </p>
+            </div>
           </b-col>
         </b-row>
       </b-container>
@@ -92,6 +114,9 @@ import WaveSurfer from "wavesurfer.js";
 import TimelinePlugin from "wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js";
 import { USER_ID, ACCESS_TOKEN } from "@/constants/config";
 import VueSlider from "vue-slider-component";
+// import Markers from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
+import Regions from "wavesurfer.js/dist/plugin/wavesurfer.regions.min.js";
+
 import "vue-slider-component/theme/default.css";
 import axios from "axios";
 var wavesurfer;
@@ -124,6 +149,40 @@ export default {
       zoomInterval: 20,
       zoomSliderValue: 0,
       errorMsg: "",
+
+      options: {
+        id: "Trim",
+        start: 0,
+        end: 0,
+        loop: false,
+        drag: false,
+        color: "hsla(200, 50%, 70%, 0.4)",
+      },
+      som: 0,
+      eom: 0,
+      somTime: "00:00:00",
+      eomTime: "00:00:00",
+      fadeOptions: [
+        {
+          text: "Fade In",
+          value: false,
+        },
+        { text: "Fade Out", value: true },
+      ],
+      buttonItem: [
+        {
+          icon: "alignleft",
+          hint: "현재 재생지점을 Start Point로 변경",
+          style: "bold",
+          text: "Start Point",
+        },
+        {
+          icon: "alignleft",
+          hint: "현재 재생지점을 End Point로 변경",
+          style: "bold",
+          text: "End Point",
+        },
+      ],
     };
   },
   mounted() {
@@ -133,14 +192,43 @@ export default {
   },
   computed: {},
   methods: {
+    editplay() {
+      wavesurfer.regions.list["Trim"].play();
+    },
+    somClick() {
+      //console.log(wavesurfer.regions.list.Trim);
+      this.options.start = wavesurfer.getCurrentTime();
+      this.options.end = wavesurfer.regions.list.Trim.end;
+      wavesurfer.regions.clear();
+      wavesurfer.addRegion(this.options);
+
+      this.somTime = new Date(
+        wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
+      );
+      this.somTime = this.somTime.toISOString().substr(11, 8);
+      this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+    },
+    eomClick() {
+      this.options.start = wavesurfer.regions.list.Trim.start;
+      this.options.end = wavesurfer.getCurrentTime();
+      wavesurfer.regions.clear();
+      wavesurfer.addRegion(this.options);
+      this.eomTime = new Date(
+        wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
+      );
+      this.eomTime = this.eomTime.toISOString().substr(11, 8);
+      this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+    },
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
         plugins: [
           TimelinePlugin.create({
             container: "#wave-timeline",
           }),
+          Regions.create(),
         ],
         container: "#waveform",
+        forceDecode: "true",
         waveColor: "gray",
         progressColor: "skyblue",
         backend: "MediaElementWebAudio",
@@ -177,9 +265,43 @@ export default {
       wavesurfer.on("finish", function () {
         vm.LoadAudioInfo();
       });
-      wavesurfer.on("ready", function () {
+      wavesurfer.on("seek", (e) => {
+        if (wavesurfer.regions.getCurrentRegion() != null) {
+          wavesurfer.play(
+            wavesurfer.getCurrentTime(),
+            wavesurfer.regions.getCurrentRegion().end
+          );
+        }
+      });
+      wavesurfer.on("ready", () => {
         vm.LoadAudioInfo();
         vm.Play();
+        //처음에 정한 som / eom 에 따라 지역 그려주는거 이쪽에서 해야함 지금은 우선 전체로 되어잇음 if로 나눠주기
+        if (this.startPoint > 0) {
+          vm.options.start = this.startPoint / 1000;
+        }
+        //vm.options.end = wavesurfer.getDuration();
+        vm.options.end = this.endPoint / 1000;
+
+        wavesurfer.addRegion(vm.options);
+
+        vm.eom = wavesurfer.getDuration();
+        vm.eomTime = new Date(vm.options.end.toFixed(2) * 1000);
+        vm.eomTime = vm.eomTime.toISOString().substr(11, 8);
+        vm.somTime = new Date(vm.options.start.toFixed(2) * 1000);
+        vm.somTime = vm.somTime.toISOString().substr(11, 8);
+      });
+      wavesurfer.on("region-updated", (obj) => {
+        vm.eom = obj.end;
+        vm.som = obj.start;
+        vm.eomTime = new Date(obj.end.toFixed(2) * 1000)
+          .toISOString()
+          .substr(11, 8);
+        vm.somTime = new Date(obj.start.toFixed(2) * 1000)
+          .toISOString()
+          .substr(11, 8);
+        this.$emit("startPosition", obj.start);
+        this.$emit("endPosition", obj.end);
       });
       wavesurfer.on("pause", function () {
         vm.LoadAudioInfo();
@@ -200,7 +322,7 @@ export default {
         this.CurrentTime = 0;
       }
     },
-    LoadAudio() {
+    async LoadAudio() {
       this.InjectWaveSurfer();
       this.SetWaveSurfer();
       let fileUrl = "";
@@ -228,12 +350,8 @@ export default {
       httpClient
         .get(downloadUrl, {
           cancelToken: source.token,
-          headers: {
-            "X-Csrf-Token": sessionStorage.getItem(ACCESS_TOKEN),
-          },
         })
         .then((res) => {
-          console.info("tempdownload status", res.status);
           if (res.status == 200) {
             httpClient
               .get(waveformUrl, {
@@ -406,6 +524,8 @@ export default {
       type: String,
       default: () => {},
     },
+    startPoint: Number,
+    endPoint: Number,
   },
 };
 </script>
@@ -420,5 +540,16 @@ export default {
 }
 .slider {
   padding-top: 6px;
+}
+.wavesurfer-region {
+  z-index: 3 !important;
+}
+#editform {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  padding: 15px;
+  border: solid 1px #d7d7d7;
+  /* background-color: #d7d7d7; */
+  text-align: center;
 }
 </style>
