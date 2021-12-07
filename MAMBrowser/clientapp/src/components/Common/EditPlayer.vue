@@ -26,14 +26,10 @@
                 <b-form-checkbox-group
                   class="custom-checkbox-group"
                   v-model="selected"
-                >
-                  <b-form-checkbox :value="{ fadeIn: true }"
-                    >Fade In</b-form-checkbox
-                  >
-                  <b-form-checkbox :value="{ fadeOutn: true }"
-                    >Fade Out</b-form-checkbox
-                  >
-                </b-form-checkbox-group>
+                  :options="fadeOptions"
+                  value-field="value"
+                  text-field="text"
+                />
               </p>
             </b-col>
             <b-col cols="5">
@@ -171,9 +167,9 @@ export default {
       fadeOptions: [
         {
           text: "Fade In",
-          value: false,
+          value: { fadeInValue: true },
         },
-        { text: "Fade Out", value: true },
+        { text: "Fade Out", value: { fadeOutValue: true } },
       ],
       buttonItem: [
         {
@@ -193,10 +189,23 @@ export default {
   },
   watch: {
     selected(val) {
-      this.$emit("fadeValue", val);
+      this.$emit("fadeValue", this.selected);
     },
+    // fadeIn(val) {
+    //   console.log("val");
+    //   console.log(val);
+    //   //this.selected.push({ fadeIn: val });
+    // },
   },
   mounted() {
+    //console.log("this.fadeIn");
+    //console.log(this.fadeIn);
+    if (this.fadeIn["fadeInValue"]) {
+      this.selected.push(this.fadeIn);
+    }
+    if (this.fadeOut["fadeOutValue"]) {
+      this.selected.push(this.fadeOut);
+    }
     cancelToken = axios.CancelToken;
     source = cancelToken.source();
     this.LoadAudio();
@@ -537,8 +546,8 @@ export default {
     },
     startPoint: Number,
     endPoint: Number,
-    fadeIn: Boolean,
-    fadeOut: Boolean,
+    fadeIn: Object,
+    fadeOut: Object,
   },
 };
 </script>

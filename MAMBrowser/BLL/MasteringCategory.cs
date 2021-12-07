@@ -1,8 +1,4 @@
-﻿using M30.AudioFile.Common.DTO;
-using M30.AudioFile.DAL;
-using M30.AudioFile.DAL.Dao;
-using M30.AudioFile.DAL.Repositories;
-using System.Collections.Generic;
+﻿using M30.AudioFile.DAL.Dao;
 
 namespace MAMBrowser.BLL
 {
