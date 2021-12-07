@@ -15,8 +15,8 @@
         :direct="direct"
         :startPoint="startPoint"
         :endPoint="endPoint"
-        :fadeIn="fadeIn"
-        :fadeOut="fadeOut"
+        :fadeIn="{ fadeInValue: fadeIn }"
+        :fadeOut="{ fadeOutValue: fadeOut }"
         @startPosition="(val) => (startPosition = val)"
         @endPosition="(val) => (endPosition = val)"
         @fadeValue="(val) => (selected = val)"
@@ -89,8 +89,8 @@ export default {
   data() {
     return {
       selected: [],
-      startPosition: 0,
-      endPosition: 0,
+      startPosition: null,
+      endPosition: null,
     };
   },
   computed: {
@@ -118,18 +118,6 @@ export default {
       this.$emit("closePlayer");
     },
     editOK() {
-      // if (this.type == "A") {
-      //   var rowData = [...this.abCartArr];
-      //   rowData = this.setTime(rowData);
-      //   this.SET_ABCARTARR(rowData);
-      // } else if (this.type == "channel_my") {
-      //   var rowData = [...this.cueFavorites];
-      //   this.setTime(rowData);
-      //   this.SET_CUEFAVORITES(rowData);
-      //   eventBus.$emit("clearFav");
-      // }
-      // console.log("this.type");
-      // console.log(this.type);
       switch (this.type) {
         case "A":
           var rowData = [...this.abCartArr];
@@ -164,8 +152,8 @@ export default {
         default:
           break;
       }
-      this.startPosition = 0;
-      this.endPosition = 0;
+      this.startPosition = null;
+      this.endPosition = null;
       this.show = false;
     },
     setTime(rowData) {
@@ -173,40 +161,37 @@ export default {
       var endTime = 0;
       rowData.forEach((ele) => {
         if (ele.rownum == this.rowNum) {
-          startTime = Math.floor(this.startPosition * 1000);
+          if (this.startPosition != null) {
+            startTime = Math.floor(this.startPosition * 1000);
+            ele.startposition = startTime;
+          }
           if (this.endPosition * 1000 + 1 > ele.duration) {
             endTime = ele.duration;
           } else {
             endTime = Math.floor(this.endPosition * 1000);
           }
-          ele.startposition = startTime;
-          if (ele.startposition > 0) {
-            ele.fadeintime = true;
-          }
 
           if (endTime != 0) {
             ele.endposition = endTime;
-            ele.fadeouttime = true;
           }
-          this.selected.forEach((item) => {
-            console.log(item);
-            if (item["fadeIn"] == true) {
-              ele.fadeintime = true;
-            }
-            if (item["fadeOut"] == true) {
-              ele.fadeouttime = true;
-            }
-            // if (item.fadeIn) {
-            //   console.log("뭐");
-            //   ele.fadeintime = true;
-            // } else if (item.fadeOut) {
-            //   console.log("망햇어");
-            //   ele.fadeouttime = true;
-            // }
+          var fadeinvalue = this.selected.filter((ele) => {
+            return Object.keys(ele).includes("fadeInValue");
           });
+          if (fadeinvalue.length != 0) {
+            ele.fadeintime = true;
+          } else {
+            ele.fadeintime = false;
+          }
+          var fadeoutvalue = this.selected.filter((ele) => {
+            return Object.keys(ele).includes("fadeOutValue");
+          });
+          if (fadeoutvalue.length != 0) {
+            ele.fadeouttime = true;
+          } else {
+            ele.fadeouttime = false;
+          }
         }
       });
-      console.log(rowData);
       return rowData;
     },
   },

@@ -236,11 +236,14 @@
         />
         <template #start_Template="{ data }">
           <div>
-            <div v-if="data.data.startposition > 0">
+            <div v-if="!data.data.fadeintime && data.data.startposition > 0">
               <b-icon icon="screwdriver"></b-icon>
             </div>
-            <div v-if="data.data.fadeintime">
-              <b-icon icon="wrench"></b-icon>
+            <div v-if="data.data.fadeintime && !data.data.startposition > 0">
+              <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+            </div>
+            <div v-if="data.data.fadeintime && data.data.startposition > 0">
+              <b-icon icon="tools"></b-icon>
             </div>
           </div>
         </template>
@@ -252,11 +255,30 @@
         />
         <template #end_Template="{ data }">
           <div>
-            <div v-if="data.data.duration > data.data.endposition">
+            <div
+              v-if="
+                !data.data.fadeouttime &&
+                data.data.duration > data.data.endposition
+              "
+            >
               <b-icon icon="screwdriver"></b-icon>
             </div>
-            <div v-if="data.data.fadeouttime">
-              <b-icon icon="wrench"></b-icon>
+            <div
+              v-if="
+                data.data.fadeouttime &&
+                (!data.data.duration > data.data.endposition ||
+                  data.data.duration == data.data.endposition)
+              "
+            >
+              <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+            </div>
+            <div
+              v-if="
+                data.data.fadeouttime &&
+                data.data.duration > data.data.endposition
+              "
+            >
+              <b-icon icon="tools"></b-icon>
             </div>
           </div>
         </template>
