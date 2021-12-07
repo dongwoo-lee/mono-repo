@@ -56,13 +56,6 @@ export default {
           width: "20%",
         },
         {
-          name: "__slot:status",
-          title: "상태",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%",
-        },
-        {
           name: "__slot:silence",
           title: "무음",
           titleClass: "center aligned text-center",
@@ -75,6 +68,13 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "7%",
+        },
+        {
+          name: "__slot:status",
+          title: "상태",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "20%",
         },
         {
           name: "__slot:actions",
@@ -107,13 +107,6 @@ export default {
           width: "20%",
         },
         {
-          name: "__slot:status",
-          title: "상태",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%",
-        },
-        {
           name: "__slot:silence",
           title: "무음",
           titleClass: "center aligned text-center",
@@ -126,6 +119,13 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "7%",
+        },
+        {
+          name: "__slot:status",
+          title: "상태",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "20%",
         },
         {
           name: "__slot:actions",

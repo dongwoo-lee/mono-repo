@@ -251,11 +251,6 @@
                           {{ props.rowData.date }}
                         </div>
                       </template>
-                      <template slot="status" scope="props">
-                        <div>
-                          {{ props.rowData.status }}
-                        </div>
-                      </template>
                       <template slot="silence" scope="props">
                         <div>
                           {{ props.rowData.silence }}
@@ -265,6 +260,10 @@
                         <div>
                           {{ props.rowData.worker }}
                         </div>
+                      </template>
+                      <template slot="status" scope="props">
+                        <div v-if="props.rowData.status == 5">성공</div>
+                        <div v-if="props.rowData.status == 6">실패</div>
                       </template>
                       <template slot="actions" scope="props">
                         <div>
