@@ -291,24 +291,6 @@
                         <div v-if="props.rowData.status == 5">성공</div>
                         <div v-if="props.rowData.status == 6">실패</div>
                       </template>
-                      <template slot="actions" scope="props">
-                        <div>
-                          <b-button
-                            class="icon-buton"
-                            style="
-                              background-color: transparent;
-                              border: 0;
-                              outlilne: 0;
-                            "
-                            @click="removeLog(props)"
-                            ><b-icon
-                              icon="trash"
-                              class="icon"
-                              variant="danger"
-                            ></b-icon
-                          ></b-button>
-                        </div>
-                      </template>
                     </vuetable>
 
                     <vuetable
@@ -354,27 +336,10 @@
                           {{ props.rowData.worker }}
                         </div>
                       </template>
-                      <template slot="actions" scope="props">
-                        <div>
-                          <b-button
-                            class="icon-buton"
-                            style="
-                              background-color: transparent;
-                              border: 0;
-                              outlilne: 0;
-                            "
-                            @click="removeLog(props)"
-                            ><b-icon
-                              icon="trash"
-                              class="icon"
-                              variant="danger"
-                            ></b-icon
-                          ></b-button>
-                        </div>
-                      </template>
                     </vuetable>
-                  </div> </b-card
-              ></b-tab>
+                  </div>
+                </b-card>
+              </b-tab>
             </b-tabs>
           </div>
         </h4>
@@ -571,12 +536,6 @@ export default {
           });
           this.setMasteringLogData(masteringLogData);
         });
-    },
-    removeLog(props) {
-      console.log(props.rowData);
-    },
-    getProps(props) {
-      console.log(props);
     },
     onsInput(event) {
       const targetValue = event.target.value;

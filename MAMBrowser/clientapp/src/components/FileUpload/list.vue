@@ -40,7 +40,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 0"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -77,7 +77,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 1"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -114,7 +114,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 2"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -151,7 +151,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 3"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -188,7 +188,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 4"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -251,7 +251,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 0"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -288,7 +288,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 1"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -325,7 +325,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 2"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -362,7 +362,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 3"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div
@@ -399,7 +399,7 @@
         <transition name="list-fade">
           <div
             v-if="props.rowData.step == 4"
-            style="margin-top: 7px; height: 25px"
+            style="margin-top: 0px; height: 20px"
           >
             <span>
               <div

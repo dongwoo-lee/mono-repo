@@ -76,13 +76,6 @@ export default {
           dataClass: "center aligned text-center",
           width: "20%",
         },
-        {
-          name: "__slot:actions",
-          title: "추가 작업",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "14%",
-        },
       ],
       userLogFields: [
         {
@@ -126,13 +119,6 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "20%",
-        },
-        {
-          name: "__slot:actions",
-          title: "추가 작업",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "14%",
         },
       ],
     };
