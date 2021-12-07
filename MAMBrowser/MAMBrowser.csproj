@@ -58,10 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="M30.AudioFile.Common">
-      <HintPath>C:\Users\kimeunbee\Desktop\m30library-master\M30.AudioFile\M30.AudioFile.Common\bin\Debug\netstandard2.0\M30.AudioFile.Common.dll</HintPath>
+      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
     </Reference>
     <Reference Include="M30.AudioFile.DAL">
-      <HintPath>C:\Users\kimeunbee\Desktop\m30library-master\M30.AudioFile\M30.AudioFile.DAL\bin\Debug\netstandard2.0\M30.AudioFile.DAL.dll</HintPath>
+      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
     </Reference>
     <Reference Include="M30_CueSheetDAO">
       <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
