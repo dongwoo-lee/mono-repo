@@ -121,13 +121,13 @@
                 </b-card>
               </b-tab>
               <b-tab title="로그">
-                <b-card style="color: #008ecc" title="기간검색">
+                <b-card style="color: #008ecc">
                   <div
                     style="
-                      position: absolute;
-                      top: 22px;
-                      left: 120px;
-                      font-size: 14px;
+                      width: 1300px;
+                      height: 70px;
+                      border: 1px solid #d7d7d7;
+                      padding-top: 20px;
                     "
                   >
                     <b-form-group
@@ -135,9 +135,11 @@
                       class="has-float-label"
                       style="
                         width: 200px;
+                        height: 30px;
                         float: left;
                         margin-left: 20px;
                         margin-right: 20px;
+                        font-size: 13px;
                       "
                     >
                       <b-input-group
@@ -145,7 +147,7 @@
                         style="width: 200px; float: left"
                       >
                         <input
-                          style="height: 33px; font-size: 13px"
+                          style="height: 34px; font-size: 13px"
                           id="sdateinput"
                           type="text"
                           class="form-control input-picker date-input"
@@ -154,7 +156,7 @@
                         />
                         <b-input-group-append>
                           <b-form-datepicker
-                            style="height: 33px"
+                            style="height: 34px"
                             v-model="logSDate"
                             button-only
                             button-variant="outline-primary"
@@ -168,11 +170,14 @@
                     <b-form-group
                       label="종료일"
                       class="has-float-label"
-                      style="width: 200px"
+                      style="width: 200px; font-size: 13px; float: left"
                     >
-                      <b-input-group class="mb-3" style="width: 200px">
+                      <b-input-group
+                        class="mb-3"
+                        style="width: 200px; float: left"
+                      >
                         <input
-                          style="height: 33px; font-size: 13px"
+                          style="height: 34px; font-size: 13px"
                           id="edateinput"
                           type="text"
                           class="form-control input-picker date-input"
@@ -181,7 +186,7 @@
                         />
                         <b-input-group-append>
                           <b-form-datepicker
-                            style="height: 33px"
+                            style="height: 34px"
                             v-model="logEDate"
                             button-only
                             button-variant="outline-primary"
@@ -192,16 +197,36 @@
                         </b-input-group-append>
                       </b-input-group>
                     </b-form-group>
+                    <b-form-group
+                      v-if="this.role == 'ADMIN'"
+                      label="제작자"
+                      class="has-float-label"
+                      style="
+                        width: 200px;
+                        float: left;
+                        margin-left: 20px;
+                        font-size: 13px;
+                      "
+                    >
+                      <common-vue-select
+                        class="h145"
+                        style="
+                          font-size: 14px;
+                          width: 200px;
+                          border: 1px solid #008ecc;
+                        "
+                        :suggestions="editorOptions"
+                        @inputEvent="onEditorSelected"
+                      ></common-vue-select>
+                    </b-form-group>
                     <b-button
                       style="
-                        position: absolute;
-                        top: 0px;
-                        right: -85px;
-                        z-index: 9999;
+                        margin-top: -43px;
+                        margin-left: 20px;
                         border-color: #008ecc;
                         color: #008ecc;
                         background-color: white;
-                        height: 33px;
+                        height: 34px;
                       "
                       class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                       @click="logSearch"
@@ -213,6 +238,7 @@
                   <div
                     style="
                       width: 1300px;
+                      margin-top: 20px;
                       margin-left: auto;
                       margin-right: auto;
                       font-size: 14px;
@@ -251,11 +277,6 @@
                           {{ props.rowData.date }}
                         </div>
                       </template>
-                      <template slot="status" scope="props">
-                        <div>
-                          {{ props.rowData.status }}
-                        </div>
-                      </template>
                       <template slot="silence" scope="props">
                         <div>
                           {{ props.rowData.silence }}
@@ -266,23 +287,9 @@
                           {{ props.rowData.worker }}
                         </div>
                       </template>
-                      <template slot="actions" scope="props">
-                        <div>
-                          <b-button
-                            class="icon-buton"
-                            style="
-                              background-color: transparent;
-                              border: 0;
-                              outlilne: 0;
-                            "
-                            @click="removeLog(props)"
-                            ><b-icon
-                              icon="trash"
-                              class="icon"
-                              variant="danger"
-                            ></b-icon
-                          ></b-button>
-                        </div>
+                      <template slot="status" scope="props">
+                        <div v-if="props.rowData.status == 5">성공</div>
+                        <div v-if="props.rowData.status == 6">실패</div>
                       </template>
                     </vuetable>
 
@@ -329,27 +336,10 @@
                           {{ props.rowData.worker }}
                         </div>
                       </template>
-                      <template slot="actions" scope="props">
-                        <div>
-                          <b-button
-                            class="icon-buton"
-                            style="
-                              background-color: transparent;
-                              border: 0;
-                              outlilne: 0;
-                            "
-                            @click="removeLog(props)"
-                            ><b-icon
-                              icon="trash"
-                              class="icon"
-                              variant="danger"
-                            ></b-icon
-                          ></b-button>
-                        </div>
-                      </template>
                     </vuetable>
-                  </div> </b-card
-              ></b-tab>
+                  </div>
+                </b-card>
+              </b-tab>
             </b-tabs>
           </div>
         </h4>
@@ -370,6 +360,7 @@
 <script>
 import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
+import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
 import MetaModal from "./MetaModal";
 import list from "./list.vue";
 import axios from "axios";
@@ -386,13 +377,13 @@ export default {
   },
   components: {
     CommonFileModal,
+    CommonVueSelect,
     MetaModal,
     list,
   },
   data() {
     return {
       tabIndex: 0,
-      role: "",
       dxfu,
       MetaModal: false,
       dropzone: false,
@@ -403,6 +394,8 @@ export default {
       percent: 0,
       logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
       logEDate: "2021-11-10", //TODO: 오늘 날짜로 설정
+      editorOptions: [],
+      logEditor: "",
     };
   },
   watch: {
@@ -418,14 +411,21 @@ export default {
     },
   },
   created() {
-    // DB = setInterval(() => {
     this.masteringStatus();
-    // }, 1000);
+
+    axios.get("/api/Categories/users/pd").then((res) => {
+      this.editorOptions = res.data.resultObject.data;
+      this.editorOptions.unshift({ id: "", name: "전체 선택" });
+    });
 
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
     axios
-      .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
+      .get(
+        `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${sessionStorage.getItem(
+          "user_id"
+        )}`
+      )
       .then((res) => {
         var masteringLogData = [];
         res.data.resultObject.data.forEach((e) => {
@@ -443,9 +443,6 @@ export default {
         this.setMasteringLogData(masteringLogData);
       });
   },
-  // beforeDestroy() {
-  //   clearInterval(DB);
-  // },
   computed: {
     fileupload: function () {
       return this.$refs[dxfu].instance;
@@ -477,26 +474,40 @@ export default {
       "setDuration",
       "setAudioFormat",
       "setFileModal",
-      "startDBConnection",
       "stopDBConnection",
     ]),
+    onEditorSelected(data) {
+      this.logEditor = data.id;
+    },
     masteringStatus() {
-      axios.get("/api/Mastering/mastering-status").then((res) => {
-        var masteringListData = [];
-        res.data.resultObject.data.forEach((e) => {
-          var data = {
-            title: e.title,
-            type: this.getCategory(e.category),
-            user_id: e.regUserId,
-            date: e.regDtm,
-            step: e.workStatus,
-          };
-          masteringListData.push(data);
+      axios
+        .get(
+          `/api/Mastering/mastering-status?user_id=${sessionStorage.getItem(
+            "user_id"
+          )}`
+        )
+        .then((res) => {
+          var masteringListData = [];
+          res.data.resultObject.data.forEach((e) => {
+            var data = {
+              title: e.title,
+              type: this.getCategory(e.category),
+              user_id: e.regUserId,
+              date: e.regDtm,
+              step: e.workStatus,
+            };
+            masteringListData.push(data);
+          });
+          this.setMasteringListData(masteringListData);
         });
-        this.setMasteringListData(masteringListData);
-      });
     },
     logSearch() {
+      var user_id;
+      if (sessionStorage.getItem("authority") == "ADMIN") {
+        user_id = this.logEditor;
+      } else {
+        user_id = sessionStorage.getItem("user_id");
+      }
       var sdt = this.logSDate.replace(/-/g, "");
       var edt = this.logEDate.replace(/-/g, "");
       if (edt < sdt) {
@@ -506,7 +517,9 @@ export default {
         return;
       }
       axios
-        .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
+        .get(
+          `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
+        )
         .then((res) => {
           var masteringLogData = [];
           res.data.resultObject.data.forEach((e) => {
@@ -523,12 +536,6 @@ export default {
           });
           this.setMasteringLogData(masteringLogData);
         });
-    },
-    removeLog(props) {
-      console.log(props.rowData);
-    },
-    getProps(props) {
-      console.log(props);
     },
     onsInput(event) {
       const targetValue = event.target.value;
@@ -723,6 +730,9 @@ export default {
 @import "./FileUploadCSS.css";
 </style>
 <style scoped>
+.v-select .vs__dropdown-toggle {
+  border: 1px solid white !important;
+}
 .myTableHeader {
   margin-left: 100px !important;
   height: 400px !important;

@@ -56,13 +56,6 @@ export default {
           width: "20%",
         },
         {
-          name: "__slot:status",
-          title: "상태",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%",
-        },
-        {
           name: "__slot:silence",
           title: "무음",
           titleClass: "center aligned text-center",
@@ -77,11 +70,11 @@ export default {
           width: "7%",
         },
         {
-          name: "__slot:actions",
-          title: "추가 작업",
+          name: "__slot:status",
+          title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "14%",
+          width: "20%",
         },
       ],
       userLogFields: [
@@ -107,13 +100,6 @@ export default {
           width: "20%",
         },
         {
-          name: "__slot:status",
-          title: "상태",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%",
-        },
-        {
           name: "__slot:silence",
           title: "무음",
           titleClass: "center aligned text-center",
@@ -128,11 +114,11 @@ export default {
           width: "7%",
         },
         {
-          name: "__slot:actions",
-          title: "추가 작업",
+          name: "__slot:status",
+          title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "14%",
+          width: "20%",
         },
       ],
     };

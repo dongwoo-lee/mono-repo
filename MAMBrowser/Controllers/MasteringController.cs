@@ -892,11 +892,11 @@ namespace MAMBrowser.Controllers
         /// <param name="bll"></param>
         /// <returns></returns>
         [HttpGet("mastering-status")]
-        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus([FromServices] APIBll bll)
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus([FromServices] APIBll bll, string user_id)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
             result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
-            result.ResultObject.Data = bll.GetMasteringStatus();
+            result.ResultObject.Data = bll.GetMasteringStatus(user_id);
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }
@@ -908,11 +908,11 @@ namespace MAMBrowser.Controllers
         /// <param name="bll"></param>
         /// <returns></returns>
         [HttpGet("mastering-logs")]
-        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus2([FromQuery] string startDt, [FromQuery] string endDt, [FromServices] APIBll bll)
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus2([FromQuery] string startDt, [FromQuery] string endDt, [FromQuery] string user_id, [FromServices] APIBll bll)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
             result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
-            result.ResultObject.Data = bll.GetMasteringLogs(startDt, endDt);
+            result.ResultObject.Data = bll.GetMasteringLogs(startDt, endDt, user_id);
             result.ResultCode = RESUlT_CODES.SUCCESS;
             return result;
         }

@@ -23,6 +23,7 @@ namespace MAMBrowser.Controllers
         }
 
         //시작일, 종료일 날짜
+        [HttpGet("setDateList")] //Swagger 오류 수정
         public List<string> setDateList(string start_dt, string end_dt)
         {
             List<string> dateList = new List<string>();
