@@ -114,10 +114,10 @@
             >
               파일 업로드
             </b-button>
-            <b-tabs content-class="mt-3">
-              <b-tab title="작업목록" active>
+            <b-tabs content-class="mt-3" v-model="tabIndex">
+              <b-tab title="작업목록">
                 <b-card style="color: #008ecc">
-                  <list></list>
+                  <list v-if="this.tabIndex == 0 && this.FileModal"></list>
                 </b-card>
               </b-tab>
               <b-tab title="로그">
@@ -391,6 +391,7 @@ export default {
   },
   data() {
     return {
+      tabIndex: 0,
       role: "",
       dxfu,
       MetaModal: false,
@@ -407,6 +408,13 @@ export default {
   watch: {
     DragFileModalState(v) {
       this.dropzone = v;
+    },
+    FileModal(v) {
+      if (v) {
+        this.tabIndex = 0;
+      } else {
+        this.tabIndex = 1;
+      }
     },
   },
   created() {
@@ -667,14 +675,12 @@ export default {
     //#endregion
     //#region 모달 조작
     openFileModal() {
+      this.tabIndex = 0;
       this.setFileModal(true);
-      //NOTE: DB 폴링 START 메소드
-      this.startDBConnection();
     },
     closeFileModal() {
+      this.tabIndex = 1;
       this.setFileModal(false);
-      //NOTE: DB 폴링 STOP 메소드
-      this.stopDBConnection();
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {

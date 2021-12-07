@@ -87,7 +87,9 @@ export default {
     },
   },
   created() {
-    console.log(this.errorMsg);
+    if (this.errorMsg != "") {
+      console.log(this.errorMsg);
+    }
   },
   computed: {
     ...mapGetters("user", ["processing", "userId"]),

@@ -668,7 +668,13 @@ export default {
     },
     // zip 파일 다운로드
     async exportZipWave() {
-      var cuesheetpram = await this.setCueConFav_save(false);
+      var cuesheetData = await this.setCueConFav_save(false);
+      var pramList = [];
+      for (var i = 1; i < 5; i++) {
+        cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
+          //if(ele.)
+        });
+      }
       await axios
         .post(`/api/CueAttachments/exportZipFile`, [])
         .then((response) => {
