@@ -35,12 +35,13 @@
             <tr>
               <td rowspan="2">
                 <b-button
+                  v-show="getBadge != 0"
                   class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                   id="fileuploadbutton"
                   @click="openFileModal"
                   style="
                     padding: 7px !important;
-                    padding-right: 0px !important;
+                    padding-right: 0px;
                     border-color: #008ecc;
                     color: #008ecc;
                     background-color: white;
@@ -54,7 +55,6 @@
                   </b-icon>
                   마스터링
                   <b-badge
-                    v-show="getBadge != 0"
                     style="
                       position: relative;
                       top: -17px;
@@ -68,6 +68,27 @@
                     variant="outline-danger"
                     >{{ getBadge }}</b-badge
                   >
+                </b-button>
+                <b-button
+                  v-show="getBadge == 0"
+                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                  id="fileuploadbutton"
+                  @click="openFileModal"
+                  style="
+                    padding: 7px !important;
+                    padding-right: 20px;
+                    border-color: #008ecc;
+                    color: #008ecc;
+                    background-color: white;
+                  "
+                >
+                  <b-icon
+                    icon="file-earmark-music"
+                    style="margin-right: 15px"
+                    aria-hidden="true"
+                  >
+                  </b-icon>
+                  마스터링
                 </b-button>
               </td>
               <!-- 타이머 -->
@@ -186,7 +207,7 @@ export default {
     ]),
     ...mapActions("user", ["setLang", "signOut", "renewal"]),
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
-    ...mapMutations("FileIndexStore", ["setFileModal", "startDBConnection"]),
+    ...mapMutations("FileIndexStore", ["setFileModal"]),
     openFileModal() {
       this.setFileModal(true);
     },

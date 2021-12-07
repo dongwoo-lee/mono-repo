@@ -64,7 +64,11 @@
                 "
               >
                 대기중
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -97,7 +101,11 @@
                 "
               >
                 디코딩
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -130,7 +138,11 @@
                 "
               >
                 리샘플링
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -163,7 +175,11 @@
                 "
               >
                 노말라이즈
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -196,7 +212,11 @@
                 "
               >
                 스토리지 저장
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -255,7 +275,11 @@
                 "
               >
                 대기중
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -288,7 +312,11 @@
                 "
               >
                 디코딩
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -321,7 +349,11 @@
                 "
               >
                 리샘플링
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -354,7 +386,11 @@
                 "
               >
                 노말라이즈
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -387,7 +423,11 @@
                 "
               >
                 스토리지 저장
-                <b-spinner small type="grow"></b-spinner>
+                <b-spinner
+                  small
+                  type="grow"
+                  v-if="props.rowIndex == 0"
+                ></b-spinner>
               </span>
             </span>
           </div>
@@ -484,7 +524,8 @@ export default {
   },
   created() {
     this.role = sessionStorage.getItem("authority");
-    this.startDBConnection();
+    var user_id = sessionStorage.getItem("user_id");
+    this.startDBConnection(user_id);
   },
   beforeDestroy() {
     this.stopDBConnection();

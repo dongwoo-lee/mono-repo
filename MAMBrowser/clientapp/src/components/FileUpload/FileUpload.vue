@@ -147,7 +147,7 @@
                         style="width: 200px; float: left"
                       >
                         <input
-                          style="height: 33px; font-size: 13px"
+                          style="height: 34px; font-size: 13px"
                           id="sdateinput"
                           type="text"
                           class="form-control input-picker date-input"
@@ -156,7 +156,7 @@
                         />
                         <b-input-group-append>
                           <b-form-datepicker
-                            style="height: 33px"
+                            style="height: 34px"
                             v-model="logSDate"
                             button-only
                             button-variant="outline-primary"
@@ -170,14 +170,14 @@
                     <b-form-group
                       label="종료일"
                       class="has-float-label"
-                      style="width: 200px; font-size: 13px"
+                      style="width: 200px; font-size: 13px; float: left"
                     >
                       <b-input-group
                         class="mb-3"
                         style="width: 200px; float: left"
                       >
                         <input
-                          style="height: 33px; font-size: 13px"
+                          style="height: 34px; font-size: 13px"
                           id="edateinput"
                           type="text"
                           class="form-control input-picker date-input"
@@ -186,7 +186,7 @@
                         />
                         <b-input-group-append>
                           <b-form-datepicker
-                            style="height: 33px"
+                            style="height: 34px"
                             v-model="logEDate"
                             button-only
                             button-variant="outline-primary"
@@ -198,16 +198,14 @@
                       </b-input-group>
                     </b-form-group>
                     <b-form-group
+                      v-if="this.role == 'ADMIN'"
                       label="제작자"
                       class="has-float-label"
                       style="
                         width: 200px;
-                        height: 30px;
                         float: left;
                         margin-left: 20px;
-                        margin-right: 20px;
                         font-size: 13px;
-                        border: 1px solid white !important;
                       "
                     >
                       <common-vue-select
@@ -223,14 +221,12 @@
                     </b-form-group>
                     <b-button
                       style="
-                        position: absolute;
-                        top: 0px;
-                        right: -85px;
-                        z-index: 9999;
+                        margin-top: -43px;
+                        margin-left: 20px;
                         border-color: #008ecc;
                         color: #008ecc;
                         background-color: white;
-                        height: 33px;
+                        height: 34px;
                       "
                       class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                       @click="logSearch"
@@ -423,7 +419,6 @@ export default {
   data() {
     return {
       tabIndex: 0,
-      role: "",
       dxfu,
       MetaModal: false,
       dropzone: false,
@@ -451,9 +446,7 @@ export default {
     },
   },
   created() {
-    // DB = setInterval(() => {
     this.masteringStatus();
-    // }, 1000);
 
     axios.get("/api/Categories/users/pd").then((res) => {
       this.editorOptions = res.data.resultObject.data;
@@ -463,7 +456,11 @@ export default {
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
     axios
-      .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
+      .get(
+        `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${sessionStorage.getItem(
+          "user_id"
+        )}`
+      )
       .then((res) => {
         var masteringLogData = [];
         res.data.resultObject.data.forEach((e) => {
@@ -481,9 +478,6 @@ export default {
         this.setMasteringLogData(masteringLogData);
       });
   },
-  // beforeDestroy() {
-  //   clearInterval(DB);
-  // },
   computed: {
     fileupload: function () {
       return this.$refs[dxfu].instance;
@@ -515,29 +509,40 @@ export default {
       "setDuration",
       "setAudioFormat",
       "setFileModal",
-      "startDBConnection",
       "stopDBConnection",
     ]),
     onEditorSelected(data) {
       this.logEditor = data.id;
     },
     masteringStatus() {
-      axios.get("/api/Mastering/mastering-status").then((res) => {
-        var masteringListData = [];
-        res.data.resultObject.data.forEach((e) => {
-          var data = {
-            title: e.title,
-            type: this.getCategory(e.category),
-            user_id: e.regUserId,
-            date: e.regDtm,
-            step: e.workStatus,
-          };
-          masteringListData.push(data);
+      axios
+        .get(
+          `/api/Mastering/mastering-status?user_id=${sessionStorage.getItem(
+            "user_id"
+          )}`
+        )
+        .then((res) => {
+          var masteringListData = [];
+          res.data.resultObject.data.forEach((e) => {
+            var data = {
+              title: e.title,
+              type: this.getCategory(e.category),
+              user_id: e.regUserId,
+              date: e.regDtm,
+              step: e.workStatus,
+            };
+            masteringListData.push(data);
+          });
+          this.setMasteringListData(masteringListData);
         });
-        this.setMasteringListData(masteringListData);
-      });
     },
     logSearch() {
+      var user_id;
+      if (sessionStorage.getItem("authority") == "ADMIN") {
+        user_id = this.logEditor;
+      } else {
+        user_id = sessionStorage.getItem("user_id");
+      }
       var sdt = this.logSDate.replace(/-/g, "");
       var edt = this.logEDate.replace(/-/g, "");
       if (edt < sdt) {
@@ -547,7 +552,9 @@ export default {
         return;
       }
       axios
-        .get(`/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}`)
+        .get(
+          `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
+        )
         .then((res) => {
           var masteringLogData = [];
           res.data.resultObject.data.forEach((e) => {
