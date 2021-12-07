@@ -37,121 +37,170 @@
         </div>
       </template>
       <template slot="step" scope="props">
-        <div
-          v-if="props.rowData.step == 0"
-          style="margin-top: 7px; height: 25px"
-        >
-          <span>
-            <div
-              style="
-                width: 18px;
-                height: 18px;
-                border-radius: 2px;
-                background-color: #27ae60;
-                color: white;
-                margin-right: 0px;
-              "
-            >
-              {{ props.rowData.step + 1 }}
-            </div>
-            <span style="color: #27ae60">
-              대기중
-              <b-spinner small type="grow"></b-spinner>
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 0"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: -10px;
+                "
+              >
+                대기중
+                <b-spinner small type="grow"></b-spinner>
+              </span>
             </span>
-          </span>
-        </div>
-        <div
-          v-if="props.rowData.step == 1"
-          style="margin-top: 7px; height: 25px"
-        >
-          <span>
-            <div
-              style="
-                width: 18px;
-                height: 18px;
-                border-radius: 2px;
-                background-color: #27ae60;
-                color: white;
-                margin-right: 0px;
-              "
-            >
-              {{ props.rowData.step + 1 }}
-            </div>
-            <span style="color: #27ae60">
-              디코딩
-              <b-spinner small type="grow"></b-spinner>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 1"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: -10px;
+                "
+              >
+                디코딩
+                <b-spinner small type="grow"></b-spinner>
+              </span>
             </span>
-          </span>
-        </div>
-        <div
-          v-if="props.rowData.step == 2"
-          style="margin-top: 7px; height: 25px"
-        >
-          <span>
-            <div
-              style="
-                width: 18px;
-                height: 18px;
-                border-radius: 2px;
-                background-color: #27ae60;
-                color: white;
-                margin-right: 0px;
-              "
-            >
-              {{ props.rowData.step + 1 }}
-            </div>
-            <span style="color: #27ae60">
-              리샘플링
-              <b-spinner small type="grow"></b-spinner>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 2"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: -5px;
+                "
+              >
+                리샘플링
+                <b-spinner small type="grow"></b-spinner>
+              </span>
             </span>
-          </span>
-        </div>
-        <div
-          v-if="props.rowData.step == 3"
-          style="margin-top: 7px; height: 25px"
-        >
-          <span>
-            <div
-              style="
-                width: 18px;
-                height: 18px;
-                border-radius: 2px;
-                background-color: #27ae60;
-                color: white;
-                margin-right: 0px;
-              "
-            >
-              {{ props.rowData.step + 1 }}
-            </div>
-            <span style="color: #27ae60">
-              노말라이즈
-              <b-spinner small type="grow"></b-spinner>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 3"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: 3px;
+                "
+              >
+                노말라이즈
+                <b-spinner small type="grow"></b-spinner>
+              </span>
             </span>
-          </span>
-        </div>
-        <div
-          v-if="props.rowData.step == 4"
-          style="margin-top: 7px; height: 25px"
-        >
-          <span>
-            <div
-              style="
-                width: 18px;
-                height: 18px;
-                border-radius: 2px;
-                background-color: #27ae60;
-                color: white;
-                margin-right: 0px;
-              "
-            >
-              {{ props.rowData.step + 1 }}
-            </div>
-            <span style="color: #27ae60">
-              스토리지 저장
-              <b-spinner small type="grow"></b-spinner>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 4"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: 12px;
+                "
+              >
+                스토리지 저장
+                <b-spinner small type="grow"></b-spinner>
+              </span>
             </span>
-          </span>
-        </div>
+          </div>
+        </transition>
       </template>
     </vuetable>
     <vuetable
@@ -179,7 +228,170 @@
         </div>
       </template>
       <template slot="step" scope="props">
-        {{ props.rowData.step + 1 }}
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 0"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: -10px;
+                "
+              >
+                대기중
+                <b-spinner small type="grow"></b-spinner>
+              </span>
+            </span>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 1"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: -10px;
+                "
+              >
+                디코딩
+                <b-spinner small type="grow"></b-spinner>
+              </span>
+            </span>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 2"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: -5px;
+                "
+              >
+                리샘플링
+                <b-spinner small type="grow"></b-spinner>
+              </span>
+            </span>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 3"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: 3px;
+                "
+              >
+                노말라이즈
+                <b-spinner small type="grow"></b-spinner>
+              </span>
+            </span>
+          </div>
+        </transition>
+
+        <transition name="list-fade">
+          <div
+            v-if="props.rowData.step == 4"
+            style="margin-top: 7px; height: 25px"
+          >
+            <span>
+              <div
+                style="
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 2px;
+                  background-color: #27ae60;
+                  color: white;
+                  margin-right: 0px;
+                "
+              >
+                {{ props.rowData.step + 1 }}
+              </div>
+              <span
+                style="
+                  color: #27ae60;
+                  position: relative;
+                  top: -16px;
+                  left: 12px;
+                "
+              >
+                스토리지 저장
+                <b-spinner small type="grow"></b-spinner>
+              </span>
+            </span>
+          </div>
+        </transition>
       </template>
     </vuetable>
   </div>
@@ -223,7 +435,7 @@ export default {
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "20%",
+          width: "4%",
         },
       ],
       adminListFields: [
@@ -260,7 +472,7 @@ export default {
           title: "상태",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%",
+          width: "4%",
         },
       ],
     };
@@ -272,8 +484,33 @@ export default {
   },
   created() {
     this.role = sessionStorage.getItem("authority");
+    this.startDBConnection();
+  },
+  beforeDestroy() {
+    this.stopDBConnection();
+  },
+  methods: {
+    ...mapMutations("FileIndexStore", [
+      "startDBConnection",
+      "stopDBConnection",
+    ]),
   },
 };
 </script>
 
-<style></style>
+<style>
+.list-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.list-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.list-fade-enter {
+  transform: translateX(10px);
+  opacity: 0;
+}
+.list-fade-leave-to {
+  transform: translateX(-10px);
+  opacity: 40%;
+}
+</style>
