@@ -54,34 +54,88 @@ namespace MAMBrowser.Controllers
                         {
                             try
                             {
-                            using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
-                            {
-                                inStream.CopyTo(outFileStream);
-                            }
+                                using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
+                                {
+                                    inStream.CopyTo(outFileStream);
+                                    ele.FILEPATH = outFilePath;
+                                }
                             }
                             catch (Exception e)
                             {
                                 Console.WriteLine(e.Message);
+                                ele.FILEPATH = "";
                             }
                         }
-
-
                     }
                     else
                     {
-                        //여기 오디오클립 추가되면 해야함
+                        // 그룹소재 아이템 가져오기
                         if (ele.ONAIRDATE != "")
                         {
-                            
+                            ele.AUDIOS = new List<CueSheetConAudioDTO>();
                             if (ele.CARTTYPE == "SB")
                             {
-                                var item = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
+                                var collection = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
+                                if (collection.Data.Any())
+                                {
+                                    foreach (var item in collection.Data)
+                                    {
+                                        var result = new CueSheetConAudioDTO();
+                                        result.P_SEQNUM = item.RowNO;
+                                        result.P_CLIPID = item.ID;
+                                        result.P_MAINTITLE = item.Name;
+                                        result.P_DURATION = item.IntDuration;
+                                        result.P_MASTERFILE = item.FilePath;
+                                        result.P_CODEID = item.PgmCODE ?? "";
+                                        ele.AUDIOS.Add(result);
+                                    }
 
+                                }
                             }
                             if (ele.CARTTYPE == "CM")
                             {
-                            var item = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
+                                var collection = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
+                                if (collection.Data.Any())
+                                {
+                                    foreach (var item in collection.Data)
+                                    {
+                                        var result = new CueSheetConAudioDTO();
+                                        result.P_SEQNUM = item.RowNO;
+                                        result.P_CLIPID = item.ID;
+                                        result.P_MAINTITLE = item.Name;
+                                        result.P_DURATION = item.IntDuration;
+                                        result.P_MASTERFILE = item.FilePath;
+                                        result.P_CODEID = item.PgmCODE ?? "";
+                                        ele.AUDIOS.Add(result);
+                                    }
+
+                                }
                             }
+                        }
+                        if (ele.AUDIOS.Any())
+                        {
+                            foreach (var item in ele.AUDIOS)
+                            {
+                                var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(item.P_MASTERFILE));
+
+                                using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                                {
+                                    try
+                                    {
+                                        using (var inStream = _fileService.GetFileStream(item.P_MASTERFILE, 0))
+                                        {
+                                            inStream.CopyTo(outFileStream);
+                                            item.P_MASTERFILE = outFilePath;
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e.Message);
+                                        item.P_MASTERFILE = "";
+                                    }
+                                }
+                            }
+
                         }
                     }
 

@@ -992,6 +992,7 @@ export default {
         setautosave({ }, payload) {
             return axios.patch(`/api/user`, payload)
                 .then((res) => {
+                    console.log(res)
                 })
         }
     }

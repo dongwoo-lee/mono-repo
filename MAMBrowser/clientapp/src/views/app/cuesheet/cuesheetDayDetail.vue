@@ -193,11 +193,11 @@ export default {
       //type: "D",
       options: [{ text: "자동저장", value: true }],
       autosaveValue: [true],
+      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
       widgetIndex: 16,
-      autoSaveFun: null,
     };
   },
   async mounted() {
@@ -207,7 +207,7 @@ export default {
       if (this.cueSheetAutoSave) {
         this.saveDayCue();
       }
-    }, 10000); //15분마다 저장
+    }, 900000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];

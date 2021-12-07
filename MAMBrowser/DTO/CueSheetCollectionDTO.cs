@@ -79,8 +79,6 @@ namespace MAMBrowser.DTO
         public string MEMO { get; set; }
         public string TRANSTYPE { get; set; }
         public string USEFLAG { get; set; }
-        //public List<string> FILEPATH { get; set; } = new List<string>();
-        //public List<string> FILETOKEN { get; set; } = new List<string>();
         public string FILEPATH { get; set; }
         public string FILETOKEN { get; set; }
         public string CARTTYPE { get; set; }
@@ -90,15 +88,9 @@ namespace MAMBrowser.DTO
 
         // Fav
         public string PERSONID { get; set; }
+
+        public List<CueSheetConAudioDTO> AUDIOS { get; set; }
     }
-
-    
-
-    //public class AttachmentDTO
-    //{
-    //    public string FILEPATH { get; set; }
-    //    public int FILESIZE { get; set; }
-    //}
 
     public class PrintDTO
     {
@@ -115,20 +107,20 @@ namespace MAMBrowser.DTO
         public string WEEK { get; set; }
     }
 
-    //public class ViewInstance
-    //{
-    //    public List<CueSheetConDTO> channel_1 { get; set; }
-    //    public List<CueSheetConDTO> channel_2 { get; set; }
-    //    public List<CueSheetConDTO> channel_3 { get; set; }
-    //    public List<CueSheetConDTO> channel_4 { get; set; }
-    //}
+    public class CueSheetConAudioDTO
+    {
+        public string P_TYPE { get; set; }
+        public int P_SEQNUM { get; set; }
+        public string P_CLIPID { get; set; }
+        public string P_MAINTITLE { get; set; }
+        public string P_SUBTITLE { get; set; }
+        public int P_DURATION { get; set; }
+        public string P_MASTERFILE { get; set; }
+        public string P_ENERGYFILE { get; set; }
+        public string P_OWNER { get; set; }
+        public string P_CODEID { get; set; }
+        public int P_LENGTH { get; set; }
+    }
 
-    //public enum InstaceType
-    //{
 
-    //    channel_1,
-    //    channel_2,
-    //    channel_3,
-    //    channel_4
-    //}
 }

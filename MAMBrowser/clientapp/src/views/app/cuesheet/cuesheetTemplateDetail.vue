@@ -30,6 +30,8 @@
                 <span class="autosave">
                   <b-form-checkbox-group
                     :options="options"
+                    v-model="autosaveValue"
+                    @change="toggleChange"
                     switches
                     style="float: right"
                   ></b-form-checkbox-group>
@@ -140,8 +142,14 @@ import { eventBus } from "@/eventBus";
 
 export default {
   beforeRouteLeave(to, from, next) {
-    eventBus.$off();
-    next();
+    const answer = window.confirm(
+      "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+    );
+    if (answer) {
+      clearInterval(this.autoSaveFun);
+      eventBus.$off();
+      next();
+    }
   },
   components: {
     SearchWidget,
@@ -155,8 +163,9 @@ export default {
   },
   data() {
     return {
-      //type: "T",
-      options: [{ text: "자동저장", value: false }],
+      options: [{ text: "자동저장", value: true }],
+      autosaveValue: [true],
+      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
@@ -164,12 +173,34 @@ export default {
   },
   async mounted() {
     document.getElementById("app-container").classList.add("drag_");
+    this.autoSaveFun = setInterval(() => {
+      if (this.cueSheetAutoSave) {
+        this.saveTempCue();
+      }
+    }, 900000); //15분마다 저장
+    await this.getautosave(this.cueInfo.personid);
+    if (!this.cueSheetAutoSave) {
+      this.autosaveValue = [];
+    }
   },
-  created() {},
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("cueList", ["cueSheetAutoSave"]),
   },
   methods: {
+    ...mapActions("cueList", ["getautosave"]),
+    ...mapActions("cueList", ["setautosave"]),
+    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
+    ...mapActions("cueList", ["saveTempCue"]),
+    toggleChange(value) {
+      if (value.length == 0) {
+        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
+        this.SET_CUESHEETAUTOSAVE(false);
+      } else {
+        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
+        this.SET_CUESHEETAUTOSAVE(true);
+      }
+    },
     onTextEdit() {
       this.$refs.inputText.focus();
     },
