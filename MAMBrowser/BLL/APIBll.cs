@@ -95,7 +95,7 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetOptions(optionGrpCd);
         }
-        public IList<DTO_MASTERING_INFO> GetMasteringStatus()
+        public IList<DTO_MASTERING_INFO> GetMasteringStatus(string userId)
         {
             List<string> workStatus = new List<string>();
             workStatus.Add("0");
@@ -103,14 +103,14 @@ namespace MAMBrowser.BLL
             workStatus.Add("2");
             workStatus.Add("3");
             workStatus.Add("4");
-            return _dao.GetMasteringStatus(null, null, workStatus);
+            return _dao.GetMasteringStatus(null, null, userId, workStatus);
         }
-        public IList<DTO_MASTERING_INFO> GetMasteringLogs(string startDt, string endDt)
+        public IList<DTO_MASTERING_INFO> GetMasteringLogs(string startDt, string endDt, string userId)
         {
             List<string> workStatus = new List<string>();
             workStatus.Add("5");
             workStatus.Add("6");
-            return _dao.GetMasteringStatus(startDt, endDt, workStatus);
+            return _dao.GetMasteringStatus(startDt, endDt, userId, workStatus);
         }
        
     }
