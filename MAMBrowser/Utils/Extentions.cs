@@ -174,12 +174,7 @@ namespace MAMBrowser.Utils
                 con.EDITTARGET = true;
                 con.CARTTYPE = SetCartCode(item.CARTCODE);
 
-                if (item.AUDIOS.Count != 1)
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                else
+                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
                     con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
                     if (con.FILEPATH != "")
@@ -187,7 +182,11 @@ namespace MAMBrowser.Utils
                         con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
 
                     }
-
+                }
+                else
+                {
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -328,13 +327,7 @@ namespace MAMBrowser.Utils
                 con.EDITTARGET = true;
                 con.CARTTYPE = SetCartCode(item.CARTCODE);
 
-
-                if (item.AUDIOS.Count != 1)
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                else
+                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
                     con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
                     if (con.FILEPATH != "")
@@ -342,7 +335,11 @@ namespace MAMBrowser.Utils
                         con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
 
                     }
-
+                }
+                else
+                {
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -485,13 +482,7 @@ namespace MAMBrowser.Utils
                 con.EDITTARGET = true;
                 con.CARTTYPE = SetCartCode(item.CARTCODE);
 
-
-                if (item.AUDIOS.Count != 1)
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                else
+                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
                     con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
                     if (con.FILEPATH != "")
@@ -499,7 +490,11 @@ namespace MAMBrowser.Utils
                         con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
 
                     }
-
+                }
+                else
+                {
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -639,12 +634,7 @@ namespace MAMBrowser.Utils
                 con.EDITTARGET = true;
                 con.CARTTYPE = SetCartCode(item.CARTCODE);
 
-                if (item.AUDIOS.Count != 1)
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                else
+                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
                     con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
                     if (con.FILEPATH != "")
@@ -652,7 +642,11 @@ namespace MAMBrowser.Utils
                         con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
 
                     }
-
+                }
+                else
+                {
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
                 }
                 if (item.CHANNELTYPE == "N")
                 {
@@ -848,21 +842,19 @@ namespace MAMBrowser.Utils
                 favItem.EDITTARGET = true;
                 favItem.CARTTYPE = SetCartCode(item.CARTCODE);
 
-
-                if (item.AUDIOS.Count != 1)
-                {
-                    favItem.FILEPATH = "";
-                    favItem.FILETOKEN = "";
-                }
-                else
+                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
                     favItem.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
                     if (favItem.FILEPATH != "")
                     {
-                    favItem.FILETOKEN = TokenGenerator.GenerateFileToken(favItem.FILEPATH);
+                        favItem.FILETOKEN = TokenGenerator.GenerateFileToken(favItem.FILEPATH);
 
                     }
-                    
+                }
+                else
+                {
+                    favItem.FILEPATH = "";
+                    favItem.FILETOKEN = "";
                 }
                 favList.Add(favItem);
             }

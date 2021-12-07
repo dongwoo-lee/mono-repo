@@ -202,8 +202,8 @@ export default {
         duration: "", //string
         edittarget: true,
         endposition: 0, //millisecond
-        fadeintime: 0,
-        fadeouttime: 0,
+        fadeintime: false,
+        fadeouttime: false,
         filetoken: "", //미리듣기 때문 바뀔수도있음
         filepath: "",
         maintitle: "",
@@ -353,7 +353,6 @@ export default {
         var selectedRowsData = this.sortSelectedRowsData(e);
         selectedRowsData = selectedRowsData.filter((ele) => {
           if (Object.keys(ele).includes("cartcode")) {
-            console.log(ele);
             return ele.cartcode != "";
           } else {
             return (ele = ele);
@@ -484,12 +483,14 @@ export default {
       if (this.cueInfo.cuetype == "A") {
         return;
       }
-      if (!$event.toData.cartcode) {
-        this.fileData.splice(index - 1, 1, { rownum: index });
-      } else {
-        var data = $event.toData;
-        data.rownum = index;
-        this.fileData.splice(index - 1, 1, data);
+      if ($event.toData) {
+        if (!$event.toData.cartcode) {
+          this.fileData.splice(index - 1, 1, { rownum: index });
+        } else {
+          var data = $event.toData;
+          data.rownum = index;
+          this.fileData.splice(index - 1, 1, data);
+        }
       }
     },
     onTextEdit(index) {

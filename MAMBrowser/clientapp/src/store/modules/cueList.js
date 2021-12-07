@@ -24,6 +24,7 @@ export default {
         abCartArr: [], //ab 카트
         cChannelData: [], //c 카트
         cueFavorites: [], //즐겨찾기
+        cueSheetAutoSave: true,
         printTem: [{
             code: "",
             contents: "---------- 1부  ----------",
@@ -234,6 +235,7 @@ export default {
         cChannelData: state => state.cChannelData,
         cueFavorites: state => state.cueFavorites,
         printTem: state => state.printTem,
+        cueSheetAutoSave: state => state.cueSheetAutoSave,
     },
     mutations: {
         SET_CUESHEETLISTARR(state, payload) {
@@ -274,31 +276,13 @@ export default {
         },
         SET_CCHANNELDATA(state, payload) {
             state.cChannelData = payload;
-            // switch (payload.type) {
-            //     case "channel_1":
-            //         state.cChannelData.channel_1 = payload.value;
-            //         break;
-
-            //     case "channel_2":
-            //         state.cChannelData.channel_2 = payload.value;
-            //         break;
-
-            //     case "channel_3":
-            //         state.cChannelData.channel_3 = payload.value;
-            //         break;
-
-            //     case "channel_4":
-            //         state.cChannelData.channel_4 = payload.value;
-            //         break;
-
-            //     default:
-            //         state.cChannelData = [];
-            //         break;
-            // }
         },
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
         },
+        SET_CUESHEETAUTOSAVE(state, payload) {
+            state.cueSheetAutoSave = payload;
+        }
     },
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
@@ -534,8 +518,6 @@ export default {
         async saveDayCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            console.log("pram")
-            console.log(pram)
             await axios
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
@@ -932,18 +914,6 @@ export default {
                 abDataResult[index] = Object.assign({}, ele);
                 abDataResult[index].channeltype = "N";
                 abDataResult[index].rownum = index + 1;
-                if (ele.fadeintime) {
-                    abDataResult[index].fadeintime = 300;
-                } else {
-                    abDataResult[index].fadeintime = 0;
-
-                }
-                if (ele.fadeouttime) {
-                    abDataResult[index].fadeouttime = 300;
-                } else {
-                    abDataResult[index].fadeouttime = 0;
-
-                }
             });
 
             var pram = {
@@ -1007,5 +977,22 @@ export default {
             var result = moment.duration(itemTime.diff(defTime)).asMilliseconds();
             return result
         },
+        getautosave({ commit }, payload) {
+            return axios.get(`/api/users/summary/${payload}`)
+                .then((res) => {
+                    var autosave = null
+                    if (res.data.resultObject.cueSheetAutoSave == "Y") {
+                        autosave = true
+                    } else {
+                        autosave = false
+                    }
+                    commit('SET_CUESHEETAUTOSAVE', autosave);
+                })
+        },
+        setautosave({ }, payload) {
+            return axios.patch(`/api/user`, payload)
+                .then((res) => {
+                })
+        }
     }
 }

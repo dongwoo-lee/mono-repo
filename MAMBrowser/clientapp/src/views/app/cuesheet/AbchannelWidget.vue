@@ -462,7 +462,6 @@ export default {
               }
               row.cartid = search_row.id;
               row.cartcode = this.searchListData.cartcode;
-
               this.cartCodeFilter({
                 row: row,
                 search_row: search_row,
@@ -505,7 +504,6 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      console.log(e.itemData);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },

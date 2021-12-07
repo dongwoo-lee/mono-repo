@@ -672,18 +672,25 @@ export default {
       var pramList = [];
       for (var i = 1; i < 5; i++) {
         cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
-          //if(ele.)
+          if (ele.cartcode != null && ele.cartcode != "") {
+            pramList.push(ele);
+          }
         });
       }
+      cuesheetData.NormalCon.forEach((ele) => {
+        if (ele.cartcode != null && ele.cartcode != "") {
+          pramList.push(ele);
+        }
+      });
       await axios
-        .post(`/api/CueAttachments/exportZipFile`, [])
+        .post(`/api/CueAttachments/exportZipFile`, pramList)
         .then((response) => {
           const link = document.createElement("a");
           link.href = "/api/CueAttachments/exportZipFileDownload";
           document.body.appendChild(link);
           link.click();
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
         });
     },

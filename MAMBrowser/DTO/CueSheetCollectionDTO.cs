@@ -92,6 +92,7 @@ namespace MAMBrowser.DTO
         public string PERSONID { get; set; }
     }
 
+    
 
     //public class AttachmentDTO
     //{

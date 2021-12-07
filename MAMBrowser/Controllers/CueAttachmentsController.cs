@@ -16,13 +16,16 @@ namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CueAttachmentsController : ControllerBase
+    public class CueAttachmentsController : Controller
     {
+        private readonly ProductsBll _bll;
         private readonly IFileProtocol _fileService;
-        public CueAttachmentsController(ServiceResolver sr)
+        public CueAttachmentsController(ServiceResolver sr, ProductsBll bll)
         {
             _fileService = sr(MAMDefine.MirosConnection).FileSystem;
+            _bll = bll;
         }
+
         //zip파일 내보내기
         [HttpPost("exportZipFile")]
         public bool ExportZipFile([FromBody] List<CueSheetConDTO> pram)
@@ -35,16 +38,50 @@ namespace MAMBrowser.Controllers
                 {
                     di.Create();
                 }
+                else
+                {
+                    di.Delete(true);
+                    di.Create();
+                }
                 foreach (CueSheetConDTO ele in pram)
                 {
-
-                    ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
-                    var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FILEPATH));
-                    using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    if (ele.FILEPATH != null && ele.FILEPATH != "")
                     {
-                        using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
+                        //ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
+                        var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FILEPATH));
+
+                        using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                         {
-                            inStream.CopyTo(outFileStream);
+                            try
+                            {
+                            using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
+                            {
+                                inStream.CopyTo(outFileStream);
+                            }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+                        //여기 오디오클립 추가되면 해야함
+                        if (ele.ONAIRDATE != "")
+                        {
+                            
+                            if (ele.CARTTYPE == "SB")
+                            {
+                                var item = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
+
+                            }
+                            if (ele.CARTTYPE == "CM")
+                            {
+                            var item = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
+                            }
                         }
                     }
 

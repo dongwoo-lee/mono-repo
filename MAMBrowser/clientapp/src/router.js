@@ -310,7 +310,6 @@ const routes = [
           cueDataObj.personid = userId;
           store.commit('cueList/SET_CUEINFO', cueDataObj)
           sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
-
           next();
         })
       },
