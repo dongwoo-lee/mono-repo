@@ -38,7 +38,7 @@
       v-if="displayEtc('delete')"
       class="icon-buton"
       :title="getTitle('delete')"
-      :disabled="!isPossibleDelete || !isSystemTopAdmin"
+      :disabled="!isPossibleDelete"
       :style="getDeleteStyle()"
       @click.stop="onDelete()"
     >

@@ -121,13 +121,13 @@
                 </b-card>
               </b-tab>
               <b-tab title="로그">
-                <b-card style="color: #008ecc" title="기간검색">
+                <b-card style="color: #008ecc">
                   <div
                     style="
-                      position: absolute;
-                      top: 22px;
-                      left: 120px;
-                      font-size: 14px;
+                      width: 1300px;
+                      height: 70px;
+                      border: 1px solid #d7d7d7;
+                      padding-top: 20px;
                     "
                   >
                     <b-form-group
@@ -135,9 +135,11 @@
                       class="has-float-label"
                       style="
                         width: 200px;
+                        height: 30px;
                         float: left;
                         margin-left: 20px;
                         margin-right: 20px;
+                        font-size: 13px;
                       "
                     >
                       <b-input-group
@@ -168,9 +170,12 @@
                     <b-form-group
                       label="종료일"
                       class="has-float-label"
-                      style="width: 200px"
+                      style="width: 200px; font-size: 13px"
                     >
-                      <b-input-group class="mb-3" style="width: 200px">
+                      <b-input-group
+                        class="mb-3"
+                        style="width: 200px; float: left"
+                      >
                         <input
                           style="height: 33px; font-size: 13px"
                           id="edateinput"
@@ -191,6 +196,30 @@
                           ></b-form-datepicker>
                         </b-input-group-append>
                       </b-input-group>
+                    </b-form-group>
+                    <b-form-group
+                      label="제작자"
+                      class="has-float-label"
+                      style="
+                        width: 200px;
+                        height: 30px;
+                        float: left;
+                        margin-left: 20px;
+                        margin-right: 20px;
+                        font-size: 13px;
+                        border: 1px solid white !important;
+                      "
+                    >
+                      <common-vue-select
+                        class="h145"
+                        style="
+                          font-size: 14px;
+                          width: 200px;
+                          border: 1px solid #008ecc;
+                        "
+                        :suggestions="editorOptions"
+                        @inputEvent="onEditorSelected"
+                      ></common-vue-select>
                     </b-form-group>
                     <b-button
                       style="
@@ -213,6 +242,7 @@
                   <div
                     style="
                       width: 1300px;
+                      margin-top: 20px;
                       margin-left: auto;
                       margin-right: auto;
                       font-size: 14px;
@@ -369,6 +399,7 @@
 <script>
 import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
+import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
 import MetaModal from "./MetaModal";
 import list from "./list.vue";
 import axios from "axios";
@@ -385,6 +416,7 @@ export default {
   },
   components: {
     CommonFileModal,
+    CommonVueSelect,
     MetaModal,
     list,
   },
@@ -402,6 +434,8 @@ export default {
       percent: 0,
       logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
       logEDate: "2021-11-10", //TODO: 오늘 날짜로 설정
+      editorOptions: [],
+      logEditor: "",
     };
   },
   watch: {
@@ -420,6 +454,11 @@ export default {
     // DB = setInterval(() => {
     this.masteringStatus();
     // }, 1000);
+
+    axios.get("/api/Categories/users/pd").then((res) => {
+      this.editorOptions = res.data.resultObject.data;
+      this.editorOptions.unshift({ id: "", name: "전체 선택" });
+    });
 
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
@@ -479,6 +518,9 @@ export default {
       "startDBConnection",
       "stopDBConnection",
     ]),
+    onEditorSelected(data) {
+      this.logEditor = data.id;
+    },
     masteringStatus() {
       axios.get("/api/Mastering/mastering-status").then((res) => {
         var masteringListData = [];
@@ -722,6 +764,9 @@ export default {
 @import "./FileUploadCSS.css";
 </style>
 <style scoped>
+.v-select .vs__dropdown-toggle {
+  border: 1px solid white !important;
+}
 .myTableHeader {
   margin-left: 100px !important;
   height: 400px !important;
