@@ -171,6 +171,7 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
+        <!-- @row-prepared="log" -->
         <tbody
           slot="rowTemplate"
           slot-scope="{
@@ -182,7 +183,7 @@
         >
           <tr
             v-if="!userProgramList.includes(productId) && eventName != ''"
-            style="background-color: #e9ecef; color: silver"
+            :class="[getProductId(productId)] ? 'disabledRow' : ''"
           >
             <td>{{ eventName }}</td>
             <td>{{ eventType }}</td>
@@ -192,9 +193,9 @@
           </tr>
           <tr
             v-if="userProgramList.includes(productId) && eventName != ''"
-            style="background-color: white; color: black"
+            @click="selectedRow"
           >
-            <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가 -->
+            <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가</td> -->
             <td>{{ eventName }}</td>
             <td>{{ eventType }}</td>
             <td>{{ productId }}</td>
@@ -236,39 +237,6 @@
           />
         </b-form-group>
       </div>
-      <!-- <div style="width: 170px; margin-left: 20px; float: left">
-        <b-form-group
-          label="프로그램 ID"
-          class="has-float-label"
-          style="margin-top: 20px"
-        >
-          <b-form-input
-            style="width: 170px"
-            class="editTask"
-            v-model="this.ProgramSelected.productId"
-            readonly
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-      <div style="width: 120px; margin-left: 400px">
-        <b-form-group
-          label="이벤트 타입"
-          class="has-float-label"
-          style="margin-top: 20px"
-        >
-          <b-form-input
-            style="width: 120px"
-            class="editTask"
-            v-model="this.ProgramSelected.eventType"
-            readonly
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div> -->
-
       <div style="width: 170px; float: left; margin-left: 20px">
         <b-form-group label="방송 시간" class="has-float-label">
           <b-form-input
@@ -344,6 +312,23 @@ export default {
 
     this.getPro();
   },
+  computed: {
+    getProgramId(productId) {
+      if (this.userProgramList.includes(productId)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    getSelectedId(productId) {
+      console.log(productId);
+      if (this.ProgramSelected.productId != productId) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
     inputEditor(v) {
@@ -352,8 +337,22 @@ export default {
     mediaChange(v) {
       this.setMediaSelected(v);
     },
+    selectedRow(e) {
+      console.log(e.path[1]);
+      e.path[1].classList.value = "selected";
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.disabledRow {
+  color: silver;
+}
+.dx-row :hover {
+  background-color: #f5f5f5 !important;
+}
+.selected {
+  background-color: gray !important;
+}
+</style>
