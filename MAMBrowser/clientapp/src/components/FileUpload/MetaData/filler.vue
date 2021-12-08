@@ -3,7 +3,7 @@
     <transition name="fade">
       <div>
         <b-form-input
-          style="position: absolute; top: 360px; left: -400px; z-index: 9999"
+          style="position: absolute; top: 340px; left: -400px; z-index: 9999"
           class="editTask"
           v-model="MetaData.title"
           :state="titleState"
@@ -17,7 +17,7 @@
           style="
             position: relative;
             left: -85px;
-            top: 343px;
+            top: 323px;
             z-index: 9999;
             width: 3px;
             heigth: 3px;
@@ -39,7 +39,7 @@
           style="
             position: relative;
             left: -90px;
-            top: 350px;
+            top: 330px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -50,7 +50,7 @@
       </div>
     </transition>
     <transition name="fade">
-      <div style="position: absolute; top: 415px; left: -400px; z-index: 9999">
+      <div style="position: absolute; top: 395px; left: -400px; z-index: 9999">
         <b-form-input
           class="editTask"
           v-model="MetaData.memo"
@@ -105,14 +105,14 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 480px;
+            top: 460px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
           "
         >
           <common-vue-select
-            style="font-size: 14px; width: 200px; border: 1px solid #008ecc"
+            style="font-size: 14px; width: 350px; border: 1px solid #008ecc"
             class="h105"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"

@@ -4,7 +4,7 @@
       <div
         style="
           position: absolute;
-          top: 360px;
+          top: 340px;
           left: -400px;
           z-index: 9999;
           font-size: 16px;
@@ -64,7 +64,7 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 430px;
+            top: 410px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
@@ -72,7 +72,7 @@
         >
           <common-vue-select
             class="h145"
-            style="font-size: 14px; width: 200px; border: 1px solid #008ecc"
+            style="font-size: 14px; width: 350px; border: 1px solid #008ecc"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>
@@ -155,21 +155,15 @@
     </div>
     <div
       v-show="this.MetaData.typeSelected == 'program'"
-      style="
-        position: absolute;
-        width: 550px;
-        top: 90px;
-        height: 210px;
-        border: 1px solid #008ecc;
-      "
+      style="position: absolute; width: 550px; top: 90px; height: 210px"
     >
       <DxDataGrid
         name="proDxDataGrid"
         v-show="this.ProgramData.eventName != ''"
-        style="height: 208px"
+        style="height: 245px; border: 1px solid #008ecc"
         :data-source="ProgramData"
         :selection="{ mode: 'single' }"
-        :show-borders="true"
+        :show-borders="false"
         :hover-state-enabled="true"
         key-expr="productId"
         :allow-column-resizing="true"
@@ -177,11 +171,42 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
+        <tbody
+          slot="rowTemplate"
+          slot-scope="{
+            data: {
+              data: { eventName, eventType, productId, onairTime, durationSec },
+            },
+          }"
+          class="dx-row"
+        >
+          <tr
+            v-if="!userProgramList.includes(productId) && eventName != ''"
+            style="background-color: #e9ecef; color: silver"
+          >
+            <td>{{ eventName }}</td>
+            <td>{{ eventType }}</td>
+            <td>{{ productId }}</td>
+            <td>{{ onairTime }}</td>
+            <td>{{ durationSec }}</td>
+          </tr>
+          <tr
+            v-if="userProgramList.includes(productId) && eventName != ''"
+            style="background-color: white; color: black"
+          >
+            <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가 -->
+            <td>{{ eventName }}</td>
+            <td>{{ eventType }}</td>
+            <td>{{ productId }}</td>
+            <td>{{ onairTime }}</td>
+            <td>{{ durationSec }}</td>
+          </tr>
+        </tbody>
         <DxColumn data-field="eventName" caption="이벤트 명" />
-        <DxColumn :width="60" data-field="eventType" caption="타입" />
-        <DxColumn data-field="productId" caption="프로그램 ID" />
+        <DxColumn :width="50" data-field="eventType" caption="타입" />
+        <DxColumn :width="100" data-field="productId" caption="프로그램 ID" />
         <DxColumn data-field="onairTime" caption="방송 시간" />
-        <DxColumn data-field="durationSec" caption="편성 분량" />
+        <DxColumn :width="80" data-field="durationSec" caption="편성 분량" />
       </DxDataGrid>
     </div>
     <!-- 프로그램 -->
@@ -189,31 +214,29 @@
       v-show="!isActive && this.ProgramSelected.eventName != ''"
       style="
         width: 550px;
-        height: 150px;
-        margin-top: 280px;
+        height: 85px;
+        margin-top: 328px;
+        padding-top: 20px;
         padding-left: 10px;
         padding-right: 10px;
         float: left;
         border: 1px solid #008ecc;
+        font-size: 13px;
       "
     >
-      <div style="width: 180px; float: left">
-        <b-form-group
-          label="이벤트 명"
-          class="has-float-label"
-          style="margin-top: 20px"
-        >
+      <div style="width: 200px; float: left">
+        <b-form-group label="이벤트 명" class="has-float-label">
           <b-form-input
-            style="width: 180px"
             class="editTask"
+            style="width: 200px"
             v-model="this.ProgramSelected.eventName"
-            readonly
+            disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
           />
         </b-form-group>
       </div>
-      <div style="width: 170px; margin-left: 20px; float: left">
+      <!-- <div style="width: 170px; margin-left: 20px; float: left">
         <b-form-group
           label="프로그램 ID"
           class="has-float-label"
@@ -244,12 +267,12 @@
             trim
           />
         </b-form-group>
-      </div>
+      </div> -->
 
-      <div style="width: 200px; float: left; margin-top: 10px">
+      <div style="width: 170px; float: left; margin-left: 20px">
         <b-form-group label="방송 시간" class="has-float-label">
           <b-form-input
-            style="width: 200px"
+            style="width: 170px"
             class="editTask"
             v-model="this.ProgramSelected.onairTime"
             readonly
@@ -258,12 +281,10 @@
           />
         </b-form-group>
       </div>
-      <div
-        style="width: 200px; margin-left: 20px; float: left; margin-top: 10px"
-      >
+      <div style="width: 100px; margin-left: 20px; float: left">
         <b-form-group label="편성 분량" class="has-float-label">
           <b-form-input
-            style="width: 120px"
+            style="width: 100px"
             class="editTask"
             v-model="this.ProgramSelected.durationSec"
             readonly
@@ -296,6 +317,7 @@ export default {
     this.reset();
     this.getEditorForPd();
     this.resetFileMediaOptions();
+
     axios.get("/api/categories/media").then((res) => {
       res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
@@ -304,11 +326,23 @@ export default {
         });
       });
     });
+
     this.proMedia = "A";
     this.setMediaSelected(this.proMedia);
 
+    var user_id = sessionStorage.getItem("user_id");
+    axios
+      .get(
+        `/api/categories/user-pgmcodes?userId=${user_id}&media=${this.MetaData.mediaSelected}`
+      )
+      .then((res) => {
+        this.setUserProgramList(res.data.resultObject.data);
+      });
+
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
+
+    this.getPro();
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),

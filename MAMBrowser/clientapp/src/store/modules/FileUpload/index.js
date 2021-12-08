@@ -35,6 +35,7 @@ export default {
       duration: "",
       audioFormat: "",
     },
+    userProgramList: [],
     masteringListData: [],
     masteringLogData: [],
     ProgramData: [
