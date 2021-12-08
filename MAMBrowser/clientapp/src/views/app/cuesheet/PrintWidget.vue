@@ -222,6 +222,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver";
 import "moment/locale/ko";
 import {
+  HeadingLevel,
   AlignmentType,
   Document,
   Packer,
@@ -622,6 +623,7 @@ export default {
                   size: 2000,
                   type: WidthType.DXA,
                 },
+
                 children: [new Paragraph(code)],
               }),
               new TableCell({
@@ -653,12 +655,16 @@ export default {
                 children: [new Paragraph(this.nullChecker(i.etc))],
               }),
             ],
+            height: {
+              height: 500,
+            },
           })
         );
       });
       const table = new Table({
         columnWidths: [3505, 5505],
         rows: rows,
+        tableHeader: true,
       });
       const doc = new Document({
         sections: [
@@ -666,7 +672,11 @@ export default {
             headers: {
               default: new Header({
                 children: [
-                  new Paragraph(this.nullChecker(this.cueInfo.headertitle)),
+                  new Paragraph({
+                    text: this.nullChecker(this.cueInfo.headertitle),
+                    heading: HeadingLevel.HEADING_2,
+                    alignment: AlignmentType.CENTER,
+                  }),
                 ],
               }),
             },
@@ -703,6 +713,26 @@ export default {
             ],
           },
         ],
+        styles: {
+          default: {
+            heading2: {
+              run: {
+                size: 28,
+                bold: true,
+                font: "MBC 새로움 M",
+                color: "black",
+              },
+            },
+          },
+          paragraphStyles: [
+            {
+              name: "Normal",
+              run: {
+                font: "MBC 새로움 M",
+              },
+            },
+          ],
+        },
       });
 
       Packer.toBlob(doc).then((blob) => {

@@ -165,7 +165,7 @@ namespace MAMBrowser.Utils
                 con.MEMO = item.MEMO ?? "";
                 con.STARTPOSITION = item.STARTPOSITION;
                 con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME>0?true:false;
+                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
                 con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
                 con.MAINTITLE = item.MAINTITLE ?? "";
                 con.SUBTITLE = item.SUBTITLE ?? "";
@@ -927,8 +927,8 @@ namespace MAMBrowser.Utils
                 obj.p_useflag = (item.USEFLAG == null) ? 'Y' : char.Parse(item.USEFLAG);
                 obj.p_startposition = item.STARTPOSITION;
                 obj.p_endposition = item.ENDPOSITION;
-                obj.p_fadeintime = item.FADEINTIME? 300 : 0;
-                obj.p_fadeouttime = item.FADEOUTTIME? 300 : 0;
+                obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
+                obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                 obj.p_transtype = char.Parse(item.TRANSTYPE);
                 obj.p_maintitle = item.MAINTITLE;
                 obj.p_subtitle = item.SUBTITLE;
@@ -1001,7 +1001,7 @@ namespace MAMBrowser.Utils
                     result.DelDefCueParams.Add(delParm);
                 }
             }
-            if (dto.PrintDTO != null&& dto.PrintDTO.Count!=0)
+            if (dto.PrintDTO != null && dto.PrintDTO.Count != 0)
             {
                 //print
                 result.PrintParams = new List<PrintParam>();
@@ -1030,7 +1030,7 @@ namespace MAMBrowser.Utils
                     obj.p_onairdate = item.ONAIRDATE;
                     obj.p_cartid = item.CARTID;
                     obj.p_cartcode = item.CARTCODE;
-                    obj.p_useflag = char.Parse(item.USEFLAG);
+                    obj.p_useflag = (item.USEFLAG == null) ? 'Y' : char.Parse(item.USEFLAG);
                     obj.p_startposition = item.STARTPOSITION;
                     obj.p_endposition = item.ENDPOSITION;
                     obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
@@ -1059,7 +1059,7 @@ namespace MAMBrowser.Utils
                             obj.p_onairdate = item.ONAIRDATE;
                             obj.p_cartid = item.CARTID;
                             obj.p_cartcode = item.CARTCODE;
-                            obj.p_useflag = char.Parse(item.USEFLAG);
+                            obj.p_useflag = 'Y';
                             obj.p_startposition = item.STARTPOSITION;
                             obj.p_endposition = item.ENDPOSITION;
                             obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
@@ -1123,7 +1123,7 @@ namespace MAMBrowser.Utils
                     obj.p_onairdate = item.ONAIRDATE;
                     obj.p_cartid = item.CARTID;
                     obj.p_cartcode = item.CARTCODE;
-                    obj.p_useflag = char.Parse(item.USEFLAG);
+                    obj.p_useflag = (item.USEFLAG == null) ? 'Y' : char.Parse(item.USEFLAG);
                     obj.p_startposition = item.STARTPOSITION;
                     obj.p_endposition = item.ENDPOSITION;
                     obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
@@ -1152,7 +1152,7 @@ namespace MAMBrowser.Utils
                             obj.p_onairdate = item.ONAIRDATE;
                             obj.p_cartid = item.CARTID;
                             obj.p_cartcode = item.CARTCODE;
-                            obj.p_useflag = char.Parse(item.USEFLAG);
+                            obj.p_useflag = 'Y';
                             obj.p_startposition = item.STARTPOSITION;
                             obj.p_endposition = item.ENDPOSITION;
                             obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
@@ -1239,27 +1239,28 @@ namespace MAMBrowser.Utils
                 foreach (var item in dto.NormalCon)
                 {
                     if (item.CARTID != "" &&
-                    (!string.IsNullOrEmpty(item.MEMO) || !string.IsNullOrEmpty(item.MAINTITLE))){
-                    var resultItem = new PDPQSConParam();
-                    resultItem.Description_in = item.MEMO;
-                    resultItem.LLevel_in = 0;
-                    resultItem.RLevel_in = 0;
-                    resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
+                    (!string.IsNullOrEmpty(item.MEMO) || !string.IsNullOrEmpty(item.MAINTITLE)))
+                    {
+                        var resultItem = new PDPQSConParam();
+                        resultItem.Description_in = item.MEMO;
+                        resultItem.LLevel_in = 0;
+                        resultItem.RLevel_in = 0;
+                        resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
                         resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
                         resultItem.ExtroTime_in = 0;
-                    resultItem.IntroTime_in = 0;
-                    resultItem.MainTitle_in = item.MAINTITLE;
-                    resultItem.TransType_in = char.Parse(item.TRANSTYPE);
-                    resultItem.SOM_in = item.STARTPOSITION;
-                    resultItem.CartType_in = item.CARTTYPE;
-                    resultItem.CartID_in = item.CARTID;
-                    resultItem.SeqNum_in = item.ROWNUM;
-                    resultItem.PqsType_in = 'N';
-                    resultItem.OnAirDate_in = dto.CueSheetDTO.BRDDATE;
-                    resultItem.ProductID_in = dto.CueSheetDTO.PRODUCTID;
-                    resultItem.EOM_in = item.ENDPOSITION;
-                    resultItem.SubTitle_in = item.SUBTITLE;
-                    result.PDPQSConParam.Add(resultItem);
+                        resultItem.IntroTime_in = 0;
+                        resultItem.MainTitle_in = item.MAINTITLE;
+                        resultItem.TransType_in = char.Parse(item.TRANSTYPE);
+                        resultItem.SOM_in = item.STARTPOSITION;
+                        resultItem.CartType_in = item.CARTTYPE;
+                        resultItem.CartID_in = item.CARTID;
+                        resultItem.SeqNum_in = item.ROWNUM;
+                        resultItem.PqsType_in = 'N';
+                        resultItem.OnAirDate_in = dto.CueSheetDTO.BRDDATE;
+                        resultItem.ProductID_in = dto.CueSheetDTO.PRODUCTID;
+                        resultItem.EOM_in = item.ENDPOSITION;
+                        resultItem.SubTitle_in = item.SUBTITLE;
+                        result.PDPQSConParam.Add(resultItem);
                     }
                 }
             }
@@ -1271,7 +1272,7 @@ namespace MAMBrowser.Utils
                 {
                     foreach (var item in cData.Value)
                     {
-                        if (item.CARTCODE != "" && item.CARTCODE != null && item.ROWNUM + (index * 16)<33)
+                        if (item.CARTCODE != "" && item.CARTCODE != null && item.ROWNUM + (index * 16) < 33)
                         {
                             var resultItem = new PDPQSConParam();
                             resultItem.Description_in = item.MEMO;
