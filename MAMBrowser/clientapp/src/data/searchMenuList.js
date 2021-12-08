@@ -2,7 +2,7 @@ let searchMenuList = {
   data() {
     return {
       menuList_items: [
-        { id: "1", name: "CM [자동]" },
+        { id: "1", name: "음반 기록실" },
         { id: "2", name: "공유소재" },
         { id: "3", name: "(구)프로소재" },
         {
@@ -63,7 +63,7 @@ let searchMenuList = {
           items: [
             {
               id: "6_1",
-              name: "MY공간",
+              name: "MY디스크",
             },
             {
               id: "6_2",
@@ -89,61 +89,62 @@ let searchMenuList = {
           {
             num: 0,
             id: "",
-            name: "CM [자동]",
+            cartcode: "S01G01C020",
+            name: "음반 기록실",
             options:
               [
-                // {
-                //   text: "대분류",
-                //   value:
-                //     [
-                //       { text: '국내', value: 1 },
-                //       { text: '국외', value: 2 },
-                //       { text: '클래식', value: 4 }
-                //     ],
-                //   type: "C"
-                // },
-                // {
-                //   text: "검색옵션",
-                //   value:
-                //     [
-                //       { text: '히트', value: 1 },
-                //       { text: '금지', value: 2 },
-                //       { text: '주의', value: 4 },
-                //       { text: '청소년 유해', value: 8 },
-                //     ],
-                //   type: "C"
-                // },
-                // {
-                //   text: "소분류",
-                //   value:
-                //     [
-                //       { text: '전체', value: 'song_idx' },
-                //       { text: '곡명', value: 'song_name_idx' },
-                //       { text: '곡명/아티스트', value: 'songname_artist_idx' },
-                //       { text: '아티스트', value: 'song_artist_idx' },
-                //       { text: '배열번호', value: 'song_disc_arr_num_idx' },
-                //       { text: '국가명', value: 'song_country_name_idx' }
-                //     ],
-                //   type: "S"
-                // },
-                // {
-                //   text: "검색어",
-                //   value: "",
-                //   type: "T"
-                // }
+                {
+                  text: "대분류",
+                  value:
+                    [
+                      { text: '국내', value: 1 },
+                      { text: '국외', value: 2 },
+                      { text: '클래식', value: 4 }
+                    ],
+                  type: "C"
+                },
+                {
+                  text: "검색옵션",
+                  value:
+                    [
+                      { text: '히트', value: 1 },
+                      { text: '금지', value: 2 },
+                      { text: '주의', value: 4 },
+                      { text: '청소년 유해', value: 8 },
+                    ],
+                  type: "C"
+                },
+                {
+                  text: "소분류",
+                  value:
+                    [
+                      { text: '전체', value: 'song_idx' },
+                      { text: '곡명', value: 'song_name_idx' },
+                      { text: '곡명/아티스트', value: 'songname_artist_idx' },
+                      { text: '아티스트', value: 'song_artist_idx' },
+                      { text: '배열번호', value: 'song_disc_arr_num_idx' },
+                      { text: '국가명', value: 'song_country_name_idx' }
+                    ],
+                  type: "S"
+                },
+                {
+                  text: "검색어",
+                  value: "",
+                  type: "T"
+                }
               ],
             columns:
               [
-                // { dataField: "rowNO", caption: "순서" },
-                // { dataField: "name", caption: "곡명" },
-                // { dataField: "artistName", caption: "아티스트" },
-                // { dataField: "duration", caption: "재생시간" },
-                // { dataField: "albumName", caption: "음반명" },
-                // { dataField: "releaseDate", caption: "발매년도" },
-                // { dataField: "composer", caption: "작곡가" },
-                // { dataField: "writer", caption: "작사가" },
-                // { dataField: "sequenceNO", caption: "배열번호" },
-                // { dataField: "__slot:actions", caption: "추가작업" }
+                { dataField: "rowNO", caption: "순서" },
+                { dataField: "name", caption: "곡명" },
+                { dataField: "artistName", caption: "아티스트" },
+                { dataField: "duration", caption: "재생시간" },
+                { dataField: "albumName", caption: "음반명" },
+                { dataField: "releaseDate", caption: "발매년도" },
+                { dataField: "composer", caption: "작곡가" },
+                { dataField: "writer", caption: "작사가" },
+                { dataField: "sequenceNO", caption: "배열번호" },
+                { dataField: "__slot:actions", caption: "추가작업" }
               ]
           },
           {
@@ -766,10 +767,47 @@ let searchMenuList = {
           },
           {
             num: 13,
-            id: "",
-            name: "MY공간",
-            options: [],
-            columns: [],
+            id: "MyDisk",
+            cartcode: "S01G01C007",
+            name: "MY디스크",
+            options: [
+              {
+                id: "startDate",
+                text: "시작일",
+                value: "",
+                type: "D",
+
+              },
+              {
+                id: "endDate",
+                text: "종료일",
+                value: "",
+                type: "D",
+
+              },
+              {
+                id: "title",
+                text: "제목",
+                value: "",
+                type: "T",
+              },
+              {
+                id: "memo",
+                text: "메모",
+                value: "",
+                type: "T",
+              },
+            ],
+            columns: [
+              { dataField: "rowNO", caption: "순서" },
+              { dataField: "title", caption: "제목" },
+              { dataField: "memo", caption: "메모" },
+              { dataField: "fileExt", caption: "파일형식" },
+              { dataField: "fileSize", caption: "파일사이즈" },
+              { dataField: "audioFormat", caption: "오디오포맷" },
+              { dataField: "editedDtm", caption: "등록일시" },
+              { dataField: "__slot:actions", caption: "추가작업" }
+            ],
           },
           {
             num: 14,
@@ -825,10 +863,47 @@ let searchMenuList = {
           },
           {
             num: 15,
-            id: "",
+            id: "DL30",
             name: "DL3",
-            options: [],
-            columns: [],
+            options: [
+              {
+                id: "brddate",
+                text: "방송일",
+                value: "",
+                type: "D",
+              },
+              {
+                id: "deviceSeq",
+                text: "단말",
+                value: [],
+                type: "S",
+                name: "dlDevice",
+              },
+              {
+                id: "media",
+                text: "매체",
+                value: [],
+                type: "S",
+                name: "medias",
+              },
+              {
+                id: "name",
+                text: "소재명",
+                value: "",
+                type: "T",
+              },
+            ],
+            columns: [
+              { dataField: "rowNO", caption: "순서" },
+              { dataField: "brdDate", caption: "송출일시" },
+              { dataField: "recName", caption: "녹음소재명" },
+              { dataField: "sourceID", caption: "Source ID" },
+              { dataField: "duration", caption: "녹음분량" },
+              //{ dataField: "fileSize", caption: "파일사이즈" ,cellTemplate: "play_Template"},//변환해야함
+              { caption: "파일사이즈", cellTemplate: "calculate_Template" },//변환해야함
+              { dataField: "regDtm", caption: "등록일시" },
+              { dataField: "__slot:actions", caption: "추가작업" }
+            ],
           },
           {
             num: 16,

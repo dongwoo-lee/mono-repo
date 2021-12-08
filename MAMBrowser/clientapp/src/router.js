@@ -364,7 +364,6 @@ const routes = [
                 })
               }
               if (res.data.normalCon.length == 0 && !dataVal) {
-                //이거 테스트해봐야함 (데이터가 없을경우 광고 자동 가져오기임)
                 store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode, brd_dt: toDay });
               }
               store.dispatch('cueList/getProUserList', cueDataObj.productid);

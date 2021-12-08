@@ -98,6 +98,11 @@
               />
             </div>
           </template>
+          <template #calculate_Template="{ data }">
+            <div>
+              {{ Math.round((data.data.fileSize / 1024 / 1024).toFixed(2)) }}
+            </div>
+          </template>
           <template #row_Template="{ data }">
             <div>
               <div>{{ data.rowIndex + 1 }}</div>
@@ -163,6 +168,7 @@ import {
   DxSelection,
   DxRowDragging,
 } from "devextreme-vue/data-grid";
+import { USER_ID } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
 import axios from "axios";
 
@@ -278,6 +284,7 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_SEARCHLISTDATA"]),
+    //아이템 소재 가져오기
     eventClick(newObjectState, object) {
       const url = `/api/SearchMenu/GetPublicSecond`;
       if (object.name == "medias") {
@@ -289,12 +296,14 @@ export default {
         }
       }
     },
+    //검색
     async onSubmit(e) {
+      const userId = sessionStorage.getItem(USER_ID);
       e.preventDefault();
       const selectOptions = this.searchDataList.options.filter(
         (Val) => Val.selectVal
       );
-      const result = {};
+      const result = { userid: userId };
       selectOptions.forEach((ele) => {
         if (typeof ele.selectVal != "object") {
           result[ele.id] = ele.selectVal;
@@ -392,6 +401,8 @@ export default {
             }
           });
         }
+        console.log("this.searchDataList.options");
+        console.log(this.searchDataList.options);
       });
     },
     // 서브 데이터 조회

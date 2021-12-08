@@ -70,6 +70,19 @@ namespace MAMBrowser.Controllers
                 throw;
             }
         }
+        [HttpGet("GetAddSponsor")]
+        public List<CueSheetConDTO> GetAddSponsor(string pgmcode, string brd_dt)
+        {
+            try
+            {
+                return _bll.GetAddSponsorList(pgmcode, brd_dt);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         //일일큐시트 생성 & 업데이트
         [HttpPost("SaveDayCue")]
         public int SaveDayCue([FromBody] CueSheetCollectionDTO pram)

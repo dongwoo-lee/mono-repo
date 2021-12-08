@@ -2,7 +2,9 @@
 using M30.AudioFile.Common.Expand.CommonType;
 using M30.AudioFile.Common.Expand.Menus;
 using M30.AudioFile.Common.Expand.Result;
+using M30.AudioFile.Common.Expand.SearchOptions;
 using M30.AudioFile.DAL.Expand.Factories.Web;
+using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MAMBrowser.Controllers
@@ -30,7 +32,8 @@ namespace MAMBrowser.Controllers
             public string type { get; set; }
             public string spotid { get; set; }
             public string status { get; set; }
-
+            public string userid { get; set; }
+            public long? deviceSeq {get; set;}
             public int rowperpage { get; set; }
             public int selectpage { get; set; }
             public string sortKey { get; set; }
@@ -46,6 +49,9 @@ namespace MAMBrowser.Controllers
                 //프로그램
                 case "PGM":
                     return MAMWebFactory.Instance.GetMenus(PageType.PGM);
+                //DL30
+                case "DL30":
+                    return MAMWebFactory.Instance.GetMenus(PageType.DL30);
                 //부조 SPOT
                 case "SCR_SPOT":
                     return MAMWebFactory.Instance.GetMenus(PageType.SCR_SPOT);
@@ -93,6 +99,37 @@ namespace MAMBrowser.Controllers
         #endregion
 
         #region 소재검색 테이블
+        //MY 공간
+        [HttpGet("GetSearchTable/MyDisk")]
+        public MyDiskResultDTO GetMyDisk([FromQuery] Pram pram)
+        {
+            var dto = new MyDiskSearchOptionDTO() 
+            {
+                UserID = pram.userid,
+                StartDate = pram.startDate,
+                EndDate = pram.endDate,
+                Title = pram.title,
+                Memo = pram.memo
+
+            };
+
+            return MAMWebFactory.Instance.Search<MyDiskResultDTO>(dto);
+        }
+        //DL 3.0
+        [HttpGet("GetSearchTable/DL30")]
+        public DL30ResultDTO GetDL30([FromQuery] Pram pram)
+        {
+            var dto = new DL30SearchOptionDTO()
+            {
+                brd_dt = pram.brddate,
+                deviceSeq = pram.deviceSeq,
+                media = pram.media,
+                name = pram.name,
+
+            };
+
+            return MAMWebFactory.Instance.Search<DL30ResultDTO>(dto);
+        }
         //프로그램
         [HttpGet("GetSearchTable/PGM")]
         public PgmResultDTO GetProgram([FromQuery] Pram pram)
@@ -109,9 +146,11 @@ namespace MAMBrowser.Controllers
 
                 .Build();
 
+            
             return MAMWebFactory.Instance.Search<PgmResultDTO>(a);
 
         }
+
         //부조 SPOT
         [HttpGet("GetSearchTable/SCR_SPOT")]
         public ScrSpotResultDTO GetScrSpot([FromQuery] Pram pram)

@@ -178,7 +178,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
@@ -196,21 +196,21 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "title"
+          sortField: "title",
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "memo"
+          sortField: "memo",
         },
         {
           name: "fileExt",
@@ -226,9 +226,9 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "fileSize",
           width: "8%",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.formatBytes(v);
-          }
+          },
         },
         {
           name: "audioFormat",
@@ -236,7 +236,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "audioFormat",
-          width: "10%"
+          width: "10%",
         },
         {
           name: "editedDtm",
@@ -244,7 +244,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "editedDtm",
-          width: "12%"
+          width: "12%",
         },
         {
           name: "__slot:actions",
@@ -254,7 +254,7 @@ export default {
           width: "8%",
         },
       ],
-      USER_ID
+      USER_ID,
     };
   },
   created() {
@@ -266,7 +266,7 @@ export default {
     ...mapActions("file", ["open_popup"]),
     SDateErrorLog() {
       this.$fn.notify("error", {
-        message: "시작 날짜가 종료 날짜보다 큽니다."
+        message: "시작 날짜가 종료 날짜보다 큽니다.",
       });
       this.hasErrorClass = true;
     },
@@ -278,7 +278,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
         return;
@@ -290,9 +290,11 @@ export default {
 
       this.$http
         .get(`/api/products/workspace/private/meta/${userId}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
+          console.log("res");
+          console.log(res);
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -323,10 +325,11 @@ export default {
     // 선택항목 휴지통 보내기 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
-        this.selectedIds,
-        this.responseData.data
-      );
+      this.innerHtmlSelectedFileNames =
+        this.getInnerHtmlSelectdFileNamesFromMulti(
+          this.selectedIds,
+          this.responseData.data
+        );
       this.$bvModal.show("modalRemove");
     },
     // 휴지통 보내기
@@ -343,10 +346,10 @@ export default {
 
       this.$http
         .delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
-        .then(res => {
+        .then((res) => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify("primary", {
-              message: "휴지통으로 이동되었습니다."
+              message: "휴지통으로 이동되었습니다.",
             });
             this.$bvModal.hide("modalRemove");
             setTimeout(() => {
@@ -355,7 +358,7 @@ export default {
             }, 0);
           } else {
             this.$fn.notify("error", {
-              message: "휴지통 이동 실패: " + res.data.errorMsg
+              message: "휴지통 이동 실패: " + res.data.errorMsg,
             });
           }
         });
@@ -369,7 +372,7 @@ export default {
       // this.metaDataModifyPopup = true;
     },
     masteringUpdate(e) {
-      axios.patch("/api/Mastering/my-disk", e).then(res => {
+      axios.patch("/api/Mastering/my-disk", e).then((res) => {
         console.log(res);
       });
     },
@@ -384,7 +387,7 @@ export default {
     },
     getMoveRecyclebinMsg() {
       return this.innerHtmlSelectedFileNames + "휴지통으로 이동하시겠습니까?";
-    }
-  }
+    },
+  },
 };
 </script>
