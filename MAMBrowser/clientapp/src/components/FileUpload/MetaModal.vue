@@ -33,19 +33,6 @@
                 >
                   {{ this.MetaModalTitle }}
                 </p>
-                <b-progress
-                  class="w-100"
-                  variant="success"
-                  :max="100"
-                  height="16px"
-                >
-                  <b-progress-bar
-                    :max="100"
-                    :value="percent"
-                    :label="`${percent} %`"
-                    show-progress
-                  ></b-progress-bar
-                ></b-progress>
 
                 <div style="height: 50px; margin-top: 20px">
                   <b-form-input
@@ -83,40 +70,82 @@
             </div>
 
             <div :class="[isActive ? 'date-modal' : 'file-modal']">
-              <div>
-                <div style="position: relative">
-                  <h3 style="color: #008ecc">메타 데이터</h3>
-                  <my-disk
-                    v-if="this.MetaData.typeSelected == 'my-disk'"
-                  ></my-disk>
-                  <scr-spot
-                    v-if="this.MetaData.typeSelected == 'scr-spot'"
-                  ></scr-spot>
-                </div>
+              <div style="width: 350px">
+                <h3 style="color: #008ecc">메타 데이터</h3>
+                <my-disk
+                  v-if="this.MetaData.typeSelected == 'my-disk'"
+                ></my-disk>
+                <scr-spot
+                  v-if="this.MetaData.typeSelected == 'scr-spot'"
+                ></scr-spot>
               </div>
             </div>
             <transition name="slide-fade">
-              <div v-show="!isActive" class="date-div">
-                <h3 style="color: #008ecc">프로그램 선택</h3>
-                <program
-                  v-if="this.MetaData.typeSelected == 'program'"
-                ></program>
-                <mcr-spot
-                  v-if="this.MetaData.typeSelected == 'mcr-spot'"
-                ></mcr-spot>
-                <static-spot
-                  v-if="this.MetaData.typeSelected == 'static-spot'"
-                ></static-spot>
-                <var-spot v-if="this.MetaData.typeSelected == 'var-spot'">
-                </var-spot>
-                <report v-if="this.MetaData.typeSelected == 'report'"> </report>
-                <filler v-if="this.MetaData.typeSelected == 'filler'"></filler>
+              <div>
+                <div v-show="!isActive" class="date-div">
+                  <h3 style="color: #008ecc">프로그램 선택</h3>
+                  <program
+                    v-if="this.MetaData.typeSelected == 'program'"
+                  ></program>
+                  <mcr-spot
+                    v-if="this.MetaData.typeSelected == 'mcr-spot'"
+                  ></mcr-spot>
+                  <static-spot
+                    v-if="this.MetaData.typeSelected == 'static-spot'"
+                  ></static-spot>
+                  <var-spot v-if="this.MetaData.typeSelected == 'var-spot'">
+                  </var-spot>
+                  <report v-if="this.MetaData.typeSelected == 'report'">
+                  </report>
+                  <filler
+                    v-if="this.MetaData.typeSelected == 'filler'"
+                  ></filler>
+                </div>
+                <div
+                  style="
+                    position: absolute;
+                    top: 620px;
+                    left: 20px;
+                    width: 950px;
+                  "
+                >
+                  <b-progress
+                    v-if="!isActive"
+                    class="w-100"
+                    variant="success"
+                    :max="100"
+                    height="16px"
+                  >
+                    <b-progress-bar
+                      :max="100"
+                      :value="percent"
+                      :label="`${percent} %`"
+                      show-progress
+                    ></b-progress-bar
+                  ></b-progress>
+                </div>
               </div>
             </transition>
           </div>
         </h4>
 
         <h3 slot="footer">
+          <div style="margin-left: 20px; width: 350px">
+            <b-progress
+              v-if="isActive"
+              class="w-100"
+              variant="success"
+              :max="100"
+              height="16px"
+            >
+              <b-progress-bar
+                :max="100"
+                :value="percent"
+                :label="`${percent} %`"
+                show-progress
+              ></b-progress-bar
+            ></b-progress>
+          </div>
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <!-- 로그 버튼 -->
             <!-- <b-button

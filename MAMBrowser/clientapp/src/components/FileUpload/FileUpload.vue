@@ -504,7 +504,10 @@ export default {
     logSearch() {
       var user_id;
       if (sessionStorage.getItem("authority") == "ADMIN") {
-        user_id = this.logEditor;
+        console.log(this.logEditor);
+        if (this.logEditor != null) {
+          user_id = this.logEditor;
+        }
       } else {
         user_id = sessionStorage.getItem("user_id");
       }
@@ -642,7 +645,7 @@ export default {
       }
     },
     MetaModalClose() {
-      this.resetLocalFiles();
+      this.fileRemove();
       this.typeReset();
       this.percent = 0;
       this.MetaModal = false;
@@ -682,7 +685,9 @@ export default {
     //#endregion
     //#region 모달 조작
     openFileModal() {
-      this.tabIndex = 0;
+      if (!this.FileModal) {
+        this.tabIndex = 0;
+      }
       this.setFileModal(true);
     },
     closeFileModal() {
