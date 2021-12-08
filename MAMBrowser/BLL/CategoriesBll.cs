@@ -137,5 +137,16 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetSpotSch(media, date, spotType);
         }
+
+        /// <summary>
+        /// 특정 사용자가 담당하는 프로그램 목록 반환
+        /// </summary>
+        /// <param name="media">매체ID</param>
+        /// <param name="userId">유저ID</param>
+        /// <returns></returns>
+        public IList<string> GetPgmCodeByUser(string media, string userId)
+        {
+            return _dao.GetPgmCodeByUser(media, userId);
+        }
     }
 }

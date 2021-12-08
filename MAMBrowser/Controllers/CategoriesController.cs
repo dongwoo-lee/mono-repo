@@ -337,6 +337,7 @@ namespace MAMBrowser.Controllers
         /// 사용처 목록 조회
         /// </summary>
         /// <param name="brd_dt">방송 종료일</param>
+        /// <param name="media">매체코드</param>
         /// <returns></returns>
         [HttpGet("pgmcodes")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPgmCodes([FromQuery] string brd_dt, [FromQuery] string media)
@@ -484,6 +485,29 @@ namespace MAMBrowser.Controllers
             {
                 result.ResultObject = new DTO_RESULT_LIST<DTO_BrdSpot>();
                 result.ResultObject.Data = _bll.GetSpotSch(media, date, spotType);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 특정 사용자가 담당하는 프로그램 목록 반환
+        /// </summary>
+        /// <param name="media"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("user-pgmcodes")]
+        public DTO_RESULT<DTO_RESULT_LIST<string>> GetSpotSch([FromQuery] string media, [FromQuery] string userId)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<string>> result = new DTO_RESULT<DTO_RESULT_LIST<string>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<string>();
+                result.ResultObject.Data = _bll.GetPgmCodeByUser(media, userId);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
