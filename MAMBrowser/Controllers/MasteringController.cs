@@ -118,7 +118,7 @@ namespace MAMBrowser.Controllers
             }
              catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -189,7 +189,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -261,7 +261,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -335,7 +335,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -409,7 +409,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -483,7 +483,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -555,7 +555,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }
@@ -626,7 +626,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "파일 업로드 실패");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
         }      
