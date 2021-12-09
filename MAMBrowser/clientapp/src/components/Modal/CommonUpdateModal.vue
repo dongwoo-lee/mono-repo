@@ -4,9 +4,7 @@
       <div class="update-modal-wrapper">
         <div class="update-modal-container">
           <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
+            <slot name="header"> default header </slot>
             <button class="update-modal-default-button" @click="$emit('close')">
               <p class="h4 mb-2">
                 <b-icon icon="x" class="icon" variant="danger"></b-icon>
@@ -15,15 +13,11 @@
           </div>
 
           <div class="update-modal-body">
-            <slot name="body">
-              default body
-            </slot>
+            <slot name="body"> default body </slot>
           </div>
 
           <div class="update-modal-footer">
-            <slot name="footer">
-              default footer
-            </slot>
+            <slot name="footer"> default footer </slot>
           </div>
         </div>
       </div>
@@ -62,17 +56,18 @@ export default {};
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
   transition: all 0.3s ease;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "MBC 새로움 M";
 }
 
 .update-modal-header h2 {
   margin-top: 10px;
   color: #008ecc;
-  font-weight: bolder;
+  font-family: "MBC 새로움 M";
 }
 
 .update-modal-body {
   height: 200px;
+  font-family: "MBC 새로움 M";
 }
 
 .update-modal-default-button {
@@ -83,6 +78,7 @@ export default {};
   border: 0;
   outline: 0;
   background-color: white;
+  font-family: "MBC 새로움 M";
 }
 .update-modal-footer {
   width: 400px;

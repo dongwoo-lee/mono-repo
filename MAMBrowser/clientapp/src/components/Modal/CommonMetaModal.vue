@@ -4,13 +4,11 @@
       <div class="meta-modal-wrapper">
         <div
           v-bind:class="[
-            !isActive ? 'meta-modal-container' : 'meta-modal-container2'
+            !isActive ? 'meta-modal-container' : 'meta-modal-container2',
           ]"
         >
           <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
+            <slot name="header"> default header </slot>
             <button class="modal-default-button" @click="$emit('close')">
               <p class="h4 mb-2">
                 <b-icon icon="x" class="icon" variant="danger"></b-icon>
@@ -18,14 +16,12 @@
             </button>
           </div>
           <div class="meta-modal-body">
-            <slot name="body">
-              default body
-            </slot>
+            <slot name="body"> default body </slot>
           </div>
 
           <div
             v-bind:class="[
-              !isActive ? 'meta-modal-footer' : 'meta-modal-footer2'
+              !isActive ? 'meta-modal-footer' : 'meta-modal-footer2',
             ]"
           >
             <slot name="footer"> </slot>
@@ -41,9 +37,9 @@ export default {
   props: {
     isActive: {
       type: Boolean, // list data
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 };
 </script>
 
@@ -74,7 +70,7 @@ export default {
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
   transition: all 0.3s ease;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "MBC 새로움 M";
 }
 
 .meta-modal-container2 {
@@ -87,21 +83,24 @@ export default {
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
   transition: all 0.3s ease;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "MBC 새로움 M";
 }
 
 .modal-header h3 {
   margin-top: 10px;
   color: #008ecc;
+  font-family: "MBC 새로움 M";
 }
 
 .meta-modal-body {
+  font-family: "MBC 새로움 M";
   width: 400px;
   height: 550px;
   background-color: white;
 }
 
 .modal-default-button {
+  font-family: "MBC 새로움 M";
   float: right;
   position: absolute;
   top: 25px;
@@ -130,6 +129,7 @@ export default {
   background-color: white;
 }
 .meta-modal-footer2 {
+  font-family: "MBC 새로움 M";
   width: 400px;
   height: 83px;
   background-color: white;
