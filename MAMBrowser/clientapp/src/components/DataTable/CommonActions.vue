@@ -29,6 +29,8 @@
     <b-button
       v-if="displayEtc('modify')"
       class="icon-buton"
+      :disabled="!isPossibleUpdate"
+      :style="getUpdateStyle()"
       :title="getTitle('modify')"
       @click.stop="onMetaModify()"
     >
@@ -120,6 +122,10 @@ export default {
       default: () => [],
     },
     isPossibleDelete: {
+      type: Boolean,
+      default: true,
+    },
+    isPossibleUpdate: {
       type: Boolean,
       default: true,
     },
@@ -226,6 +232,11 @@ export default {
     getDeleteStyle() {
       return {
         opacity: this.isPossibleDelete ? 1 : 0.2,
+      };
+    },
+    getUpdateStyle() {
+      return {
+        opacity: this.isPossibleUpdate ? 1 : 0.2,
       };
     },
     existFile() {

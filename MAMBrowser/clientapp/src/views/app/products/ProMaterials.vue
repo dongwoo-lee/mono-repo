@@ -34,7 +34,7 @@
             :options="[
               { value: '', text: '선택해주세요.' },
               { value: 'Y', text: '방송중' },
-              { value: 'N', text: '폐지' }
+              { value: 'N', text: '폐지' },
             ]"
             @change="onSearch"
           />
@@ -42,7 +42,7 @@
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <common-vue-select
-            style="width:220px;"
+            style="width: 220px"
             :suggestions="proOptions"
             @inputEvent="onProSelected"
           ></common-vue-select>
@@ -94,11 +94,13 @@
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               :etcData="['delete', 'modify']"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
               @modify="onMetaModifyPopup"
-              @MasteringDelete="onDeleteConfirm"
+              @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
           </template>
@@ -113,6 +115,8 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
+
+    <!-- 마스터링 메타 데이터 수정 -->
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -122,14 +126,17 @@
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
     </transition>
-    <!-- 삭제 -->
-    <common-confirm
-      id="proRemove"
-      title="삭제?"
-      :message="getRemove()"
-      submitBtn="이동"
-      @ok="onDelete()"
-    />
+
+    <!-- 마스터링 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        :updateScreenName="deleteScreenName"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -149,16 +156,19 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinBasicPage],
   data() {
     return {
       deleteId: "",
       metaUpdate: false,
-      rowData: "",
       updateScreenName: "",
+      metaDelete: false,
+      deleteScreenName: "",
+      rowData: "",
       searchItems: {
         media: "A", // 매체
         cate: "", // 분류
@@ -170,7 +180,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       proOptions: [],
       fields: [
@@ -179,21 +189,21 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name"
+          sortField: "name",
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "categoryName"
+          sortField: "categoryName",
         },
         {
           name: "duration",
@@ -202,7 +212,7 @@ export default {
           dataClass: "center aligned text-center",
           width: "6%",
           sortField: "duration",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.splitFirst(v);
           },
         },
@@ -212,7 +222,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "8%",
-          sortField: "editorName"
+          sortField: "editorName",
         },
         {
           name: "editDtm",
@@ -220,7 +230,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "editDtm"
+          sortField: "editDtm",
         },
         {
           name: "masteringDtm",
@@ -228,7 +238,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "12%",
-          sortField: "masteringDtm"
+          sortField: "masteringDtm",
         },
         {
           name: "proType",
@@ -236,16 +246,16 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "proType"
+          sortField: "proType",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
-        }
-      ]
+          width: "10%",
+        },
+      ],
     };
   },
   created() {
@@ -261,9 +271,19 @@ export default {
     });
   },
   methods: {
+    authorityCheck(e) {
+      if (
+        e.editorID == sessionStorage.getItem("user_id") ||
+        sessionStorage.getItem("authority") == "ADMIN"
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     SDateErrorLog() {
       this.$fn.notify("error", {
-        message: "시작 날짜가 종료 날짜보다 큽니다."
+        message: "시작 날짜가 종료 날짜보다 큽니다.",
       });
       this.hasErrorClass = true;
     },
@@ -275,7 +295,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
         return;
@@ -284,7 +304,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       this.$http
         .get(`/api/products/old_pro`, { params: this.searchItems })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -298,23 +318,6 @@ export default {
       var tmpName = `${rowData.name}_${rowData.categoryName}`;
       return tmpName;
     },
-    onDeleteConfirm(rowData) {
-      this.deleteId = rowData.id;
-      var user = sessionStorage.getItem("user_id");
-      var role = sessionStorage.getItem("authority");
-      if (user === rowData.editorID || role == "ADMIN") {
-        this.$bvModal.show("proRemove");
-      }
-    },
-    getRemove() {
-      return "삭제하시겠습니까?";
-    },
-    // 휴지통 보내기
-    onDelete() {
-      axios.delete(`/api/Mastering/pro/${this.deleteId}`).then(res => {
-        console.log(res);
-      });
-    },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;
       this.updateScreenName = "pro";
@@ -324,10 +327,23 @@ export default {
       this.metaUpdate = false;
     },
     masteringUpdate(e) {
-      axios.patch("/api/Mastering/pro", e).then(res => {
+      axios.patch("/api/Mastering/pro", e).then((res) => {
         console.log(res);
       });
-    }
-  }
+    },
+    DeleteModalOff() {
+      this.metaDelete = false;
+    },
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.deleteScreenName = "scr-spot";
+      this.rowData = rowData;
+    },
+    masteringDelete(e) {
+      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
+        console.log(res);
+      });
+    },
+  },
 };
 </script>
