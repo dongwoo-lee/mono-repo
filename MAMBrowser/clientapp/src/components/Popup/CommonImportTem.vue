@@ -333,56 +333,6 @@ export default {
         }
       }
     },
-    productFilter(arr) {
-      switch (arr.cartcode) {
-        case "S01G01C011":
-          arr.productType = "PUBLIC_FILE";
-          break;
-        case "S01G01C013":
-          arr.productType = "OLD_PRO";
-          break;
-        case "S01G01C017":
-          arr.productType = "SCR_SB";
-          break;
-        case "S01G01C010":
-          arr.productType = "SCR_SPOT";
-          break;
-        case "S01G01C018":
-          arr.productType = "PGM_CM";
-          break;
-        case "S01G01C019":
-          arr.productType = "CM";
-          break;
-        case "S01G01C012":
-          arr.productType = "REPOTE";
-          break;
-        case "S01G01C021":
-          arr.productType = "FILLER_PR";
-          break;
-        case "S01G01C022":
-          arr.productType = "FILLER_MT";
-          break;
-        case "S01G01C023":
-          arr.productType = "FILLER_TIME";
-          break;
-        case "S01G01C024":
-          arr.productType = "FILLER_ETC";
-          break;
-        case "S01G01C009":
-          arr.productType = "PGM";
-          break;
-        case "S01G01C016":
-          arr.productType = "MCR_SB";
-          break;
-        case "S01G01C020":
-          arr.productType = "MCR_SPOT";
-          break;
-
-        default:
-          break;
-      }
-      return arr;
-    },
   },
 };
 </script>

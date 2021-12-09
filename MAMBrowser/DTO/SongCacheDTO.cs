@@ -9,15 +9,15 @@
         /// <summary>
         /// 노래 제목
         /// </summary>
-        public string SongName { get; set; }
+        public string SongName { get; set; } //메인으로
         /// <summary>
         /// 앨범명
         /// </summary>
-        public string AlbumName { get; set; }
+        public string AlbumName { get; set; } 
         /// <summary>
         /// 가수명
         /// </summary>
-        public string ArtistName { get; set; }
+        public string ArtistName { get; set; } //서브
         /// <summary>
         /// 발매년도
         /// </summary>

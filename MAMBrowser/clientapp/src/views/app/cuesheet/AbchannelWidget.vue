@@ -59,8 +59,12 @@
         <template #product_Template="{ data }">
           <div v-if="data.data.subTitle != ''">
             <b-icon
-              icon="box-seam"
-              v-if="data.data.cartcode == 'S01G01C011'"
+              icon="disc"
+              v-if="data.data.cartcode == 'S01G01C007'"
+            ></b-icon>
+            <b-icon
+              icon="archive"
+              v-if="data.data.cartcode == 'S01G01C006'"
             ></b-icon>
             <b-icon
               icon="trophy"

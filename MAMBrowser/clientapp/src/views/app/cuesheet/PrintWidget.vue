@@ -320,6 +320,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations("cueList", ["SET_PRINTARR"]),
     calculateSalesAmount(rowData) {
       if (this.dataGrid.getRowIndexByKey(rowData.rownum) == 0) {
         if (this.cueInfo.r_ONAIRTIME == undefined) {
@@ -379,11 +380,7 @@ export default {
             }
           } else {
             row.usedtime = search_row.intDuration;
-            if (this.searchListData.cartcode == "S01G01C011") {
-              row.contents = search_row.title;
-            } else {
-              row.contents = search_row.name;
-            }
+            row.contents = search_row.name;
           }
           arrData.splice(e.toIndex + index, 0, row);
           this.rowData.rownum = this.rowData.rownum + 1;
@@ -403,10 +400,16 @@ export default {
           }
         } else {
           row.usedtime = search_row.intDuration;
-          if (this.searchListData.cartcode == "S01G01C011") {
-            row.contents = search_row.title;
-          } else {
-            row.contents = search_row.name;
+          switch (this.searchListData.cartcode) {
+            case "S01G01C007":
+              row.contents = search_row.title;
+              break;
+            case "S01G01C006":
+              row.contents = search_row.recName;
+              break;
+            default:
+              row.contents = search_row.name;
+              break;
           }
         }
         arrData.splice(e.toIndex, 0, row);
@@ -473,7 +476,7 @@ export default {
         }
         arrData = a;
       }
-      //this.SET_PRINTARR(arrData);
+      this.SET_PRINTARR(arrData);
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();

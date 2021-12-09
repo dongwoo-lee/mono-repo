@@ -631,63 +631,18 @@ export default {
 
                 }));
         },
-        productFilter({ }, arr) {
-            switch (arr.cartcode) {
-                case "S01G01C011":
-                    arr.productType = "PUBLIC_FILE";
-                    break;
-                case "S01G01C013":
-                    arr.productType = "OLD_PRO";
-                    break;
-                case "S01G01C017":
-                    arr.productType = "SCR_SB";
-                    break;
-                case "S01G01C010":
-                    arr.productType = "SCR_SPOT";
-                    break;
-                case "S01G01C018":
-                    arr.productType = "PGM_CM";
-                    break;
-                case "S01G01C019":
-                    arr.productType = "CM";
-                    break;
-                case "S01G01C012":
-                    arr.productType = "REPOTE";
-                    break;
-                case "S01G01C021":
-                    arr.productType = "FILLER_PR";
-                    break;
-                case "S01G01C022":
-                    arr.productType = "FILLER_MT";
-                    break;
-                case "S01G01C023":
-                    arr.productType = "FILLER_TIME";
-                    break;
-                case "S01G01C024":
-                    arr.productType = "FILLER_ETC";
-                    break;
-                case "S01G01C009":
-                    arr.productType = "PGM";
-                    break;
-                case "S01G01C016":
-                    arr.productType = "MCR_SB";
-                    break;
-                case "S01G01C020":
-                    arr.productType = "MCR_SPOT";
-                    break;
-
-                default:
-                    break;
-            }
-            return arr;
-        },
         //AB, C 필터
         cartCodeFilter({ }, payload) {
             switch (payload.row.cartcode) {
-                //공유소재
-                case "S01G01C011":
+                //MY 디스크
+                case "S01G01C007":
                     payload.row.maintitle = payload.search_row.title;
-                    payload.row.subtitle = payload.search_row.categoryName;
+                    payload.row.subtitle = payload.search_row.memo;
+                    break;
+                //DL30
+                case "S01G01C006":
+                    payload.row.maintitle = payload.search_row.recName;
+                    payload.row.subtitle = payload.search_row.sourceID;
                     break;
                 //(구)프로소재
                 case "S01G01C013":

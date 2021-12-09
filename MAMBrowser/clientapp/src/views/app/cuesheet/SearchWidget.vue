@@ -7,7 +7,7 @@
           class="item_size"
           :data-source="menuList_items"
           orientation="vertical"
-          :selectedItem="menuList_items[0]"
+          :selectedItem="menuList_items[2]"
           display-expr="name"
           :selectByClick="true"
           selectionMode="single"
@@ -63,8 +63,7 @@
           <div>
             <b-button
               variant="outline-primary default"
-              class="float-right"
-              style="margin: 10px"
+              class="search_ok_btn"
               type="submit"
               >검색</b-button
             >
@@ -75,6 +74,7 @@
     <div v-bind:class="search_table_size">
       <div>
         <DxDataGrid
+          id="search_data_grid"
           :data-source="searchtable_data.columns"
           :ref="dataGridRef"
           :height="gridHeight"
@@ -83,6 +83,7 @@
           :show-borders="true"
           :row-alternation-enabled="true"
           :columns="searchtable_columns"
+          width="500"
           :showRowLines="true"
           @selection-changed="onSelectionChanged"
           keyExpr="rowNO"
@@ -94,13 +95,29 @@
                 icon="music"
                 type="default"
                 hint="미리듣기"
+                styling-mode="outlined"
                 @click="onPreview(data.data)"
               />
             </div>
           </template>
-          <template #calculate_Template="{ data }">
+          <template #calculate_MB_Template="{ data }">
             <div>
-              {{ Math.round((data.data.fileSize / 1024 / 1024).toFixed(2)) }}
+              {{
+                Math.round(
+                  (data.data.fileSize / 1024 / 1024 + Number.EPSILON) * 100
+                ) /
+                  100 +
+                "MB"
+              }}
+            </div>
+          </template>
+          <template #calculate_KB_Template="{ data }">
+            <div>
+              {{
+                Math.round((data.data.fileSize / 1024 + Number.EPSILON) * 100) /
+                  100 +
+                "KB"
+              }}
             </div>
           </template>
           <template #row_Template="{ data }">
@@ -108,13 +125,20 @@
               <div>{{ data.rowIndex + 1 }}</div>
             </div>
           </template>
+          <template #duration_Template="{ data }">
+            <div>
+              <div>{{ data.data.duration.substring(0, 8) }}</div>
+            </div>
+          </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling mode="virtual" />
+          <DxPaging :enabled="false" />
+          <DxScrolling column-rendering-mode="virtual" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
         <DxDataGrid
+          id="search_data_grid"
           :data-source="subtable_data"
           :ref="dataGridRef"
           :height="gridHeight"
@@ -124,6 +148,7 @@
           :row-alternation-enabled="true"
           :columns="subtable_columns"
           :showRowLines="true"
+          column-auto-width="true"
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
@@ -133,13 +158,14 @@
                 icon="music"
                 type="default"
                 hint="미리듣기"
+                styling-mode="outlined"
                 @click="onPreview(data.data)"
               />
             </div>
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling mode="virtual" />
+          <DxScrolling column-rendering-mode="virtual" />
         </DxDataGrid>
       </div>
       <PlayerPopup
@@ -167,6 +193,7 @@ import {
   DxScrolling,
   DxSelection,
   DxRowDragging,
+  DxPaging,
 } from "devextreme-vue/data-grid";
 import { USER_ID } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
@@ -202,38 +229,87 @@ export default {
       subtable_data: [],
       subtable_columns: [],
       sbFields: [
-        { dataField: "rowNO", caption: "순서" },
-        { dataField: "categoryID", caption: "구분" },
-        { dataField: "categoryName", caption: "광고주명/분류명" },
-        { dataField: "id", caption: "소재ID" },
-        { dataField: "name", caption: "소재명" },
+        {
+          dataField: "rowNO",
+          caption: "순서",
+          width: "7.5%",
+          alignment: "center",
+        },
+        {
+          dataField: "categoryID",
+          caption: "구분",
+          width: "8%",
+          alignment: "center",
+        },
+        {
+          dataField: "categoryName",
+          caption: "광고주명/분류명",
+          width: "20%",
+          alignment: "center",
+        },
+        {
+          dataField: "id",
+          caption: "소재ID",
+          width: "17%",
+          alignment: "center",
+        },
+        {
+          dataField: "name",
+          caption: "소재명",
+          width: "30%",
+          alignment: "center",
+        },
         {
           dataField: "length",
-          caption: "길이(초)",
-          format: "00:00:hh.mm",
-          dataType: "date",
+          caption: "길이",
+          width: "10%",
+          alignment: "center",
         },
-        { dataField: "__slot:actions", caption: "추가작업" },
+        {
+          cellTemplate: "play_Template",
+          caption: "작업",
+          width: "7%",
+          alignment: "center",
+        },
       ],
       cmFields: [
         {
           dataField: "rowNO",
           caption: "순서",
-          width: "50px",
+          width: "7.5%",
           alignment: "center",
         },
-        { dataField: "advertiser", caption: "광고주" },
-        { dataField: "name", caption: "소재명" },
+        {
+          dataField: "advertiser",
+          caption: "광고주",
+          width: "25%",
+          alignment: "center",
+        },
+        {
+          dataField: "name",
+          caption: "소재명",
+          width: "33%",
+          alignment: "center",
+        },
         {
           dataField: "length",
           caption: "길이(초)",
-          format: "00:00:hh.mm",
-          dataType: "date",
-          width: "95px",
+          width: "10%",
+          alignment: "center",
         },
-        // { dataField: "codingUserID", caption: "제작자", width: "80px" },
-        { dataField: "codingDT", caption: "제작일", width: "90px" },
-        { dataField: "__slot:actions", caption: "추가작업", width: "70px" },
+        {
+          dataField: "codingDT",
+          caption: "제작일",
+          width: "90px",
+          width: "18%",
+          alignment: "center",
+        },
+        {
+          cellTemplate: "play_Template",
+          caption: "작업",
+          width: "7%",
+          alignment: "center",
+        },
       ],
     };
   },
@@ -251,6 +327,7 @@ export default {
     DxRowDragging,
     DxButton,
     mapMutations,
+    DxPaging,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -401,8 +478,6 @@ export default {
             }
           });
         }
-        console.log("this.searchDataList.options");
-        console.log(this.searchDataList.options);
       });
     },
     // 서브 데이터 조회
@@ -426,11 +501,18 @@ export default {
         this.SET_SEARCHLISTDATA(this.searchtable_data);
       });
     },
+    // onRowPrepared(e) {
+    //   e.rowElement.css({ height: 100 });
+    // },
   },
 };
 </script>
 
 <style>
+#search_data_grid .dx-row {
+  height: 30px;
+  line-height: 25px;
+}
 .search_view {
   height: 330px;
   display: grid;
@@ -468,7 +550,7 @@ export default {
   gap: 0px 15px;
 }
 .item_size_big .dx-item-content {
-  line-height: 3;
+  line-height: 3.8;
   height: auto;
   width: 100px;
 }
@@ -490,6 +572,17 @@ export default {
   display: flex;
   gap: 15px;
   flex-direction: column;
+}
+.search_ok_btn {
+  width: 90%;
+  height: 35px;
+  margin: 15px 0px 0px 15px;
+  padding: 2;
+}
+#search_data_grid .dx-button-content {
+  width: 25px;
+  height: 25px;
+  padding: 0;
 }
 /* select CSS */
 .dx-rtl

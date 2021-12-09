@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="right_view">
-            <div class="ab_channel">
+            <div>
               <SearchWidget :width_size="490" />
             </div>
           </div>
