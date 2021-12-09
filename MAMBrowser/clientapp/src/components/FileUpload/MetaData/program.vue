@@ -335,9 +335,6 @@ export default {
   color: silver;
 }
 .dx-row :hover {
-  background-color: #f5f5f5 !important;
-}
-.selected {
-  background-color: gray !important;
+  background-color: #f5f5f5;
 }
 </style>
