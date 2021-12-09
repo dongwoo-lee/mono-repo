@@ -29,6 +29,7 @@ using M30_CueSheetDAO.DAO;
 using M30_CueSheetDAO.Interfaces;
 using M30_CueSheetDAO;
 using M30.AudioFile.DAL.Expand.Factories.Web;
+using M30.AudioFile.DAL.WebService;
 
 namespace MAMBrowser
 {
@@ -185,14 +186,20 @@ namespace MAMBrowser
         private void StorageFactorySetting(IServiceCollection services)
         {
             //스토리지 연결정보 팩토리구성
-            //services.AddTransient(serviceProvider =>
-            //{
-            //    var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
-            //    var musicService = storagesSection.Get<MusicService>();
-            //    return musicService;
-            //});
-
-            services.AddTransient<MusicService>();
+            services.AddTransient<MusicWebService>(serviceProvider =>
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
+                var storage = storagesSection.Get<ExternalStorage>();
+                var logger = serviceProvider.GetRequiredService<ILogger<MusicWebService>>();
+                return new MusicWebService(logger, Startup.AppSetting.TempDownloadPath, storage, Startup.AppSetting.ExpireMusicTokenHour);
+            });
+            services.AddTransient(serviceProvider =>
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
+                var storage = storagesSection.Get<StorageManager>();
+                storage.FileSystem = GetProtocol(storage);
+                return storage;
+            });
             services.AddTransient(serviceProvider =>
             {
                 var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");

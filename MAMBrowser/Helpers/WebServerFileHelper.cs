@@ -69,7 +69,7 @@ namespace MAMBrowser.Helper
                 string fileName = Path.GetFileName(filePath);
                 //파형검색시 mp2파일은 wav로 치환됨.
                 fileName = Path.GetExtension(fileName).ToUpper() == Define.MP2 ? fileName.ToUpper().Replace(Define.MP2, Define.WAV) : fileName;
-                string tempSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+                string tempSoundPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, fileName);
                 return MAMUtility.GetWaveformCore(tempSoundPath);
             }
             else
@@ -96,7 +96,7 @@ namespace MAMBrowser.Helper
             {
                 contentType = "application/octet-stream";
             }
-            string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            string tempDownloadedPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, fileName);
             var result = new PhysicalFileResult(tempDownloadedPath, contentType);
             result.EnableRangeProcessing = true;
             return result;
@@ -134,12 +134,12 @@ namespace MAMBrowser.Helper
             string fileName = Path.GetFileName(filePath);
             //파형검색시 mp2파일은 wav로 치환됨.
             fileName = Path.GetExtension(fileName).ToUpper() == Define.MP2 ? fileName.ToUpper().Replace(Define.MP2, Define.WAV) : fileName;
-            string tempSoundPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            string tempSoundPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, fileName);
             return MAMUtility.GetWaveformCore(tempSoundPath);
         }
         public IActionResult StreamingFromPath(string filePath, string userId, string remoteIp)
         {
-            string relativePath = MAMUtility.GetRelativePath(filePath);
+            string relativePath = CommonUtility.GetRelativePath(filePath);
             string fileName = Path.GetFileName(filePath);
             fileName = Path.GetExtension(fileName).ToUpper() == Define.MP2 ? fileName.ToUpper().Replace(Define.MP2, Define.WAV) : fileName;
             //if (direct.ToUpper() == "Y")
@@ -155,7 +155,7 @@ namespace MAMBrowser.Helper
             {
                 contentType = "application/octet-stream";
             }
-            string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            string tempDownloadedPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, fileName);
             var result = new PhysicalFileResult(tempDownloadedPath, contentType);
             result.EnableRangeProcessing = true;
             return result;
@@ -170,7 +170,7 @@ namespace MAMBrowser.Helper
             {
                 contentType = "application/octet-stream";
             }
-            string tempDownloadedPath = MAMUtility.GetTempFilePath(userId, remoteIp, fileName);
+            string tempDownloadedPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, fileName);
             var result = new PhysicalFileResult(tempDownloadedPath, contentType);
             result.EnableRangeProcessing = true;
             return result;

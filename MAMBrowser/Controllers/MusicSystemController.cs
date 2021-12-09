@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
+using M30.AudioFile.DAL.WebService;
 
 namespace MAMBrowser.Controllers
 {
@@ -31,10 +32,10 @@ namespace MAMBrowser.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
-        private readonly MusicService _fileService;
+        private readonly MusicWebService _fileService;
         private readonly WebServerFileHelper _fileHelper;
-        private readonly ILogger<MusicService> _logger;
-        public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicService fileService, WebServerFileHelper fileHelper, ILogger<MusicService> logger)
+        private readonly ILogger<MusicSystemController> _logger;
+        public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicWebService fileService, WebServerFileHelper fileHelper, ILogger<MusicSystemController> logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
@@ -128,8 +129,8 @@ namespace MAMBrowser.Controllers
         [HttpGet("files")]
         public IActionResult MusicDownload([FromQuery] string token, [FromQuery] string downloadName, [FromQuery] string inline = "N")
         {
-            var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
-            var musicInfo = MAMUtility.ParseToRequestContent(token);
+            var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(token);
+            var musicInfo = CommonUtility.ParseToRequestContent(token);
             var requestInfo = _fileService.GetRequestInfo(musicInfo);
             string contentType = "audio/wav";
             long fileSize;
@@ -152,7 +153,7 @@ namespace MAMBrowser.Controllers
         [HttpGet("streaming")]
         public IActionResult MusicStreaming([FromQuery] string token, [FromQuery] string userId, [FromQuery] string direct = "N")
         {
-            var decodedFilePath = MAMUtility.GetFilePathFromMusicToken(token);
+            var decodedFilePath = CommonUtility.GetFilePathFromMusicToken(token);
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
@@ -171,7 +172,7 @@ namespace MAMBrowser.Controllers
         [HttpGet("waveform")]
         public ActionResult<List<float>> MusicGetWaveform([FromQuery] string token, [FromQuery] string userId)
         {
-            var decodedFilePath = MAMUtility.GetFilePathFromMusicToken(token);
+            var decodedFilePath = CommonUtility.GetFilePathFromMusicToken(token);
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             try
             {
@@ -202,8 +203,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
-                var jsonMusicInfo = MAMUtility.ParseToJsonRequestContent(token);
-                var musicInfo = MAMUtility.ParseToRequestContent(token);
+                var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(token);
+                var musicInfo = CommonUtility.ParseToRequestContent(token);
                 var requestInfo = _fileService.GetRequestInfo(musicInfo);
                 var fileName = requestInfo[2] as string;
 
