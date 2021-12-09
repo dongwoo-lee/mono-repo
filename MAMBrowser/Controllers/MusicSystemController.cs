@@ -32,14 +32,15 @@ namespace MAMBrowser.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly AppSettings _appSesstings;
-        private readonly MusicWebService _fileService;
+        private readonly IMusicService _fileService;
         private readonly WebServerFileHelper _fileHelper;
         private readonly ILogger<MusicSystemController> _logger;
         public MusicSystemController(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSesstings, MusicWebService fileService, WebServerFileHelper fileHelper, ILogger<MusicSystemController> logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
-            _fileService = fileService;
+            //_fileService = fileService;
+            _fileService = new MusicSystemMockup();
             _fileHelper = fileHelper;
             _logger = logger;
         }
