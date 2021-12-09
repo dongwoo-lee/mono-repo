@@ -72,7 +72,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="effect.xml">
+    <None Update="Mockup\song.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mockup\effect.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="lyrics.xml">
