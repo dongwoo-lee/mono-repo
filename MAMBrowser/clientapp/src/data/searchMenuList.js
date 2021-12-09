@@ -88,12 +88,13 @@ let searchMenuList = {
         [
           {
             num: 0,
-            id: "",
+            id: "MUSIC",
             cartcode: "S01G01C020",
             name: "음반 기록실",
             options:
               [
                 {
+                  id: "searchtype1",
                   text: "대분류",
                   value:
                     [
@@ -104,6 +105,7 @@ let searchMenuList = {
                   type: "C"
                 },
                 {
+                  id: "gradetype",
                   text: "검색옵션",
                   value:
                     [
@@ -115,19 +117,21 @@ let searchMenuList = {
                   type: "C"
                 },
                 {
+                  id: "searchtype2",
                   text: "소분류",
                   value:
                     [
-                      { text: '전체', value: 'song_idx' },
-                      { text: '곡명', value: 'song_name_idx' },
-                      { text: '곡명/아티스트', value: 'songname_artist_idx' },
-                      { text: '아티스트', value: 'song_artist_idx' },
-                      { text: '배열번호', value: 'song_disc_arr_num_idx' },
-                      { text: '국가명', value: 'song_country_name_idx' }
+                      { text: '전체', value: "song_idx" },
+                      { text: '곡명', value: "song_name_idx" },
+                      { text: '곡명/아티스트', value: "songname_artist_idx" },
+                      { text: '아티스트', value: "song_artist_idx" },
+                      { text: '배열번호', value: "song_disc_arr_num_idx" },
+                      { text: '국가명', value: "song_country_name_idx" }
                     ],
                   type: "S"
                 },
                 {
+                  id: "searchtext",
                   text: "검색어",
                   value: "",
                   type: "T"
@@ -135,7 +139,7 @@ let searchMenuList = {
               ],
             columns:
               [
-                { dataField: "rowNO", caption: "순서" },
+                { dataField: "rowNO", minWidth: "50", caption: "순서" },
                 { dataField: "name", caption: "곡명" },
                 { dataField: "artistName", caption: "아티스트" },
                 { dataField: "duration", caption: "재생시간" },
@@ -201,7 +205,7 @@ let searchMenuList = {
           //   ],
           //   columns:
           //     [
-          //       { dataField: "rowNO", caption: "순서" },
+          //       { dataField: "rowNO",minWidth: "50", caption: "순서" },
           //       { dataField: "categoryName", caption: "분류" },
           //       { dataField: "title", caption: "제목" },
           //       { dataField: "memo", caption: "메모" },
@@ -263,7 +267,7 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "21%", alignment: "center" },
               { dataField: "categoryName", caption: "분류", width: "17%", alignment: "center" },
               { dataField: "duration", caption: "길이(초)", width: "9%", alignment: "center" },
@@ -271,7 +275,7 @@ let searchMenuList = {
               { dataField: "editDtm", caption: "최종편집일시", width: "15%", alignment: "center" },
               { dataField: "masteringDtm", caption: "마스터링 일시", width: "15%", alignment: "center" },
               { dataField: "proType", caption: "타입", width: "7%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "5%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" }
             ],
           },
           {
@@ -358,7 +362,7 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "22%", alignment: "center" },
               { dataField: "categoryName", caption: "분류", width: "8%", alignment: "center" },
               { cellTemplate: "duration_Template", caption: "길이(초)", width: "8%", alignment: "center" },
@@ -366,7 +370,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "제작자", width: "8%", alignment: "center" },
               { dataField: "pgmName", caption: "사용처명", width: "22%", alignment: "center" },
               { dataField: "masteringDtm", caption: "마스터링 일시", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           },
           {
@@ -510,7 +514,7 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "14%", alignment: "center" },
               { dataField: "reporter", caption: "취재인", width: "7%", alignment: "center" },
               { dataField: "pgmName", caption: "사용처명", width: "17%", alignment: "center" },
@@ -519,7 +523,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "제작자", width: "8%", alignment: "center" },
               { dataField: "editDtm", caption: "최종편집일시", width: "15%", alignment: "center" },
               { dataField: "masteringDtm", caption: "마스터링 일시", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           },
           {
@@ -535,7 +539,7 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서" },
               { dataField: "name", caption: "효과음명" },
               { dataField: "description", caption: "설명" },
               { dataField: "duration", caption: "길이(초)" },
@@ -579,7 +583,7 @@ let searchMenuList = {
               }
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "categoryName", caption: "분류", width: "13%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "23%", alignment: "center" },
               { dataField: "brdDT", caption: "방송유효일", width: "8%", alignment: "center" },
@@ -587,7 +591,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "편집자", width: "10%", alignment: "center" },
               { dataField: "editDtm", caption: "편집일자", width: "15%", alignment: "center" },
               { dataField: "masteringDtm", caption: "마스터링일자", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           },
           {
@@ -628,7 +632,7 @@ let searchMenuList = {
               }
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "categoryName", caption: "분류", width: "13%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "23%", alignment: "center" },
               { dataField: "brdDT", caption: "방송유효일", width: "8%", alignment: "center" },
@@ -636,7 +640,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "편집자", width: "10%", alignment: "center" },
               { dataField: "editDtm", caption: "편집일자", width: "15%", alignment: "center" },
               { dataField: "masteringDtm", caption: "마스터링일자", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           },
           {
@@ -693,29 +697,17 @@ let searchMenuList = {
               },
             ],
             columns: [
-              // { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
-              // { dataField: "name", caption: "소재명", width: "16%", alignment: "center" },
-              // { dataField: "brdDate", caption: "방송개시일", width: "8%", alignment: "center" },
-              // { dataField: "endDT", caption: "방송종료일", width: "8%", alignment: "center" },
-              // { dataField: "status", caption: "상태", width: "6%", alignment: "center" },
-              // { cellTemplate: "duration_Template", caption: "길이(초)", width: "7%", alignment: "center" },
-              // { dataField: "editorName", caption: "편집자", width: "5%", alignment: "center" },
-              // { dataField: "editDtm", caption: "최종편집일시", width: "15%", alignment: "center" },
-              // { dataField: "fileName", caption: "파일명", width: "12%", alignment: "center" },
-              // { dataField: "masteringDtm", caption: "마스터링일자", width: "15%", alignment: "center" },
-              // { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
-
-              { dataField: "rowNO", caption: "순서", alignment: "center" },
-              { dataField: "name", caption: "소재명", alignment: "center" },
-              { dataField: "brdDate", caption: "방송개시일", alignment: "center" },
-              { dataField: "endDT", caption: "방송종료일", alignment: "center" },
-              { dataField: "status", caption: "상태", alignment: "center" },
-              { cellTemplate: "duration_Template", caption: "길이(초)", alignment: "center" },
-              { dataField: "editorName", caption: "편집자", alignment: "center" },
-              { dataField: "editDtm", caption: "최종편집일시", alignment: "center" },
-              { dataField: "fileName", caption: "파일명", alignment: "center" },
-              { dataField: "masteringDtm", caption: "마스터링일자", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", alignment: "center" }
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "name", caption: "소재명", width: "16%", alignment: "center" },
+              { dataField: "brdDate", caption: "방송개시일", width: "8%", alignment: "center" },
+              { dataField: "endDT", caption: "방송종료일", width: "8%", alignment: "center" },
+              { dataField: "status", caption: "상태", width: "6%", alignment: "center" },
+              { cellTemplate: "duration_Template", caption: "길이(초)", width: "7%", alignment: "center" },
+              { dataField: "editorName", caption: "편집자", width: "5%", alignment: "center" },
+              { dataField: "editDtm", caption: "최종편집일시", width: "15%", alignment: "center" },
+              { dataField: "fileName", caption: "파일명", width: "12%", alignment: "center" },
+              { dataField: "masteringDtm", caption: "마스터링일자", width: "15%", alignment: "center" },
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           },
           {
@@ -756,7 +748,7 @@ let searchMenuList = {
               }
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "categoryName", caption: "분류", width: "13%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "23%", alignment: "center" },
               { dataField: "brdDT", caption: "방송유효일", width: "8%", alignment: "center" },
@@ -764,7 +756,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "편집자", width: "10%", alignment: "center" },
               { dataField: "editDtm", caption: "편집일자", width: "15%", alignment: "center" },
               { dataField: "masteringDtm", caption: "마스터링일자", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           },
           {
@@ -801,26 +793,12 @@ let searchMenuList = {
               },
             ],
             columns: [
-              // { dataField: "rowNO", caption: "순서", width: "5%", alignment: "center" },
-              // { dataField: "title", caption: "제목", width: "36%", alignment: "center" },
-              // { dataField: "memo", caption: "메모", width: "36%", alignment: "center" },
-              // { cellTemplate: "calculate_KB_Template", caption: "파일사이즈", width: "10%", alignment: "center" },
-              // { dataField: "editedDtm", caption: "등록일시", width: "18%", alignment: "center" },
-              // { cellTemplate: "play_Template", caption: "작업", width: "5%", alignment: "center" },
-
-              { dataField: "rowNO", caption: "순서", width: "200px", alignment: "center" },
-              { dataField: "title", caption: "제목", width: "200px", alignment: "center" },
-              { dataField: "memo", caption: "메모", width: "200px", alignment: "center" },
-              { cellTemplate: "calculate_KB_Template", caption: "파일사이즈", width: "300px", alignment: "center" },
-              { dataField: "editedDtm", caption: "등록일시", width: "500px", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "300px", alignment: "center" },
-
-              // { dataField: "rowNO", caption: "순서", alignment: "center" },
-              // { dataField: "title", caption: "제목", alignment: "center" },
-              // { dataField: "memo", caption: "메모", alignment: "center" },
-              // { cellTemplate: "calculate_KB_Template", caption: "파일사이즈", alignment: "center" },
-              // { dataField: "editedDtm", caption: "등록일시", alignment: "center" },
-              // { cellTemplate: "play_Template", caption: "작업", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "5%", alignment: "center" },
+              { dataField: "title", caption: "제목", width: "36%", alignment: "center" },
+              { dataField: "memo", caption: "메모", width: "36%", alignment: "center" },
+              { cellTemplate: "calculate_KB_Template", caption: "파일사이즈", width: "10%", alignment: "center" },
+              { dataField: "editedDtm", caption: "등록일시", width: "18%", alignment: "center" },
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" },
             ],
           },
           {
@@ -862,7 +840,7 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "mediaName", caption: "매체", width: "4%", alignment: "center" },
               { dataField: "name", caption: "프로그램명", width: "21%", alignment: "center" },
               { dataField: "brdDT", caption: "방송일", width: "8%", alignment: "center" },
@@ -872,7 +850,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "제작자", width: "6%", alignment: "center" },
               { dataField: "editDtm", caption: "최종편집일시", width: "15%", alignment: "center" },
               { dataField: "reqCompleteDtm", caption: "방송의뢰일시", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" },
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" },
             ],
           },
           {
@@ -909,14 +887,14 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "brdDate", caption: "송출일시", width: "15%", alignment: "center" },
               { dataField: "recName", caption: "녹음소재명", width: "30%", alignment: "center" },
               { dataField: "sourceID", caption: "Source ID", width: "15%", alignment: "center" },
               { cellTemplate: "duration_Template", caption: "녹음분량", width: "8%", alignment: "center" },
               { cellTemplate: "calculate_MB_Template", caption: "파일사이즈", width: "9%", alignment: "center" },//변환해야함
               { dataField: "regDtm", caption: "등록일시", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" },
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" },
             ],
           },
           {
@@ -997,7 +975,7 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
               { dataField: "name", caption: "소재명", width: "30%", alignment: "center" },
               { dataField: "brdDT", caption: "방송일", width: "8%", alignment: "center" },
               { dataField: "status", caption: "상태", width: "6%", alignment: "center" },
@@ -1005,7 +983,7 @@ let searchMenuList = {
               { dataField: "editorName", caption: "제작자", width: "8%", alignment: "center" },
               { dataField: "editDtm", caption: "최종편집일시", width: "15%", alignment: "center" },
               { dataField: "reqCompleteDtm", caption: "방송의뢰일시", width: "15%", alignment: "center" },
-              { cellTemplate: "play_Template", caption: "작업", width: "4%", alignment: "center" }
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "4%", alignment: "center" }
             ],
           }
         ]

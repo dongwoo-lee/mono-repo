@@ -63,8 +63,8 @@
           <div>
             <b-button
               variant="outline-primary default"
-              class="search_ok_btn"
               type="submit"
+              class="search_ok_btn"
               >검색</b-button
             >
           </div>
@@ -83,7 +83,6 @@
           :show-borders="true"
           :row-alternation-enabled="true"
           :columns="searchtable_columns"
-          width="500"
           :showRowLines="true"
           @selection-changed="onSelectionChanged"
           keyExpr="rowNO"
@@ -133,7 +132,7 @@
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxPaging :enabled="false" />
-          <DxScrolling column-rendering-mode="virtual" />
+          <DxScrolling mode="virtual" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -148,7 +147,6 @@
           :row-alternation-enabled="true"
           :columns="subtable_columns"
           :showRowLines="true"
-          column-auto-width="true"
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
@@ -165,7 +163,7 @@
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling column-rendering-mode="virtual" />
+          <DxScrolling mode="virtual" />
         </DxDataGrid>
       </div>
       <PlayerPopup
@@ -374,7 +372,7 @@ export default {
       }
     },
     //검색
-    async onSubmit(e) {
+    onSubmit(e) {
       const userId = sessionStorage.getItem(USER_ID);
       e.preventDefault();
       const selectOptions = this.searchDataList.options.filter(
@@ -385,10 +383,15 @@ export default {
         if (typeof ele.selectVal != "object") {
           result[ele.id] = ele.selectVal;
         } else {
-          result[ele.id] = ele.selectVal[0];
+          if (typeof ele.selectVal[0] == "string") {
+            result[ele.id] = ele.selectVal[0];
+          } else {
+            var sum = ele.selectVal.reduce((a, b) => a + b);
+            result[ele.id] = sum;
+          }
         }
       });
-      await this.getData(result);
+      this.getData(result);
       switch (this.searchDataList.id) {
         case "MCR_SB":
           this.subtableVal = true;
@@ -490,16 +493,16 @@ export default {
       });
     },
     async getData(Val) {
-      var basedata = this.searchItems;
-      const result = Object.assign({}, basedata, Val);
-      await axios(`/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`, {
-        params: result,
-      }).then((res) => {
-        this.searchtable_data.cartcode = this.searchDataList.cartcode;
-        this.searchtable_data.columns = res.data.result.data;
-        this.searchtable_columns = this.searchDataList.columns;
-        this.SET_SEARCHLISTDATA(this.searchtable_data);
-      });
+      // var basedata = this.searchItems;
+      // const result = Object.assign({}, basedata, Val);
+      // await axios(`/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`, {
+      //   params: result,
+      // }).then((res) => {
+      //   this.searchtable_data.cartcode = this.searchDataList.cartcode;
+      //   this.searchtable_data.columns = res.data.result.data;
+      //   this.searchtable_columns = this.searchDataList.columns;
+      //   this.SET_SEARCHLISTDATA(this.searchtable_data);
+      // });
     },
     // onRowPrepared(e) {
     //   e.rowElement.css({ height: 100 });
@@ -555,7 +558,7 @@ export default {
   width: 100px;
 }
 .item_size_sm .dx-item-content {
-  line-height: 2.1;
+  line-height: 2.65;
   height: auto;
   width: 100px;
 }
@@ -574,9 +577,10 @@ export default {
   flex-direction: column;
 }
 .search_ok_btn {
-  width: 90%;
+  float: right;
+  width: 150px;
   height: 35px;
-  margin: 15px 0px 0px 15px;
+  margin: 15px 30px 0px 15px;
   padding: 2;
 }
 #search_data_grid .dx-button-content {

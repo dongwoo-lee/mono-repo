@@ -1,9 +1,12 @@
-﻿using M30.AudioFile.Common.Expand.Builder;
+﻿using M30.AudioFile.Common;
+using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Expand.Builder;
 using M30.AudioFile.Common.Expand.CommonType;
 using M30.AudioFile.Common.Expand.Menus;
 using M30.AudioFile.Common.Expand.Result;
 using M30.AudioFile.Common.Expand.SearchOptions;
 using M30.AudioFile.DAL.Expand.Factories.Web;
+using M30.AudioFile.DAL.WebService;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +16,11 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class SearchMenuController : ControllerBase
     {
+        private readonly IMusicService _fileService;
+        public SearchMenuController(MusicWebService fileService)
+        {
+            _fileService = new MusicSystemMockup();
+        }
         public class Pram
         {
             public string startDate { get; set; }
@@ -38,6 +46,12 @@ namespace MAMBrowser.Controllers
             public int selectpage { get; set; }
             public string sortKey { get; set; }
             public string sortValue { get; set; }
+
+            public int searchType1 { get; set; }
+            public string searchType2 { get; set; }
+            public int gradeType { get; set; }
+            public string searchText { get; set; }
+
         }
 
         #region 소재검색 옵션
@@ -111,7 +125,7 @@ namespace MAMBrowser.Controllers
                 Title = pram.title,
                 Memo = pram.memo
 
-            };
+            }; 
 
             return MAMWebFactory.Instance.Search<MyDiskResultDTO>(dto);
         }
@@ -129,6 +143,23 @@ namespace MAMBrowser.Controllers
             };
 
             return MAMWebFactory.Instance.Search<DL30ResultDTO>(dto);
+        }
+        //MUSIC
+        [HttpGet("GetSearchTable/MUSIC")]
+        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> GetMUSIC([FromQuery] Pram pram)
+        {
+            long totalCount = 0; 
+            //var result = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+            //var dto = new DL30SearchOptionDTO()
+            //{
+            //    brd_dt = pram.brddate,
+            //    deviceSeq = pram.deviceSeq,
+            //    media = pram.media,
+            //    name = pram.name,
+
+            //};
+
+            return null;
         }
         //프로그램
         [HttpGet("GetSearchTable/PGM")]

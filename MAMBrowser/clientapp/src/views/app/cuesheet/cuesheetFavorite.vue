@@ -12,13 +12,6 @@
                 <h1>즐겨찾기 편집</h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
-              <!-- <div class="subtitle">
-                <span class="sub_text">
-                  <span class="subtitle_css">●</span>
-                  수정일 :
-                  <span> {{ cuesheetData.edittime }} </span>
-                </span>
-              </div> -->
               <div class="button_view_fav">
                 <ButtonWidget :fav="true" :type="type" />
               </div>
