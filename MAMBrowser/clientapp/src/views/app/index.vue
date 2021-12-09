@@ -28,7 +28,7 @@
 
 <script>
 import AppLayout from "@/layouts/AppLayout";
-import FileUpload from "@/components/FileUpload/FileUpload";
+import FileUpload from "@/components/FileUpload/FileMastering";
 import FileDragUploadForm from "@/components/File/FileDragUploadForm";
 import FileUploadingToast from "@/components/File/FileUploadingToast";
 import FileUploadPopup from "@/components/File/FileUploadPopup";
@@ -49,12 +49,12 @@ export default {
     FileUploadPopup,
     FileMetaDataPopup,
     LoginPopup,
-    MyDiskCopyLooadingOverlay
+    MyDiskCopyLooadingOverlay,
   },
   data() {
     return {
       DragFileModalState: false,
-      FileDragState: false
+      FileDragState: false,
     };
   },
   watch: {
@@ -71,8 +71,8 @@ export default {
           this.isActive = false;
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -96,7 +96,7 @@ export default {
     },
     FileDrop() {
       this.DragFileModalState = false;
-    }
-  }
+    },
+  },
 };
 </script>

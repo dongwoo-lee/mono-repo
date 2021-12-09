@@ -300,7 +300,6 @@ export default {
   },
   methods: {
     authorityCheck(e) {
-      console.log(e);
       if (
         e.editorID == sessionStorage.getItem("user_id") ||
         sessionStorage.getItem("authority") == "ADMIN"

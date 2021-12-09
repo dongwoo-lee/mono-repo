@@ -175,7 +175,6 @@ export default {
     axios.get("/api/options/S01G06C001").then((res) => {
       res.data.resultObject.data.forEach((e) => {
         this[e.name] = e.value;
-        console.log(e);
       });
     });
   },

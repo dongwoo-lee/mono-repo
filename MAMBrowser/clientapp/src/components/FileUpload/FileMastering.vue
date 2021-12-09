@@ -360,7 +360,7 @@
 <script>
 import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
-import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
+import CommonVueSelect from "../Form/CommonVueSelect.vue";
 import MetaModal from "./MetaModal";
 import list from "./list.vue";
 import axios from "axios";
@@ -395,6 +395,7 @@ export default {
       logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
       logEDate: "2021-11-10", //TODO: 오늘 날짜로 설정
       editorOptions: [],
+      editorIdList: [],
       logEditor: "",
     };
   },
@@ -503,10 +504,18 @@ export default {
     },
     logSearch() {
       var user_id;
+
+      this.editorOptions.forEach((e) => {
+        this.editorIdList.push(e.id);
+      });
+
       if (sessionStorage.getItem("authority") == "ADMIN") {
-        console.log(this.logEditor);
-        if (this.logEditor != null) {
+        if (this.logEditor == "") {
           user_id = this.logEditor;
+        } else if (this.editorIdList.includes(this.logEditor)) {
+          user_id = this.logEditor;
+        } else {
+          user_id = sessionStorage.getItem("user_id");
         }
       } else {
         user_id = sessionStorage.getItem("user_id");

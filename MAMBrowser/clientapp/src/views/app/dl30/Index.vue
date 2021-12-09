@@ -106,10 +106,11 @@
                   :rowData="data.item"
                   :behaviorData="behaviorList"
                   :etcData="['delete']"
+                  :isPossibleDelete="authorityCheck(props.props.rowData)"
                   @preview="onPreview"
                   @download="onDownloadDl30"
                   @mydiskCopy="onCopyToMySpacePopup"
-                  @MasteringDelete="onDeleteConfirm"
+                  @MasteringDelete="onMetaDeletePopup"
                 />
               </template>
             </b-table>
@@ -117,14 +118,16 @@
         </b-row>
       </template>
     </common-form>
-    <!-- 삭제 -->
-    <common-confirm
-      id="dlRemove"
-      title="삭제?"
-      :message="getRemove()"
-      submitBtn="이동"
-      @ok="onDelete()"
-    />
+    <!-- 마스터링 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        :updateScreenName="deleteScreenName"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
     <CopyToMySpacePopup
       ref="refCopyToMySpacePopup"
       :show="copyToMySpacePopup"
@@ -150,12 +153,15 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 export default {
-  components: { CopyToMySpacePopup },
+  components: { CopyToMySpacePopup, FileDelete },
   mixins: [MixinBasicPage],
   data() {
     return {
       deleteId: "",
+      metaDelete: false,
+      deleteScreenName: "",
       streamingUrl: "/api/Products/dl30-streaming",
       waveformUrl: "/api/Products/dl30-waveform",
       tempDownloadUrl: "/api/Products/dl30-temp-download",
@@ -245,19 +251,26 @@ export default {
     this.getDlDeviceOptions();
   },
   methods: {
-    onDeleteConfirm(rowData) {
-      this.deleteId = rowData.id;
-      var role = sessionStorage.getItem("authority");
-      if (role == "ADMIN") {
-        this.$bvModal.show("fillerTimeRemove");
+    authorityCheck(e) {
+      if (
+        e.editorID == sessionStorage.getItem("user_id") ||
+        sessionStorage.getItem("authority") == "ADMIN"
+      ) {
+        return true;
+      } else {
+        return false;
       }
     },
-    getRemove() {
-      return "삭제하시겠습니까?";
+    DeleteModalOff() {
+      this.metaDelete = false;
     },
-    // 휴지통 보내기
-    onDelete() {
-      axios.delete(`/api/Mastering/dl/${this.deleteId}`).then((res) => {
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.deleteScreenName = "scr-spot";
+      this.rowData = rowData;
+    },
+    masteringDelete(e) {
+      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
         console.log(res);
       });
     },
