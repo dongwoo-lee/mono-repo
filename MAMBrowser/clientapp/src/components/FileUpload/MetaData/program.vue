@@ -171,7 +171,6 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
-        <!-- @row-prepared="log" -->
         <tbody
           slot="rowTemplate"
           slot-scope="{
@@ -191,10 +190,7 @@
             <td>{{ onairTime }}</td>
             <td>{{ durationSec }}</td>
           </tr>
-          <tr
-            v-if="userProgramList.includes(productId) && eventName != ''"
-            @click="selectedRow"
-          >
+          <tr v-if="userProgramList.includes(productId) && eventName != ''">
             <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가</td> -->
             <td>{{ eventName }}</td>
             <td>{{ eventType }}</td>
@@ -208,6 +204,7 @@
         <DxColumn :width="100" data-field="productId" caption="프로그램 ID" />
         <DxColumn data-field="onairTime" caption="방송 시간" />
         <DxColumn :width="80" data-field="durationSec" caption="편성 분량" />
+        <DxSelection mode="single" />
       </DxDataGrid>
     </div>
     <!-- 프로그램 -->
@@ -320,14 +317,6 @@ export default {
         return false;
       }
     },
-    getSelectedId(productId) {
-      console.log(productId);
-      if (this.ProgramSelected.productId != productId) {
-        return true;
-      } else {
-        return false;
-      }
-    },
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -336,10 +325,6 @@ export default {
     },
     mediaChange(v) {
       this.setMediaSelected(v);
-    },
-    selectedRow(e) {
-      console.log(e.path[1]);
-      e.path[1].classList.value = "selected";
     },
   },
 };

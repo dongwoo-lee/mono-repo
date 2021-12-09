@@ -1,5 +1,5 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid";
 import commonFunction from "../../utils/CommonFunctions";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
@@ -11,6 +11,7 @@ export default {
   components: {
     DxDataGrid,
     DxColumn,
+    DxSelection,
     commonFunction,
     DxFileUploader,
     DxTextBox,
