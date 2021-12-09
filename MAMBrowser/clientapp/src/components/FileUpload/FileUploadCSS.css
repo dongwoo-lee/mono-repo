@@ -55,7 +55,7 @@
     right: -250px;
 }
 .file-modal {
-    margin-top: 260px;
+    margin-top: 230px;
     width: 400px;
     height: 280px;
     float: left;
@@ -66,7 +66,7 @@
     display: none;
 }
 .date-modal {
-    margin-top: 260px;
+    margin-top: 230px;
     width: 380px;
     height: 210px;
     float: left;

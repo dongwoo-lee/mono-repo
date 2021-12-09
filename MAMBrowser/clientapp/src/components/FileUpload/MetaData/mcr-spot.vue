@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <div style="position: absolute; top: 360px; left: -400px; z-index: 9999">
+      <div style="position: absolute; top: 340px; left: -400px; z-index: 9999">
         <b-form-input
           class="editTask"
           v-model="MetaData.memo"
@@ -52,7 +52,7 @@
     <transition name="fade">
       <div>
         <b-form-input
-          style="position: absolute; top: 415px; left: -400px; z-index: 9999"
+          style="position: absolute; top: 395px; left: -400px; z-index: 9999"
           class="editTask"
           v-model="MetaData.advertiser"
           :state="advertiserState"
@@ -66,7 +66,7 @@
           style="
             position: relative;
             left: -86px;
-            top: 398px;
+            top: 379px;
             z-index: 9999;
             width: 3px;
             heigth: 3px;
@@ -88,7 +88,7 @@
           style="
             position: relative;
             left: -90px;
-            top: 405px;
+            top: 385px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -105,14 +105,14 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 480px;
+            top: 460px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
           "
         >
           <common-vue-select
-            style="font-size: 14px; width: 200px; border: 1px solid #008ecc"
+            style="font-size: 14px; width: 350px; border: 1px solid #008ecc"
             class="h105"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
@@ -196,18 +196,12 @@
     </div>
     <div
       v-show="this.MetaData.typeSelected == 'mcr-spot'"
-      style="
-        position: absolute;
-        width: 550px;
-        top: 90px;
-        height: 210px;
-        border: 1px solid #008ecc;
-      "
+      style="position: absolute; top: 90px"
     >
       <DxDataGrid
         name="mcrDxDataGrid"
         v-show="this.EventData.id != ''"
-        style="height: 208px"
+        style="height: 280px; border: 1px solid #008ecc"
         :data-source="EventData"
         :selection="{ mode: 'single' }"
         :show-borders="true"
@@ -227,7 +221,7 @@
       v-show="!isActive && EventSelected.id != ''"
       style="
         position: absolute;
-        top: 320px;
+        top: 385px;
         width: 550px;
         height: 110px;
         padding-top: 10px;
@@ -308,6 +302,8 @@ export default {
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
+
+    this.getPro();
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),

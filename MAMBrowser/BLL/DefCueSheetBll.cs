@@ -58,7 +58,7 @@ namespace MAMBrowser.BLL
                 spon_param.BrdDate = brd_dt;
                 spon_param.PgmCode = pgmcode;
                 //var result2 = _common_dao.GetSponsor(spon_param);
-                result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsor(_dao.GetDefCueSheet(param).CueSheetConEntities);
+                result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(_dao.GetDefCueSheet(param).CueSheetConEntities);
             }
 
             return result?.DefConverting();

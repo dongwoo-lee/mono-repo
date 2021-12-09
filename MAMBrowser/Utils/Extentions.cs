@@ -154,12 +154,12 @@ namespace MAMBrowser.Utils
             {
                 var con = new CueSheetConDTO();
                 con.CARTCODE = item.CARTCODE ?? "";
+                con.PGMCODE = item.PGMCODE ?? "";
                 con.CHANNELTYPE = item.CHANNELTYPE ?? "";
                 con.ONAIRDATE = item.ONAIRDATE ?? "";
                 if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
                 {
                     con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
-
                 }
                 con.CARTID = item.CARTID ?? "";
                 con.MEMO = item.MEMO ?? "";
@@ -173,14 +173,12 @@ namespace MAMBrowser.Utils
                 con.USEFLAG = item.USEFLAG ?? "Y";
                 con.EDITTARGET = true;
                 con.CARTTYPE = SetCartCode(item.CARTCODE);
-
                 if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
                     con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
                     if (con.FILEPATH != "")
                     {
                         con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
-
                     }
                 }
                 else
@@ -200,7 +198,6 @@ namespace MAMBrowser.Utils
                 }
 
             }
-
             //C가공
             for (var channelNum = 0; 4 > channelNum; channelNum++)
             {
@@ -307,6 +304,7 @@ namespace MAMBrowser.Utils
             {
                 var con = new CueSheetConDTO();
                 con.CARTCODE = item.CARTCODE ?? "";
+                con.PGMCODE = item.PGMCODE ?? "";
                 con.CHANNELTYPE = item.CHANNELTYPE ?? "";
                 con.CARTID = item.CARTID ?? "";
                 con.ONAIRDATE = item.ONAIRDATE ?? "";
@@ -462,6 +460,7 @@ namespace MAMBrowser.Utils
             {
                 var con = new CueSheetConDTO();
                 con.CARTCODE = item.CARTCODE ?? "";
+                con.PGMCODE = item.PGMCODE ?? "";
                 con.CHANNELTYPE = item.CHANNELTYPE ?? "";
                 con.CARTID = item.CARTID ?? "";
                 con.ONAIRDATE = item.ONAIRDATE ?? "";
@@ -614,6 +613,7 @@ namespace MAMBrowser.Utils
             {
                 var con = new CueSheetConDTO();
                 con.CARTCODE = item.CARTCODE ?? "";
+                con.PGMCODE = item.PGMCODE ?? "";
                 con.CHANNELTYPE = item.CHANNELTYPE ?? "";
                 con.ONAIRDATE = item.ONAIRDATE ?? "";
                 if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
@@ -1217,7 +1217,6 @@ namespace MAMBrowser.Utils
         //}
 
         // DTO TO Entity - 구 DB
-
         public static PDPQSCreateCollectionParam PDPQSToEntity(this CueSheetCollectionDTO dto, char type)
         {
             var result = new PDPQSCreateCollectionParam();
@@ -1303,34 +1302,39 @@ namespace MAMBrowser.Utils
         }
 
         //상세내용 가져오기 시 광고 업데이트
-        public static List<CueSheetConEntity> SetSponsor(this SponsorCollectionEntity spons, List<CueSheetConEntity> entity)
+        public static List<CueSheetConEntity> SetSponsorToEntity(this SponsorCollectionEntity spons, List<CueSheetConEntity> entity)
         {
             if (spons.CM?.Any() == true)
             {
-                foreach (var item in spons.CM)
+                //foreach (var item in spons.CM)
+                for (int i = 0; i < spons.CM.Count; i++) 
                 {
+                    var item = spons.CM[i];
+
                     var cartId = item.CMGROUPID.Substring(2);
-                    foreach (var cueItem in entity)
+                    //foreach (var cueItem in entity)
+                    for(int j = 0;j<entity.Count;j++)
                     {
+                        var cueItem = entity[j];
                         if (cueItem.CARTID.Contains(cartId))
                         {
+                            cueItem.PGMCODE = item.PGMCODE;
                             cueItem.ONAIRDATE = item.ONAIRDATE;
                             cueItem.STARTPOSITION = 0;
                             var duration = 0;
                             foreach (var clip in item.Clips)
                             {
                                 duration = duration + clip.LENGTH;
-
                             }
                             cueItem.ENDPOSITION = duration;
                             cueItem.FADEINTIME = 0;
                             cueItem.FADEOUTTIME = 0;
                             cueItem.MAINTITLE = item.CMGROUPNAME;
                             cueItem.SUBTITLE = item.STATENAME;
-
                         }
                     }
                 }
+
             }
             if (spons.SB?.Any() == true)
             {
@@ -1341,6 +1345,7 @@ namespace MAMBrowser.Utils
                     {
                         if (cueItem.CARTID.Contains(cartId))
                         {
+                            cueItem.PGMCODE = item.PGMCODE;
                             cueItem.ONAIRDATE = item.ONAIRDATE;
                             cueItem.STARTPOSITION = 0;
                             var duration = 0;
@@ -1360,6 +1365,43 @@ namespace MAMBrowser.Utils
                 }
             }
             return entity;
+        }
+
+        // AB 광고 자동추가 가져오기
+        public static List<CueSheetConDTO> AddSponsorListToDTO(this SponsorCollectionEntity spons, string pgmcode)
+        {
+            var result = new List<CueSheetConDTO>();
+            var rownum = 1;
+            foreach (var item in spons.CM)
+            {
+                var itemResult = new CueSheetConDTO();
+                itemResult.ROWNUM = rownum;
+                itemResult.PGMCODE = pgmcode;
+                itemResult.CHANNELTYPE = "N";
+                itemResult.CARTCODE = "S01G01C018";
+                itemResult.TRANSTYPE = "S";
+                itemResult.USEFLAG = "Y";
+                itemResult.CARTID = item.CMGROUPID ?? "";
+                itemResult.ONAIRDATE = item.ONAIRDATE ?? "";
+                itemResult.STARTPOSITION = 0;
+                itemResult.FADEINTIME = false;
+                itemResult.FADEOUTTIME = false;
+                itemResult.MAINTITLE = item.CMGROUPNAME ?? "";
+                itemResult.SUBTITLE = item.STATENAME ?? "";
+                itemResult.MEMO = "";
+                itemResult.EDITTARGET = true;
+                itemResult.CARTTYPE = "CM";
+                var duration = 0;
+                foreach (var clip in item.Clips)
+                {
+                    duration = duration + clip.LENGTH;
+                }
+                itemResult.DURATION = duration;
+                itemResult.ENDPOSITION = duration;
+                result.Add(itemResult);
+                rownum++;
+            }
+            return result;
         }
 
         public static string SetCartCode(string code)

@@ -51,17 +51,27 @@ namespace MAMBrowser.BLL
                 .SetProductID(productid)
                 .SetRequestType(RequestType.Web)
                 .Build();
+
             var result = _dao.GetDayCueSheet(param);
             if (pgmcode!=null&& brd_dt != null)
             {
             SponsorParam spon_param = new SponsorParam();
             spon_param.BrdDate = brd_dt;
             spon_param.PgmCode = pgmcode;
-            result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsor(_dao.GetDayCueSheet(param).CueSheetConEntities);
+            result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(_dao.GetDayCueSheet(param).CueSheetConEntities);
             }
 
             return result?.DayConverting();
 
+
+        }
+        public List<CueSheetConDTO> GetAddSponsorList(string pgmcode, string brd_dt)
+        {
+            SponsorParam param = new SponsorParam();
+            param.BrdDate = brd_dt;
+            param.PgmCode = pgmcode;
+
+            return _common_dao.GetSponsor(param).AddSponsorListToDTO(pgmcode);
         }
 
         //일일큐시트 저장
@@ -165,7 +175,7 @@ namespace MAMBrowser.BLL
 
         }
 
-
+        // 구DB 삭제
         private void DeletePDPQS(CueSheetDTO cueshset, char type)
         {
             _dao.DeletePDPQS(new PDPQSDeleteCollectionParam()
@@ -185,6 +195,7 @@ namespace MAMBrowser.BLL
             });
         }
 
+        // 구DB CARTTYPE 변환
         public static string setCartType(string cartid)
         {
             var front = cartid.Substring(0, 2);

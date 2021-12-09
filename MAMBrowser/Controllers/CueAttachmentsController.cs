@@ -11,6 +11,8 @@ using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MAMBrowser.Controllers
 {
@@ -33,6 +35,7 @@ namespace MAMBrowser.Controllers
             try
             {
                 var filePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.xml";
+                var filePathJson = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.json";
                 DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(filePath));
                 if (!di.Exists)
                 {
@@ -49,6 +52,8 @@ namespace MAMBrowser.Controllers
                     {
                         //ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
                         var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FILEPATH));
+                        var audioData = new CueSheetConAudioDTO();
+                        ele.AUDIOS = new List<CueSheetConAudioDTO>();
 
                         using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                         {
@@ -57,7 +62,7 @@ namespace MAMBrowser.Controllers
                                 using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
                                 {
                                     inStream.CopyTo(outFileStream);
-                                    ele.FILEPATH = outFilePath;
+
                                 }
                             }
                             catch (Exception e)
@@ -66,6 +71,15 @@ namespace MAMBrowser.Controllers
                                 ele.FILEPATH = "";
                             }
                         }
+                        ele.FILEPATH = outFilePath;
+                        audioData.P_TYPE = ele.CARTTYPE;
+                        audioData.P_SEQNUM = 1;
+                        audioData.P_CLIPID = ele.CARTID;
+                        audioData.P_MAINTITLE = ele.MAINTITLE;
+                        audioData.P_SUBTITLE = ele.SUBTITLE;
+                        audioData.P_DURATION = ele.DURATION;
+                        audioData.P_MASTERFILE = outFilePath;
+                        ele.AUDIOS.Add(audioData);
                     }
                     else
                     {
@@ -145,6 +159,17 @@ namespace MAMBrowser.Controllers
                 {
                     XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConDTO>));
                     serialiser.Serialize(FileStream, pram);
+
+                }
+
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Converters.Add(new JavaScriptDateTimeConverter());
+                serializer.NullValueHandling = NullValueHandling.Ignore;
+
+                using (StreamWriter sw = new StreamWriter(filePathJson))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, pram);
                 }
 
                 var zipFilePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022.zip";

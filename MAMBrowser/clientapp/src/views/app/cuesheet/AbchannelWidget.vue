@@ -504,6 +504,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      console.log(e.itemData);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },

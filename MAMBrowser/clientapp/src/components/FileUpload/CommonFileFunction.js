@@ -136,6 +136,7 @@ export default {
       masteringLogData: (state) => state.masteringLogData,
       ProgramData: (state) => state.ProgramData,
       ProgramSelected: (state) => state.ProgramSelected,
+      userProgramList: (state) => state.userProgramList,
       EventData: (state) => state.EventData,
       EventSelected: (state) => state.EventSelected,
       isActive: (state) => state.isActive,
@@ -203,6 +204,7 @@ export default {
       "setFileMediaOptions",
       "setMediaSelected",
       "setProgramSelected",
+      "setUserProgramList",
       "setEventSelected",
       "resetDate",
       "resetFileSDate",
@@ -227,6 +229,10 @@ export default {
     },
     onRowClick(v) {
       if (this.MetaData.typeSelected == "program") {
+        if (!this.userProgramList.includes(v.data.productId)) {
+          this.resetProgramSelected();
+          return;
+        }
         this.setProgramSelected(v.data);
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.setEventSelected(v.data);
@@ -249,7 +255,9 @@ export default {
         this.resetProgramData();
         axios
           .get(
-            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
+            `/api/categories/pgm-sch?media=${
+              this.MetaData.mediaSelected
+            }&date=${20191206}`
           )
           .then((res) => {
             var value = res.data.resultObject.data;

@@ -55,6 +55,9 @@ export default {
   setProgramSelected(state, payload) {
     state.ProgramSelected = payload;
   },
+  setUserProgramList(state, payload) {
+    state.userProgramList = payload;
+  },
   setEventSelected(state, payload) {
     state.EventSelected = payload;
   },

@@ -82,7 +82,7 @@ namespace MAMBrowser.DTO
         public string FILEPATH { get; set; }
         public string FILETOKEN { get; set; }
         public string CARTTYPE { get; set; }
-
+        public string PGMCODE { get; set; }
         // C
         public bool EDITTARGET { get; set; }
 

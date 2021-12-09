@@ -826,72 +826,88 @@ export default {
             }
             commit('SET_PRINTARR', payload.printDTO);
         },
-        async setSponsorList({ state, commit, dispatch }, payload) {
-            await axios.get(`/api/CueUserInfo/GetSponsorList`, {
+        setSponsorList({ commit }, payload) {
+            axios.get(`/api/DayCueSheet/GetAddSponsor`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);
                 },
             })
-                .then(async (res) => {
-                    var abData = await dispatch('sponsorDataFun', { spnsorArr: res.data, cueData: state.abCartArr })
-                    commit('SET_ABCARTARR', abData);
+                .then((res) => {
+                    console.log("res")
+                    console.log(res)
+                    commit('SET_ABCARTARR', res.data);
                 })
                 .catch((err => {
                     console.log("setSponsorList" + err);
                 }));
         },
-        sponsorDataFun({ }, payload) {
-            var result = [];
-            const updatedArr = [...payload.cueData]
-            var sponsorArr = [];
-            //데이터가 있는지 확인하여 업데이트
-            payload.spnsorArr.forEach((ele) => {
-                var cartIdText = ele.cartid.substring(2)
-                const found = payload.cueData.filter(data => { return data.cartid != null && data.cartid.indexOf(cartIdText) != -1 })
-                if (found.length != 0) {
-                    //업데이트
-                    updatedArr.forEach((item) => {
-                        if (item.cartid != null && item.cartid.indexOf(cartIdText) != -1) {
-                            item.cartid = ele.cartid
-                            item.onairdate = ele.onairdate;
-                            item.duration = ele.duration;
-                            item.startposition = ele.startposition;
-                            item.endposition = ele.endposition;
-                            item.fadeintime = ele.fadeintime;
-                            item.fadeouttime = ele.fadeouttime;
-                            item.maintitle = ele.maintitle;
-                            item.subtitle = ele.subtitle;
-                            item.memo = ele.memo;
-                            item.transtype = "S";
-                            item.useflag = "Y";
-                            item.filepath = null;
-                            item.filetoken = null;
-                            item.carttype = ele.carttype;
-                        }
-                    })
-                } else {
-                    //새로추가할것들 변수로 담아둠
-                    if (ele.carttype == "CM") {
-                        sponsorArr.push(ele);
-                    }
-                }
-            })
+        // async setSponsorList({ state, commit, dispatch }, payload) {
+        //     await axios.get(`/api/CueUserInfo/GetSponsorList`, {
+        //         params: payload,
+        //         paramsSerializer: (params) => {
+        //             return qs.stringify(params);
+        //         },
+        //     })
+        //         .then(async (res) => {
+        //             var abData = await dispatch('sponsorDataFun', { spnsorArr: res.data, cueData: state.abCartArr })
+        //             commit('SET_ABCARTARR', abData);
+        //         })
+        //         .catch((err => {
+        //             console.log("setSponsorList" + err);
+        //         }));
+        // },
+        // sponsorDataFun({ }, payload) {
+        //     var result = [];
+        //     const updatedArr = [...payload.cueData]
+        //     var sponsorArr = [];
+        //     //데이터가 있는지 확인하여 업데이트
+        //     payload.spnsorArr.forEach((ele) => {
+        //         var cartIdText = ele.cartid.substring(2)
+        //         const found = payload.cueData.filter(data => { return data.cartid != null && data.cartid.indexOf(cartIdText) != -1 })
+        //         if (found.length != 0) {
+        //             //업데이트
+        //             updatedArr.forEach((item) => {
+        //                 if (item.cartid != null && item.cartid.indexOf(cartIdText) != -1) {
+        //                     item.cartid = ele.cartid
+        //                     item.onairdate = ele.onairdate;
+        //                     item.duration = ele.duration;
+        //                     item.startposition = ele.startposition;
+        //                     item.endposition = ele.endposition;
+        //                     item.fadeintime = ele.fadeintime;
+        //                     item.fadeouttime = ele.fadeouttime;
+        //                     item.maintitle = ele.maintitle;
+        //                     item.subtitle = ele.subtitle;
+        //                     item.memo = ele.memo;
+        //                     item.transtype = "S";
+        //                     item.useflag = "Y";
+        //                     item.filepath = null;
+        //                     item.filetoken = null;
+        //                     item.carttype = ele.carttype;
+        //                 }
+        //             })
+        //         } else {
+        //             //새로추가할것들 변수로 담아둠
+        //             if (ele.carttype == "CM") {
+        //                 sponsorArr.push(ele);
+        //             }
+        //         }
+        //     })
 
-            var index = 1;
-            sponsorArr.forEach((ele) => {
-                ele.rownum = index;
-                result.push(ele)
-                index++
-            })
-            updatedArr.forEach((ele) => {
-                ele.rownum = index;
-                result.push(ele)
-                index++
-            })
-            return result;
+        //     var index = 1;
+        //     sponsorArr.forEach((ele) => {
+        //         ele.rownum = index;
+        //         result.push(ele)
+        //         index++
+        //     })
+        //     updatedArr.forEach((ele) => {
+        //         ele.rownum = index;
+        //         result.push(ele)
+        //         index++
+        //     })
+        //     return result;
 
-        },
+        // },
         setCueConFav_save({ state }, fav) {
             var printData = state.printArr
             var abData = state.abCartArr
