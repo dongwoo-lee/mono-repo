@@ -6421,6 +6421,7 @@ footer.page-footer {
 }
 
 #app-container {
+  width: 100%; //은비가 추가함
   &.sub-hidden .footer-content,
   &.menu-sub-hidden .footer-content,
   &.menu-hidden .footer-content {
