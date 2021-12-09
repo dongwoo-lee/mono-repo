@@ -32,7 +32,7 @@
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <b-form-select
-            style="border-radius:0px !impotant;"
+            style="border-radius: 0px !impotant"
             class="width-100"
             v-model="searchItems.cate"
             :options="rePortOptions"
@@ -58,7 +58,7 @@
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-vue-select
-            style="width:160px;"
+            style="width: 160px"
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
           ></common-vue-select>
@@ -116,11 +116,13 @@
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               :etcData="['delete', 'modify']"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
               @modify="onMetaModifyPopup"
-              @MasteringDelete="onDeleteConfirm"
+              @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
           </template>
@@ -136,6 +138,7 @@
       </template>
     </common-form>
 
+    <!-- 마스터링 메타 데이터 수정 -->
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -145,14 +148,18 @@
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
     </transition>
-    <!-- 삭제 -->
-    <common-confirm
-      id="reportRemove"
-      title="삭제?"
-      :message="getRemove()"
-      submitBtn="이동"
-      @ok="onDelete()"
-    />
+
+    <!-- 마스터링 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        :updateScreenName="deleteScreenName"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
+
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -172,14 +179,17 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinBasicPage],
   data() {
     return {
       deleteId: "",
       metaUpdate: false,
+      metaDelete: false,
+      deleteScreenName: "",
       rowData: "",
       updateScreenName: "",
       searchItems: {
@@ -194,7 +204,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       isTableLoading: false,
       fields: [
@@ -203,14 +213,14 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name"
+          sortField: "name",
         },
         {
           name: "reporter",
@@ -218,14 +228,14 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%",
-          sortField: "reporter"
+          sortField: "reporter",
         },
         {
           name: "pgmName",
           title: "사용처명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "pgmName"
+          sortField: "pgmName",
         },
         {
           name: "brdDT",
@@ -234,9 +244,9 @@ export default {
           dataClass: "center aligned text-center bold",
           width: "10%",
           sortField: "brdDT",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
-          }
+          },
         },
         {
           name: "duration",
@@ -245,9 +255,9 @@ export default {
           dataClass: "center aligned text-center",
           width: "6%",
           sortField: "duration",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.splitFirst(v);
-          }
+          },
         },
         {
           name: "editorName",
@@ -255,7 +265,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "editorName"
+          sortField: "editorName",
         },
         {
           name: "editDtm",
@@ -263,7 +273,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "11%",
-          sortField: "editDtm"
+          sortField: "editDtm",
         },
         {
           name: "masteringDtm",
@@ -271,16 +281,16 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "11%",
-          sortField: "masteringDtm"
+          sortField: "masteringDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
-        }
-      ]
+          width: "10%",
+        },
+      ],
     };
   },
   created() {
@@ -304,7 +314,7 @@ export default {
 
       this.$http
         .get(`/api/products/report`, { params: this.searchItems })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -315,22 +325,15 @@ export default {
       var tmpName = `${rowData.pgmName}_${rowData.brdDT}_${rowData.name}`;
       return tmpName;
     },
-    onDeleteConfirm(rowData) {
-      this.deleteId = rowData.id;
-      var user = sessionStorage.getItem("user_id");
-      var role = sessionStorage.getItem("authority");
-      if (user === rowData.editorID || role == "ADMIN") {
-        this.$bvModal.show("reportRemove");
+    authorityCheck(e) {
+      if (
+        e.editorID == sessionStorage.getItem("user_id") ||
+        sessionStorage.getItem("authority") == "ADMIN"
+      ) {
+        return true;
+      } else {
+        return false;
       }
-    },
-    getRemove() {
-      return "삭제하시겠습니까?";
-    },
-    // 휴지통 보내기
-    onDelete() {
-      axios.delete(`/api/Mastering/report/${this.deleteId}`).then(res => {
-        console.log(res);
-      });
     },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;
@@ -341,10 +344,23 @@ export default {
       this.metaUpdate = false;
     },
     masteringUpdate(e) {
-      axios.patch("/api/Mastering/filler", e).then(res => {
+      axios.patch("/api/Mastering/filler", e).then((res) => {
         console.log(res);
       });
-    }
-  }
+    },
+    DeleteModalOff() {
+      this.metaDelete = false;
+    },
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.deleteScreenName = "scr-spot";
+      this.rowData = rowData;
+    },
+    masteringDelete(e) {
+      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
+        console.log(res);
+      });
+    },
+  },
 };
 </script>

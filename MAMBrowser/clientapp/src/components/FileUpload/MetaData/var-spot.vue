@@ -250,7 +250,11 @@
       <DxDataGrid
         name="mcrDxDataGrid"
         v-show="this.EventData.id != ''"
-        style="height: 280px; border: 1px solid #008ecc"
+        style="
+          height: 280px;
+          border: 1px solid #008ecc;
+          font-family: 'MBC 새로움 M';
+        "
         :data-source="EventData"
         :selection="{ mode: 'single' }"
         :show-borders="true"
@@ -281,6 +285,7 @@
         padding-right: 10px;
         float: left;
         border: 1px solid #008ecc;
+        font-family: 'MBC 새로움 M';
       "
     >
       <div style="width: 180px; float: left">

@@ -4,9 +4,7 @@
       <div class="file-modal-wrapper">
         <div class="file-modal-container">
           <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
+            <slot name="header"> default header </slot>
             <button class="modal-default-button" @click="$emit('close')">
               <p class="h4 mb-2">
                 <b-icon icon="x" class="icon" variant="danger"></b-icon>
@@ -15,9 +13,7 @@
           </div>
 
           <div class="file-modal-body">
-            <slot name="body">
-              default body
-            </slot>
+            <slot name="body"> default body </slot>
           </div>
 
           <!-- <div class="modal-footer">
@@ -60,17 +56,17 @@ export default {};
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
   transition: all 0.3s ease;
-  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header h2 {
   margin-top: 10px;
   color: #008ecc;
-  font-weight: bolder;
+  font-family: "MBC 새로움 M";
 }
 
 .file-modal-body {
   height: 600px;
+  font-family: "MBC 새로움 M";
 }
 
 .modal-default-button {

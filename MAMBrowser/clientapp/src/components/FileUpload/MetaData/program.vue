@@ -160,7 +160,11 @@
       <DxDataGrid
         name="proDxDataGrid"
         v-show="this.ProgramData.eventName != ''"
-        style="height: 245px; border: 1px solid #008ecc"
+        style="
+          height: 245px;
+          border: 1px solid #008ecc;
+          font-family: 'MBC 새로움 M';
+        "
         :data-source="ProgramData"
         :selection="{ mode: 'single' }"
         :show-borders="false"
@@ -201,7 +205,7 @@
         </tbody>
         <DxColumn data-field="eventName" caption="이벤트 명" />
         <DxColumn :width="50" data-field="eventType" caption="타입" />
-        <DxColumn :width="100" data-field="productId" caption="프로그램 ID" />
+        <DxColumn :width="95" data-field="productId" caption="프로그램 ID" />
         <DxColumn data-field="onairTime" caption="방송 시간" />
         <DxColumn :width="80" data-field="durationSec" caption="편성 분량" />
         <DxSelection mode="single" />
@@ -220,6 +224,7 @@
         float: left;
         border: 1px solid #008ecc;
         font-size: 13px;
+        font-family: 'MBC 새로움 M';
       "
     >
       <div style="width: 200px; float: left">

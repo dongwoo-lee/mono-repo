@@ -36,7 +36,7 @@
         <!-- 사용처 -->
         <b-form-group label="사용처" class="has-float-label">
           <common-vue-select
-            style="width:220px"
+            style="width: 220px"
             :suggestions="spotOptions"
             :vSelectProps="vSelectProps"
             :vChangedProps="vChangedProps"
@@ -61,7 +61,7 @@
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-vue-select
-            style="width:180px"
+            style="width: 180px"
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
           ></common-vue-select>
@@ -97,10 +97,11 @@
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               :etcData="['delete']"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
-              @MasteringDelete="onDeleteConfirm"
+              @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
           </template>
@@ -115,14 +116,16 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-    <!-- 삭제 -->
-    <common-confirm
-      id="mcrRemove"
-      title="삭제?"
-      :message="getRemove()"
-      submitBtn="이동"
-      @ok="onDelete()"
-    />
+    <!-- 마스터링 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        :updateScreenName="deleteScreenName"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -141,13 +144,16 @@
 import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileDelete },
   mixins: [MixinFillerPage],
   data() {
     return {
       deleteId: "",
+      metaDelete: false,
+      deleteScreenName: "",
       vSelectProps: {},
       vChangedProps: false,
       searchItems: {
@@ -162,7 +168,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       isTableLoading: false,
       fields: [
@@ -171,14 +177,14 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name"
+          sortField: "name",
         },
         {
           name: "brdDT",
@@ -187,9 +193,9 @@ export default {
           dataClass: "center aligned text-center bold",
           width: "10%",
           sortField: "brdDT",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
-          }
+          },
         },
         {
           name: "status",
@@ -197,7 +203,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "6%",
-          sortField: "status"
+          sortField: "status",
         },
         {
           name: "duration",
@@ -205,7 +211,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "duration"
+          sortField: "duration",
         },
         {
           name: "editorName",
@@ -213,7 +219,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "editorName"
+          sortField: "editorName",
         },
         {
           name: "editDtm",
@@ -221,7 +227,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "editDtm"
+          sortField: "editDtm",
         },
         {
           name: "reqCompleteDtm",
@@ -229,16 +235,16 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "14%",
-          sortField: "reqCompleteDtm"
+          sortField: "reqCompleteDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
-        }
-      ]
+          width: "10%",
+        },
+      ],
     };
   },
 
@@ -251,9 +257,19 @@ export default {
     this.getmcrSpotMediaOptions();
   },
   methods: {
+    authorityCheck(e) {
+      if (
+        e.editorID == sessionStorage.getItem("user_id") ||
+        sessionStorage.getItem("authority") == "ADMIN"
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     SDateErrorLog() {
       this.$fn.notify("error", {
-        message: "시작 날짜가 종료 날짜보다 큽니다."
+        message: "시작 날짜가 종료 날짜보다 큽니다.",
       });
       this.hasErrorClass = true;
     },
@@ -276,7 +292,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
       }
@@ -286,7 +302,7 @@ export default {
 
       this.$http
         .get(`/api/products/spot/mcr/${media}`, { params: this.searchItems })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -297,23 +313,19 @@ export default {
       var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.mediaName}_${rowData.id}`;
       return tmpName;
     },
-    onDeleteConfirm(rowData) {
-      this.deleteId = rowData.id;
-      var user = sessionStorage.getItem("user_id");
-      var role = sessionStorage.getItem("authority");
-      if (user === rowData.editorID || role == "ADMIN") {
-        this.$bvModal.show("mcrRemove");
-      }
+    DeleteModalOff() {
+      this.metaDelete = false;
     },
-    getRemove() {
-      return "삭제하시겠습니까?";
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.deleteScreenName = "scr-spot";
+      this.rowData = rowData;
     },
-    // 휴지통 보내기
-    onDelete() {
-      axios.delete(`/api/Mastering/mcr-spot/${this.deleteId}`).then(res => {
+    masteringDelete(e) {
+      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
         console.log(res);
       });
-    }
-  }
+    },
+  },
 };
 </script>

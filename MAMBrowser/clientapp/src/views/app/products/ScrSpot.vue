@@ -86,7 +86,8 @@
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               :etcData="['delete', 'modify']"
-              :isPossibleDelete="deleteCheck(props.props.rowData)"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
@@ -107,7 +108,7 @@
       </template>
     </common-form>
 
-    <!-- 메타 데이터 수정 -->
+    <!-- 마스터링 메타 데이터 수정 -->
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -157,10 +158,10 @@ export default {
     return {
       deleteId: "",
       metaUpdate: false,
-      metaDelete: false,
-      rowData: "",
       updateScreenName: "",
+      metaDelete: false,
       deleteScreenName: "",
+      rowData: "",
       searchItems: {
         start_dt: "", // 시작일
         end_dt: "", // 종료일
@@ -270,7 +271,7 @@ export default {
       });
       this.hasErrorClass = true;
     },
-    deleteCheck(e) {
+    authorityCheck(e) {
       if (
         e.editorID == sessionStorage.getItem("user_id") ||
         sessionStorage.getItem("authority") == "ADMIN"
@@ -312,19 +313,13 @@ export default {
       var tmpName = `${rowData.name}_${rowData.brdDT}`;
       return tmpName;
     },
-    onMetaDeletePopup(rowData) {
-      this.metaDelete = true;
-      this.deleteScreenName = "scr-spot";
-      this.rowData = rowData;
-    },
+
     onMetaUpdatePopup(rowData) {
       this.metaUpdate = true;
       this.updateScreenName = "scr-spot";
       this.rowData = rowData;
     },
-    DeleteModalOff() {
-      this.metaDelete = false;
-    },
+
     UpdateModalOff() {
       this.metaUpdate = false;
     },
@@ -332,6 +327,14 @@ export default {
       axios.patch("/api/Mastering/filler", e).then((res) => {
         console.log(res);
       });
+    },
+    DeleteModalOff() {
+      this.metaDelete = false;
+    },
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.deleteScreenName = "scr-spot";
+      this.rowData = rowData;
     },
     masteringDelete(e) {
       axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {

@@ -380,8 +380,6 @@ export default {
           onairTime: this.date,
         };
       }
-
-      console.log(data);
     },
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
@@ -485,7 +483,6 @@ export default {
             onairTime: this.date,
           };
         }
-        console.log(data);
         this.setUploaderCustomData(data);
         if (this.cancel) {
           this.cancel = false;

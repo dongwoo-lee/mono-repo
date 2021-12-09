@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100">
+  <div class="h-100" style="font-family: 'MBC 새로움 M'">
     <router-view />
   </div>
 </template>
