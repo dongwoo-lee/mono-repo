@@ -158,7 +158,7 @@
       style="position: absolute; width: 550px; top: 90px; height: 210px"
     >
       <DxDataGrid
-        name="proDxDataGrid"
+        ref="my-proDataGrid"
         v-show="this.ProgramData.eventName != ''"
         style="
           height: 245px;
@@ -273,6 +273,7 @@ import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
+const dxdg = "my-proDataGrid";
 export default {
   components: {
     CommonVueSelect,
@@ -281,6 +282,7 @@ export default {
   data() {
     return {
       proMedia: "A",
+      dxdg,
     };
   },
   created() {
@@ -322,6 +324,9 @@ export default {
         return false;
       }
     },
+    proDataGrid: function () {
+      return this.$refs[dxdg].instance;
+    },
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setEditor"]),
@@ -337,7 +342,7 @@ export default {
 
 <style scoped>
 .disabledRow {
-  color: silver;
+  color: silver !important;
 }
 .dx-row :hover {
   background-color: #f5f5f5;

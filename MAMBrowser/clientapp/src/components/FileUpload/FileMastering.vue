@@ -618,7 +618,9 @@ export default {
                 res.data.resultObject.duration == null ||
                 res.data.resultObject.audioFormatInfo == null
               ) {
-                this.$fn.notify("error", { title: "오디오 파일 확인" });
+                this.$fn.notify("error", {
+                  title: "잘못된 파일 형식입니다.",
+                });
                 return;
               }
               this.setDuration(res.data.resultObject.duration);
@@ -630,14 +632,17 @@ export default {
               // this.setFileUploading(true);
             });
           } else {
-            //TODO: 얼럿 창 예쁜 모달로 변경
-            alert("업로드 할 수 없는 파일 형식입니다.");
+            this.$fn.notify("error", {
+              title: "오디오 파일만 업로드 가능합니다.",
+            });
             this.fileupload.removeFile(0);
             this.fileselect = false;
             this.setProcessing(false);
           }
         } else {
           this.$fn.notify("error", { title: "디스크 공간이 부족합니다." });
+          this.fileupload.removeFile(0);
+          this.fileselect = false;
           this.setProcessing(false);
         }
       } else if (event.value.length == 0) {

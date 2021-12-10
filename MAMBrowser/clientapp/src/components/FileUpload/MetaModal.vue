@@ -22,15 +22,7 @@
             >
               <h3 style="color: #008ecc">파일 정보</h3>
               <div style="padding: 10px; border: 1px solid #008ecc">
-                <p
-                  style="
-                    font-size: 16px;
-                    width: 350px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                  "
-                >
+                <p class="title-ellipsis">
                   {{ this.MetaModalTitle }}
                 </p>
 
@@ -540,4 +532,17 @@ export default {
   border-color: #bbbbbb !important;
   color: #3a3a3a !important;
 }
+.title-ellipsis {
+  font-size: 16px;
+  width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* .title-ellipsis:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+} */
 </style>

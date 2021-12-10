@@ -231,6 +231,7 @@ export default {
     onRowClick(v) {
       if (this.MetaData.typeSelected == "program") {
         if (!this.userProgramList.includes(v.data.productId)) {
+          this.proDataGrid.deselectRows(v.data.productId);
           this.resetProgramSelected();
           return;
         }
