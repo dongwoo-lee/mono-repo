@@ -245,7 +245,7 @@
             style="width: 170px"
             class="editTask"
             v-model="this.ProgramSelected.onairTime"
-            readonly
+            disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
           />
@@ -257,7 +257,7 @@
             style="width: 100px"
             class="editTask"
             v-model="this.ProgramSelected.durationSec"
-            readonly
+            disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
           />

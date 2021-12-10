@@ -31,7 +31,7 @@
                     style="width: 330px"
                     class="editTask"
                     v-model="MetaData.duration"
-                    readonly
+                    disabled
                     aria-describedby="input-live-help input-live-feedback"
                     placeholder="duration"
                     trim
@@ -42,7 +42,7 @@
                     style="width: 330px"
                     class="editTask"
                     v-model="MetaData.audioFormat"
-                    readonly
+                    disabled
                     aria-describedby="input-live-help input-live-feedback"
                     placeholder="audioFormat"
                     trim

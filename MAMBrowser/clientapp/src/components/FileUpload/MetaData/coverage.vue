@@ -244,7 +244,7 @@
             style="width: 180px"
             class="editTask"
             v-model="EventSelected.name"
-            readonly
+            disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
           />
@@ -260,7 +260,7 @@
             style="width: 170px"
             class="editTask"
             v-model="EventSelected.id"
-            readonly
+            disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
           />
