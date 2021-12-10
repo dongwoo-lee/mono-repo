@@ -105,18 +105,6 @@ let searchMenuList = {
                   type: "C"
                 },
                 {
-                  id: "gradetype",
-                  text: "검색옵션",
-                  value:
-                    [
-                      { text: '히트', value: 1 },
-                      { text: '금지', value: 2 },
-                      { text: '주의', value: 4 },
-                      { text: '청소년 유해', value: 8 },
-                    ],
-                  type: "C"
-                },
-                {
                   id: "searchtype2",
                   text: "소분류",
                   value:
@@ -131,11 +119,23 @@ let searchMenuList = {
                   type: "S"
                 },
                 {
+                  id: "gradetype",
+                  text: "검색옵션",
+                  value:
+                    [
+                      { text: '히트', value: 1 },
+                      { text: '금지', value: 2 },
+                      { text: '주의', value: 4 },
+                      { text: '청소년 유해', value: 8 },
+                    ],
+                  type: "C"
+                },
+                {
                   id: "searchtext",
                   text: "검색어",
                   value: "",
                   type: "T"
-                }
+                },
               ],
             columns:
               [
@@ -542,10 +542,10 @@ let searchMenuList = {
             ],
             columns: [
               { dataField: "rowNO", minWidth: "50", caption: "순서", width: "5%", alignment: "center" },
-              { dataField: "name", caption: "효과음명", width: "38%", alignment: "center" },
-              { dataField: "description", caption: "설명", width: "38%", alignment: "center" },
+              { dataField: "name", caption: "효과음명", width: "37%", alignment: "center" },
+              { dataField: "description", caption: "설명", width: "37%", alignment: "center" },
               { dataField: "duration", caption: "길이(초)", width: "8%", alignment: "center" },
-              { dataField: "audioFormat", caption: "오디오 포맷", width: "6%", alignment: "center" },
+              { dataField: "audioFormat", caption: "오디오 포맷", width: "8%", alignment: "center" },
               { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" }
             ],
           },
