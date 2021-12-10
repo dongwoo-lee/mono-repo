@@ -141,7 +141,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -214,7 +214,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -288,7 +288,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -362,7 +362,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -438,7 +438,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -446,7 +446,7 @@ namespace MAMBrowser.Controllers
                     string newFileName = date + "_" + memo + "_var_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -513,7 +513,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -521,7 +521,7 @@ namespace MAMBrowser.Controllers
                     string newFileName = date + "_" + memo + "_report_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -587,7 +587,7 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
 
@@ -595,7 +595,7 @@ namespace MAMBrowser.Controllers
                     string newFileName = date + "_" + title + "_filler_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
