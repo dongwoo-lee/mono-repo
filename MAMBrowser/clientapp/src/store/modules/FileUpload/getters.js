@@ -17,7 +17,9 @@ export default {
     return state.MetaData.memo.length >= 1 ? true : false;
   },
   editorState(state) {
-    return state.MetaData.editor.length >= 1 ? true : false;
+    return state.MetaData.editor != null && state.MetaData.editor != ""
+      ? true
+      : false;
   },
   reporterState(state) {
     return state.MetaData.reporter.length >= 1 ? true : false;
@@ -71,7 +73,6 @@ export default {
       if (
         getters.titleState &&
         getters.memoState &&
-        getters.usageState &&
         getters.advertiserState &&
         getters.editorState
       ) {

@@ -77,7 +77,7 @@ namespace MAMBrowser.Controllers
                     string date = DateTime.Now.ToString(Define.DTM8);
 
                     string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + title + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + title + "_my-disk_" + metaDataObject.FileName;
                     
                     var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
@@ -146,7 +146,7 @@ namespace MAMBrowser.Controllers
                     string date = DateTime.Now.ToString(Define.DTM8);
 
                     string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + productId + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + memo + "_program_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
@@ -219,7 +219,7 @@ namespace MAMBrowser.Controllers
                     string date = DateTime.Now.ToString(Define.DTM8);
 
                     string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_" + productId + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + memo + "_mcr-spot_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
@@ -272,8 +272,8 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("scr-spot")]
         public ActionResult<DTO_RESULT> RegScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
-            [FromForm] string UserId, [FromForm] string title, [FromForm] string memo, [FromForm] string usage, [FromForm] string advertiser, [FromForm] string editor, 
-            [FromForm] string media, [FromForm] string onairTime)
+            [FromForm] string UserId, [FromForm] string title, [FromForm] string memo, [FromForm] string advertiser, [FromForm] string editor, 
+            [FromForm] string media)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -293,7 +293,7 @@ namespace MAMBrowser.Controllers
                     string date = DateTime.Now.ToString(Define.DTM8);
 
                     string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + title + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + title + "_scr-spot_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
@@ -315,10 +315,8 @@ namespace MAMBrowser.Controllers
                         scr.UserId = UserId;
                         scr.Title = title;
                         scr.Memo = memo;
-                        scr.Usage = usage;
                         scr.Advertiser = advertiser;
                         scr.Media = media;
-                        scr.OnAirTime = onairTime;
                         scr.Editor = editor;
                         scr.FilePath = newFilePath;
                         scr.RegDtm = DateTime.Now.ToString(Define.DTM19);
@@ -369,7 +367,7 @@ namespace MAMBrowser.Controllers
                     string date = DateTime.Now.ToString(Define.DTM8);
 
                     string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + memo + "_static_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
@@ -443,7 +441,9 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + memo + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + memo + "_var_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
@@ -516,7 +516,9 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + memo + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + memo + "_report_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
@@ -588,7 +590,9 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + title + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + title + "_filler_" + metaDataObject.FileName;
 
 
                     var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");

@@ -66,9 +66,9 @@
     display: none;
 }
 .date-modal {
-    margin-top: 230px;
+    margin-top: 250px;
     width: 380px;
-    height: 210px;
+    height: 190px;
     float: left;
     overflow-y: auto;
     margin-left: 20px;

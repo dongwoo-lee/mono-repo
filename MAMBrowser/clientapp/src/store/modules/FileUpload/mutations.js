@@ -143,6 +143,9 @@ export default {
       },
     ];
   },
+  resetUploaderCustomData(state) {
+    state.uploaderCustomData = {};
+  },
   startDBConnection(state, payload) {
     clearInterval(db);
     db = setInterval(() => {

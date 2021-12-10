@@ -326,6 +326,8 @@ export default {
       return tmpName;
     },
     authorityCheck(e) {
+      console.log(e);
+      console.log(sessionStorage.getItem("user_id"));
       if (
         e.editorID == sessionStorage.getItem("user_id") ||
         sessionStorage.getItem("authority") == "ADMIN"

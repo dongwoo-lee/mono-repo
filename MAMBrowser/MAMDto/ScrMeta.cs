@@ -9,10 +9,8 @@ namespace MAMBrowser.MAMDto
     {
         public string Title { get; set; }
         public string Memo { get; set; }
-        public string Usage { get; set; }
         public string Advertiser { get; set; }
         public string Editor { get; set; }
         public string Media { get; set; }
-        public string OnAirTime { get; set; }
     }
 }

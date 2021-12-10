@@ -79,22 +79,27 @@
                     />
                   </b-form-group>
                 </div>
+                <div style="width: 300px; margin-top: 10px">
+                  <b-form-group
+                    label="소재 유형"
+                    class="has-float-label"
+                    style="font-size: 15px"
+                  >
+                    <b-form-select
+                      style="width: 330px"
+                      id="filetype"
+                      v-model="MetaData.typeSelected"
+                      :options="typeOptions"
+                      @change="resetMemo"
+                    ></b-form-select>
+                  </b-form-group>
+                </div>
               </div>
-              <div style="width: 300px; margin-top: 15px">
-                <h3 style="color: #008ecc">소재 유형</h3>
-                <b-form-select
-                  style="width: 350px; border-color: #008eca"
-                  id="filetype"
-                  v-model="MetaData.typeSelected"
-                  :options="typeOptions"
-                  @change="resetMemo"
-                ></b-form-select>
-              </div>
+              <h3 style="color: #008ecc; margin-top: 10px">메타 데이터</h3>
             </div>
 
             <div :class="[isActive ? 'date-modal' : 'file-modal']">
               <div style="width: 350px">
-                <h3 style="color: #008ecc">메타 데이터</h3>
                 <my-disk
                   v-if="this.MetaData.typeSelected == 'my-disk'"
                 ></my-disk>
@@ -427,6 +432,7 @@ export default {
       "resetMemo",
       "resetEditor",
       "resetType",
+      "resetUploaderCustomData",
     ]),
     resetEvent() {
       this.$emit("reset");
@@ -464,7 +470,7 @@ export default {
             memo: this.MetaData.memo,
             UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
-            productId: this.EventSelected,
+            productId: this.EventSelected.id,
             onairTime: this.date,
             editor: this.MetaData.editor,
           };
@@ -519,6 +525,7 @@ export default {
             onairTime: this.date,
           };
         }
+        this.resetUploaderCustomData();
         this.setUploaderCustomData(data);
         if (this.cancel) {
           this.cancel = false;

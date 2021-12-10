@@ -27,7 +27,6 @@
         @inputEvent="inputEditor"
       ></common-vue-select>
     </b-form-group>
-
     <div style="height: 50px">
       <b-form-input
         class="editTask"
