@@ -22,31 +22,62 @@
             >
               <h3 style="color: #008ecc">파일 정보</h3>
               <div style="padding: 10px; border: 1px solid #008ecc">
-                <p class="title-ellipsis">
-                  {{ this.MetaModalTitle }}
-                </p>
-
-                <div style="height: 50px; margin-top: 20px">
+                <b-form-group
+                  label="파일명"
+                  class="has-float-label"
+                  style="font-size: 15px; margin-top: 10px"
+                >
                   <b-form-input
-                    style="width: 330px"
-                    class="editTask"
-                    v-model="MetaData.duration"
+                    title="오디오 포맷"
+                    style="width: 330px; font-size: 14px"
+                    class="editTask title-ellipsis"
+                    v-model="this.MetaModalTitle"
                     disabled
                     aria-describedby="input-live-help input-live-feedback"
-                    placeholder="duration"
+                    placeholder="Title"
                     trim
                   />
+                </b-form-group>
+                <div style="height: 50px; margin-top: 10px">
+                  <b-form-group
+                    label="파일 분량"
+                    class="has-float-label"
+                    style="font-size: 15px"
+                  >
+                    <b-form-input
+                      style="width: 330px"
+                      class="editTask"
+                      v-model="MetaData.duration"
+                      disabled
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="duration"
+                      trim
+                    >
+                    </b-form-input>
+                    <b-icon-alarm
+                      v-if="!this.durationState"
+                      variant="warning"
+                      style="position: relative; top: -28px; left: 300px"
+                    ></b-icon-alarm>
+                  </b-form-group>
                 </div>
                 <div style="height: 50px; margin-top: 10px">
-                  <b-form-input
-                    style="width: 330px"
-                    class="editTask"
-                    v-model="MetaData.audioFormat"
-                    disabled
-                    aria-describedby="input-live-help input-live-feedback"
-                    placeholder="audioFormat"
-                    trim
-                  />
+                  <b-form-group
+                    label="오디오 포맷"
+                    class="has-float-label"
+                    style="font-size: 15px"
+                  >
+                    <b-form-input
+                      title="오디오 포맷"
+                      style="width: 330px"
+                      class="editTask"
+                      v-model="MetaData.audioFormat"
+                      disabled
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="audioFormat"
+                      trim
+                    />
+                  </b-form-group>
                 </div>
               </div>
               <div style="width: 300px; margin-top: 15px">
@@ -266,6 +297,7 @@ export default {
       "titleState",
       "memoState",
       "editorState",
+      "durationState",
       "metaValid",
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),
@@ -295,6 +327,18 @@ export default {
     },
   },
   methods: {
+    calc() {
+      var dh = this.MetaData.duration.slice(0, 2);
+      var dm = this.MetaData.duration.slice(3, 5);
+      var ds = this.MetaData.duration.slice(6, 8);
+      var calcD = dh * 60 * 60 + dm * 60 + ds * 1;
+
+      var ph = this.ProgramSelected.durationSec.slice(0, 2);
+      var pm = this.ProgramSelected.durationSec.slice(3, 5);
+      var ps = this.ProgramSelected.durationSec.slice(6, 8);
+      var calcP = ph * 60 * 60 + pm * 60 + ps * 1;
+      console.log(calcD - calcP);
+    },
     log() {
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {

@@ -218,6 +218,7 @@
       >
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
+        <DxColumn data-field="duration" caption="편성 분량" />
       </DxDataGrid>
     </div>
     <!-- 프로그램 -->
@@ -236,14 +237,14 @@
         font-family: 'MBC 새로움 M';
       "
     >
-      <div style="width: 180px; float: left">
+      <div style="width: 200px; float: left">
         <b-form-group
           label="이벤트 명"
           class="has-float-label"
           style="margin-top: 20px"
         >
           <b-form-input
-            style="width: 180px"
+            style="width: 200px"
             class="editTask"
             v-model="EventSelected.name"
             disabled
@@ -262,6 +263,22 @@
             style="width: 170px"
             class="editTask"
             v-model="EventSelected.id"
+            disabled
+            aria-describedby="input-live-help input-live-feedback"
+            trim
+          />
+        </b-form-group>
+      </div>
+      <div style="width: 100px; margin-left: 20px; float: left">
+        <b-form-group
+          label="편성 분량"
+          class="has-float-label"
+          style="margin-top: 20px"
+        >
+          <b-form-input
+            style="width: 100px"
+            class="editTask"
+            v-model="EventSelected.duration"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim

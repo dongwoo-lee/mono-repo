@@ -34,6 +34,26 @@ export default {
   eventState(state) {
     return state.EventSelected.id != "" ? true : false;
   },
+  durationState(state) {
+    var dh = state.MetaData.duration.slice(0, 2);
+    var dm = state.MetaData.duration.slice(3, 5);
+    var ds = state.MetaData.duration.slice(6, 8);
+    var calcD = dh * 60 * 60 + dm * 60 + ds * 1;
+
+    if (
+      state.MetaData.typeSelected == "program" &&
+      state.ProgramSelected.durationSec != ""
+    ) {
+      var ph = state.ProgramSelected.durationSec.slice(0, 2);
+      var pm = state.ProgramSelected.durationSec.slice(3, 5);
+      var ps = state.ProgramSelected.durationSec.slice(6, 8);
+      var calcP = ph * 60 * 60 + pm * 60 + ps * 1;
+      if (5 < calcD - calcP) {
+        return false;
+      }
+    }
+    return true;
+  },
   metaValid(state, getters) {
     // TODO: dateState 추가
     if (state.MetaData.typeSelected == "my-disk") {

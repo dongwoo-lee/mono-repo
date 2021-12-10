@@ -70,13 +70,6 @@
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
-          <CopyToMySpacePopup
-            ref="refCopyToMySpacePopup"
-            :show="copyToMySpacePopup"
-            @ok="onMyDiskCopyFromProduct"
-            @close="copyToMySpacePopup = false"
-          >
-          </CopyToMySpacePopup>
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
@@ -92,6 +85,13 @@
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
+        <CopyToMySpacePopup
+          ref="refCopyToMySpacePopup"
+          :show="copyToMySpacePopup"
+          @ok="onMyDiskCopyFromProduct"
+          @close="copyToMySpacePopup = false"
+        >
+        </CopyToMySpacePopup>
       </template>
     </common-form>
     <!-- 마스터링 파일 삭제 -->

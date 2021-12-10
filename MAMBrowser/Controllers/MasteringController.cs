@@ -72,13 +72,14 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\Temp";
+                    var tempPath = @"D:\FileUpload\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + title + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
 
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + title + "_" + metaDataObject.FileName;
                     
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -143,10 +144,12 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + productId + "_"+ metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + productId + "_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -214,10 +217,12 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + productId + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + memo + "_" + productId + "_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -286,10 +291,12 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
-                    string newFileName = date + "_" + title + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
+                    string newFileName = date + "_" + title + "_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -360,10 +367,12 @@ namespace MAMBrowser.Controllers
                     var tempPath = @"D:\Temp";
 
                     string date = DateTime.Now.ToString(Define.DTM8);
+
+                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
                     string newFileName = date + "_" + memo + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
 
 
-                    var tempFilePath = Path.Combine(tempPath, newFileName + ".tmp");
+                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -957,7 +966,7 @@ namespace MAMBrowser.Controllers
             }
             string newFilePath = Path.Combine(newFolder, fileName);
             // check if the uploaded file is a valid image
-            System.IO.File.Copy(tempFilePath, newFilePath);
+            System.IO.File.Move(tempFilePath, newFilePath);
             return newFilePath;
         }
     }

@@ -155,6 +155,7 @@ export default {
       "eventState",
       "SEDateState",
       "advertiserState",
+      "durationState",
       "metaValid",
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),
