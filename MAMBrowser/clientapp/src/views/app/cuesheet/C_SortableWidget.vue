@@ -18,10 +18,19 @@
           style="height: 100%; cursor: pointer"
         >
           <div class="top">
-            <div style="font-size: 13px; padding-right: 5px; padding-left: 3px">
-              {{ index }}
+            <div
+              style="
+                font-size: 15px;
+                padding-right: 5px;
+                padding-left: 3px;
+                width: 30px;
+              "
+            >
+              <b>
+                {{ index }}
+              </b>
             </div>
-            <div>
+            <div class="product_icon" style="width: 20px">
               <b-icon
                 icon="disc"
                 v-if="fileData[index - 1].cartcode == 'S01G01C007'"
@@ -29,6 +38,14 @@
               <b-icon
                 icon="archive"
                 v-if="fileData[index - 1].cartcode == 'S01G01C006'"
+              ></b-icon>
+              <b-icon
+                icon="music-note-list"
+                v-if="fileData[index - 1].cartcode == 'S01G01C014'"
+              ></b-icon>
+              <b-icon
+                icon="joystick"
+                v-if="fileData[index - 1].cartcode == 'S01G01C015'"
               ></b-icon>
               <b-icon
                 icon="trophy"
@@ -83,28 +100,91 @@
                 v-if="fileData[index - 1].cartcode == 'S01G01C020'"
               ></b-icon>
             </div>
-            <div v-if="fileData[index - 1].startposition > 0">
-              <b-icon icon="star"></b-icon>
+            <div style="width: 15px">
+              <div
+                v-if="
+                  !fileData[index - 1].fadeintime &&
+                  fileData[index - 1].startposition > 0
+                "
+              >
+                <b-icon icon="screwdriver"></b-icon>
+              </div>
+              <div
+                v-if="
+                  fileData[index - 1].fadeintime &&
+                  !fileData[index - 1].startposition > 0
+                "
+              >
+                <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+              </div>
+              <div
+                v-if="
+                  fileData[index - 1].fadeintime &&
+                  fileData[index - 1].startposition > 0
+                "
+              >
+                <b-icon icon="tools"></b-icon>
+              </div>
             </div>
-            <div
-              v-if="
-                fileData[index - 1].duration > fileData[index - 1].endposition
-              "
-            >
-              <b-icon icon="star"></b-icon>
+            <div style="width: 15px">
+              <div
+                v-if="
+                  !fileData[index - 1].fadeouttime &&
+                  fileData[index - 1].duration > fileData[index - 1].endposition
+                "
+              >
+                <b-icon icon="screwdriver"></b-icon>
+              </div>
+              <div
+                v-if="
+                  fileData[index - 1].fadeouttime &&
+                  (!fileData[index - 1].duration >
+                    fileData[index - 1].endposition ||
+                    fileData[index - 1].duration ==
+                      fileData[index - 1].endposition)
+                "
+              >
+                <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+              </div>
+              <div
+                v-if="
+                  fileData[index - 1].fadeouttime &&
+                  fileData[index - 1].duration > fileData[index - 1].endposition
+                "
+              >
+                <b-icon icon="tools"></b-icon>
+              </div>
             </div>
             <div class="actionBtn">
-              <b-icon
-                icon="play-circle"
-                class="btnIcon"
+              <DxButton
+                icon="music"
+                type="default"
+                hint="미리듣기/음원편집"
                 @click="onPreview(fileData[index - 1])"
-              ></b-icon>
-              <b-icon
-                icon="x-circle"
-                class="btnIcon"
+                v-if="fileData[index - 1].onairdate == ''"
+              />
+              <DxButton
+                icon="music"
+                type="success"
+                hint="그룹 미리듣기"
+                v-else
+                @click="
+                  showGrpPlayerPopup({
+                    grpType: 'cm',
+                    brd_Dt: fileData[index - 1].onairdate,
+                    grpId: fileData[index - 1].cartid,
+                    title: fileData[index - 1].maintitle,
+                  })
+                "
+              />
+              <DxButton
+                icon="remove"
+                type="danger"
+                styling-mode="outlined"
+                hint="소재삭제"
                 @click="arrdelete(index)"
                 v-if="cueInfo.cuetype != 'A'"
-              ></b-icon>
+              />
             </div>
           </div>
           <div class="bottom">
@@ -159,7 +239,17 @@
         </div>
       </div>
     </DxSortable>
-    <PlayerPopup
+    <CMGroupPlayerPopup
+      :showPlayerPopup="showGrpPlayer"
+      :title="grpParam.title"
+      :grpType="grpParam.grpType"
+      :brd_Dt="grpParam.brd_Dt"
+      :grpId="grpParam.grpId"
+      @closePlayer="closeGrpPlayerPopup"
+    >
+    </CMGroupPlayerPopup>
+
+    <EditPlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.maintitle"
       :fileKey="soundItem.filetoken"
@@ -170,10 +260,12 @@
       :type="channelKey"
       :startPoint="soundItem.startposition"
       :endPoint="soundItem.endposition"
+      :fadeIn="soundItem.fadeintime"
+      :fadeOut="soundItem.fadeouttime"
       requestType="token"
       @closePlayer="onClosePlayer"
     >
-    </PlayerPopup>
+    </EditPlayerPopup>
   </div>
 </template>
 
@@ -199,6 +291,8 @@ export default {
   data() {
     return {
       fileData: [],
+      showGrpPlayer: false,
+      grpParam: {},
       rowData: {
         carttype: "",
         cartcode: "", //그룹코드
@@ -542,6 +636,13 @@ export default {
       var defTime = moment("00:00:00.0", "HH:mm:ss.SS");
       return moment.duration(itemTime.diff(defTime)).asMilliseconds();
     },
+    showGrpPlayerPopup(data) {
+      this.grpParam = data;
+      this.showGrpPlayer = true;
+    },
+    closeGrpPlayerPopup() {
+      this.showGrpPlayer = false;
+    },
   },
 };
 </script>
@@ -565,6 +666,14 @@ export default {
   /* background-color: #EFF0F2; */
   /* border-radius: 10px; */
 }
+.actionBtn .dx-button-content {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+.product_icon svg {
+  font-size: 13px;
+}
 /* .sortableView {
   background: linear-gradient(45deg, #f5709d, #f0a39a);
   background: linear-gradient(45deg, #f791b1, #ed9671);
@@ -577,67 +686,37 @@ export default {
 } */
 .backColor_1 {
   padding: 5px;
+  border: solid 3px rgb(211, 145, 145);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: white;
+}
+.backColor_2 {
+  padding: 5px;
+  border: solid 3px rgb(153, 211, 145);
 
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
-
-  /* color: white;
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-  background: linear-gradient(45deg, #23bfd3, #5177d0); */
-
-  /* background: linear-gradient(45deg, #4fc9da, #7293d8); */
-  /* background: linear-gradient(45deg, #e8dae3, white); */
-  /* background-color: #b0b0b0; */
-}
-.backColor_2 {
-  color: white;
-  padding: 5px;
-  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  background-color: white; */
-
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-  /* background: linear-gradient(45deg, #896de3, #407ac2); */
-  background: linear-gradient(45deg, #9f8ae8, #6995cf);
 }
 .backColor_3 {
-  color: white;
   padding: 5px;
+  border: solid 3px rgb(149, 145, 211);
 
-  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  background-color: white; */
-
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-  /* background: linear-gradient(45deg, #f3b128, #ef8256); */
-  /* background: linear-gradient(45deg, #f29d77, #f5be55); */
-
-  background: linear-gradient(45deg, #4fc9da, #7293d8);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: white;
 }
 .backColor_4 {
-  color: white;
   padding: 5px;
+  border: solid 3px rgb(211, 145, 205);
 
-  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  background-color: white; */
-
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-  /* background: linear-gradient(45deg, #eb4282, #b3509c); */
-  background: linear-gradient(45deg, #ec699d, #c272af);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: white;
 }
 .backColor_my {
-  color: white !important;
   padding: 5px;
+  border: solid 3px rgb(155, 161, 63);
 
-  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  background-color: white; */
-
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-  /* background: linear-gradient(45deg, #f3825b, #f56f86); */
-  background: linear-gradient(45deg, #f58e6e, #f57f90);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: white;
 }
 .top {
   width: 100%;

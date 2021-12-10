@@ -7,6 +7,8 @@ using M30.AudioFile.Common.Expand.Result;
 using M30.AudioFile.Common.Expand.SearchOptions;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
+using MAMBrowser.DTO;
+using MAMBrowser.Foundation;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +19,11 @@ namespace MAMBrowser.Controllers
     public class SearchMenuController : ControllerBase
     {
         private readonly IMusicService _fileService;
-        public SearchMenuController(MusicWebService fileService)
+        private readonly MusicSystemMastering _mastering;
+        public SearchMenuController()
         {
             _fileService = new MusicSystemMockup();
+            _mastering = new MusicSystemMastering();
         }
         public class Pram
         {
@@ -60,6 +64,23 @@ namespace MAMBrowser.Controllers
         public class EFFECTResultDTO
         {
             public DTO_RESULT_PAGE_LIST<DTO_EFFECT> Result { get; set; }
+        }
+        public class SongPrams : DTO_FILEBASE
+        {
+            public string SequenceNO { get; set; }
+            public string Name { get; set; }
+            public string ArtistName { get; set; }
+            public string Duration { get; set; }
+            public string AlbumName { get; set; }
+            public string TrackNO { get; set; }
+            public string ReleaseDate { get; set; }
+            public string Composer { get; set; }
+            public string Writer { get; set; }
+            public string Arranger { get; set; }
+            public string LyricsSeq { get; set; }
+            public override string FilePath { get; set; }
+            public string AlbumImageFilePath { get; set; }
+            public string AlbumToken { get; set; }
         }
 
         #region 소재검색 옵션
@@ -190,9 +211,7 @@ namespace MAMBrowser.Controllers
                 .SetSelectPage(pram.selectpage)
                 .SetSortKey(pram.sortKey)
                 .SetSortValue(pram.sortValue)
-
                 .Build();
-
             
             return MAMWebFactory.Instance.Search<PgmResultDTO>(a);
 
@@ -437,6 +456,20 @@ namespace MAMBrowser.Controllers
         public MenuDTO GetPublicSecond([FromQuery] string media)
         {
             return MAMWebFactory.Instance.GetSubMenu(PageType.PUBLIC_FILE, new MenuParamDTO() { Media = media });
+        }
+
+        //음반 기록실 rowData 가져오기
+        [HttpPost("GetSongItem")]
+        public SongCacheDTO GetSongMastering([FromBody] DTO_SONG pram)
+        {
+            return _mastering.SongMastering(pram);
+        }
+
+        //효과음 rowData 가져오기
+        [HttpPost("GetEffectItem")]
+        public SongCacheDTO GetEffectMastering([FromQuery] DTO_EFFECT pram)
+        {
+            return _mastering.EffectMastering(pram);
         }
     }
 }

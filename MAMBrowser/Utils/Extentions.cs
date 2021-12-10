@@ -1448,6 +1448,20 @@ namespace MAMBrowser.Utils
                 case "S01G01C020":
                     result = "MS";
                     break;
+                //구DB지원 안함 구DB 레이아웃 분리하면 뺴기
+                case "S01G01C014":
+                    result = "FC";
+                    break;
+                case "S01G01C015":
+                    result = "FC";
+                    break;
+                case "S01G01C007":
+                    result = "FC";
+                    break;
+                case "S01G01C006":
+                    result = "FC";
+                    break;
+
                 default:
                     break;
             }

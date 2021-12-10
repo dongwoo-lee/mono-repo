@@ -19,7 +19,7 @@
         :height="abChannelHeight"
         :showColumnLines="false"
         :show-borders="true"
-        :showRowLines="true"
+        :showRowLines="false"
         keyExpr="rownum"
         @selection-changed="onSelectionChanged"
         @toolbar-preparing="onToolbarPreparing($event)"
@@ -65,6 +65,14 @@
             <b-icon
               icon="archive"
               v-if="data.data.cartcode == 'S01G01C006'"
+            ></b-icon>
+            <b-icon
+              icon="music-note-list"
+              v-if="data.data.cartcode == 'S01G01C014'"
+            ></b-icon>
+            <b-icon
+              icon="joystick"
+              v-if="data.data.cartcode == 'S01G01C015'"
             ></b-icon>
             <b-icon
               icon="trophy"
@@ -373,6 +381,7 @@ import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import "moment/locale/ko";
 import { eventBus } from "@/eventBus";
+import axios from "axios";
 
 const moment = require("moment");
 const dataGridRef = "dataGrid";
@@ -444,17 +453,31 @@ export default {
   methods: {
     //...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
-    onAddChannelAB(e) {
+    async onAddChannelAB(e) {
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
         if (selectedRowsData.length > 1) {
-          selectedRowsData.forEach((data, index) => {
+          selectedRowsData.forEach(async (data, index) => {
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
+              if (this.searchListData.cartcode == "S01G01C014") {
+                await axios
+                  .post(`/api/SearchMenu/GetSongItem`, search_row)
+                  .then((res) => {
+                    search_row = res.data;
+                  });
+              }
+              if (this.searchListData.cartcode == "S01G01C015") {
+                await axios
+                  .post(`/api/SearchMenu/GetEffectItem`, search_row)
+                  .then((res) => {
+                    search_row = res.data;
+                  });
+              }
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
               if (!search_row.intDuration) {
@@ -480,6 +503,20 @@ export default {
           if (Object.keys(search_row).includes("contents")) {
             row.memo = search_row.contents;
           } else {
+            if (this.searchListData.cartcode == "S01G01C014") {
+              await axios
+                .post(`/api/SearchMenu/GetSongItem`, search_row)
+                .then((res) => {
+                  search_row = res.data;
+                });
+            }
+            if (this.searchListData.cartcode == "S01G01C015") {
+              await axios
+                .post(`/api/SearchMenu/GetEffectItem`, search_row)
+                .then((res) => {
+                  search_row = res.data;
+                });
+            }
             row.filetoken = search_row.fileToken;
             row.filepath = search_row.filePath;
             if (!search_row.intDuration) {
@@ -508,7 +545,6 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
-      console.log(e.itemData);
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },

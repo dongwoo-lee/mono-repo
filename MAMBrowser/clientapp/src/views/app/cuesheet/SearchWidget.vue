@@ -7,7 +7,7 @@
           class="item_size"
           :data-source="menuList_items"
           orientation="vertical"
-          :selectedItem="menuList_items[2]"
+          :selectedItem="menuList_items[0]"
           display-expr="name"
           :selectByClick="true"
           selectionMode="single"
@@ -131,8 +131,8 @@
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxPaging :enabled="false" />
-          <DxScrolling mode="virtual" />
+          <DxPaging :page-size="10" />
+          <DxScrolling mode="virtual" row-rendering-mode="virtual" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -174,9 +174,21 @@
         :waveformUrl="waveformUrl"
         :tempDownloadUrl="tempDownloadUrl"
         requestType="token"
+        v-if="searchListData.cartcode != 'S01G01C014'"
         @closePlayer="onClosePlayer"
       >
       </PlayerPopup>
+      <MusicPlayerPopup
+        :showPlayerPopup="showPlayerPopup"
+        :music="soundItem"
+        :streamingUrl="streamingUrl_music"
+        :waveformUrl="waveformUrl_music"
+        :tempDownloadUrl="tempDownloadUrl_music"
+        requestType="token"
+        v-else
+        @closePlayer="onClosePlayer"
+      >
+      </MusicPlayerPopup>
     </div>
   </div>
 </template>
@@ -206,6 +218,9 @@ export default {
   },
   data() {
     return {
+      streamingUrl_music: "/api/musicsystem/streaming",
+      waveformUrl_music: "/api/musicsystem/waveform",
+      tempDownloadUrl_music: "/api/musicsystem/temp-download",
       gridHeight: 0,
       searchDataList: {
         id: "",
@@ -219,7 +234,7 @@ export default {
       },
       searchtable_columns: [],
       searchItems: {
-        rowPerPage: 30,
+        rowPerPage: 300000,
         selectPage: 1,
       },
       dataGridRef,
@@ -313,7 +328,7 @@ export default {
   },
   created() {},
   mounted() {
-    this.searchDataList = this.searchData[1];
+    this.searchDataList = this.searchData[0];
     this.searchtable_columns = this.searchDataList.columns;
     this.gridHeight = this.width_size;
   },
@@ -485,11 +500,11 @@ export default {
     },
     // 서브 데이터 조회
     getSubData(apiType, brdDT, id) {
-      //if (sbID === undefined) return;
-      //this.isSubTableLoading = true;
       axios(`/api/products/${apiType}/contents/${brdDT}/${id}`).then((res) => {
+        res.data.resultObject.data.forEach((ele, index) => {
+          ele.rowNO = index + 1;
+        });
         this.subtable_data = res.data.resultObject.data;
-        //this.isSubTableLoading = false;
       });
     },
     async getData(Val) {
@@ -504,9 +519,6 @@ export default {
         this.SET_SEARCHLISTDATA(this.searchtable_data);
       });
     },
-    // onRowPrepared(e) {
-    //   e.rowElement.css({ height: 100 });
-    // },
   },
 };
 </script>

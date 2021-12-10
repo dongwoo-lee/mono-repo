@@ -208,12 +208,6 @@ let mixinCommon = {
       this.$refs.scrollPaging.initSelectedIds();
     },
     onPreview(item) {
-      //console.log(item);
-      //console.log(typeof item.filetyken);
-      // if(typeof(item.filetoken)=='')
-      //   if ("filetoken" in item) {
-      //     item.fileToken = item.filetoken[0]
-      // };
       this.soundItem = item;
       this.showPlayerPopup = true;
     },
