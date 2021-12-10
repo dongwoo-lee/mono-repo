@@ -53,6 +53,14 @@ namespace MAMBrowser.Controllers
             public string searchText { get; set; }
 
         }
+        public class MusicResultDTO
+        {
+            public DTO_RESULT_PAGE_LIST<DTO_SONG> Result { get; set; }
+        }
+        public class EFFECTResultDTO
+        {
+            public DTO_RESULT_PAGE_LIST<DTO_EFFECT> Result { get; set; }
+        }
 
         #region 소재검색 옵션
         [HttpGet("GetSearchOption")]
@@ -144,23 +152,31 @@ namespace MAMBrowser.Controllers
 
             return MAMWebFactory.Instance.Search<DL30ResultDTO>(dto);
         }
+
         //MUSIC
         [HttpGet("GetSearchTable/MUSIC")]
-        public DTO_RESULT_PAGE_LIST<DTO_PRIVATE_FILE> GetMUSIC([FromQuery] Pram pram)
+        public MusicResultDTO GetMUSIC([FromQuery] Pram pram)
         {
-            long totalCount = 0; 
-            //var result = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
-            //var dto = new DL30SearchOptionDTO()
-            //{
-            //    brd_dt = pram.brddate,
-            //    deviceSeq = pram.deviceSeq,
-            //    media = pram.media,
-            //    name = pram.name,
-
-            //};
-
-            return null;
+            var result = new MusicResultDTO();
+            result.Result = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+            long totalCount = 0;
+            result.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+            result.Result.TotalRowCount = totalCount;
+            return result;
         }
+
+        //EFFECT
+        [HttpGet("GetSearchTable/EFFECT")]
+        public EFFECTResultDTO GetEFFECT([FromQuery] Pram pram)
+        {
+            var result = new EFFECTResultDTO();
+            result.Result = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
+            long totalCount = 0;
+            result.Result.Data = _fileService.SearchEffect(pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+            result.Result.TotalRowCount = totalCount;
+            return result;
+        }
+
         //프로그램
         [HttpGet("GetSearchTable/PGM")]
         public PgmResultDTO GetProgram([FromQuery] Pram pram)

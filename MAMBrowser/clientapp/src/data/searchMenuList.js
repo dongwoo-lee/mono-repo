@@ -89,7 +89,7 @@ let searchMenuList = {
           {
             num: 0,
             id: "MUSIC",
-            cartcode: "S01G01C020",
+            cartcode: "S01G01C014",
             name: "음반 기록실",
             options:
               [
@@ -139,16 +139,16 @@ let searchMenuList = {
               ],
             columns:
               [
-                { dataField: "rowNO", minWidth: "50", caption: "순서" },
-                { dataField: "name", caption: "곡명" },
-                { dataField: "artistName", caption: "아티스트" },
-                { dataField: "duration", caption: "재생시간" },
-                { dataField: "albumName", caption: "음반명" },
-                { dataField: "releaseDate", caption: "발매년도" },
-                { dataField: "composer", caption: "작곡가" },
-                { dataField: "writer", caption: "작사가" },
-                { dataField: "sequenceNO", caption: "배열번호" },
-                { dataField: "__slot:actions", caption: "추가작업" }
+                { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
+                { dataField: "name", caption: "곡명", width: "16%", alignment: "center" },
+                { dataField: "artistName", caption: "아티스트", width: "10%", alignment: "center" },
+                { dataField: "duration", caption: "재생시간", width: "8%", alignment: "center" },
+                { dataField: "albumName", caption: "음반명", width: "25%", alignment: "center" },
+                { dataField: "releaseDate", caption: "발매년도", width: "8%", alignment: "center" },
+                { dataField: "composer", caption: "작곡가", width: "8%", alignment: "center" },
+                { dataField: "writer", caption: "작사가", width: "8%", alignment: "center" },
+                { dataField: "sequenceNO", caption: "배열번호", width: "8%", alignment: "center" },
+                { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" }
               ]
           },
           // {
@@ -528,10 +528,12 @@ let searchMenuList = {
           },
           {
             num: 8,
-            id: "",
+            id: "EFFECT",
             name: "효과음",
+            cartcode: "S01G01C015",
             options: [
               {
+                id: "searchText",
                 text: "검색어",
                 value: "",
                 type: "T",
@@ -539,12 +541,12 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { dataField: "rowNO", minWidth: "50", caption: "순서" },
-              { dataField: "name", caption: "효과음명" },
-              { dataField: "description", caption: "설명" },
-              { dataField: "duration", caption: "길이(초)" },
-              { dataField: "audioFormat", caption: "오디오 포맷" },
-              { dataField: "__slot:actions", caption: "추가작업" }
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "5%", alignment: "center" },
+              { dataField: "name", caption: "효과음명", width: "38%", alignment: "center" },
+              { dataField: "description", caption: "설명", width: "38%", alignment: "center" },
+              { dataField: "duration", caption: "길이(초)", width: "8%", alignment: "center" },
+              { dataField: "audioFormat", caption: "오디오 포맷", width: "6%", alignment: "center" },
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" }
             ],
           },
           {
