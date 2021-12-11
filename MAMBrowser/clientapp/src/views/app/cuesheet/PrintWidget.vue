@@ -20,6 +20,7 @@
         :showRowLines="true"
         @selection-changed="onSelectionChanged"
         @toolbar-preparing="viewtableOnToolbarPreparing($event)"
+        @key-down="onKeyDownDel"
         keyExpr="rownum"
         noDataText="데이터가 없습니다."
       >
@@ -100,7 +101,6 @@
           caption="사용시간"
           alignment="center"
           :width="105"
-          :calculate-cell-value="calculateSalesAmount"
           edit-cell-template="etc_usedtime_Template"
           cell-template="usedtime_Template"
         />
@@ -132,12 +132,26 @@
           edit-cell-template="etc_starttime_Template"
         />
         <template #starttime_Template="{ data }">
-          <div v-if="data.data.starttime > 0">
+          <div
+            v-if="
+              data.data.starttime > 0 &&
+              (data.data.usedtime > 0 ||
+                data.rowIndex == 0 ||
+                data.rowIndex == printArr.length - 1)
+            "
+          >
             {{ $moment(data.data.starttime) | moment("HH:mm:ss") }}
           </div>
         </template>
         <template #etc_starttime_Template="{ data }">
-          <div v-if="data.data.starttime > 0">
+          <div
+            v-if="
+              data.data.starttime > 0 &&
+              (data.data.usedtime > 0 ||
+                data.rowIndex == 0 ||
+                data.rowIndex == printArr.length - 1)
+            "
+          >
             {{ $moment(data.data.starttime) | moment("HH:mm:ss") }}
           </div>
         </template>
@@ -159,7 +173,7 @@
             />
           </div>
         </template>
-        <DxScrolling mode="virtual" />
+        <DxScrolling mode="infinite" />
         <template #deleteTem>
           <div>
             <DxButton
@@ -224,6 +238,7 @@ import "moment/locale/ko";
 import {
   HeadingLevel,
   AlignmentType,
+  VerticalAlign,
   Document,
   Packer,
   Paragraph,
@@ -231,6 +246,7 @@ import {
   TableCell,
   TableRow,
   WidthType,
+  HeightRule,
   Footer,
   Header,
 } from "docx";
@@ -238,7 +254,6 @@ import {
 const dataGridRef = "dataGrid";
 const selectBoxRef = "selectBox";
 const moment = require("moment");
-
 export default {
   props: {
     printHeight: Number,
@@ -274,6 +289,7 @@ export default {
   mounted() {
     if (this.printArr.length > 0) {
       this.rowData.rownum = this.printArr.length + 1;
+      this.setStartTime();
     }
   },
   created() {
@@ -321,48 +337,24 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
-    calculateSalesAmount(rowData) {
-      if (this.dataGrid.getRowIndexByKey(rowData.rownum) == 0) {
-        if (this.cueInfo.r_ONAIRTIME == undefined) {
-          rowData.starttime = moment(
-            this.cueInfo.brdtime,
-            "YYYY-MM-DDHH:mm:ss"
-          ).valueOf();
-        } else {
-          rowData.starttime = moment(
-            this.cueInfo.r_ONAIRTIME,
-            "YYYY-MM-DDHH:mm:ss"
-          ).valueOf();
-        }
-        this.brdDate = rowData.starttime;
-      } else if (rowData.usedtime == 0) {
-        rowData.starttime = 0;
+    setStartTime() {
+      if (this.cueInfo.r_ONAIRTIME == undefined) {
+        this.printArr[0].starttime = moment(
+          this.cueInfo.brdtime,
+          "YYYY-MM-DDHH:mm:ss"
+        ).valueOf();
       } else {
-        var startTime = 0;
-        this.printArr.forEach((ele) => {
-          if (
-            ele.usedtime != 0 &&
-            this.dataGrid.getRowIndexByKey(ele.rownum) <
-              this.dataGrid.getRowIndexByKey(rowData.rownum)
-          ) {
-            startTime = startTime + ele.usedtime;
-          }
-        });
-        //console.log(this.brdDate);
-        rowData.starttime = this.brdDate + startTime;
+        this.printArr[0].starttime = moment(
+          this.cueInfo.r_ONAIRTIME,
+          "YYYY-MM-DDHH:mm:ss"
+        ).valueOf();
       }
-      if (
-        this.dataGrid.getRowIndexByKey(rowData.rownum) ==
-        this.printArr.length - 1
-      ) {
-        var startTime = 0;
-        this.printArr.forEach((ele) => {
-          if (ele.usedtime != 0) {
-            startTime = startTime + ele.usedtime;
-          }
-        });
-        rowData.starttime = this.brdDate + startTime;
-      }
+      this.printArr.forEach((ele, index) => {
+        if (index != 0)
+          ele.starttime =
+            this.printArr[index - 1].usedtime +
+            this.printArr[index - 1].starttime;
+      });
     },
     onAddPrint(e) {
       var arrData = this.printArr;
@@ -415,6 +407,7 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      this.setStartTime();
     },
     onReorderPrint(e) {
       var arrData = this.printArr;
@@ -459,9 +452,7 @@ export default {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
       }
-      //this.SET_PRINTARR(arrData);
-
-      //e.component.clearSelection();
+      this.setStartTime();
     },
     selectionDel() {
       var arrData = this.printArr;
@@ -477,6 +468,9 @@ export default {
         arrData = a;
       }
       this.SET_PRINTARR(arrData);
+      if (this.printArr.length > 0) {
+        this.setStartTime();
+      }
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -563,6 +557,7 @@ export default {
       } else {
         cellInfo.data.usedtime = 0;
       }
+      this.setStartTime();
     },
     onValueChanged_etcText(value, cellInfo) {
       cellInfo.data.etc = value.value;
@@ -590,7 +585,7 @@ export default {
                 arrData.splice(1, 0, row);
               }
               this.rowData.rownum = this.rowData.rownum + 1;
-              //this.SET_PRINTARR(arrData);
+              this.setStartTime();
             },
           };
         }
@@ -611,6 +606,86 @@ export default {
     },
     exportWord() {
       const rows = [];
+      var djname = this.cueInfo.djname != undefined ? this.cueInfo.djname : "";
+      var membername =
+        this.cueInfo.membername != undefined ? this.cueInfo.membername : "";
+      var directorname =
+        this.cueInfo.directorname != undefined ? this.cueInfo.directorname : "";
+
+      rows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              width: {
+                size: 2000,
+                type: WidthType.DXA,
+              },
+              children: [
+                new Paragraph({
+                  text: "코드",
+                  alignment: AlignmentType.CENTER,
+                }),
+              ],
+              verticalAlign: VerticalAlign.CENTER,
+            }),
+            new TableCell({
+              width: {
+                size: 5000,
+                type: WidthType.DXA,
+              },
+              children: [
+                new Paragraph({
+                  text: this.nullChecker("내용"),
+                  alignment: AlignmentType.CENTER,
+                }),
+              ],
+              verticalAlign: VerticalAlign.CENTER,
+            }),
+            new TableCell({
+              width: {
+                size: 1500,
+                type: WidthType.DXA,
+              },
+              children: [
+                new Paragraph({
+                  text: this.nullChecker("사용시간"),
+                  alignment: AlignmentType.CENTER,
+                }),
+              ],
+              verticalAlign: VerticalAlign.CENTER,
+            }),
+            new TableCell({
+              width: {
+                size: 1500,
+                type: WidthType.DXA,
+              },
+              children: [
+                new Paragraph({
+                  text: this.nullChecker("시작시간"),
+                  alignment: AlignmentType.CENTER,
+                }),
+              ],
+              verticalAlign: VerticalAlign.CENTER,
+            }),
+            new TableCell({
+              width: {
+                size: 3000,
+                type: WidthType.DXA,
+              },
+              children: [
+                new Paragraph({
+                  text: this.nullChecker("비고"),
+                  alignment: AlignmentType.CENTER,
+                }),
+              ],
+              verticalAlign: VerticalAlign.CENTER,
+            }),
+          ],
+          tableHeader: true,
+          height: { value: 500, rule: HeightRule.ATLEAST },
+        })
+      );
+
       var num = 1;
       this.printArr.forEach((i) => {
         var code = this.exportCode(i.code);
@@ -623,51 +698,92 @@ export default {
             children: [
               new TableCell({
                 width: {
-                  size: 2000,
+                  size: 1900,
                   type: WidthType.DXA,
                 },
-
-                children: [new Paragraph(code)],
+                children: [
+                  new Paragraph({
+                    text: code,
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
               }),
               new TableCell({
                 width: {
-                  size: 5000,
+                  size: 5500,
                   type: WidthType.DXA,
                 },
-                children: [new Paragraph(this.nullChecker(i.contents))],
+                children: [
+                  new Paragraph(
+                    this.nullChecker({
+                      text: i.contents,
+                      alignment: AlignmentType.CENTER,
+                    })
+                  ),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
               }),
               new TableCell({
                 width: {
-                  size: 1500,
+                  size: 1400,
                   type: WidthType.DXA,
                 },
-                children: [new Paragraph(this.nullChecker(i.duration))],
+                children: [
+                  new Paragraph({
+                    text:
+                      i.usedtime == 0
+                        ? ""
+                        : moment(i.usedtime)
+                            .subtract(9, "hours")
+                            .format("HH:mm:ss"),
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
               }),
               new TableCell({
                 width: {
-                  size: 1500,
+                  size: 1400,
                   type: WidthType.DXA,
                 },
-                children: [new Paragraph(this.nullChecker(i.starttime))],
+                children: [
+                  new Paragraph({
+                    text:
+                      i.starttime > 0 &&
+                      (i.usedtime > 0 ||
+                        this.printArr[0].rownum == i.rownum ||
+                        i.rownum ==
+                          this.printArr[this.printArr.length - 1].rownum)
+                        ? moment(i.starttime).format("HH:mm:ss")
+                        : "",
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
               }),
               new TableCell({
                 width: {
-                  size: 3000,
+                  size: 2800,
                   type: WidthType.DXA,
                 },
-                children: [new Paragraph(this.nullChecker(i.etc))],
+                children: [
+                  new Paragraph({
+                    text: this.nullChecker(i.etc),
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                verticalAlign: VerticalAlign.CENTER,
               }),
             ],
-            height: {
-              height: 500,
-            },
+            height: { value: 500, rule: HeightRule.ATLEAST },
           })
         );
       });
+      //rows[1].height = { height: 2500, rule: HeightRule.ATLEAST };
       const table = new Table({
         columnWidths: [3505, 5505],
         rows: rows,
-        tableHeader: true,
       });
       const doc = new Document({
         sections: [
@@ -686,7 +802,11 @@ export default {
             footers: {
               default: new Footer({
                 children: [
-                  new Paragraph(this.nullChecker(this.cueInfo.footertitle)),
+                  new Paragraph({
+                    text: this.nullChecker(this.cueInfo.footertitle),
+                    heading: HeadingLevel.HEADING_6,
+                    alignment: AlignmentType.CENTER,
+                  }),
                 ],
               }),
             },
@@ -705,11 +825,11 @@ export default {
               new Paragraph({
                 text:
                   "진행 : " +
-                  this.cueInfo.djname +
+                  djname +
                   " / 연출 : " +
-                  this.cueInfo.membername +
+                  membername +
                   " / 구성 : " +
-                  this.cueInfo.directorname,
+                  directorname,
                 alignment: AlignmentType.RIGHT,
               }),
               table,
@@ -722,6 +842,14 @@ export default {
               run: {
                 size: 28,
                 bold: true,
+                font: "MBC 새로움 M",
+                color: "black",
+              },
+            },
+            heading6: {
+              run: {
+                size: 18,
+                bold: false,
                 font: "MBC 새로움 M",
                 color: "black",
               },
@@ -951,6 +1079,11 @@ export default {
         codeText = "";
       }
       return codeText;
+    },
+    onKeyDownDel(e) {
+      if (e.event.key == "Delete") {
+        this.selectionDel();
+      }
     },
   },
 };

@@ -23,6 +23,7 @@
         keyExpr="rownum"
         @selection-changed="onSelectionChanged"
         @toolbar-preparing="onToolbarPreparing($event)"
+        @key-down="onKeyDownDel"
         :customize-columns="customizeColumns"
         :show-column-headers="false"
         noDataText="데이터가 없습니다."
@@ -749,6 +750,11 @@ export default {
     },
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
+    },
+    onKeyDownDel(e) {
+      if (e.event.key == "Delete") {
+        this.selectionDel();
+      }
     },
   },
 };

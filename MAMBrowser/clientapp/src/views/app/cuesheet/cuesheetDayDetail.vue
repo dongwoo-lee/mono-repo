@@ -267,7 +267,7 @@ export default {
 </script>
 <style>
 .drag_ {
-  position: relative;
+  position: fixed;
   height: 100%;
   overflow: auto;
 }

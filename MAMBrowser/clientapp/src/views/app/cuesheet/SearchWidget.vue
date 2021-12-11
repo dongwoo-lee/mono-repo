@@ -65,7 +65,8 @@
               variant="outline-primary default"
               type="submit"
               class="search_ok_btn"
-              >검색</b-button
+              >검색
+              {{ "(" + searchtable_data.columns.length + "개)" }}</b-button
             >
           </div>
         </b-form>
@@ -126,13 +127,15 @@
           </template>
           <template #duration_Template="{ data }">
             <div>
-              <div>{{ data.data.duration.substring(0, 8) }}</div>
+              <div v-if="data.data.duration">
+                {{ data.data.duration.substring(0, 8) }}
+              </div>
             </div>
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxPaging :page-size="10" />
-          <DxScrolling mode="virtual" row-rendering-mode="virtual" />
+          <DxScrolling mode="infinite" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -168,7 +171,7 @@
       </div>
       <PlayerPopup
         :showPlayerPopup="showPlayerPopup"
-        :title="soundItem.name"
+        :title="goTitle"
         :fileKey="soundItem.fileToken"
         :streamingUrl="streamingUrl"
         :waveformUrl="waveformUrl"
@@ -370,6 +373,15 @@ export default {
     },
     dataGrid: function () {
       return this.$refs[dataGridRef].instance;
+    },
+    goTitle() {
+      switch (this.searchDataList.cartcode) {
+        case "S01G01C007":
+          return this.soundItem.title;
+
+        default:
+          return this.soundItem.name;
+      }
     },
   },
   methods: {

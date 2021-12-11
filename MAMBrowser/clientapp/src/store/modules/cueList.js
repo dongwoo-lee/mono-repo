@@ -779,15 +779,6 @@ export default {
                 if (Object.keys(cueDataObj).length === 0) {
                     cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
                 }
-                // payload.printDTO.forEach((ele) => {
-                //     if (ele.rownum == 1) {
-                //         if (cueDataObj.r_ONAIRTIME == undefined) {
-                //             ele.starttime = moment(cueDataObj.brdtime, "YYYY-MM-DDHH:mm:ss").valueOf();
-                //         } else {
-                //             ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
-                //         }
-                //     }
-                // })
             }
             commit('SET_PRINTARR', payload.printDTO);
         },
@@ -848,16 +839,6 @@ export default {
             if (Object.keys(cueDataObj).length === 0) {
                 cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
             }
-            // printTemplate.forEach((ele) => {
-            //     if (ele.rownum == 1) {
-            //         ele.starttime = moment(cueDataObj.r_ONAIRTIME, "YYYY-MM-DDHH:mm:ss").valueOf();
-            //         // var time1 = moment("00:00:00", "HH:mm:ss");
-            //         // var time2 = moment(cueDataObj.brdtime, "YYYY-MM-DDTHH:mm:ss");
-            //         // ele.starttime = moment
-            //         //     .duration(time2.diff(time1))
-            //         //     .asMilliseconds();
-            //     }
-            // })
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
             // commit('SET_CUEINFO', payload)
@@ -867,10 +848,6 @@ export default {
                     arr.push({ rownum: i + 1 })
                 }
                 insData["channel_" + (c + 1)] = arr
-                // commit('SET_CCHANNELDATA', {
-                //     type: "channel_" + (c + 1),
-                //     value: arr,
-                // })
             }
             commit('SET_CCHANNELDATA', insData)
 

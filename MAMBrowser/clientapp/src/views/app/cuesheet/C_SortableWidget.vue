@@ -18,14 +18,7 @@
           style="height: 100%; cursor: pointer"
         >
           <div class="top">
-            <div
-              style="
-                font-size: 15px;
-                padding-right: 5px;
-                padding-left: 3px;
-                width: 30px;
-              "
-            >
+            <div class="indexNumber">
               <b>
                 {{ index }}
               </b>
@@ -673,6 +666,13 @@ export default {
 }
 .product_icon svg {
   font-size: 13px;
+}
+.indexNumber {
+  text-align: center;
+  font-size: 15px;
+  padding-right: 5px;
+  padding-left: 3px;
+  width: 30px;
 }
 /* .sortableView {
   background: linear-gradient(45deg, #f5709d, #f0a39a);
