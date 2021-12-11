@@ -872,10 +872,17 @@ export default {
     },
     exportGrid(v) {
       var num = 1;
+      var djname = this.cueInfo.djname != undefined ? this.cueInfo.djname : "";
+      var membername =
+        this.cueInfo.membername != undefined ? this.cueInfo.membername : "";
+      var directorname =
+        this.cueInfo.directorname != undefined ? this.cueInfo.directorname : "";
       const doc = new jsPDF();
-      this.dataGrid.columnOption("소재명", "visible", false);
+      //this.dataGrid.columnOption("소재명", "visible", false);
       doc.addFileToVFS("MBC NEW M-normal.ttf", font);
       doc.addFont("MBC NEW M-normal.ttf", "MBC NEW M", "normal");
+      this.dataGrid.columnOption("소재명", "visible", true);
+
       exportDataGridToPdf({
         jsPDFDocument: doc,
         component: this.dataGrid,
@@ -926,59 +933,67 @@ export default {
           margin: { top: 30 },
         },
       }).then(() => {
-        this.dataGrid.columnOption("소재명", "visible", true);
-        const pageSize = doc.internal.pageSize;
-        const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
-        const pageHeight = pageSize.height
-          ? pageSize.height
-          : pageSize.getHeight();
-        pageHeight;
-        doc.setFontSize(18);
-        doc.setFont("MBC NEW M");
-        doc.text(
-          this.nullChecker(this.cueInfo.headertitle),
-          pageWidth / 2 -
-            doc.getTextWidth(this.nullChecker(this.cueInfo.headertitle)) / 2,
-          5,
-          {
-            baseline: "top",
-          }
-        );
-        doc.setFontSize(10);
-        doc.text(
-          moment(
-            this.cueInfo.detail[0].brdtime,
-            "YYYY-MM-DD'T'HH:mm:ss"
-          ).format("YYYY년 MM월 DD일 (ddd)"),
-          pageWidth - 52,
-          20,
-          {}
-        );
-        doc.setFontSize(9);
-        doc.text(
-          "진행 : " +
-            this.cueInfo.djname +
-            " / 연출 : " +
-            this.cueInfo.membername +
-            " / 구성 : " +
-            this.cueInfo.directorname,
-          pageWidth - 76,
-          25,
-          {}
-        );
-        doc.text(
-          this.nullChecker(this.cueInfo.footertitle),
-          pageWidth / 2 -
-            doc.getTextWidth(this.nullChecker(this.cueInfo.footertitle)) / 2,
-          pageHeight - 5,
-          { baseline: "bottom" }
-        );
+        const pageCount = doc.internal.getNumberOfPages();
+
+        for (var i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          const pageSize = doc.internal.pageSize;
+          const pageWidth = pageSize.width
+            ? pageSize.width
+            : pageSize.getWidth();
+          const pageHeight = pageSize.height
+            ? pageSize.height
+            : pageSize.getHeight();
+          pageHeight;
+          doc.setFontSize(18);
+          doc.setFont("MBC NEW M");
+          doc.text(
+            this.nullChecker(this.cueInfo.headertitle),
+            pageWidth / 2 -
+              doc.getTextWidth(this.nullChecker(this.cueInfo.headertitle)) / 2,
+            5,
+            {
+              baseline: "top",
+            }
+          );
+          doc.setFontSize(10);
+          doc.text(
+            Object.keys(this.cueInfo).includes("detail")
+              ? moment(this.cueInfo.brdtime, "YYYY-MM-DD'T'HH:mm:ss").format(
+                  "YYYY년 MM월 DD일 (ddd)"
+                )
+              : moment(this.cueInfo.day, "YYYY-MM-DD'T'HH:mm:ss").format(
+                  "YYYY년 MM월 DD일 (ddd)"
+                ),
+            pageWidth - 15,
+            20,
+            { align: "right" }
+          );
+          doc.setFontSize(9);
+          doc.text(
+            "진행 : " +
+              djname +
+              " / 연출 : " +
+              membername +
+              " / 구성 : " +
+              directorname,
+            pageWidth - 15,
+            25,
+            { align: "right" }
+          );
+          doc.text(
+            this.nullChecker(this.cueInfo.footertitle),
+            pageWidth / 2 -
+              doc.getTextWidth(this.nullChecker(this.cueInfo.footertitle)) / 2,
+            pageHeight - 5,
+            { baseline: "bottom" }
+          );
+        }
         if (v == "print") {
           doc.autoPrint();
         } else {
           doc.save(this.nullChecker(this.cueInfo.headertitle) + ".pdf");
         }
-        //doc.output("dataurlnewwindow");
 
         const hiddFrame = document.createElement("iframe");
         hiddFrame.style.position = "fixed";
