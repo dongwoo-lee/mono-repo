@@ -154,13 +154,17 @@
                 type="default"
                 hint="미리듣기/음원편집"
                 @click="onPreview(fileData[index - 1])"
-                v-if="fileData[index - 1].onairdate == ''"
+                v-if="
+                  fileData[index - 1].onairdate == '' &&
+                  fileData[index - 1].filepath != null &&
+                  fileData[index - 1].filepath != ''
+                "
               />
               <DxButton
                 icon="music"
                 type="success"
                 hint="그룹 미리듣기"
-                v-else
+                v-if="fileData[index - 1].onairdate != ''"
                 @click="
                   showGrpPlayerPopup({
                     grpType: 'cm',

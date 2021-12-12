@@ -308,6 +308,7 @@
                 icon="music"
                 type="default"
                 hint="미리듣기/음원편집"
+                v-if="data.data.filepath != null && data.data.filepath != ''"
                 @click="onPreview(data.data)"
               />
             </div>
@@ -576,7 +577,6 @@ export default {
         var startindex = e.fromIndex;
         var newindex = e.toIndex;
         this.selectionDel();
-
         if (startindex > e.toIndex) {
           selectedRowsKey.forEach((selectindex) => {
             var index = e.component.getRowIndexByKey(selectindex);
@@ -603,10 +603,7 @@ export default {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
       }
-      this.setRowNum();
-
       //e.component.clearSelection();
-      //this.SET_ABCARTARR(arrData);
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();

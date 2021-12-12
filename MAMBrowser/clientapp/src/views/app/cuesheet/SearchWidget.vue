@@ -96,6 +96,7 @@
                 type="default"
                 hint="미리듣기"
                 styling-mode="outlined"
+                v-if="data.data.filePath != null"
                 @click="onPreview(data.data)"
               />
             </div>
@@ -163,6 +164,7 @@
                 type="default"
                 hint="미리듣기"
                 styling-mode="outlined"
+                v-if="data.data.filePath != null"
                 @click="onPreview(data.data)"
               />
             </div>

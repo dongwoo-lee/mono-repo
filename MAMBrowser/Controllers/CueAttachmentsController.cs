@@ -126,7 +126,7 @@ namespace MAMBrowser.Controllers
                                 }
                             }
                         }
-                        if (ele.AUDIOS.Any())
+                        if (ele.AUDIOS!=null&&ele.AUDIOS.Any())
                         {
                             foreach (var item in ele.AUDIOS)
                             {
