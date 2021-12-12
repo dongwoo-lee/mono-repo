@@ -499,8 +499,14 @@ export default {
             await axios
                 .post(`/api/TempCueSheet/SaveTempCue`, payload)
                 .then((res) => {
-                    console.log("res")
-                    console.log(res)
+                    window.$notify(
+                        "info",
+                        `템플릿 추가완료.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
                 })
         },
         //상세내용 -즐겨찾기
@@ -536,11 +542,25 @@ export default {
                         commit('SET_CUEINFO', newInfo)
                         sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                     })
-                    alert("저장완료");
+                    window.$notify(
+                        "info",
+                        `일일 큐시트 저장완료.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
                 })
                 .catch((err => {
                     console.log("saveDayCue" + err.message);
-                    alert("오류발생");
+                    window.$notify(
+                        "error",
+                        `일일 큐시트 저장실패.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
                 }));
         },
         //기본큐시트 저장
@@ -592,11 +612,25 @@ export default {
                             commit('SET_CUEINFO', cueInfoData)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(cueInfoData));
                         });
-                    alert("저장완료");
+                    window.$notify(
+                        "info",
+                        `기본 큐시트 저장완료.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
                 })
                 .catch((err => {
                     console.log("saveDefCue" + err);
-                    alert("오류발생");
+                    window.$notify(
+                        "error",
+                        `기본 큐시트 저장실패.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
                 }));
         },
         //템플릿 저장
@@ -622,12 +656,25 @@ export default {
                             commit('SET_CUEINFO', newInfo)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                         });
-                    alert("저장완료");
-
+                    window.$notify(
+                        "info",
+                        `템플릿 저장완료.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
                 })
                 .catch((err => {
                     console.log("saveTempCue" + err);
-                    alert("오류발생");
+                    window.$notify(
+                        "error",
+                        `템플릿 저장실패.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
 
                 }));
         },
@@ -779,6 +826,15 @@ export default {
                 if (Object.keys(cueDataObj).length === 0) {
                     cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
                 }
+                payload.printDTO.sort(function (a, b) {
+                    if (a.rownum > b.rownum) {
+                        return 1;
+                    }
+                    if (a.rownum < b.rownum) {
+                        return -1;
+                    }
+                    return 0;
+                });
             }
             commit('SET_PRINTARR', payload.printDTO);
         },
@@ -856,7 +912,7 @@ export default {
         setclearFav({ commit }) {
             var favArr = [];
             for (var i = 0; 16 > i; i++) {
-                favArr.push({})
+                favArr.push({ rownum: i + 1 })
             }
             commit('SET_CUEFAVORITES', favArr)
         },
@@ -884,6 +940,25 @@ export default {
                 .then((res) => {
                     console.log(res)
                 })
-        }
+        },
+        setStartTime({ state }) {
+            if (state.cueInfo.r_ONAIRTIME == undefined) {
+                state.printArr[0].starttime = moment(
+                    state.cueInfo.brdtime,
+                    "YYYY-MM-DDHH:mm:ss"
+                ).valueOf();
+            } else {
+                state.printArr[0].starttime = moment(
+                    state.cueInfo.r_ONAIRTIME,
+                    "YYYY-MM-DDHH:mm:ss"
+                ).valueOf();
+            }
+            state.printArr.forEach((ele, index) => {
+                if (index != 0)
+                    ele.starttime =
+                        state.printArr[index - 1].usedtime +
+                        state.printArr[index - 1].starttime;
+            });
+        },
     }
 }

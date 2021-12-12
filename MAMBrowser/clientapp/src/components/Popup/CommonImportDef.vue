@@ -228,6 +228,7 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
     ...mapActions("cueList", ["getMediasOption"]),
     ...mapActions("cueList", ["disableList"]),
+    ...mapActions("cueList", ["setStartTime"]),
 
     async getData() {
       if (this.state) {
@@ -361,6 +362,7 @@ export default {
 
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
                 this.SET_PRINTARR(resultPrintData);
+                this.setStartTime();
                 this.SET_CUEINFO(oldCueInfo);
                 this.$emit("settings", oldCueInfo);
                 eventBus.$emit("printDataSet");

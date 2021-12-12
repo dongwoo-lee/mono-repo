@@ -32,6 +32,8 @@ namespace MAMBrowser.BLL
         {
             var paramData = pram.FavToEntity();
             List<UserFavCreateParam> param = new List<UserFavCreateParam>();
+            if (paramData.Any())
+            {
             foreach (var item in paramData)
             {
                 var paramItem = new UserFavCreateParam();
@@ -40,9 +42,13 @@ namespace MAMBrowser.BLL
                 param.Add(paramItem);
             }
 
-            if (param?.Any() == true)
-                return _dao.CreateFavorites(param);
-            return 0;
+            return _dao.CreateFavorites(param);
+            }
+            else
+            {
+                return 0;
+            }
+            //0개면 에러나는데 이거 한번 봐야함
         }
     }
 }

@@ -137,19 +137,18 @@ let searchMenuList = {
                   type: "T"
                 },
               ],
-            columns:
-              [
-                { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
-                { dataField: "name", caption: "곡명", width: "16%", alignment: "center" },
-                { dataField: "artistName", caption: "아티스트", width: "10%", alignment: "center" },
-                { dataField: "duration", caption: "재생시간", width: "8%", alignment: "center" },
-                { dataField: "albumName", caption: "음반명", width: "25%", alignment: "center" },
-                { dataField: "releaseDate", caption: "발매년도", width: "8%", alignment: "center" },
-                { dataField: "composer", caption: "작곡가", width: "8%", alignment: "center" },
-                { dataField: "writer", caption: "작사가", width: "8%", alignment: "center" },
-                { dataField: "sequenceNO", caption: "배열번호", width: "8%", alignment: "center" },
-                { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" }
-              ]
+            columns: [
+              { dataField: "rowNO", minWidth: "50", caption: "순서", width: "4%", alignment: "center" },
+              { dataField: "name", caption: "곡명", width: "16%", alignment: "center" },
+              { dataField: "artistName", caption: "아티스트", width: "10%", alignment: "center" },
+              { dataField: "duration", caption: "재생시간", width: "8%", alignment: "center" },
+              { dataField: "albumName", caption: "음반명", width: "25%", alignment: "center" },
+              { dataField: "releaseDate", caption: "발매년도", width: "8%", alignment: "center" },
+              { dataField: "composer", caption: "작곡가", width: "8%", alignment: "center" },
+              { dataField: "writer", caption: "작사가", width: "8%", alignment: "center" },
+              { dataField: "sequenceNO", caption: "배열번호", width: "8%", alignment: "center" },
+              { cellTemplate: "play_Template", minWidth: "50", caption: "작업", width: "5%", alignment: "center" }
+            ]
           },
           // {
           //   num: 1,

@@ -335,7 +335,12 @@ export default {
       var pram = {
         DefCueSheetDTO: result,
       };
-      await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {});
+      await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {
+        window.$notify("info", `기본 큐시트 추가완료.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      });
       this.getData();
     },
     // 요일확인 및 목록 가져오기 (modal)
@@ -382,14 +387,27 @@ export default {
             delcueidList.push(ele.cueid);
           });
         });
-        await axios.delete(`/api/DefCueSheet/DelDefCue`, {
-          params: {
-            delParams: delcueidList,
-          },
-          paramsSerializer: (params) => {
-            return qs.stringify(params);
-          },
-        });
+        await axios
+          .delete(`/api/DefCueSheet/DelDefCue`, {
+            params: {
+              delParams: delcueidList,
+            },
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+          .then((res) => {
+            window.$notify("info", `기본 큐시트 삭제완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          })
+          .catch(() => {
+            window.$notify("error", `기본 큐시트 삭제실패.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          });
         this.getData();
         this.initSelectedIds();
       }

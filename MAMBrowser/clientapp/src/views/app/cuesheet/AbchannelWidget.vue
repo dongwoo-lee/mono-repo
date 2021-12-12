@@ -51,9 +51,14 @@
           :width="45"
           alignment="center"
         />
-        <template #rowIndexTemplate="{ data }">
+        <!-- <template #rowIndexTemplate="{ data }">
           <div>
             <div>{{ data.rowIndex + 1 }}</div>
+          </div>
+        </template> -->
+        <template #rowIndexTemplate="{ data }">
+          <div>
+            <div>{{ data.data.rownum }}</div>
           </div>
         </template>
         <DxColumn :width="30" cell-template="product_Template" />
@@ -452,7 +457,7 @@ export default {
     },
   },
   methods: {
-    //...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
       var arrData = this.abCartArr;
@@ -546,8 +551,14 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      this.setRowNum();
       // e.fromComponent.clearSelection();
       //this.SET_ABCARTARR(arrData);
+    },
+    setRowNum() {
+      this.abCartArr.forEach((ele, index) => {
+        ele.rownum = index + 1;
+      });
     },
     onReorderChannelAB(e) {
       var arrData = this.abCartArr;
@@ -592,6 +603,8 @@ export default {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
       }
+      this.setRowNum();
+
       //e.component.clearSelection();
       //this.SET_ABCARTARR(arrData);
     },
@@ -642,19 +655,28 @@ export default {
       }
     },
     selectionDel() {
-      var arrData = this.abCartArr;
-      let a = arrData;
-      let b = this.selectedItemKeys;
-      for (let i = 0; i < b.length; i++) {
-        for (let j = 0; j < a.length; j++) {
-          if (b[i].rownum == a[j].rownum) {
-            a.splice(j, 1);
-            break;
-          }
-        }
-        arrData = a;
-      }
-      //this.SET_ABCARTARR(arrData);
+      var totalList = [...this.abCartArr];
+      this.selectedItemKeys.forEach((item) => {
+        var result = totalList.filter((ele) => {
+          return ele.rownum != item.rownum;
+        });
+        totalList = result;
+      });
+      this.SET_ABCARTARR(totalList);
+      this.setRowNum();
+
+      // var arrData = this.abCartArr;
+      // let a = arrData;
+      // let b = this.selectedItemKeys;
+      // for (let i = 0; i < b.length; i++) {
+      //   for (let j = 0; j < a.length; j++) {
+      //     if (b[i].rownum == a[j].rownum) {
+      //       a.splice(j, 1);
+      //       break;
+      //     }
+      //   }
+      //   arrData = a;
+      // }
     },
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
@@ -701,6 +723,7 @@ export default {
                 arrData.splice(1, 0, row);
               }
               this.rowData.rownum = this.rowData.rownum + 1;
+              this.setRowNum();
               //this.SET_ABCARTARR(arrData);
             },
           };

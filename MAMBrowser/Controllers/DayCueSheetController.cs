@@ -65,7 +65,7 @@ namespace MAMBrowser.Controllers
             {
                 return _bll.GetDayCueSheet(productid, cueid, pgmcode, brd_dt);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 throw;
             }

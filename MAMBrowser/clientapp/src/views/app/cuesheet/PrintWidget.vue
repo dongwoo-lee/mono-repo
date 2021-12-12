@@ -214,7 +214,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import {
   DxDataGrid,
   DxColumn,
@@ -337,25 +337,26 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
-    setStartTime() {
-      if (this.cueInfo.r_ONAIRTIME == undefined) {
-        this.printArr[0].starttime = moment(
-          this.cueInfo.brdtime,
-          "YYYY-MM-DDHH:mm:ss"
-        ).valueOf();
-      } else {
-        this.printArr[0].starttime = moment(
-          this.cueInfo.r_ONAIRTIME,
-          "YYYY-MM-DDHH:mm:ss"
-        ).valueOf();
-      }
-      this.printArr.forEach((ele, index) => {
-        if (index != 0)
-          ele.starttime =
-            this.printArr[index - 1].usedtime +
-            this.printArr[index - 1].starttime;
-      });
-    },
+    ...mapActions("cueList", ["setStartTime"]),
+    // setStartTime() {
+    //   if (this.cueInfo.r_ONAIRTIME == undefined) {
+    //     this.printArr[0].starttime = moment(
+    //       this.cueInfo.brdtime,
+    //       "YYYY-MM-DDHH:mm:ss"
+    //     ).valueOf();
+    //   } else {
+    //     this.printArr[0].starttime = moment(
+    //       this.cueInfo.r_ONAIRTIME,
+    //       "YYYY-MM-DDHH:mm:ss"
+    //     ).valueOf();
+    //   }
+    //   this.printArr.forEach((ele, index) => {
+    //     if (index != 0)
+    //       ele.starttime =
+    //         this.printArr[index - 1].usedtime +
+    //         this.printArr[index - 1].starttime;
+    //   });
+    // },
     onAddPrint(e) {
       var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -886,12 +887,14 @@ export default {
       exportDataGridToPdf({
         jsPDFDocument: doc,
         component: this.dataGrid,
-        customizeCell: function (options) {
+        customizeCell: (options) => {
           const { gridCell, pdfCell } = options;
           pdfCell.styles = {
             font: "MBC NEW M",
             fontSize: 10,
             showHead: "firstPage",
+            valign: "middle",
+            halign: "center",
           };
           switch (pdfCell.content) {
             case "CSGP01":
@@ -927,6 +930,30 @@ export default {
               break;
             default:
               break;
+          }
+          if (
+            gridCell.rowType == "data" &&
+            gridCell.column.dataField == "usedtime"
+          ) {
+            gridCell.data.usedtime == 0
+              ? (pdfCell.content = "")
+              : (pdfCell.content = moment(gridCell.data.usedtime)
+                  .subtract(9, "hours")
+                  .format("HH:mm:ss"));
+          }
+          if (
+            gridCell.rowType == "data" &&
+            gridCell.column.dataField == "starttime"
+          ) {
+            gridCell.data.starttime > 0 &&
+            (gridCell.data.usedtime > 0 ||
+              this.printArr[0].rownum == gridCell.data.rownum ||
+              gridCell.data.rownum ==
+                this.printArr[this.printArr.length - 1].rownum)
+              ? (pdfCell.content = moment(gridCell.data.starttime).format(
+                  "HH:mm:ss"
+                ))
+              : (pdfCell.content = "");
           }
         },
         autoTableOptions: {
@@ -1029,7 +1056,7 @@ export default {
         component: this.dataGrid,
         worksheet: worksheet,
         autoFilterEnabled: false,
-        customizeCell: function (options) {
+        customizeCell: (options) => {
           const { excelCell, gridCell } = options;
           switch (excelCell.value) {
             case "CSGP01":
@@ -1066,8 +1093,40 @@ export default {
             default:
               break;
           }
+          if (
+            gridCell.rowType == "data" &&
+            gridCell.column.dataField == "usedtime"
+          ) {
+            gridCell.data.usedtime == 0
+              ? (excelCell.value = "")
+              : (excelCell.value = moment(gridCell.data.usedtime)
+                  .subtract(9, "hours")
+                  .format("HH:mm:ss"));
+          }
+          if (
+            gridCell.rowType == "data" &&
+            gridCell.column.dataField == "starttime"
+          ) {
+            gridCell.data.starttime > 0 &&
+            (gridCell.data.usedtime > 0 ||
+              this.printArr[0].rownum == gridCell.data.rownum ||
+              gridCell.data.rownum ==
+                this.printArr[this.printArr.length - 1].rownum)
+              ? (excelCell.value = moment(gridCell.data.starttime).format(
+                  "HH:mm:ss"
+                ))
+              : (excelCell.value = "");
+          }
         },
       }).then(() => {
+        worksheet.columns.forEach((column) => {
+          column.border = {
+            top: { style: "thin" },
+            left: { style: "thin" },
+            bottom: { style: "thin" },
+            right: { style: "thin" },
+          };
+        });
         workbook.xlsx.writeBuffer().then((buffer) => {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),

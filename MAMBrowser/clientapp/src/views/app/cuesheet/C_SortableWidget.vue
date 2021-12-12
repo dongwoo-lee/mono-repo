@@ -388,13 +388,11 @@ export default {
             if (this.channelKey == "channel_4") {
               this.fileData = val.data["channel_4"];
             }
-            break;
           default:
             break;
         }
       });
       this.SET_CCHANNELDATA(resultData);
-      //eventBus.$off("updateCData");
     });
     eventBus.$on("clearFav", (val) => {
       this.fileData = this.cueFavorites;

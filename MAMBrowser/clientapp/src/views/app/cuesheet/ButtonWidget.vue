@@ -221,14 +221,23 @@
       id="modal-save"
       size="lg"
       centered
-      title="큐시트 저장"
+      title="저장"
       ok-title="확인"
       cancel-title="취소"
       @ok="saveOk"
     >
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
-          <div class="mb-3">큐시트를 저장합니다.</div>
+          <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
+            "{{ cueInfo.title }}" 큐시트를 저장합니다.
+          </div>
+          <div class="mb-3" v-if="cueInfo.cuetype == 'B' && !fav">
+            "{{ cueInfo.title }}" 기본 큐시트를 저장합니다.
+          </div>
+          <div class="mb-3" v-if="cueInfo.cuetype == 'T' && !fav">
+            "{{ cueInfo.title }}" 템플릿을 저장합니다.
+          </div>
+          <div class="mb-3" v-if="fav">즐겨찾기를 저장합니다.</div>
         </div>
       </div>
     </b-modal>
@@ -656,10 +665,16 @@ export default {
               this.cueFavorites
             )
             .then((res) => {
-              alert("저장완료");
+              window.$notify("info", `즐겨찾기 저장완료.`, "", {
+                duration: 10000,
+                permanent: false,
+              });
             })
             .catch((err) => {
-              alert("오류발생");
+              window.$notify("error", `즐겨찾기 저장실패.`, "", {
+                duration: 10000,
+                permanent: false,
+              });
             });
           break;
         default:

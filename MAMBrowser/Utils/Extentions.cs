@@ -117,13 +117,9 @@ namespace MAMBrowser.Utils
         //일일 큐시트 Entity TO DTO로 변환 - 상세내용
         public static CueSheetCollectionDTO DayConverting(this CueSheetCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = new CueSheetCollectionDTO();
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities);
+            
             collectionDTO.CueSheetDTO = new CueSheetDTO();
-            collectionDTO.NormalCon = new List<CueSheetConDTO>();
-            collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
-            collectionDTO.PrintDTO = new List<PrintDTO>();
-
-            var InstanceConList = new List<CueSheetConDTO>();
 
             collectionDTO.CueSheetDTO.CUETYPE = "D";
             collectionDTO.CueSheetDTO.PRODUCTID = entity.CueSheetEntity.PRODUCTID;
@@ -148,133 +144,15 @@ namespace MAMBrowser.Utils
                 collectionDTO.CueSheetDTO.BRDDATE = item.BRDDATE;
                 collectionDTO.CueSheetDTO.BRDTIME = item.BRDTIME;
             }
-
-            //AB가공
-            foreach (var item in entity.CueSheetConEntities)
-            {
-                var con = new CueSheetConDTO();
-                con.CARTCODE = item.CARTCODE ?? "";
-                con.PGMCODE = item.PGMCODE ?? "";
-                con.CHANNELTYPE = item.CHANNELTYPE ?? "";
-                con.ONAIRDATE = item.ONAIRDATE ?? "";
-                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
-                {
-                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
-                }
-                con.CARTID = item.CARTID ?? "";
-                con.MEMO = item.MEMO ?? "";
-                con.STARTPOSITION = item.STARTPOSITION;
-                con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
-                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
-                con.MAINTITLE = item.MAINTITLE ?? "";
-                con.SUBTITLE = item.SUBTITLE ?? "";
-                con.TRANSTYPE = item.TRANSTYPE;
-                con.USEFLAG = item.USEFLAG ?? "Y";
-                con.EDITTARGET = true;
-                con.CARTTYPE = SetCartCode(item.CARTCODE);
-                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
-                {
-                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
-                    if (con.FILEPATH != "")
-                    {
-                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
-                    }
-                }
-                else
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                if (item.CHANNELTYPE == "N")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    collectionDTO.NormalCon.Add(con);
-                }
-                if (item.CHANNELTYPE == "I")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    InstanceConList.Add(con);
-                }
-
-            }
-            //C가공
-            for (var channelNum = 0; 4 > channelNum; channelNum++)
-            {
-                var cartData = new List<CueSheetConDTO>();
-                for (var i = 0; 16 > i; i++)
-                {
-                    var row = new CueSheetConDTO();
-                    if (InstanceConList.Count != 0)
-                    {
-                        for (var itemIndex = 0; InstanceConList.Count > itemIndex; itemIndex++)
-                        {
-                            if (InstanceConList[itemIndex].ROWNUM == i + 16 * channelNum + 1)
-                            {
-                                row = InstanceConList[itemIndex];
-                                row.ROWNUM = i + 1;
-                                break;
-                            }
-                            else
-                            {
-                                row.ROWNUM = i + 1;
-                                row.EDITTARGET = true;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        row.ROWNUM = i + 1;
-                        row.EDITTARGET = true;
-                    }
-                    cartData.Add(row);
-                }
-                switch (channelNum)
-                {
-                    case 0:
-                        collectionDTO.InstanceCon["channel_1"] = cartData;
-                        break;
-                    case 1:
-                        collectionDTO.InstanceCon["channel_2"] = cartData;
-                        break;
-                    case 2:
-                        collectionDTO.InstanceCon["channel_3"] = cartData;
-                        break;
-                    case 3:
-                        collectionDTO.InstanceCon["channel_4"] = cartData;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            //print 가공
-            foreach (var item in entity.PrintEntities)
-            {
-                var printItem = new PrintDTO();
-                printItem.ROWNUM = item.SEQNUM;
-                printItem.CODE = item.CODE.TrimEnd();
-                printItem.CONTENTS = item.CONTENTS ?? "";
-                printItem.ETC = item.ETC ?? "";
-                printItem.USEDTIME = item.USEDTIME;
-                collectionDTO.PrintDTO.Add(printItem);
-            }
             return collectionDTO;
         }
 
         //기본 큐시트 Entity TO DTO로 변환 - 상세내용
         public static CueSheetCollectionDTO DefConverting(this CueSheetCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = new CueSheetCollectionDTO();
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
-            collectionDTO.NormalCon = new List<CueSheetConDTO>();
-            collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
-            collectionDTO.PrintDTO = new List<PrintDTO>();
             var detailArr = new List<ViewDetail>();
-
-            var InstanceConList = new List<CueSheetConDTO>();
 
             // defdue 가공
             collectionDTO.CueSheetDTO.CUETYPE = "B";
@@ -299,122 +177,7 @@ namespace MAMBrowser.Utils
             }
             collectionDTO.CueSheetDTO.DETAIL = detailArr;
 
-            //AB가공
-            foreach (var item in entity.CueSheetConEntities)
-            {
-                var con = new CueSheetConDTO();
-                con.CARTCODE = item.CARTCODE ?? "";
-                con.PGMCODE = item.PGMCODE ?? "";
-                con.CHANNELTYPE = item.CHANNELTYPE ?? "";
-                con.CARTID = item.CARTID ?? "";
-                con.ONAIRDATE = item.ONAIRDATE ?? "";
-                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
-                {
-                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
-
-                }
-                con.STARTPOSITION = item.STARTPOSITION;
-                con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
-                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
-                con.MAINTITLE = item.MAINTITLE ?? "";
-                con.SUBTITLE = item.SUBTITLE ?? "";
-                con.MEMO = item.MEMO ?? "";
-                con.TRANSTYPE = item.TRANSTYPE;
-                con.USEFLAG = item.USEFLAG ?? "Y";
-                con.EDITTARGET = true;
-                con.CARTTYPE = SetCartCode(item.CARTCODE);
-
-                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
-                {
-                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
-                    if (con.FILEPATH != "")
-                    {
-                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
-
-                    }
-                }
-                else
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                if (item.CHANNELTYPE == "N")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    collectionDTO.NormalCon.Add(con);
-                }
-                if (item.CHANNELTYPE == "I")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    InstanceConList.Add(con);
-                }
-
-            }
-
-            //C가공
-            for (var channelNum = 0; 4 > channelNum; channelNum++)
-            {
-                var cartData = new List<CueSheetConDTO>();
-                for (var i = 0; 16 > i; i++)
-                {
-                    var row = new CueSheetConDTO();
-                    if (InstanceConList.Count != 0)
-                    {
-                        for (var itemIndex = 0; InstanceConList.Count > itemIndex; itemIndex++)
-                        {
-                            if (InstanceConList[itemIndex].ROWNUM == i + 16 * channelNum + 1)
-                            {
-                                row = InstanceConList[itemIndex];
-                                row.ROWNUM = i + 1;
-                                break;
-                            }
-                            else
-                            {
-                                row.ROWNUM = i + 1;
-                                row.EDITTARGET = true;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        row.ROWNUM = i + 1;
-                        row.EDITTARGET = true;
-                    }
-                    cartData.Add(row);
-                }
-                switch (channelNum)
-                {
-                    case 0:
-                        collectionDTO.InstanceCon["channel_1"] = cartData;
-                        break;
-                    case 1:
-                        collectionDTO.InstanceCon["channel_2"] = cartData;
-                        break;
-                    case 2:
-                        collectionDTO.InstanceCon["channel_3"] = cartData;
-                        break;
-                    case 3:
-                        collectionDTO.InstanceCon["channel_4"] = cartData;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            //print 가공
-            foreach (var item in entity.PrintEntities)
-            {
-                var printItem = new PrintDTO();
-                printItem.ROWNUM = item.SEQNUM;
-                printItem.CODE = item.CODE.TrimEnd();
-                printItem.CONTENTS = item.CONTENTS ?? "";
-                printItem.ETC = item.ETC ?? "";
-                printItem.USEDTIME = item.USEDTIME;
-                collectionDTO.PrintDTO.Add(printItem);
-            }
+           
 
             return collectionDTO;
         }
@@ -422,14 +185,9 @@ namespace MAMBrowser.Utils
         //템플릿 Entity TO DTO로 변환 - 상세내용
         public static CueSheetCollectionDTO TemConverting(this TemplateCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = new CueSheetCollectionDTO();
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
-            collectionDTO.NormalCon = new List<CueSheetConDTO>();
-            collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
-            collectionDTO.PrintDTO = new List<PrintDTO>();
             var detailArr = new List<ViewDetail>();
-
-            var InstanceConList = new List<CueSheetConDTO>();
 
             // defdue 가공
             collectionDTO.CueSheetDTO.CUETYPE = "T";
@@ -455,136 +213,14 @@ namespace MAMBrowser.Utils
             }
             collectionDTO.CueSheetDTO.DETAIL = detailArr;
 
-            //AB가공
-            foreach (var item in entity.CueSheetConEntities)
-            {
-                var con = new CueSheetConDTO();
-                con.CARTCODE = item.CARTCODE ?? "";
-                con.PGMCODE = item.PGMCODE ?? "";
-                con.CHANNELTYPE = item.CHANNELTYPE ?? "";
-                con.CARTID = item.CARTID ?? "";
-                con.ONAIRDATE = item.ONAIRDATE ?? "";
-                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
-                {
-                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
-
-                }
-                con.STARTPOSITION = item.STARTPOSITION;
-                con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
-                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
-                con.MAINTITLE = item.MAINTITLE ?? "";
-                con.SUBTITLE = item.SUBTITLE ?? "";
-                con.MEMO = item.MEMO ?? "";
-                con.TRANSTYPE = item.TRANSTYPE;
-                con.USEFLAG = item.USEFLAG ?? "Y";
-                con.EDITTARGET = true;
-                con.CARTTYPE = SetCartCode(item.CARTCODE);
-
-                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
-                {
-                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
-                    if (con.FILEPATH != "")
-                    {
-                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
-
-                    }
-                }
-                else
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                if (item.CHANNELTYPE == "N")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    collectionDTO.NormalCon.Add(con);
-                }
-                if (item.CHANNELTYPE == "I")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    InstanceConList.Add(con);
-                }
-
-            }
-
-            //C가공
-            for (var channelNum = 0; 4 > channelNum; channelNum++)
-            {
-                var cartData = new List<CueSheetConDTO>();
-                for (var i = 0; 16 > i; i++)
-                {
-                    var row = new CueSheetConDTO();
-                    if (InstanceConList.Count != 0)
-                    {
-                        for (var itemIndex = 0; InstanceConList.Count > itemIndex; itemIndex++)
-                        {
-                            if (InstanceConList[itemIndex].ROWNUM == i + 16 * channelNum + 1)
-                            {
-                                row = InstanceConList[itemIndex];
-                                row.ROWNUM = i + 1;
-                                break;
-                            }
-                            else
-                            {
-                                row.ROWNUM = i + 1;
-                                row.EDITTARGET = true;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        row.ROWNUM = i + 1;
-                        row.EDITTARGET = true;
-                    }
-                    cartData.Add(row);
-                }
-                switch (channelNum)
-                {
-                    case 0:
-                        collectionDTO.InstanceCon["channel_1"] = cartData;
-                        break;
-                    case 1:
-                        collectionDTO.InstanceCon["channel_2"] = cartData;
-                        break;
-                    case 2:
-                        collectionDTO.InstanceCon["channel_3"] = cartData;
-                        break;
-                    case 3:
-                        collectionDTO.InstanceCon["channel_4"] = cartData;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            //print 가공
-            foreach (var item in entity.PrintEntities)
-            {
-                var printItem = new PrintDTO();
-                printItem.ROWNUM = item.SEQNUM;
-                printItem.CODE = item.CODE.TrimEnd();
-                printItem.CONTENTS = item.CONTENTS ?? "";
-                printItem.ETC = item.ETC ?? "";
-                printItem.USEDTIME = item.USEDTIME;
-                collectionDTO.PrintDTO.Add(printItem);
-            }
-
             return collectionDTO;
         }
 
         //이전 큐시트 Entity TO DTO로 변환 - 상세내용
         public static CueSheetCollectionDTO ArchiveConverting(this ArchiveCueSheetCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = new CueSheetCollectionDTO();
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
-            collectionDTO.NormalCon = new List<CueSheetConDTO>();
-            collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
-            collectionDTO.PrintDTO = new List<PrintDTO>();
-
-            var InstanceConList = new List<CueSheetConDTO>();
 
             collectionDTO.CueSheetDTO.CUETYPE = "A";
             collectionDTO.CueSheetDTO.PRODUCTID = entity.ArchiveCueSheetEntity.PRODUCTID;
@@ -607,123 +243,6 @@ namespace MAMBrowser.Utils
             detailArr.Add(detailItem);
             collectionDTO.CueSheetDTO.DETAIL = detailArr;
 
-
-            //AB가공
-            foreach (var item in entity.CueSheetConEntities)
-            {
-                var con = new CueSheetConDTO();
-                con.CARTCODE = item.CARTCODE ?? "";
-                con.PGMCODE = item.PGMCODE ?? "";
-                con.CHANNELTYPE = item.CHANNELTYPE ?? "";
-                con.ONAIRDATE = item.ONAIRDATE ?? "";
-                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
-                {
-                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
-
-                }
-                con.CARTID = item.CARTID ?? "";
-                con.MEMO = item.MEMO ?? "";
-                con.STARTPOSITION = item.STARTPOSITION;
-                con.ENDPOSITION = item.ENDPOSITION;
-                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
-                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
-                con.MAINTITLE = item.MAINTITLE ?? "";
-                con.SUBTITLE = item.SUBTITLE ?? "";
-                con.TRANSTYPE = item.TRANSTYPE;
-                con.USEFLAG = item.USEFLAG ?? "Y";
-                con.EDITTARGET = true;
-                con.CARTTYPE = SetCartCode(item.CARTCODE);
-
-                if (item.ONAIRDATE == null || item.ONAIRDATE == "")
-                {
-                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
-                    if (con.FILEPATH != "")
-                    {
-                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
-
-                    }
-                }
-                else
-                {
-                    con.FILEPATH = "";
-                    con.FILETOKEN = "";
-                }
-                if (item.CHANNELTYPE == "N")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    collectionDTO.NormalCon.Add(con);
-                }
-                if (item.CHANNELTYPE == "I")
-                {
-                    con.ROWNUM = item.SEQNUM;
-                    InstanceConList.Add(con);
-                }
-
-            }
-
-            //C가공
-            for (var channelNum = 0; 4 > channelNum; channelNum++)
-            {
-                var cartData = new List<CueSheetConDTO>();
-                for (var i = 0; 16 > i; i++)
-                {
-                    var row = new CueSheetConDTO();
-                    if (InstanceConList.Count != 0)
-                    {
-                        for (var itemIndex = 0; InstanceConList.Count > itemIndex; itemIndex++)
-                        {
-                            if (InstanceConList[itemIndex].ROWNUM == i + 16 * channelNum + 1)
-                            {
-                                row = InstanceConList[itemIndex];
-                                row.ROWNUM = i + 1;
-                                break;
-                            }
-                            else
-                            {
-                                row.ROWNUM = i + 1;
-                                row.EDITTARGET = true;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        row.ROWNUM = i + 1;
-                        row.EDITTARGET = true;
-                    }
-                    cartData.Add(row);
-                }
-                switch (channelNum)
-                {
-                    case 0:
-                        collectionDTO.InstanceCon["channel_1"] = cartData;
-                        break;
-                    case 1:
-                        collectionDTO.InstanceCon["channel_2"] = cartData;
-                        break;
-                    case 2:
-                        collectionDTO.InstanceCon["channel_3"] = cartData;
-                        break;
-                    case 3:
-                        collectionDTO.InstanceCon["channel_4"] = cartData;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            //print 가공
-            foreach (var item in entity.PrintEntities)
-            {
-                var printItem = new PrintDTO();
-                printItem.ROWNUM = item.SEQNUM;
-                printItem.CODE = item.CODE.TrimEnd();
-                printItem.CONTENTS = item.CONTENTS ?? "";
-                printItem.ETC = item.ETC ?? "";
-                printItem.USEDTIME = item.USEDTIME;
-                collectionDTO.PrintDTO.Add(printItem);
-            }
             return collectionDTO;
         }
 
@@ -862,7 +381,7 @@ namespace MAMBrowser.Utils
             var resultFavList = new List<CueSheetConDTO>();
             for (var i = 0; 16 > i; i++)
             {
-                var row = new CueSheetConDTO();
+                var row = new CueSheetConDTO() {ROWNUM=i+1};
                 for (var itemIndex = 0; favList.Count > itemIndex; itemIndex++)
                 {
                     if (favList[itemIndex].ROWNUM == i + 1)
@@ -1306,17 +825,17 @@ namespace MAMBrowser.Utils
         {
             if (spons.CM?.Any() == true)
             {
-                //foreach (var item in spons.CM)
-                for (int i = 0; i < spons.CM.Count; i++) 
+                foreach (var item in spons.CM)
+                //for (int i = 0; i < spons.CM.Count; i++) 
                 {
-                    var item = spons.CM[i];
+                    //var item = spons.CM[i];
 
                     var cartId = item.CMGROUPID.Substring(2);
-                    //foreach (var cueItem in entity)
-                    for(int j = 0;j<entity.Count;j++)
+                    foreach (var cueItem in entity)
+                    //for(int j = 0;j<entity.Count;j++)
                     {
-                        var cueItem = entity[j];
-                        if (cueItem.CARTID.Contains(cartId))
+                        //var cueItem = entity[j];
+                        if (cueItem.CARTID!=null&&cueItem.CARTID.Contains(cartId))
                         {
                             cueItem.PGMCODE = item.PGMCODE;
                             cueItem.ONAIRDATE = item.ONAIRDATE;
@@ -1343,7 +862,7 @@ namespace MAMBrowser.Utils
                     var cartId = item.GROUPCONTENTID.Substring(2);
                     foreach (var cueItem in entity)
                     {
-                        if (cueItem.CARTID.Contains(cartId))
+                        if (cueItem.CARTID != null && cueItem.CARTID.Contains(cartId))
                         {
                             cueItem.PGMCODE = item.PGMCODE;
                             cueItem.ONAIRDATE = item.ONAIRDATE;
@@ -1466,6 +985,130 @@ namespace MAMBrowser.Utils
                     break;
             }
             return result;
+        }
+
+        public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> print)
+        {
+            var collectionDTO = new CueSheetCollectionDTO();
+            collectionDTO.NormalCon = new List<CueSheetConDTO>();
+            collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
+            collectionDTO.PrintDTO = new List<PrintDTO>();
+            var InstanceConList = new List<CueSheetConDTO>();
+
+            //AB가공
+            foreach (var item in conData)
+            {
+                var con = new CueSheetConDTO();
+                con.CARTCODE = item.CARTCODE ?? "";
+                con.PGMCODE = item.PGMCODE ?? "";
+                con.CHANNELTYPE = item.CHANNELTYPE ?? "";
+                con.ONAIRDATE = item.ONAIRDATE ?? "";
+                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
+                {
+                    con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
+                }
+                con.CARTID = item.CARTID ?? "";
+                con.MEMO = item.MEMO ?? "";
+                con.STARTPOSITION = item.STARTPOSITION;
+                con.ENDPOSITION = item.ENDPOSITION;
+                con.FADEINTIME = item.FADEINTIME > 0 ? true : false;
+                con.FADEOUTTIME = item.FADEOUTTIME > 0 ? true : false;
+                con.MAINTITLE = item.MAINTITLE ?? "";
+                con.SUBTITLE = item.SUBTITLE ?? "";
+                con.TRANSTYPE = item.TRANSTYPE;
+                con.USEFLAG = item.USEFLAG ?? "Y";
+                con.EDITTARGET = true;
+                con.CARTTYPE = SetCartCode(item.CARTCODE);
+                if (item.CARTCODE != null && (item.ONAIRDATE == null || item.ONAIRDATE == ""))
+                {
+                    con.FILEPATH = item.AUDIOS[0].P_MASTERFILE ?? "";
+                    if (con.FILEPATH != "")
+                    {
+                        con.FILETOKEN = TokenGenerator.GenerateFileToken(con.FILEPATH);
+                    }
+                }
+                else
+                {
+                    con.FILEPATH = "";
+                    con.FILETOKEN = "";
+                }
+                if (item.CHANNELTYPE == "N")
+                {
+                    con.ROWNUM = item.SEQNUM;
+                    collectionDTO.NormalCon.Add(con);
+                }
+                if (item.CHANNELTYPE == "I")
+                {
+                    con.ROWNUM = item.SEQNUM;
+                    InstanceConList.Add(con);
+                }
+
+            }
+            //C가공
+            for (var channelNum = 0; 4 > channelNum; channelNum++)
+            {
+                var cartData = new List<CueSheetConDTO>();
+                for (var i = 0; 16 > i; i++)
+                {
+                    var row = new CueSheetConDTO();
+                    if (InstanceConList.Count != 0)
+                    {
+                        for (var itemIndex = 0; InstanceConList.Count > itemIndex; itemIndex++)
+                        {
+                            if (InstanceConList[itemIndex].ROWNUM == i + 16 * channelNum + 1)
+                            {
+                                row = InstanceConList[itemIndex];
+                                row.ROWNUM = i + 1;
+                                break;
+                            }
+                            else
+                            {
+                                row.ROWNUM = i + 1;
+                                row.EDITTARGET = true;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        row.ROWNUM = i + 1;
+                        row.EDITTARGET = true;
+                    }
+                    cartData.Add(row);
+                }
+                switch (channelNum)
+                {
+                    case 0:
+                        collectionDTO.InstanceCon["channel_1"] = cartData;
+                        break;
+                    case 1:
+                        collectionDTO.InstanceCon["channel_2"] = cartData;
+                        break;
+                    case 2:
+                        collectionDTO.InstanceCon["channel_3"] = cartData;
+                        break;
+                    case 3:
+                        collectionDTO.InstanceCon["channel_4"] = cartData;
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            //print 가공
+            foreach (var item in print)
+            {
+                var printItem = new PrintDTO();
+                printItem.ROWNUM = item.SEQNUM;
+                printItem.CODE = item.CODE.TrimEnd();
+                printItem.CONTENTS = item.CONTENTS ?? "";
+                printItem.ETC = item.ETC ?? "";
+                printItem.USEDTIME = item.USEDTIME;
+                collectionDTO.PrintDTO.Add(printItem);
+            }
+
+            return collectionDTO;
         }
     }
 }
