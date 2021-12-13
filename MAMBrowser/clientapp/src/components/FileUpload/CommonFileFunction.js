@@ -282,6 +282,10 @@ export default {
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=MS`
           )
           .then((res) => {
+            var value = res.data.resultObject.data;
+            value.forEach((e) => {
+              e.duration = this.getDurationSec(e.duration);
+            });
             this.setEventData(res.data.resultObject.data);
           });
       } else if (this.MetaData.typeSelected == "static-spot") {

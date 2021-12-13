@@ -59,11 +59,13 @@ export default {
       {
         name: "",
         id: "",
+        duration: "",
       },
     ],
     EventSelected: {
       id: "",
       name: "",
+      duration: "",
     },
     FileUploadProgress: {},
   },

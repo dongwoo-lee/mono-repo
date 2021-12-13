@@ -133,6 +133,7 @@ export default {
     state.EventSelected = {
       id: "",
       name: "",
+      duration: "",
     };
   },
   resetEventData(state) {
@@ -140,6 +141,7 @@ export default {
       {
         name: "",
         id: "",
+        duration: "",
       },
     ];
   },

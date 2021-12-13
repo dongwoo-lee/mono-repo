@@ -53,6 +53,39 @@ export default {
       if (5 < calcD - calcP) {
         return false;
       }
+    } else if (
+      state.MetaData.typeSelected == "mcr-spot" &&
+      state.EventSelected.id != ""
+    ) {
+      var eh = state.EventSelected.duration.slice(0, 2);
+      var em = state.EventSelected.duration.slice(3, 5);
+      var es = state.EventSelected.duration.slice(6, 8);
+      var calcE = eh * 60 * 60 + em * 60 + es * 1;
+      if (5 < calcD - calcE) {
+        return false;
+      }
+    } else if (
+      state.MetaData.typeSelected == "static-spot" &&
+      state.EventSelected.id != ""
+    ) {
+      var eh = state.EventSelected.duration.slice(0, 2);
+      var em = state.EventSelected.duration.slice(3, 5);
+      var es = state.EventSelected.duration.slice(6, 8);
+      var calcE = eh * 60 * 60 + em * 60 + es * 1;
+      if (1 < calcD - calcE) {
+        return false;
+      }
+    } else if (
+      state.MetaData.typeSelected == "var-spot" &&
+      state.EventSelected.id != ""
+    ) {
+      var eh = state.EventSelected.duration.slice(0, 2);
+      var em = state.EventSelected.duration.slice(3, 5);
+      var es = state.EventSelected.duration.slice(6, 8);
+      var calcE = eh * 60 * 60 + em * 60 + es * 1;
+      if (1 < calcD - calcE) {
+        return false;
+      }
     }
     return true;
   },

@@ -45,6 +45,7 @@
                     style="font-size: 15px"
                   >
                     <b-form-input
+                      v-if="this.durationState"
                       style="width: 330px"
                       class="editTask"
                       v-model="MetaData.duration"
@@ -54,11 +55,21 @@
                       trim
                     >
                     </b-form-input>
-                    <b-icon-alarm
+                    <b-form-input
                       v-if="!this.durationState"
-                      variant="warning"
+                      style="width: 330px; background-color: #ffb600"
+                      class="editTask"
+                      v-model="MetaData.duration"
+                      disabled
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="duration"
+                      trim
+                    >
+                    </b-form-input>
+                    <!-- <b-icon-alarm
+                      v-if="!this.durationState"
                       style="position: relative; top: -28px; left: 300px"
-                    ></b-icon-alarm>
+                    ></b-icon-alarm> -->
                   </b-form-group>
                 </div>
                 <div style="height: 50px; margin-top: 10px">
@@ -176,13 +187,13 @@
           </div>
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <!-- 로그 버튼 -->
-            <!-- <b-button
+            <b-button
               variant="outline-success"
               @click="log"
               style="margin-left: -80px"
             >
               <span class="label">확인</span>
-            </b-button> -->
+            </b-button>
             <!-- <b-button
               class="defaultButton"
               variant="outline-danger"
@@ -332,18 +343,6 @@ export default {
     },
   },
   methods: {
-    calc() {
-      var dh = this.MetaData.duration.slice(0, 2);
-      var dm = this.MetaData.duration.slice(3, 5);
-      var ds = this.MetaData.duration.slice(6, 8);
-      var calcD = dh * 60 * 60 + dm * 60 + ds * 1;
-
-      var ph = this.ProgramSelected.durationSec.slice(0, 2);
-      var pm = this.ProgramSelected.durationSec.slice(3, 5);
-      var ps = this.ProgramSelected.durationSec.slice(6, 8);
-      var calcP = ph * 60 * 60 + pm * 60 + ps * 1;
-      console.log(calcD - calcP);
-    },
     log() {
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {
