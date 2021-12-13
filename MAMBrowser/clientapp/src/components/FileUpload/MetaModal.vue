@@ -20,8 +20,8 @@
                 margin-bottom: 20px;
               "
             >
-              <h3 style="color: #008ecc">파일 정보</h3>
-              <div style="padding: 10px; border: 1px solid #008ecc">
+              <h3 style="color: black">파일 정보</h3>
+              <div style="padding: 10px; border: 1px solid gray">
                 <b-form-group
                   label="파일명"
                   class="has-float-label"
@@ -106,7 +106,7 @@
                   </b-form-group>
                 </div>
               </div>
-              <h3 style="color: #008ecc; margin-top: 10px">메타 데이터</h3>
+              <h3 style="color: black; margin-top: 10px">메타 데이터</h3>
             </div>
 
             <div :class="[isActive ? 'date-modal' : 'file-modal']">
@@ -122,7 +122,7 @@
             <transition name="slide-fade">
               <div>
                 <div v-show="!isActive" class="date-div">
-                  <h3 style="color: #008ecc">프로그램 선택</h3>
+                  <h3 style="color: black">프로그램 선택</h3>
                   <program
                     v-if="this.MetaData.typeSelected == 'program'"
                   ></program>

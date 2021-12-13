@@ -8,17 +8,17 @@
     height: 320px;
 }
 #dateinput {
-    border: 1px solid #008ecc;
+    border: 1px solid silver;
 }
 #program-media {
-    border: 1px solid #008ecc;
+    border: 1px solid silver;
 }
 .form-control:focus {
     z-index: 0 !important;
 }
 .data-grid-div {
     height: 210px;
-    border: 1px solid #008ecc;
+    border: 1px solid silver;
 }
 .date-div {
     position: relative;
@@ -319,9 +319,9 @@
     border-bottom: 1px solid white;
 }
 .nav-pills .nav-link.active {
-    color: #008ecc;
+    color: black;
     background-color: white !important;
-    border-right: 5px solid #008ecc !important;
+    border-right: 5px solid silver !important;
 }
 .nav-item {
     border: 1px solid rgb(211, 211, 211);

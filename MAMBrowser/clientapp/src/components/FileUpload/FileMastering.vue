@@ -104,8 +104,8 @@
                 position: absolute;
                 top: 85px;
                 right: 20px;
-                border-color: #008ecc;
-                color: #008ecc;
+                border-color: silver;
+                color: black;
                 background-color: white;
                 z-index: 9999;
               "
@@ -116,12 +116,12 @@
             </b-button>
             <b-tabs content-class="mt-3" v-model="tabIndex">
               <b-tab title="작업목록">
-                <b-card style="color: #008ecc">
+                <b-card style="color: black">
                   <list v-if="this.tabIndex == 0 && this.FileModal"></list>
                 </b-card>
               </b-tab>
               <b-tab title="로그">
-                <b-card style="color: #008ecc">
+                <b-card style="color: black">
                   <div
                     style="
                       width: 1300px;
@@ -158,8 +158,8 @@
                           <b-form-datepicker
                             style="height: 34px"
                             v-model="logSDate"
+                            button-variant="outline-dark"
                             button-only
-                            button-variant="outline-primary"
                             right
                             aria-controls="example-input"
                             @context="onContext"
@@ -189,7 +189,7 @@
                             style="height: 34px"
                             v-model="logEDate"
                             button-only
-                            button-variant="outline-primary"
+                            button-variant="outline-dark"
                             right
                             aria-controls="example-input"
                             @context="onContext"
@@ -210,11 +210,7 @@
                     >
                       <common-vue-select
                         class="h145"
-                        style="
-                          font-size: 14px;
-                          width: 200px;
-                          border: 1px solid #008ecc;
-                        "
+                        style="font-size: 14px; width: 200px"
                         :suggestions="editorOptions"
                         @inputEvent="onEditorSelected"
                       ></common-vue-select>
@@ -223,8 +219,8 @@
                       style="
                         margin-top: -43px;
                         margin-left: 20px;
-                        border-color: #008ecc;
-                        color: #008ecc;
+                        border-color: silver;
+                        color: black;
                         background-color: white;
                         height: 34px;
                       "
@@ -771,10 +767,10 @@ export default {
   border: 1px solid #4475c4 !important;
 }
 .date-input {
-  border: 1px solid #008ecc !important;
+  border: 1px solid silver !important;
 }
 .media-select {
-  border: 1px solid #008ecc !important;
+  border: 1px solid silver !important;
 }
 .media-select:focus {
   border: 1px solid #4475c4 !important;

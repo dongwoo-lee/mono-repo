@@ -72,7 +72,7 @@
         >
           <common-vue-select
             class="h145"
-            style="font-size: 14px; width: 350px; border: 1px solid #008ecc"
+            style="font-size: 14px; width: 350px; border: 1px solid gray"
             :suggestions="editorOptions"
             @inputEvent="inputEditor"
           ></common-vue-select>

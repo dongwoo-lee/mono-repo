@@ -60,7 +60,7 @@ export default {};
 
 .modal-header h2 {
   margin-top: 10px;
-  color: #008ecc;
+  color: black;
   font-family: "MBC 새로움 M";
 }
 
