@@ -109,6 +109,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
@@ -163,6 +164,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      MySpaceScreenName: "[(구)프로]",
       deleteId: "",
       metaUpdate: false,
       updateScreenName: "",

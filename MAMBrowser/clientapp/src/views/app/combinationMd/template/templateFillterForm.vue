@@ -116,6 +116,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
@@ -266,6 +267,7 @@ export default {
   },
   created() {
     this.getOptions();
+    this.getScreenName();
   },
   computed: {
     getEtc() {
@@ -320,6 +322,15 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.categoryName}_${rowData.id}`;
       return tmpName;
+    },
+    getScreenName() {
+      if (this.screenName == "pr") {
+        this.MySpaceScreenName = "[Filler PR]";
+      } else if (this.screenName == "general") {
+        this.MySpaceScreenName = "[Filler 소재]";
+      } else if (this.screenName == "etc") {
+        this.MySpaceScreenName = "[Filler 기타]";
+      }
     },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;

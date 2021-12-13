@@ -132,6 +132,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
@@ -174,6 +175,7 @@ export default {
   data() {
     return {
       deleteId: "",
+      MySpaceScreenName: "[Filler 시간]",
       metaDelete: false,
       deleteScreenName: "",
       searchItems: {

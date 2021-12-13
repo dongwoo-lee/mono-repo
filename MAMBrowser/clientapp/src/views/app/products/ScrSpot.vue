@@ -101,6 +101,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
@@ -158,6 +159,7 @@ export default {
     return {
       deleteId: "",
       metaUpdate: false,
+      MySpaceScreenName: "[부조SPOT]",
       updateScreenName: "",
       metaDelete: false,
       deleteScreenName: "",

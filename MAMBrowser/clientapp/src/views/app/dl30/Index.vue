@@ -106,7 +106,7 @@
                   :rowData="data.item"
                   :behaviorData="behaviorList"
                   :etcData="['delete']"
-                  :isPossibleDelete="authorityCheck(props.props.rowData)"
+                  :isPossibleDelete="authorityCheck(data.item)"
                   @preview="onPreview"
                   @download="onDownloadDl30"
                   @mydiskCopy="onCopyToMySpacePopup"
@@ -131,6 +131,7 @@
     <CopyToMySpacePopup
       ref="refCopyToMySpacePopup"
       :show="copyToMySpacePopup"
+      :MySpaceScreenName="MySpaceScreenName"
       @ok="onMyDiskCopyFromDl30"
       @close="copyToMySpacePopup = false"
     >
@@ -160,6 +161,7 @@ export default {
   data() {
     return {
       deleteId: "",
+      MySpaceScreenName: "[DL3]",
       metaDelete: false,
       deleteScreenName: "",
       streamingUrl: "/api/Products/dl30-streaming",
@@ -252,6 +254,7 @@ export default {
   },
   methods: {
     authorityCheck(e) {
+      console.log(e);
       if (
         e.editorID == sessionStorage.getItem("user_id") ||
         sessionStorage.getItem("authority") == "ADMIN"

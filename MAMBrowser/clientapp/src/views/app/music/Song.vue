@@ -112,6 +112,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromMusic"
           @close="copyToMySpacePopup = false"
         >
@@ -151,6 +152,7 @@ export default {
       streamingUrl: "/api/musicsystem/streaming",
       waveformUrl: "/api/musicsystem/waveform",
       tempDownloadUrl: "/api/musicsystem/temp-download",
+      MySpaceScreenName: "[음원]",
       allSelected: false,
       indeterminate: false,
 

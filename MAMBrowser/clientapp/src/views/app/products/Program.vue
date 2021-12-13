@@ -88,6 +88,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
@@ -133,6 +134,7 @@ export default {
       vSelectProps: {},
       metaDelete: false,
       deleteScreenName: "",
+      MySpaceScreenName: "[프로그램]",
       searchItems: {
         media: "A",
         brd_dt: "",
