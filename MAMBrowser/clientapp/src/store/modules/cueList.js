@@ -382,6 +382,9 @@ export default {
                 },
             })
                 .then((res) => {
+                    res.data.resultObject.data.sort((a, b) => {
+                        return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
+                    })
                     commit('SET_CUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })
@@ -512,7 +515,7 @@ export default {
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
             await axios.get(
-                `/api/Favorite/GetFavorites?personid=${payload}`)
+                `/api/Favorite/GetFavorites?personid=${payload.personid}&pgmcode=${payload.pgmcode}&brd_dt=${payload.brd_dt}`)
                 .then((res) => {
                     commit('SET_CUEFAVORITES', res.data);
                 })
@@ -713,7 +716,7 @@ export default {
                     if (payload.search_row.brdDT) {
                         payload.row.subtitle = payload.search_row.pgmName;
                         payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.pgmcode = payload.search_row.pgmCODE;
                         payload.row.carttype = "AS";
                     } else {
                         payload.row.subtitle = payload.search_row.categoryName;
@@ -733,7 +736,7 @@ export default {
                     if (payload.search_row.brdDT) {
                         payload.row.subtitle = payload.search_row.status;
                         payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.pgmcode = payload.search_row.pgmCODE;
                     } else {
                         payload.row.subtitle = payload.search_row.advertiser;
                     }
@@ -745,7 +748,7 @@ export default {
                     if (payload.search_row.brdDT) {
                         payload.row.subtitle = payload.search_row.status;
                         payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.pgmcode = payload.search_row.pgmCODE;
                     } else {
                         payload.row.subtitle = payload.search_row.advertiser;
                     }
@@ -796,7 +799,7 @@ export default {
                     if (payload.search_row.brdDT) {
                         payload.row.subtitle = payload.search_row.id;
                         payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmCODE = payload.search_row.pgmCODE;
+                        payload.row.pgmcode = payload.search_row.pgmCODE;
                         payload.row.carttype = "AS";
                     } else {
                         payload.row.subtitle = payload.search_row.categoryName;
@@ -942,23 +945,25 @@ export default {
                 })
         },
         setStartTime({ state }) {
-            if (state.cueInfo.r_ONAIRTIME == undefined) {
-                state.printArr[0].starttime = moment(
-                    state.cueInfo.brdtime,
-                    "YYYY-MM-DDHH:mm:ss"
-                ).valueOf();
-            } else {
-                state.printArr[0].starttime = moment(
-                    state.cueInfo.r_ONAIRTIME,
-                    "YYYY-MM-DDHH:mm:ss"
-                ).valueOf();
+            if (state.printArr.length > 0) {
+                if (state.cueInfo.r_ONAIRTIME == undefined) {
+                    state.printArr[0].starttime = moment(
+                        state.cueInfo.brdtime,
+                        "YYYY-MM-DDHH:mm:ss"
+                    ).valueOf();
+                } else {
+                    state.printArr[0].starttime = moment(
+                        state.cueInfo.r_ONAIRTIME,
+                        "YYYY-MM-DDHH:mm:ss"
+                    ).valueOf();
+                }
+                state.printArr.forEach((ele, index) => {
+                    if (index != 0)
+                        ele.starttime =
+                            state.printArr[index - 1].usedtime +
+                            state.printArr[index - 1].starttime;
+                });
             }
-            state.printArr.forEach((ele, index) => {
-                if (index != 0)
-                    ele.starttime =
-                        state.printArr[index - 1].usedtime +
-                        state.printArr[index - 1].starttime;
-            });
         },
     }
 }

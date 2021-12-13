@@ -207,7 +207,7 @@ export default {
       if (this.cueSheetAutoSave) {
         this.saveDayCue();
       }
-    }, 900000); //15분마다 저장
+    }, 10000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];

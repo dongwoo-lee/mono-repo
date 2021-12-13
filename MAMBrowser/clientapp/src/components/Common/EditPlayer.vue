@@ -16,8 +16,18 @@
             <b-col cols="3" class="p-0 mb-2">
               <p align="left">
                 <b-button-group size="sm">
-                  <b-button @click="somClick"> Start Point </b-button>
-                  <b-button @click="eomClick"> End Point </b-button>
+                  <b-button
+                    @click="somClick"
+                    :disabled="cueInfo.cuetype == 'A'"
+                  >
+                    Start Point
+                  </b-button>
+                  <b-button
+                    @click="eomClick"
+                    :disabled="cueInfo.cuetype == 'A'"
+                  >
+                    End Point
+                  </b-button>
                 </b-button-group>
               </p>
             </b-col>
@@ -29,6 +39,7 @@
                   :options="fadeOptions"
                   value-field="value"
                   text-field="text"
+                  :disabled="cueInfo.cuetype == 'A'"
                 />
               </p>
             </b-col>
@@ -117,6 +128,7 @@ import { USER_ID, ACCESS_TOKEN } from "@/constants/config";
 import VueSlider from "vue-slider-component";
 // import Markers from "wavesurfer.js/dist/plugin/wavesurfer.markers.min.js";
 import Regions from "wavesurfer.js/dist/plugin/wavesurfer.regions.min.js";
+import { mapActions, mapGetters } from "vuex";
 
 import "vue-slider-component/theme/default.css";
 import axios from "axios";
@@ -210,7 +222,9 @@ export default {
     source = cancelToken.source();
     this.LoadAudio();
   },
-  computed: {},
+  computed: {
+    ...mapGetters("cueList", ["cueInfo"]),
+  },
   methods: {
     editplay() {
       wavesurfer.regions.list["Trim"].play();

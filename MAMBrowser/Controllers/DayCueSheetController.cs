@@ -73,6 +73,11 @@ namespace MAMBrowser.Controllers
         [HttpGet("GetAddSponsor")]
         public List<CueSheetConDTO> GetAddSponsor(string pgmcode, string brd_dt)
         {
+            var toDate = DateTime.Today;
+            if (brd_dt == null)
+            {
+                brd_dt = toDate.ToString("yyyyMMdd");
+            }
             try
             {
                 return _bll.GetAddSponsorList(pgmcode, brd_dt);

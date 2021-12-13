@@ -126,7 +126,20 @@ namespace MAMBrowser.Controllers
                                 }
                             }
                         }
-                        if (ele.AUDIOS!=null&&ele.AUDIOS.Any())
+                        if (ele.AUDIOS == null)
+                        {
+                            var audioData = new CueSheetConAudioDTO();
+                            ele.AUDIOS = new List<CueSheetConAudioDTO>();
+                            audioData.P_TYPE = ele.CARTTYPE;
+                            audioData.P_SEQNUM = 1;
+                            audioData.P_CLIPID = ele.CARTID;
+                            audioData.P_MAINTITLE = ele.MAINTITLE;
+                            audioData.P_SUBTITLE = ele.SUBTITLE;
+                            audioData.P_DURATION = ele.DURATION;
+                            audioData.P_MASTERFILE = "";
+                            ele.AUDIOS.Add(audioData);
+                        }
+                        else
                         {
                             foreach (var item in ele.AUDIOS)
                             {
@@ -149,7 +162,6 @@ namespace MAMBrowser.Controllers
                                     }
                                 }
                             }
-
                         }
                     }
 

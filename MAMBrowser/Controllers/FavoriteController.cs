@@ -21,11 +21,11 @@ namespace MAMBrowser.Controllers
         }
         //즐겨찾기 가져오기
         [HttpGet("GetFavorites")]
-        public IEnumerable<CueSheetConDTO> GetFavorites([FromQuery] string personid)
+        public IEnumerable<CueSheetConDTO> GetFavorites([FromQuery] string personid, string pgmcode, string brd_dt)
         {
             try
             {
-                return _bll.GetUserFavorites(personid);
+                return _bll.GetUserFavorites(personid, pgmcode, brd_dt);
             }
             catch(Exception ex)
             {

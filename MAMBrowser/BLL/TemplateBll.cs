@@ -45,14 +45,17 @@ namespace MAMBrowser.BLL
         {
             TemplateInfoParam param = new TemplateInfoParam();
             param.TemplateID = cueid;
-
+            var toDate = DateTime.Today;
+            if (brd_dt == null)
+            {
+                brd_dt = toDate.ToString("yyyyMMdd");
+            }
             var result = _dao.GetTemplate(param);
             if (pgmcode != null && brd_dt != null)
             {
                 SponsorParam spon_param = new SponsorParam();
                 spon_param.BrdDate = brd_dt;
                 spon_param.PgmCode = pgmcode;
-                var result2 = _common_dao.GetSponsor(spon_param);
                 result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(_dao.GetTemplate(param).CueSheetConEntities);
             }
             return result?.TemConverting();

@@ -35,6 +35,7 @@
         variant="outline-success default cutom-label"
         size="sm"
         class="float-right"
+        v-if="cueInfo.cuetype != 'A'"
         @click="editOK()"
       >
         편집 저장</b-button
@@ -97,6 +98,7 @@ export default {
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["cChannelData"]),
     ...mapGetters("cueList", ["cueFavorites"]),
+    ...mapGetters("cueList", ["cueInfo"]),
 
     show: {
       get() {

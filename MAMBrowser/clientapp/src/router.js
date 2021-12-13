@@ -334,7 +334,7 @@ const routes = [
           //   productid: cueDataObj.productid,
           //   week: cueDataObj.weeks,
           // };
-          var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode, brd_dt: toDay };
+          var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode };
           // if (Object.keys(cueDataObj).includes("detail")) {
           //   params.brd_dt = cueDataObj.brddate
           // } else {
@@ -364,7 +364,7 @@ const routes = [
                 })
               }
               if (res.data.normalCon.length == 0 && !dataVal) {
-                store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode, brd_dt: toDay });
+                store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode });
               }
               store.dispatch('cueList/getProUserList', cueDataObj.productid);
             });

@@ -335,8 +335,6 @@ export default {
             } else {
               params.brd_dt = this.cueInfo.day;
             }
-          } else if (this.cueInfo.cuetype == "B") {
-            params.brd_dt = toDay;
           }
           await axios
             .get(`/api/defcuesheet/GetdefCue`, {

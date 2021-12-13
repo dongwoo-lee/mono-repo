@@ -210,7 +210,8 @@
                   maintitle_red:
                     data.data.onairdate != '' &&
                     (data.data.onairdate != cueInfo.day ||
-                      data.data.onairdate != cueInfo.brddate),
+                      data.data.onairdate != cueInfo.brddate ||
+                      cueInfo.pgmcode != data.data.pgmcode),
                 }"
               >
                 {{ data.data.maintitle }}
@@ -431,10 +432,6 @@ export default {
     }
   },
   created() {
-    // if(this.cueInfo.cueid!=-1){
-    // }else{
-    //   this.SET_ABCARTARR([]);
-    // }
     eventBus.$on("abDataSet", (val) => {
       this.rowData.rownum = this.abCartArr.length + 1;
     });
@@ -552,9 +549,9 @@ export default {
         arrData.splice(e.toIndex, 0, row);
         this.rowData.rownum = this.rowData.rownum + 1;
       }
+      this.SET_ABCARTARR(arrData);
       this.setRowNum();
       // e.fromComponent.clearSelection();
-      //this.SET_ABCARTARR(arrData);
     },
     setRowNum() {
       this.abCartArr.forEach((ele, index) => {
@@ -576,7 +573,13 @@ export default {
       if (selectedRowsData.length > 1) {
         var startindex = e.fromIndex;
         var newindex = e.toIndex;
+        selectedRowsData.forEach((ele, index) => {
+          ele.rownum = this.rowData.rownum;
+          arrData.splice(newindex + index, 0, ele);
+          this.rowData.rownum = this.rowData.rownum + 1;
+        });
         this.selectionDel();
+
         if (startindex > e.toIndex) {
           selectedRowsKey.forEach((selectindex) => {
             var index = e.component.getRowIndexByKey(selectindex);
@@ -603,6 +606,8 @@ export default {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
       }
+      this.setRowNum();
+
       //e.component.clearSelection();
     },
     sortSelectedRowsData(e, dataType) {

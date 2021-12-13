@@ -118,7 +118,7 @@ namespace MAMBrowser.Utils
         public static CueSheetCollectionDTO DayConverting(this CueSheetCollectionEntity entity)
         {
             CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities);
-            
+
             collectionDTO.CueSheetDTO = new CueSheetDTO();
 
             collectionDTO.CueSheetDTO.CUETYPE = "D";
@@ -177,7 +177,7 @@ namespace MAMBrowser.Utils
             }
             collectionDTO.CueSheetDTO.DETAIL = detailArr;
 
-           
+
 
             return collectionDTO;
         }
@@ -339,7 +339,7 @@ namespace MAMBrowser.Utils
             return collectionDTO;
         }
 
-        //Entity TO DTO로 변환 - 즐겨찾기
+        //Entity TO DTO로 변환 - 즐겨찾기 가져오기
         public static IEnumerable<CueSheetConDTO> Converting(this List<UserFavConEntity> entity)
         {
             var favList = new List<CueSheetConDTO>();
@@ -348,6 +348,7 @@ namespace MAMBrowser.Utils
                 var favItem = new CueSheetConDTO();
                 favItem.ROWNUM = item.SEQNUM;
                 favItem.CARTCODE = item.CARTCODE ?? "";
+                favItem.PGMCODE = item.PGMCODE ?? "";
                 favItem.CARTID = item.CARTID ?? "";
                 favItem.ONAIRDATE = item.ONAIRDATE ?? "";
                 favItem.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
@@ -381,7 +382,7 @@ namespace MAMBrowser.Utils
             var resultFavList = new List<CueSheetConDTO>();
             for (var i = 0; 16 > i; i++)
             {
-                var row = new CueSheetConDTO() {ROWNUM=i+1};
+                var row = new CueSheetConDTO() { ROWNUM = i + 1 };
                 for (var itemIndex = 0; favList.Count > itemIndex; itemIndex++)
                 {
                     if (favList[itemIndex].ROWNUM == i + 1)
@@ -826,16 +827,11 @@ namespace MAMBrowser.Utils
             if (spons.CM?.Any() == true)
             {
                 foreach (var item in spons.CM)
-                //for (int i = 0; i < spons.CM.Count; i++) 
                 {
-                    //var item = spons.CM[i];
-
                     var cartId = item.CMGROUPID.Substring(2);
                     foreach (var cueItem in entity)
-                    //for(int j = 0;j<entity.Count;j++)
                     {
-                        //var cueItem = entity[j];
-                        if (cueItem.CARTID!=null&&cueItem.CARTID.Contains(cartId))
+                        if (cueItem.CARTID != null && cueItem.CARTID.Contains(cartId))
                         {
                             cueItem.PGMCODE = item.PGMCODE;
                             cueItem.ONAIRDATE = item.ONAIRDATE;
@@ -878,7 +874,6 @@ namespace MAMBrowser.Utils
                             cueItem.FADEOUTTIME = 0;
                             cueItem.MAINTITLE = item.NAME;
                             cueItem.SUBTITLE = item.ID;
-
                         }
                     }
                 }
@@ -886,6 +881,41 @@ namespace MAMBrowser.Utils
             return entity;
         }
 
+        //즐겨찾기 광고 pgmcode 가져오기
+        public static List<UserFavConEntity> SetSponsorToEntity(this SponsorCollectionEntity spons, List<UserFavConEntity> entity)
+        {
+            if (spons.CM?.Any() == true)
+            {
+                foreach (var item in spons.CM)
+                {
+                    var cartId = item.CMGROUPID.Substring(2);
+                    foreach (var cueItem in entity)
+                    {
+                        if (cueItem.CARTID != null && cueItem.CARTID.Contains(cartId))
+                        {
+                            cueItem.PGMCODE = item.PGMCODE;
+                        }
+                    }
+                }
+
+            }
+            if (spons.SB?.Any() == true)
+            {
+                foreach (var item in spons.SB)
+                {
+                    var cartId = item.GROUPCONTENTID.Substring(2);
+                    foreach (var cueItem in entity)
+                    {
+                        if (cueItem.CARTID != null && cueItem.CARTID.Contains(cartId))
+                        {
+                            cueItem.PGMCODE = item.PGMCODE;
+                        }
+                    }
+                }
+            }
+            return entity;
+        }
+        
         // AB 광고 자동추가 가져오기
         public static List<CueSheetConDTO> AddSponsorListToDTO(this SponsorCollectionEntity spons, string pgmcode)
         {
@@ -986,7 +1016,7 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
-
+        //소재 가져오기 통합
         public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> print)
         {
             var collectionDTO = new CueSheetCollectionDTO();
