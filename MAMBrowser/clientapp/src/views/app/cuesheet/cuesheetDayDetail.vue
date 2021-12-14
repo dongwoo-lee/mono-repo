@@ -157,13 +157,6 @@ import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { eventBus } from "@/eventBus";
 
-//새로고침 감지
-// window.onbeforeunload = function (e) {
-//   var dialogText = "Dialog text here";
-//   e.returnValue = dialogText;
-//   return dialogText;
-// };
-
 export default {
   beforeRouteLeave(to, from, next) {
     const answer = window.confirm(
@@ -188,9 +181,7 @@ export default {
 
   data() {
     return {
-      // brdDate: "",
-      //editData: "",
-      //type: "D",
+      onload: null,
       options: [{ text: "자동저장", value: true }],
       autosaveValue: [true],
       autoSaveFun: null,
@@ -205,7 +196,6 @@ export default {
 
     this.autoSaveFun = setInterval(() => {
       if (this.cueSheetAutoSave) {
-        console.log(this.cueSheetAutoSave);
         this.saveDayCue();
       }
     }, 900000); //15분마다 저장
@@ -262,6 +252,18 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
+    },
+    onloadEvent() {
+      const answer = window.confirm(
+        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+      );
+      if (answer) {
+        clearInterval(this.autoSaveFun);
+        eventBus.$off();
+        this.onload = true;
+      } else {
+        this.onload = false;
+      }
     },
   },
 };

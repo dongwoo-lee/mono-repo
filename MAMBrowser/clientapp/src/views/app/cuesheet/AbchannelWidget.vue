@@ -38,6 +38,7 @@
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
+        <DxLoadPanel :enabled="true" />
         <DxEditing
           :allow-adding="true"
           :allow-updating="true"
@@ -387,6 +388,7 @@ import {
   DxPaging,
   DxSelection,
   DxRowDragging,
+  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
@@ -405,6 +407,7 @@ export default {
   data() {
     return {
       dataGridRef,
+      loadpanelVal: false,
       showGrpPlayer: false,
       grpParam: {},
       rowData: {
@@ -449,6 +452,7 @@ export default {
     DxSelection,
     DxButton,
     DxTextBox,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -462,8 +466,7 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
-      console.log("e.toIndex");
-      console.log(e.toIndex);
+      this.loadpanelVal = true;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -557,6 +560,7 @@ export default {
       }
       this.SET_ABCARTARR(arrData);
       this.setRowNum();
+
       //e.fromComponent.clearSelection();
     },
     setRowNum() {

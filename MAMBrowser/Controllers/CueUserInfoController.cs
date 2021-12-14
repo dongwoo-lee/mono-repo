@@ -22,7 +22,7 @@ namespace MAMBrowser.Controllers
 
         //유저별 프로그램 리스트 가져오기
         [HttpGet("GetProgramList")]
-        public IEnumerable<PgmListDTO> GetUserProgramList([FromQuery] string personid, char media)
+        public IEnumerable<PgmListDTO> GetUserProgramList(string personid, char media)
         {
             try
             {

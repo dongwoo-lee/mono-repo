@@ -41,6 +41,8 @@
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
+        <DxLoadPanel :enabled="true" />
+
         <DxColumn
           width="13%"
           cell-template="code_cell_Template"
@@ -229,6 +231,7 @@ import {
   DxPaging,
   DxSelection,
   DxRowDragging,
+  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
@@ -330,6 +333,7 @@ export default {
     DxButton,
     DxSelectBox,
     DxTextBox,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),

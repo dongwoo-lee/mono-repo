@@ -199,6 +199,9 @@ export default {
         await this.getMediasOption({ personid: userId, gropId: null });
         this.searchItems.productid = this.userProList;
       }
+      if (this.searchItems.productid == undefined) {
+        this.searchItems.productid = this.userProList;
+      }
       var params = {
         start_dt: this.searchItems.start_dt,
         end_dt: this.searchItems.end_dt,
@@ -215,13 +218,13 @@ export default {
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
       const userId = sessionStorage.getItem(USER_ID);
-
       var proOption = await this.getuserProOption({
         personid: userId,
         gropId: null,
         media: e,
       });
       this.programList = this.userProOption;
+      this.searchItems.productid = this.userProList;
     },
   },
 };

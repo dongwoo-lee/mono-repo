@@ -287,26 +287,28 @@ export default {
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
         async getuserProOption({ commit }, payload) {
-
             var pram = { media: payload.media }
             if (payload.gropId == "S01G04C004") {
-
                 pram.personid = payload.personid
             }
-            return await axios.get(`/api/CueUserInfo/GetProgramList`, pram)
+            return await axios.get(`/api/CueUserInfo/GetProgramList`, {
+                params: pram
+            })
                 .then((res) => {
                     var dataList = res.data
                     var products = [];
+                    var selectProductList = [];
                     if (dataList) {
                         dataList.forEach((ele) => {
                             products.push({
                                 value: ele.productid,
                                 text: ele.eventname,
                             });
-
+                            selectProductList.push(ele.productid)
                         });
                     }
                     commit('SET_USERPROOPTION', products);
+                    commit('SET_USERPROLIST', selectProductList)
                 })
                 .catch((err => {
                     console.log("getuserProOption" + err);
@@ -316,9 +318,13 @@ export default {
         async getMediasOption({ commit }, payload) {
             var pram = {}
             if (payload.gropId == "S01G04C004") {
+                console.log(payload)
+
                 pram.personid = payload.personid
             }
-            return await axios.get(`/api/CueUserInfo/GetProgramList`, pram)
+            return await axios.get(`/api/CueUserInfo/GetProgramList`, {
+                params: pram
+            })
                 .then((res) => {
                     var dataList = res.data
                     var medias = [];
@@ -393,7 +399,6 @@ export default {
                         return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
                     })
                     commit('SET_CUESHEETLISTARR', res.data.resultObject);
-                    console.log(res)
                     return res;
                 })
                 .catch((err => {

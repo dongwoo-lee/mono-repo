@@ -189,6 +189,12 @@ export default {
   watch: {
     state: function (val) {
       this.getData();
+      if (!val) {
+        (this.MenuSelected = ["print", "ab", "c1", "c2", "c3", "c4"]),
+          this.MenuOptions.forEach((item) => {
+            item.notEnabled = true;
+          });
+      }
     },
     selectedIds: function (val) {
       if (val.length > 0) {

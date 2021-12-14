@@ -260,14 +260,27 @@ export default {
         this.selectedIds.forEach((ids) => {
           delcueidList.push(this.tempCuesheetListArr.data[ids].cueid);
         });
-        await axios.delete(`/api/TempCueSheet/DelTempCue`, {
-          params: {
-            tempids: delcueidList,
-          },
-          paramsSerializer: (params) => {
-            return qs.stringify(params);
-          },
-        });
+        await axios
+          .delete(`/api/TempCueSheet/DelTempCue`, {
+            params: {
+              tempids: delcueidList,
+            },
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+          .then((res) => {
+            window.$notify("info", `템플릿 삭제완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          })
+          .catch((err) => {
+            window.$notify("error", `템플릿 삭제실패.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          });
         this.getData();
         this.initSelectedIds();
       }
