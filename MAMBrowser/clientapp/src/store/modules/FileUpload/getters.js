@@ -57,6 +57,9 @@ export default {
       state.MetaData.typeSelected == "mcr-spot" &&
       state.EventSelected.id != ""
     ) {
+      if (state.EventSelected.duration == null) {
+        return true;
+      }
       var eh = state.EventSelected.duration.slice(0, 2);
       var em = state.EventSelected.duration.slice(3, 5);
       var es = state.EventSelected.duration.slice(6, 8);
@@ -68,6 +71,9 @@ export default {
       state.MetaData.typeSelected == "static-spot" &&
       state.EventSelected.id != ""
     ) {
+      if (state.EventSelected.duration == null) {
+        return true;
+      }
       var eh = state.EventSelected.duration.slice(0, 2);
       var em = state.EventSelected.duration.slice(3, 5);
       var es = state.EventSelected.duration.slice(6, 8);
@@ -79,6 +85,9 @@ export default {
       state.MetaData.typeSelected == "var-spot" &&
       state.EventSelected.id != ""
     ) {
+      if (state.EventSelected.duration == null) {
+        return true;
+      }
       var eh = state.EventSelected.duration.slice(0, 2);
       var em = state.EventSelected.duration.slice(3, 5);
       var es = state.EventSelected.duration.slice(6, 8);

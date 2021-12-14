@@ -497,7 +497,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("report")]
-        public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string memo, 
+        public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId,[FromForm] string title,  [FromForm] string memo, 
             [FromForm] string productId, [FromForm] string onairTime, [FromForm] string reporter, [FromForm] string editor, [FromForm] string media)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -538,6 +538,7 @@ namespace MAMBrowser.Controllers
                         ReportMeta report = new ReportMeta();
 
                         report.UserId = UserId;
+                        report.Title = title;
                         report.OnAirTime = onairTime;
                         report.Memo = memo;
                         report.Reporter = reporter;
@@ -669,7 +670,26 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        
+
+        [HttpPatch("program")]
+        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] AudioFileMetaBase jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
         [HttpPatch("scr-spot")]
         public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] AudioFileMetaBase jsonObject)
         {

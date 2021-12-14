@@ -123,7 +123,6 @@
       <file-delete
         v-if="metaDelete"
         :rowData="rowData"
-        :updateScreenName="deleteScreenName"
         @deleteFile="masteringDelete"
         @DeleteModalClose="DeleteModalOff"
       ></file-delete>
@@ -163,7 +162,6 @@ export default {
       deleteId: "",
       MySpaceScreenName: "[DL3]",
       metaDelete: false,
-      deleteScreenName: "",
       streamingUrl: "/api/Products/dl30-streaming",
       waveformUrl: "/api/Products/dl30-waveform",
       tempDownloadUrl: "/api/Products/dl30-temp-download",
@@ -269,7 +267,6 @@ export default {
     },
     onMetaDeletePopup(rowData) {
       this.metaDelete = true;
-      this.deleteScreenName = "scr-spot";
       this.rowData = rowData;
     },
     masteringDelete(e) {

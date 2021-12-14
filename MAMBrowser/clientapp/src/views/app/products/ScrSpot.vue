@@ -125,7 +125,6 @@
       <file-delete
         v-if="metaDelete"
         :rowData="rowData"
-        :updateScreenName="deleteScreenName"
         @deleteFile="masteringDelete"
         @DeleteModalClose="DeleteModalOff"
       ></file-delete>
@@ -162,7 +161,6 @@ export default {
       MySpaceScreenName: "[부조SPOT]",
       updateScreenName: "",
       metaDelete: false,
-      deleteScreenName: "",
       rowData: "",
       searchItems: {
         start_dt: "", // 시작일
@@ -335,7 +333,6 @@ export default {
     },
     onMetaDeletePopup(rowData) {
       this.metaDelete = true;
-      this.deleteScreenName = "scr-spot";
       this.rowData = rowData;
     },
     masteringDelete(e) {

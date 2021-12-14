@@ -1,3 +1,15 @@
+.btn-outline-dark {
+    background-color: white;
+    border-color: #bbbbbb;
+    color: gray;
+}
+
+.btn-outline-dark:hover {
+    background-color: white;
+    border-color: gray;
+    color: #3a3a3a;
+}
+
 .h145 .vs__dropdown-menu {
     height: 145px;
 }

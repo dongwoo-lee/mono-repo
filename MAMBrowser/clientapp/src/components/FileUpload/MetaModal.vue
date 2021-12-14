@@ -403,6 +403,7 @@ export default {
       } else if (this.MetaData.typeSelected == "report") {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
+          title: this.MetaData.title,
           meida: this.MetaData.mediaSelected,
           ProductId: this.EventSelected.id,
           date: this.date,
@@ -507,9 +508,10 @@ export default {
         } else if (this.MetaData.typeSelected == "report") {
           var data = {
             UserId: sessionStorage.getItem("user_id"),
-            meida: this.MetaData.mediaSelected,
+            title: this.MetaData.title,
+            media: this.MetaData.mediaSelected,
             ProductId: this.EventSelected.id,
-            date: this.date,
+            onairTime: this.date,
             editor: this.MetaData.editor,
             memo: this.MetaData.memo,
             reporter: this.MetaData.reporter,

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h6>제목</h6>
+    <h6>프로그램 명</h6>
     <b-form-input
       class="editTask"
-      :value="rowData.title"
-      @input="changeTitle"
+      :value="rowData.name"
+      disabled
       aria-describedby="input-live-help input-live-feedback"
-      placeholder="제목"
+      placeholder="프로그램명"
       trim
     />
 
@@ -33,25 +33,22 @@ export default {
   },
   data() {
     return {
-      title: "",
       memo: "",
     };
   },
+  created() {
+    console.log(this.rowData);
+  },
   methods: {
-    changeTitle(v) {
-      this.title = v;
-      this.update();
-    },
     changeMemo(v) {
       this.memo = v;
       this.update();
     },
     update() {
       var meta = {
-        title: this.title,
         memo: this.memo,
       };
-      this.$emit("updateMyDiskMeta", meta);
+      this.$emit("updateProgramMeta", meta);
     },
   },
 };

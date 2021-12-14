@@ -137,7 +137,6 @@
       <file-delete
         v-if="metaDelete"
         :rowData="rowData"
-        :updateScreenName="deleteScreenName"
         @deleteFile="masteringDelete"
         @DeleteModalClose="DeleteModalOff"
       ></file-delete>
@@ -172,7 +171,6 @@ export default {
       deleteId: "",
       metaUpdate: false,
       metaDelete: false,
-      deleteScreenName: "",
       rowData: "",
       updateScreenName: "",
       searchItems: {
@@ -350,7 +348,6 @@ export default {
     },
     onMetaDeletePopup(rowData) {
       this.metaDelete = true;
-      this.deleteScreenName = "scr-spot";
       this.rowData = rowData;
     },
     masteringDelete(e) {

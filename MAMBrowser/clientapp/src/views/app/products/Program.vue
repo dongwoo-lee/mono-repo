@@ -75,11 +75,13 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
-              :etcData="['delete']"
+              :etcData="['delete', 'modify']"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
               :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
               @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
@@ -95,12 +97,23 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
+
+    <!-- 마스터링 메타 데이터 수정 -->
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
+
     <!-- 마스터링 파일 삭제 -->
     <transition name="slide-fade">
       <file-delete
         v-if="metaDelete"
         :rowData="rowData"
-        :updateScreenName="deleteScreenName"
         @deleteFile="masteringDelete"
         @DeleteModalClose="DeleteModalOff"
       ></file-delete>
@@ -123,17 +136,20 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect, FileDelete },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinBasicPage],
   data() {
     return {
       deleteId: "",
       vSelectProps: {},
+      metaUpdate: false,
+      updateScreenName: "",
+      rowData: "",
       metaDelete: false,
-      deleteScreenName: "",
       MySpaceScreenName: "[프로그램]",
       searchItems: {
         media: "A",
@@ -311,9 +327,21 @@ export default {
       var tmpName = `${rowData.name}_${rowData.brdDT}`;
       return tmpName;
     },
+    onMetaModifyPopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "program";
+      this.rowData = rowData;
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/program", e).then((res) => {
+        console.log(res);
+      });
+    },
     onMetaDeletePopup(rowData) {
       this.metaDelete = true;
-      this.deleteScreenName = "program";
       this.rowData = rowData;
     },
     DeleteModalOff() {

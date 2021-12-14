@@ -7,6 +7,7 @@ namespace MAMBrowser.MAMDto
 {
     public class ReportMeta : MasteringMetaBase
     {
+        public string Title { get; set; }
         public string Media { get; set; }
         public string OnAirTime { get; set; }
         public string Reporter { get; set; }

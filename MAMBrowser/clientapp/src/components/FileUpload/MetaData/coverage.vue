@@ -4,6 +4,55 @@
       <div style="position: absolute; top: 340px; left: -400px; z-index: 9999">
         <b-form-input
           class="editTask"
+          v-model="MetaData.title"
+          :state="titleState"
+          :maxLength="200"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="소재명"
+          trim
+        />
+        <button
+          v-show="titleState"
+          style="
+            position: relative;
+            left: 315px;
+            top: -27px;
+            z-index: 99;
+            width: 3px;
+            heigth: 3px;
+            background-color: #ffffff;
+            border: 0;
+            outline: 0;
+          "
+        >
+          <b-icon
+            icon="x-circle"
+            font-scale="1"
+            style="position: relative; top: 0px; right: 0px; z-index: 999"
+            variant="secondary"
+            @click="resetTitle"
+          ></b-icon>
+        </button>
+        <p
+          v-show="titleState"
+          style="
+            position: relative;
+            left: 290px;
+            top: -20px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
+        >
+          {{ MetaData.title.length }}/200
+        </p>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div style="position: absolute; top: 395px; left: -400px; z-index: 9999">
+        <b-form-input
+          style="width: 160px"
+          class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
           :maxLength="200"
@@ -29,7 +78,7 @@
           <b-icon
             icon="x-circle"
             font-scale="1"
-            style="position: relative; top: 0px; right: 0px; z-index: 999"
+            style="position: relative; top: 0px; right: 185px; z-index: 999"
             variant="secondary"
             @click="resetMemo"
           ></b-icon>
@@ -38,7 +87,7 @@
           v-show="memoState"
           style="
             position: relative;
-            left: 310px;
+            left: 100px;
             top: -20px;
             z-index: 9999;
             width: 30px;
@@ -52,7 +101,13 @@
     <transition name="fade">
       <div>
         <b-form-input
-          style="position: absolute; top: 395px; left: -400px; z-index: 9999"
+          style="
+            position: absolute;
+            top: 395px;
+            left: -210px;
+            z-index: 9999;
+            width: 160px;
+          "
           class="editTask"
           v-model="MetaData.reporter"
           :state="reporterState"
@@ -172,7 +227,7 @@
       </button>
 
       <b-form-group
-        label="매체"
+        label="분류"
         class="has-float-label"
         style="position: absolute; margin-left: 320px; z-index: 9999"
       >
@@ -213,7 +268,7 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
-        <DxPager :visible="false" />
+        <DxPager :visible="true" />
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
       </DxDataGrid>

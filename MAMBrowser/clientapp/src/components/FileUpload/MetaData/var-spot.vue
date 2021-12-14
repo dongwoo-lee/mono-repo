@@ -265,7 +265,7 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
-        <DxPager :visible="false" />
+        <DxPager :visible="true" />
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
         <DxColumn data-field="startDate" caption="시작일" />

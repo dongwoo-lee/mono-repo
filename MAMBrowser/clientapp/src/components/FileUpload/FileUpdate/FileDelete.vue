@@ -26,10 +26,6 @@ export default {
       type: [],
       default: "",
     },
-    deleteScreenName: {
-      type: String,
-      default: "",
-    },
   },
   data() {
     return {};

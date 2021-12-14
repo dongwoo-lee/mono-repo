@@ -385,7 +385,6 @@ export default {
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
-      fileSelect: false,
       fileState: "",
       percent: 0,
       logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
@@ -623,7 +622,6 @@ export default {
               this.setAudioFormat(res.data.resultObject.audioFormatInfo);
               this.openFileModal();
               this.MetaModal = true;
-              this.fileSelect = true;
               this.setProcessing(false);
               // this.setFileUploading(true);
             });
@@ -632,17 +630,15 @@ export default {
               title: "오디오 파일만 업로드 가능합니다.",
             });
             this.fileupload.removeFile(0);
-            this.fileselect = false;
             this.setProcessing(false);
           }
         } else {
           this.$fn.notify("error", { title: "디스크 공간이 부족합니다." });
           this.fileupload.removeFile(0);
-          this.fileselect = false;
+
           this.setProcessing(false);
         }
       } else if (event.value.length == 0) {
-        this.fileselect = false;
         this.setProcessing(false);
       }
     },
@@ -681,11 +677,12 @@ export default {
       this.uploadRefresh();
     },
     uploadError(e) {
-      this.percent = 0;
-      this.$fn.notify("error", { message: e.error.response });
+      this.setProcessing(false);
+      this.setFileUploading(false);
+      this.MetaModalClose();
+      this.$fn.notify("error", { message: e.error.response }); // TODO:오류 발생 => 영구 지속?
     },
     uploadAborted() {
-      this.fileselect = false;
       this.percent = 0;
       // this.$fn.notify("error", { message: "파일 업로드 취소" });
     },

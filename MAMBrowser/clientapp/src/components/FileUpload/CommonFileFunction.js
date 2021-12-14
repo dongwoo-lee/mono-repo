@@ -160,7 +160,7 @@ export default {
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),
     getVariant() {
-      return this.isActive ? "outline-dark" : "outline-primary";
+      return this.isActive ? "outline-dark" : "outline-dark";
     },
     ...mapGetters("menu", ["getMenuType"]),
     programState() {
@@ -333,11 +333,9 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
-        axios
-          .get(`/api/categories/pgmcodes?brd_dt=${date}&media=A`)
-          .then((res) => {
-            this.setEventData(res.data.resultObject.data);
-          });
+        axios.get(`/api/categories/pgmcodes?brd_dt=${date}`).then((res) => {
+          this.setEventData(res.data.resultObject.data);
+        });
       }
     },
     validDateType(value) {
@@ -431,7 +429,6 @@ export default {
       this.resetAdvertiser();
       this.resetReporter();
       this.watch = "";
-      this.fileSelect = false;
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });
       }
@@ -450,7 +447,6 @@ export default {
       this.resetUsage();
       this.resetAdvertiser();
       this.watch = "";
-      this.fileSelect = false;
       if (this.processing) {
         this.$fn.notify("error", { message: "파일 업로드 취소" });
       }
