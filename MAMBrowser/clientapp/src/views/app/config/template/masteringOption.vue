@@ -1,13 +1,13 @@
 <template>
   <div class="card-body">
     <div style="margin-left: 395px">
-      <h4 style="color: #008ecc">마스터링 옵션</h4>
+      <h4 style="color: black">마스터링 옵션</h4>
       <div
         style="
           margin-top: 20px;
           padding: 25px;
           width: 840px;
-          border: 1px solid #008ecc;
+          border: 1px solid silver;
         "
       >
         <span style="width: 200px; float: left; margin-right: 90px">
@@ -65,14 +65,14 @@
           </b-form-group>
         </span>
       </div>
-      <h4 style="color: #008ecc; margin-top: 40px">파일 경로 설정</h4>
+      <h4 style="color: black; margin-top: 40px">파일 경로 설정</h4>
       <div
         style="
           margin-top: 20px;
           padding: 25px;
           width: 840px;
           height: 230px;
-          border: 1px solid #008ecc;
+          border: 1px solid silver;
         "
       >
         <b-form-group
@@ -133,7 +133,7 @@
         </b-form-group>
       </div>
       <div style="margin-left: 705px; margin-top: 30px; margin-bottom: -20px">
-        <b-button variant="outline-info" @click="save">저장</b-button>
+        <b-button variant="outline-success" @click="save">저장</b-button>
         <b-button variant="outline-danger" @click="cancel">취소</b-button>
       </div>
     </div>
@@ -253,7 +253,13 @@ export default {
         console.log(res);
       });
     },
-    cancel() {},
+    cancel() {
+      axios.get("/api/options/S01G06C001").then((res) => {
+        res.data.resultObject.data.forEach((e) => {
+          this[e.name] = e.value;
+        });
+      });
+    },
   },
 };
 </script>

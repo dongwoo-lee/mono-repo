@@ -66,7 +66,6 @@ export default {};
 }
 
 .update-modal-body {
-  height: 200px;
   font-family: "MBC 새로움 M";
 }
 

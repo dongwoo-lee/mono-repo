@@ -53,7 +53,7 @@
         v-model="MetaData.memo"
         :state="memoState"
         :maxLength="200"
-        placeholder="설명"
+        placeholder="메모"
         trim
       />
 

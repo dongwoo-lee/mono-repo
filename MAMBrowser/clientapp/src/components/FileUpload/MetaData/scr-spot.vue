@@ -126,7 +126,7 @@
         :state="memoState"
         :maxLength="200"
         aria-describedby="input-live-help input-live-feedback"
-        placeholder="설명"
+        placeholder="메모"
         trim
       />
 

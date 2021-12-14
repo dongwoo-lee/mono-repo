@@ -116,14 +116,6 @@
           submitBtn="이동"
           @ok="onDelete()"
         />
-        <!-- My공간 메타데이터 수정 팝업 -->
-        <meta-data-private-modify-popup
-          ref="refMetaDataModifyPopup"
-          :show="metaDataModifyPopup"
-          @editSuccess="onEditSuccess"
-          @close="metaDataModifyPopup = false"
-        >
-        </meta-data-private-modify-popup>
       </template>
     </common-form>
     <transition name="slide-fade">
@@ -367,9 +359,6 @@ export default {
       this.metaUpdate = true;
       this.updateScreenName = "private";
       this.rowData = rowData;
-
-      // this.$refs.refMetaDataModifyPopup.setData(rowData);
-      // this.metaDataModifyPopup = true;
     },
     masteringUpdate(e) {
       axios.patch("/api/Mastering/my-disk", e).then((res) => {

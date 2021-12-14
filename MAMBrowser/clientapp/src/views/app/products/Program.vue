@@ -76,7 +76,7 @@
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
               :etcData="['delete']"
-              :isPossibleDelete="deleteCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
@@ -279,7 +279,7 @@ export default {
     });
   },
   methods: {
-    deleteCheck(e) {
+    authorityCheck(e) {
       if (
         e.editorID == sessionStorage.getItem("user_id") ||
         sessionStorage.getItem("authority") == "ADMIN"
