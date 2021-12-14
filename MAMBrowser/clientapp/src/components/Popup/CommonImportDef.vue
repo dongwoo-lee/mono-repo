@@ -92,11 +92,10 @@
 </template>
 <script>
 import CommonWeeks from "../../components/DataTable/CommonWeeks.vue";
-import { USER_ID } from "@/constants/config";
+import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import { eventBus } from "@/eventBus";
-const userId = sessionStorage.getItem(USER_ID);
 const qs = require("qs");
 import axios from "axios";
 import "moment/locale/ko";
@@ -233,9 +232,15 @@ export default {
     async getData() {
       if (this.state) {
         //기본 큐시트 목록 가져오기
+        const userId = sessionStorage.getItem(USER_ID);
+        const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+
         this.isTableLoading = this.isScrollLodaing ? false : true;
         if (!this.searchItems.productid) {
-          var mediaOption = await this.getMediasOption(userId);
+          var mediaOption = await this.getMediasOption({
+            personid: userId,
+            gropId: gropId,
+          });
 
           if (this.type != "T") {
             var temmedia = await this.eventClick(this.cueInfo.media);
@@ -387,8 +392,14 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
-      var pram = { personid: userId, media: e };
-      var proOption = await this.getuserProOption(pram);
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      const userId = sessionStorage.getItem(USER_ID);
+
+      var proOption = await this.getuserProOption({
+        personid: userId,
+        gropId: gropId,
+        media: e,
+      });
       this.programList = this.userProOption;
     },
   },

@@ -319,12 +319,13 @@
           </div>
         </div>
       </div>
-      <template #modal-footer>
+      <template #modal-footer="{ cancel }">
+        <b-button variant="danger" @click="cancel()">닫기 </b-button>
         <b-button
           type="submit"
+          v-if="cueInfo.cuetype != 'A'"
           variant="secondary"
           @click="editOk()"
-          v-if="cueInfo.cuetype != 'A'"
           >저장
         </b-button>
       </template>
@@ -404,7 +405,7 @@ import DxTextArea from "devextreme-vue/text-area";
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
-import { USER_ID } from "@/constants/config";
+import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
@@ -710,9 +711,13 @@ export default {
         });
     },
     async editWeekListClick() {
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       const userId = sessionStorage.getItem(USER_ID);
-      var pram = { personid: userId, media: this.cueInfo.media };
-      var proOption = await this.getuserProOption(pram);
+      var proOption = await this.getuserProOption({
+        personid: userId,
+        gropId: gropId,
+        media: this.cueInfo.media,
+      });
 
       this.$refs["modal-editWeek"].show();
     },

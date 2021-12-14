@@ -203,15 +203,8 @@ export default {
     selected(val) {
       this.$emit("fadeValue", this.selected);
     },
-    // fadeIn(val) {
-    //   console.log("val");
-    //   console.log(val);
-    //   //this.selected.push({ fadeIn: val });
-    // },
   },
   mounted() {
-    //console.log("this.fadeIn");
-    //console.log(this.fadeIn);
     if (this.fadeIn["fadeInValue"]) {
       this.selected.push(this.fadeIn);
     }

@@ -287,18 +287,23 @@ export default {
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
         async getuserProOption({ commit }, payload) {
-            return await axios.get(`/api/CueUserInfo/GetProgramList?personid=${payload.personid}&media=${payload.media}`)
+
+            var pram = { media: payload.media }
+            if (payload.gropId == "S01G04C004") {
+
+                pram.personid = payload.personid
+            }
+            return await axios.get(`/api/CueUserInfo/GetProgramList`, pram)
                 .then((res) => {
                     var dataList = res.data
                     var products = [];
                     if (dataList) {
                         dataList.forEach((ele) => {
-                            ele.details.filter((pro) => {
-                                products.push({
-                                    value: pro.productid,
-                                    text: pro.eventname,
-                                });
+                            products.push({
+                                value: ele.productid,
+                                text: ele.eventname,
                             });
+
                         });
                     }
                     commit('SET_USERPROOPTION', products);
@@ -309,52 +314,53 @@ export default {
         },
         //유저 - 전체 프로그램 + 매체 가져오기
         async getMediasOption({ commit }, payload) {
-            return await axios.get(`/api/CueUserInfo/GetProgramList?personid=` + payload)
+            var pram = {}
+            if (payload.gropId == "S01G04C004") {
+                pram.personid = payload.personid
+            }
+            return await axios.get(`/api/CueUserInfo/GetProgramList`, pram)
                 .then((res) => {
                     var dataList = res.data
                     var medias = [];
                     var products = [];
-                    if (dataList) {
-                        dataList.forEach((ele) => {
-                            switch (ele.media) {
-                                case "A":
-                                    medias.push({
-                                        value: ele.media,
-                                        text: "AM"
-                                    })
-                                    break;
-                                case "F":
-                                    medias.push({
-                                        value: ele.media,
-                                        text: "FM"
-                                    })
-                                    break;
-                                case "D":
-                                    medias.push({
-                                        value: ele.media,
-                                        text: "DMB"
-                                    })
-                                    break;
-                                case "C":
-                                    medias.push({
-                                        value: ele.media,
-                                        text: "공통"
-                                    })
-                                    break;
-                                case "Z":
-                                    medias.push({
-                                        value: ele.media,
-                                        text: "기타"
-                                    })
-                                    break;
-                                default:
-                                    break;
-                            }
-                            ele.details.filter((pro) => {
-                                products.push(pro.productid);
-                            });
-                        });
+                    var media_a = dataList.filter(ele => ele.media.includes("A"));
+                    var media_f = dataList.filter(ele => ele.media.includes("F"));
+                    var media_d = dataList.filter(ele => ele.media.includes("D"));
+                    var media_c = dataList.filter(ele => ele.media.includes("C"));
+                    var media_z = dataList.filter(ele => ele.media.includes("Z"));
+                    if (media_a.length > 0) {
+                        medias.push({
+                            value: "A",
+                            text: "AM"
+                        })
                     }
+                    if (media_f.length > 0) {
+                        medias.push({
+                            value: "F",
+                            text: "FM"
+                        })
+                    }
+                    if (media_d.length > 0) {
+                        medias.push({
+                            value: "D",
+                            text: "DMB"
+                        })
+                    }
+                    if (media_c.length > 0) {
+                        medias.push({
+                            value: "C",
+                            text: "공통"
+                        })
+                    }
+                    if (media_z.length > 0) {
+                        medias.push({
+                            value: "Z",
+                            text: "기타"
+                        })
+                    }
+                    dataList.forEach((ele) => {
+                        products.push(ele.productid);
+                    })
                     commit('SET_MEDIASOPTION', medias)
                     commit('SET_USERPROLIST', products)
 
@@ -382,10 +388,12 @@ export default {
                 },
             })
                 .then((res) => {
+
                     res.data.resultObject.data.sort((a, b) => {
                         return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
                     })
                     commit('SET_CUESHEETLISTARR', res.data.resultObject);
+                    console.log(res)
                     return res;
                 })
                 .catch((err => {

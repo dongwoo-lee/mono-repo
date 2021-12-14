@@ -205,9 +205,10 @@ export default {
 
     this.autoSaveFun = setInterval(() => {
       if (this.cueSheetAutoSave) {
+        console.log(this.cueSheetAutoSave);
         this.saveDayCue();
       }
-    }, 10000); //15분마다 저장
+    }, 900000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];

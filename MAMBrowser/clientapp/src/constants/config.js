@@ -8,17 +8,19 @@ export const defaultColor = 'light.blueolympic'
 /* role system top management */
 export const SYSTEM_TOP_ADMIN_CODE = 'S01G03C001';
 /* behavior system management code */
-export const SYSTEM_MANAGEMENT_CODE  = 'S01G02C001';
+export const SYSTEM_MANAGEMENT_CODE = 'S01G02C001';
 /* behavior preview listening code */
-export const PREVIEW_CODE  = 'S01G02C002';
+export const PREVIEW_CODE = 'S01G02C002';
 /* behavior download code */
-export const DOWNLOAD_CODE  = 'S01G02C003';
+export const DOWNLOAD_CODE = 'S01G02C003';
 /* role my disk page id */
 export const MY_DISK_PAGE_ID = 'S01G01C007';
 /* behavior authority*/
 export const AUTHORITY_ADMIN = 'ADMIN';
 /* behavior authority*/
 export const AUTHORITY_MANAGER = 'MANAGER';
+//큐시트 제작 및 조회 권한
+export const ACCESS_GROP_ID = 'MANAGER';
 /* route name */
 export const ROUTE_NAMES = {
   PRIVATE: 'private',

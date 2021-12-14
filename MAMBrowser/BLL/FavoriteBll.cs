@@ -32,11 +32,12 @@ namespace MAMBrowser.BLL
             {
                 brd_dt = toDate.ToString("yyyyMMdd");
             }
-            if (pgmcode != null && brd_dt != null)
+            if (pgmcode != null && brd_dt != null&& pgmcode != "undefined" && brd_dt != "undefined")
             {
                 SponsorParam spon_param = new SponsorParam();
                 spon_param.BrdDate = brd_dt;
                 spon_param.PgmCode = pgmcode;
+                var result2 = _common_dao.GetSponsor(spon_param);
                 result = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(result);
             }
 

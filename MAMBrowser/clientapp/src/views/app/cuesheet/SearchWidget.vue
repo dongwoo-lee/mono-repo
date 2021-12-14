@@ -135,11 +135,8 @@
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxPaging :page-size="10" />
-          <DxScrolling
-            v-if="searchtable_data.columns.length > 0"
-            mode="infinite"
-          />
+          <DxScrolling showScrollbar="always" />
+          <DxPaging :enabled="false" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">

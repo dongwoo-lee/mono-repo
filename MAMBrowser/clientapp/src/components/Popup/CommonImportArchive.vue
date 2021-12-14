@@ -100,7 +100,6 @@ import MixinBasicPage from "../../mixin/MixinBasicPage";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
 import { USER_ID } from "@/constants/config";
-const userId = sessionStorage.getItem(USER_ID);
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
@@ -251,6 +250,7 @@ export default {
     ...mapActions("cueList", ["setStartTime"]),
 
     async getData() {
+      const userId = sessionStorage.getItem(USER_ID);
       if (this.state) {
         this.isTableLoading = this.isScrollLodaing ? false : true;
         if (
@@ -266,7 +266,7 @@ export default {
           return;
         }
         if (this.searchItems.productid == "") {
-          await this.getMediasOption(userId);
+          await this.getMediasOption({ personid: userId, gropId: null });
           this.searchItems.productid = this.userProList;
         }
         await axios
@@ -301,8 +301,13 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
-      var pram = { personid: userId, media: e };
-      var proOption = await this.getuserProOption(pram);
+      const userId = sessionStorage.getItem(USER_ID);
+
+      var proOption = await this.getuserProOption({
+        personid: userId,
+        gropId: null,
+        media: e,
+      });
       this.programList = this.userProOption;
     },
     async ok() {
