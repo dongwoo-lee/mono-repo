@@ -11,6 +11,6 @@ namespace MAMBrowser.MAMDto
         public string Memo { get; set; }
         public string Advertiser { get; set; }
         public string Editor { get; set; }
-        public string Media { get; set; }
+        public string Category { get; set; }
     }
 }

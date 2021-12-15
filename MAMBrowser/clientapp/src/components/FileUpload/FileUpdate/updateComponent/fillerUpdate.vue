@@ -1,16 +1,26 @@
 <template>
   <div>
+    <h6>소재명</h6>
+    <b-form-input
+      class="editTask"
+      :value="rowData.name"
+      @input="changeName"
+      aria-describedby="input-live-help input-live-feedback"
+      placeholder="소재명"
+      trim
+    />
+    <br />
     <h6>분류</h6>
     <b-form-select
       style="width: 350px"
       class="media-select"
-      :value="media"
+      :value="category"
       :options="mediaOptions"
       @input="changeMedia"
     />
     <br />
     <br />
-    <h6>방송일</h6>
+    <h6>방송유효일</h6>
     <b-input-group class="mb-3" style="width: 350px; float: left">
       <input
         type="text"
@@ -33,85 +43,44 @@
     <br />
     <br />
     <br />
-    <h6>취재인</h6>
+    <h6>메모</h6>
     <b-form-input
       class="editTask"
-      :value="rowData.reporter"
-      @input="changeReporter"
+      :value="rowData.memo"
+      @input="changeMemo"
       aria-describedby="input-live-help input-live-feedback"
-      placeholder="소재명"
+      placeholder="메모"
       trim
     />
-
-    <br />
-    <h6>소재명</h6>
-    <b-form-input
-      class="editTask"
-      :value="rowData.name"
-      @input="changeName"
-      aria-describedby="input-live-help input-live-feedback"
-      placeholder="소재명"
-      trim
-    />
-
-    <br />
-    <h6>사용처</h6>
-    <b-form-input
-      style="width: 265px; float: left"
-      class="editTask"
-      :value="this.pgmName"
-      disabled
-      aria-describedby="input-live-help input-live-feedback"
-      placeholder="소재명"
-      trim
-    />
-    <b-button style="margin-left: 20px; margin-top: 10px" @click="getPro"
-      >검색</b-button
-    >
-    <report-modal
-      v-if="reportModal"
-      :pgmData="pgmData"
-      @reportModalClose="reportModalOff"
-      @changePgm="changePgm"
-    ></report-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import ReportModal from "./reportModal.vue";
 export default {
-  components: {
-    ReportModal,
-  },
+  components: {},
   props: {
     rowData: {
       type: [],
       default: "",
     },
+    fillerType: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
-      reportModal: false,
-      media: this.rowData.media,
-      reporter: this.rowData.reporter,
+      category: this.rowData.categoryID,
+      memo: this.rowData.memo,
       date: this.convertDateSTH(this.rowData.brdDT),
       brdDT: this.convertDateSTH(this.rowData.brdDT),
-      pgmName: this.rowData.pgmName,
-      pgmid: this.rowData.pgmid,
       name: this.rowData.name,
       mediaOptions: [],
-      pgmData: [
-        {
-          name: "",
-          id: "",
-        },
-      ],
-      pgmSelected: {},
     };
   },
   created() {
-    axios.get("/api/categories/report").then((res) => {
+    axios.get(`/api/Categories/filler/${this.fillerType}`).then((res) => {
       res.data.resultObject.data.forEach((e) => {
         this.mediaOptions.push({
           value: e.id,
@@ -119,41 +88,19 @@ export default {
         });
       });
     });
-
-    const replaceVal = this.date.replace(/-/g, "");
-    const yyyy = replaceVal.substring(0, 4);
-    const mm = replaceVal.substring(4, 6);
-    const dd = replaceVal.substring(6, 8);
-    var date = yyyy + "" + mm + "" + dd;
-    this.pgmData = [];
-    axios.get(`/api/categories/pgmcodes?brd_dt=${date}`).then((res) => {
-      this.pgmData = res.data.resultObject.data;
-    });
-
     console.log(this.rowData);
   },
   methods: {
-    getPro() {
-      this.reportModal = true;
-    },
-    reportModalOff() {
-      this.reportModal = false;
-    },
     changeMedia(v) {
       this.media = v;
       this.update();
     },
-    changeReporter(v) {
-      this.reporter = v;
+    changeMemo(v) {
+      this.memo = v;
       this.update();
     },
     changeName(v) {
       this.name = v;
-      this.update();
-    },
-    changePgm(v) {
-      this.pgmName = v.pgmName;
-      this.pgmid = v.pgmid;
       this.update();
     },
     update() {
@@ -165,7 +112,7 @@ export default {
         pgmid: this.pgmid,
         name: this.name,
       };
-      this.$emit("updateReportMeta", meta);
+      this.$emit("updateFillerMeta", meta);
     },
     eventInput(event) {
       this.brdDT = event;
@@ -184,7 +131,7 @@ export default {
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
-          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          var convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.brdDT = convertDate;
           this.date = convertDate;
         }

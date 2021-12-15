@@ -1,9 +1,9 @@
 <template>
   <div style="margin-top: 20px">
     <b-form-group
-      label="매체"
+      label="분류"
       class="has-float-label"
-      style="float: left; margin-right: 20px"
+      style="float: left; margin-right: 20px; margin-top: 10px"
     >
       <b-form-select
         id="program-media"
@@ -18,14 +18,18 @@
     <b-form-group
       label="제작자"
       class="has-float-label"
-      style="margin-top: 10px; margin-bottom: 20px"
+      style="font-size: 16px"
     >
-      <common-vue-select
-        style="font-size: 14px; width: 160px; border: 1px solid #008ecc"
-        class="h105"
-        :suggestions="editorOptions"
-        @inputEvent="inputEditor"
-      ></common-vue-select>
+      <b-form-input
+        title="제작자"
+        style="width: 160px; font-size: 14px"
+        class="editTask"
+        :value="userID"
+        disabled
+        aria-describedby="input-live-help input-live-feedback"
+        placeholder="제작자"
+        trim
+      />
     </b-form-group>
     <div style="height: 50px">
       <b-form-input
@@ -124,7 +128,7 @@
         class="editTask"
         v-model="MetaData.memo"
         :state="memoState"
-        :maxLength="200"
+        :maxLength="30"
         aria-describedby="input-live-help input-live-feedback"
         placeholder="메모"
         trim
@@ -163,7 +167,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.memo.length }}/200
+        {{ MetaData.memo.length }}/30
       </p>
     </div>
   </div>

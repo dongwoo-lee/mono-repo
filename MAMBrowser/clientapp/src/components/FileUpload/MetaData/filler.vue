@@ -55,7 +55,7 @@
           class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
-          :maxLength="200"
+          :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
           trim
@@ -94,7 +94,7 @@
             margin-right: 0px;
           "
         >
-          {{ MetaData.memo.length }}/200
+          {{ MetaData.memo.length }}/30
         </p>
       </div>
     </transition>

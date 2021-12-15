@@ -10,12 +10,6 @@
     color: #3a3a3a;
 }
 
-.h145 .vs__dropdown-menu {
-    height: 145px;
-}
-.h105 .vs__dropdown-menu {
-    height: 105px;
-}
 .mastering-list {
     height: 320px;
 }
@@ -78,9 +72,9 @@
     display: none;
 }
 .date-modal {
-    margin-top: 250px;
+    margin-top: 260px;
     width: 380px;
-    height: 190px;
+    height: 180px;
     float: left;
     overflow-y: auto;
     margin-left: 20px;

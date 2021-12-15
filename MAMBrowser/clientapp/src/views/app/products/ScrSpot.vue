@@ -158,10 +158,10 @@ export default {
     return {
       deleteId: "",
       metaUpdate: false,
-      MySpaceScreenName: "[부조SPOT]",
       updateScreenName: "",
-      metaDelete: false,
       rowData: "",
+      MySpaceScreenName: "[부조SPOT]",
+      metaDelete: false,
       searchItems: {
         start_dt: "", // 시작일
         end_dt: "", // 종료일

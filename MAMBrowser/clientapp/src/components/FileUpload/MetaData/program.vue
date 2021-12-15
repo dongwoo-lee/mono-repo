@@ -4,28 +4,29 @@
       <div
         style="
           position: absolute;
-          top: 340px;
+          top: 350px;
           left: -400px;
           z-index: 9999;
           font-size: 16px;
         "
       >
-        <b-form-input
-          class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
-          :maxLength="200"
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="메모"
-          trim
-        />
-
+        <b-form-group label="메모" class="has-float-label">
+          <b-form-input
+            class="editTask"
+            v-model="MetaData.memo"
+            :state="memoState"
+            :maxLength="30"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="메모"
+            trim
+          />
+        </b-form-group>
         <button
           v-show="memoState"
           style="
             position: relative;
             left: 315px;
-            top: -27px;
+            top: -40px;
             z-index: 99;
             width: 3px;
             heigth: 3px;
@@ -47,35 +48,37 @@
           style="
             position: relative;
             left: 310px;
-            top: -20px;
+            top: -35px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
           "
         >
-          {{ MetaData.memo.length }}/200
+          {{ MetaData.memo.length }}/30
         </p>
       </div>
     </transition>
     <transition name="fade">
-      <div>
-        <b-form-group
-          label="제작자"
-          class="has-float-label"
-          style="
-            position: absolute;
-            top: 410px;
-            left: -400px;
-            z-index: 9999;
-            font-size: 16px;
-          "
-        >
-          <common-vue-select
-            class="h145"
-            style="font-size: 14px; width: 350px; border: 1px solid gray"
-            :suggestions="editorOptions"
-            @inputEvent="inputEditor"
-          ></common-vue-select>
+      <div
+        style="
+          position: absolute;
+          top: 415px;
+          left: -400px;
+          z-index: 9999;
+          font-size: 16px;
+        "
+      >
+        <b-form-group label="제작자" class="has-float-label">
+          <b-form-input
+            title="제작자"
+            style="width: 350px; font-size: 14px"
+            class="editTask"
+            :value="userID"
+            disabled
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="제작자"
+            trim
+          />
         </b-form-group>
       </div>
     </transition>
@@ -90,7 +93,7 @@
             :disabled="isActive"
             id="dateinput"
             type="text"
-            class="form-control input-picker date-input"
+            class="form-control input-picker"
             :value="date"
             @input="onInput"
           />
@@ -161,8 +164,8 @@
         ref="my-proDataGrid"
         v-show="this.ProgramData.eventName != ''"
         style="
-          height: 245px;
-          border: 1px solid #008ecc;
+          height: 280px;
+          border: 1px solid silver;
           font-family: 'MBC 새로움 M';
         "
         :data-source="ProgramData"
@@ -216,14 +219,14 @@
       v-show="!isActive && this.ProgramSelected.eventName != ''"
       style="
         width: 550px;
-        height: 85px;
-        margin-top: 328px;
+        height: 82px;
+        margin-top: 350px;
         padding-top: 20px;
         padding-left: 10px;
         padding-right: 10px;
         float: left;
-        border: 1px solid #008ecc;
-        font-size: 13px;
+        border: 1px solid silver;
+        font-size: 16px;
         font-family: 'MBC 새로움 M';
       "
     >
