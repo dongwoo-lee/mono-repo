@@ -248,10 +248,6 @@ export default {
     this.setDate(today);
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setEditor"]),
-    inputEditor(v) {
-      this.setEditor(v.id);
-    },
     mediaChange(v) {
       this.setMediaSelected(v);
     },

@@ -114,6 +114,7 @@
                 <my-disk
                   v-if="this.MetaData.typeSelected == 'my-disk'"
                 ></my-disk>
+                <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
                 <scr-spot
                   v-if="this.MetaData.typeSelected == 'scr-spot'"
                 ></scr-spot>
@@ -250,6 +251,7 @@ import MixinBasicPage from "../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../components/Form/CommonVueSelect.vue";
 import myDisk from "./MetaData/my-disk.vue";
 import program from "./MetaData/program.vue";
+import pro from "./MetaData/pro.vue";
 import mcrSpot from "./MetaData/mcr-spot.vue";
 import scrSpot from "./MetaData/scr-spot.vue";
 import staticSpot from "./MetaData/static-spot.vue";
@@ -277,6 +279,7 @@ export default {
     CommonMetaModal,
     myDisk,
     program,
+    pro,
     mcrSpot,
     scrSpot,
     staticSpot,
@@ -343,79 +346,6 @@ export default {
     },
   },
   methods: {
-    log() {
-      if (this.MetaData.typeSelected == "my-disk") {
-        var data = {
-          editor: sessionStorage.getItem("user_id"),
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
-        };
-      } else if (this.MetaData.typeSelected == "program") {
-        var data = {
-          memo: this.MetaData.memo,
-          media: this.MetaData.mediaSelected,
-          productId: this.ProgramSelected.productId,
-          brdDTM: this.ProgramSelected.onairTime,
-          editor: sessionStorage.getItem("user_id"),
-        };
-      } else if (this.MetaData.typeSelected == "mcr-spot") {
-        var data = {
-          memo: this.MetaData.memo,
-          media: this.MetaData.mediaSelected,
-          productId: this.EventSelected.id,
-          brdDT: this.date,
-          editor: sessionStorage.getItem("user_id"),
-          advertiser: this.MetaData.advertiser,
-        };
-      } else if (this.MetaData.typeSelected == "scr-spot") {
-        var data = {
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser,
-          editor: sessionStorage.getItem("user_id"),
-          category: this.MetaData.mediaSelected,
-        };
-      } else if (this.MetaData.typeSelected == "static-spot") {
-        var data = {
-          media: this.MetaData.mediaSelected,
-          productId: this.EventSelected.id,
-          SDate: this.fileSDate,
-          EDate: this.fileEDate,
-          editor: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser,
-        };
-      } else if (this.MetaData.typeSelected == "var-spot") {
-        var data = {
-          media: this.MetaData.mediaSelected,
-          productId: this.EventSelected.id,
-          SDate: this.fileSDate,
-          EDate: this.fileEDate,
-          editor: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser,
-        };
-      } else if (this.MetaData.typeSelected == "report") {
-        var data = {
-          title: this.MetaData.title,
-          category: this.MetaData.mediaSelected,
-          ProductId: this.EventSelected.id,
-          brdDTM: this.date,
-          editor: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
-          reporter: this.MetaData.reporter,
-        };
-      } else if (this.MetaData.typeSelected == "filler") {
-        var data = {
-          category: this.MetaData.mediaSelected,
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
-          editor: sessionStorage.getItem("user_id"),
-          brdDT: this.date,
-        };
-      }
-      console.log(data);
-    },
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setMasteringListData",
@@ -452,6 +382,15 @@ export default {
             productId: this.ProgramSelected.productId,
             brdDTM: this.ProgramSelected.onairTime,
             editor: sessionStorage.getItem("user_id"),
+          };
+        } else if (this.MetaData.typeSelected == "pro") {
+          var data = {
+            editor: sessionStorage.getItem("user_id"),
+            category: this.MetaData.mediaSelected,
+            type: this.MetaData.proType,
+            typeName: this.MetaData.proTypeName,
+            title: this.MetaData.title,
+            memo: this.MetaData.memo,
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
           var data = {
@@ -495,7 +434,7 @@ export default {
             title: this.MetaData.title,
             category: this.MetaData.mediaSelected,
             ProductId: this.EventSelected.id,
-            brdDTM: this.date,
+            brdDT: this.date,
             editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,
             reporter: this.MetaData.reporter,

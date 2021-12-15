@@ -353,10 +353,6 @@ export default {
     this.getPro();
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setEditor"]),
-    inputEditor(v) {
-      this.setEditor(v.id);
-    },
     mediaChange(v) {
       this.setMediaSelected(v);
     },

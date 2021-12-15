@@ -183,7 +183,7 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 480px;
+            top: 485px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
@@ -392,10 +392,6 @@ export default {
     this.getPro();
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setEditor"]),
-    inputEditor(v) {
-      this.setEditor(v.id);
-    },
     mediaChange(v) {
       this.setMediaSelected(v);
     },

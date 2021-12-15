@@ -10,6 +10,12 @@ export default {
       ? true
       : false;
   },
+  proMediaState(state) {
+    return state.MetaData.mediaSelected != null &&
+      state.MetaData.mediaSelected != ""
+      ? true
+      : false;
+  },
   titleState(state) {
     return state.MetaData.title.length >= 1 ? true : false;
   },
@@ -18,9 +24,6 @@ export default {
   },
   reporterState(state) {
     return state.MetaData.reporter.length >= 1 ? true : false;
-  },
-  usageState(state) {
-    return state.MetaData.usage.length >= 1 ? true : false;
   },
   advertiserState(state) {
     return state.MetaData.advertiser.length >= 1 ? true : false;
@@ -102,6 +105,10 @@ export default {
       if (getters.memoState && getters.programState) {
         return true;
       }
+    } else if (state.MetaData.typeSelected == "pro") {
+      if (getters.memoState && getters.titleState && getters.proMediaState) {
+        return true;
+      }
     } else if (state.MetaData.typeSelected == "mcr-spot") {
       if (getters.memoState && getters.eventState) {
         return true;
@@ -134,7 +141,7 @@ export default {
         return true;
       }
     } else if (state.MetaData.typeSelected == "report") {
-      if (getters.memoState && getters.eventState && getters.reporterStates) {
+      if (getters.memoState && getters.eventState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "filler") {

@@ -3,7 +3,9 @@
     border-color: #bbbbbb;
     color: gray;
 }
-
+.h120 .vs__dropdown-menu {
+    height: 120px;
+}
 .btn-outline-dark:hover {
     background-color: white;
     border-color: gray;
@@ -74,7 +76,7 @@
 .date-modal {
     margin-top: 260px;
     width: 380px;
-    height: 180px;
+    height: 200px;
     float: left;
     overflow-y: auto;
     margin-left: 20px;

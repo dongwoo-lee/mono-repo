@@ -143,7 +143,7 @@
           id="program-media"
           class="media-select"
           style="width: 140px; height: 37px"
-          :value="this.proMedia"
+          :value="this.programMedia"
           @input="mediaChange"
           :options="fileMediaOptions"
         />
@@ -284,7 +284,7 @@ export default {
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
-      proMedia: "A",
+      programMedia: "A",
       dxdg,
     };
   },
@@ -302,8 +302,8 @@ export default {
       });
     });
 
-    this.proMedia = "A";
-    this.setMediaSelected(this.proMedia);
+    this.programMedia = "A";
+    this.setMediaSelected(this.programMedia);
 
     var user_id = sessionStorage.getItem("user_id");
     axios
@@ -332,10 +332,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setEditor"]),
-    inputEditor(v) {
-      this.setEditor(v.id);
-    },
     mediaChange(v) {
       this.setMediaSelected(v);
     },
