@@ -96,46 +96,10 @@ export default {
       this.update();
     },
     proTypeChange(v) {
-      if (v == 0) {
-        this.proType = 0;
-        this.proTypeName = "Title Music";
-      } else if (v == 1) {
-        this.proType = 1;
-        this.proTypeName = "Effect";
-      } else if (v == 2) {
-        this.proType = 2;
-        this.proTypeName = "Cut";
-      } else if (v == 3) {
-        this.proType = 3;
-        this.proTypeName = "모음1";
-      } else if (v == 4) {
-        this.proType = 4;
-        this.proTypeName = "모음2";
-      } else if (v == 5) {
-        this.proType = 5;
-        this.proTypeName = "모음3";
-      } else if (v == 6) {
-        this.proType = 6;
-        this.proTypeName = "모음4";
-      } else if (v == 7) {
-        this.proType = 7;
-        this.proTypeName = "모음5";
-      } else if (v == 8) {
-        this.proType = 8;
-        this.proTypeName = "모음6";
-      } else if (v == 9) {
-        this.proType = 9;
-        this.proTypeName = "모음7";
-      } else if (v == 10) {
-        this.proType = 1;
-        this.proTypeName = "모음8";
-      } else if (v == 11) {
-        this.proType = 1;
-        this.proTypeName = "모음9";
-      } else if (v == 12) {
-        this.proType = 1;
-        this.proTypeName = "모음10";
-      }
+      var data = this.proTypeOptions.find((dt) => dt.value == v);
+      this.proTypeName = data.text;
+      this.proType = data.value;
+      this.update();
     },
     update() {
       var meta = {
@@ -143,8 +107,9 @@ export default {
         name: this.name,
         category: this.proMedia,
         proType: this.proType,
-        ProTypeName: this.proTypeName,
+        proTypeName: this.proTypeName,
       };
+      console.log(this.proTypeName);
       this.$emit("updateProMeta", meta);
     },
   },
