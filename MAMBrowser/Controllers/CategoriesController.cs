@@ -501,13 +501,35 @@ namespace MAMBrowser.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("user-pgmcodes")]
-        public DTO_RESULT<DTO_RESULT_LIST<string>> GetSpotSch([FromQuery] string media, [FromQuery] string userId)
+        public DTO_RESULT<DTO_RESULT_LIST<string>> GetPgmCodeByUser([FromQuery] string media, [FromQuery] string userId)
         {
             DTO_RESULT<DTO_RESULT_LIST<string>> result = new DTO_RESULT<DTO_RESULT_LIST<string>>();
             try
             {
                 result.ResultObject = new DTO_RESULT_LIST<string>();
                 result.ResultObject.Data = _bll.GetPgmCodeByUser(media, userId);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 특정 사용자가 담당하는 오디오코드 목록 반환((구)프로소재 목록)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("user-audiocodes")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetAudioCodeByUser([FromQuery] string userId)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<DTO_CATEGORY>();
+                result.ResultObject.Data = _bll.GetAudioCodeByUser(userId);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

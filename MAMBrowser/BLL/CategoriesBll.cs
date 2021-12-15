@@ -148,5 +148,17 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetPgmCodeByUser(media, userId);
         }
+
+        /// <summary>
+        /// 특정 사용자가 담당하는 오디오코드 목록 반환((구)프로소재 목록)
+        /// </summary>
+        /// <param name="userId">유저ID</param>
+        /// <returns></returns>
+        public IList<DTO_CATEGORY> GetAudioCodeByUser(string userId)
+        {
+            return _dao.GetAudioCodeByUser(userId);
+        }
+
+        
     }
 }
