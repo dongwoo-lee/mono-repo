@@ -41,11 +41,14 @@
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
+        <DxLoadPanel :enabled="true" />
+
         <DxColumn
           width="13%"
           cell-template="code_cell_Template"
           edit-cell-template="code_Template"
           alignment="center"
+          :allowSorting="false"
           data-field="code"
           caption="코드"
         />
@@ -82,6 +85,7 @@
         <DxColumn
           caption="내용"
           data-field="contents"
+          :allowSorting="false"
           alignment="center"
           edit-cell-template="content_Template"
         />
@@ -98,6 +102,7 @@
         <DxColumn
           css-class="durationTime"
           data-field="usedtime"
+          :allowSorting="false"
           caption="사용시간"
           alignment="center"
           :width="105"
@@ -126,6 +131,7 @@
           css-class="durationTime"
           data-field="starttime"
           caption="시작시간"
+          :allowSorting="false"
           alignment="center"
           :width="105"
           cell-template="starttime_Template"
@@ -159,6 +165,7 @@
         <DxColumn
           caption="비고"
           :width="130"
+          :allowSorting="false"
           edit-cell-template="etc_Template"
           alignment="center"
           data-field="etc"
@@ -173,7 +180,8 @@
             />
           </div>
         </template>
-        <DxScrolling mode="infinite" />
+        <DxScrolling showScrollbar="always" />
+        <DxPaging :enabled="false" />
         <template #deleteTem>
           <div>
             <DxButton
@@ -220,8 +228,10 @@ import {
   DxColumn,
   DxEditing,
   DxScrolling,
+  DxPaging,
   DxSelection,
   DxRowDragging,
+  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
@@ -317,11 +327,13 @@ export default {
     DxColumn,
     DxEditing,
     DxScrolling,
+    DxPaging,
     DxRowDragging,
     DxSelection,
     DxButton,
     DxSelectBox,
     DxTextBox,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -338,25 +350,6 @@ export default {
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapActions("cueList", ["setStartTime"]),
-    // setStartTime() {
-    //   if (this.cueInfo.r_ONAIRTIME == undefined) {
-    //     this.printArr[0].starttime = moment(
-    //       this.cueInfo.brdtime,
-    //       "YYYY-MM-DDHH:mm:ss"
-    //     ).valueOf();
-    //   } else {
-    //     this.printArr[0].starttime = moment(
-    //       this.cueInfo.r_ONAIRTIME,
-    //       "YYYY-MM-DDHH:mm:ss"
-    //     ).valueOf();
-    //   }
-    //   this.printArr.forEach((ele, index) => {
-    //     if (index != 0)
-    //       ele.starttime =
-    //         this.printArr[index - 1].usedtime +
-    //         this.printArr[index - 1].starttime;
-    //   });
-    // },
     onAddPrint(e) {
       var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");

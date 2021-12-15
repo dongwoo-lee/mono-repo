@@ -63,7 +63,6 @@
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
-          @sortableclick="onSortable"
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
@@ -79,8 +78,7 @@
 import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import { USER_ID } from "@/constants/config";
-const userId = sessionStorage.getItem(USER_ID);
+import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
 const moment = require("moment");
 const date = new Date();
 
@@ -107,8 +105,8 @@ export default {
       date,
       programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
-        start_dt: "", // 시작일
-        end_dt: "", // 종료일
+        start_dt: toDay, // 시작일
+        end_dt: endDay, // 종료일
         media: "", // 매체
         productid: "", // 프로그램명
         rowPerPage: 30,
@@ -132,14 +130,12 @@ export default {
           title: "프로그램명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "eventname",
         },
         {
           name: "media",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "media",
           width: "15%",
           callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
         },
@@ -173,8 +169,6 @@ export default {
     ...mapGetters("cueList", ["userProList"]),
   },
   mounted() {
-    this.searchItems.start_dt = toDay;
-    this.searchItems.end_dt = endDay;
     this.getData();
   },
   methods: {
@@ -183,6 +177,8 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
+      const userId = sessionStorage.getItem(USER_ID);
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (
         this.$fn.checkGreaterStartDate(
@@ -196,8 +192,12 @@ export default {
         this.hasErrorClass = true;
         return;
       }
+
       if (this.searchItems.productid == "") {
-        await this.getMediasOption(userId);
+        await this.getMediasOption({ personid: userId, gropId: gropId });
+        this.searchItems.productid = this.userProList;
+      }
+      if (this.searchItems.productid == undefined) {
         this.searchItems.productid = this.userProList;
       }
       var params = {
@@ -215,9 +215,15 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
-      var pram = { personid: userId, media: e };
-      var proOption = await this.getuserProOption(pram);
+      const userId = sessionStorage.getItem(USER_ID);
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      var proOption = await this.getuserProOption({
+        personid: userId,
+        gropId: gropId,
+        media: e,
+      });
       this.programList = this.userProOption;
+      this.searchItems.productid = this.userProList;
     },
   },
 };

@@ -32,11 +32,13 @@
           dropFeedbackMode="indicate"
           :allow-reordering="true"
           :on-add="onAddChannelAB"
+          :on-drag-end="onDragEndchannelAB"
           :on-reorder="onReorderChannelAB"
           :show-drag-icons="false"
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
+        <DxLoadPanel :enabled="true" />
         <DxEditing
           :allow-adding="true"
           :allow-updating="true"
@@ -330,7 +332,8 @@
             </div>
           </div>
         </template>
-        <DxScrolling mode="infinite" />
+        <DxScrolling showScrollbar="always" />
+        <DxPaging :enabled="false" />
         <template #totalGroupCount>
           <div>
             <DxButton
@@ -382,8 +385,10 @@ import {
   DxColumn,
   DxEditing,
   DxScrolling,
+  DxPaging,
   DxSelection,
   DxRowDragging,
+  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
@@ -402,6 +407,7 @@ export default {
   data() {
     return {
       dataGridRef,
+      loadpanelVal: false,
       showGrpPlayer: false,
       grpParam: {},
       rowData: {
@@ -441,10 +447,12 @@ export default {
     DxColumn,
     DxEditing,
     DxScrolling,
+    DxPaging,
     DxRowDragging,
     DxSelection,
     DxButton,
     DxTextBox,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -458,6 +466,7 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
+      this.loadpanelVal = true;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
@@ -551,7 +560,8 @@ export default {
       }
       this.SET_ABCARTARR(arrData);
       this.setRowNum();
-      // e.fromComponent.clearSelection();
+
+      //e.fromComponent.clearSelection();
     },
     setRowNum() {
       this.abCartArr.forEach((ele, index) => {
@@ -574,41 +584,29 @@ export default {
         var startindex = e.fromIndex;
         var newindex = e.toIndex;
         selectedRowsData.forEach((ele, index) => {
-          ele.rownum = this.rowData.rownum;
-          arrData.splice(newindex + index, 0, ele);
-          this.rowData.rownum = this.rowData.rownum + 1;
+          var row = { ...ele };
+          row.rownum = arrData.length + index + 1;
+          if (startindex > e.toIndex) {
+            arrData.splice(newindex + index, 0, row);
+          } else {
+            arrData.splice(newindex + index + 1, 0, row);
+          }
         });
         this.selectionDel();
-
-        if (startindex > e.toIndex) {
-          selectedRowsKey.forEach((selectindex) => {
-            var index = e.component.getRowIndexByKey(selectindex);
-            if (index < e.toIndex) {
-              newindex = newindex - 1;
-            }
-          });
-          selectedRowsData.forEach((obj, index) => {
-            arrData.splice(newindex + index, 0, obj);
-          });
-        } else {
-          selectedRowsKey.forEach((selectindex) => {
-            var index = e.component.getRowIndexByKey(selectindex);
-            if (index < e.toIndex) {
-              newindex = newindex - 1;
-            }
-          });
-          newindex = newindex + 1;
-          selectedRowsData.forEach((obj, index) => {
-            arrData.splice(newindex + index, 0, obj);
-          });
-        }
+        e.component.clearSelection();
       } else {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
+        this.setRowNum();
       }
-      this.setRowNum();
 
       //e.component.clearSelection();
+    },
+    onDragEndchannelAB(e) {
+      // var selectedRowsData = this.sortSelectedRowsData(e, "data");
+      // if (selectedRowsData.length > 1 && e.dropInsideItem) {
+      //   e.component.clearSelection();
+      // }
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -666,19 +664,7 @@ export default {
       });
       this.SET_ABCARTARR(totalList);
       this.setRowNum();
-
-      // var arrData = this.abCartArr;
-      // let a = arrData;
-      // let b = this.selectedItemKeys;
-      // for (let i = 0; i < b.length; i++) {
-      //   for (let j = 0; j < a.length; j++) {
-      //     if (b[i].rownum == a[j].rownum) {
-      //       a.splice(j, 1);
-      //       break;
-      //     }
-      //   }
-      //   arrData = a;
-      // }
+      this.dataGrid.clearSelection();
     },
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
@@ -726,6 +712,8 @@ export default {
               }
               this.rowData.rownum = this.rowData.rownum + 1;
               this.setRowNum();
+              this.dataGrid.clearSelection();
+              this.dataGrid.option("focusedRowIndex", -1); //////////////////////////////////
               //this.SET_ABCARTARR(arrData);
             },
           };

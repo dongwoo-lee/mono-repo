@@ -539,8 +539,6 @@ const router = new VueRouter({
 
 // 라우터 내비게이션 가드
 router.beforeEach((to, from, next) => {
-  // console.info('from', from);
-  // console.info('to', to);
   // 토큰 유무 체크
   const tokenString = sessionStorage.getItem("access_token");
   if (!tokenString || !from) {

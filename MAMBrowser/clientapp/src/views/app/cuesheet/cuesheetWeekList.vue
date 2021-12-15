@@ -160,12 +160,11 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import { USER_ID } from "@/constants/config";
+import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
 import axios from "axios";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
-const userId = sessionStorage.getItem(USER_ID);
 const moment = require("moment");
 const qs = require("qs");
 
@@ -225,14 +224,12 @@ export default {
           title: "프로그램명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "eventname",
         },
         {
           name: "media",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "media",
           width: "15%",
           callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
         },
@@ -279,9 +276,11 @@ export default {
     ...mapActions("cueList", ["getMediasOption"]),
     ...mapActions("cueList", ["getuserProOption"]),
     async getData() {
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      const userId = sessionStorage.getItem(USER_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (this.searchItems.productid == "") {
-        await this.getMediasOption(userId);
+        await this.getMediasOption({ personid: userId, gropId: gropId });
         this.searchItems.productid = this.userProList;
       }
       var params = {
@@ -297,8 +296,14 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기 (일반,modal)
     async eventClick(e, V) {
-      var pram = { personid: userId, media: e };
-      var proOption = await this.getuserProOption(pram);
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      const userId = sessionStorage.getItem(USER_ID);
+
+      var proOption = await this.getuserProOption({
+        personid: userId,
+        gropId: gropId,
+        media: e,
+      });
       if (V == "list") {
         this.programList = this.userProOption;
       } else if (V == "modal") {
@@ -316,6 +321,8 @@ export default {
     },
     // 기본큐시트 추가 (modal)
     async addWeekCue() {
+      const userId = sessionStorage.getItem(USER_ID);
+
       var result = [];
       this.btnWeekStates.forEach((ele) => {
         var cueItem = {

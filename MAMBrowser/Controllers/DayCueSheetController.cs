@@ -51,7 +51,7 @@ namespace MAMBrowser.Controllers
                 result.ResultCode = RESUlT_CODES.SUCCESS;
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }

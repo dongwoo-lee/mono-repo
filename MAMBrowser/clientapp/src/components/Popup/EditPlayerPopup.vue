@@ -194,6 +194,7 @@ export default {
           }
         }
       });
+      this.selected = [];
       return rowData;
     },
   },

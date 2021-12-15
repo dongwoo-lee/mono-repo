@@ -10,7 +10,8 @@ import {
   SYSTEM_MANAGEMENT_CODE,
   AUTHORITY_ADMIN,
   AUTHORITY_MANAGER,
-  SYSTEM_TOP_ADMIN_CODE
+  SYSTEM_TOP_ADMIN_CODE,
+  ACCESS_GROP_ID
 } from "@/constants/config";
 
 // URL주소와 ICON 요소 추가 & Role 데이터 생성
@@ -37,16 +38,6 @@ const getAddUrlAndIconMenuList = (menuList, roleList) => {
         menus.icon = item.icon;
       }
     });
-  });
-  // 메뉴 정렬
-  menuList.sort(function (a, b) {
-    if (a.id > b.id) {
-      return 1;
-    }
-    if (a.id < b.id) {
-      return -1;
-    }
-    return 0;
   });
   return menuList;
 };
@@ -121,7 +112,7 @@ export default {
       sessionStorage.setItem(ACCESS_TOKEN, token);
     },
     SET_AUTH(state, resultObject) {
-      const { menuList, behaviorList, id } = resultObject;
+      const { menuList, behaviorList, id, menuGrpID } = resultObject;
       state.isAuth = true;
       state.processing = false;
       state.roleList = [];
@@ -135,6 +126,8 @@ export default {
       sessionStorage.setItem(USER_ID, id);
       sessionStorage.setItem(ROLE, JSON.stringify(state.roleList));
       sessionStorage.setItem(AUTHORITY, state.authority);
+      //큐시트 작성 및 조회 권한 세션 등록
+      sessionStorage.setItem(ACCESS_GROP_ID, menuGrpID);
     },
     SET_SUMMARY_USER(state, resultObject) {
       delete resultObject.menuList;

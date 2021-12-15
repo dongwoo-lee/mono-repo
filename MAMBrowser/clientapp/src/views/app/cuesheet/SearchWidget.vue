@@ -66,8 +66,7 @@
               type="submit"
               class="search_ok_btn"
               >검색
-              {{ "(" + searchtable_data.columns.length + "개)" }}</b-button
-            >
+            </b-button>
           </div>
         </b-form>
       </div>
@@ -135,11 +134,8 @@
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxPaging :page-size="10" />
-          <DxScrolling
-            v-if="searchtable_data.columns.length > 0"
-            mode="infinite"
-          />
+          <DxScrolling showScrollbar="always" />
+          <DxPaging :enabled="false" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -197,6 +193,9 @@
         @closePlayer="onClosePlayer"
       >
       </MusicPlayerPopup>
+    </div>
+    <div class="contentsLength" v-if="width_size == 330">
+      전체 : {{ searchtable_data.columns.length }}개
     </div>
   </div>
 </template>
@@ -541,6 +540,11 @@ export default {
 </script>
 
 <style>
+.contentsLength {
+  position: absolute;
+  bottom: 3px;
+  right: 30px;
+}
 #search_data_grid .dx-row {
   height: 30px;
   line-height: 25px;
@@ -561,6 +565,7 @@ export default {
 .search_menu {
   padding: 5px;
   display: grid;
+
   grid-template-rows: 1fr;
   grid-template-columns: 110px auto;
   border: solid 1px #ddd;

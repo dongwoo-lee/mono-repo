@@ -250,21 +250,23 @@ namespace MAMBrowser.Utils
         public static IEnumerable<PgmListDTO> Converting(this List<ProgramListEntity> entity)
         {
             List<PgmListDTO> dto = new List<PgmListDTO>();
-            List<ProgramListDetailDTO> detail = new List<ProgramListDetailDTO>();
+            //List<ProgramListDetailDTO> detail = new List<ProgramListDetailDTO>();
             foreach (var item in entity)
             {
                 var dtoItem = new PgmListDTO();
+                dtoItem.PRODUCTID = item.PRODUCTID;
+                dtoItem.EVENTNAME = item.EVENTNAME;
+                dtoItem.SERVICENAME = item.SERVICENAME;
                 dtoItem.MEDIA = item.MEDIA;
-                dtoItem.PERSONID = item.PERSONID;
-                foreach (var detailItem in item.DETAILS)
-                {
-                    var dtoDetail = new ProgramListDetailDTO();
-                    dtoDetail.EVENTNAME = detailItem.EVENTNAME;
-                    dtoDetail.PRODUCTID = detailItem.PRODUCTID;
-                    dtoDetail.SERVICENAME = detailItem.SERVICENAME;
-                    detail.Add(dtoDetail);
-                }
-                dtoItem.DETAILS = detail;
+                //foreach (var detailItem in item.DETAILS)
+                //{
+                //    var dtoDetail = new ProgramListDetailDTO();
+                //    dtoDetail.EVENTNAME = detailItem.EVENTNAME;
+                //    dtoDetail.PRODUCTID = detailItem.PRODUCTID;
+                //    dtoDetail.SERVICENAME = detailItem.SERVICENAME;
+                //    detail.Add(dtoDetail);
+                //}
+                //dtoItem.DETAILS = detail;
                 dto.Add(dtoItem);
             }
             return dto;
