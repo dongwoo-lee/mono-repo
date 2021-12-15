@@ -205,10 +205,6 @@ export default {
     this.setMediaSelected(this.scrMedia);
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setEditor"]),
-    inputEditor(v) {
-      this.setEditor(v.id);
-    },
     mediaChange(v) {
       this.setMediaSelected(v);
     },

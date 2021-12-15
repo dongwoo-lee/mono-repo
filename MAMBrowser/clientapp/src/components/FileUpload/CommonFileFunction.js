@@ -150,7 +150,6 @@ export default {
       "memoState",
       "editorState",
       "reporterState",
-      "usageState",
       "programState",
       "eventState",
       "SEDateState",
@@ -180,7 +179,8 @@ export default {
         if (
           v.typeSelected == "my-disk" ||
           v.typeSelected == "null" ||
-          v.typeSelected == "scr-spot"
+          v.typeSelected == "scr-spot" ||
+          v.typeSelected == "pro"
         ) {
           this.setIsActive(true);
         } else {
@@ -205,6 +205,8 @@ export default {
       "setFileUploading",
       "setFileMediaOptions",
       "setMediaSelected",
+      "setProType",
+      "setProTypeName",
       "setProgramSelected",
       "setUserProgramList",
       "setEventSelected",
@@ -215,7 +217,8 @@ export default {
       "resetMemo",
       "resetReporter",
       "resetType",
-      "resetUsage",
+      "resetProType",
+      "resetProTypeName",
       "resetAdvertiser",
       "resetFileMediaOptions",
       "resetMediaSelected",
@@ -423,7 +426,8 @@ export default {
       this.resetProgramSelected();
       this.resetEventData();
       this.resetEventSelected();
-      this.resetUsage();
+      this.resetProType();
+      this.resetProTypeName();
       this.resetAdvertiser();
       this.resetReporter();
       this.watch = "";
@@ -441,7 +445,8 @@ export default {
       this.resetProgramSelected();
       this.resetEventData();
       this.resetEventSelected();
-      this.resetUsage();
+      this.resetProType();
+      this.resetProTypeName();
       this.resetAdvertiser();
       this.watch = "";
       if (this.processing) {

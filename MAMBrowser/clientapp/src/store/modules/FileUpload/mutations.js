@@ -43,6 +43,12 @@ export default {
   setMediaSelected(state, payload) {
     state.MetaData.mediaSelected = payload;
   },
+  setProType(state, payload) {
+    state.MetaData.proType = payload;
+  },
+  setProTypeName(state, payload) {
+    state.MetaData.proTypeName = payload;
+  },
   setDuration(state, payload) {
     state.MetaData.duration = payload;
   },
@@ -88,11 +94,14 @@ export default {
   resetMediaSelected(state) {
     state.MetaData.mediaSelected = "";
   },
+  resetProType(state) {
+    state.MetaData.proType = "";
+  },
+  resetProTypeName(state) {
+    state.MetaData.proTypeName = "";
+  },
   resetReporter(state) {
     state.MetaData.reporter = "";
-  },
-  resetUsage(state) {
-    state.MetaData.usage = "";
   },
   resetAdvertiser(state) {
     state.MetaData.advertiser = "";
