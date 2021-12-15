@@ -1,5 +1,8 @@
 ﻿using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.MasteringMeta;
+using M30.AudioFile.DAL.DBParams;
+using M30.AudioFile.DAL.Repositories;
 using MAMBrowser.BLL;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
@@ -382,7 +385,7 @@ namespace MAMBrowser.Controllers
                     {
                         string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
 
-                        StaticSpotMeta staticSpot = new StaticSpotMeta();
+                        FillerTimeMeta staticSpot = new FillerTimeMeta();
 
                         staticSpot.SDate = SDate;
                         staticSpot.Memo = memo;
@@ -457,7 +460,7 @@ namespace MAMBrowser.Controllers
                     {
                         string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
 
-                        VarSpotMeta varSpot = new VarSpotMeta();
+                        FillerTimeMeta varSpot = new FillerTimeMeta();
 
                         varSpot.SDate = SDate;
                         varSpot.Memo = memo;
@@ -741,6 +744,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                PGMRepository repo = new PGMRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_ProgramParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -760,6 +765,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                McrSpotRepository repo = new McrSpotRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_McrSpotParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -779,6 +786,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                ScrSpotRepoository repo = new ScrSpotRepoository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_ScrSpotParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -798,6 +807,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                ReportRepository repo = new ReportRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_ReportParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -817,6 +828,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                FillerTimeRepository repo = new FillerTimeRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_FillerTimeParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -836,6 +849,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                FillerRepository repo = new FillerRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_FillerParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -855,6 +870,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                //FillerRepository repo = new FillerRepository(Startup.AppSetting.ConnectionString);
+                //repo.EditMeta(new U_FillerParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -874,6 +891,8 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+                repo.Delete(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -893,6 +912,8 @@ namespace MAMBrowser.Controllers
                 if (spotID == null || productID  == null || brdDT == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                ScrSpotOperRepository repo = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
+                repo.Delete(new D_ScrSpotOperParam { SpotID=spotID, ProductID=productID, OnAirDate=brdDT});
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -912,6 +933,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -931,6 +953,8 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+                repo.Delete(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -950,6 +974,8 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+                repo.Delete(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -969,6 +995,8 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+                repo.Delete(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -988,6 +1016,8 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+                repo.Delete(id);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
