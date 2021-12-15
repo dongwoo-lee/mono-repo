@@ -19,7 +19,7 @@ namespace MAMBrowser.Foundation
             songCacheDTO.ArtistName = "ELVIS COSTELLO";
             songCacheDTO.AlbumName = "25TH 배철수의 음악캠프, SINCE 1990: RADIOHEAD 에서 BRITNEY SPEARS 까지 (CD 1)";
             songCacheDTO.ReleaseDate = "2015";
-            songCacheDTO.FilePath = song.FilePath;
+            songCacheDTO.FilePath = @"\\test_svr\MBCDATA\SONG\SONG001.wav";
             if (!string.IsNullOrEmpty(song.FilePath))
                 songCacheDTO.FileToken = TokenGenerator.GenerateFileToken(song.FilePath);
             songCacheDTO.IntDuration = 208849;
@@ -41,7 +41,7 @@ namespace MAMBrowser.Foundation
             songCacheDTO.ArtistName = "ELVIS COSTELLO";
             songCacheDTO.AlbumName = "FX COLLECTION - INDUSTRY AND OFFICE 3";
             songCacheDTO.ReleaseDate = "1993";
-            songCacheDTO.FilePath = effect.FilePath;
+            songCacheDTO.FilePath = @"\\test_svr\MBCDATA\SONG\EFFECT001.wav";
             if (!string.IsNullOrEmpty(effect.FilePath))
                 songCacheDTO.FileToken = TokenGenerator.GenerateFileToken(effect.FilePath);
             songCacheDTO.IntDuration = 208849;
