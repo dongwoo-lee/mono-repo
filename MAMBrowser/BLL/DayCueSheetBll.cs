@@ -77,7 +77,6 @@ namespace MAMBrowser.BLL
         //일일큐시트 저장
         public int SaveDayCue(CueSheetCollectionDTO pram)
         {
-            // 신 DB
             var paramData = pram.DayToEntity();
             DayCueSheetCreateParam param = new DayCueSheetCreateParamBuilder()
                 .SetCueSheetConParams(paramData.CueSheetConParams)
@@ -85,10 +84,22 @@ namespace MAMBrowser.BLL
                 .SetPrintParams(paramData.PrintParams)
                 .Build();
 
-            // 구 DB
-            // 기존 구 DB 데이터 삭제
+            return _dao.CreateDayCueSheet(param);
+        }
+        //구 DAP 삭제
+        public int DelOldCue(CueSheetCollectionDTO pram)
+        {
             DeletePDPQS(pram.CueSheetDTO, 'I');
             DeletePDPQS(pram.CueSheetDTO, 'N');
+            return 1;
+        }
+        //구 DAP 저장
+        public int SaveOldCue(CueSheetCollectionDTO pram)
+        {
+            // 구 DB
+            // 기존 구 DB 데이터 삭제
+            //DeletePDPQS(pram.CueSheetDTO, 'I');
+            //DeletePDPQS(pram.CueSheetDTO, 'N');
 
             var instanceCon = pram.PDPQSToEntity('I');
             var normalCon = pram.PDPQSToEntity('N');
@@ -96,8 +107,7 @@ namespace MAMBrowser.BLL
                 _dao.CreatePDPQS(instanceCon);
             if (normalCon.PDPQSConParam?.Any() == true)
                 _dao.CreatePDPQS(normalCon);
-
-            return _dao.CreateDayCueSheet(param);
+            return 0;
         }
 
         // 구DB 삭제
@@ -118,70 +128,6 @@ namespace MAMBrowser.BLL
                     ProductID_in = cueshset.PRODUCTID
                 }
             });
-        }
-
-        // 구DB CARTTYPE 변환
-        public static string setCartType(string cartid)
-        {
-            var front = cartid.Substring(0, 2);
-            var back = cartid[cartid.Length - 2];
-            var result = "";
-            switch (front)
-            {
-                case "TS":
-                    result = "TS";
-                    break;
-                case "SS":
-                    result = "SS";
-                    break;
-                case "AC":
-                    result = "AC";
-                    break;
-                case "EC":
-                    result = "EC";
-                    break;
-                case "RC":
-                    result = "RC";
-                    break;
-                case "AS":
-                    result = "SB";
-                    break;
-                case "FC":
-                    result = "FC";
-                    break;
-                case "ST":
-                    result = "ST";
-                    break;
-                case "PM":
-                    if (back.ToString() == "NA")
-                    {
-                        result = "AR";
-                    }
-                    else
-                    {
-                        result = "PM";
-                    }
-                    break;
-                case "MS":
-                    result = "MS";
-                    break;
-                case "TT":
-                    result = "TT";
-                    break;
-                case "AR":
-                    result = "AR";
-                    break;
-                case "MB":
-                    result = "MB";
-                    break;
-                case "JG":
-                    result = "JG";
-                    break;
-                default:
-                    result = "CM";
-                    break;
-            }
-            return result;
         }
     }
 }

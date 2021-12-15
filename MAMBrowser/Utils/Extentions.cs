@@ -172,6 +172,7 @@ namespace MAMBrowser.Utils
             {
                 var detailItem = new ViewDetail();
                 detailItem.CUEID = item.CUEID;
+                detailItem.ONAIRTIME = item.ONAIRTIME;
                 detailItem.WEEK = item.WEEK;
                 detailArr.Add(detailItem);
             }
@@ -255,7 +256,7 @@ namespace MAMBrowser.Utils
             {
                 var dtoItem = new PgmListDTO();
                 dtoItem.PRODUCTID = item.PRODUCTID;
-                dtoItem.EVENTNAME = item.EVENTNAME;
+                dtoItem.EVENTNAME = item.CODENAME;
                 dtoItem.SERVICENAME = item.SERVICENAME;
                 dtoItem.MEDIA = item.MEDIA;
                 //foreach (var detailItem in item.DETAILS)
@@ -766,8 +767,10 @@ namespace MAMBrowser.Utils
                         resultItem.Description_in = item.MEMO;
                         resultItem.LLevel_in = 0;
                         resultItem.RLevel_in = 0;
-                        resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
-                        resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
+                        //resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
+                        //resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
+                        resultItem.FadeInTime_in = 0;
+                        resultItem.FadeOutTime_in = 0;
                         resultItem.ExtroTime_in = 0;
                         resultItem.IntroTime_in = 0;
                         resultItem.MainTitle_in = item.MAINTITLE;
@@ -799,8 +802,10 @@ namespace MAMBrowser.Utils
                             resultItem.Description_in = item.MEMO;
                             resultItem.LLevel_in = 0;
                             resultItem.RLevel_in = 0;
-                            resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
-                            resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
+                            //resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
+                            //resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
+                            resultItem.FadeInTime_in = 0;
+                            resultItem.FadeOutTime_in = 0;
                             resultItem.ExtroTime_in = 0;
                             resultItem.IntroTime_in = 0;
                             resultItem.MainTitle_in = item.MAINTITLE;
@@ -1001,16 +1006,16 @@ namespace MAMBrowser.Utils
                     break;
                 //구DB지원 안함 구DB 레이아웃 분리하면 뺴기
                 case "S01G01C014":
-                    result = "FC";
+                    result = "SS";
                     break;
                 case "S01G01C015":
-                    result = "FC";
+                    result = "SS";
                     break;
                 case "S01G01C007":
-                    result = "FC";
+                    result = "";
                     break;
                 case "S01G01C006":
-                    result = "FC";
+                    result = "";
                     break;
 
                 default:

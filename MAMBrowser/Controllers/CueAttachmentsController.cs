@@ -30,13 +30,23 @@ namespace MAMBrowser.Controllers
 
         //zip파일 내보내기
         [HttpPost("exportZipFile")]
-        public bool ExportZipFile([FromBody] List<CueSheetConDTO> pram)
+        public ActionResult<string> ExportZipFile([FromBody] List<CueSheetConDTO> pram)
         {
             try
             {
-                var filePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.xml";
-                var filePathJson = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.json";
-                DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(filePath));
+                var rootFolder = Startup.AppSetting.TempExportPath;
+                if (!Directory.Exists(rootFolder))
+                    Directory.CreateDirectory(rootFolder);
+
+                var guid = Guid.NewGuid().ToString();
+                string xmlFileName= $"{guid}_MetaData.xml";
+                string jsonFileName = $"{guid}_MetaData.json"; 
+                string xmlFileFullPath = Path.Combine(rootFolder, xmlFileName);
+                string jsonFileFullPath = Path.Combine(rootFolder, jsonFileName);
+
+               // var filePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.xml";
+               // var filePathJson = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.json";
+                DirectoryInfo di = new DirectoryInfo(rootFolder);
                 if (!di.Exists)
                 {
                     di.Create();
@@ -44,6 +54,7 @@ namespace MAMBrowser.Controllers
                 else
                 {
                     di.Delete(true);
+
                     di.Create();
                 }
                 foreach (CueSheetConDTO ele in pram)
@@ -51,7 +62,7 @@ namespace MAMBrowser.Controllers
                     if (ele.FILEPATH != null && ele.FILEPATH != "")
                     {
                         //ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
-                        var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(ele.FILEPATH));
+                        var outFilePath = Path.Combine(rootFolder, Path.GetFileName(ele.FILEPATH));
                         var audioData = new CueSheetConAudioDTO();
                         ele.AUDIOS = new List<CueSheetConAudioDTO>();
 
@@ -143,7 +154,7 @@ namespace MAMBrowser.Controllers
                         {
                             foreach (var item in ele.AUDIOS)
                             {
-                                var outFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(item.P_MASTERFILE));
+                                var outFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), Path.GetFileName(item.P_MASTERFILE));
 
                                 using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                                 {
@@ -167,7 +178,7 @@ namespace MAMBrowser.Controllers
 
 
                 }
-                using (var FileStream = new StreamWriter(filePath))
+                using (var FileStream = new StreamWriter(xmlFileFullPath))
                 {
                     XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConDTO>));
                     serialiser.Serialize(FileStream, pram);
@@ -178,33 +189,18 @@ namespace MAMBrowser.Controllers
                 serializer.Converters.Add(new JavaScriptDateTimeConverter());
                 serializer.NullValueHandling = NullValueHandling.Ignore;
 
-                using (StreamWriter sw = new StreamWriter(filePathJson))
+                using (StreamWriter sw = new StreamWriter(jsonFileFullPath))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, pram);
                 }
+                string zipFileName = $"{guid}.zip";
+                var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
-                var zipFilePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022.zip";
-                ZipFileManager.Instance.CreateZIPFile(Path.GetDirectoryName(filePath), zipFilePath);
-                return true;
+                ZipFileManager.Instance.CreateZIPFile(Path.GetDirectoryName(rootFolder), zipFilePath);
+                //return zipFileName;
+                return Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
-                //string fileName = "20211022.zip";
-                //byte[] fileBytes = System.IO.File.ReadAllBytes(zipFilePath);
-                //return File(fileBytes, "application/octet-stream", fileName);
-                //const string contentType = "application/octet*";
-                //HttpContext.Response.ContentType = contentType;
-                //var result = new FileContentResult(System.IO.File.ReadAllBytes(zipFilePath), contentType)
-                //{
-                //   FileDownloadName = fileName
-                //};
-                //var provider = new FileExtensionContentTypeProvider();
-                //string contentType;
-                //if (!provider.TryGetContentType(zipFilePath, out contentType))
-                //{
-                //    contentType = "application/octet-stream";
-                //}
-
-                //return PhysicalFile(zipFilePath, contentType);
             }
             catch (Exception ex)
             {
@@ -214,52 +210,26 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpGet("exportZipFileDownload")]
-        public FileResult ExportZipFileDownload()
+        public FileResult ExportZipFileDownload([FromQuery] string fileName)
         {
-            var zipFilePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022.zip";
+            //var rootFolder = Startup.AppSetting.TempExportPath;
+            //if (!Directory.Exists(rootFolder))
+            //    Directory.CreateDirectory(rootFolder);
+
+            //var fullFilePath = Path.Combine(rootFolder, fileName);
+
+
+            //var zipFilePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022.zip";
             var provider = new FileExtensionContentTypeProvider();
             string contentType;
-            if (!provider.TryGetContentType(zipFilePath, out contentType))
+            if (!provider.TryGetContentType(fileName, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-            return PhysicalFile(zipFilePath, contentType);
+            return PhysicalFile(fileName, contentType);
 
-            //string fileName = "20211022.zip";
-            //const string contentType = "application/zip";
-            //HttpContext.Response.ContentType = contentType;
-            //var result = new FileContentResult(System.IO.File.ReadAllBytes(zipFilePath), contentType)
-            //{
-            //    FileDownloadName = fileName
-            //};
 
-            //return result;
         }
     }
-    //public class ViewCueSheetCollectionDTO
-    //{
-    //    public List<ViewCueSheetConDTO> ViewCueSheetConDTO { get; set; } = new List<ViewCueSheetConDTO>();
-    //}
-
-    //public class ViewCueSheetConDTO
-    //{
-    //    public int RowNum { get; set; }
-    //    public string ProductType { get; set; }
-    //    public string CartCode { get; set; }
-    //    public string ChannelType { get; set; }
-    //    public string CartId { get; set; }
-    //    public string OnairDate { get; set; }
-    //    public string Duration { get; set; }
-    //    public int StartPosition { get; set; }
-    //    public int EndPosition { get; set; }
-    //    public int FadeInTime { get; set; }
-    //    public int FadeOutTime { get; set; }
-    //    public string MainTitle { get; set; }
-    //    public string SubTitle { get; set; }
-    //    public string Memo { get; set; }
-    //    public string TransType { get; set; }
-    //    public string UseFlag { get; set; }
-    //    //public List<string> FilePath { get; set; } = new List<string>();
-    //    public string FilePath { get; set; }
-    //}
+  
 }

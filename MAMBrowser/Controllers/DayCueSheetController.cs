@@ -103,5 +103,32 @@ namespace MAMBrowser.Controllers
             }
 
         }
+
+        //구 DAP 저장
+        [HttpPost("SaveOldCue")]
+        public int SaveOldCue([FromBody] CueSheetCollectionDTO pram)
+        {
+            var deleteVal = 0;
+            var saveVal = -1;
+            try
+            {
+                deleteVal = _bll.DelOldCue(pram);
+                saveVal = _bll.SaveOldCue(pram);
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                if (deleteVal == 0)
+                {
+                    return 0;
+                }
+                if(saveVal == -1)
+                {
+                    return -1;
+                }
+                throw;
+            }
+
+        }
     }
 }

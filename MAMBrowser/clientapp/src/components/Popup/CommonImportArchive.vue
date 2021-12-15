@@ -89,8 +89,8 @@
         v-model="importSelected"
         :options="importOptions"
       ></b-form-radio-group>
-      <b-button size="sm" @click="cancel()"> Cancel </b-button>
-      <b-button size="sm" @click="ok()"> OK </b-button>
+      <b-button size="sm" variant="danger" @click="cancel()"> 닫기 </b-button>
+      <b-button size="sm" variant="secondary" @click="ok()"> 확인 </b-button>
     </template>
   </b-modal>
 </template>
@@ -168,7 +168,22 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "media",
           width: "15%",
-          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
+          callback: (value) => {
+            switch (value) {
+              case "A":
+                return "표준FM";
+              case "F":
+                return "FM4U";
+              case "D":
+                return "DMB";
+              case "C":
+                return "공통";
+              case "Z":
+                return "기타";
+              default:
+                break;
+            }
+          },
         },
         {
           name: "brdtime",
@@ -219,7 +234,7 @@ export default {
     },
     selectedIds: function (val) {
       //ok,cancel 시 선택 해지해주기
-      if (val.length > 0) {
+      if (val != null && val.length > 0) {
         this.MenuOptions.forEach((item) => {
           item.notEnabled = false;
         });
@@ -272,7 +287,11 @@ export default {
           return;
         }
         if (this.searchItems.productid == "") {
-          await this.getMediasOption({ personid: userId, gropId: null });
+          await this.getMediasOption({
+            brd_dt: this.searchItems.start_dt,
+            personid: userId,
+            gropId: null,
+          });
           this.searchItems.productid = this.userProList;
         }
         await axios
@@ -308,6 +327,7 @@ export default {
       const userId = sessionStorage.getItem(USER_ID);
 
       var proOption = await this.getuserProOption({
+        brd_dt: this.searchItems.start_dt,
         personid: userId,
         gropId: null,
         media: e,
@@ -315,8 +335,11 @@ export default {
       this.programList = this.userProOption;
     },
     async ok() {
-      if (this.selectedIds.length == 0) {
-        alert("큐시트를 선택하세요.");
+      if (this.selectedIds == null || this.selectedIds.length == 0) {
+        window.$notify("error", `큐시트를 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
       } else {
         var rowNum_ab = 0;
         var rowNum_print = 0;
@@ -348,7 +371,10 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          alert("가져오기할 항목들을 선택하세요.");
+          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
+            duration: 10000,
+            permanent: false,
+          });
         } else {
           var seqnum = this.selectedIds[0];
           var cueid = this.archiveCuesheetListArr.data[seqnum].cueid;
@@ -399,70 +425,7 @@ export default {
                 items: this.MenuSelected,
               };
               eventBus.$emit("updateCData", pram);
-              // if (this.MenuSelected.includes("c1")) {
-              //   eventBus.$emit("update_channel_1", res.data.instanceCon["channel_1"]);
-              // }
-              // if (this.MenuSelected.includes("c2")) {
-              //   eventBus.$emit("channel_2", res.data.instanceCon["channel_2"]);
-              // }
-              // if (this.MenuSelected.includes("c3")) {
-              //   eventBus.$emit("channel_3", res.data.instanceCon["channel_3"]);
-              // }
-              // if (this.MenuSelected.includes("c4")) {
-              //   eventBus.$emit("channel_4", res.data.instanceCon["channel_4"]);
-              // }
-
-              // if (
-              //   this.MenuSelected.includes("c1") ||
-              //   this.MenuSelected.includes("c2") ||
-              //   this.MenuSelected.includes("c3") ||
-              //   this.MenuSelected.includes("c4")
-              //) {
-              // //C채널 -그룹
-              // var cDataGroup = cueSheetCons.filter((ele) => {
-              //   if (ele.channeltype == "I") {
-              //     ele.rowNum = rowNum_c;
-              //     ele.editTarget = true;
-              //     rowNum_c = rowNum_c + 1;
-              //     ele.duration = moment(ele.endposition)
-              //       .add(-9, "hours")
-              //       .format("HH:mm:ss.SS");
-              //     this.productFilter(ele);
-              //     return ele;
-              //   }
-              // });
-              // //C채널 - 카트별
-              // var cDataResult = [];
-              // var row = {};
-              // for (var channelNum = 0; 4 > channelNum; channelNum++) {
-              //   cDataResult = [];
-              //   var cartNum = "c" + (channelNum + 1);
-              //   var setResult = false;
-              //   for (var i = 0; 16 > i; i++) {
-              //     for (var index = 0; cDataGroup.length > index; index++) {
-              //       if (cDataGroup[index].seqnum == i + 16 * channelNum + 1) {
-              //         row = cDataGroup[index];
-              //         break;
-              //       } else {
-              //         row = {};
-              //       }
-              //     }
-              //     cDataResult.push(row);
-              //   }
-              //   this.MenuSelected.forEach((cart) => {
-              //     if (cart == cartNum) {
-              //       return (setResult = true);
-              //     }
-              //   });
-              //   if (setResult) {
-              //     this.SET_CCHANNELDATA({
-              //       type: "channel_" + (channelNum + 1),
-              //       value: cDataResult,
-              //     });
-              //     eventBus.$emit("update_channel_" + (channelNum + 1));
-              //   }
-              // }
-              //}
+              this.selectedIds = null;
               this.$refs["importArchive"].hide();
             });
         }

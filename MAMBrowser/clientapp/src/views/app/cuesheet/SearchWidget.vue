@@ -133,6 +133,7 @@
             </div>
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
+          <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling showScrollbar="always" />
           <DxPaging :enabled="false" />
@@ -166,6 +167,7 @@
             </div>
           </template>
           <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
+          <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling mode="virtual" />
         </DxDataGrid>
@@ -210,6 +212,7 @@ import {
   DxScrolling,
   DxSelection,
   DxRowDragging,
+  DxLoadPanel,
   DxPaging,
 } from "devextreme-vue/data-grid";
 import { USER_ID } from "@/constants/config";
@@ -241,7 +244,7 @@ export default {
       },
       searchtable_columns: [],
       searchItems: {
-        rowPerPage: 300000,
+        rowPerPage: 1000,
         selectPage: 1,
       },
       dataGridRef,
@@ -348,6 +351,7 @@ export default {
     DxButton,
     mapMutations,
     DxPaging,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -392,13 +396,29 @@ export default {
     ...mapMutations("cueList", ["SET_SEARCHLISTDATA"]),
     //아이템 소재 가져오기
     eventClick(newObjectState, object) {
-      const url = `/api/SearchMenu/GetPublicSecond`;
+      const url_public = `/api/SearchMenu/GetPublicSecond`;
+      const url_pgm = `/api/SearchMenu/GetPgmcodes`;
       if (object.name == "medias") {
-        const selectOptions = this.searchDataList.options.filter(
+        const selectOptions_public = this.searchDataList.options.filter(
           (Val) => Val.name == "publicSecond"
         );
-        if (selectOptions.length > 0) {
-          this.getOptionsData(url, { media: newObjectState });
+        var brd_dt = "";
+        const selectOptions_pgmcode = this.searchDataList.options.filter(
+          (Val) => {
+            if (Val.name == "brd_dt") {
+              brd_dt = Val.value;
+            }
+            return Val.name == "pgmCodes";
+          }
+        );
+        if (selectOptions_public.length > 0) {
+          this.getOptionsData(url_public, { media: newObjectState });
+        }
+        if (selectOptions_pgmcode.length > 0) {
+          this.getOptionsData(url_pgm, {
+            media: newObjectState,
+            brd_dt: brd_dt,
+          });
         }
       }
     },
@@ -499,6 +519,7 @@ export default {
       axios(url, {
         params: pram,
       }).then((res) => {
+        console.log(res);
         const resData = res.data;
         for (const [key, value] of Object.entries(resData)) {
           this.searchDataList.options.forEach((ele) => {
@@ -524,6 +545,8 @@ export default {
       });
     },
     async getData(Val) {
+      this.searchtable_data.columns = [];
+      this.subtable_data = [];
       var basedata = this.searchItems;
       const result = Object.assign({}, basedata, Val);
       await axios(`/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`, {

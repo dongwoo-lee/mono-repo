@@ -133,12 +133,22 @@ const data = [
     subs: [
       {
         icon: "iconsminds-notepad",
+        label: "menu.cuesheet-old-list", // (구)DAP 목록
+        to: "/app/cuesheet/old/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-old-detail", // (구)DAP 작성
+        to: "/app/cuesheet/old/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
         label: "menu.cuesheet-day-list", // 일큐시트 목록
         to: "/app/cuesheet/day/list",
       },
       {
         icon: "iconsminds-notepad",
-        label: "menu.cuesheet-day-list", // 일큐시트 작성
+        label: "menu.cuesheet-day-detail", // 일큐시트 작성
         to: "/app/cuesheet/day/detail",
       },
       {
@@ -148,7 +158,7 @@ const data = [
       },
       {
         icon: "iconsminds-notepad",
-        label: "menu.cuesheet-week-list", // 기본큐시트 목록
+        label: "menu.cuesheet-week-detail", // 기본큐시트 목록
         to: "/app/cuesheet/week/detail",
       },
       {

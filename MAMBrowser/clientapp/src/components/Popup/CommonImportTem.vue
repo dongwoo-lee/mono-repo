@@ -67,8 +67,8 @@
         v-model="importSelected"
         :options="importOptions"
       ></b-form-radio-group>
-      <b-button size="sm" @click="cancel()"> Cancel </b-button>
-      <b-button size="sm" @click="ok()"> OK </b-button>
+      <b-button size="sm" variant="danger" @click="cancel()"> 닫기 </b-button>
+      <b-button size="sm" variant="secondary" @click="ok()"> 확인 </b-button>
     </template>
   </b-modal>
 </template>
@@ -185,7 +185,7 @@ export default {
     },
     selectedIds: function (val) {
       //ok,cancel 시 선택 해지해주기
-      if (val.length > 0) {
+      if (val != null && val.length > 0) {
         this.MenuOptions.forEach((item) => {
           item.notEnabled = false;
         });
@@ -242,14 +242,15 @@ export default {
       }
     },
     async ok() {
-      if (this.selectedIds.length == 0) {
-        alert("템플릿을 선택하세요.");
+      if (this.selectedIds == null || this.selectedIds.length == 0) {
+        window.$notify("error", `템플릿을 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
       } else {
         var rowNum_ab = 0;
-        var rowNum_print = 0;
-
         var rowNum_c = 0;
-
+        var rowNum_print = 0;
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
@@ -275,7 +276,10 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          alert("가져오기할 항목들을 선택하세요.");
+          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
+            duration: 10000,
+            permanent: false,
+          });
         } else {
           var seqnum = this.selectedIds[0];
           //var cueid = this.tempCuesheetListArr.data[seqnum].cueid;
@@ -336,6 +340,7 @@ export default {
                 items: this.MenuSelected,
               };
               eventBus.$emit("updateCData", pram);
+              this.selectedIds = null;
               this.$refs["importTem"].hide();
             });
         }

@@ -457,6 +457,12 @@ namespace MAMBrowser.Controllers
         {
             return MAMWebFactory.Instance.GetSubMenu(PageType.PUBLIC_FILE, new MenuParamDTO() { Media = media });
         }
+        //부조SB > pgmcode
+        [HttpGet("GetPgmcodes")]
+        public MenuDTO GetPgmcodes([FromQuery] string media, string brd_dt)
+        {
+            return MAMWebFactory.Instance.GetSubMenu(PageType.SCR_SB, new MenuParamDTO() { Media = media, BrdDate= brd_dt});
+        }
 
         //음반 기록실 rowData 가져오기
         [HttpPost("GetSongItem")]

@@ -560,7 +560,6 @@ export default {
       }
       this.SET_ABCARTARR(arrData);
       this.setRowNum();
-
       //e.fromComponent.clearSelection();
     },
     setRowNum() {
@@ -712,9 +711,6 @@ export default {
               }
               this.rowData.rownum = this.rowData.rownum + 1;
               this.setRowNum();
-              this.dataGrid.clearSelection();
-              this.dataGrid.option("focusedRowIndex", -1); //////////////////////////////////
-              //this.SET_ABCARTARR(arrData);
             },
           };
         }

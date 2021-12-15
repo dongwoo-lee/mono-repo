@@ -105,6 +105,7 @@ namespace MAMBrowser.DTO
     {
         public int CUEID { get; set; }
         public string WEEK { get; set; }
+        public DateTime ONAIRTIME { get; set; }
     }
 
     public class CueSheetConAudioDTO

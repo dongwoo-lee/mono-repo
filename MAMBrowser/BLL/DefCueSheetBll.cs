@@ -45,17 +45,19 @@ namespace MAMBrowser.BLL
         // 기본큐시트 상세내용 가져오기
         public CueSheetCollectionDTO GetDefCue(string productid, List<string> week, string pgmcode, string brd_dt)
         {
-            DefCueSheetInfoParam param = new DefCueSheetInfoParamBuilder()
-                .SetWeeks(week)
-                .SetProductID(productid)
-                .SetRequestType(RequestType.Web)
-                .Build();
-            var result = _dao.GetDefCueSheet(param);
             var toDate = DateTime.Today;
             if (brd_dt == null)
             {
                 brd_dt = toDate.ToString("yyyyMMdd");
             }
+            DefCueSheetInfoParam param = new DefCueSheetInfoParamBuilder()
+                .SetBrdDate(brd_dt)
+                .SetWeeks(week)
+                .SetProductID(productid)
+                .SetRequestType(RequestType.Web)
+                .Build();
+            var result = _dao.GetDefCueSheet(param);
+
             if (pgmcode != null && brd_dt != null)
             {
                 SponsorParam spon_param = new SponsorParam();

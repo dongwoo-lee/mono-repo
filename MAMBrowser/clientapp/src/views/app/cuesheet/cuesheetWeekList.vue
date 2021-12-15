@@ -231,7 +231,22 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "15%",
-          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
+          callback: (value) => {
+            switch (value) {
+              case "A":
+                return "표준FM";
+              case "F":
+                return "FM4U";
+              case "D":
+                return "DMB";
+              case "C":
+                return "공통";
+              case "Z":
+                return "기타";
+              default:
+                break;
+            }
+          },
         },
         {
           name: "__slot:weeks",
@@ -280,7 +295,11 @@ export default {
       const userId = sessionStorage.getItem(USER_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (this.searchItems.productid == "") {
-        await this.getMediasOption({ personid: userId, gropId: gropId });
+        await this.getMediasOption({
+          brd_dt: null,
+          personid: userId,
+          gropId: gropId,
+        });
         this.searchItems.productid = this.userProList;
       }
       var params = {
@@ -300,6 +319,7 @@ export default {
       const userId = sessionStorage.getItem(USER_ID);
 
       var proOption = await this.getuserProOption({
+        brd_dt: null,
         personid: userId,
         gropId: gropId,
         media: e,

@@ -2,7 +2,20 @@ import axios from "axios";
 const qs = require("qs");
 import "moment/locale/ko";
 const moment = require("moment");
+const date = new Date();
 
+function get_date_str(date) {
+    var sYear = date.getFullYear();
+    var sMonth = date.getMonth() + 1;
+    var sDate = date.getDate();
+
+    sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+    sDate = sDate > 9 ? sDate : "0" + sDate;
+
+    return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
 export default {
     namespaced: true,
     state: {
@@ -287,7 +300,10 @@ export default {
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
         async getuserProOption({ commit }, payload) {
-            var pram = { media: payload.media }
+            var pram = { brd_dt: payload.brd_dt, media: payload.media }
+            if (pram.brd_dt == null) {
+                pram.brd_dt = toDay
+            }
             if (payload.gropId == "S01G04C004") {
                 pram.personid = payload.personid
             }
@@ -316,10 +332,11 @@ export default {
         },
         //유저 - 전체 프로그램 + 매체 가져오기
         async getMediasOption({ commit }, payload) {
-            var pram = {}
+            var pram = { brd_dt: payload.brd_dt }
+            if (pram.brd_dt == null) {
+                pram.brd_dt = toDay
+            }
             if (payload.gropId == "S01G04C004") {
-                console.log(payload)
-
                 pram.personid = payload.personid
             }
             return await axios.get(`/api/CueUserInfo/GetProgramList`, {
@@ -466,6 +483,7 @@ export default {
                 },
             })
                 .then((res) => {
+                    console.log(res)
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })
@@ -578,6 +596,57 @@ export default {
                     }
                     )
                 }));
+        },
+        //구 DAP 저장
+        async saveOldCue({ state, dispatch }) {
+            var pram = await dispatch('setCueConFav_save', true)
+            pram.CueSheetDTO = state.cueInfo;
+            await axios
+                .post(`/api/DayCueSheet/SaveOldCue`, pram)
+                .then(async (res) => {
+                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    if (res.data == 1) {
+                        window.$notify(
+                            "info",
+                            `(구) DAP에 큐시트 저장완료.`,
+                            '', {
+                            duration: 10000,
+                            permanent: false
+                        }
+                        )
+                    }
+                    if (res.data == 0) {
+                        window.$notify(
+                            "error",
+                            `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)`,
+                            '', {
+                            duration: 10000,
+                            permanent: false
+                        }
+                        )
+                    }
+                    if (res.data == -1) {
+                        window.$notify(
+                            "error",
+                            `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.`,
+                            '', {
+                            duration: 10000,
+                            permanent: false
+                        }
+                        )
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                    window.$notify(
+                        "error",
+                        `(구) DAP에 큐시트 저장실패.`,
+                        '', {
+                        duration: 10000,
+                        permanent: false
+                    }
+                    )
+                })
         },
         //기본큐시트 저장
         async saveDefCue({ commit, state, dispatch }) {
@@ -711,11 +780,14 @@ export default {
                 case "S01G01C014":
                     payload.row.maintitle = payload.search_row.songName;
                     payload.row.subtitle = payload.search_row.artistName;
+                    payload.row.carttype = "SS";
                     break;
                 //효과음
                 case "S01G01C015":
                     payload.row.maintitle = payload.search_row.songName;
                     payload.row.subtitle = payload.search_row.artistName;
+                    payload.row.carttype = "SS";
+
                     break;
                 //(구)프로소재
                 case "S01G01C013":

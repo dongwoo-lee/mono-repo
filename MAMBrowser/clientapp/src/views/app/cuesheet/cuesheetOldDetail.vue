@@ -15,11 +15,10 @@
               <div class="subtitle ml-2">
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
-                  적용요일 :
-                  <span style="display: inline-block">
-                    <common-weeks :rowData="cueInfo" :edit="true">
-                    </common-weeks>
-                  </span>
+                  방송 예정일 :
+                  <span>{{
+                    $moment(cueInfo.brdtime).format("YYYY-MM-DD")
+                  }}</span>
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
@@ -39,8 +38,11 @@
                   <span class="subtitle_css">●</span>
                   수정일 :
                   <span>{{
-                    $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                    cueInfo.edittime == null
+                      ? ""
+                      : $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
+                  <!-- <span>{{ cueInfo.edittime }}</span> -->
                 </span>
                 <span class="autosave">
                   <b-form-checkbox-group
@@ -53,7 +55,7 @@
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget :type="cueInfo.cuetype" />
+                <ButtonWidget type="O" />
               </div>
             </div>
             <div class="left_bottom">
@@ -70,7 +72,7 @@
                     <template #default>
                       <div class="c_channel_panel">
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
                           channelKey="channel_1"
                         />
@@ -81,7 +83,7 @@
                     <template #default>
                       <div class="c_channel_panel">
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
                           channelKey="channel_2"
                         />
@@ -92,7 +94,7 @@
                     <template #default>
                       <div>
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
                           channelKey="channel_3"
                         />
@@ -103,7 +105,7 @@
                     <template #default>
                       <div>
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
                           channelKey="channel_4"
                         />
@@ -153,7 +155,6 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
-import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
 import { eventBus } from "@/eventBus";
 
 export default {
@@ -176,23 +177,26 @@ export default {
     AbchannelWidget,
     SortableWidget,
     DxSpeedDialAction,
-    CommonWeeks,
   },
+
   data() {
     return {
+      onload: null,
       options: [{ text: "자동저장", value: true }],
       autosaveValue: [true],
       autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
+      widgetIndex: 16,
     };
   },
   async mounted() {
     document.getElementById("app-container").classList.add("drag_");
+
     this.autoSaveFun = setInterval(() => {
       if (this.cueSheetAutoSave) {
-        this.saveDefCue();
+        this.saveOldCue();
       }
     }, 900000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
@@ -209,7 +213,7 @@ export default {
     ...mapActions("cueList", ["getautosave"]),
     ...mapActions("cueList", ["setautosave"]),
     ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
-    ...mapActions("cueList", ["saveDefCue"]),
+    ...mapActions("cueList", ["saveOldCue"]),
     toggleChange(value) {
       if (value.length == 0) {
         this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
@@ -218,6 +222,9 @@ export default {
         this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
         this.SET_CUESHEETAUTOSAVE(true);
       }
+    },
+    nextOk() {
+      this.nextgo = true;
     },
     onTextEdit() {
       this.$refs.inputText.focus();
@@ -245,6 +252,18 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
+    },
+    onloadEvent() {
+      const answer = window.confirm(
+        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+      );
+      if (answer) {
+        clearInterval(this.autoSaveFun);
+        eventBus.$off();
+        this.onload = true;
+      } else {
+        this.onload = false;
+      }
     },
   },
 };
@@ -284,7 +303,7 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view {
-  /* width: 316px; */
+  /* width: 280px; */
   height: 30px;
   position: absolute;
   top: 0px;
@@ -328,26 +347,5 @@ input {
 .listTitle .breadcrumb {
   margin: 0;
   padding: 0;
-}
-.modal_search {
-  width: 700px;
-  text-align: center;
-  margin: auto;
-}
-.modal_search fieldset {
-  display: inline-block;
-}
-.modal_week_form {
-  margin-top: 10px;
-  height: 150px;
-  border: 1px solid #d7d7d7;
-  display: table-cell;
-  vertical-align: middle;
-  width: 800px;
-}
-.modal_week_form .btn-outline-primary:disabled {
-  border: solid 1px #757575;
-  background-color: rgb(223, 222, 222);
-  color: #757575;
 }
 </style>

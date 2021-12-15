@@ -85,8 +85,8 @@
         v-model="importSelected"
         :options="importOptions"
       ></b-form-radio-group>
-      <b-button size="sm" @click="cancel()"> Cancel </b-button>
-      <b-button size="sm" @click="ok()"> OK </b-button>
+      <b-button size="sm" variant="danger" @click="cancel()"> 닫기 </b-button>
+      <b-button size="sm" variant="secondary" @click="ok()"> 확인 </b-button>
     </template>
   </b-modal>
 </template>
@@ -159,7 +159,22 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "media",
           width: "10%",
-          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
+          callback: (value) => {
+            switch (value) {
+              case "A":
+                return "표준FM";
+              case "F":
+                return "FM4U";
+              case "D":
+                return "DMB";
+              case "C":
+                return "공통";
+              case "Z":
+                return "기타";
+              default:
+                break;
+            }
+          },
         },
         {
           name: "__slot:weeks",
@@ -197,7 +212,7 @@ export default {
       }
     },
     selectedIds: function (val) {
-      if (val.length > 0) {
+      if (val != null && val.length > 0) {
         this.MenuOptions.forEach((item) => {
           item.notEnabled = false;
         });
@@ -244,6 +259,7 @@ export default {
         this.isTableLoading = this.isScrollLodaing ? false : true;
         if (!this.searchItems.productid) {
           var mediaOption = await this.getMediasOption({
+            brd_dt: null,
             personid: userId,
             gropId: gropId,
           });
@@ -299,13 +315,15 @@ export default {
       }
     },
     async ok() {
-      if (this.selectedIds.length == 0) {
-        alert("큐시트를 선택하세요.");
+      if (this.selectedIds == null || this.selectedIds.length == 0) {
+        window.$notify("error", `기본큐시트를 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
       } else {
         var rowNum_ab = 0;
         var rowNum_c = 0;
         var rowNum_print = 0;
-
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
@@ -331,10 +349,12 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          alert("가져오기할 항목들을 선택하세요.");
+          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
+            duration: 10000,
+            permanent: false,
+          });
         } else {
           var seqnum = this.selectedIds[0];
-          //var cueid = this.defCuesheetListArr.data[seqnum].cueid;
           var params = {
             productid: this.searchItems.productid,
             week: this.defCuesheetListArr.data[seqnum].weeks,
@@ -362,6 +382,7 @@ export default {
                   });
                 }
                 var oldCueInfo = { ...this.cueInfo };
+                oldCueInfo.r_ONAIRTIME = oldCueInfo.detail[0].onairtime;
                 oldCueInfo.directorname = res.data.cueSheetDTO.directorname;
                 oldCueInfo.djname = res.data.cueSheetDTO.djname;
                 oldCueInfo.footertitle = res.data.cueSheetDTO.footertitle;
@@ -391,6 +412,7 @@ export default {
                 items: this.MenuSelected,
               };
               eventBus.$emit("updateCData", pram);
+              this.selectedIds = null;
               this.$refs["importDef"].hide();
             });
         }
@@ -400,8 +422,8 @@ export default {
     async eventClick(e) {
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       const userId = sessionStorage.getItem(USER_ID);
-
       var proOption = await this.getuserProOption({
+        brd_dt: null,
         personid: userId,
         gropId: gropId,
         media: e,

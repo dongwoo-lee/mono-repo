@@ -181,6 +181,140 @@ const routes = [
       * CueSheet
       */
       {
+        // (구) DAP 리스트
+        name: 'cuesheet-old-list',
+        path: "cuesheet/old/list",
+        component: () => import("./views/app/cuesheet/cuesheetOldList"),
+      },
+      {
+        // (구) DAP 상세페이지
+        name: 'cuesheet-old-detail',
+        path: "cuesheet/old/detail",
+        component: () => import("./views/app/cuesheet/cuesheetOldDetail"),
+        beforeEnter: (async (to, from, next) => {
+          const userId = sessionStorage.getItem(USER_ID);
+          var cueDataObj = { ...store.getters['cueList/cueInfo'] }
+          if (Object.keys(cueDataObj).length === 0) {
+            cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
+          }
+          if (cueDataObj.cueid != -1) {
+            //큐시트 수정
+            var params = { productid: cueDataObj.productid, pgmcode: cueDataObj.pgmcode };
+            if (Object.keys(cueDataObj).includes("detail")) {
+              params.cueid = cueDataObj.detail[0].cueid
+              params.brd_dt = cueDataObj.brddate
+            } else {
+              params.cueid = cueDataObj.cueid
+              params.brd_dt = cueDataObj.day
+            }
+            await axios.get(`/api/daycuesheet/GetdayCue`, {
+              params: params,
+              paramsSerializer: (params) => {
+                return qs.stringify(params);
+              },
+            })
+              .then(async (res) => {
+                var newInfo = { ...res.data.cueSheetDTO }
+                newInfo.day = cueDataObj.day
+                newInfo.liveflag = cueDataObj.liveflag
+                newInfo.onairday = cueDataObj.onairday
+                newInfo.seqnum = cueDataObj.seqnum
+                newInfo.startdate = cueDataObj.startdate
+                cueDataObj = newInfo
+                await store.dispatch('cueList/setCueConData', res.data);
+                store.dispatch('cueList/getProUserList', cueDataObj.productid);
+              });
+          } else {
+            //큐시트 작성
+            cueDataObj.detail = [{
+              cueid: cueDataObj.cueid
+            }]
+            cueDataObj.brddate = cueDataObj.day;
+            cueDataObj.brdtime = cueDataObj.r_ONAIRTIME;
+            cueDataObj.cuetype = "D"
+            cueDataObj.title = cueDataObj.eventname
+
+            //작성된 기본큐시트가 있는지 확인
+            var defCueId = [];
+            await store.dispatch('cueList/getcuesheetListArrDef', {
+              productids: cueDataObj.productid,
+              row_per_page: 30,
+              select_page: 1
+            })
+
+            var defCueList = store.getters['cueList/defCuesheetListArr'];
+            defCueList.data.forEach((ele) => {
+              var result = ele.detail.filter((v) => {
+                return v.week == moment(cueDataObj.brdtime, "YYYY-MM-DD'T'HH:mm:ss").lang("en").format("ddd").toUpperCase()
+              })
+              if (result.length > 0) {
+                defCueId = result
+              }
+            });
+            if (defCueId.length > 0) {
+              //기본큐시트 작성 내용 가져오기
+              var params = { productid: cueDataObj.productid, week: defCueId[0].week, pgmcode: cueDataObj.pgmcode };
+              if (Object.keys(cueDataObj).includes("detail")) {
+                params.brd_dt = cueDataObj.brddate
+              } else {
+                params.brd_dt = cueDataObj.day
+              }
+              // var params = {
+              //   productid: cueDataObj.productid,
+              //   //cueid: defCueId[0].cueid,
+              //   week: defCueId[0].week,
+              // };
+              await axios.get(`/api/defcuesheet/GetdefCue`, {
+                params: params,
+                paramsSerializer: (params) => {
+                  return qs.stringify(params);
+                },
+              })
+                .then((res) => {
+                  var defcueData = res.data.cueSheetDTO
+                  cueDataObj.r_ONAIRTIME = defcueData.detail[0].onairtime;
+                  cueDataObj.directorname = defcueData.directorname;
+                  cueDataObj.djname = defcueData.djname;
+                  cueDataObj.footertitle = defcueData.footertitle;
+                  cueDataObj.headertitle = defcueData.headertitle;
+                  cueDataObj.membername = defcueData.membername;
+                  cueDataObj.memo = defcueData.memo;
+                  //나중에 여기에 태그도 추가되어야함
+                  store.dispatch('cueList/setCueConData', res.data);
+                });
+
+            } else {
+              store.dispatch('cueList/setclearCon');
+              store.dispatch('cueList/setSponsorList', { pgmcode: cueDataObj.pgmcode, brd_dt: cueDataObj.brddate });
+            }
+            await store.dispatch('cueList/getProUserList', cueDataObj.productid);
+          }
+          store.dispatch('cueList/setclearFav');
+          if (
+            !cueDataObj.directorname ||
+            cueDataObj.directorname == ""
+          ) {
+            cueDataObj.directorname = store.getters['cueList/proUserList'];
+          }
+          if (
+            !cueDataObj.headertitle ||
+            cueDataObj.headertitle == ""
+          ) {
+            cueDataObj.headertitle = cueDataObj.title;
+          }
+          if (
+            !cueDataObj.footertitle ||
+            cueDataObj.footertitle == ""
+          ) {
+            cueDataObj.footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
+          }
+          cueDataObj.personid = userId;
+          store.commit('cueList/SET_CUEINFO', cueDataObj)
+          sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
+          next();
+        })
+      },
+      {
         // 일일 큐시트 리스트
         name: 'cuesheet-day-list',
         path: "cuesheet/day/list",
@@ -272,6 +406,7 @@ const routes = [
               })
                 .then((res) => {
                   var defcueData = res.data.cueSheetDTO
+                  cueDataObj.r_ONAIRTIME = defcueData.detail[0].onairtime;
                   cueDataObj.directorname = defcueData.directorname;
                   cueDataObj.djname = defcueData.djname;
                   cueDataObj.footertitle = defcueData.footertitle;
@@ -348,6 +483,7 @@ const routes = [
           })
             .then((res) => {
               var cueData = res.data.cueSheetDTO
+              cueData.r_ONAIRTIME = cueData.detail[0].onairtime;
               cueData.activeWeekList = cueDataObj.activeWeekList
               cueData.cueid = cueDataObj.cueid
               cueData.weeks = cueDataObj.weeks

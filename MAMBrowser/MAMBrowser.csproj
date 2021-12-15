@@ -64,10 +64,7 @@
       <HintPath>C:\Users\kimeunbee\Desktop\m30library-master\M30.AudioFile\M30.AudioFile.DAL\bin\Debug\netstandard2.0\M30.AudioFile.DAL.dll</HintPath>
     </Reference>
     <Reference Include="M30_CueSheetDAO">
-      <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
-    </Reference>
-    <Reference Include="M30_CueSheetDAO">
-      <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
+      <HintPath>C:\Users\kimeunbee\Documents\DaouMessenger\M30_CueSheetDAO.dll</HintPath>
     </Reference>
   </ItemGroup>
 

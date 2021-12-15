@@ -121,7 +121,6 @@
         </div>
       </div>
     </b-modal>
-
     <!-- 템플릿으로 저장 -->
     <b-modal
       id="modal-template"
@@ -129,7 +128,7 @@
       centered
       title="템플릿으로 저장"
       ok-title="확인"
-      cancel-title="취소"
+      cancel-title="닫기"
       @ok="addtemClick"
       @show="resetModal_tem"
       @hidden="resetModal_tem"
@@ -154,6 +153,12 @@
           </div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <b-button variant="danger" @click="cancel()">닫기 </b-button>
+        <b-button type="submit" variant="secondary" @click="addtemClick()"
+          >저장
+        </b-button>
+      </template>
     </b-modal>
 
     <!-- 가져오기 -->
@@ -355,8 +360,8 @@
       centered
       title="적용요일 변경"
       ok-title="확인"
-      cancel-title="취소"
-      @ok="editWeekOk"
+      cancel-title="닫기"
+      @hidden="resetModal_weekedit"
     >
       <div id="modelDiv" class="d-block text-center">
         <div class="modal_search">
@@ -393,6 +398,12 @@
           </b-button-group>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <b-button variant="danger" @click="cancel()">닫기 </b-button>
+        <b-button type="submit" variant="secondary" @click="editWeekOk()"
+          >저장
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -468,6 +479,9 @@ export default {
   },
   mounted() {
     switch (this.type) {
+      case "O":
+        this.goBackPoint = "old";
+        break;
       case "D":
         this.goBackPoint = "day";
         break;
@@ -540,6 +554,7 @@ export default {
     ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["saveTempCue"]),
+    ...mapActions("cueList", ["saveOldCue"]),
 
     ...mapActions("cueList", ["addTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
@@ -573,11 +588,28 @@ export default {
       cueCon.CueSheetDTO = tempItem;
 
       await this.addTemplate(cueCon);
+      this.$bvModal.hide("modal-template");
     },
     resetModal_tem() {
       this.tmpTitleTextBoxValue = "이름없는 템플릿";
     },
-    //이거 나중에 setclearCon 나눠서 변경해서 사용하는거로 바꾸기
+    resetModal_weekedit() {
+      // if (this.type == "B") {
+      //   console.log(this.cueInfo.activeWeekList);
+      //   this.cueInfo.activeWeekList.forEach((week)=>{
+      //     if(Object.)
+      //   })
+      //   // this.weekButtons.forEach((week) => {
+      //   //   this.cueInfo.activeWeekList.forEach((item) => {
+      //   //     if (week.value == item) {
+      //   //       week.state = true;
+      //   //     } else {
+      //   //       week.state = false;
+      //   //     }
+      //   //   });
+      //   // });
+      // }
+    },
     clearOk() {
       if (this.selected.length > 0) {
         if (this.selected.includes("print")) {
@@ -646,6 +678,9 @@ export default {
     //큐시트 저장
     async saveOk() {
       switch (this.type) {
+        case "O":
+          this.saveOldCue();
+          break;
         case "D":
           this.saveDayCue();
           break;
@@ -702,7 +737,9 @@ export default {
         .post(`/api/CueAttachments/exportZipFile`, pramList)
         .then((response) => {
           const link = document.createElement("a");
-          link.href = "/api/CueAttachments/exportZipFileDownload";
+          link.href =
+            "/api/CueAttachments/exportZipFileDownload?fileName=" +
+            response.data;
           document.body.appendChild(link);
           link.click();
         })
@@ -714,6 +751,7 @@ export default {
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       const userId = sessionStorage.getItem(USER_ID);
       var proOption = await this.getuserProOption({
+        brd_dt: null,
         personid: userId,
         gropId: gropId,
         media: this.cueInfo.media,
@@ -728,34 +766,39 @@ export default {
       var activeWeekList = [];
       var pushList = [];
       var delId = [];
-      this.weekButtons.forEach((week, index) => {
-        if (week.state) {
-          weekList.push({ week: week.value });
-          activeWeekList.push(week.value);
-        }
+      var stateList = this.weekButtons.filter((ele) => {
+        return ele.state == true;
       });
-      cueData.detail.forEach((v) => {
-        // weekList.forEach((value) => {
-        //   if (value.week == v.week) {
-        //     value.cueid = v.cueid;
-        //   }
-        // });
-        if (!activeWeekList.includes(v.week)) {
-          delId.push(v.cueid);
-        }
-      });
-      cueData.productWeekList[0].weekList.forEach((week) => {
-        if (!cueData.activeWeekList.includes(week)) {
-          pushList.push(week);
-        }
-      });
-      cueData.productWeekList[0].weekList = pushList.concat(activeWeekList);
+      if (stateList.length == 0) {
+        window.$notify("error", `적용요일을 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      } else {
+        this.weekButtons.forEach((week, index) => {
+          if (week.state) {
+            weekList.push({ week: week.value });
+            activeWeekList.push(week.value);
+          }
+        });
+        cueData.detail.forEach((v) => {
+          if (!activeWeekList.includes(v.week)) {
+            delId.push(v.cueid);
+          }
+        });
+        cueData.productWeekList[0].weekList.forEach((week) => {
+          if (!cueData.activeWeekList.includes(week)) {
+            pushList.push(week);
+          }
+        });
+        cueData.productWeekList[0].weekList = pushList.concat(activeWeekList);
 
-      cueData.newdetail = weekList;
-      cueData.activeWeekList = activeWeekList;
-      cueData.delId = delId;
-
-      this.SET_CUEINFO(cueData);
+        cueData.newdetail = weekList;
+        cueData.activeWeekList = activeWeekList;
+        cueData.delId = delId;
+        this.SET_CUEINFO(cueData);
+        this.$refs["modal-editWeek"].hide();
+      }
     },
     editOk() {
       this.SET_CUEINFO(this.editOptions);

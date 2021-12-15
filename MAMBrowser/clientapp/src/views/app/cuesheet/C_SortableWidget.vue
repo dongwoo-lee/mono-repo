@@ -273,6 +273,7 @@ import DxButton from "devextreme-vue/button";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { eventBus } from "@/eventBus";
 import MixinCommon from "../../../mixin/MixinCommon";
+import axios from "axios";
 
 import "moment/locale/ko";
 const moment = require("moment");
@@ -463,7 +464,7 @@ export default {
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
-    onAdd(e, totalIndex) {
+    async onAdd(e, totalIndex) {
       if (this.cueInfo.cuetype == "A") {
         return;
       }
@@ -477,7 +478,7 @@ export default {
           }
         });
         if (selectedRowsData.length > 1) {
-          selectedRowsData.forEach((data, index) => {
+          selectedRowsData.forEach(async (data, index) => {
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("subtitle")) {
@@ -489,6 +490,20 @@ export default {
               row.edittarget = true;
             } else {
               row.rownum = totalIndex + index;
+              if (this.searchListData.cartcode == "S01G01C014") {
+                await axios
+                  .post(`/api/SearchMenu/GetSongItem`, search_row)
+                  .then((res) => {
+                    search_row = res.data;
+                  });
+              }
+              if (this.searchListData.cartcode == "S01G01C015") {
+                await axios
+                  .post(`/api/SearchMenu/GetEffectItem`, search_row)
+                  .then((res) => {
+                    search_row = res.data;
+                  });
+              }
               row.filetoken = search_row.fileToken;
               row.filepath = search_row.filePath;
               if (!search_row.intDuration) {
@@ -518,11 +533,26 @@ export default {
             if (search_row.subtitle == "") {
               return;
             }
+            console.log(1);
             row = { ...search_row };
             row.rownum = this.fileData[totalIndex - 1].rownum;
             row.edittarget = true;
           } else {
             row.rownum = this.fileData[totalIndex - 1].rownum;
+            if (this.searchListData.cartcode == "S01G01C014") {
+              await axios
+                .post(`/api/SearchMenu/GetSongItem`, search_row)
+                .then((res) => {
+                  search_row = res.data;
+                });
+            }
+            if (this.searchListData.cartcode == "S01G01C015") {
+              await axios
+                .post(`/api/SearchMenu/GetEffectItem`, search_row)
+                .then((res) => {
+                  search_row = res.data;
+                });
+            }
             row.filetoken = search_row.fileToken;
             row.filepath = search_row.filePath;
             if (!search_row.intDuration) {

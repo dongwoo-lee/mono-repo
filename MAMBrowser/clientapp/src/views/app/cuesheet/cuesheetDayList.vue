@@ -137,7 +137,22 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "15%",
-          callback: (value) => (value === "A" ? "표준FM" : "FM4U"),
+          callback: (value) => {
+            switch (value) {
+              case "A":
+                return "표준FM";
+              case "F":
+                return "FM4U";
+              case "D":
+                return "DMB";
+              case "C":
+                return "공통";
+              case "Z":
+                return "기타";
+              default:
+                break;
+            }
+          },
         },
         {
           name: "r_ONAIRTIME",
@@ -194,7 +209,11 @@ export default {
       }
 
       if (this.searchItems.productid == "") {
-        await this.getMediasOption({ personid: userId, gropId: gropId });
+        await this.getMediasOption({
+          brd_dt: this.searchItems.start_dt,
+          personid: userId,
+          gropId: gropId,
+        });
         this.searchItems.productid = this.userProList;
       }
       if (this.searchItems.productid == undefined) {
@@ -218,6 +237,7 @@ export default {
       const userId = sessionStorage.getItem(USER_ID);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       var proOption = await this.getuserProOption({
+        brd_dt: this.searchItems.start_dt,
         personid: userId,
         gropId: gropId,
         media: e,
