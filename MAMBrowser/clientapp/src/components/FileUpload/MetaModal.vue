@@ -355,7 +355,7 @@ export default {
           UserId: sessionStorage.getItem("user_id"),
           media: this.MetaData.mediaSelected,
           productId: this.ProgramSelected.productId,
-          onairTime: this.ProgramSelected.onairTime,
+          brdDTM: this.ProgramSelected.onairTime,
           editor: this.MetaData.editor,
           memo: this.MetaData.memo,
         };
@@ -364,7 +364,7 @@ export default {
           UserId: sessionStorage.getItem("user_id"),
           media: this.MetaData.mediaSelected,
           productId: this.EventSelected.id,
-          onairTime: this.date,
+          brdDT: this.date,
           editor: this.MetaData.editor,
           memo: this.MetaData.memo,
           advertiser: this.MetaData.advertiser,
@@ -376,7 +376,7 @@ export default {
           memo: this.MetaData.memo,
           advertiser: this.MetaData.advertiser,
           editor: this.MetaData.editor,
-          media: this.MetaData.mediaSelected,
+          category: this.MetaData.mediaSelected,
         };
       } else if (this.MetaData.typeSelected == "static-spot") {
         var data = {
@@ -404,9 +404,9 @@ export default {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
-          meida: this.MetaData.mediaSelected,
-          ProductId: this.EventSelected.id,
-          date: this.date,
+          media: this.MetaData.mediaSelected,
+          productId: this.EventSelected.id,
+          brdDTM: this.date,
           editor: this.MetaData.editor,
           memo: this.MetaData.memo,
           reporter: this.MetaData.reporter,
@@ -414,11 +414,11 @@ export default {
       } else if (this.MetaData.typeSelected == "filler") {
         var data = {
           UserId: sessionStorage.getItem("user_id"),
-          media: this.MetaData.mediaSelected,
+          category: this.MetaData.mediaSelected,
           title: this.MetaData.title,
           memo: this.MetaData.memo,
           editor: this.MetaData.editor,
-          onairTime: this.date,
+          brdDT: this.date,
         };
       }
     },
@@ -462,7 +462,7 @@ export default {
             UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
             productId: this.ProgramSelected.productId,
-            onairTime: this.ProgramSelected.onairTime,
+            brdDTM: this.ProgramSelected.onairTime,
             editor: this.MetaData.editor,
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
@@ -471,7 +471,7 @@ export default {
             UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
-            onairTime: this.date,
+            brdDT: this.date,
             editor: this.MetaData.editor,
           };
         } else if (this.MetaData.typeSelected == "scr-spot") {
@@ -481,7 +481,7 @@ export default {
             memo: this.MetaData.memo,
             advertiser: this.MetaData.advertiser,
             editor: this.MetaData.editor,
-            media: this.MetaData.mediaSelected,
+            category: this.MetaData.mediaSelected,
           };
         } else if (this.MetaData.typeSelected == "static-spot") {
           var data = {
@@ -509,9 +509,9 @@ export default {
           var data = {
             UserId: sessionStorage.getItem("user_id"),
             title: this.MetaData.title,
-            media: this.MetaData.mediaSelected,
+            category: this.MetaData.mediaSelected,
             ProductId: this.EventSelected.id,
-            onairTime: this.date,
+            brdDTM: this.date,
             editor: this.MetaData.editor,
             memo: this.MetaData.memo,
             reporter: this.MetaData.reporter,
@@ -519,13 +519,14 @@ export default {
         } else if (this.MetaData.typeSelected == "filler") {
           var data = {
             UserId: sessionStorage.getItem("user_id"),
-            media: this.MetaData.mediaSelected,
+            category: this.MetaData.mediaSelected,
             title: this.MetaData.title,
             memo: this.MetaData.memo,
             editor: this.MetaData.editor,
-            onairTime: this.date,
+            brdDT: this.date,
           };
         }
+        console.log(data);
         this.resetUploaderCustomData();
         this.setUploaderCustomData(data);
         if (this.cancel) {

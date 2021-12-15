@@ -126,7 +126,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("program")]
         public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string onairTime, [FromForm] string editor)
+            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -169,7 +169,7 @@ namespace MAMBrowser.Controllers
                         Program.Memo = memo;
                         Program.Media = media;
                         Program.ProductId = productId;
-                        Program.OnAirTime = onairTime;
+                        Program.BrdDTM = brdDTM;
                         Program.Editor = editor;
                         Program.FilePath = newFilePath;
                         Program.RegDtm = DateTime.Now.ToString(Define.DTM19);
@@ -199,7 +199,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("mcr-spot")]
         public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string onairTime, [FromForm] string editor)
+            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -242,7 +242,7 @@ namespace MAMBrowser.Controllers
                         mcr.Memo = memo;
                         mcr.Media = media;
                         mcr.ProductId = productId;
-                        mcr.OnAirTime = onairTime;
+                        mcr.BrdDT = brdDT;
                         mcr.Editor = editor;
                         mcr.FilePath = newFilePath;
                         mcr.RegDtm = DateTime.Now.ToString(Define.DTM19);
@@ -273,7 +273,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("scr-spot")]
         public ActionResult<DTO_RESULT> RegScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
             [FromForm] string UserId, [FromForm] string title, [FromForm] string memo, [FromForm] string advertiser, [FromForm] string editor, 
-            [FromForm] string media)
+            [FromForm] string category)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -316,7 +316,7 @@ namespace MAMBrowser.Controllers
                         scr.Title = title;
                         scr.Memo = memo;
                         scr.Advertiser = advertiser;
-                        scr.Media = media;
+                        scr.Category = category;
                         scr.Editor = editor;
                         scr.FilePath = newFilePath;
                         scr.RegDtm = DateTime.Now.ToString(Define.DTM19);
@@ -498,7 +498,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("report")]
         public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId,[FromForm] string title,  [FromForm] string memo, 
-            [FromForm] string productId, [FromForm] string onairTime, [FromForm] string reporter, [FromForm] string editor, [FromForm] string media)
+            [FromForm] string productId, [FromForm] string brdDTM, [FromForm] string reporter, [FromForm] string editor, [FromForm] string category)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -539,10 +539,10 @@ namespace MAMBrowser.Controllers
 
                         report.UserId = UserId;
                         report.Title = title;
-                        report.OnAirTime = onairTime;
+                        report.BrdDTM = brdDTM;
                         report.Memo = memo;
                         report.Reporter = reporter;
-                        report.Media = media;
+                        report.Category = category;
                         report.ProductId = productId;
                         report.Editor = editor;
                         report.FilePath = newFilePath;
@@ -573,7 +573,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("filler")]
         public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string title,
-            [FromForm] string memo, [FromForm] string onairTime, [FromForm] string editor, [FromForm] string media)
+            [FromForm] string memo, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string category)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -615,9 +615,9 @@ namespace MAMBrowser.Controllers
                         Filler.UserId = UserId;
                         Filler.Title = title;
                         Filler.Memo = memo;
-                        Filler.Media = media;
+                        Filler.Category = category;
                         Filler.Editor = editor;
-                        Filler.OnAirTime = onairTime;
+                        Filler.BrdDT = brdDT;
                         Filler.FilePath = newFilePath;
                         Filler.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         Filler.SoundType = SoundDataTypes.SCR_SPOT;

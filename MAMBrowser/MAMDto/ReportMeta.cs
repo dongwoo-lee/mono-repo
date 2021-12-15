@@ -8,8 +8,8 @@ namespace MAMBrowser.MAMDto
     public class ReportMeta : MasteringMetaBase
     {
         public string Title { get; set; }
-        public string Media { get; set; }
-        public string OnAirTime { get; set; }
+        public string Category { get; set; }
+        public string BrdDTM { get; set; }
         public string Reporter { get; set; }
         public string Editor { get; set; }
         public string Memo { get; set; }

@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <b-form-group
-      label="매체"
+      label="분류"
       class="has-float-label"
       style="float: left; margin-right: 20px"
     >
