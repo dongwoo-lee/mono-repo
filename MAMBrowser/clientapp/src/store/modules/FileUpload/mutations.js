@@ -64,9 +64,6 @@ export default {
   setEventData(state, payload) {
     state.EventData = payload;
   },
-  setEditor(state, payload) {
-    state.MetaData.editor = payload;
-  },
   setProgramState(state, payload) {
     state.programState = payload;
   },
@@ -90,9 +87,6 @@ export default {
   },
   resetMediaSelected(state) {
     state.MetaData.mediaSelected = "";
-  },
-  resetEditor(state) {
-    state.MetaData.editor = "";
   },
   resetReporter(state) {
     state.MetaData.reporter = "";

@@ -16,11 +16,6 @@ export default {
   memoState(state) {
     return state.MetaData.memo.length >= 1 ? true : false;
   },
-  editorState(state) {
-    return state.MetaData.editor != null && state.MetaData.editor != ""
-      ? true
-      : false;
-  },
   reporterState(state) {
     return state.MetaData.reporter.length >= 1 ? true : false;
   },
@@ -104,11 +99,11 @@ export default {
       if (getters.typeState && getters.titleState && getters.memoState)
         return true;
     } else if (state.MetaData.typeSelected == "program") {
-      if (getters.memoState && getters.editorState && getters.programState) {
+      if (getters.memoState && getters.programState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "mcr-spot") {
-      if (getters.memoState && getters.editorState && getters.eventState) {
+      if (getters.memoState && getters.eventState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "scr-spot") {
@@ -125,7 +120,6 @@ export default {
         getters.memoState &&
         getters.eventState &&
         getters.advertiserState &&
-        getters.editorState &&
         getters.SEDateState
       ) {
         return true;
@@ -135,27 +129,16 @@ export default {
         getters.memoState &&
         getters.eventState &&
         getters.advertiserState &&
-        getters.editorState &&
         getters.SEDateState
       ) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "report") {
-      if (
-        getters.memoState &&
-        getters.eventState &&
-        getters.reporterState &&
-        getters.editorState
-      ) {
+      if (getters.memoState && getters.eventState && getters.reporterStates) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "filler") {
-      if (
-        getters.titleState &&
-        getters.memoState &&
-        getters.editorState &&
-        getters.dateState
-      ) {
+      if (getters.titleState && getters.memoState && getters.dateState) {
         return true;
       }
     }

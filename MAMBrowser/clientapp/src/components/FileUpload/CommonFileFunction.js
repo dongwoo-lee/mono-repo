@@ -24,7 +24,7 @@ export default {
       role: "",
       formatted: "",
       dateSelected: "",
-
+      userID: sessionStorage.getItem("user_name"),
       logTableHeight: "480px",
 
       adminLogFields: [
@@ -213,7 +213,6 @@ export default {
       "resetFileEDate",
       "resetTitle",
       "resetMemo",
-      "resetEditor",
       "resetReporter",
       "resetType",
       "resetUsage",
@@ -422,7 +421,6 @@ export default {
       this.fileStateFalse();
       this.resetProgramData();
       this.resetProgramSelected();
-      this.resetEditor();
       this.resetEventData();
       this.resetEventSelected();
       this.resetUsage();
@@ -441,7 +439,6 @@ export default {
       this.fileStateFalse();
       this.resetProgramData();
       this.resetProgramSelected();
-      this.resetEditor();
       this.resetEventData();
       this.resetEventSelected();
       this.resetUsage();

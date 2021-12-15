@@ -21,7 +21,7 @@
               "
             >
               <h3 style="color: black">파일 정보</h3>
-              <div style="padding: 10px; border: 1px solid gray">
+              <div style="padding-top: 10px">
                 <b-form-group
                   label="파일명"
                   class="has-float-label"
@@ -29,7 +29,7 @@
                 >
                   <b-form-input
                     title="오디오 포맷"
-                    style="width: 330px; font-size: 14px"
+                    style="width: 350px; font-size: 14px"
                     class="editTask title-ellipsis"
                     v-model="this.MetaModalTitle"
                     disabled
@@ -38,7 +38,7 @@
                     trim
                   />
                 </b-form-group>
-                <div style="height: 50px; margin-top: 10px">
+                <div style="height: 50px; margin-top: 20px">
                   <b-form-group
                     label="파일 분량"
                     class="has-float-label"
@@ -46,7 +46,7 @@
                   >
                     <b-form-input
                       v-if="this.durationState"
-                      style="width: 330px"
+                      style="width: 350px"
                       class="editTask"
                       v-model="MetaData.duration"
                       disabled
@@ -57,7 +57,7 @@
                     </b-form-input>
                     <b-form-input
                       v-if="!this.durationState"
-                      style="width: 330px; background-color: #ffb600"
+                      style="width: 350px; background-color: #ffb600"
                       class="editTask"
                       v-model="MetaData.duration"
                       disabled
@@ -72,7 +72,7 @@
                     ></b-icon-alarm> -->
                   </b-form-group>
                 </div>
-                <div style="height: 50px; margin-top: 10px">
+                <div style="height: 50px; margin-top: 20px">
                   <b-form-group
                     label="오디오 포맷"
                     class="has-float-label"
@@ -80,7 +80,7 @@
                   >
                     <b-form-input
                       title="오디오 포맷"
-                      style="width: 330px"
+                      style="width: 350px"
                       class="editTask"
                       v-model="MetaData.audioFormat"
                       disabled
@@ -90,14 +90,14 @@
                     />
                   </b-form-group>
                 </div>
-                <div style="width: 300px; margin-top: 10px">
+                <div style="width: 300px; margin-top: 20px">
                   <b-form-group
                     label="소재 유형"
                     class="has-float-label"
                     style="font-size: 15px"
                   >
                     <b-form-select
-                      style="width: 330px"
+                      style="width: 350px"
                       id="filetype"
                       v-model="MetaData.typeSelected"
                       :options="typeOptions"
@@ -143,7 +143,7 @@
                 <div
                   style="
                     position: absolute;
-                    top: 620px;
+                    top: 640px;
                     left: 20px;
                     width: 950px;
                   "
@@ -187,13 +187,13 @@
           </div>
           <div :class="[isActive ? 'date-modal-button' : 'file-modal-button']">
             <!-- 로그 버튼 -->
-            <b-button
+            <!-- <b-button
               variant="outline-success"
               @click="log"
               style="margin-left: -80px"
             >
               <span class="label">확인</span>
-            </b-button>
+            </b-button> -->
             <!-- <b-button
               class="defaultButton"
               variant="outline-danger"
@@ -346,99 +346,87 @@ export default {
     log() {
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
+          editor: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
           memo: this.MetaData.memo,
         };
       } else if (this.MetaData.typeSelected == "program") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
           media: this.MetaData.mediaSelected,
           productId: this.ProgramSelected.productId,
           brdDTM: this.ProgramSelected.onairTime,
-          editor: this.MetaData.editor,
-          memo: this.MetaData.memo,
+          editor: sessionStorage.getItem("user_id"),
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
           media: this.MetaData.mediaSelected,
           productId: this.EventSelected.id,
           brdDT: this.date,
-          editor: this.MetaData.editor,
-          memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser,
+          editor: sessionStorage.getItem("user_id"),
         };
       } else if (this.MetaData.typeSelected == "scr-spot") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
           memo: this.MetaData.memo,
           advertiser: this.MetaData.advertiser,
-          editor: this.MetaData.editor,
+          editor: sessionStorage.getItem("user_id"),
           category: this.MetaData.mediaSelected,
         };
       } else if (this.MetaData.typeSelected == "static-spot") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
           media: this.MetaData.mediaSelected,
           productId: this.EventSelected.id,
           SDate: this.fileSDate,
           EDate: this.fileEDate,
-          editor: this.MetaData.editor,
+          editor: sessionStorage.getItem("user_id"),
           memo: this.MetaData.memo,
           advertiser: this.MetaData.advertiser,
         };
       } else if (this.MetaData.typeSelected == "var-spot") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
           media: this.MetaData.mediaSelected,
           productId: this.EventSelected.id,
           SDate: this.fileSDate,
           EDate: this.fileEDate,
-          editor: this.MetaData.editor,
+          editor: sessionStorage.getItem("user_id"),
           memo: this.MetaData.memo,
           advertiser: this.MetaData.advertiser,
         };
       } else if (this.MetaData.typeSelected == "report") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
           title: this.MetaData.title,
-          media: this.MetaData.mediaSelected,
-          productId: this.EventSelected.id,
+          category: this.MetaData.mediaSelected,
+          ProductId: this.EventSelected.id,
           brdDTM: this.date,
-          editor: this.MetaData.editor,
+          editor: sessionStorage.getItem("user_id"),
           memo: this.MetaData.memo,
           reporter: this.MetaData.reporter,
         };
       } else if (this.MetaData.typeSelected == "filler") {
         var data = {
-          UserId: sessionStorage.getItem("user_id"),
           category: this.MetaData.mediaSelected,
           title: this.MetaData.title,
           memo: this.MetaData.memo,
-          editor: this.MetaData.editor,
+          editor: sessionStorage.getItem("user_id"),
           brdDT: this.date,
         };
       }
+      console.log(data);
     },
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
-      "setEditor",
       "setMasteringListData",
       "setProcessing",
       "setFileUploading",
       "resetTitle",
       "resetMemo",
-      "resetEditor",
       "resetType",
       "resetUploaderCustomData",
     ]),
     resetEvent() {
       this.$emit("reset");
-    },
-    inputEditor(v) {
-      this.setEditor(v.id);
     },
     MetaModalOff() {
       if (this.processing || this.fileUploading) {
@@ -452,77 +440,70 @@ export default {
         //NOTE: 커스텀 데이터 파라미터
         if (this.MetaData.typeSelected == "my-disk") {
           var data = {
-            UserId: sessionStorage.getItem("user_id"),
+            editor: sessionStorage.getItem("user_id"),
             title: this.MetaData.title,
             memo: this.MetaData.memo,
           };
         } else if (this.MetaData.typeSelected == "program") {
           var data = {
             memo: this.MetaData.memo,
-            UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
             productId: this.ProgramSelected.productId,
             brdDTM: this.ProgramSelected.onairTime,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
           var data = {
             memo: this.MetaData.memo,
-            UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
             brdDT: this.date,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "scr-spot") {
           var data = {
-            UserId: sessionStorage.getItem("user_id"),
             title: this.MetaData.title,
             memo: this.MetaData.memo,
             advertiser: this.MetaData.advertiser,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
             category: this.MetaData.mediaSelected,
           };
         } else if (this.MetaData.typeSelected == "static-spot") {
           var data = {
-            UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
             SDate: this.fileSDate,
             EDate: this.fileEDate,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,
             advertiser: this.MetaData.advertiser,
           };
         } else if (this.MetaData.typeSelected == "var-spot") {
           var data = {
-            UserId: sessionStorage.getItem("user_id"),
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
             SDate: this.fileSDate,
             EDate: this.fileEDate,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,
             advertiser: this.MetaData.advertiser,
           };
         } else if (this.MetaData.typeSelected == "report") {
           var data = {
-            UserId: sessionStorage.getItem("user_id"),
             title: this.MetaData.title,
             category: this.MetaData.mediaSelected,
             ProductId: this.EventSelected.id,
             brdDTM: this.date,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,
             reporter: this.MetaData.reporter,
           };
         } else if (this.MetaData.typeSelected == "filler") {
           var data = {
-            UserId: sessionStorage.getItem("user_id"),
             category: this.MetaData.mediaSelected,
             title: this.MetaData.title,
             memo: this.MetaData.memo,
-            editor: this.MetaData.editor,
+            editor: sessionStorage.getItem("user_id"),
             brdDT: this.date,
           };
         }

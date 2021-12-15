@@ -1,24 +1,32 @@
 <template>
   <div>
     <transition name="fade">
-      <div style="position: absolute; top: 340px; left: -400px; z-index: 9999">
-        <b-form-input
-          class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
-          :maxLength="200"
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="메모"
-          trim
-        />
-
+      <div
+        style="
+          position: absolute;
+          top: 350px;
+          left: -400px;
+          z-index: 9999;
+          font-size: 16px;
+        "
+      >
+        <b-form-group label="메모" class="has-float-label">
+          <b-form-input
+            class="editTask"
+            v-model="MetaData.memo"
+            :state="memoState"
+            :maxLength="30"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="메모"
+            trim
+        /></b-form-group>
         <button
           v-show="memoState"
           style="
             position: relative;
             left: 315px;
-            top: -27px;
-            z-index: 99;
+            top: -40px;
+            z-index: 9999;
             width: 3px;
             heigth: 3px;
             background-color: #ffffff;
@@ -38,35 +46,44 @@
           v-show="memoState"
           style="
             position: relative;
-            left: 310px;
-            top: -20px;
+            left: 315px;
+            top: -35px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
           "
         >
-          {{ MetaData.memo.length }}/200
+          {{ MetaData.memo.length }}/30
         </p>
       </div>
     </transition>
     <transition name="fade">
-      <div>
-        <b-form-input
-          style="position: absolute; top: 395px; left: -400px; z-index: 9999"
-          class="editTask"
-          v-model="MetaData.advertiser"
-          :state="advertiserState"
-          :maxLength="50"
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="광고주 명"
-          trim
-        />
+      <div
+        style="
+          position: absolute;
+          top: 415px;
+          left: -400px;
+          font-size: 16px;
+          z-index: 9999;
+        "
+      >
+        <b-form-group label="광고주" class="has-float-label">
+          <b-form-input
+            class="editTask"
+            v-model="MetaData.advertiser"
+            :state="advertiserState"
+            :maxLength="50"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="광고주"
+            trim
+          />
+        </b-form-group>
         <button
           v-show="advertiserState"
           style="
             position: relative;
-            left: -86px;
-            top: 379px;
+            left: 315px;
+            top: -40px;
             z-index: 9999;
             width: 3px;
             heigth: 3px;
@@ -87,8 +104,8 @@
           v-show="advertiserState"
           style="
             position: relative;
-            left: -90px;
-            top: 385px;
+            left: 315px;
+            top: -35px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -105,23 +122,27 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 460px;
+            top: 485px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
           "
         >
-          <common-vue-select
-            style="font-size: 14px; width: 350px; border: 1px solid #008ecc"
-            class="h105"
-            :suggestions="editorOptions"
-            @inputEvent="inputEditor"
-          ></common-vue-select>
+          <b-form-input
+            title="제작자"
+            style="width: 350px; font-size: 14px"
+            class="editTask"
+            :value="userID"
+            disabled
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="제작자"
+            trim
+          />
         </b-form-group>
       </div>
     </transition>
     <!-- 시작/종료일 -->
-    <div style="position: absolute; top: 30px; width: 550px">
+    <div style="position: absolute; top: 40px; width: 550px">
       <div>
         <b-form-group
           label="시작일"
@@ -143,7 +164,7 @@
                 :value="fileSDate"
                 @input="eventSInput"
                 button-only
-                button-variant="outline-primary"
+                button-variant="outline-dark"
                 left
                 aria-controls="example-input"
                 @context="onContext"
@@ -182,7 +203,7 @@
               style="height: 33px; font-size: 13px"
               id="edateinput"
               type="text"
-              class="form-control input-picker date-input"
+              class="form-control input-picker"
               :value="fileEDate"
               @input="oneInput"
             />
@@ -192,7 +213,7 @@
                 :value="fileEDate"
                 @input="eventEInput"
                 button-only
-                button-variant="outline-primary"
+                button-variant="outline-dark"
                 right
                 aria-controls="example-input"
                 @context="onContext"
@@ -246,13 +267,13 @@
         >검색</b-button
       >
     </div>
-    <div style="position: absolute; top: 85px">
+    <div style="position: absolute; top: 90px">
       <DxDataGrid
         name="mcrDxDataGrid"
         v-show="this.EventData.id != ''"
         style="
-          height: 280px;
-          border: 1px solid #008ecc;
+          height: 300px;
+          border: 1px solid silver;
           font-family: 'MBC 새로움 M';
         "
         :data-source="EventData"
@@ -277,14 +298,14 @@
       v-show="!isActive && EventSelected.id != ''"
       style="
         position: absolute;
-        top: 385px;
+        top: 420px;
         width: 550px;
         height: 110px;
         padding-top: 10px;
         padding-left: 10px;
         padding-right: 10px;
         float: left;
-        border: 1px solid #008ecc;
+        border: 1px solid silver;
         font-family: 'MBC 새로움 M';
       "
     >

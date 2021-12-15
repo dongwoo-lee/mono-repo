@@ -22,7 +22,6 @@ export default {
     MetaData: {
       title: "",
       memo: "",
-      editor: "",
       reporter: "",
       usage: "",
       advertiser: "",
