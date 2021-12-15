@@ -12,6 +12,7 @@ namespace MAMBrowser.MAMDto
         public string ProductId { get; set; }
         public string BrdDT { get; set; }
         public string Editor { get; set; }
-    
+        public string Advertiser { get; set; }
+
     }
 }

@@ -16,6 +16,13 @@
       ></program-update>
     </h4>
 
+    <h4 v-if="updateScreenName == 'mcr-spot'" slot="body" class="h240">
+      <mcr-spot-update
+        :rowData="rowData"
+        @updateMcrSpotMeta="getUpdateMeta"
+      ></mcr-spot-update>
+    </h4>
+
     <h4 v-if="updateScreenName == 'scr-spot'" slot="body" class="h240">
       <scr-spot-update
         :rowData="rowData"
@@ -28,6 +35,21 @@
         :rowData="rowData"
         @updateReportMeta="getUpdateMeta"
       ></report-update>
+    </h4>
+
+    <h4 v-if="updateScreenName == 'filler-time'" slot="body" class="h240">
+      <filler-time-update
+        :rowData="rowData"
+        @updateFillerTimeMeta="getUpdateMeta"
+      ></filler-time-update>
+    </h4>
+
+    <h4 v-if="updateScreenName == 'filler'" slot="body" class="h500">
+      <filler-update
+        :rowData="rowData"
+        @updateFillerMeta="getUpdateMeta"
+        :fillerType="fillerType"
+      ></filler-update>
     </h4>
 
     <h3 slot="footer">
@@ -46,15 +68,21 @@
 import CommonUpdateModal from "../../Modal/CommonUpdateModal.vue";
 import MyDiskUpdate from "./updateComponent/myDiskUpdate.vue";
 import ProgramUpdate from "./updateComponent/programUpdate.vue";
+import McrSpotUpdate from "./updateComponent/mcrSpotUpdate.vue";
 import ScrSpotUpdate from "./updateComponent/scrSpotUpdate.vue";
 import ReportUpdate from "./updateComponent/reportUpdate.vue";
+import FillerTimeUpdate from "./updateComponent/fillerTimeUpdate.vue";
+import FillerUpdate from "./updateComponent/fillerUpdate.vue";
 export default {
   components: {
     CommonUpdateModal,
     MyDiskUpdate,
     ProgramUpdate,
+    McrSpotUpdate,
     ScrSpotUpdate,
     ReportUpdate,
+    FillerTimeUpdate,
+    FillerUpdate,
   },
   props: {
     rowData: {
@@ -62,6 +90,10 @@ export default {
       default: "",
     },
     updateScreenName: {
+      type: String,
+      default: "",
+    },
+    fillerType: {
       type: String,
       default: "",
     },

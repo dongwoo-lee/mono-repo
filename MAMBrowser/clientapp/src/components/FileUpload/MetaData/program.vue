@@ -226,7 +226,7 @@
         padding-right: 10px;
         float: left;
         border: 1px solid silver;
-        font-size: 13px;
+        font-size: 16px;
         font-family: 'MBC 새로움 M';
       "
     >

@@ -100,7 +100,7 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
-              :etcData="getEtc"
+              :etcData="['delete', 'modify']"
               :isPossibleUpdate="authorityCheck(props.props.rowData)"
               :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
@@ -128,6 +128,7 @@
         v-if="metaUpdate"
         :rowData="rowData"
         :updateScreenName="updateScreenName"
+        :fillerType="fillerType"
         @updateFile="masteringUpdate"
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
@@ -171,6 +172,7 @@ export default {
       deleteId: "",
       metaUpdate: false,
       metaDelete: false,
+      fillerType: "",
       rowData: "",
       updateScreenName: "",
       searchItems: {
@@ -267,11 +269,6 @@ export default {
     this.getOptions();
     this.getScreenName();
   },
-  computed: {
-    getEtc() {
-      return this.screenName == "pr" ? ["delete", "modify"] : ["delete"];
-    },
-  },
   methods: {
     authorityCheck(e) {
       if (
@@ -332,7 +329,14 @@ export default {
     },
     onMetaModifyPopup(rowData) {
       this.metaUpdate = true;
-      this.updateScreenName = "pr";
+      this.updateScreenName = "filler";
+      if (this.screenName == "pr") {
+        this.fillerType = "pro";
+      } else if (this.screenName == "general") {
+        this.fillerType = "general";
+      } else if (this.screenName == "etc") {
+        this.fillerType = "etc";
+      }
       this.rowData = rowData;
     },
     UpdateModalOff() {

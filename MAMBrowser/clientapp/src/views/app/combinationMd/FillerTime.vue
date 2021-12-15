@@ -118,11 +118,13 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
-              :etcData="['delete']"
+              :etcData="['delete', 'modify']"
               :isPossibleDelete="authorityCheck(props.props.rowData)"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaUpdatePopup"
               @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
@@ -139,6 +141,18 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
+
+    <!-- 마스터링 메타 데이터 수정 -->
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
+
     <!-- 마스터링 파일 삭제 -->
     <transition name="slide-fade">
       <file-delete
@@ -167,13 +181,17 @@ import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect, FileDelete },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinFillerPage],
   data() {
     return {
       deleteId: "",
+      metaUpdate: false,
+      updateScreenName: "",
+      rowData: "",
       MySpaceScreenName: "[Filler 시간]",
       metaDelete: false,
       searchItems: {
@@ -344,6 +362,20 @@ export default {
       var tmpName = `${rowData.name}_${rowData.brdDate}_${rowData.endDT}_${rowData.id}`;
       return tmpName;
     },
+    onMetaUpdatePopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "filler-time";
+      this.rowData = rowData;
+    },
+
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/filler-time", e).then((res) => {
+        console.log(res);
+      });
+    },
     DeleteModalOff() {
       this.metaDelete = false;
     },
@@ -352,7 +384,7 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
+      axios.delete(`/api/Mastering/filler-time/${e.deleteId}`).then((res) => {
         console.log(res);
       });
     },

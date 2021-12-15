@@ -199,7 +199,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("mcr-spot")]
         public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor)
+            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -244,6 +244,7 @@ namespace MAMBrowser.Controllers
                         mcr.ProductId = productId;
                         mcr.BrdDT = brdDT;
                         mcr.Editor = editor;
+                        mcr.Advertiser = advertiser;
                         mcr.FilePath = newFilePath;
                         mcr.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         mcr.SoundType = SoundDataTypes.MCR_SPOT;
@@ -690,6 +691,25 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        [HttpPatch("mcr-spot")]
+        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] AudioFileMetaBase jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
         [HttpPatch("scr-spot")]
         public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] AudioFileMetaBase jsonObject)
         {
@@ -715,6 +735,25 @@ namespace MAMBrowser.Controllers
         {
             DTO_RESULT result = new DTO_RESULT();
             
+            try
+            {
+                if (jsonObject == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return result;
+        }
+
+        [HttpPatch("filler-time")]
+        public ActionResult<DTO_RESULT> UpdateFillerTime([FromBody] AudioFileMetaBase jsonObject)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
             try
             {
                 if (jsonObject == null)
