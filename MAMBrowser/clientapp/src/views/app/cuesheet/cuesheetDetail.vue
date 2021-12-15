@@ -155,9 +155,6 @@ export default {
       widgetIndex: 16,
     };
   },
-  mounted() {
-    document.getElementById("app-container").classList.add("drag_");
-  },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
@@ -173,11 +170,6 @@ export default {
 };
 </script>
 <style>
-.drag_ {
-  position: fixed;
-  height: 100%;
-  overflow: auto;
-}
 .detail_view {
   position: relative;
   width: 100%;

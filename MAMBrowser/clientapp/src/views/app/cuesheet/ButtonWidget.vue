@@ -593,23 +593,6 @@ export default {
     resetModal_tem() {
       this.tmpTitleTextBoxValue = "이름없는 템플릿";
     },
-    resetModal_weekedit() {
-      // if (this.type == "B") {
-      //   console.log(this.cueInfo.activeWeekList);
-      //   this.cueInfo.activeWeekList.forEach((week)=>{
-      //     if(Object.)
-      //   })
-      //   // this.weekButtons.forEach((week) => {
-      //   //   this.cueInfo.activeWeekList.forEach((item) => {
-      //   //     if (week.value == item) {
-      //   //       week.state = true;
-      //   //     } else {
-      //   //       week.state = false;
-      //   //     }
-      //   //   });
-      //   // });
-      // }
-    },
     clearOk() {
       if (this.selected.length > 0) {
         if (this.selected.includes("print")) {
@@ -799,6 +782,37 @@ export default {
         this.SET_CUEINFO(cueData);
         this.$refs["modal-editWeek"].hide();
       }
+    },
+    resetModal_weekedit() {
+      if (this.type == "B") {
+        this.weekButtons.forEach((week) => {
+          if (this.cueInfo.productWeekList[0].weekList.includes(week.value)) {
+            if (this.cueInfo.activeWeekList.includes(week.value)) {
+              week.state = true;
+            } else {
+              week.disable = true;
+            }
+          } else {
+            week.state = false;
+            week.disable = false;
+          }
+        });
+      }
+      // if (this.type == "B") {
+      //   console.log(this.cueInfo.activeWeekList);
+      //   this.cueInfo.activeWeekList.forEach((week)=>{
+      //     if(Object.)
+      //   })
+      //   // this.weekButtons.forEach((week) => {
+      //   //   this.cueInfo.activeWeekList.forEach((item) => {
+      //   //     if (week.value == item) {
+      //   //       week.state = true;
+      //   //     } else {
+      //   //       week.state = false;
+      //   //     }
+      //   //   });
+      //   // });
+      // }
     },
     editOk() {
       this.SET_CUEINFO(this.editOptions);

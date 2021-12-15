@@ -255,7 +255,7 @@ export default {
           Regions.create(),
         ],
         container: "#waveform",
-        forceDecode: "true",
+        //forceDecode: "true",
         waveColor: "gray",
         progressColor: "skyblue",
         backend: "MediaElementWebAudio",
@@ -303,7 +303,6 @@ export default {
       wavesurfer.on("ready", () => {
         vm.LoadAudioInfo();
         vm.Play();
-        //처음에 정한 som / eom 에 따라 지역 그려주는거 이쪽에서 해야함 지금은 우선 전체로 되어잇음 if로 나눠주기
         if (this.startPoint > 0) {
           vm.options.start = this.startPoint / 1000;
         }

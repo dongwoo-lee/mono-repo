@@ -38,6 +38,7 @@
           :show-drag-icons="false"
           :on-add="onAddPrint"
           :on-reorder="onReorderPrint"
+          :on-drag-start="onDragStart"
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
@@ -555,6 +556,9 @@ export default {
     },
     onValueChanged_etcText(value, cellInfo) {
       cellInfo.data.etc = value.value;
+    },
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
     },
     viewtableOnToolbarPreparing(e) {
       let toolbarItems = e.toolbarOptions.items;
@@ -1156,6 +1160,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.drag_ {
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
 .TabDiv {
   padding: 10px;
 }

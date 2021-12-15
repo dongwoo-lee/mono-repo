@@ -59,10 +59,6 @@ import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 
-window.onload = () => {
-  document.getElementById("app-container").classList.add("drag_");
-};
-
 export default {
   components: {
     SearchWidget,
@@ -88,11 +84,7 @@ export default {
     var ele = document.getElementById("app-container");
     this.classText = ele.classList.item(1);
   },
-  watch: {
-    classText() {
-      document.getElementById("app-container").classList.add("drag_");
-    },
-  },
+
   computed: {},
   methods: {
     onTextEdit() {
@@ -126,11 +118,6 @@ export default {
 };
 </script>
 <style>
-.drag_ {
-  position: fixed;
-  height: 100%;
-  overflow: auto;
-}
 .detail_view {
   position: relative;
   width: 100%;

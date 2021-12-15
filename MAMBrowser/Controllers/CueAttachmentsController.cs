@@ -44,8 +44,6 @@ namespace MAMBrowser.Controllers
                 string xmlFileFullPath = Path.Combine(rootFolder, xmlFileName);
                 string jsonFileFullPath = Path.Combine(rootFolder, jsonFileName);
 
-               // var filePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.xml";
-               // var filePathJson = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022\MetaData.json";
                 DirectoryInfo di = new DirectoryInfo(rootFolder);
                 if (!di.Exists)
                 {
@@ -61,7 +59,6 @@ namespace MAMBrowser.Controllers
                 {
                     if (ele.FILEPATH != null && ele.FILEPATH != "")
                     {
-                        //ele.FILEPATH = @"\\test_svr\MBCDATA\FILLER\FC00005956.wav";
                         var outFilePath = Path.Combine(rootFolder, Path.GetFileName(ele.FILEPATH));
                         var audioData = new CueSheetConAudioDTO();
                         ele.AUDIOS = new List<CueSheetConAudioDTO>();
@@ -198,7 +195,6 @@ namespace MAMBrowser.Controllers
                 var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
                 ZipFileManager.Instance.CreateZIPFile(Path.GetDirectoryName(rootFolder), zipFilePath);
-                //return zipFileName;
                 return Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
             }
@@ -212,14 +208,6 @@ namespace MAMBrowser.Controllers
         [HttpGet("exportZipFileDownload")]
         public FileResult ExportZipFileDownload([FromQuery] string fileName)
         {
-            //var rootFolder = Startup.AppSetting.TempExportPath;
-            //if (!Directory.Exists(rootFolder))
-            //    Directory.CreateDirectory(rootFolder);
-
-            //var fullFilePath = Path.Combine(rootFolder, fileName);
-
-
-            //var zipFilePath = @"C:\Users\kimeunbee\Desktop\알집_테스트\20211022.zip";
             var provider = new FileExtensionContentTypeProvider();
             string contentType;
             if (!provider.TryGetContentType(fileName, out contentType))

@@ -192,8 +192,6 @@ export default {
     };
   },
   async mounted() {
-    document.getElementById("app-container").classList.add("drag_");
-
     this.autoSaveFun = setInterval(() => {
       if (this.cueSheetAutoSave) {
         this.saveDayCue();
@@ -269,11 +267,6 @@ export default {
 };
 </script>
 <style>
-.drag_ {
-  position: fixed;
-  height: 100%;
-  overflow: auto;
-}
 .detail_view {
   position: relative;
   width: 100%;

@@ -7,6 +7,7 @@
       :allow-drop-inside-item="true"
       @add="onAdd($event, index)"
       @remove="onRemove($event, index)"
+      :on-drag-start="onDragStart"
       v-for="index in widgetIndex"
       :key="index"
       class="cart_div"
@@ -641,6 +642,9 @@ export default {
         }
       }
     },
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
+    },
     onTextEdit(index) {
       if (this.cueInfo.cuetype == "A") {
         return;
@@ -698,6 +702,11 @@ export default {
 </script>
 
 <style >
+.drag_ {
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
 .cartC_view {
   padding: 10px;
   display: grid;

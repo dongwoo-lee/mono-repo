@@ -132,7 +132,11 @@
               </div>
             </div>
           </template>
-          <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
+          <DxRowDragging
+            :show-drag-icons="false"
+            group="tasksGroup"
+            :on-drag-start="onDragStart"
+          />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling showScrollbar="always" />
@@ -166,7 +170,11 @@
               />
             </div>
           </template>
-          <DxRowDragging :show-drag-icons="false" group="tasksGroup" />
+          <DxRowDragging
+            :show-drag-icons="false"
+            group="tasksGroup"
+            :on-drag-start="onDragStart"
+          />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling mode="virtual" />
@@ -422,6 +430,9 @@ export default {
         }
       }
     },
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
+    },
     //검색
     onSubmit(e) {
       const userId = sessionStorage.getItem(USER_ID);
@@ -563,6 +574,11 @@ export default {
 </script>
 
 <style>
+.drag_ {
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
 .contentsLength {
   position: absolute;
   bottom: 3px;

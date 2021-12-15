@@ -34,6 +34,7 @@
           :on-add="onAddChannelAB"
           :on-drag-end="onDragEndchannelAB"
           :on-reorder="onReorderChannelAB"
+          :on-drag-start="onDragStart"
           :show-drag-icons="false"
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
@@ -549,7 +550,7 @@ export default {
           arrData.splice(e.toIndex, 0, row);
           this.rowData.rownum = this.rowData.rownum + 1;
         }
-      } else if (e.fromData.subtitle !== undefined) {
+      } else if (e.fromData.cartcode != undefined) {
         var search_row = e.fromData;
         var row = { ...search_row };
         row.rownum = this.rowData.rownum;
@@ -566,6 +567,9 @@ export default {
       this.abCartArr.forEach((ele, index) => {
         ele.rownum = index + 1;
       });
+    },
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
     },
     onReorderChannelAB(e) {
       var arrData = this.abCartArr;
@@ -770,6 +774,11 @@ export default {
 </script>
 
 <style>
+.drag_ {
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
 .abchannel_view {
   /* position: absolute; */
   /* border: solid 0.5px #ddd; */
