@@ -16,6 +16,13 @@
       ></program-update>
     </h4>
 
+    <h4 v-if="updateScreenName == 'pro'" slot="body" class="h500">
+      <pro-update
+        :rowData="rowData"
+        @updateProMeta="getUpdateMeta"
+      ></pro-update>
+    </h4>
+
     <h4 v-if="updateScreenName == 'mcr-spot'" slot="body" class="h240">
       <mcr-spot-update
         :rowData="rowData"
@@ -68,6 +75,7 @@
 import CommonUpdateModal from "../../Modal/CommonUpdateModal.vue";
 import MyDiskUpdate from "./updateComponent/myDiskUpdate.vue";
 import ProgramUpdate from "./updateComponent/programUpdate.vue";
+import ProUpdate from "./updateComponent/proUpdate.vue";
 import McrSpotUpdate from "./updateComponent/mcrSpotUpdate.vue";
 import ScrSpotUpdate from "./updateComponent/scrSpotUpdate.vue";
 import ReportUpdate from "./updateComponent/reportUpdate.vue";
@@ -78,6 +86,7 @@ export default {
     CommonUpdateModal,
     MyDiskUpdate,
     ProgramUpdate,
+    ProUpdate,
     McrSpotUpdate,
     ScrSpotUpdate,
     ReportUpdate,
@@ -108,6 +117,7 @@ export default {
       this.$emit("UpdateModalClose");
     },
     updateFile() {
+      console.log(this.updateMeta);
       this.$emit("updateFile", this.updateMeta);
     },
     getUpdateMeta(v) {

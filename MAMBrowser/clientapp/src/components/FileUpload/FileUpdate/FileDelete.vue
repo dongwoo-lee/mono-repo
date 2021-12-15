@@ -26,6 +26,10 @@ export default {
       type: [],
       default: "",
     },
+    isScrSpot: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {};
@@ -39,8 +43,15 @@ export default {
     },
     deleteFile() {
       var deleteInfo = {
-        deleteId: this.rowData.rowNO,
+        deleteId: this.rowData.id,
       };
+      if (this.isScrSpot) {
+        deleteInfo = {
+          spotID: this.rowData.id,
+          productID: this.rowData.productID,
+          brdDT: this.rowData.brdDT,
+        };
+      }
       this.$emit("deleteFile", deleteInfo);
     },
   },

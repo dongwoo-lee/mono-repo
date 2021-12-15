@@ -125,6 +125,7 @@
       <file-delete
         v-if="metaDelete"
         :rowData="rowData"
+        :isScrSpot="true"
         @deleteFile="masteringDelete"
         @DeleteModalClose="DeleteModalOff"
       ></file-delete>
@@ -324,7 +325,7 @@ export default {
       this.metaUpdate = false;
     },
     masteringUpdate(e) {
-      axios.patch("/api/Mastering/filler", e).then((res) => {
+      axios.patch("/api/Mastering/scr-spot", e).then((res) => {
         console.log(res);
       });
     },
@@ -336,9 +337,13 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
-        console.log(res);
-      });
+      axios
+        .delete(
+          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}`
+        )
+        .then((res) => {
+          console.log(res);
+        });
     },
   },
 };

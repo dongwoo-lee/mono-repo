@@ -713,7 +713,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("my-disk")]
-        public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] UpdateMyDiskMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -732,7 +732,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("program")]
-        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdateProgram([FromBody] UpdateProgramMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -751,7 +751,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("mcr-spot")]
-        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdateMcrSpot([FromBody] UpdateMcrSpotMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -770,7 +770,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("scr-spot")]
-        public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdateScrSpot([FromBody] UpdateScrSpotMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -789,8 +789,7 @@ namespace MAMBrowser.Controllers
         }
         
         [HttpPatch("report")]
-        public ActionResult<DTO_RESULT> UpdateReport([FromBody] AudioFileMetaBase jsonObject)
-        
+        public ActionResult<DTO_RESULT> UpdateReport([FromBody] UpdateReportMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
             
@@ -809,7 +808,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("filler-time")]
-        public ActionResult<DTO_RESULT> UpdateFillerTime([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdateFillerTime([FromBody] UpdateFillerTimeMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -828,7 +827,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("filler")]
-        public ActionResult<DTO_RESULT> UpdateFiller([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdateFiller([FromBody] UpdateFillerMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -847,7 +846,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPatch("pro")]
-        public ActionResult<DTO_RESULT> UpdatePro([FromBody] AudioFileMetaBase jsonObject)
+        public ActionResult<DTO_RESULT> UpdatePro([FromBody] UpdateProMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -884,14 +883,14 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        [HttpDelete("scr-spot/{id}")]
-        public ActionResult<DTO_RESULT> DeleteScrSpot(string id)
+        [HttpDelete("scr-spot")]
+        public ActionResult<DTO_RESULT> DeleteScrSpot([FromQuery] string spotID, [FromQuery] string productID, [FromQuery] string brdDT)
         {
             DTO_RESULT result = new DTO_RESULT();
 
             try
             {
-                if (id == null)
+                if (spotID == null || productID  == null || brdDT == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -981,25 +980,6 @@ namespace MAMBrowser.Controllers
 
         [HttpDelete("filler-time/{id}")]
         public ActionResult<DTO_RESULT> DeleteFillerTime(string id)
-        {
-            DTO_RESULT result = new DTO_RESULT();
-
-            try
-            {
-                if (id == null)
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
-
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            return result;
-        }
-
-        [HttpDelete("dl/{id}")]
-        public ActionResult<DTO_RESULT> DeleteDL(string id)
         {
             DTO_RESULT result = new DTO_RESULT();
 

@@ -6,6 +6,9 @@
 .h120 .vs__dropdown-menu {
     height: 120px;
 }
+.h300 .vs__dropdown-menu {
+    height: 300px;
+}
 .btn-outline-dark:hover {
     background-color: white;
     border-color: gray;

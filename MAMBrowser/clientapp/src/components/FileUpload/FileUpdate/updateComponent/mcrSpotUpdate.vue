@@ -44,6 +44,7 @@ export default {
     },
     update() {
       var meta = {
+        ID: this.rowData.id,
         memo: this.memo,
       };
       this.$emit("updateMcrSpotMeta", meta);

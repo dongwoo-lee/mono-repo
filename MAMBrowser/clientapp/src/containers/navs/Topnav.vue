@@ -42,8 +42,8 @@
                   style="
                     padding: 7px !important;
                     padding-right: 0px;
-                    border-color: #008ecc;
-                    color: #008ecc;
+                    border-color: silver;
+                    color: black;
                     background-color: white;
                   "
                 >
@@ -77,8 +77,8 @@
                   style="
                     padding: 7px !important;
                     padding-right: 20px;
-                    border-color: #008ecc;
-                    color: #008ecc;
+                    border-color: silver;
+                    color: black;
                     background-color: white;
                   "
                 >

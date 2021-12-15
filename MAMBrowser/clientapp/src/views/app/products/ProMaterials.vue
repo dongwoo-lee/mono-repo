@@ -165,6 +165,7 @@ export default {
     return {
       MySpaceScreenName: "[(구)프로]",
       deleteId: "",
+      userAudioList: [],
       metaUpdate: false,
       updateScreenName: "",
       metaDelete: false,
@@ -268,17 +269,26 @@ export default {
 
     this.$nextTick(() => {
       this.getData();
+      var userId = sessionStorage.getItem("user_id");
+      axios
+        .get(`/api/Categories/user-audiocodes?userId=${userId}`)
+        .then((res) => {
+          res.data.resultObject.data.forEach((e) => {
+            this.userAudioList.push(e.id);
+          });
+        });
     });
   },
   methods: {
     authorityCheck(e) {
-      if (
-        e.editorID == sessionStorage.getItem("user_id") ||
-        sessionStorage.getItem("authority") == "ADMIN"
-      ) {
-        return true;
+      if (sessionStorage.getItem("authority") != "ADMIN") {
+        if (this.userAudioList.includes(e.categoryID)) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
-        return false;
+        return true;
       }
     },
     SDateErrorLog() {
@@ -339,7 +349,7 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
+      axios.delete(`/api/Mastering/pro/${e.deleteId}`).then((res) => {
         console.log(res);
       });
     },

@@ -145,6 +145,7 @@ export default {
   data() {
     return {
       deleteId: "",
+      userPgmList: [],
       vSelectProps: {},
       metaUpdate: false,
       updateScreenName: "",
@@ -292,17 +293,27 @@ export default {
     this.getEditorForPd();
     this.$nextTick(() => {
       this.getData();
+      var userId = sessionStorage.getItem("user_id");
+
+      axios
+        .get(
+          `/api/Categories/user-pgmcodes?media=${this.searchItems.media}&userId=${userId}`
+        )
+        .then((res) => {
+          this.userPgmList = res.data.resultObject.data;
+        });
     });
   },
   methods: {
     authorityCheck(e) {
-      if (
-        e.editorID == sessionStorage.getItem("user_id") ||
-        sessionStorage.getItem("authority") == "ADMIN"
-      ) {
-        return true;
+      if (sessionStorage.getItem("authority") != "ADMIN") {
+        if (this.userPgmList.includes(e.productID)) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
-        return false;
+        return true;
       }
     },
     mediaReset() {

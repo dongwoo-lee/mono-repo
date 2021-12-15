@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       reportModal: false,
-      media: this.rowData.media,
+      media: this.rowData.categoryName,
       reporter: this.rowData.reporter,
       date: this.convertDateSTH(this.rowData.brdDT),
       brdDT: this.convertDateSTH(this.rowData.brdDT),
@@ -113,6 +113,9 @@ export default {
   created() {
     axios.get("/api/categories/report").then((res) => {
       res.data.resultObject.data.forEach((e) => {
+        if (e.name == this.rowData.categoryName) {
+          this.media = e.id;
+        }
         this.mediaOptions.push({
           value: e.id,
           text: e.name,
@@ -158,7 +161,8 @@ export default {
     },
     update() {
       var meta = {
-        media: this.media,
+        ID: this.rowData.id,
+        category: this.media,
         reporter: this.reporter,
         brdDT: this.brdDT.replace(/-/g, ""),
         pgmName: this.pgmName,

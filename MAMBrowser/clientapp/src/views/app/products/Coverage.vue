@@ -344,7 +344,7 @@ export default {
       this.metaUpdate = false;
     },
     masteringUpdate(e) {
-      axios.patch("/api/Mastering/filler", e).then((res) => {
+      axios.patch("/api/Mastering/report", e).then((res) => {
         console.log(res);
       });
     },
@@ -356,7 +356,7 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
+      axios.delete(`/api/Mastering/report/${e.deleteId}`).then((res) => {
         console.log(res);
       });
     },

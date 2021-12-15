@@ -105,11 +105,13 @@ export default {
     },
     update() {
       var meta = {
-        media: this.media,
+        ID: this.rowData.id,
+        category: this.media,
         reporter: this.reporter,
         brdDT: this.brdDT.replace(/-/g, ""),
         pgmName: this.pgmName,
         pgmid: this.pgmid,
+        memo: this.memo,
         name: this.name,
       };
       this.$emit("updateFillerMeta", meta);

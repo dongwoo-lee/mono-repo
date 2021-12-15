@@ -48,6 +48,7 @@ export default {
     },
     update() {
       var meta = {
+        ID: this.rowData.id,
         name: this.name,
         memo: this.memo,
       };

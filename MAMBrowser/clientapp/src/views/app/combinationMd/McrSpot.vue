@@ -353,7 +353,7 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/scr-spot/${e.deleteId}`).then((res) => {
+      axios.delete(`/api/Mastering/mcr-spot/${e.deleteId}`).then((res) => {
         console.log(res);
       });
     },
