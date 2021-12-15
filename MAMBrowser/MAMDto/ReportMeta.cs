@@ -9,7 +9,7 @@ namespace MAMBrowser.MAMDto
     {
         public string Title { get; set; }
         public string Category { get; set; }
-        public string BrdDTM { get; set; }
+        public string BrdDT { get; set; }
         public string Reporter { get; set; }
         public string Editor { get; set; }
         public string Memo { get; set; }

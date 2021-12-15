@@ -57,7 +57,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("my-disk")]
-        public ActionResult<DTO_RESULT> RegMyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string title, [FromForm] string memo)
+        public ActionResult<DTO_RESULT> RegMyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string editor, [FromForm] string title, [FromForm] string memo)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -96,7 +96,7 @@ namespace MAMBrowser.Controllers
                         MyDiskMeta MyDisk = new MyDiskMeta();
                         MyDisk.Title = title;
                         MyDisk.Memo = memo;
-                        MyDisk.UserId = UserId;
+                        MyDisk.Editor = editor;
                         MyDisk.FilePath = newFilePath;
                         MyDisk.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         MyDisk.SoundType = SoundDataTypes.MY_DISK;
@@ -126,7 +126,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("program")]
         public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string editor)
+             [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -165,7 +165,6 @@ namespace MAMBrowser.Controllers
 
                         ProgramMeta Program = new ProgramMeta();
 
-                        Program.UserId = UserId;
                         Program.Memo = memo;
                         Program.Media = media;
                         Program.ProductId = productId;
@@ -199,7 +198,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("mcr-spot")]
         public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
+            [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -238,7 +237,6 @@ namespace MAMBrowser.Controllers
 
                         McrMeta mcr = new McrMeta();
 
-                        mcr.UserId = UserId;
                         mcr.Memo = memo;
                         mcr.Media = media;
                         mcr.ProductId = productId;
@@ -273,7 +271,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("scr-spot")]
         public ActionResult<DTO_RESULT> RegScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
-            [FromForm] string UserId, [FromForm] string title, [FromForm] string memo, [FromForm] string advertiser, [FromForm] string editor, 
+             [FromForm] string title, [FromForm] string memo, [FromForm] string advertiser, [FromForm] string editor, 
             [FromForm] string category)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -313,7 +311,6 @@ namespace MAMBrowser.Controllers
 
                         ScrMeta scr = new ScrMeta();
 
-                        scr.UserId = UserId;
                         scr.Title = title;
                         scr.Memo = memo;
                         scr.Advertiser = advertiser;
@@ -347,7 +344,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("static-spot")]
         public ActionResult<DTO_RESULT> RegStaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor, 
+             [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor, 
             [FromForm] string media, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -387,7 +384,6 @@ namespace MAMBrowser.Controllers
 
                         StaticSpotMeta staticSpot = new StaticSpotMeta();
 
-                        staticSpot.UserId = UserId;
                         staticSpot.SDate = SDate;
                         staticSpot.Memo = memo;
                         staticSpot.EDate = EDate;
@@ -423,7 +419,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("var-spot")]
         public ActionResult<DTO_RESULT> RegVarSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-            [FromForm] string UserId, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor,
+             [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor,
             [FromForm] string media, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -463,7 +459,6 @@ namespace MAMBrowser.Controllers
 
                         VarSpotMeta varSpot = new VarSpotMeta();
 
-                        varSpot.UserId = UserId;
                         varSpot.SDate = SDate;
                         varSpot.Memo = memo;
                         varSpot.EDate = EDate;
@@ -498,8 +493,8 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("report")]
-        public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId,[FromForm] string title,  [FromForm] string memo, 
-            [FromForm] string productId, [FromForm] string brdDTM, [FromForm] string reporter, [FromForm] string editor, [FromForm] string category)
+        public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string title,  [FromForm] string memo, 
+            [FromForm] string productId, [FromForm] string brdDT, [FromForm] string reporter, [FromForm] string editor, [FromForm] string category)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -538,9 +533,8 @@ namespace MAMBrowser.Controllers
 
                         ReportMeta report = new ReportMeta();
 
-                        report.UserId = UserId;
                         report.Title = title;
-                        report.BrdDTM = brdDTM;
+                        report.BrdDT = brdDT;
                         report.Memo = memo;
                         report.Reporter = reporter;
                         report.Category = category;
@@ -573,7 +567,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("filler")]
-        public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string UserId, [FromForm] string title,
+        public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string title,
             [FromForm] string memo, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string category)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -613,7 +607,6 @@ namespace MAMBrowser.Controllers
 
                         FillerMeta Filler = new FillerMeta();
 
-                        Filler.UserId = UserId;
                         Filler.Title = title;
                         Filler.Memo = memo;
                         Filler.Category = category;
