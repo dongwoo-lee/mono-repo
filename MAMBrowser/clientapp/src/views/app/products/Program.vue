@@ -138,7 +138,6 @@ import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
-import { mapActions } from "vuex";
 import axios from "axios";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
@@ -306,7 +305,6 @@ export default {
     });
   },
   methods: {
-    ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     authorityCheck(e) {
       if (sessionStorage.getItem("authority") != "ADMIN") {
         if (this.userPgmList.includes(e.productID)) {
@@ -355,13 +353,13 @@ export default {
           this.$fn.notify("primary", {
             title: "메타 데이터 수정 성공",
           });
-          this.uploadRefresh();
+          this.getData();
         } else {
           this.UpdateModalOff();
           $fn.notify("error", {
             message: "메타 데이터 수정 실패: " + res.data.errorMsg,
           });
-          this.uploadRefresh();
+          this.getData();
         }
       });
     },
@@ -379,13 +377,13 @@ export default {
           this.$fn.notify("primary", {
             title: "파일 삭제 성공",
           });
-          this.uploadRefresh();
+          this.getData();
         } else {
           this.UpdateModalOff();
           $fn.notify("error", {
             message: "파일 삭제 실패: " + res.data.errorMsg,
           });
-          this.uploadRefresh();
+          this.getData();
         }
       });
     },

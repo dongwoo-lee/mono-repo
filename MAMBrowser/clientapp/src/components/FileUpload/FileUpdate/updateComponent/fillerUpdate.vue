@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     changeMedia(v) {
-      this.media = v;
+      this.category = v;
       this.update();
     },
     changeMemo(v) {
@@ -107,7 +107,7 @@ export default {
     update() {
       var meta = {
         ID: this.rowData.id,
-        category: this.media,
+        category: this.category,
         brdDT: this.brdDT.replace(/-/g, ""),
         memo: this.memo,
         name: this.name,

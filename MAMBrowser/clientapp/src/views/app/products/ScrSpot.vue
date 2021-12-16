@@ -152,7 +152,6 @@ import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
-import { mapActions } from "vuex";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinBasicPage],
@@ -267,7 +266,6 @@ export default {
     });
   },
   methods: {
-    ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     SDateErrorLog() {
       this.$fn.notify("error", {
         message: "시작 날짜가 종료 날짜보다 큽니다.",
@@ -333,13 +331,13 @@ export default {
           this.$fn.notify("primary", {
             title: "메타 데이터 수정 성공",
           });
-          this.uploadRefresh();
+          this.getData();
         } else {
           this.UpdateModalOff();
           $fn.notify("error", {
             message: "파일 업로드 실패: " + res.data.errorMsg,
           });
-          this.uploadRefresh();
+          this.getData();
         }
       });
     },
@@ -361,13 +359,13 @@ export default {
             this.$fn.notify("primary", {
               title: "파일 삭제 성공",
             });
-            this.uploadRefresh();
+            this.getData();
           } else {
             this.UpdateModalOff();
             $fn.notify("error", {
               message: "파일 삭제 실패: " + res.data.errorMsg,
             });
-            this.uploadRefresh();
+            this.getData();
           }
         });
     },
