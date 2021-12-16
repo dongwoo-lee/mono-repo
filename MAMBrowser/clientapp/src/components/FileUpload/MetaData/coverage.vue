@@ -388,6 +388,7 @@ export default {
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
+    this.setTempDate(today);
 
     this.getPro();
   },

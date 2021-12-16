@@ -1,24 +1,33 @@
 <template>
   <div>
     <transition name="fade">
-      <div>
-        <b-form-input
-          style="position: absolute; top: 340px; left: -400px; z-index: 9999"
-          class="editTask"
-          v-model="MetaData.title"
-          :state="titleState"
-          :maxLength="200"
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="소재 명"
-          trim
-        />
+      <div
+        style="
+          position: absolute;
+          top: 350px;
+          left: -400px;
+          z-index: 9999;
+          font-size: 16px;
+        "
+      >
+        <b-form-group label="소재명" class="has-float-label">
+          <b-form-input
+            class="editTask"
+            v-model="MetaData.title"
+            :state="titleState"
+            :maxLength="200"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="소재명"
+            trim
+          />
+        </b-form-group>
         <button
           v-show="titleState"
           style="
             position: relative;
-            left: -85px;
-            top: 323px;
-            z-index: 9999;
+            left: 315px;
+            top: -40px;
+            z-index: 99;
             width: 3px;
             heigth: 3px;
             background-color: #ffffff;
@@ -29,17 +38,17 @@
           <b-icon
             icon="x-circle"
             font-scale="1"
-            style="position: relative; top: 0px; right: 0px; z-index: 9999"
+            style="position: relative; top: 0px; right: 0px; z-index: 999"
             variant="secondary"
             @click="resetTitle"
-          />
+          ></b-icon>
         </button>
         <p
           v-show="titleState"
           style="
             position: relative;
-            left: -90px;
-            top: 330px;
+            left: 290px;
+            top: -35px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -50,23 +59,33 @@
       </div>
     </transition>
     <transition name="fade">
-      <div style="position: absolute; top: 395px; left: -400px; z-index: 9999">
-        <b-form-input
-          class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
-          :maxLength="30"
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="메모"
-          trim
-        />
-
+      <div
+        style="
+          position: absolute;
+          top: 415px;
+          left: -400px;
+          z-index: 9999;
+          font-size: 16px;
+        "
+      >
+        <b-form-group label="메모" class="has-float-label">
+          <b-form-input
+            style="width: 350px"
+            class="editTask"
+            v-model="MetaData.memo"
+            :state="memoState"
+            :maxLength="30"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="메모"
+            trim
+          />
+        </b-form-group>
         <button
           v-show="memoState"
           style="
             position: relative;
             left: 315px;
-            top: -27px;
+            top: -42px;
             z-index: 99;
             width: 3px;
             heigth: 3px;
@@ -81,14 +100,14 @@
             style="position: relative; top: 0px; right: 0px; z-index: 999"
             variant="secondary"
             @click="resetMemo"
-          />
+          ></b-icon>
         </button>
         <p
           v-show="memoState"
           style="
             position: relative;
-            left: 310px;
-            top: -20px;
+            left: 290px;
+            top: -35px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -105,18 +124,22 @@
           class="has-float-label"
           style="
             position: absolute;
-            top: 460px;
+            top: 485px;
             left: -400px;
             z-index: 9999;
             font-size: 16px;
           "
         >
-          <common-vue-select
-            style="font-size: 14px; width: 350px; border: 1px solid #008ecc"
-            class="h105"
-            :suggestions="editorOptions"
-            @inputEvent="inputEditor"
-          ></common-vue-select>
+          <b-form-input
+            title="제작자"
+            style="width: 350px; font-size: 14px"
+            class="editTask"
+            :value="userID"
+            disabled
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="제작자"
+            trim
+          />
         </b-form-group>
       </div>
     </transition>
@@ -246,6 +269,7 @@ export default {
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
+    this.setTempDate(today);
   },
   methods: {
     mediaChange(v) {

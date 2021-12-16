@@ -208,46 +208,9 @@ export default {
       this.setMediaSelected(v.id);
     },
     proTypeChange(v) {
-      if (v == 0) {
-        this.setProType(0);
-        this.setProTypeName("Title Music");
-      } else if (v == 1) {
-        this.setProType(1);
-        this.setProTypeName("Effect");
-      } else if (v == 2) {
-        this.setProType(2);
-        this.setProTypeName("Cut");
-      } else if (v == 3) {
-        this.setProType(3);
-        this.setProTypeName("모음1");
-      } else if (v == 4) {
-        this.setProType(4);
-        this.setProTypeName("모음2");
-      } else if (v == 5) {
-        this.setProType(5);
-        this.setProTypeName("모음3");
-      } else if (v == 6) {
-        this.setProType(6);
-        this.setProTypeName("모음4");
-      } else if (v == 7) {
-        this.setProType(7);
-        this.setProTypeName("모음5");
-      } else if (v == 8) {
-        this.setProType(8);
-        this.setProTypeName("모음6");
-      } else if (v == 9) {
-        this.setProType(9);
-        this.setProTypeName("모음7");
-      } else if (v == 10) {
-        this.setProType(10);
-        this.setProTypeName("모음8");
-      } else if (v == 11) {
-        this.setProType(11);
-        this.setProTypeName("모음9");
-      } else if (v == 12) {
-        this.setProType(12);
-        this.setProTypeName("모음10");
-      }
+      var data = this.proTypeOptions.find((dt) => dt.value == v);
+      this.setProType(data.value);
+      this.setProTypeName(data.text);
     },
   },
 };

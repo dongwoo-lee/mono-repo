@@ -17,8 +17,11 @@ export default {
     localFiles: [],
     uploaderCustomData: {},
     date: "",
+    tempDate: "",
     fileSDate: "",
+    tempFileSDate: "",
     fileEDate: "",
+    tempFileEDate: "",
     MetaData: {
       title: "",
       memo: "",

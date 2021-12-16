@@ -129,8 +129,11 @@ export default {
       MetaModalTitle: (state) => state.MetaModalTitle,
       localFiles: (state) => state.localFiles,
       date: (state) => state.date,
+      tempDate: (state) => state.tempDate,
       fileSDate: (state) => state.fileSDate,
+      tempFileSDate: (state) => state.tempFileSDate,
       fileEDate: (state) => state.fileEDate,
+      tempFileEDate: (state) => state.tempFileEDate,
       MetaData: (state) => state.MetaData,
       fileMediaOptions: (state) => state.fileMediaOptions,
       masteringListData: (state) => state.masteringListData,
@@ -195,8 +198,11 @@ export default {
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setDate",
+      "setTempDate",
       "setFileSDate",
+      "setTempFileSDate",
       "setFileEDate",
+      "setTempFileEDate",
       "setProgramData",
       "setEventData",
       "setProgramState",
@@ -211,8 +217,11 @@ export default {
       "setUserProgramList",
       "setEventSelected",
       "resetDate",
+      "resetTempDate",
       "resetFileSDate",
+      "resetTempFileSDate",
       "resetFileEDate",
+      "resetTempFileEDate",
       "resetTitle",
       "resetMemo",
       "resetReporter",
@@ -376,6 +385,7 @@ export default {
     //#region 파일 업로드 모달 캘린더
     eventInput(event) {
       this.setDate(event);
+      this.setTempDate(event);
     },
     onInput(event) {
       const targetValue = event.target.value;
@@ -383,7 +393,7 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        event.target.value = targetValue.slice(0, -1);
+        event.target.value = this.tempDate;
         this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
@@ -392,6 +402,7 @@ export default {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.setDate(convertDate);
+          this.setTempDate(convertDate);
         }
       }
     },

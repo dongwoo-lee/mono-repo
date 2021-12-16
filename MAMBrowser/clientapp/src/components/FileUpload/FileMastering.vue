@@ -387,6 +387,8 @@ export default {
       chunks: [],
       fileState: "",
       percent: 0,
+      tempSDate: "2021-11-10",
+      tempEDate: "2021-11-10",
       logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
       logEDate: "2021-11-10", //TODO: 오늘 날짜로 설정
       editorOptions: [],
@@ -550,7 +552,7 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        event.target.value = targetValue.slice(0, -1);
+        event.target.value = this.tempSDate;
         this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
@@ -559,6 +561,7 @@ export default {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.logSDate = convertDate;
+          this.tempSDate = convertDate;
         }
       }
     },
@@ -568,7 +571,7 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        event.target.value = targetValue.slice(0, -1);
+        event.target.value = this.tempEDate;
         this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
@@ -577,6 +580,7 @@ export default {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.logEDate = convertDate;
+          this.tempEDate = convertDate;
         }
       }
     },

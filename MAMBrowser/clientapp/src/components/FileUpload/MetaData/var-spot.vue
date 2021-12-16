@@ -407,6 +407,7 @@ export default {
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.edate = today;
     this.setFileEDate(today);
+    this.setTempFileEDate(today);
 
     var newDate = new Date();
     var dayOfMonth = newDate.getDate();
@@ -415,6 +416,7 @@ export default {
 
     this.sdate = newDate;
     this.setFileSDate(newDate);
+    this.setTempFileSDate(newDate);
 
     this.getPro();
   },
@@ -448,10 +450,11 @@ export default {
     eventSInput(value) {
       this.sdate = value;
       this.setFileSDate(value);
+      this.setTempFileSDate(value);
     },
     eventEInput(value) {
       this.edate = value;
-      this.setFileEDate(value);
+      this.setTempFileEDate(value);
     },
     onsInput(event) {
       const targetValue = event.target.value;
@@ -459,7 +462,7 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        event.target.value = targetValue.slice(0, -1);
+        event.target.value = this.tempFileSDate;
         this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
@@ -469,6 +472,7 @@ export default {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.sdate = convertDate;
           this.setFileSDate(convertDate);
+          this.setTempFileSDate(convertDate);
         }
       }
     },
@@ -478,7 +482,7 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        event.target.value = targetValue.slice(0, -1);
+        event.target.value = this.tempFileEDate;
         this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
@@ -488,6 +492,7 @@ export default {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           this.edate = convertDate;
           this.setFileEDate(convertDate);
+          this.setTempFileEDate(convertDate);
         }
       }
     },

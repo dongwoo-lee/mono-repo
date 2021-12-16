@@ -10,11 +10,20 @@ export default {
   setDate(state, payload) {
     state.date = payload;
   },
+  setTempDate(state, payload) {
+    state.tempDate = payload;
+  },
   setFileSDate(state, payload) {
     state.fileSDate = payload;
   },
   setFileEDate(state, payload) {
     state.fileEDate = payload;
+  },
+  setTempFileSDate(state, payload) {
+    state.tempFileSDate = payload;
+  },
+  setTempFileEDate(state, payload) {
+    state.tempFileEDate = payload;
   },
   setIsActive(state, payload) {
     state.isActive = payload;
@@ -76,11 +85,20 @@ export default {
   resetDate(state) {
     state.date = "";
   },
+  resetTempDate(state) {
+    state.tempDate = "";
+  },
   resetFileSDate(state) {
     state.fileSDate = "";
   },
   resetFileEDate(state) {
     state.fileEDate = "";
+  },
+  resetTempFileSDate(state) {
+    state.tempFileSDate = "";
+  },
+  resetTempFileEDate(state) {
+    state.tempFileEDate = "";
   },
   resetLocalFiles(state) {
     state.localFiles = [];
