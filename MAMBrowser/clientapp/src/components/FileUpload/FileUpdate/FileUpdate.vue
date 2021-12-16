@@ -117,7 +117,6 @@ export default {
       this.$emit("UpdateModalClose");
     },
     updateFile() {
-      console.log(this.updateMeta);
       this.$emit("updateFile", this.updateMeta);
     },
     getUpdateMeta(v) {

@@ -161,6 +161,7 @@ import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
 import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinFillerPage],
@@ -275,6 +276,7 @@ export default {
     this.getmcrSpotMediaOptions();
   },
   methods: {
+    ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     authorityCheck(e) {
       if (
         e.editorID == sessionStorage.getItem("user_id") ||
@@ -342,7 +344,18 @@ export default {
     },
     masteringUpdate(e) {
       axios.patch("/api/Mastering/mcr-spot", e).then((res) => {
-        console.log(res);
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.UpdateModalOff();
+          this.$fn.notify("primary", {
+            title: "메타 데이터 수정 성공",
+          });
+          this.uploadRefresh();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "파일 업로드 실패: " + res.data.errorMsg,
+          });
+        }
       });
     },
     DeleteModalOff() {
@@ -354,7 +367,18 @@ export default {
     },
     masteringDelete(e) {
       axios.delete(`/api/Mastering/mcr-spot/${e.deleteId}`).then((res) => {
-        console.log(res);
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.DeleteModalOff();
+          this.$fn.notify("primary", {
+            title: "파일 삭제 성공",
+          });
+          this.uploadRefresh();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "파일 삭제 실패: " + res.data.errorMsg,
+          });
+        }
       });
     },
   },

@@ -133,7 +133,7 @@ export default {
       this.pgmData = res.data.resultObject.data;
     });
 
-    console.log(this.rowData);
+    this.update();
   },
   methods: {
     getPro() {

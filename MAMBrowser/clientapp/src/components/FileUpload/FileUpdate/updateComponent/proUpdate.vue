@@ -11,16 +11,35 @@
     />
     <br />
     <h6>분류</h6>
-    <common-vue-select
-      class="h300"
-      style="width: 350px; font-size: 14px"
-      :value="proMedia"
-      :suggestions="mediaOptions"
-      @inputEvent="changeMedia"
-    ></common-vue-select>
 
-    <br />
-    <h6>타입</h6>
+    <b-form-group
+      label="현재 분류"
+      class="has-float-label"
+      style="font-size: 15px; margin-top: 20px"
+    >
+      <b-form-input
+        class="editTask"
+        :value="rowData.categoryName"
+        disabled
+        aria-describedby="input-live-help input-live-feedback"
+        trim
+      />
+    </b-form-group>
+    <b-form-group
+      label="수정 분류"
+      class="has-float-label"
+      style="font-size: 15px; margin-top: 10px"
+    >
+      <common-vue-select
+        class="h300"
+        style="width: 350px; font-size: 14px; margin-top: 10px"
+        :vSelectProps="category"
+        :suggestions="mediaOptions"
+        @inputEvent="changeMedia"
+      ></common-vue-select>
+    </b-form-group>
+
+    <h6 style="margin-top: 20px">타입</h6>
     <b-form-select
       id="program-media"
       class="media-select"
@@ -49,12 +68,15 @@ export default {
   },
   data() {
     return {
-      category: this.rowData.categoryID,
+      category: {
+        id: this.rowData.categoryID,
+        name: this.rowData.categoryName,
+      },
       memo: this.rowData.memo,
-      proMedia: "",
+      proMedia: this.rowData.categoryID,
       name: this.rowData.name,
-      proType: "0",
-      proTypeName: "",
+      proType: "",
+      proTypeName: this.rowData.proType,
       proTypeOptions: [
         { value: "0", text: "Title Music" },
         { value: "1", text: "Effect" },
@@ -79,8 +101,8 @@ export default {
         this.mediaOptions.push({ id: e.id, name: e.name });
       });
     });
-    this.proMedia = "AC73";
-    console.log(this.rowData);
+    this.getProType();
+    this.update();
   },
   methods: {
     changeMedia(v) {
@@ -109,8 +131,11 @@ export default {
         proType: this.proType,
         proTypeName: this.proTypeName,
       };
-      console.log(this.proTypeName);
       this.$emit("updateProMeta", meta);
+    },
+    getProType() {
+      var data = this.proTypeOptions.find((dt) => dt.text == this.proTypeName);
+      this.proType = data.value;
     },
   },
 };

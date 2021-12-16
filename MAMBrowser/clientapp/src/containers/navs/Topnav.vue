@@ -41,7 +41,7 @@
                   @click="openFileModal"
                   style="
                     padding: 7px !important;
-                    padding-right: 0px;
+                    padding-right: 20px;
                     border-color: silver;
                     color: black;
                     background-color: white;
@@ -54,7 +54,7 @@
                   >
                   </b-icon>
                   마스터링
-                  <b-badge
+                  <!-- <b-badge
                     style="
                       position: relative;
                       top: -17px;
@@ -67,7 +67,7 @@
                     "
                     variant="outline-danger"
                     >{{ getBadge }}</b-badge
-                  >
+                  > -->
                 </b-button>
                 <b-button
                   v-show="getBadge == 0"

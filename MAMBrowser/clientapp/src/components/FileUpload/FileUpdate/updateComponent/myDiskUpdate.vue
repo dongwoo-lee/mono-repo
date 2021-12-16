@@ -33,9 +33,12 @@ export default {
   },
   data() {
     return {
-      title: "",
-      memo: "",
+      title: this.rowData.title,
+      memo: this.rowData.memo,
     };
+  },
+  created() {
+    this.update();
   },
   methods: {
     changeTitle(v) {

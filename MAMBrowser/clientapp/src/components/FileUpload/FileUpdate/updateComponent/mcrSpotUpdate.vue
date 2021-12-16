@@ -34,8 +34,11 @@ export default {
   data() {
     return {
       name: this.rowData.name,
-      memo: "",
+      memo: this.rowData.memo,
     };
+  },
+  created() {
+    this.update();
   },
   methods: {
     changeMemo(v) {

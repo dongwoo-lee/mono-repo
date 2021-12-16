@@ -88,7 +88,8 @@ export default {
         });
       });
     });
-    console.log(this.rowData);
+
+    this.update();
   },
   methods: {
     changeMedia(v) {
@@ -107,10 +108,7 @@ export default {
       var meta = {
         ID: this.rowData.id,
         category: this.media,
-        reporter: this.reporter,
         brdDT: this.brdDT.replace(/-/g, ""),
-        pgmName: this.pgmName,
-        pgmid: this.pgmid,
         memo: this.memo,
         name: this.name,
       };

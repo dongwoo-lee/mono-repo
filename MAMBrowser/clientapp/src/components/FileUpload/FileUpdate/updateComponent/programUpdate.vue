@@ -33,11 +33,11 @@ export default {
   },
   data() {
     return {
-      memo: "",
+      memo: this.rowData.memo,
     };
   },
   created() {
-    console.log(this.rowData);
+    this.update();
   },
   methods: {
     changeMemo(v) {
