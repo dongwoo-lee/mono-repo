@@ -39,8 +39,8 @@ namespace MAMBrowser.Controllers
         {
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
-            //_fileService = fileService;
-            _fileService = new MusicSystemMockup();
+            _fileService = fileService;
+            //_fileService = new MusicSystemMockup();
             _fileHelper = fileHelper;
             _logger = logger;
         }

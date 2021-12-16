@@ -20,9 +20,9 @@ namespace MAMBrowser.Controllers
     {
         private readonly IMusicService _fileService;
         private readonly MusicSystemMastering _mastering;
-        public SearchMenuController()
+        public SearchMenuController(MusicWebService fileService)
         {
-            _fileService = new MusicSystemMockup();
+            _fileService = fileService;
             _mastering = new MusicSystemMastering();
         }
         public class Pram
