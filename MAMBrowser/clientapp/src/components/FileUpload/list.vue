@@ -46,7 +46,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -83,7 +84,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -120,7 +122,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -157,7 +160,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -194,7 +198,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -223,6 +228,20 @@
         </transition>
       </template>
     </vuetable>
+    <div
+      v-show="this.role == 'ADMIN'"
+      style="width: 1300px; margin-top: 10px; height: 70px"
+    >
+      <p style="margin-left: 820px">마스터링 상태</p>
+      <vue-step-progress-indicator
+        :steps="['대기중', '디코딩', '리샘플링', '노말라이즈', '스토리지 저장']"
+        :active-step="4"
+        :is-reactive="false"
+        :styles="styleData"
+        :colors="colorData"
+        style="margin-left: 820px; width: 670px"
+      />
+    </div>
     <vuetable
       v-show="this.role != 'ADMIN'"
       :table-height="listTableHeight"
@@ -257,7 +276,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -294,7 +314,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -331,7 +352,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -368,7 +390,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -405,7 +428,8 @@
               <div
                 style="
                   width: 18px;
-                  height: 18px;
+                  height: 20px;
+                  padding-top: 2px;
                   border-radius: 2px;
                   background-color: #27ae60;
                   color: white;
@@ -434,20 +458,97 @@
         </transition>
       </template>
     </vuetable>
+
+    <div
+      v-show="this.role != 'ADMIN'"
+      style="width: 1300px; margin-top: 10px; height: 70px"
+    >
+      <p style="margin-left: 820px">마스터링 상태</p>
+      <vue-step-progress-indicator
+        :steps="['대기중', '디코딩', '리샘플링', '노말라이즈', '스토리지 저장']"
+        :active-step="4"
+        :is-reactive="false"
+        :styles="styleData"
+        :colors="colorData"
+        style="margin-left: 820px; width: 670px"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import VueStepProgressIndicator from "vue-step-progress-indicator";
 export default {
   components: {
     Vuetable,
+    VueStepProgressIndicator,
   },
   data() {
     return {
+      styleData: {
+        progress__block: {
+          display: "flex",
+          alignItems: "center",
+        },
+        progress__bridge: {
+          backgroundColor: "grey",
+          height: "2px",
+          flexGrow: "1",
+          width: "20px",
+        },
+        progress__bubble: {
+          margin: "0",
+          padding: "0",
+          lineHeight: "10px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "18px",
+          width: "18px",
+          borderRadius: "10%",
+          backgroundColor: "transparent",
+          border: "2px grey solid",
+          textAlign: "center",
+        },
+        progress__label: {
+          margin: "0 0.8rem",
+          font: "14px;",
+        },
+      },
+      colorData: {
+        progress__bubble: {
+          active: {
+            color: "#fff",
+            backgroundColor: "#27ae60",
+            borderColor: "#27ae60",
+          },
+          inactive: {
+            color: "#fff",
+            backgroundColor: "#EF5350",
+            borderColor: "#EF5350",
+          },
+          completed: {
+            color: "#fff",
+            borderColor: "#27ae60",
+            backgroundColor: "#27ae60",
+          },
+        },
+        progress__label: {
+          active: {
+            color: "#27ae60",
+          },
+          inactive: {
+            color: "#EF5350",
+          },
+          completed: {
+            color: "#27ae60",
+          },
+        },
+      },
       role: "",
-      listTableHeight: "530px",
+      listTableHeight: "480px",
       userListFields: [
         {
           name: "__slot:title",
