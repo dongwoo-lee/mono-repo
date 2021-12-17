@@ -377,7 +377,8 @@ export default {
   mixins: [CommonFileFunction, MixinBasicPage, mixinFillerPage],
   data() {
     return {
-      staticMedia: "",
+      mediaName: "AM",
+      staticMedia: "A",
       sdate: "",
       edate: "",
     };
@@ -445,6 +446,8 @@ export default {
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
+      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.mediaName = data.text;
     },
     eventSInput(value) {
       this.sdate = value;
@@ -456,20 +459,41 @@ export default {
       this.setFileEDate(value);
       this.setTempFileEDate(value);
     },
+    get7daysago() {
+      var newDate = new Date();
+      var dayOfMonth = newDate.getDate();
+      newDate.setDate(dayOfMonth - 7);
+      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+      return newDate;
+    },
     onsInput(event) {
       const targetValue = event.target.value;
 
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
+        if (this.tempFileSDate == null) {
+          event.target.value = this.get7daysago();
+          return;
+        }
         event.target.value = this.tempFileSDate;
-        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            this.sdate = this.get7daysago();
+            this.setFileSDate(this.get7daysago());
+            this.setTempFileSDate(this.get7daysago());
+
+            return;
+          }
           this.sdate = convertDate;
           this.setFileSDate(convertDate);
           this.setTempFileSDate(convertDate);
@@ -482,14 +506,28 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
+        if (this.tempFileEDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
         event.target.value = this.tempFileEDate;
-        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            this.edate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.setFileEDate(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.setTempFileEDate(
+              this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+            );
+            return;
+          }
           this.edate = convertDate;
           this.setFileEDate(convertDate);
           this.setTempFileEDate(convertDate);

@@ -198,6 +198,7 @@ export default {
     ...mapMutations("FileIndexStore", [
       "setUploaderCustomData",
       "setDate",
+      "setTitle",
       "setTempDate",
       "setFileSDate",
       "setTempFileSDate",
@@ -248,12 +249,24 @@ export default {
           return;
         }
         this.setProgramSelected(v.data);
+        this.setTitle(
+          `[${this.date}] [${this.mediaName}] [${this.ProgramSelected.eventName}]`
+        );
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.setEventSelected(v.data);
+        this.setTitle(
+          `[${this.date}] [${this.mediaName}] [${this.EventSelected.name}]`
+        );
       } else if (this.MetaData.typeSelected == "static-spot") {
         this.setEventSelected(v.data);
+        this.setTitle(
+          `[${this.fileSDate} ~ ${this.fileEDate}] [${this.mediaName}] [${this.EventSelected.name}]`
+        );
       } else if (this.MetaData.typeSelected == "var-spot") {
         this.setEventSelected(v.data);
+        this.setTitle(
+          `[${this.fileSDate} ~ ${this.fileEDate}] [${this.mediaName}] [${this.EventSelected.name}]`
+        );
       } else if (this.MetaData.typeSelected == "report") {
         this.setEventSelected(v.data);
       }
@@ -271,7 +284,7 @@ export default {
           .get(
             `/api/categories/pgm-sch?media=${
               this.MetaData.mediaSelected
-            }&date=${20191206}`
+            }&date=${20191206}` //TODO: 오늘 날짜로 변경
           )
           .then((res) => {
             var value = res.data.resultObject.data;
@@ -393,14 +406,26 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
+        if (this.tempDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
         event.target.value = this.tempDate;
-        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.setDate(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.setTempDate(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            return;
+          }
           this.setDate(convertDate);
           this.setTempDate(convertDate);
         }
@@ -412,11 +437,9 @@ export default {
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       if (12 < mm) {
-        this.$fn.notify("error", { message: "날짜 형식 오류" });
-        this.date = "";
+        this.setDate("");
       } else if (31 < dd) {
-        this.$fn.notify("error", { message: "날짜 형식 오류" });
-        this.date = "";
+        this.setDate("");
       } else {
         return `${yyyy}-${mm}-${dd}`;
       }

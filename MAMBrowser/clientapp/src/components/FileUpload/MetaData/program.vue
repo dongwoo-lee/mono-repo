@@ -230,6 +230,18 @@
         font-family: 'MBC 새로움 M';
       "
     >
+      <!-- <div style="width: 550px">
+        <b-form-group label="제목" class="has-float-label">
+          <b-form-input
+            class="editTask"
+            style="width: 530px"
+            v-model="getTitle"
+            disabled
+            aria-describedby="input-live-help input-live-feedback"
+            trim
+          />
+        </b-form-group>
+      </div> -->
       <div style="width: 200px; float: left">
         <b-form-group label="이벤트 명" class="has-float-label">
           <b-form-input
@@ -285,6 +297,7 @@ export default {
   data() {
     return {
       programMedia: "A",
+      mediaName: "AM",
       dxdg,
     };
   },
@@ -321,6 +334,9 @@ export default {
     this.getPro();
   },
   computed: {
+    getTitle() {
+      return `[${this.date}] [${this.mediaName}] [${this.ProgramSelected.eventName}]`;
+    },
     getProgramId(productId) {
       if (this.userProgramList.includes(productId)) {
         return true;
@@ -335,6 +351,8 @@ export default {
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
+      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.mediaName = data.text;
     },
   },
 };

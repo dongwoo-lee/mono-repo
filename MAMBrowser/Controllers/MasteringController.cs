@@ -128,7 +128,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPost("program")]
-        public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,
+        public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,[FromForm] string title,
              [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -168,6 +168,7 @@ namespace MAMBrowser.Controllers
 
                         ProgramMeta Program = new ProgramMeta();
 
+                        Program.Title = title;
                         Program.Memo = memo;
                         Program.Media = media;
                         Program.ProductId = productId;
@@ -200,8 +201,8 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPost("mcr-spot")]
-        public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
-            [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
+        public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
+           [FromForm] string title, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -240,6 +241,7 @@ namespace MAMBrowser.Controllers
 
                         McrMeta mcr = new McrMeta();
 
+                        mcr.Title = title;
                         mcr.Memo = memo;
                         mcr.Media = media;
                         mcr.ProductId = productId;
@@ -347,7 +349,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("static-spot")]
         public ActionResult<DTO_RESULT> RegStaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-             [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor, 
+            [FromForm] string title, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor, 
             [FromForm] string media, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -387,6 +389,7 @@ namespace MAMBrowser.Controllers
 
                         FillerTimeMeta staticSpot = new FillerTimeMeta();
 
+                        staticSpot.Title = title;
                         staticSpot.SDate = SDate;
                         staticSpot.Memo = memo;
                         staticSpot.EDate = EDate;
@@ -422,7 +425,7 @@ namespace MAMBrowser.Controllers
         }
         [HttpPost("var-spot")]
         public ActionResult<DTO_RESULT> RegVarSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-             [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor,
+            [FromForm] string title, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor,
             [FromForm] string media, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
@@ -462,6 +465,7 @@ namespace MAMBrowser.Controllers
 
                         FillerTimeMeta varSpot = new FillerTimeMeta();
 
+                        varSpot.Title = title;
                         varSpot.SDate = SDate;
                         varSpot.Memo = memo;
                         varSpot.EDate = EDate;

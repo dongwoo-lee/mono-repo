@@ -93,7 +93,6 @@
             :visible="false"
             @valueChanged="valueChanged"
             @upload-started="() => (chunks = [])"
-            @upload-aborted="uploadAborted"
             @upload-error="uploadError"
             @uploaded="uploadSuccess"
             @progress="onUploadProgress($event)"
@@ -387,10 +386,10 @@ export default {
       chunks: [],
       fileState: "",
       percent: 0,
-      tempSDate: "2021-11-10",
-      tempEDate: "2021-11-10",
-      logSDate: "2021-11-10", //TODO: 오늘 날짜로 설정
-      logEDate: "2021-11-10", //TODO: 오늘 날짜로 설정
+      tempSDate: "",
+      tempEDate: "",
+      logSDate: "",
+      logEDate: "",
       editorOptions: [],
       editorIdList: [],
       logEditor: "",
@@ -409,6 +408,18 @@ export default {
     },
   },
   created() {
+    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+    this.logEDate = today;
+    this.tempEDate = today;
+
+    var newDate = new Date();
+    var dayOfMonth = newDate.getDate();
+    newDate.setDate(dayOfMonth - 7);
+    newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+
+    this.logSDate = newDate;
+    this.tempSDate = newDate;
+
     this.masteringStatus();
 
     axios.get("/api/Categories/users/pd").then((res) => {
@@ -546,20 +557,41 @@ export default {
           this.setMasteringLogData(masteringLogData);
         });
     },
+    get7daysago() {
+      var newDate = new Date();
+      var dayOfMonth = newDate.getDate();
+      newDate.setDate(dayOfMonth - 7);
+      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+      return newDate;
+    },
     onsInput(event) {
       const targetValue = event.target.value;
 
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
+        if (this.tempSDate == null) {
+          event.target.value = this.get7daysago();
+          return;
+        }
         event.target.value = this.tempSDate;
-        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
+
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.get7daysago();
+            this.logSDate = this.get7daysago();
+            this.tempSDate = this.get7daysago();
+            return;
+          }
           this.logSDate = convertDate;
           this.tempSDate = convertDate;
         }
@@ -571,14 +603,27 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
+        if (this.tempEDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          return;
+        }
         event.target.value = this.tempEDate;
-        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.logEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.tempEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            return;
+          }
           this.logEDate = convertDate;
           this.tempEDate = convertDate;
         }
@@ -681,14 +726,15 @@ export default {
       this.uploadRefresh();
     },
     uploadError(e) {
+      console.log(e);
       this.setProcessing(false);
       this.setFileUploading(false);
       this.MetaModalClose();
-      this.$fn.notify("error", { message: e.error.response }); // TODO:오류 발생 => 영구 지속?
-    },
-    uploadAborted() {
-      this.percent = 0;
-      // this.$fn.notify("error", { message: "파일 업로드 취소" });
+      this.$fn.notify("error", {
+        title: e.file.name,
+        message: e.error.response,
+        permanent: true,
+      });
     },
     onUploadProgress(e) {
       this.percent = Math.ceil((e.bytesLoaded / e.bytesTotal) * 100);
@@ -752,11 +798,6 @@ export default {
 .myTableHeader {
   margin-left: 100px !important;
   height: 400px !important;
-}
-.progress__wrapper {
-  width: 520px !important;
-  /* margin-left: 20px !important; */
-  margin: 0px !important;
 }
 .card {
   width: 1350px;

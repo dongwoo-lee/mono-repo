@@ -73,7 +73,7 @@ export default {
     return {
       category: this.rowData.categoryID,
       memo: this.rowData.memo,
-      date: this.convertDateSTH(this.rowData.brdDT),
+      tempDate: this.convertDateSTH(this.rowData.brdDT),
       brdDT: this.convertDateSTH(this.rowData.brdDT),
       name: this.rowData.name,
       mediaOptions: [],
@@ -116,24 +116,36 @@ export default {
     },
     eventInput(event) {
       this.brdDT = event;
-      this.date = event;
+      this.tempDate = event;
     },
     onInput(event) {
       const targetValue = event.target.value;
 
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
       if (this.validDateType(targetValue)) {
-        event.target.value = this.date;
+        if (this.tempDate == null) {
+          event.target.value = this.convertDateSTH(this.rowData.brdDT);
+          return;
+        }
+        event.target.value = this.tempDate;
 
-        this.$fn.notify("error", { message: "날짜 형식 오류입니다." });
         return;
       }
 
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 8) {
           var convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            this.brdDT = this.convertDateSTH(this.rowData.brdDT);
+            this.tempDate = this.convertDateSTH(this.rowData.brdDT);
+            return;
+          }
           this.brdDT = convertDate;
-          this.date = convertDate;
+          this.tempDate = convertDate;
         }
       }
     },
@@ -147,10 +159,8 @@ export default {
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       if (12 < mm) {
-        this.$fn.notify("error", { message: "날짜 형식 오류" });
         this.brdDT = "";
       } else if (31 < dd) {
-        this.$fn.notify("error", { message: "날짜 형식 오류" });
         this.brdDT = "";
       } else {
         return `${yyyy}-${mm}-${dd}`;

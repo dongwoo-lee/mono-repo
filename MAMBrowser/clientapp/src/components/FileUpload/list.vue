@@ -7,6 +7,19 @@
       font-size: 14px;
     "
   >
+    <div
+      v-show="this.role == 'ADMIN'"
+      style="width: 1300px; margin-top: -20px; height: 30px; font-size: 12px"
+    >
+      <vue-step-progress-indicator
+        :steps="['대기중', '디코딩', '리샘플링', '노말라이즈', '스토리지 저장']"
+        :active-step="4"
+        :is-reactive="false"
+        :styles="styleData"
+        :colors="colorData"
+        style="margin-left: 850px; width: 670px"
+      />
+    </div>
     <vuetable
       v-show="this.role == 'ADMIN'"
       :table-height="listTableHeight"
@@ -65,11 +78,6 @@
                 "
               >
                 대기중
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
               </span>
             </span>
           </div>
@@ -103,11 +111,7 @@
                 "
               >
                 디코딩
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -141,11 +145,7 @@
                 "
               >
                 리샘플링
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -179,11 +179,7 @@
                 "
               >
                 노말라이즈
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -217,11 +213,7 @@
                 "
               >
                 스토리지 저장
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -229,17 +221,16 @@
       </template>
     </vuetable>
     <div
-      v-show="this.role == 'ADMIN'"
-      style="width: 1300px; margin-top: 10px; height: 70px"
+      v-show="this.role != 'ADMIN'"
+      style="width: 1300px; margin-top: -20px; height: 30px; font-size: 12px"
     >
-      <p style="margin-left: 820px">마스터링 상태</p>
       <vue-step-progress-indicator
         :steps="['대기중', '디코딩', '리샘플링', '노말라이즈', '스토리지 저장']"
         :active-step="4"
         :is-reactive="false"
         :styles="styleData"
         :colors="colorData"
-        style="margin-left: 820px; width: 670px"
+        style="margin-left: 850px; width: 670px"
       />
     </div>
     <vuetable
@@ -295,11 +286,6 @@
                 "
               >
                 대기중
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
               </span>
             </span>
           </div>
@@ -333,11 +319,7 @@
                 "
               >
                 디코딩
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -371,11 +353,7 @@
                 "
               >
                 리샘플링
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -409,11 +387,7 @@
                 "
               >
                 노말라이즈
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
@@ -447,32 +421,13 @@
                 "
               >
                 스토리지 저장
-                <b-spinner
-                  small
-                  type="grow"
-                  v-if="props.rowIndex == 0"
-                ></b-spinner>
+                <b-spinner small type="grow"></b-spinner>
               </span>
             </span>
           </div>
         </transition>
       </template>
     </vuetable>
-
-    <div
-      v-show="this.role != 'ADMIN'"
-      style="width: 1300px; margin-top: 10px; height: 70px"
-    >
-      <p style="margin-left: 820px">마스터링 상태</p>
-      <vue-step-progress-indicator
-        :steps="['대기중', '디코딩', '리샘플링', '노말라이즈', '스토리지 저장']"
-        :active-step="4"
-        :is-reactive="false"
-        :styles="styleData"
-        :colors="colorData"
-        style="margin-left: 820px; width: 670px"
-      />
-    </div>
   </div>
 </template>
 
@@ -548,7 +503,7 @@ export default {
         },
       },
       role: "",
-      listTableHeight: "480px",
+      listTableHeight: "500px",
       userListFields: [
         {
           name: "__slot:title",

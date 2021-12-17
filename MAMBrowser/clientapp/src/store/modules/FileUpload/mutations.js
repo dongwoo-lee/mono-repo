@@ -7,6 +7,9 @@ export default {
   setFileModal(state, payload) {
     state.FileModal = payload;
   },
+  setTitle(state, payload) {
+    state.MetaData.title = payload;
+  },
   setDate(state, payload) {
     state.date = payload;
   },

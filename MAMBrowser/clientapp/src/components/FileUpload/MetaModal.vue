@@ -377,6 +377,7 @@ export default {
           };
         } else if (this.MetaData.typeSelected == "program") {
           var data = {
+            title: this.MetaData.title,
             memo: this.MetaData.memo,
             media: this.MetaData.mediaSelected,
             productId: this.ProgramSelected.productId,
@@ -394,6 +395,7 @@ export default {
           };
         } else if (this.MetaData.typeSelected == "mcr-spot") {
           var data = {
+            title: this.MetaData.title,
             memo: this.MetaData.memo,
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
@@ -411,6 +413,7 @@ export default {
           };
         } else if (this.MetaData.typeSelected == "static-spot") {
           var data = {
+            title: this.MetaData.title,
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
             SDate: this.fileSDate,
@@ -421,6 +424,7 @@ export default {
           };
         } else if (this.MetaData.typeSelected == "var-spot") {
           var data = {
+            title: this.MetaData.title,
             media: this.MetaData.mediaSelected,
             productId: this.EventSelected.id,
             SDate: this.fileSDate,

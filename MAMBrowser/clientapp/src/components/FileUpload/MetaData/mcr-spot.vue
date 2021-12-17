@@ -329,6 +329,7 @@ export default {
   data() {
     return {
       mcrMedia: "A",
+      mediaName: "AM",
     };
   },
   created() {
@@ -355,6 +356,8 @@ export default {
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
+      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.mediaName = data.text;
     },
     getData() {},
   },
