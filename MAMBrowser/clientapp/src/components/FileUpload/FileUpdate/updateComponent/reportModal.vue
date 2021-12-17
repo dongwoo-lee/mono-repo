@@ -7,7 +7,7 @@
         <DxDataGrid
           style="
             width: 350px;
-            height: 300px;
+            height: 200px;
             border: 1px solid silver;
             font-family: 'MBC 새로움 M';
           "
@@ -21,7 +21,8 @@
           no-data-text="No Data"
           @row-click="onRowClick"
         >
-          <DxPager :visible="true" />
+          <DxLoadPanel :enabled="true" />
+          <DxScrolling mode="virtual" />
           <DxColumn data-field="name" caption="이벤트 명" />
           <DxColumn data-field="id" caption="이벤트 ID" />
         </DxDataGrid>
@@ -73,14 +74,20 @@
 </template>
 
 <script>
-import { DxDataGrid, DxColumn, DxPager } from "devextreme-vue/data-grid";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxScrolling,
+  DxLoadPanel,
+} from "devextreme-vue/data-grid";
 import CommonReportModal from "../../../Modal/CommonReportModal.vue";
 export default {
   components: {
     CommonReportModal,
     DxDataGrid,
     DxColumn,
-    DxPager,
+    DxScrolling,
+    DxLoadPanel,
   },
   props: {
     rowData: {

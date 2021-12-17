@@ -272,7 +272,7 @@
         name="mcrDxDataGrid"
         v-show="this.EventData.id != ''"
         style="
-          height: 300px;
+          height: 295px;
           border: 1px solid silver;
           font-family: 'MBC 새로움 M';
         "
@@ -286,7 +286,8 @@
         no-data-text="No Data"
         @row-click="onRowClick"
       >
-        <DxPager :visible="true" />
+        <DxLoadPanel :enabled="true" />
+        <DxScrolling mode="virtual" />
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
         <DxColumn data-field="startDate" caption="시작일" />
@@ -367,12 +368,13 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import mixinFillerPage from "../../../mixin/MixinFillerPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { DxPager } from "devextreme-vue/data-grid";
+import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
 import axios from "axios";
 export default {
   components: {
     CommonVueSelect,
-    DxPager,
+    DxScrolling,
+    DxLoadPanel,
   },
   mixins: [CommonFileFunction, MixinBasicPage, mixinFillerPage],
   data() {

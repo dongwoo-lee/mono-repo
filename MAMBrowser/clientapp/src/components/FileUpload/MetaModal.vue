@@ -195,13 +195,6 @@
             >
               <span class="label">확인</span>
             </b-button> -->
-            <!-- <b-button
-              class="defaultButton"
-              variant="outline-danger"
-              @click="resetEvent"
-            >
-              초기화
-            </b-button> -->
 
             <!-- <b-button
               class="defaultButton"
@@ -222,7 +215,7 @@
               <b-button
                 variant="outline-primary"
                 @click="uploadfile()"
-                style="margin-left: 45px"
+                style="margin-left: 25px"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
@@ -232,12 +225,19 @@
               <b-button
                 variant="primary"
                 disabled
-                style="margin-left: 45px"
+                style="margin-left: 25px"
                 v-show="!processing && !fileUploading"
               >
                 <span class="label">업로드</span>
               </b-button>
             </span>
+            <b-button
+              variant="outline-danger"
+              style="margin-left: 20px"
+              @click="MetaModalOff"
+            >
+              취소
+            </b-button>
           </div>
         </h3>
       </CommonMetaModal>

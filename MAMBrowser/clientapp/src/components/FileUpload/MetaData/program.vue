@@ -164,7 +164,7 @@
         ref="my-proDataGrid"
         v-show="this.ProgramData.eventName != ''"
         style="
-          height: 280px;
+          height: 295px;
           border: 1px solid silver;
           font-family: 'MBC 새로움 M';
         "

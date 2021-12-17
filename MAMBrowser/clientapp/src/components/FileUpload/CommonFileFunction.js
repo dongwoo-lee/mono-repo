@@ -25,7 +25,7 @@ export default {
       formatted: "",
       dateSelected: "",
       userID: sessionStorage.getItem("user_name"),
-      logTableHeight: "480px",
+      logTableHeight: "450px",
 
       adminLogFields: [
         {
