@@ -284,7 +284,7 @@ export default {
           .get(
             `/api/categories/pgm-sch?media=${
               this.MetaData.mediaSelected
-            }&date=${20191206}` //TODO: 오늘 날짜로 변경
+            }&date=${20200601}` //TODO: 오늘 날짜로 변경
           )
           .then((res) => {
             var value = res.data.resultObject.data;

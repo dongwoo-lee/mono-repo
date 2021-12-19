@@ -113,7 +113,7 @@ namespace MAMBrowser.BLL
         }
         public void InsertUserToPublicCategory()
         {
-            _dao.InsertUserToPublicCategory();
+            //_dao.InsertUserToPublicCategory();
         }
 
         /// <summary>

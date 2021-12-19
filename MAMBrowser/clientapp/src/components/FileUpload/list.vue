@@ -591,6 +591,31 @@ export default {
       "startDBConnection",
       "stopDBConnection",
     ]),
+
+    getCategory(v) {
+      switch (v) {
+        case 'MY':
+          return "My 디스크";
+        case 'AC':
+          return "프로소재";
+        case 'PM':
+          return "프로그램";
+        case 'MS':
+          return "주조SPOT";
+        case 'ST':
+          return "부조SPOT";
+        case 'FC':
+          return "FILLER";
+        case 'RC':
+          return "취재물";
+        case 'TT':
+          return "고정소재";
+        case 'TS':
+          return "변동소재";
+        default:
+          return '';
+      }
+    },
   },
 };
 </script>

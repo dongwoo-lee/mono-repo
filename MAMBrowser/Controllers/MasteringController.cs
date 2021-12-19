@@ -1,6 +1,5 @@
 ﻿using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
-using M30.AudioFile.Common.MasteringMeta;
 using M30.AudioFile.DAL.DBParams;
 using M30.AudioFile.DAL.Repositories;
 using MAMBrowser.BLL;
@@ -26,8 +25,10 @@ namespace MAMBrowser.Controllers
     [CustomAuthorize]
     public class MasteringController : ControllerBase
     {
-        public MasteringController()
+        APIBll _apiBll;
+        public MasteringController(APIBll apiBll)
         {
+            _apiBll = apiBll;
         }
         public class ChunkMetadata
         {
@@ -75,14 +76,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + title + "_my-disk_" + metaDataObject.FileName;
-                    
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -94,15 +94,13 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
-
                         MyDiskMeta MyDisk = new MyDiskMeta();
                         MyDisk.Title = title;
                         MyDisk.Memo = memo;
                         MyDisk.Editor = editor;
-                        MyDisk.FilePath = newFilePath;
+                        MyDisk.FilePath = tempFilePath;
                         MyDisk.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        MyDisk.SoundType = SoundDataTypes.MY_DISK;
+                        MyDisk.SoundType = Define.AUDIO_FILE_TYPE_MYDISK;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -144,15 +142,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_program_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -164,7 +160,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         ProgramMeta Program = new ProgramMeta();
 
@@ -174,9 +170,9 @@ namespace MAMBrowser.Controllers
                         Program.ProductId = productId;
                         Program.BrdDTM = brdDTM;
                         Program.Editor = editor;
-                        Program.FilePath = newFilePath;
+                        Program.FilePath = tempFilePath;
                         Program.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        Program.SoundType = SoundDataTypes.PROGRAM;
+                        Program.SoundType = Define.AUDIO_FILE_TYPE_PGM;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -217,15 +213,14 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
 
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_mcr-spot_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -237,7 +232,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         McrMeta mcr = new McrMeta();
 
@@ -248,9 +243,9 @@ namespace MAMBrowser.Controllers
                         mcr.BrdDT = brdDT;
                         mcr.Editor = editor;
                         mcr.Advertiser = advertiser;
-                        mcr.FilePath = newFilePath;
+                        mcr.FilePath = tempFilePath;
                         mcr.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        mcr.SoundType = SoundDataTypes.MCR_SPOT;
+                        mcr.SoundType = Define.AUDIO_FILE_TYPE_MCR_SPOT;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -292,15 +287,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + title + "_scr-spot_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -312,7 +305,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         ScrMeta scr = new ScrMeta();
 
@@ -321,9 +314,9 @@ namespace MAMBrowser.Controllers
                         scr.Advertiser = advertiser;
                         scr.Category = category;
                         scr.Editor = editor;
-                        scr.FilePath = newFilePath;
+                        scr.FilePath = tempFilePath;
                         scr.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        scr.SoundType = SoundDataTypes.SCR_SPOT;
+                        scr.SoundType = Define.AUDIO_FILE_TYPE_SCR_SPOT;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -365,15 +358,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_static_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -385,7 +376,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         FillerTimeMeta staticSpot = new FillerTimeMeta();
 
@@ -397,9 +388,9 @@ namespace MAMBrowser.Controllers
                         staticSpot.Media = media;
                         staticSpot.ProductId = productId;
                         staticSpot.Editor = editor;
-                        staticSpot.FilePath = newFilePath;
+                        staticSpot.FilePath = tempFilePath;
                         staticSpot.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        staticSpot.SoundType = SoundDataTypes.SCR_SPOT;
+                        staticSpot.SoundType = Define.AUDIO_FILE_TYPE_STATIC;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -441,15 +432,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_var_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -461,7 +450,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         FillerTimeMeta varSpot = new FillerTimeMeta();
 
@@ -473,9 +462,9 @@ namespace MAMBrowser.Controllers
                         varSpot.Media = media;
                         varSpot.ProductId = productId;
                         varSpot.Editor = editor;
-                        varSpot.FilePath = newFilePath;
+                        varSpot.FilePath = tempFilePath;
                         varSpot.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        varSpot.SoundType = SoundDataTypes.SCR_SPOT;
+                        varSpot.SoundType = Define.AUDIO_FILE_TYPE_VAR;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -516,15 +505,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + memo + "_report_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -536,7 +523,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         ReportMeta report = new ReportMeta();
 
@@ -547,9 +534,9 @@ namespace MAMBrowser.Controllers
                         report.Category = category;
                         report.ProductId = productId;
                         report.Editor = editor;
-                        report.FilePath = newFilePath;
+                        report.FilePath = tempFilePath;
                         report.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        report.SoundType = SoundDataTypes.SCR_SPOT;
+                        report.SoundType = Define.AUDIO_FILE_TYPE_REPORT;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -590,15 +577,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + title + "_filler_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -610,7 +595,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         FillerMeta Filler = new FillerMeta();
 
@@ -619,9 +604,9 @@ namespace MAMBrowser.Controllers
                         Filler.Category = category;
                         Filler.Editor = editor;
                         Filler.BrdDT = brdDT;
-                        Filler.FilePath = newFilePath;
+                        Filler.FilePath = tempFilePath;
                         Filler.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        Filler.SoundType = SoundDataTypes.SCR_SPOT;
+                        Filler.SoundType = Define.AUDIO_FILE_TYPE_FILLER;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -662,15 +647,13 @@ namespace MAMBrowser.Controllers
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
 
-                    var tempPath = @"D:\FileUpload\Temp";
+                    var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
+                    var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
+                    var host = CommonUtility.GetHost(tempPath);
+                    var userinfo = GetStorageUserInfo(option);
+                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-                    string date = DateTime.Now.ToString(Define.DTM8);
-
-                    string tempFileName = date + "_" + metaDataObject.FileGuid + "_" + metaDataObject.FileName;
-                    string newFileName = date + "_" + title + "_filler_" + metaDataObject.FileName;
-
-
-                    var tempFilePath = Path.Combine(tempPath, tempFileName + ".tmp");
                     if (!Directory.Exists(tempPath))
                     {
                         Directory.CreateDirectory(tempPath);
@@ -682,7 +665,7 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        string newFilePath = ProcessUploadedFile(tempFilePath, newFileName, date);
+                        
 
                         ProMeta pro = new ProMeta();
 
@@ -692,9 +675,9 @@ namespace MAMBrowser.Controllers
                         pro.Editor = editor;
                         pro.Type = type;
                         pro.TypeName = typeName;
-                        pro.FilePath = newFilePath;
+                        pro.FilePath = tempFilePath;
                         pro.RegDtm = DateTime.Now.ToString(Define.DTM19);
-                        pro.SoundType = SoundDataTypes.SCR_SPOT;
+                        pro.SoundType = Define.AUDIO_FILE_TYPE_PRO;
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -729,6 +712,8 @@ namespace MAMBrowser.Controllers
                 if(jsonObject==null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                PrivateSpaceRepository repo = new PrivateSpaceRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_PrivateSpaceParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -831,7 +816,7 @@ namespace MAMBrowser.Controllers
             {
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
-
+                
                 FillerTimeRepository repo = new FillerTimeRepository(Startup.AppSetting.ConnectionString);
                 repo.EditMeta(new U_FillerTimeParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -1090,20 +1075,18 @@ namespace MAMBrowser.Controllers
             }
         }
 
-        string ProcessUploadedFile(string tempFilePath, string fileName, string date)
+        string GetTempFileName(ChunkMetadata meta)
         {
-            var path = @"D:\FileUpload";
-            string newFolder = Path.Combine(path, date);
-            DirectoryInfo di = new DirectoryInfo(newFolder);
-
-            if (di.Exists == false)
-            {
-                di.Create();
-            }
-            string newFilePath = Path.Combine(newFolder, fileName);
-            // check if the uploaded file is a valid image
-            System.IO.File.Move(tempFilePath, newFilePath);
-            return newFilePath;
+            string date = DateTime.Now.ToString(Define.DTM8);
+            return $"{date}_{meta.FileGuid}_{Path.GetFileNameWithoutExtension(meta.FileName)}.tmp";
+        }
+       
+        Dictionary<string,string> GetStorageUserInfo(IList<DTO_NAMEVALUE> option)
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("id", option.ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString());
+            dictionary.Add("pass", option.ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString());
+            return dictionary;
         }
     }
 }

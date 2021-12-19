@@ -765,24 +765,27 @@ export default {
     },
     //#endregion
     getCategory(v) {
-      if (v == 0) {
-        return "My 디스크";
-      } else if (v == 1) {
-        return "프로소재";
-      } else if (v == 2) {
-        return "프로그램";
-      } else if (v == 3) {
-        return "주조SPOT";
-      } else if (v == 4) {
-        return "부조SPOT";
-      } else if (v == 5) {
-        return "FILLER";
-      } else if (v == 6) {
-        return "취재물";
-      } else if (v == 7) {
-        return "고정소재";
-      } else if (v == 8) {
-        return "변동소재";
+      switch (v) {
+        case 'MY':
+          return "My 디스크";
+        case 'AC':
+          return "프로소재";
+        case 'PM':
+          return "프로그램";
+        case 'MS':
+          return "주조SPOT";
+        case 'ST':
+          return "부조SPOT";
+        case 'FC':
+          return "FILLER";
+        case 'RC':
+          return "취재물";
+        case 'TT':
+          return "고정소재";
+        case 'TS':
+          return "변동소재";
+        default:
+          return '';
       }
     },
   },

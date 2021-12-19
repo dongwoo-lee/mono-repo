@@ -16,7 +16,8 @@ namespace MAMBrowser.RabbitMQueue
             var Pass = Startup.AppSetting.RabbitMQInfo["Pass"] as string;
             var Ip = Startup.AppSetting.RabbitMQInfo["Ip"] as string;
             var Port = Startup.AppSetting.RabbitMQInfo["Port"] as string;
-
+            var QueueName = Startup.AppSetting.RabbitMQInfo["QueueName"] as string;
+            
 
             var factory = new ConnectionFactory
             {
@@ -27,7 +28,7 @@ namespace MAMBrowser.RabbitMQueue
 
             Dictionary<string, object> props = new Dictionary<string, object>();
             props.Add("x-max-priority", 10);
-            channel.QueueDeclare("message",
+            channel.QueueDeclare(QueueName,
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
@@ -37,7 +38,7 @@ namespace MAMBrowser.RabbitMQueue
             properties.Priority = priority;
 
             var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value));
-            channel.BasicPublish("", "message", properties, body);
+            channel.BasicPublish("", QueueName, properties, body);
 
         }
     }
