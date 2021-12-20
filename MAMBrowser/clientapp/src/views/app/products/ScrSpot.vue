@@ -381,7 +381,7 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}`
+          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&filetoken=${e.fileToken}`
         )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {

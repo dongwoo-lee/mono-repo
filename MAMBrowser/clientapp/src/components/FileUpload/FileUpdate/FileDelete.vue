@@ -44,12 +44,14 @@ export default {
     deleteFile() {
       var deleteInfo = {
         deleteId: this.rowData.id,
+        fileToken:this.rowData.fileToken
       };
       if (this.isScrSpot) {
         deleteInfo = {
           spotID: this.rowData.id,
           productID: this.rowData.productID,
           brdDT: this.rowData.brdDT,
+          fileToken:this.rowData.fileToken
         };
       }
       this.$emit("deleteFile", deleteInfo);

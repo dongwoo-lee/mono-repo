@@ -367,7 +367,7 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/filler/${e.deleteId}`).then((res) => {
+      axios.delete(`/api/Mastering/filler/${e.deleteId}?filetoken=${e.fileToken}`).then((res) => {
         if (res && res.status === 200 && !res.data.errorMsg) {
           this.DeleteModalOff();
           this.$fn.notify("primary", {

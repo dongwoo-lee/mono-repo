@@ -371,7 +371,7 @@ export default {
       this.metaDelete = false;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/program/${e.deleteId}`).then((res) => {
+      axios.delete(`/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`).then((res) => {
         if (res && res.status === 200 && !res.data.errorMsg) {
           this.DeleteModalOff();
           this.$fn.notify("primary", {

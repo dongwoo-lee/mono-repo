@@ -1,5 +1,6 @@
 ﻿using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.DBParams;
 using M30.AudioFile.DAL.Repositories;
 using MAMBrowser.BLL;
@@ -110,8 +111,10 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(MyDisk, (byte)userPriority);
+
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(MyDisk, (byte)userPriority);
+                        RequestMastering(MyDisk, (byte)userPriority);   //이동우
                     }
                 }
             //4. 작업결과 리턴하기
@@ -181,8 +184,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(Program, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(Program, (byte)userPriority);
+                        RequestMastering(Program, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -255,8 +259,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(mcr, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(mcr, (byte)userPriority);
+                        RequestMastering(mcr, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -326,8 +331,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(scr, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(scr, (byte)userPriority);
+                        RequestMastering(scr, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -400,8 +406,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(staticSpot, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(staticSpot, (byte)userPriority);
+                        RequestMastering(staticSpot, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -474,8 +481,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(varSpot, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(varSpot, (byte)userPriority);
+                        RequestMastering(varSpot, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -546,8 +554,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(report, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(report, (byte)userPriority);
+                        RequestMastering(report, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -616,8 +625,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(Filler, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(Filler, (byte)userPriority);
+                        RequestMastering(Filler, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -687,8 +697,9 @@ namespace MAMBrowser.Controllers
 
                         //3. 완료되면 RabbitMQ로 메타데이터, 우선순위 포함해서 보내기 임시파일패스
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
-                        RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-                        rb.Enqueue(pro, (byte)userPriority);
+                        //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                        //rb.Enqueue(pro, (byte)userPriority);
+                        RequestMastering(pro, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -859,8 +870,8 @@ namespace MAMBrowser.Controllers
                 if (jsonObject == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                //FillerRepository repo = new FillerRepository(Startup.AppSetting.ConnectionString);
-                //repo.EditMeta(new U_FillerParam(jsonObject));
+                ProRepository repo = new ProRepository(Startup.AppSetting.ConnectionString);
+                repo.EditMeta(new U_ProParam(jsonObject));
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -871,7 +882,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("program/{id}")]
-        public ActionResult<DTO_RESULT> DeleteProgram(string id)
+        public ActionResult<DTO_RESULT> DeleteProgram(string id, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -880,8 +891,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
-                repo.Delete(id);
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -892,7 +902,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("scr-spot")]
-        public ActionResult<DTO_RESULT> DeleteScrSpot([FromQuery] string spotID, [FromQuery] string productID, [FromQuery] string brdDT)
+        public ActionResult<DTO_RESULT> DeleteScrSpot([FromQuery] string spotID, [FromQuery] string productID, [FromQuery] string brdDT, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -901,6 +911,7 @@ namespace MAMBrowser.Controllers
                 if (spotID == null || productID  == null || brdDT == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
+                MoveRecycle(fileToken);
                 ScrSpotOperRepository repo = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
                 repo.Delete(new D_ScrSpotOperParam { SpotID=spotID, ProductID=productID, OnAirDate=brdDT});
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -913,7 +924,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("pro/{id}")]
-        public ActionResult<DTO_RESULT> DeletePro(string id)
+        public ActionResult<DTO_RESULT> DeletePro(string id, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -922,7 +933,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -933,7 +944,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("report/{id}")]
-        public ActionResult<DTO_RESULT> DeleteReport(string id)
+        public ActionResult<DTO_RESULT> DeleteReport(string id, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -942,8 +953,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
-                repo.Delete(id);
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -954,7 +964,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("mcr-spot/{id}")]
-        public ActionResult<DTO_RESULT> DeleteMcrSpot(string id)
+        public ActionResult<DTO_RESULT> DeleteMcrSpot(string id, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -963,8 +973,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
-                repo.Delete(id);
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -975,7 +984,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("filler/{id}")]
-        public ActionResult<DTO_RESULT> DeleteFiller(string id)
+        public ActionResult<DTO_RESULT> DeleteFiller(string id, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -984,8 +993,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
-                repo.Delete(id);
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -996,7 +1004,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("filler-time/{id}")]
-        public ActionResult<DTO_RESULT> DeleteFillerTime(string id)
+        public ActionResult<DTO_RESULT> DeleteFillerTime(string id, [FromQuery] string fileToken)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -1005,8 +1013,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
-                repo.Delete(id);
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -1087,6 +1094,50 @@ namespace MAMBrowser.Controllers
             dictionary.Add("id", option.ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString());
             dictionary.Add("pass", option.ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString());
             return dictionary;
+        }
+        void RequestMastering(MasteringMetaBase meta, byte priority)
+        {
+            var mstParam = new I_MSTHistoryParam(meta);
+            var connectionString = Startup.AppSetting.ConnectionString;
+            MSTHistoryRepository repository = new MSTHistoryRepository(connectionString);
+            var mstSeq = repository.Add<long>(mstParam);
+
+            meta.MstSeq = mstSeq;
+            RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+            rb.Enqueue(meta, (byte)priority);
+        }
+
+
+        void DeleteAudioFile(string userId, string id, string fileToken)
+        {
+            var movedFilePath = MoveRecycle(fileToken);
+            AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+            repo.Delete(id, userId, movedFilePath);
+        }
+      
+        string MoveRecycle(string fileToken)
+        {
+            string filePath = "";
+            if (TokenGenerator.ValidateFileToken(fileToken, ref filePath))
+            {
+                if (string.IsNullOrEmpty(filePath))
+                    return string.Empty;
+
+                var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
+                var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
+                var pass = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
+                var host = CommonUtility.GetHost(recycleFoler);
+                NetworkShareAccessor.Access(host, id, pass);
+
+                if(!Directory.Exists(recycleFoler))
+                    Directory.CreateDirectory(recycleFoler);
+
+                var newFileName = Path.GetFileName(filePath);
+                var newFileFullPath = Path.Combine(recycleFoler, newFileName);
+                System.IO.File.Move(filePath, newFileFullPath);
+                return newFileFullPath;
+            }
+            return String.Empty;
         }
     }
 }
