@@ -15,7 +15,7 @@
               <div class="subtitle ml-2">
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
-                  방송 예정일 :
+                  방송 완료일 :
                   <span>{{
                     $moment(cueInfo.brdtime).format("YYYY-MM-DD")
                   }}</span>
@@ -42,20 +42,10 @@
                       ? ""
                       : $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
-                  <!-- <span>{{ cueInfo.edittime }}</span> -->
-                </span>
-                <span class="autosave">
-                  <b-form-checkbox-group
-                    :options="options"
-                    v-model="autosaveValue"
-                    @change="toggleChange"
-                    switches
-                    style="float: right"
-                  ></b-form-checkbox-group>
                 </span>
               </div>
               <div class="button_view">
-                <ButtonWidget type="O" />
+                <ButtonWidget :type="cueInfo.cuetype" />
               </div>
             </div>
             <div class="left_bottom">
@@ -112,17 +102,6 @@
                       </div>
                     </template>
                   </DxItem>
-                  <DxItem title="즐겨찾기">
-                    <template #default>
-                      <div>
-                        <SortableWidget
-                          :widgetIndex="16"
-                          :searchToggleSwitch="searchToggleSwitch"
-                          channelKey="channel_my"
-                        />
-                      </div>
-                    </template>
-                  </DxItem>
                 </DxTabPanel>
               </div>
             </div>
@@ -135,133 +114,57 @@
         </div>
       </b-card>
     </b-row>
-    <b-row class="search_toggle mt-1" v-show="!searchToggleSwitch">
-      <b-card class="w-100">
-        <div>
-          <SearchWidget :width_size="330" />
-        </div>
-      </b-card>
-    </b-row>
-    <DxSpeedDialAction icon="search" @click="searchToggleEvent" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
 import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
-import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { eventBus } from "@/eventBus";
+
+//새로고침 감지
+// window.onbeforeunload = function (e) {
+//   var dialogText = "Dialog text here";
+//   e.returnValue = dialogText;
+//   return dialogText;
+// };
 
 export default {
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm(
-      "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-    );
-    if (answer) {
-      clearInterval(this.autoSaveFun);
-      eventBus.$off();
-      next();
-    }
+    eventBus.$off();
+    next();
   },
   components: {
-    SearchWidget,
     ButtonWidget,
     DxTabPanel,
     DxItem,
     PrintWidget,
     AbchannelWidget,
     SortableWidget,
-    DxSpeedDialAction,
   },
 
   data() {
     return {
-      onload: null,
-      options: [{ text: "자동저장", value: true }],
-      autosaveValue: [true],
-      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
       widgetIndex: 16,
     };
   },
-  async mounted() {
-    this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave) {
-        this.saveOldCue();
-      }
-    }, 900000); //15분마다 저장
-    await this.getautosave(this.cueInfo.personid);
-    if (!this.cueSheetAutoSave) {
-      this.autosaveValue = [];
-    }
-  },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
-    ...mapGetters("cueList", ["cueSheetAutoSave"]),
   },
   methods: {
-    ...mapActions("cueList", ["getautosave"]),
-    ...mapActions("cueList", ["setautosave"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
-    ...mapActions("cueList", ["saveOldCue"]),
-    toggleChange(value) {
-      if (value.length == 0) {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
-        this.SET_CUESHEETAUTOSAVE(false);
-      } else {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
-        this.SET_CUESHEETAUTOSAVE(true);
-      }
-    },
     nextOk() {
       this.nextgo = true;
     },
     onTextEdit() {
       this.$refs.inputText.focus();
-    },
-    searchToggleEvent() {
-      if (this.searchToggleSwitch) {
-        this.printHeight = 310;
-        this.abChannelHeight = 354;
-        document
-          .querySelector(".detail_view")
-          .classList.add("detail_view_search_toggle_on");
-        var allQuery = document.querySelectorAll(".cartC_view");
-        allQuery.forEach((item) => {
-          item.classList.add("cartC_view_search_toggle_on");
-        });
-      } else {
-        this.printHeight = 560;
-        this.abChannelHeight = 734;
-        document
-          .querySelector(".detail_view")
-          .classList.remove("detail_view_search_toggle_on");
-        var allQuery = document.querySelectorAll(".cartC_view");
-        allQuery.forEach((item) => {
-          item.classList.remove("cartC_view_search_toggle_on");
-        });
-      }
-      this.searchToggleSwitch = !this.searchToggleSwitch;
-    },
-    onloadEvent() {
-      const answer = window.confirm(
-        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-      );
-      if (answer) {
-        clearInterval(this.autoSaveFun);
-        eventBus.$off();
-        this.onload = true;
-      } else {
-        this.onload = false;
-      }
     },
   },
 };
@@ -341,4 +244,15 @@ input {
   margin: 0;
   padding: 0;
 }
+/* 모달 CSS */
+/* #modal-setting .dx-field-label {
+  font-family: "MBC 새로움 M" !important;
+  text-align: end;
+  width: 28%;
+}
+#modal-setting
+  .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+  font-family: "MBC 새로움 M" !important;
+  width: 65%;
+} */
 </style>

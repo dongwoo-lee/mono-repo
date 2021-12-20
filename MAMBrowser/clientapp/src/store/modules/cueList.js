@@ -396,7 +396,12 @@ export default {
         async getProUserList({ commit }, payload) {
             await axios.get(`/api/CueUserInfo/GetDirectorList?productid=` + payload)
                 .then((res) => {
-                    commit('SET_PROUSERLIST', res.data)
+                    var setData = new Set(res.data.split(","));
+                    var result = ""
+                    setData.forEach((ele) => {
+                        result = result.concat(ele + ",")
+                    })
+                    commit('SET_PROUSERLIST', result.slice(0, -1))
                 })
                 .catch((err => {
                     console.log("getProUserList" + err);

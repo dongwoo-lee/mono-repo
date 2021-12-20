@@ -467,6 +467,13 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
+      if (this.abCartArr.length > 500) {
+        window.$notify("error", `더 이상 추가할 수 없습니다.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+        return;
+      }
       this.loadpanelVal = true;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {

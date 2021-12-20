@@ -596,13 +596,13 @@ const routes = [
         // 큐시트 조회 리스트
         name: 'cuesheet-previous-list',
         path: "cuesheet/previous/list",
-        component: () => import("./views/app/cuesheet/cuesheetList"),
+        component: () => import("./views/app/cuesheet/cuesheetOldList"),
       },
       {
         // 큐시트 조회
         name: 'cuesheet-previous-detail',
         path: "cuesheet/previous/detail",
-        component: () => import("./views/app/cuesheet/cuesheetDetail"),
+        component: () => import("./views/app/cuesheet/cuesheetOldDetail"),
         beforeEnter: (async (to, from, next) => {
           const userId = sessionStorage.getItem(USER_ID);
           var cueDataObj = { ...store.getters['cueList/cueInfo'] }

@@ -133,7 +133,6 @@ import DxTextBox from "devextreme-vue/text-box";
 import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
-const userId = sessionStorage.getItem(USER_ID);
 const qs = require("qs");
 
 export default {
@@ -216,6 +215,7 @@ export default {
     ...mapActions("cueList", ["getcuesheetListArrTemp"]),
     ...mapActions("cueList", ["addTemplate"]),
     async getData() {
+      const userId = sessionStorage.getItem(USER_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       var params = {
         personid: userId,
@@ -231,6 +231,7 @@ export default {
     },
     // 템플릿 추가 (modal)
     async addTemCue() {
+      const userId = sessionStorage.getItem(USER_ID);
       var tempItem = {
         personid: userId,
         detail: [{ cueid: -1 }],
