@@ -163,7 +163,7 @@ export default {
   },
   data() {
     return {
-      options: [{ text: "자동저장", value: true }],
+      options: [{ text: "자동저장(5분 마다)", value: true }],
       autosaveValue: [true],
       autoSaveFun: null,
       searchToggleSwitch: true,
@@ -176,7 +176,7 @@ export default {
       if (this.cueSheetAutoSave) {
         this.saveTempCue();
       }
-    }, 900000); //15분마다 저장
+    }, 300000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];

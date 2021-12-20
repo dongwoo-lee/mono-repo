@@ -9,7 +9,14 @@
                 <piaf-breadcrumb />
               </div>
               <div class="MainTilte">
-                <h1>{{ cueInfo.title }}</h1>
+                <h1>
+                  <span v-if="cueInfo.media == 'A'">[AM]</span>
+                  <span v-if="cueInfo.media == 'F'">[FM]</span>
+                  <span v-if="cueInfo.media == 'D'">[DMB]</span>
+                  <span v-if="cueInfo.media == 'C'">[공통]</span>
+                  <span v-if="cueInfo.media == 'Z'">[기타]</span>
+                  {{ cueInfo.title }}
+                </h1>
               </div>
               <div class="separator mb-3 mt-0"></div>
               <div class="subtitle ml-2">
@@ -20,7 +27,7 @@
                     $moment(cueInfo.brdtime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
-                <span class="sub_text">
+                <!-- <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   매체 :
                   <span v-if="cueInfo.media == 'A'">AM</span>
@@ -28,7 +35,7 @@
                   <span v-if="cueInfo.media == 'D'">DMB</span>
                   <span v-if="cueInfo.media == 'C'">공통</span>
                   <span v-if="cueInfo.media == 'Z'">기타</span>
-                </span>
+                </span> -->
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   담당자 :
@@ -182,7 +189,7 @@ export default {
   data() {
     return {
       onload: null,
-      options: [{ text: "자동저장", value: true }],
+      options: [{ text: "자동저장(5분 마다)", value: true }],
       autosaveValue: [true],
       autoSaveFun: null,
       searchToggleSwitch: true,
@@ -196,7 +203,7 @@ export default {
       if (this.cueSheetAutoSave) {
         this.saveDayCue();
       }
-    }, 900000); //15분마다 저장
+    }, 300000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];
