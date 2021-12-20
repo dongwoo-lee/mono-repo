@@ -503,7 +503,7 @@ export default {
         },
       },
       role: "",
-      listTableHeight: "500px",
+      listTableHeight: "400px",
       userListFields: [
         {
           name: "__slot:title",
@@ -594,26 +594,26 @@ export default {
 
     getCategory(v) {
       switch (v) {
-        case 'MY':
+        case "MY":
           return "My 디스크";
-        case 'AC':
+        case "AC":
           return "프로소재";
-        case 'PM':
+        case "PM":
           return "프로그램";
-        case 'MS':
+        case "MS":
           return "주조SPOT";
-        case 'ST':
+        case "ST":
           return "부조SPOT";
-        case 'FC':
+        case "FC":
           return "FILLER";
-        case 'RC':
+        case "RC":
           return "취재물";
-        case 'TT':
+        case "TT":
           return "고정소재";
-        case 'TS':
+        case "TS":
           return "변동소재";
         default:
-          return '';
+          return "";
       }
     },
   },
