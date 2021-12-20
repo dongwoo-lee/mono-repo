@@ -136,6 +136,7 @@ export default {
     getProType() {
       var data = this.proTypeOptions.find((dt) => dt.text == this.proTypeName);
       this.proType = data.value;
+      this.update();
     },
   },
 };

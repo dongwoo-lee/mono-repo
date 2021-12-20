@@ -114,12 +114,7 @@ export default {
         return true;
       }
     } else if (state.MetaData.typeSelected == "scr-spot") {
-      if (
-        getters.titleState &&
-        getters.memoState &&
-        getters.advertiserState &&
-        getters.editorState
-      ) {
+      if (getters.titleState && getters.memoState && getters.advertiserState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "static-spot") {

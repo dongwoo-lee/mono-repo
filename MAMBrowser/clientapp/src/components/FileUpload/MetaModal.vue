@@ -315,7 +315,6 @@ export default {
       "typeState",
       "titleState",
       "memoState",
-      "editorState",
       "durationState",
       "metaValid",
     ]),

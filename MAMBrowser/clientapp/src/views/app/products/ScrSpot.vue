@@ -60,7 +60,7 @@
           >
         </b-form-group>
       </template>
-       <template slot="form-btn-area">
+      <template slot="form-btn-area">
         <b-input-group>
           <b-button
             variant="outline-primary default"
@@ -154,14 +154,11 @@
     >
     </PlayerPopup>
 
-
-  <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
+    <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
       <template slot="modal-title">
         <h5>기간 설정</h5>
       </template>
-      <template slot="default">
-        
-      </template>
+      <template slot="default"> </template>
       <template v-slot:modal-footer>
         <b-button
           variant="outline-danger default cutom-label-cancel"
@@ -174,7 +171,6 @@
         <!-- 여기에다가 편집 저장 버튼 추가해야함 그리고 거기에 Click이벤트로 SOM, EOM 찍히는지 확인하기 -->
       </template>
     </b-modal>
-
   </div>
 </template>
 
@@ -190,8 +186,8 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
-      showModalDuration : false,
       deleteId: "",
+      show: false,
       metaUpdate: false,
       updateScreenName: "",
       rowData: "",
@@ -403,9 +399,9 @@ export default {
           }
         });
     },
-    onShowModalDuration(){
-      this.showModalDuration = true;
-    }
+    onShowModalDuration() {
+      this.show = true;
+    },
   },
 };
 </script>

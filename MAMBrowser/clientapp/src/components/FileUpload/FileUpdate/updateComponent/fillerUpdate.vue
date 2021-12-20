@@ -117,6 +117,7 @@ export default {
     eventInput(event) {
       this.brdDT = event;
       this.tempDate = event;
+      this.update();
     },
     onInput(event) {
       const targetValue = event.target.value;
@@ -148,6 +149,7 @@ export default {
           this.tempDate = convertDate;
         }
       }
+      this.update();
     },
     validDateType(value) {
       const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;

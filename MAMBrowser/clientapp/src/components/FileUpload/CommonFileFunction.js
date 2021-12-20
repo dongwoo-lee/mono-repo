@@ -25,7 +25,7 @@ export default {
       formatted: "",
       dateSelected: "",
       userID: sessionStorage.getItem("user_name"),
-      logTableHeight: "450px",
+      logTableHeight: "360px",
 
       adminLogFields: [
         {
@@ -151,7 +151,6 @@ export default {
       "typeState",
       "titleState",
       "memoState",
-      "editorState",
       "reporterState",
       "programState",
       "eventState",
@@ -282,9 +281,7 @@ export default {
         this.resetProgramData();
         axios
           .get(
-            `/api/categories/pgm-sch?media=${
-              this.MetaData.mediaSelected
-            }&date=${20200601}` //TODO: 오늘 날짜로 변경
+            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
           )
           .then((res) => {
             var value = res.data.resultObject.data;

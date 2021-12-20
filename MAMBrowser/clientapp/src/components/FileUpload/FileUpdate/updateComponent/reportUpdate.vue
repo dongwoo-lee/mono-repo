@@ -123,7 +123,7 @@ export default {
       });
     });
 
-    const replaceVal = this.tempDate.replace(/-/g, "");
+    const replaceVal = this.brdDT.replace(/-/g, "");
     const yyyy = replaceVal.substring(0, 4);
     const mm = replaceVal.substring(4, 6);
     const dd = replaceVal.substring(6, 8);
@@ -174,6 +174,7 @@ export default {
     eventInput(event) {
       this.brdDT = event;
       this.tempDate = event;
+      this.update();
     },
     onInput(event) {
       const targetValue = event.target.value;
@@ -206,6 +207,7 @@ export default {
           this.tempDate = convertDate;
         }
       }
+      this.update();
     },
     validDateType(value) {
       const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;

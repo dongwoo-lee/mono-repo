@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import CommonUpdateModal from "../../Modal/CommonUpdateModal.vue";
+import CommonUpdateModal from "../../Modal/CommonDeleteModal.vue";
 export default {
   props: {
     rowData: {
