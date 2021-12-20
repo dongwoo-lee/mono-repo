@@ -841,6 +841,7 @@ namespace MAMBrowser.Utils
                         if (cueItem.CARTID != null && cueItem.CARTID.Contains(cartId))
                         {
                             cueItem.PGMCODE = item.PGMCODE;
+                            cueItem.CARTID = item.CMGROUPID;
                             cueItem.ONAIRDATE = item.ONAIRDATE;
                             cueItem.STARTPOSITION = 0;
                             var duration = 0;
@@ -858,29 +859,37 @@ namespace MAMBrowser.Utils
                 }
 
             }
+
+
             if (spons.SB?.Any() == true)
             {
-                foreach (var item in spons.SB)
+                var products = spons.SB.GroupBy(x => x.PRODUCTID).Select(grp => grp.ToList()).ToList();
+
+                foreach (List<SBGroupEntity> arr in products)
                 {
-                    var cartId = item.GROUPCONTENTID.Substring(2);
+                    var cartId = arr[0].ID.Remove(3, 2);
                     foreach (var cueItem in entity)
                     {
-                        if (cueItem.CARTID != null && cueItem.CARTID.Contains(cartId))
+                        if(cueItem.CARTID != null && arr[0].ID.Remove(3, 2) == cueItem.CARTID.Remove(3, 2))
                         {
-                            cueItem.PGMCODE = item.PGMCODE;
-                            cueItem.ONAIRDATE = item.ONAIRDATE;
+                            cueItem.PGMCODE = arr[0].PGMCODE;
+                            cueItem.CARTID = arr[0].ID;
+                            cueItem.ONAIRDATE = arr[0].ONAIRDATE;
                             cueItem.STARTPOSITION = 0;
+                            cueItem.FADEINTIME = 0;
+                            cueItem.FADEOUTTIME = 0;
+                            cueItem.MAINTITLE = arr[0].EVENTNAME;
+                            cueItem.SUBTITLE = arr[0].STATENAME;
                             var duration = 0;
-                            foreach (var clip in item.Clips)
+                            foreach (var item in arr)
                             {
-                                duration = duration + clip.LENGTH;
+                                foreach (var clip in item.Clips)
+                                {
+                                    duration = duration + clip.LENGTH;
+                                }
 
                             }
                             cueItem.ENDPOSITION = duration;
-                            cueItem.FADEINTIME = 0;
-                            cueItem.FADEOUTTIME = 0;
-                            cueItem.MAINTITLE = item.NAME;
-                            cueItem.SUBTITLE = item.ID;
                         }
                     }
                 }
