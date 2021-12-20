@@ -450,16 +450,19 @@ export default {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
       this.mediaName = data.text;
+      this.getPro();
     },
     eventSInput(value) {
       this.sdate = value;
       this.setFileSDate(value);
       this.setTempFileSDate(value);
+      this.getPro();
     },
     eventEInput(value) {
       this.edate = value;
       this.setFileEDate(value);
       this.setTempFileEDate(value);
+      this.getPro();
     },
     get7daysago() {
       var newDate = new Date();
@@ -499,6 +502,7 @@ export default {
           this.sdate = convertDate;
           this.setFileSDate(convertDate);
           this.setTempFileSDate(convertDate);
+          this.getPro();
         }
       }
     },
@@ -533,6 +537,7 @@ export default {
           this.edate = convertDate;
           this.setFileEDate(convertDate);
           this.setTempFileEDate(convertDate);
+          this.getPro();
         }
       }
     },

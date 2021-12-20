@@ -359,8 +359,25 @@ export default {
       this.rowData = rowData;
     },
     masteringUpdate(e) {
-      axios.patch("/api/Mastering/my-disk", e).then((res) => {
-        console.log(res);
+      var mydisk = {
+        ID: parseInt(e.ID),
+        title: e.title,
+        memo: e.memo,
+      };
+      axios.patch("/api/Mastering/mydisk", mydisk).then((res) => {
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.UpdateModalOff();
+          this.$fn.notify("primary", {
+            title: "메타 데이터 수정 성공",
+          });
+          this.getData();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "메타 데이터 수정 실패: " + res.data.errorMsg,
+          });
+          this.getData();
+        }
       });
     },
     UpdateModalOff() {

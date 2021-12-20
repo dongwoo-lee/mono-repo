@@ -212,6 +212,8 @@
         <DxColumn data-field="onairTime" caption="방송 시간" />
         <DxColumn :width="80" data-field="durationSec" caption="편성 분량" />
         <DxSelection mode="single" />
+        <DxPager :visible="false" />
+        <DxScrolling mode="standard" />
       </DxDataGrid>
     </div>
     <!-- 프로그램 -->
@@ -287,11 +289,15 @@ import CommonFileFunction from "../CommonFileFunction";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import { DxScrolling, DxLoadPanel, DxPager } from "devextreme-vue/data-grid";
 import axios from "axios";
 const dxdg = "my-proDataGrid";
 export default {
   components: {
     CommonVueSelect,
+    DxScrolling,
+    DxLoadPanel,
+    DxPager,
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
@@ -353,6 +359,7 @@ export default {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
       this.mediaName = data.text;
+      this.getPro();
     },
   },
 };

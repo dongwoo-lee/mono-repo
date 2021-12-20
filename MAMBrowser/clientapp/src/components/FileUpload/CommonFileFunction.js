@@ -291,6 +291,7 @@ export default {
             });
             this.setProgramData(res.data.resultObject.data);
           });
+        this.resetProgramSelected();
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         const replaceVal = this.date.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
@@ -309,6 +310,7 @@ export default {
             });
             this.setEventData(res.data.resultObject.data);
           });
+        this.resetProgramSelected();
       } else if (this.MetaData.typeSelected == "static-spot") {
         const replaceVal = this.fileSDate.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
@@ -328,6 +330,7 @@ export default {
             });
             this.setEventData(res.data.resultObject.data);
           });
+        this.resetProgramSelected();
       } else if (this.MetaData.typeSelected == "var-spot") {
         const replaceVal = this.fileSDate.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
@@ -347,6 +350,7 @@ export default {
             });
             this.setEventData(res.data.resultObject.data);
           });
+        this.resetProgramSelected();
       } else if (this.MetaData.typeSelected == "report") {
         const replaceVal = this.date.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
@@ -396,6 +400,7 @@ export default {
     eventInput(event) {
       this.setDate(event);
       this.setTempDate(event);
+      this.getPro();
     },
     onInput(event) {
       const targetValue = event.target.value;
@@ -425,6 +430,7 @@ export default {
           }
           this.setDate(convertDate);
           this.setTempDate(convertDate);
+          this.getPro();
         }
       }
     },

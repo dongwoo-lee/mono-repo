@@ -616,15 +616,16 @@ export default {
       if (event.value.length != 0) {
         if (this.notDiskAvailable(event.value[0].size)) {
           if (
-            event.value[0].type == "audio/mpeg" ||
+            event.value[0].type == "audio/mp3" ||
             event.value[0].type == "audio/wav"
           ) {
             var formData = new FormData();
-            if (event.value[0].type == "audio/mpeg") {
-              formData.append("file", event.value[0]);
+            if (event.value[0].type == "audio/mp3") {
+              var blob = event.value[0].slice(0, 10000);
+              formData.append("file", blob);
               formData.append("fileExt", event.value[0].name);
             } else if (event.value[0].type == "audio/wav") {
-              var blob = event.value[0].slice(0, 1152);
+              var blob = event.value[0].slice(0, 10000);
               formData.append("file", blob);
               formData.append("fileExt", event.value[0].name);
             }

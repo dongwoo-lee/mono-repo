@@ -702,7 +702,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        [HttpPatch("my-disk")]
+        [HttpPatch("mydisk")]
         public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] UpdateMyDiskMeta jsonObject)
         {
             DTO_RESULT result = new DTO_RESULT();
