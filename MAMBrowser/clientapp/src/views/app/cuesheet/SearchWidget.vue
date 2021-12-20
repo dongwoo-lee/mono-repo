@@ -690,7 +690,8 @@ export default {
   color: #232323 !important;
 }
 
-.dx-datagrid-table
+.search_view
+  .dx-datagrid-table
   .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row)
   > td:not(.dx-focused) {
   background-color: #bf4e6a !important;
