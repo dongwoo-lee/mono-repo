@@ -239,99 +239,59 @@
                       font-size: 14px;
                     "
                   >
-                    <vuetable
+                    <DxDataGrid
                       v-show="this.role == 'ADMIN'"
-                      :table-height="logTableHeight"
-                      ref="vuetable-scrollable"
-                      :api-mode="false"
-                      :fields="adminLogFields"
-                      :data="masteringLogData"
-                      no-data-template="데이터가 없습니다."
+                      style="
+                        height: 380px;
+                        border: 1px solid silver;
+                        font-family: 'MBC 새로움 M';
+                      "
+                      :data-source="masteringLogData"
+                      :show-borders="false"
+                      :hover-state-enabled="true"
+                      key-expr="title"
+                      :allow-column-resizing="true"
+                      :column-auto-width="true"
+                      no-data-text="No Data"
+                      @row-expanding="logSearch"
                     >
-                      <template slot="rowNO" scope="props">
-                        <div>{{ props.rowIndex + 1 }}</div>
-                      </template>
+                      <DxPager :visible="false" />
+                      <DxScrolling mode="standard" />
+                      <DxColumn data-field="title" caption="제목" />
+                      <DxColumn data-field="type" caption="타입" />
+                      <DxColumn data-field="user" caption="등록자" />
+                      <DxColumn data-field="date" caption="날짜" />
+                      <DxColumn data-field="silence" caption="무음" />
+                      <DxColumn data-field="worker" caption="서버" />
+                      <DxColumn data-field="status" caption="상태"
+                        ><b-spinner small type="grow"></b-spinner
+                      ></DxColumn>
+                    </DxDataGrid>
 
-                      <template slot="title" scope="props">
-                        <div style="font-size: 14px">
-                          {{ props.rowData.title }}
-                        </div>
-                      </template>
-                      <template slot="type" scope="props">
-                        <div>
-                          {{ props.rowData.type }}
-                        </div>
-                      </template>
-                      <template slot="user" scope="props">
-                        <div>
-                          {{ props.rowData.user }}
-                        </div>
-                      </template>
-                      <template slot="date" scope="props">
-                        <div>
-                          {{ props.rowData.date }}
-                        </div>
-                      </template>
-                      <template slot="silence" scope="props">
-                        <div>
-                          {{ props.rowData.silence }}
-                        </div>
-                      </template>
-                      <template slot="worker" scope="props">
-                        <div>
-                          {{ props.rowData.worker }}
-                        </div>
-                      </template>
-                      <template slot="status" scope="props">
-                        <div v-if="props.rowData.status == 5">성공</div>
-                        <div v-if="props.rowData.status == 6">실패</div>
-                      </template>
-                    </vuetable>
-
-                    <vuetable
+                    <DxDataGrid
                       v-show="this.role != 'ADMIN'"
-                      :table-height="logTableHeight"
-                      ref="vuetable-scrollable"
-                      :api-mode="false"
-                      :fields="userLogFields"
-                      :data="masteringLogData"
-                      no-data-template="데이터가 없습니다."
+                      style="
+                        height: 360px;
+                        border: 1px solid silver;
+                        font-family: 'MBC 새로움 M';
+                      "
+                      :data-source="masteringLogData"
+                      :show-borders="false"
+                      :hover-state-enabled="true"
+                      key-expr="title"
+                      :allow-column-resizing="true"
+                      :column-auto-width="true"
+                      no-data-text="No Data"
                     >
-                      <template slot="rowNO" scope="props">
-                        <div>{{ props.rowIndex + 1 }}</div>
-                      </template>
-
-                      <template slot="title" scope="props">
-                        <div style="font-size: 14px">
-                          {{ props.rowData.title }}
-                        </div>
-                      </template>
-                      <template slot="type" scope="props">
-                        <div>
-                          {{ props.rowData.type }}
-                        </div>
-                      </template>
-                      <template slot="date" scope="props">
-                        <div>
-                          {{ props.rowData.date }}
-                        </div>
-                      </template>
-                      <template slot="status" scope="props">
-                        <div>
-                          {{ props.rowData.status }}
-                        </div>
-                      </template>
-                      <template slot="silence" scope="props">
-                        <div>
-                          {{ props.rowData.silence }}
-                        </div>
-                      </template>
-                      <template slot="worker" scope="props">
-                        <div>
-                          {{ props.rowData.worker }}
-                        </div>
-                      </template>
-                    </vuetable>
+                      <DxPager :visible="false" />
+                      <DxScrolling mode="standard" />
+                      <DxColumn data-field="title" caption="제목" />
+                      <DxColumn data-field="type" caption="타입" />
+                      <DxColumn data-field="date" caption="날짜" />
+                      <DxColumn data-field="silence" caption="무음" />
+                      <DxColumn data-field="worker" caption="서버" />
+                      <DxColumn data-field="status" caption="상태" />
+                    </DxDataGrid>
                   </div>
                 </b-card>
               </b-tab>
@@ -360,6 +320,7 @@ import MetaModal from "./MetaModal";
 import list from "./list.vue";
 import axios from "axios";
 const dxfu = "my-fileupload";
+import { DxScrolling, DxLoadPanel, DxPager } from "devextreme-vue/data-grid";
 var DB;
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
@@ -371,6 +332,9 @@ export default {
     },
   },
   components: {
+    DxScrolling,
+    DxLoadPanel,
+    DxPager,
     CommonFileModal,
     CommonVueSelect,
     MetaModal,
@@ -429,6 +393,7 @@ export default {
 
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
+
     axios
       .get(
         `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${sessionStorage.getItem(
@@ -443,7 +408,7 @@ export default {
             type: this.getCategory(e.category),
             user: e.regUserName,
             date: e.regDtm,
-            status: e.workStatus,
+            status: this.getStatus(e.workStatus),
             silence: e.silenceCount,
             worker: e.workerName,
           };
@@ -548,7 +513,7 @@ export default {
               type: this.getCategory(e.category),
               user: e.regUserName,
               date: e.regDtm,
-              status: e.workStatus,
+              status: this.getStatus(e.workStatus),
               silence: e.silenceCount,
               worker: e.workerName,
             };
@@ -556,6 +521,13 @@ export default {
           });
           this.setMasteringLogData(masteringLogData);
         });
+    },
+    getStatus(v) {
+      if (v == 5) {
+        return "성공";
+      } else if (v == 6) {
+        return "실패";
+      }
     },
     get7daysago() {
       var newDate = new Date();
@@ -670,6 +642,7 @@ export default {
               this.setDuration(res.data.resultObject.duration);
               this.setAudioFormat(res.data.resultObject.audioFormatInfo);
               this.openFileModal();
+              this.dropzone = false;
               this.MetaModal = true;
               this.setProcessing(false);
               // this.setFileUploading(true);
@@ -806,7 +779,6 @@ export default {
   width: 1350px;
   height: 530px;
   margin-left: 20px;
-  margin-top: 25px;
 }
 .date-input:focus {
   border: 1px solid #4475c4 !important;

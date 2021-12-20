@@ -180,23 +180,23 @@ export default {
         .then((res) => {
           var masteringListData = [];
           res.data.resultObject.data.forEach((e) => {
-            if (e.category == 'MY') {
+            if (e.category == "MY") {
               e.category = "My 디스크";
-            } else if (e.category == 'AC') {
+            } else if (e.category == "AC") {
               e.category = "프로소재";
-            } else if (e.category == 'PM') {
+            } else if (e.category == "PM") {
               e.category = "프로그램";
-            } else if (e.category == 'MS') {
+            } else if (e.category == "MS") {
               e.category = "주조SPOT";
-            } else if (e.category == 'ST') {
+            } else if (e.category == "ST") {
               e.category = "부조SPOT";
-            } else if (e.category == 'FC') {
+            } else if (e.category == "FC") {
               e.category = "FILLER";
-            } else if (e.category == 'RC') {
+            } else if (e.category == "RC") {
               e.category = "취재물";
-            } else if (e.category == 'TT') {
+            } else if (e.category == "TT") {
               e.category = "고정소재";
-            } else if (e.category == 'TS') {
+            } else if (e.category == "TS") {
               e.category = "변동소재";
             }
             var data = {
@@ -210,7 +210,7 @@ export default {
           });
           state.masteringListData = masteringListData;
         });
-    }, 1000);
+    }, 500);
   },
   stopDBConnection() {
     clearInterval(db);

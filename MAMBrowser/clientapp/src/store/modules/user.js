@@ -145,6 +145,8 @@ export default {
       sessionStorage.removeItem(USER_ID);
       sessionStorage.removeItem(ROLE);
       sessionStorage.removeItem(AUTHORITY);
+      sessionStorage.removeItem(USER_NAME);
+      sessionStorage.removeItem(ACCESS_GROP_ID);
     },
     SET_REMOVE_TOKEN(state) {
       state.isAuth = false;
