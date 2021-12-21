@@ -158,7 +158,7 @@
     </div>
     <div
       v-show="this.MetaData.typeSelected == 'program'"
-      style="position: absolute; width: 550px; top: 90px; height: 210px"
+      style="position: absolute; width: 550px; top: 100px; height: 210px"
     >
       <DxDataGrid
         ref="my-proDataGrid"
@@ -231,7 +231,7 @@
       style="
         width: 550px;
         height: 82px;
-        margin-top: 350px;
+        margin-top: 390px;
         padding-top: 20px;
         padding-left: 10px;
         padding-right: 10px;
