@@ -262,26 +262,26 @@
                         data-field="title"
                         caption="제목"
                       />
-                      <DxColumn :width="90" data-field="type" caption="타입" />
+                      <DxColumn :width="120" data-field="type" caption="타입" />
                       <DxColumn
-                        :width="110"
+                        :width="120"
                         data-field="user"
                         caption="등록자"
                       />
                       <DxColumn :width="300" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="50"
+                        :width="80"
                         data-field="silence"
                         alignment="left"
                         caption="무음"
                       />
                       <DxColumn
-                        :width="80"
+                        :width="100"
                         data-field="worker"
                         caption="서버"
                       />
                       <DxColumn
-                        :width="70"
+                        :width="100"
                         data-field="status"
                         caption="상태"
                       />
@@ -312,17 +312,17 @@
                       <DxColumn :width="120" data-field="type" caption="타입" />
                       <DxColumn :width="350" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="70"
+                        :width="120"
                         data-field="silence"
                         caption="무음"
                       />
                       <DxColumn
-                        :width="90"
+                        :width="120"
                         data-field="worker"
                         caption="서버"
                       />
                       <DxColumn
-                        :width="80"
+                        :width="100"
                         data-field="status"
                         caption="상태"
                       />
