@@ -67,6 +67,14 @@
       >
         <span class="label">수정</span>
       </b-button>
+
+      <b-button
+        variant="outline-danger"
+        @click="MetaModalOff"
+        style="margin-right: 10px"
+      >
+        <span class="label">닫기</span>
+      </b-button>
     </h3>
   </common-update-modal>
 </template>

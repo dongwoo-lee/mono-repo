@@ -14,6 +14,14 @@
       >
         <span class="label">삭제</span>
       </b-button>
+
+      <b-button
+        variant="danger"
+        @click="MetaModalOff"
+        style="margin-right: 10px"
+      >
+        <span class="label">닫기</span>
+      </b-button>
     </h3>
   </common-update-modal>
 </template>
@@ -44,14 +52,14 @@ export default {
     deleteFile() {
       var deleteInfo = {
         deleteId: this.rowData.id,
-        fileToken:this.rowData.fileToken
+        fileToken: this.rowData.fileToken,
       };
       if (this.isScrSpot) {
         deleteInfo = {
           spotID: this.rowData.id,
           productID: this.rowData.productID,
           brdDT: this.rowData.brdDT,
-          fileToken:this.rowData.fileToken
+          fileToken: this.rowData.fileToken,
         };
       }
       this.$emit("deleteFile", deleteInfo);

@@ -16,7 +16,7 @@
             <slot name="body"> default body </slot>
           </div>
 
-          <div class="modal-footer">
+          <div class="file-modal-footer">
             <slot name="footer">
               <b-button
                 variant="outline-danger"
@@ -99,8 +99,22 @@ export default {};
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
-.modal-footer {
+.file-modal-footer {
   margin-top: 30px;
   height: 40px;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
 }
 </style>
