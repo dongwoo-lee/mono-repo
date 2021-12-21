@@ -102,7 +102,7 @@ namespace MAMBrowser.Controllers
                         MyDisk.FilePath = tempFilePath;
                         MyDisk.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         MyDisk.SoundType = Define.AUDIO_FILE_TYPE_MYDISK;
-
+                        MyDisk.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
                         var users = Startup.AppSetting.MasteringPriorities["Users"] as Dictionary<string, int>;
@@ -177,6 +177,7 @@ namespace MAMBrowser.Controllers
                         Program.FilePath = tempFilePath;
                         Program.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         Program.SoundType = Define.AUDIO_FILE_TYPE_PGM;
+                        Program.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -251,6 +252,7 @@ namespace MAMBrowser.Controllers
                         mcr.FilePath = tempFilePath;
                         mcr.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         mcr.SoundType = Define.AUDIO_FILE_TYPE_MCR_SPOT;
+                        mcr.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -323,6 +325,7 @@ namespace MAMBrowser.Controllers
                         scr.FilePath = tempFilePath;
                         scr.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         scr.SoundType = Define.AUDIO_FILE_TYPE_SCR_SPOT;
+                        scr.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -398,6 +401,7 @@ namespace MAMBrowser.Controllers
                         staticSpot.FilePath = tempFilePath;
                         staticSpot.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         staticSpot.SoundType = Define.AUDIO_FILE_TYPE_STATIC;
+                        staticSpot.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -473,6 +477,7 @@ namespace MAMBrowser.Controllers
                         varSpot.FilePath = tempFilePath;
                         varSpot.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         varSpot.SoundType = Define.AUDIO_FILE_TYPE_VAR;
+                        varSpot.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -546,6 +551,7 @@ namespace MAMBrowser.Controllers
                         report.FilePath = tempFilePath;
                         report.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         report.SoundType = Define.AUDIO_FILE_TYPE_REPORT;
+                        report.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -617,6 +623,7 @@ namespace MAMBrowser.Controllers
                         Filler.FilePath = tempFilePath;
                         Filler.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         Filler.SoundType = Define.AUDIO_FILE_TYPE_FILLER;
+                        Filler.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
@@ -689,6 +696,7 @@ namespace MAMBrowser.Controllers
                         pro.FilePath = tempFilePath;
                         pro.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         pro.SoundType = Define.AUDIO_FILE_TYPE_PRO;
+                        pro.FileOriginExt = Path.GetExtension(metaDataObject.FileName).ToLower();
 
                         //2. 우선순위 확인 (ip, user, brdDtm)           
                         //id로 유저 권한을 가져와서 권한에 해당하는 우선순위를 가져온다.
