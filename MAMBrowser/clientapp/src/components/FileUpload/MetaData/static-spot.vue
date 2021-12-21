@@ -290,7 +290,6 @@
         <DxScrolling mode="virtual" />
         <DxColumn data-field="name" caption="이벤트 명" />
         <DxColumn data-field="id" caption="이벤트 ID" />
-        <DxColumn data-field="startDate" caption="시작일" />
         <DxColumn data-field="duration" caption="편성분량" />
       </DxDataGrid>
     </div>
@@ -335,7 +334,7 @@
           <b-form-input
             style="width: 180px"
             class="editTask"
-            v-model="EventSelected.startDate"
+            v-model="fileSDate"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -408,18 +407,19 @@ export default {
 
     // 시작/종료일 초기값 설정
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+    this.sdate = today;
+    this.setFileSDate(today);
+    this.setTempFileSDate(today);
+
+    // var newDate = new Date();
+    // var dayOfMonth = newDate.getDate();
+    // newDate.setDate(dayOfMonth + 7);
+    // newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+
     this.edate = today;
     this.setFileEDate(today);
     this.setTempFileEDate(today);
 
-    var newDate = new Date();
-    var dayOfMonth = newDate.getDate();
-    newDate.setDate(dayOfMonth - 7);
-    newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
-
-    this.sdate = newDate;
-    this.setFileSDate(newDate);
-    this.setTempFileSDate(newDate);
     this.getPro();
   },
   watch: {
