@@ -188,7 +188,11 @@
           class="dx-row"
         >
           <tr
-            v-if="!userProgramList.includes(productId) && eventName != ''"
+            v-if="
+              !userProgramList.includes(productId) &&
+              eventName != '' &&
+              role != 'ADMIN'
+            "
             :class="[getProductId(productId)] ? 'disabledRow' : ''"
           >
             <td>{{ eventName }}</td>
@@ -197,7 +201,12 @@
             <td>{{ onairTime }}</td>
             <td>{{ durationSec }}</td>
           </tr>
-          <tr v-if="userProgramList.includes(productId) && eventName != ''">
+          <tr
+            v-if="
+              (userProgramList.includes(productId) && eventName != '') ||
+              role == 'ADMIN'
+            "
+          >
             <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가</td> -->
             <td>{{ eventName }}</td>
             <td>{{ eventType }}</td>
