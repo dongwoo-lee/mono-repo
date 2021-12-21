@@ -48,7 +48,8 @@ export default {
       var pm = state.ProgramSelected.durationSec.slice(3, 5);
       var ps = state.ProgramSelected.durationSec.slice(6, 8);
       var calcP = ph * 60 * 60 + pm * 60 + ps * 1;
-      if (5 < calcD - calcP) {
+      var abs = Math.abs(calcD - calcP);
+      if (5 < abs) {
         return false;
       }
     } else if (
@@ -62,7 +63,8 @@ export default {
       var em = state.EventSelected.duration.slice(3, 5);
       var es = state.EventSelected.duration.slice(6, 8);
       var calcE = eh * 60 * 60 + em * 60 + es * 1;
-      if (5 < calcD - calcE) {
+      var abs = Math.abs(calcD - calcE);
+      if (5 < abs) {
         return false;
       }
     } else if (
@@ -76,7 +78,8 @@ export default {
       var em = state.EventSelected.duration.slice(3, 5);
       var es = state.EventSelected.duration.slice(6, 8);
       var calcE = eh * 60 * 60 + em * 60 + es * 1;
-      if (1 < calcD - calcE) {
+      var abs = Math.abs(calcD - calcE);
+      if (5 < abs) {
         return false;
       }
     } else if (
@@ -90,7 +93,8 @@ export default {
       var em = state.EventSelected.duration.slice(3, 5);
       var es = state.EventSelected.duration.slice(6, 8);
       var calcE = eh * 60 * 60 + em * 60 + es * 1;
-      if (1 < calcD - calcE) {
+      var abs = Math.abs(calcD - calcE);
+      if (5 < abs) {
         return false;
       }
     }
