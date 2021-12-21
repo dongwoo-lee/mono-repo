@@ -437,6 +437,8 @@ export default {
     if (this.abCartArr.length > 0) {
       this.rowData.rownum = this.abCartArr.length + 1;
     }
+    console.log("this.abCartArr");
+    console.log(this.abCartArr);
   },
   created() {
     eventBus.$on("abDataSet", (val) => {

@@ -300,12 +300,9 @@ export default {
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
         async getuserProOption({ commit }, payload) {
-            var pram = { brd_dt: payload.brd_dt, media: payload.media }
-            if (pram.brd_dt == null) {
-                pram.brd_dt = toDay
-            }
+            var pram = { person: null, media: payload.media }
             if (payload.gropId == "S01G04C004") {
-                pram.personid = payload.personid
+                pram.person = payload.person
             }
             return await axios.get(`/api/CueUserInfo/GetProgramList`, {
                 params: pram
@@ -332,12 +329,9 @@ export default {
         },
         //유저 - 전체 프로그램 + 매체 가져오기
         async getMediasOption({ commit }, payload) {
-            var pram = { brd_dt: payload.brd_dt }
-            if (pram.brd_dt == null) {
-                pram.brd_dt = toDay
-            }
+            var pram = { person: null }
             if (payload.gropId == "S01G04C004") {
-                pram.personid = payload.personid
+                pram.person = payload.person
             }
             return await axios.get(`/api/CueUserInfo/GetProgramList`, {
                 params: pram

@@ -256,7 +256,7 @@ namespace MAMBrowser.Utils
             {
                 var dtoItem = new PgmListDTO();
                 dtoItem.PRODUCTID = item.PRODUCTID;
-                dtoItem.EVENTNAME = item.CODENAME;
+                dtoItem.EVENTNAME = item.EVENTNAME;
                 dtoItem.SERVICENAME = item.SERVICENAME;
                 dtoItem.MEDIA = item.MEDIA;
                 //foreach (var detailItem in item.DETAILS)
@@ -859,18 +859,32 @@ namespace MAMBrowser.Utils
                 }
 
             }
-
-
             if (spons.SB?.Any() == true)
             {
-                var products = spons.SB.GroupBy(x => x.PRODUCTID).Select(grp => grp.ToList()).ToList();
+                var query = from arr in spons.SB
+                            group arr by arr.PRODUCTID into g
+                            select new
+                            {
+                                GroupKey = g.Key,
+                                Cons = g
+                            };
 
-                foreach (List<SBGroupEntity> arr in products)
+                foreach (var Group in query)
                 {
+                    foreach (var con in Group.Cons)
+                    {
+                        con.Clips = con.Clips.DistinctBy(p => p.CLIPID).ToList();
+                    }
+                }
+                var products = query.ToList();
+
+                foreach(var item in products)
+                {
+                    var arr = item.Cons.ToList();
                     var cartId = arr[0].ID.Remove(3, 2);
                     foreach (var cueItem in entity)
                     {
-                        if(cueItem.CARTID != null && arr[0].ID.Remove(3, 2) == cueItem.CARTID.Remove(3, 2))
+                        if (cueItem.CARTID != null && arr[0].ID.Remove(3, 2) == cueItem.CARTID.Remove(3, 2))
                         {
                             cueItem.PGMCODE = arr[0].PGMCODE;
                             cueItem.CARTID = arr[0].ID;
@@ -881,13 +895,12 @@ namespace MAMBrowser.Utils
                             cueItem.MAINTITLE = arr[0].EVENTNAME;
                             cueItem.SUBTITLE = arr[0].STATENAME;
                             var duration = 0;
-                            foreach (var item in arr)
+                            foreach (var item2 in arr)
                             {
-                                foreach (var clip in item.Clips)
+                                foreach (var clip in item2.Clips)
                                 {
                                     duration = duration + clip.LENGTH;
                                 }
-
                             }
                             cueItem.ENDPOSITION = duration;
                         }
@@ -895,6 +908,19 @@ namespace MAMBrowser.Utils
                 }
             }
             return entity;
+        }
+        // 중복제거
+        private static IEnumerable<TSource> DistinctBy<TSource, TKey>
+    (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
         }
 
         //즐겨찾기 광고 pgmcode 가져오기

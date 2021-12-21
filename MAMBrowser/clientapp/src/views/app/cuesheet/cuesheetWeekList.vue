@@ -160,7 +160,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
+import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import axios from "axios";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
@@ -292,14 +292,11 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
     async getData() {
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      const userId = sessionStorage.getItem(USER_ID);
+      const userName = sessionStorage.getItem(USER_NAME);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (this.searchItems.productid == "") {
-        await this.getMediasOption({
-          brd_dt: null,
-          personid: userId,
-          gropId: gropId,
-        });
+        var pram = { person: userName, gropId: gropId };
+        await this.getMediasOption(pram);
         this.searchItems.productid = this.userProList;
       }
       var params = {
@@ -316,14 +313,9 @@ export default {
     //매체 선택시 프로그램 목록 가져오기 (일반,modal)
     async eventClick(e, V) {
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      const userId = sessionStorage.getItem(USER_ID);
-
-      var proOption = await this.getuserProOption({
-        brd_dt: null,
-        personid: userId,
-        gropId: gropId,
-        media: e,
-      });
+      const userName = sessionStorage.getItem(USER_NAME);
+      var pram = { person: userName, gropId: gropId, media: e };
+      var proOption = await this.getuserProOption(pram);
       if (V == "list") {
         this.programList = this.userProOption;
       } else if (V == "modal") {

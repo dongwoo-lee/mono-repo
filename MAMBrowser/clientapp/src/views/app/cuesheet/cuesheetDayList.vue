@@ -78,7 +78,7 @@
 import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
+import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 const moment = require("moment");
 const date = new Date();
 
@@ -95,7 +95,7 @@ function get_date_str(date) {
 
 var toDay = get_date_str(date);
 
-date.setDate(date.getDate() + 14);
+date.setDate(date.getDate() + 7);
 var endDay = get_date_str(date);
 
 export default {
@@ -192,7 +192,7 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
-      const userId = sessionStorage.getItem(USER_ID);
+      const userName = sessionStorage.getItem(USER_NAME);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (
@@ -209,11 +209,8 @@ export default {
       }
 
       if (this.searchItems.productid == "") {
-        await this.getMediasOption({
-          brd_dt: this.searchItems.start_dt,
-          personid: userId,
-          gropId: gropId,
-        });
+        var pram = { person: userName, gropId: gropId };
+        await this.getMediasOption(pram);
         this.searchItems.productid = this.userProList;
       }
       if (this.searchItems.productid == undefined) {
@@ -234,14 +231,10 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
-      const userId = sessionStorage.getItem(USER_ID);
+      const userName = sessionStorage.getItem(USER_NAME);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      var proOption = await this.getuserProOption({
-        brd_dt: this.searchItems.start_dt,
-        personid: userId,
-        gropId: gropId,
-        media: e,
-      });
+      var pram = { person: userName, gropId: gropId, media: e };
+      var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
       this.searchItems.productid = this.userProList;
     },

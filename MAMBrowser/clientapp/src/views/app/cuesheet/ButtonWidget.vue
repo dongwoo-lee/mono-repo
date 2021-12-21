@@ -416,7 +416,7 @@ import DxTextArea from "devextreme-vue/text-area";
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
-import { USER_ID, ACCESS_GROP_ID } from "@/constants/config";
+import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
@@ -731,15 +731,14 @@ export default {
         });
     },
     async editWeekListClick() {
+      const userName = sessionStorage.getItem(USER_NAME);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      const userId = sessionStorage.getItem(USER_ID);
-      var proOption = await this.getuserProOption({
-        brd_dt: null,
-        personid: userId,
+      var pram = {
+        person: userName,
         gropId: gropId,
         media: this.cueInfo.media,
-      });
-
+      };
+      var proOption = await this.getuserProOption(pram);
       this.$refs["modal-editWeek"].show();
     },
     //적용요일 변경
