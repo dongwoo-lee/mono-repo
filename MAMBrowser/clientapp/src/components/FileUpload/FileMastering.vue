@@ -84,6 +84,7 @@
             :upload-custom-data="uploaderCustomData"
             :ref="dxfu"
             name="file"
+            :accept="accept"
             drop-zone=".dropzone"
             @drop-zone-enter="onDropZoneEnter"
             @drop-zone-leave="onDropZoneLeave"
@@ -377,6 +378,7 @@ export default {
   },
   data() {
     return {
+      accept: ["audio/mp3", "audio/wav"],
       tabIndex: 0,
       dxfu,
       MetaModal: false,
@@ -647,6 +649,7 @@ export default {
       this.fileupload.upload(0);
     },
     valueChanged(event) {
+      console.log(event.value[0].type);
       this.setProcessing(true);
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
@@ -656,14 +659,16 @@ export default {
       if (event.value.length != 0) {
         if (this.notDiskAvailable(event.value[0].size)) {
           if (
-            event.value[0].type == "audio/mp3" ||
+            event.value[0].type == "audio/mpeg" ||
             event.value[0].type == "audio/wav"
           ) {
             var formData = new FormData();
-            if (event.value[0].type == "audio/mp3") {
-              var blob = event.value[0].slice(0, 10000);
+            if (event.value[0].type == "audio/mpeg") {
+              var blob = event.value[0].slice(0, 300000);
               formData.append("file", blob);
               formData.append("fileExt", event.value[0].name);
+              //  formData.append("file", event.value[0]);
+              // formData.append("fileExt", event.value[0].name);
             } else if (event.value[0].type == "audio/wav") {
               var blob = event.value[0].slice(0, 10000);
               formData.append("file", blob);
