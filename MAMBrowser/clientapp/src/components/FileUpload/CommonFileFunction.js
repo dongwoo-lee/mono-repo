@@ -333,7 +333,7 @@ export default {
             });
             this.setEventData(res.data.resultObject.data);
           });
-        this.resetProgramSelected();
+        this.resetEventSelected();
       } else if (this.MetaData.typeSelected == "var-spot") {
         const replaceVal = this.fileSDate.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
@@ -353,7 +353,7 @@ export default {
             });
             this.setEventData(res.data.resultObject.data);
           });
-        this.resetProgramSelected();
+        this.resetEventSelected();
       } else if (this.MetaData.typeSelected == "report") {
         const replaceVal = this.date.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
