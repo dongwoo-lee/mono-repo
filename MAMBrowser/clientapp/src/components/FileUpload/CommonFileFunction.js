@@ -313,7 +313,7 @@ export default {
             });
             this.setEventData(res.data.resultObject.data);
           });
-        this.resetProgramSelected();
+        this.resetEventSelected();
       } else if (this.MetaData.typeSelected == "static-spot") {
         const replaceVal = this.fileSDate.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
@@ -364,6 +364,7 @@ export default {
         axios.get(`/api/categories/pgmcodes?brd_dt=${date}`).then((res) => {
           this.setEventData(res.data.resultObject.data);
         });
+        this.resetEventSelected();
       }
     },
     validDateType(value) {
