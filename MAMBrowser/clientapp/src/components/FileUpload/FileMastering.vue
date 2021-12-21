@@ -85,6 +85,7 @@
             :ref="dxfu"
             name="file"
             :accept="accept"
+            :allowed-file-extensions="['.mp3', '.wav']"
             drop-zone=".dropzone"
             @drop-zone-enter="onDropZoneEnter"
             @drop-zone-leave="onDropZoneLeave"
@@ -378,7 +379,7 @@ export default {
   },
   data() {
     return {
-      accept: ["audio/mp3", "audio/wav"],
+      accept: "audio/mp3,audio/wav",
       tabIndex: 0,
       dxfu,
       MetaModal: false,
@@ -649,7 +650,6 @@ export default {
       this.fileupload.upload(0);
     },
     valueChanged(event) {
-      console.log(event.value[0].type);
       this.setProcessing(true);
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
