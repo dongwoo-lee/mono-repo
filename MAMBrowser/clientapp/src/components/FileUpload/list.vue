@@ -50,10 +50,10 @@
             {{ rowInfo.data.type }}
           </td>
           <td style="border-right: 1px solid #dddddd">
-            {{ rowInfo.data.date }}
+            {{ rowInfo.data.user_id }}
           </td>
           <td style="border-right: 1px solid #dddddd">
-            {{ rowInfo.data.user_id }}
+            {{ rowInfo.data.date }}
           </td>
           <td v-if="rowInfo.data.step == 0">
             <span>
@@ -72,10 +72,7 @@
               >
                 {{ rowInfo.data.step + 1 }}
               </div>
-              <span style="color: #27ae60">
-                대기중
-                <b-spinner small type="grow"></b-spinner>
-              </span>
+              <span style="color: #27ae60"> 대기중 </span>
             </span>
           </td>
           <td v-if="rowInfo.data.step == 1">
@@ -236,10 +233,7 @@
               >
                 {{ rowInfo.data.step + 1 }}
               </div>
-              <span style="color: #27ae60">
-                대기중
-                <b-spinner small type="grow"></b-spinner>
-              </span>
+              <span style="color: #27ae60"> 대기중 </span>
             </span>
           </td>
           <td v-if="rowInfo.data.step == 1">
