@@ -130,7 +130,7 @@ namespace MAMBrowser.Controllers
 
         [HttpPost("program")]
         public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,[FromForm] string title,
-             [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string editor)
+             [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string SchDate, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -172,6 +172,7 @@ namespace MAMBrowser.Controllers
                         Program.Media = media;
                         Program.ProductId = productId;
                         Program.BrdDTM = brdDTM;
+                        Program.SchDate = SchDate;
                         Program.Editor = editor;
                         Program.FilePath = tempFilePath;
                         Program.RegDtm = DateTime.Now.ToString(Define.DTM19);

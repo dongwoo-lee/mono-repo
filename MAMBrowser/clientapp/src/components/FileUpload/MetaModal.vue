@@ -381,6 +381,7 @@ export default {
             media: this.MetaData.mediaSelected,
             productId: this.ProgramSelected.productId,
             brdDTM: this.ProgramSelected.onairTime,
+            SchDate: this.date,
             editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "pro") {

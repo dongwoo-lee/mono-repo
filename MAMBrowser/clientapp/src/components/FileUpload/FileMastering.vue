@@ -370,6 +370,11 @@ export default {
         this.tabIndex = 1;
       }
     },
+    tabIndex(v) {
+      if (v == 1 && this.FileModal) {
+        this.logSearch();
+      }
+    },
   },
   created() {
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
