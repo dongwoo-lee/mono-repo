@@ -191,24 +191,33 @@ export default {
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/pro").then((res) => {
-      axios
-        .get(
-          `/api/categories/user-audiocodes?userId=${sessionStorage.getItem(
-            "user_id"
-          )}`
-        )
-        .then((res2) => {
-          res.data.resultObject.data.forEach((e) => {
-            res2.data.resultObject.data.forEach((e2) => {
-              if (e.id == e2.id) {
-                this.setFileMediaOptions({
-                  id: e.id,
-                  name: e.name,
-                });
-              }
-            });
+      if (this.role == "ADMIN") {
+        res.data.resultObject.data.forEach((e) => {
+          this.setFileMediaOptions({
+            id: e.id,
+            name: e.name,
           });
         });
+      } else {
+        axios
+          .get(
+            `/api/categories/user-audiocodes?userId=${sessionStorage.getItem(
+              "user_id"
+            )}`
+          )
+          .then((res2) => {
+            res.data.resultObject.data.forEach((e) => {
+              res2.data.resultObject.data.forEach((e2) => {
+                if (e.id == e2.id && this.role != "ADMIN") {
+                  this.setFileMediaOptions({
+                    id: e.id,
+                    name: e.name,
+                  });
+                }
+              });
+            });
+          });
+      }
     });
     this.proMedia = "";
     this.setMediaSelected(this.proMedia);
