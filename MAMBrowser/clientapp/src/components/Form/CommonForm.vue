@@ -40,7 +40,7 @@
                   >
                     <b-form-select-option value="30">30개</b-form-select-option>
                     <b-form-select-option value="50">50개</b-form-select-option>
-                    <b-form-select-option value="100"
+                    <b-form-select-option value="100" v-if="templateVal"
                       >100개</b-form-select-option
                     >
                   </b-form-select>
@@ -76,6 +76,10 @@ export default {
       default: true,
     },
     isDisplayPageSize: {
+      type: Boolean,
+      default: true,
+    },
+    templateVal: {
       type: Boolean,
       default: true,
     },

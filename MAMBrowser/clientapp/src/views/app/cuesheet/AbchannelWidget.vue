@@ -9,7 +9,7 @@
           abchannel_total_num_xs: cueInfo.cuetype == 'A',
         }"
       >
-        전체 : {{ abCartArr.length }}개
+        {{ abCartArr.length }} / 500
       </div>
       <DxDataGrid
         id="channelAB"
@@ -64,79 +64,6 @@
             <div>{{ data.data.rownum }}</div>
           </div>
         </template>
-        <DxColumn :width="30" cell-template="product_Template" />
-        <template #product_Template="{ data }">
-          <div v-if="data.data.subTitle != ''">
-            <b-icon
-              icon="disc"
-              v-if="data.data.cartcode == 'S01G01C007'"
-            ></b-icon>
-            <b-icon
-              icon="archive"
-              v-if="data.data.cartcode == 'S01G01C006'"
-            ></b-icon>
-            <b-icon
-              icon="music-note-list"
-              v-if="data.data.cartcode == 'S01G01C014'"
-            ></b-icon>
-            <b-icon
-              icon="joystick"
-              v-if="data.data.cartcode == 'S01G01C015'"
-            ></b-icon>
-            <b-icon
-              icon="trophy"
-              v-if="data.data.cartcode == 'S01G01C013'"
-            ></b-icon>
-            <b-icon
-              icon="shield-check"
-              v-if="data.data.cartcode == 'S01G01C017'"
-            ></b-icon>
-            <b-icon
-              icon="shield-lock"
-              v-if="data.data.cartcode == 'S01G01C010'"
-            ></b-icon>
-            <b-icon
-              icon="shield-shaded"
-              v-if="data.data.cartcode == 'S01G01C018'"
-            ></b-icon>
-            <b-icon
-              icon="shield-plus"
-              v-if="data.data.cartcode == 'S01G01C019'"
-            ></b-icon>
-            <b-icon
-              icon="camera2"
-              v-if="data.data.cartcode == 'S01G01C012'"
-            ></b-icon>
-            <b-icon
-              icon="hourglass"
-              v-if="data.data.cartcode == 'S01G01C021'"
-            ></b-icon>
-            <b-icon
-              icon="hourglass-bottom"
-              v-if="data.data.cartcode == 'S01G01C022'"
-            ></b-icon>
-            <b-icon
-              icon="hourglass-split"
-              v-if="data.data.cartcode == 'S01G01C023'"
-            ></b-icon>
-            <b-icon
-              icon="hourglass-top"
-              v-if="data.data.cartcode == 'S01G01C024'"
-            ></b-icon>
-            <b-icon
-              icon="camera-reels"
-              v-if="data.data.cartcode == 'S01G01C009'"
-            ></b-icon>
-            <b-icon
-              icon="alarm"
-              v-if="data.data.cartcode == 'S01G01C016'"
-            ></b-icon>
-            <b-icon
-              icon="clock"
-              v-if="data.data.cartcode == 'S01G01C020'"
-            ></b-icon>
-          </div>
-        </template>
         <DxColumn :width="60" cell-template="trans_Template" />
         <template #trans_Template="{ data }">
           <div v-if="data.data.subtitle != ''">
@@ -173,6 +100,55 @@
                 style="color: #03a9f4"
               ></b-icon>
             </DxButton>
+          </div>
+        </template>
+        <DxColumn :width="30" cell-template="product_Template" />
+        <template #product_Template="{ data }">
+          <div class="iconDiv" v-if="data.data.cartcode != ''">
+            <i
+              class="iconsminds-shop"
+              v-if="data.data.cartcode == 'S01G01C007'"
+            >
+            </i>
+            <i
+              class="iconsminds-big-data"
+              v-if="data.data.cartcode == 'S01G01C006'"
+            ></i>
+            <i
+              class="iconsminds-cd-2"
+              v-if="
+                data.data.cartcode == 'S01G01C014' ||
+                data.data.cartcode == 'S01G01C015'
+              "
+            ></i>
+            <i
+              class="iconsminds-coins"
+              v-if="
+                data.data.cartcode == 'S01G01C017' ||
+                data.data.cartcode == 'S01G01C016' ||
+                data.data.cartcode == 'S01G01C018' ||
+                data.data.cartcode == 'S01G01C019'
+              "
+            ></i>
+            <i
+              class="iconsminds-film"
+              v-if="
+                data.data.cartcode == 'S01G01C009' ||
+                data.data.cartcode == 'S01G01C010' ||
+                data.data.cartcode == 'S01G01C012' ||
+                data.data.cartcode == 'S01G01C013'
+              "
+            ></i>
+            <i
+              class="iconsminds-engineering"
+              v-if="
+                data.data.cartcode == 'S01G01C020' ||
+                data.data.cartcode == 'S01G01C021' ||
+                data.data.cartcode == 'S01G01C022' ||
+                data.data.cartcode == 'S01G01C023' ||
+                data.data.cartcode == 'S01G01C024'
+              "
+            ></i>
           </div>
         </template>
         <DxColumn
@@ -410,6 +386,7 @@ export default {
       dataGridRef,
       loadpanelVal: false,
       showGrpPlayer: false,
+      lengthCheck: false,
       grpParam: {},
       rowData: {
         carttype: "",
@@ -437,8 +414,6 @@ export default {
     if (this.abCartArr.length > 0) {
       this.rowData.rownum = this.abCartArr.length + 1;
     }
-    console.log("this.abCartArr");
-    console.log(this.abCartArr);
   },
   created() {
     eventBus.$on("abDataSet", (val) => {
@@ -469,14 +444,7 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
-      console.log(e.itemData);
-      // if (this.abCartArr.length > 500) {
-      //   window.$notify("error", `더 이상 추가할 수 없습니다.`, "", {
-      //     duration: 10000,
-      //     permanent: false,
-      //   });
-      //   return;
-      // }
+      this.lengthCheck = false;
       this.loadpanelVal = true;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
@@ -518,8 +486,11 @@ export default {
                 search_row: search_row,
               });
             }
-            arrData.splice(e.toIndex + index, 0, row);
-            this.rowData.rownum = this.rowData.rownum + 1;
+            var checkValue = this.maxLengthCheck();
+            if (checkValue) {
+              arrData.splice(e.toIndex + index, 0, row);
+              this.rowData.rownum = this.rowData.rownum + 1;
+            }
           });
         } else {
           var row = { ...this.rowData };
@@ -557,8 +528,12 @@ export default {
               search_row: search_row,
             });
           }
-          arrData.splice(e.toIndex, 0, row);
-          this.rowData.rownum = this.rowData.rownum + 1;
+
+          var checkValue = this.maxLengthCheck();
+          if (checkValue) {
+            arrData.splice(e.toIndex, 0, row);
+            this.rowData.rownum = this.rowData.rownum + 1;
+          }
         }
       } else if (e.fromData.cartcode != undefined) {
         var search_row = e.fromData;
@@ -566,17 +541,35 @@ export default {
         row.rownum = this.rowData.rownum;
         row.transtype = "S";
         delete row.editTarget;
-        arrData.splice(e.toIndex, 0, row);
-        this.rowData.rownum = this.rowData.rownum + 1;
+
+        var checkValue = this.maxLengthCheck();
+        if (checkValue) {
+          arrData.splice(e.toIndex, 0, row);
+          this.rowData.rownum = this.rowData.rownum + 1;
+        }
       }
       this.SET_ABCARTARR(arrData);
       this.setRowNum();
+      if (this.lengthCheck) {
+        window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      }
       //e.fromComponent.clearSelection();
     },
     setRowNum() {
       this.abCartArr.forEach((ele, index) => {
         ele.rownum = index + 1;
       });
+    },
+    maxLengthCheck() {
+      var result = true;
+      if (this.abCartArr.length > 499) {
+        result = false;
+        this.lengthCheck = true;
+      }
+      return result;
     },
     onDragStart() {
       document.getElementById("app-container").classList.add("drag_");
@@ -610,6 +603,7 @@ export default {
       } else {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
+
         this.setRowNum();
       }
 
@@ -712,6 +706,7 @@ export default {
             icon: "add",
             hint: "행 추가",
             onClick: () => {
+              this.lengthCheck = false;
               var arrData = this.abCartArr;
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
@@ -719,12 +714,25 @@ export default {
               row.rownum = this.rowData.rownum;
               if (rastkey != -1) {
                 var index = this.dataGrid.getRowIndexByKey(rastkey);
-                arrData.splice(index + 1, 0, row);
+                var checkValue = this.maxLengthCheck();
+                if (checkValue) {
+                  arrData.splice(index + 1, 0, row);
+                  this.rowData.rownum = this.rowData.rownum + 1;
+                }
               } else {
-                arrData.splice(1, 0, row);
+                var checkValue = this.maxLengthCheck();
+                if (checkValue) {
+                  arrData.splice(1, 0, row);
+                  this.rowData.rownum = this.rowData.rownum + 1;
+                }
               }
-              this.rowData.rownum = this.rowData.rownum + 1;
               this.setRowNum();
+              if (this.lengthCheck) {
+                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+                  duration: 10000,
+                  permanent: false,
+                });
+              }
             },
           };
         }
@@ -825,10 +833,16 @@ export default {
 #channelAB td {
   vertical-align: middle;
 }
+#channelAB td:nth-child(3) {
+  padding: 0;
+}
 .editTemplateSubTitle {
   color: #2a4878;
 }
 .maintitle_red {
   color: red;
+}
+.iconDiv i {
+  font-size: 17px;
 }
 </style>

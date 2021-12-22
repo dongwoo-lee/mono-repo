@@ -386,6 +386,13 @@ export default {
                 oldCueInfo.memo = res.data.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
+                if (resultPrintData.length > 99) {
+                  resultPrintData.splice(100);
+                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+                    duration: 10000,
+                    permanent: false,
+                  });
+                }
                 this.SET_PRINTARR(resultPrintData);
                 this.setStartTime();
                 this.SET_CUEINFO(oldCueInfo);
@@ -399,6 +406,13 @@ export default {
                   });
                 }
                 var resultABData = beforeAbData.concat(res.data.normalCon);
+                if (resultABData.length > 499) {
+                  resultABData.splice(500);
+                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+                    duration: 10000,
+                    permanent: false,
+                  });
+                }
                 this.SET_ABCARTARR(resultABData);
                 eventBus.$emit("abDataSet");
               }

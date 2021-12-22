@@ -9,6 +9,7 @@
     <common-form
       :searchItems="searchItems"
       :isDisplayBtnArea="true"
+      :templateVal="false"
       @changeRowPerpage="onChangeRowPerpage"
     >
       <!-- 검색 -->

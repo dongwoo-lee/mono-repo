@@ -25,74 +25,50 @@
               </b>
             </div>
             <div class="product_icon" style="width: 20px">
-              <b-icon
-                icon="disc"
+              <i
+                class="iconsminds-shop"
                 v-if="fileData[index - 1].cartcode == 'S01G01C007'"
-              ></b-icon>
-              <b-icon
-                icon="archive"
+              >
+              </i>
+              <i
+                class="iconsminds-big-data"
                 v-if="fileData[index - 1].cartcode == 'S01G01C006'"
-              ></b-icon>
-              <b-icon
-                icon="music-note-list"
-                v-if="fileData[index - 1].cartcode == 'S01G01C014'"
-              ></b-icon>
-              <b-icon
-                icon="joystick"
-                v-if="fileData[index - 1].cartcode == 'S01G01C015'"
-              ></b-icon>
-              <b-icon
-                icon="trophy"
-                v-if="fileData[index - 1].cartcode == 'S01G01C013'"
-              ></b-icon>
-              <b-icon
-                icon="shield-check"
-                v-if="fileData[index - 1].cartcode == 'S01G01C017'"
-              ></b-icon>
-              <b-icon
-                icon="shield-lock"
-                v-if="fileData[index - 1].cartcode == 'S01G01C010'"
-              ></b-icon>
-              <b-icon
-                icon="shield-shaded"
-                v-if="fileData[index - 1].cartcode == 'S01G01C018'"
-              ></b-icon>
-              <b-icon
-                icon="shield-plus"
-                v-if="fileData[index - 1].cartcode == 'S01G01C019'"
-              ></b-icon>
-              <b-icon
-                icon="camera2"
-                v-if="fileData[index - 1].cartcode == 'S01G01C012'"
-              ></b-icon>
-              <b-icon
-                icon="hourglass"
-                v-if="fileData[index - 1].cartcode == 'S01G01C021'"
-              ></b-icon>
-              <b-icon
-                icon="hourglass-bottom"
-                v-if="fileData[index - 1].cartcode == 'S01G01C022'"
-              ></b-icon>
-              <b-icon
-                icon="hourglass-split"
-                v-if="fileData[index - 1].cartcode == 'S01G01C023'"
-              ></b-icon>
-              <b-icon
-                icon="hourglass-top"
-                v-if="fileData[index - 1].cartcode == 'S01G01C024'"
-              ></b-icon>
-              <b-icon
-                icon="camera-reels"
-                v-if="fileData[index - 1].cartcode == 'S01G01C009'"
-              ></b-icon>
-              <b-icon
-                icon="alarm"
-                v-if="fileData[index - 1].cartcode == 'S01G01C016'"
-              ></b-icon>
-              <b-icon
-                icon="clock"
-                v-if="fileData[index - 1].cartcode == 'S01G01C020'"
-              ></b-icon>
+              ></i>
+              <i
+                class="iconsminds-cd-2"
+                v-if="
+                  fileData[index - 1].cartcode == 'S01G01C014' ||
+                  fileData[index - 1].cartcode == 'S01G01C015'
+                "
+              ></i>
+              <i
+                class="iconsminds-coins"
+                v-if="
+                  fileData[index - 1].cartcode == 'S01G01C017' ||
+                  fileData[index - 1].cartcode == 'S01G01C016' ||
+                  fileData[index - 1].cartcode == 'S01G01C018' ||
+                  fileData[index - 1].cartcode == 'S01G01C019'
+                "
+              ></i>
+              <i
+                class="iconsminds-film"
+                v-if="
+                  fileData[index - 1].cartcode == 'S01G01C009' ||
+                  fileData[index - 1].cartcode == 'S01G01C010' ||
+                  fileData[index - 1].cartcode == 'S01G01C012' ||
+                  fileData[index - 1].cartcode == 'S01G01C013'
+                "
+              ></i>
+              <i
+                class="iconsminds-engineering"
+                v-if="
+                  fileData[index - 1].cartcode == 'S01G01C020' ||
+                  fileData[index - 1].cartcode == 'S01G01C021' ||
+                  fileData[index - 1].cartcode == 'S01G01C022' ||
+                  fileData[index - 1].cartcode == 'S01G01C023' ||
+                  fileData[index - 1].cartcode == 'S01G01C024'
+                "
+              ></i>
             </div>
             <div style="width: 15px">
               <div
@@ -305,6 +281,7 @@ export default {
     return {
       fileData: [],
       showGrpPlayer: false,
+      groupFilterVal: false,
       grpParam: {},
       rowData: {
         carttype: "",
@@ -466,11 +443,14 @@ export default {
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     async onAdd(e, totalIndex) {
+      this.groupFilterVal = false;
+      //아카이브 수정불가
       if (this.cueInfo.cuetype == "A") {
         return;
       }
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e);
+        //ab > c 빈칸 제거
         selectedRowsData = selectedRowsData.filter((ele) => {
           if (Object.keys(ele).includes("cartcode")) {
             return ele.cartcode != "";
@@ -521,7 +501,12 @@ export default {
                 search_row: search_row,
               });
             }
-            this.fileData.splice(totalIndex - 1 + index, 1, row);
+            var filterVal = this.groupFilter(row);
+            if (filterVal) {
+              this.fileData.splice(totalIndex - 1 + index, 1, row);
+            } else {
+              totalIndex--;
+            }
           });
           this.fileData = this.fileData.slice(0, 16);
         } else {
@@ -534,7 +519,6 @@ export default {
             if (search_row.subtitle == "") {
               return;
             }
-            console.log(1);
             row = { ...search_row };
             row.rownum = this.fileData[totalIndex - 1].rownum;
             row.edittarget = true;
@@ -570,11 +554,17 @@ export default {
               search_row: search_row,
             });
           }
-          this.fileData.splice(totalIndex - 1, 1, row);
+          var filterVal = this.groupFilter(row);
+          if (filterVal) {
+            this.fileData.splice(totalIndex - 1, 1, row);
+          }
         }
       } else {
         e.fromData.rownum = this.fileData[totalIndex - 1].rownum;
-        this.fileData.splice(totalIndex - 1, 1, e.fromData);
+        var filterVal = this.groupFilter(e.fromData);
+        if (filterVal) {
+          this.fileData.splice(totalIndex - 1, 1, e.fromData);
+        }
       }
       if (this.channelKey == "channel_my") {
         this.SET_CUEFAVORITES(this.fileData);
@@ -582,15 +572,27 @@ export default {
         var resultData = { ...this.cChannelData };
         resultData[this.channelKey] = this.fileData;
         this.SET_CCHANNELDATA(resultData);
-        // this.setInstanceCon({
-        //   fileData: this.fileData,
-        //   channelKey: this.channelKey,
-        // });
-        // var cChannelDataArr = this.cChannelData;
-        // cChannelDataArr[this.channelKey] = this.fileData;
-        // // this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-        // //this.SET_CCHANNELDATA(cChannelDataArr);
       }
+      if (this.groupFilterVal) {
+        window.$notify(
+          "error",
+          `즐겨찾기 탭에는 그룹소재를 추가할 수 없습니다.`,
+          "",
+          {
+            duration: 10000,
+            permanent: false,
+          }
+        );
+      }
+    },
+    //여기 하는중
+    groupFilter(row) {
+      var result = true;
+      if (this.channelKey == "channel_my" && row.onairdate != "") {
+        result = false;
+        this.groupFilterVal = true;
+      }
+      return result;
     },
     sortSelectedRowsData(e) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -660,35 +662,12 @@ export default {
         this.fileData[index - 1].maintitle = data;
       }
       this.fileData[index - 1].edittarget = true;
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
     },
     onValueBlur(index) {
       this.fileData[index - 1].edittarget = true;
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      //   this.SET_CUEFAVORITES(this.fileData);
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
     },
     arrdelete(index) {
       this.fileData.splice(index - 1, 1, { rownum: index });
-      // if (this.channelKey == "channel_my") {
-      //   //즐겨찾기 부분
-      //   this.SET_CUEFAVORITES(this.fileData);
-      // } else {
-      //   this.SET_CCHANNELDATA({ type: this.channelKey, value: this.fileData });
-      // }
-    },
-    //시간 string > milliseconds
-    millisecondsFuc(duration) {
-      var itemTime = moment(duration, "HH:mm:ss.SS");
-      var defTime = moment("00:00:00.0", "HH:mm:ss.SS");
-      return moment.duration(itemTime.diff(defTime)).asMilliseconds();
     },
     showGrpPlayerPopup(data) {
       this.grpParam = data;
@@ -730,15 +709,15 @@ export default {
   height: 20px;
   padding: 0;
 }
-.product_icon svg {
-  font-size: 13px;
+.product_icon i {
+  font-size: 14px;
 }
 .indexNumber {
   text-align: center;
   font-size: 15px;
   padding-right: 5px;
   padding-left: 3px;
-  width: 30px;
+  width: 28px;
 }
 /* .sortableView {
   background: linear-gradient(45deg, #f5709d, #f0a39a);

@@ -22,7 +22,7 @@ namespace MAMBrowser.Utils
                 {
                     PGMCODE = item.PGMCODE,
                     SERVICENAME = item.SERVICENAME,
-                    CODENAME = item.CODENAME,
+                    //CODENAME = item.CODENAME,
                     ONAIRDAY = item.ONAIRDAY,
                     STARTDATE = item.STARTDATE,
                     PRODUCTID = item.PRODUCTID,
@@ -50,7 +50,7 @@ namespace MAMBrowser.Utils
                 dtoItem.PRODUCTID = item.PRODUCTID;
                 dtoItem.EVENTNAME = item.EVENTNAME;
                 dtoItem.SERVICENAME = item.SERVICENAME;
-                dtoItem.CODENAME = item.CODENAME;
+                //dtoItem.CODENAME = item.CODENAME;
                 dtoItem.MEDIA = item.MEDIA;
                 dtoItem.CUETYPE = item.CUETYPE;
                 dtoItem.EDITTIME = item.EDITTIME;

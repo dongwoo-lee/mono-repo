@@ -235,6 +235,17 @@
         <div class="mb-3 mt-3" style="font-size: 20px">
           <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
             "{{ cueInfo.title }}" 큐시트를 저장합니다.
+
+            <div>
+              <b-form-checkbox-group
+                class="custom-checkbox-group mt-5"
+                style="font-size: 16px"
+                v-model="oldCueSelected"
+                :options="oldCueOptions"
+                value-field="value"
+                text-field="text"
+              />
+            </div>
           </div>
           <div class="mb-3" v-if="cueInfo.cuetype == 'B' && !fav">
             "{{ cueInfo.title }}" 기본 큐시트를 저장합니다.
@@ -440,6 +451,13 @@ export default {
       allCheck: true,
       selected: ["print", "ab"],
       cartSelected: ["c1", "c2", "c3", "c4"],
+      oldCueOptions: [
+        {
+          text: "(구)DAP에 현재 큐시트 저장",
+          value: true,
+        },
+      ],
+      oldCueSelected: [true],
       options: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
@@ -665,7 +683,11 @@ export default {
           this.saveOldCue();
           break;
         case "D":
-          this.saveDayCue();
+          if (this.oldCueSelected.length != 0) {
+            this.saveDayCue(true);
+          } else {
+            this.saveDayCue();
+          }
           break;
 
         case "B":
@@ -716,19 +738,29 @@ export default {
           pramList.push(ele);
         }
       });
-      await axios
-        .post(`/api/CueAttachments/exportZipFile`, pramList)
-        .then((response) => {
-          const link = document.createElement("a");
-          link.href =
-            "/api/CueAttachments/exportZipFileDownload?fileName=" +
-            response.data;
-          document.body.appendChild(link);
-          link.click();
-        })
-        .catch((error) => {
-          console.log(error);
+      if (pramList.length == 0) {
+        window.$notify("error", `내려받을 소재가 없습니다.`, "", {
+          duration: 10000,
+          permanent: false,
         });
+      } else {
+        await axios
+          .post(
+            `/api/CueAttachments/exportZipFile?title=${this.cueInfo.title}`,
+            pramList
+          )
+          .then((response) => {
+            const link = document.createElement("a");
+            link.href =
+              "/api/CueAttachments/exportZipFileDownload?fileName=" +
+              response.data;
+            document.body.appendChild(link);
+            link.click();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
     async editWeekListClick() {
       const userName = sessionStorage.getItem(USER_NAME);

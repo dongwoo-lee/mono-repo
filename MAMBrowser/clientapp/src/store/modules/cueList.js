@@ -459,7 +459,12 @@ export default {
         },
         // 템플릿 목록 전체 가져오기
         getcuesheetListArrTemp({ commit }, payload) {
-            return axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.temptitle}`)
+            return axios.get(`/api/TempCueSheet/GetTempList`, {
+                params: payload,
+                paramsSerializer: (params) => {
+                    return qs.stringify(params);
+                },
+            })
                 .then((res) => {
                     var seqnum = 0;
                     res.data.resultObject.data.forEach((ele) => {
@@ -529,18 +534,34 @@ export default {
         },
         //템플릿 추가 + 템플릿으로 저장 (나중에 템플릿 저장이랑 합치기)
         async addTemplate({ }, payload) {
-            await axios
-                .post(`/api/TempCueSheet/SaveTempCue`, payload)
+            var temLength = 0
+            await axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
                 .then((res) => {
-                    window.$notify(
-                        "info",
-                        `템플릿 추가완료.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    temLength = res.data.resultObject.data.length
                 })
+            if (temLength > 49) {
+                window.$notify(
+                    "error",
+                    `템플릿을 더이상 추가할 수 없습니다.`,
+                    '', {
+                    duration: 10000,
+                    permanent: false
+                }
+                )
+            } else {
+                await axios
+                    .post(`/api/TempCueSheet/SaveTempCue`, payload)
+                    .then((res) => {
+                        window.$notify(
+                            "info",
+                            `템플릿 추가완료.`,
+                            '', {
+                            duration: 10000,
+                            permanent: false
+                        }
+                        )
+                    })
+            }
         },
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
@@ -554,7 +575,7 @@ export default {
                 }));
         },
         //일일큐시트 저장
-        async saveDayCue({ commit, state, dispatch }) {
+        async saveDayCue({ commit, state, dispatch }, payload) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
             await axios
@@ -595,6 +616,55 @@ export default {
                     }
                     )
                 }));
+
+            if (payload == true) {
+                await axios
+                    .post(`/api/DayCueSheet/SaveOldCue`, pram)
+                    .then(async (res) => {
+                        await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                        if (res.data == 1) {
+                            window.$notify(
+                                "info",
+                                `(구) DAP에 큐시트 저장완료.`,
+                                '', {
+                                duration: 10000,
+                                permanent: false
+                            }
+                            )
+                        }
+                        if (res.data == 0) {
+                            window.$notify(
+                                "error",
+                                `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)`,
+                                '', {
+                                duration: 10000,
+                                permanent: false
+                            }
+                            )
+                        }
+                        if (res.data == -1) {
+                            window.$notify(
+                                "error",
+                                `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.`,
+                                '', {
+                                duration: 10000,
+                                permanent: false
+                            }
+                            )
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        window.$notify(
+                            "error",
+                            `(구) DAP에 큐시트 저장실패.`,
+                            '', {
+                            duration: 10000,
+                            permanent: false
+                        }
+                        )
+                    })
+            }
         },
         //구 DAP 저장
         async saveOldCue({ state, dispatch }) {
