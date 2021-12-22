@@ -7,10 +7,11 @@
   >
     <router-view />
     <!-- 파일 업로드 -->
-    <file-upload
+    <file-mastering
       :DragFileModalState="DragFileModalState"
       @dropZoneLeave="FileDrop"
-    ></file-upload>
+      @dragLeave="FileDrop"
+    ></file-mastering>
     <!-- 업로딩 토스트 -->
     <file-uploading-toast ref="refFileUploadingToast"></file-uploading-toast>
     <!-- 업로드 팝업 -->
@@ -28,7 +29,7 @@
 
 <script>
 import AppLayout from "@/layouts/AppLayout";
-import FileUpload from "@/components/FileUpload/FileMastering";
+import FileMastering from "@/components/FileUpload/FileMastering";
 import FileDragUploadForm from "@/components/File/FileDragUploadForm";
 import FileUploadingToast from "@/components/File/FileUploadingToast";
 import FileUploadPopup from "@/components/File/FileUploadPopup";
@@ -43,7 +44,7 @@ import { mapMutations } from "vuex";
 export default {
   components: {
     "app-layout": AppLayout,
-    FileUpload,
+    FileMastering,
     FileDragUploadForm,
     FileUploadingToast,
     FileUploadPopup,

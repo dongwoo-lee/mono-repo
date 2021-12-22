@@ -7,6 +7,9 @@ export default {
   setFileModal(state, payload) {
     state.FileModal = payload;
   },
+  setFileSelected(state, payload) {
+    state.fileSelected = payload;
+  },
   setTitle(state, payload) {
     state.MetaData.title = payload;
   },

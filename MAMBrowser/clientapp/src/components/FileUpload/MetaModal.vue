@@ -459,6 +459,14 @@ export default {
           this.cancel = false;
           return;
         } else {
+          if (!this.durationState) {
+            if (confirm("분량차이 확인")) {
+              this.setFileUploading(true);
+              this.$emit("upload");
+            } else {
+              return;
+            }
+          }
           this.setFileUploading(true);
           this.$emit("upload");
         }

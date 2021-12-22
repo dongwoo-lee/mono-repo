@@ -146,6 +146,7 @@ export default {
       isActive: (state) => state.isActive,
       processing: (state) => state.processing,
       fileUploading: (state) => state.fileUploading,
+      fileSelected: (state) => state.fileSelected,
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
@@ -208,6 +209,7 @@ export default {
       "setProgramState",
       "setIsActive",
       "setProcessing",
+      "setFileSelected",
       "setFileUploading",
       "setFileMediaOptions",
       "setMediaSelected",

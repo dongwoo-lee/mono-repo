@@ -25,15 +25,15 @@ import { mapGetters } from "vuex";
 export default {
   components: {
     topnav: Topnav,
-    sidebar: Sidebar
+    sidebar: Sidebar,
   },
   data() {
     return {
-      show: false
+      show: false,
     };
   },
   computed: {
-    ...mapGetters("menu", ["getMenuType"])
+    ...mapGetters("menu", ["getMenuType"]),
   },
   mounted() {
     setTimeout(() => {
@@ -52,7 +52,7 @@ export default {
     },
     dropzoneon() {
       this.$emit("FileDragEnter");
-    }
-  }
+    },
+  },
 };
 </script>

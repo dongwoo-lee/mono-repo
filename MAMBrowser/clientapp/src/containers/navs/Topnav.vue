@@ -207,9 +207,10 @@ export default {
     ]),
     ...mapActions("user", ["setLang", "signOut", "renewal"]),
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
-    ...mapMutations("FileIndexStore", ["setFileModal"]),
+    ...mapMutations("FileIndexStore", ["setFileModal", "setFileSelected"]),
     openFileModal() {
       this.setFileModal(true);
+      this.setFileSelected(true);
     },
     logout() {
       this.SET_LOGOUT();

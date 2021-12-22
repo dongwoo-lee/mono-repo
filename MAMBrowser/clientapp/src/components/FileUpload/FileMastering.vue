@@ -27,6 +27,7 @@
       </div>
     </div>
     <div
+      @dragleave="dragLeave"
       id="dropzone-external"
       class="dropzone"
       v-show="dropzone"
@@ -272,7 +273,7 @@
                       />
                       <DxColumn :width="300" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="80"
+                        :width="70"
                         data-field="silence"
                         alignment="left"
                         caption="무음"
@@ -283,7 +284,7 @@
                         caption="서버"
                       />
                       <DxColumn
-                        :width="100"
+                        :width="80"
                         data-field="status"
                         caption="상태"
                       />
@@ -314,7 +315,7 @@
                       <DxColumn :width="120" data-field="type" caption="타입" />
                       <DxColumn :width="350" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="120"
+                        :width="70"
                         data-field="silence"
                         caption="무음"
                       />
@@ -324,7 +325,7 @@
                         caption="서버"
                       />
                       <DxColumn
-                        :width="100"
+                        :width="80"
                         data-field="status"
                         caption="상태"
                       />
@@ -689,6 +690,7 @@ export default {
               this.setAudioFormat(res.data.resultObject.audioFormatInfo);
               this.openFileModal();
               this.dropzone = false;
+              this.setFileSelected(false);
               this.MetaModal = true;
               this.setProcessing(false);
               // this.setFileUploading(true);
@@ -759,6 +761,9 @@ export default {
     },
     //#endregion
     //#region 모달 조작
+    select() {
+      this.setFileSelected(true);
+    },
     openFileModal() {
       if (!this.FileModal) {
         this.tabIndex = 0;
@@ -768,6 +773,12 @@ export default {
     closeFileModal() {
       this.tabIndex = 1;
       this.setFileModal(false);
+      this.setFileSelected(false);
+      this.isDropZoneActive = false;
+      this.dropzone = false;
+      console.log("this.fileSelected :>> ", this.fileSelected);
+      console.log("this.dropzone :>> ", this.dropzone);
+      console.log("this.isDropZoneActive :>> ", this.isDropZoneActive);
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {
@@ -780,6 +791,9 @@ export default {
         this.dropzone = false;
         this.$emit("dropZoneLeave");
       }
+    },
+    dragLeave() {
+      this.$emit("dragLeave");
     },
     //#endregion
     getCategory(v) {
