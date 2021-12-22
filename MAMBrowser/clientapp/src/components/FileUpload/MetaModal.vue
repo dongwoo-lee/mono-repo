@@ -346,6 +346,7 @@ export default {
   },
   methods: {
     ...mapMutations("FileIndexStore", [
+      "setTitle",
       "setUploaderCustomData",
       "setMasteringListData",
       "setProcessing",
@@ -444,6 +445,10 @@ export default {
             reporter: this.MetaData.reporter,
           };
         } else if (this.MetaData.typeSelected == "filler") {
+          var name = this.MetaData.title;
+          this.setTitle(
+            `[${this.date}] [${this.MetaData.mediaName}] [${name}]`
+          );
           var data = {
             category: this.MetaData.mediaSelected,
             title: this.MetaData.title,

@@ -776,9 +776,9 @@ export default {
       this.setFileSelected(false);
       this.isDropZoneActive = false;
       this.dropzone = false;
-      console.log("this.fileSelected :>> ", this.fileSelected);
-      console.log("this.dropzone :>> ", this.dropzone);
-      console.log("this.isDropZoneActive :>> ", this.isDropZoneActive);
+      // console.log("this.fileSelected :>> ", this.fileSelected);
+      // console.log("this.dropzone :>> ", this.dropzone);
+      // console.log("this.isDropZoneActive :>> ", this.isDropZoneActive);
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {

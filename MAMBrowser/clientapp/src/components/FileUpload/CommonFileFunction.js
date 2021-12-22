@@ -213,6 +213,7 @@ export default {
       "setFileUploading",
       "setFileMediaOptions",
       "setMediaSelected",
+      "setMediaName",
       "setProType",
       "setProTypeName",
       "setProgramSelected",
@@ -233,6 +234,7 @@ export default {
       "resetAdvertiser",
       "resetFileMediaOptions",
       "resetMediaSelected",
+      "resetMediaName",
       "resetProgramData",
       "resetProgramSelected",
       "resetEventData",
@@ -273,6 +275,7 @@ export default {
         );
       } else if (this.MetaData.typeSelected == "report") {
         this.setEventSelected(v.data);
+        this.setTitle(`[${this.date}] [${this.EventSelected.name}]`);
       }
     },
     getPro() {

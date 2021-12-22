@@ -58,6 +58,9 @@ export default {
   setMediaSelected(state, payload) {
     state.MetaData.mediaSelected = payload;
   },
+  setMediaName(state, payload) {
+    state.MetaData.mediaName = payload;
+  },
   setProType(state, payload) {
     state.MetaData.proType = payload;
   },
@@ -117,6 +120,9 @@ export default {
   },
   resetMediaSelected(state) {
     state.MetaData.mediaSelected = "";
+  },
+  resetMediaName(state) {
+    state.MetaData.mediaName = "";
   },
   resetProType(state) {
     state.MetaData.proType = "";

@@ -250,6 +250,7 @@ export default {
       generallMedia: "",
       etcMedia: "",
       selectedFillerMedia: "",
+      selectedFillerMediaName: "",
     };
   },
   created() {
@@ -265,7 +266,10 @@ export default {
       });
     });
     this.selectedFillerMedia = "FC05";
+    this.selectedFillerMediaName = "공통PR-프로그램";
+
     this.setMediaSelected(this.selectedFillerMedia);
+    this.setMediaName(this.selectedFillerMediaName);
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
@@ -274,6 +278,8 @@ export default {
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
+      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.setMediaName(data.text);
     },
     getSecondMedia(v) {
       this.resetFileMediaOptions();

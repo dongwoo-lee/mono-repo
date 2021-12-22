@@ -147,6 +147,7 @@ export default {
       deleteId: "",
       userPgmList: [],
       vSelectProps: {},
+      today: this.$fn.formatDate(new Date(), "yyyyMMdd"),
       metaUpdate: false,
       updateScreenName: "",
       rowData: "",
@@ -308,7 +309,11 @@ export default {
     authorityCheck(e) {
       if (sessionStorage.getItem("authority") != "ADMIN") {
         if (this.userPgmList.includes(e.productID)) {
-          return true;
+          if (this.today <= e.brdDT) {
+            return true;
+          } else {
+            return false;
+          }
         } else {
           return false;
         }
@@ -371,21 +376,23 @@ export default {
       this.metaDelete = false;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`).then((res) => {
-        if (res && res.status === 200 && !res.data.errorMsg) {
-          this.DeleteModalOff();
-          this.$fn.notify("primary", {
-            title: "파일 삭제 성공",
-          });
-          this.getData();
-        } else {
-          this.UpdateModalOff();
-          $fn.notify("error", {
-            message: "파일 삭제 실패: " + res.data.errorMsg,
-          });
-          this.getData();
-        }
-      });
+      axios
+        .delete(`/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`)
+        .then((res) => {
+          if (res && res.status === 200 && !res.data.errorMsg) {
+            this.DeleteModalOff();
+            this.$fn.notify("primary", {
+              title: "파일 삭제 성공",
+            });
+            this.getData();
+          } else {
+            this.UpdateModalOff();
+            $fn.notify("error", {
+              message: "파일 삭제 실패: " + res.data.errorMsg,
+            });
+            this.getData();
+          }
+        });
     },
     onEditSuccess() {
       this.getData();

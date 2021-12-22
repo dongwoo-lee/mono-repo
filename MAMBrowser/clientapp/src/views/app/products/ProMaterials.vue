@@ -285,6 +285,11 @@ export default {
         if (this.userAudioList.includes(e.categoryID)) {
           return true;
         } else {
+          if (sessionStorage.getItem("user_id") == e.editorID) {
+            return true;
+          } else {
+            false;
+          }
           return false;
         }
       } else {
@@ -361,21 +366,23 @@ export default {
       this.rowData = rowData;
     },
     masteringDelete(e) {
-      axios.delete(`/api/Mastering/pro/${e.deleteId}?filetoken=${e.fileToken}`).then((res) => {
-        if (res && res.status === 200 && !res.data.errorMsg) {
-          this.DeleteModalOff();
-          this.$fn.notify("primary", {
-            title: "파일 삭제 성공",
-          });
-          this.getData();
-        } else {
-          this.UpdateModalOff();
-          $fn.notify("error", {
-            message: "파일 삭제 실패: " + res.data.errorMsg,
-          });
-          this.getData();
-        }
-      });
+      axios
+        .delete(`/api/Mastering/pro/${e.deleteId}?filetoken=${e.fileToken}`)
+        .then((res) => {
+          if (res && res.status === 200 && !res.data.errorMsg) {
+            this.DeleteModalOff();
+            this.$fn.notify("primary", {
+              title: "파일 삭제 성공",
+            });
+            this.getData();
+          } else {
+            this.UpdateModalOff();
+            $fn.notify("error", {
+              message: "파일 삭제 실패: " + res.data.errorMsg,
+            });
+            this.getData();
+          }
+        });
     },
   },
 };

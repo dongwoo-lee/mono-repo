@@ -34,6 +34,7 @@ export default {
       categoryCD: "",
       typeSelected: "null",
       mediaSelected: "A",
+      mediaName: "",
       timeToneSelected: "TU",
       reqStatusSelected: "R",
       duration: "",
