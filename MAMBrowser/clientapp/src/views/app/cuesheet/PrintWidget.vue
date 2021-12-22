@@ -8,7 +8,7 @@
           print_total_num_xs: cueInfo.cuetype == 'A',
         }"
       >
-        전체 : {{ printArr.length }}개
+        {{ printArr.length }} / 100
       </div>
       <DxDataGrid
         :data-source="printArr"
@@ -272,6 +272,7 @@ export default {
   data() {
     return {
       selectedItemKeys: [],
+      lengthCheck: false,
       rowData: {
         rownum: 1,
         code: "",
@@ -352,6 +353,7 @@ export default {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapActions("cueList", ["setStartTime"]),
     onAddPrint(e) {
+      this.lengthCheck = false;
       var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       if (selectedRowsData.length > 1) {
@@ -369,8 +371,12 @@ export default {
             row.usedtime = search_row.intDuration;
             row.contents = search_row.name;
           }
-          arrData.splice(e.toIndex + index, 0, row);
-          this.rowData.rownum = this.rowData.rownum + 1;
+
+          var checkValue = this.maxLengthCheck();
+          if (checkValue) {
+            arrData.splice(e.toIndex + index, 0, row);
+            this.rowData.rownum = this.rowData.rownum + 1;
+          }
         });
       } else {
         var row = { ...this.rowData };
@@ -399,10 +405,28 @@ export default {
               break;
           }
         }
-        arrData.splice(e.toIndex, 0, row);
-        this.rowData.rownum = this.rowData.rownum + 1;
+
+        var checkValue = this.maxLengthCheck();
+        if (checkValue) {
+          arrData.splice(e.toIndex, 0, row);
+          this.rowData.rownum = this.rowData.rownum + 1;
+        }
       }
       this.setStartTime();
+      if (this.lengthCheck) {
+        window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      }
+    },
+    maxLengthCheck() {
+      var result = true;
+      if (this.printArr.length > 99) {
+        result = false;
+        this.lengthCheck = true;
+      }
+      return result;
     },
     onReorderPrint(e) {
       var arrData = this.printArr;
@@ -571,6 +595,7 @@ export default {
             icon: "add",
             hint: "행 추가",
             onClick: () => {
+              this.lengthCheck = false;
               var arrData = this.printArr;
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
@@ -578,12 +603,25 @@ export default {
               row.rownum = this.rowData.rownum;
               if (rastkey != -1) {
                 var index = this.dataGrid.getRowIndexByKey(rastkey);
-                arrData.splice(index + 1, 0, row);
+                var checkValue = this.maxLengthCheck();
+                if (checkValue) {
+                  arrData.splice(index + 1, 0, row);
+                  this.rowData.rownum = this.rowData.rownum + 1;
+                }
               } else {
-                arrData.splice(1, 0, row);
+                var checkValue = this.maxLengthCheck();
+                if (checkValue) {
+                  arrData.splice(1, 0, row);
+                  this.rowData.rownum = this.rowData.rownum + 1;
+                }
               }
-              this.rowData.rownum = this.rowData.rownum + 1;
               this.setStartTime();
+              if (this.lengthCheck) {
+                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+                  duration: 10000,
+                  permanent: false,
+                });
+              }
             },
           };
         }

@@ -30,30 +30,30 @@ namespace MAMBrowser.Controllers
 
         //zip파일 내보내기
         [HttpPost("exportZipFile")]
-        public ActionResult<string> ExportZipFile([FromBody] List<CueSheetConDTO> pram)
+        public ActionResult<string> ExportZipFile([FromQuery]string title, [FromBody] List<CueSheetConDTO> pram)
         {
             try
             {
                 var rootFolder = Startup.AppSetting.TempExportPath;
-                if (!Directory.Exists(rootFolder))
-                    Directory.CreateDirectory(rootFolder);
+                //if (!Directory.Exists(rootFolder))
+                //    Directory.CreateDirectory(rootFolder);
 
                 var guid = Guid.NewGuid().ToString();
-                string xmlFileName= $"{guid}_MetaData.xml";
-                string jsonFileName = $"{guid}_MetaData.json"; 
+                string xmlFileName= $"{title}_{guid}_MetaData.xml";
+                string jsonFileName = $"{title}_{guid}_MetaData.json"; 
                 string xmlFileFullPath = Path.Combine(rootFolder, xmlFileName);
                 string jsonFileFullPath = Path.Combine(rootFolder, jsonFileName);
 
-                DirectoryInfo di = new DirectoryInfo(rootFolder);
+                DirectoryInfo di_folder = new DirectoryInfo(rootFolder);
+                DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(rootFolder));
                 if (!di.Exists)
                 {
-                    di.Create();
+                    di_folder.Create();
                 }
                 else
                 {
                     di.Delete(true);
-
-                    di.Create();
+                    di_folder.Create();
                 }
                 foreach (CueSheetConDTO ele in pram)
                 {
@@ -191,10 +191,11 @@ namespace MAMBrowser.Controllers
                 {
                     serializer.Serialize(writer, pram);
                 }
-                string zipFileName = $"{guid}.zip";
+                string zipFileName = $"{title}_{guid}.zip";
                 var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
                 ZipFileManager.Instance.CreateZIPFile(Path.GetDirectoryName(rootFolder), zipFilePath);
+                di_folder.Delete(true);
                 return Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
             }

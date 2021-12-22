@@ -31,7 +31,6 @@ namespace MAMBrowser.Controllers
                 result.ResultObject = _bll.GetPersonIDWithTitleTemplateList(personid, title, row_per_page, select_page);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
                 return result;
-
             }
             catch
             {

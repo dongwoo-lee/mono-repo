@@ -30,6 +30,8 @@ namespace MAMBrowser.BLL
             TemplateListParam param = new TemplateListParamBuilder()
                 .SetPersonID(personid)
                 .SetTitle(title)
+                .SetRowPage(row_per_page)
+                .SetSelectPage(select_page)
                 .Build();
 
             var data = _dao.GetTemplateList(param);

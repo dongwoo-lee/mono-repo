@@ -22,12 +22,11 @@ namespace MAMBrowser.BLL
             _dao = dao;
         }
 
-        public IEnumerable<PgmListDTO> GetUserPgmList(string brd_dt,string personid, char media)
+        public IEnumerable<PgmListDTO> GetUserPgmList(string person, char media)
         {
             ProgramListParam param = new ProgramListParamBuilder()
-                .SetBrdDate(brd_dt)
                 .SetMedia(media)
-                .SetPersonid(personid)
+                .SetPerson(person)
                 .Build();
 
             return _dao.GetProgramList(param)?.Converting();

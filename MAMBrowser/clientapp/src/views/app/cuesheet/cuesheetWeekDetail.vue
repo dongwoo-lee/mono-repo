@@ -205,6 +205,8 @@ export default {
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];
     }
+    console.log("this.cueInfo");
+    console.log(this.cueInfo);
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),

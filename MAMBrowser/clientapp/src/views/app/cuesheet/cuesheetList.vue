@@ -211,11 +211,8 @@ export default {
         return;
       }
       if (this.searchItems.productid == "") {
-        await this.getMediasOption({
-          brd_dt: this.searchItems.start_dt,
-          personid: userId,
-          gropId: null,
-        });
+        var pram = { person: null, gropId: null };
+        await this.getMediasOption(pram);
         this.searchItems.productid = this.userProList;
       }
       if (this.searchItems.productid == undefined) {
@@ -236,13 +233,8 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
-      const userId = sessionStorage.getItem(USER_ID);
-      var proOption = await this.getuserProOption({
-        brd_dt: this.searchItems.start_dt,
-        personid: userId,
-        gropId: null,
-        media: e,
-      });
+      var pram = { person: null, gropId: null, media: e };
+      var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
       this.searchItems.productid = this.userProList;
     },
