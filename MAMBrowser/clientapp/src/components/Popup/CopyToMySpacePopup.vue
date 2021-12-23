@@ -123,7 +123,6 @@ export default {
         });
     },
     setData(rowData) {
-      console.log(rowData);
       this.metaData.title = "";
       this.metaData.memo = "";
       this.rowData = rowData;

@@ -250,7 +250,7 @@ export default {
       ];
 
       axios.post("/api/options/S01G06C001", list).then((res) => {
-        console.log(res);
+        // TODO :  response action
       });
     },
     cancel() {

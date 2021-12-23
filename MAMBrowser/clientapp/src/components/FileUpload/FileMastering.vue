@@ -745,7 +745,6 @@ export default {
       this.fileRemove();
     },
     uploadError(e) {
-      console.log(e);
       this.setProcessing(false);
       this.setFileUploading(false);
       this.MetaModalClose();

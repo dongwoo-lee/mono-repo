@@ -101,7 +101,6 @@ export default {
     return true;
   },
   metaValid(state, getters) {
-    // TODO: dateState 추가
     if (state.MetaData.typeSelected == "my-disk") {
       if (getters.typeState && getters.titleState && getters.memoState)
         return true;

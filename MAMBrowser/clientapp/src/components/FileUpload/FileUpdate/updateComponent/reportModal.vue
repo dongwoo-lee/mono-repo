@@ -142,11 +142,6 @@ export default {
     this.getEvent();
   },
   methods: {
-    log() {
-      console.log("this.brdDT :>> ", this.brdDT);
-      console.log("this.pgmid :>> ", this.pgmid);
-      console.log("this.pgmName :>> ", this.pgmName);
-    },
     getEvent() {
       const replaceVal = this.brdDT.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
