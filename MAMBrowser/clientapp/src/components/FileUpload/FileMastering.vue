@@ -30,7 +30,7 @@
       @dragleave="dragLeave"
       id="dropzone-external"
       class="dropzone"
-      v-show="dropzone"
+      v-show="dropzone && !fileSelected"
       style="
         position: fixed;
         z-index: 9800;
@@ -81,7 +81,6 @@
         <h4 slot="body">
           <DxFileUploader
             :chunk-size="200000"
-            dialog-trigger="#addFile"
             :upload-custom-data="uploaderCustomData"
             :ref="dxfu"
             name="file"
@@ -112,7 +111,7 @@
                 z-index: 9999;
               "
               class="btn btn-outline-primary btn-sm default cutom-label mr-2"
-              id="addFile"
+              @click="select"
             >
               파일 업로드
             </b-button>
@@ -762,7 +761,8 @@ export default {
     //#endregion
     //#region 모달 조작
     select() {
-      this.setFileSelected(true);
+      this.fileupload._isCustomClickEvent = true;
+      this.fileupload._$fileInput[0].click();
     },
     openFileModal() {
       if (!this.FileModal) {
@@ -776,9 +776,7 @@ export default {
       this.setFileSelected(false);
       this.isDropZoneActive = false;
       this.dropzone = false;
-      // console.log("this.fileSelected :>> ", this.fileSelected);
-      // console.log("this.dropzone :>> ", this.dropzone);
-      // console.log("this.isDropZoneActive :>> ", this.isDropZoneActive);
+      this.$emit("dropZoneLeave");
     },
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {
