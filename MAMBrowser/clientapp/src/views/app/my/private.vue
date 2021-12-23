@@ -276,7 +276,7 @@ export default {
         return;
       }
 
-      this.selectedIds = [];
+      //this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false : true;
       const userId = sessionStorage.getItem(USER_ID);
 
@@ -344,7 +344,7 @@ export default {
             this.$bvModal.hide("modalRemove");
             setTimeout(() => {
               this.initSelectedIds();
-              this.getData();
+              this.onSearch();
             }, 0);
           } else {
             this.$fn.notify("error", {
@@ -384,7 +384,8 @@ export default {
       this.metaUpdate = false;
     },
     onEditSuccess() {
-      this.getData();
+      this.initSelectedIds();
+      this.onSearch();
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
