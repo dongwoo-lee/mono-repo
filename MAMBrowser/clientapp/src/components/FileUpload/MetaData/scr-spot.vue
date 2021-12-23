@@ -186,7 +186,8 @@ export default {
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
-      scrMedia: "A",
+      scrMedia: "",
+      scrMediaName: "",
     };
   },
   created() {
@@ -202,11 +203,15 @@ export default {
       });
     });
     this.scrMedia = "ST01";
+    this.scrMediaName = "우리의 소리를 찾아서";
     this.setMediaSelected(this.scrMedia);
+    this.setMediaName(this.scrMediaName);
   },
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
+      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.setMediaName(data.text);
     },
   },
 };

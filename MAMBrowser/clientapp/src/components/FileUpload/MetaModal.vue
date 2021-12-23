@@ -386,6 +386,8 @@ export default {
             editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "pro") {
+          var name = this.MetaData.title;
+          this.setTitle(`[${this.MetaData.mediaName}] [${name}]`);
           var data = {
             editor: sessionStorage.getItem("user_id"),
             category: this.MetaData.mediaSelected,
@@ -405,6 +407,8 @@ export default {
             editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "scr-spot") {
+          var name = this.MetaData.title;
+          this.setTitle(`[${this.MetaData.mediaName}] [${name}]`);
           var data = {
             title: this.MetaData.title,
             memo: this.MetaData.memo,
