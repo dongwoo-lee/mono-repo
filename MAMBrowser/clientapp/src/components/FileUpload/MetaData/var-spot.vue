@@ -336,29 +336,6 @@ export default {
 
     this.getPro();
   },
-  watch: {
-    sdate() {
-      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-      const replaceAllFileEDate = this.edate.replace(/-/g, "");
-      if (
-        replaceAllFileEDate < replaceAllFileSDate &&
-        replaceAllFileEDate != ""
-      ) {
-        this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
-        });
-      }
-    },
-    edate() {
-      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-      const replaceAllFileEDate = this.edate.replace(/-/g, "");
-      if (replaceAllFileEDate < replaceAllFileSDate) {
-        this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
-        });
-      }
-    },
-  },
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
@@ -370,13 +347,36 @@ export default {
       this.sdate = value;
       this.setFileSDate(value);
       this.setTempFileSDate(value);
-      this.getPro();
+
+      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+      const replaceAllFileEDate = this.edate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        this.getPro();
+      }
     },
     eventEInput(value) {
       this.edate = value;
       this.setFileEDate(value);
       this.setTempFileEDate(value);
-      this.getPro();
+
+      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+      const replaceAllFileEDate = this.edate.replace(/-/g, "");
+      if (replaceAllFileEDate < replaceAllFileSDate) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        this.getPro();
+      }
     },
     get7daysago() {
       var newDate = new Date();
@@ -411,12 +411,38 @@ export default {
             this.setFileSDate(this.get7daysago());
             this.setTempFileSDate(this.get7daysago());
 
+            const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+            const replaceAllFileEDate = this.edate.replace(/-/g, "");
+            if (
+              replaceAllFileEDate < replaceAllFileSDate &&
+              replaceAllFileEDate != ""
+            ) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            } else {
+              this.getPro();
+            }
             return;
           }
           this.sdate = convertDate;
           this.setFileSDate(convertDate);
           this.setTempFileSDate(convertDate);
-          this.getPro();
+
+          const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+          const replaceAllFileEDate = this.edate.replace(/-/g, "");
+          if (
+            replaceAllFileEDate < replaceAllFileSDate &&
+            replaceAllFileEDate != ""
+          ) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          } else {
+            this.getPro();
+          }
         }
       }
     },
@@ -446,12 +472,32 @@ export default {
             this.setTempFileEDate(
               this.$fn.formatDate(new Date(), "yyyy-MM-dd")
             );
+
+            const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+            const replaceAllFileEDate = this.edate.replace(/-/g, "");
+            if (replaceAllFileEDate < replaceAllFileSDate) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            } else {
+              this.getPro();
+            }
             return;
           }
           this.edate = convertDate;
           this.setFileEDate(convertDate);
           this.setTempFileEDate(convertDate);
-          this.getPro();
+          const replaceAllFileSDate = this.sdate.replace(/-/g, "");
+          const replaceAllFileEDate = this.edate.replace(/-/g, "");
+          if (replaceAllFileEDate < replaceAllFileSDate) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          } else {
+            this.getPro();
+          }
         }
       }
     },

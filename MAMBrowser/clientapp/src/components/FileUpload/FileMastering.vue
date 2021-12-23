@@ -158,7 +158,8 @@
                         <b-input-group-append>
                           <b-form-datepicker
                             style="height: 34px"
-                            v-model="logSDate"
+                            :value="logSDate"
+                            @input="eventSInput"
                             button-variant="outline-dark"
                             button-only
                             right
@@ -188,7 +189,8 @@
                         <b-input-group-append>
                           <b-form-datepicker
                             style="height: 34px"
-                            v-model="logEDate"
+                            :value="logEDate"
+                            @input="eventEInput"
                             button-only
                             button-variant="outline-dark"
                             right
@@ -572,6 +574,39 @@ export default {
         return "실패";
       }
     },
+    eventSInput(value) {
+      this.logSDate = value;
+      this.tempSDate = value;
+
+      const replaceAllFileSDate = this.logSDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.logEDate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        this.logSearch();
+      }
+    },
+    eventEInput(value) {
+      this.logEDate = value;
+      this.tempEDate = value;
+
+      const replaceAllFileSDate = this.logSDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.logEDate.replace(/-/g, "");
+      if (replaceAllFileEDate < replaceAllFileSDate) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        this.logSearch();
+      }
+    },
     get7daysago() {
       var newDate = new Date();
       var dayOfMonth = newDate.getDate();
@@ -605,10 +640,37 @@ export default {
             event.target.value = this.get7daysago();
             this.logSDate = this.get7daysago();
             this.tempSDate = this.get7daysago();
+
+            const replaceAllFileSDate = this.logSDate.replace(/-/g, "");
+            const replaceAllFileEDate = this.logEDate.replace(/-/g, "");
+            if (
+              replaceAllFileEDate < replaceAllFileSDate &&
+              replaceAllFileEDate != ""
+            ) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            } else {
+              this.logSearch();
+            }
             return;
           }
           this.logSDate = convertDate;
           this.tempSDate = convertDate;
+          const replaceAllFileSDate = this.logSDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.logEDate.replace(/-/g, "");
+          if (
+            replaceAllFileEDate < replaceAllFileSDate &&
+            replaceAllFileEDate != ""
+          ) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          } else {
+            this.logSearch();
+          }
         }
       }
     },
@@ -637,10 +699,32 @@ export default {
             event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
             this.logEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
             this.tempEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+
+            const replaceAllFileSDate = this.logSDate.replace(/-/g, "");
+            const replaceAllFileEDate = this.logEDate.replace(/-/g, "");
+            if (replaceAllFileEDate < replaceAllFileSDate) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            } else {
+              this.logSearch();
+            }
             return;
           }
           this.logEDate = convertDate;
           this.tempEDate = convertDate;
+
+          const replaceAllFileSDate = this.logSDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.logEDate.replace(/-/g, "");
+          if (replaceAllFileEDate < replaceAllFileSDate) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          } else {
+            this.logSearch();
+          }
         }
       }
     },
