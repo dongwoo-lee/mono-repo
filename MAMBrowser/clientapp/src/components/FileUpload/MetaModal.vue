@@ -242,6 +242,15 @@
         </h3>
       </CommonMetaModal>
     </transition>
+    <common-confirm
+      id="durationOver"
+      title="편성 분량 확인"
+      :message="getDurationOverMsg()"
+      submitBtn="업로드"
+      :customClose="true"
+      @ok="DurationOK()"
+      @close="DurationCancel()"
+    />
   </div>
 </template>
 
@@ -468,12 +477,9 @@ export default {
           return;
         } else {
           if (!this.durationState) {
-            if (confirm("분량차이 확인")) {
-              this.setFileUploading(true);
-              this.$emit("upload");
-            } else {
-              return;
-            }
+            console.log("hi");
+            this.$bvModal.show("durationOver");
+            return;
           }
           this.setFileUploading(true);
           this.$emit("upload");
@@ -481,6 +487,17 @@ export default {
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
       }
+    },
+    DurationOK() {
+      this.$bvModal.hide("durationOver");
+      this.setFileUploading(true);
+      this.$emit("upload");
+    },
+    DurationCancel() {
+      this.$bvModal.hide("durationOver");
+    },
+    getDurationOverMsg() {
+      return `<text style="color:red;">편성 분량을 확인하세요.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
     },
     typeOptionsByRole(role) {
       if (role == "관리자") {
