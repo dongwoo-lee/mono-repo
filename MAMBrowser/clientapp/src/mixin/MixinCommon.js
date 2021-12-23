@@ -66,9 +66,11 @@ let mixinCommon = {
         },
         // 스크롤 페이징
         onScrollPerPage() {
-            this.isScrollLodaing = true;
-            this.searchItems.selectPage++;
-            this.getData();
+            if(!this.isScrollLodaing){
+                this.isScrollLodaing = true;
+                this.searchItems.selectPage++;
+                this.getData();
+            }
         },
         // 결과값 설정
         setResponseData(res, type = '') {

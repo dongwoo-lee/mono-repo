@@ -77,6 +77,7 @@
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
+           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
@@ -145,8 +146,8 @@ export default {
         memo: "", // 메모
         rowPerPage: 30,
         selectPage: 1,
-        sortKey: "",
-        sortValue: ""
+        sortKey: "deletedDtm",
+        sortValue: "desc"
       },
       singleSelectedId: null,
       recycleId: null,
@@ -195,11 +196,11 @@ export default {
           sortField: "audioFormat"
         },
         {
-          name: "editedDtm",
+          name: "deletedDtm",
           title: "삭제일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "editedDtm"
+          sortField: "deletedDtm"
         },
         {
           name: "__slot:actions",
@@ -271,7 +272,7 @@ export default {
             this.$bvModal.hide("modalRemove");
             this.initSelectedIds();
             this.getSummaryUser();
-            this.getData();
+            this.onSearch();
           } else {
             this.$fn.notify("error", {
               message: "삭제 실패: " + res.data.errorMsg
@@ -316,7 +317,7 @@ export default {
             this.$fn.notify("primary", { message: "복원 성공" });
             this.$bvModal.hide("modalRecycle");
             this.initSelectedIds();
-            this.getData();
+            this.onSearch();
           } else {
             this.$fn.notify("error", {
               message: "복원 실패: " + res.data.errorMsg
@@ -340,7 +341,8 @@ export default {
             // this.$fn.notify('primary', { message: '휴지통 비우기가 요청되었습니다.' });
             this.$bvModal.hide("modalRecyclebin");
             this.getSummaryUser();
-            this.getData();
+            this.initSelectedIds();
+            this.onSearch();
           } else {
             this.$fn.notify("error", {
               message: "휴지통 비우기 실패: " + res.data.errorMsg

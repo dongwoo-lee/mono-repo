@@ -82,7 +82,7 @@
                     <div
                       style="float:right; color:red; font-size:12px; margin-right:6px"
                     >
-                      v1.0.211020
+                      v1.0.211223
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">

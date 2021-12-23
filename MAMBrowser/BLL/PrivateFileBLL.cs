@@ -121,6 +121,8 @@ namespace MAMBrowser.BLL
             foreach (var seq in seqList)
             {
                 var fileData = Get(seq);
+                if (fileData == null)
+                    continue;
                 if (File.Exists(fileData.FilePath))
                 {
                     _fileProtocol.Delete(fileData.FilePath);

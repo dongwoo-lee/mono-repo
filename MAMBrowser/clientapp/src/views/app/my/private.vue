@@ -338,7 +338,7 @@ export default {
             this.$bvModal.hide("modalRemove");
             setTimeout(() => {
               this.initSelectedIds();
-              this.getData();
+              this.onSearch();
             }, 0);
           } else {
             this.$fn.notify("error", {
@@ -352,7 +352,8 @@ export default {
       this.metaDataModifyPopup = true;
     },
     onEditSuccess() {
-      this.getData();
+      this.initSelectedIds();
+      this.onSearch();
     },
     isNoSelected() {
       return !this.selectedIds || this.selectedIds.length === 0;
