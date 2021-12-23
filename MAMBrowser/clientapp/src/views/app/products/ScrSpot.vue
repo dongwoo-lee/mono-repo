@@ -65,7 +65,7 @@
           <b-button
             variant="outline-primary default"
             size="sm"
-            @click="onShowModalDuration"
+            @click="show = true"
             >기간 설정</b-button
           >
         </b-input-group>
@@ -154,27 +154,313 @@
     >
     </PlayerPopup>
 
-    <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
+    <b-modal
+      id="setScrRange"
+      size="lg"
+      v-model="show"
+      centered
+      no-close-on-backdrop
+      footer-class="scr-modal-footer"
+    >
       <template slot="modal-title">
-        <h5>기간 설정</h5>
+        <h5>부조SPOT 방송의뢰</h5>
       </template>
-      <template slot="default"> </template>
+      <template slot="default">
+        <DxDataGrid
+          :data-source="setScrRange"
+          :show-borders="true"
+          style="height: 200px"
+          :hover-state-enabled="true"
+          key-expr="event"
+          :allow-column-resizing="true"
+          :column-auto-width="true"
+          no-data-text="No Data"
+        >
+          <DxPager :visible="false" />
+          <DxScrolling mode="standard" />
+          <DxColumn data-field="spot" caption="SPOT명" />
+          <DxColumn data-field="event" caption="사용처" />
+          <DxColumn data-field="sDate" caption="시작일" />
+          <DxColumn data-field="eDate" caption="종료일" />
+        </DxDataGrid>
+      </template>
       <template v-slot:modal-footer>
+        <b-button
+          variant="outline-primary default cutom-label"
+          size="sm"
+          class="float-left"
+          style="margin-right: 5px"
+          @click="show2 = true"
+        >
+          추가</b-button
+        ><b-button
+          variant="outline-primary default cutom-label-cancel"
+          size="sm"
+          class="float-left"
+          style="margin-right: 480px"
+          @click="show = false"
+        >
+          삭제</b-button
+        >
+        <b-button
+          variant="outline-primary default cutom-label"
+          size="sm"
+          class="float-right"
+          @click="show = false"
+        >
+          방송의뢰</b-button
+        >
         <b-button
           variant="outline-danger default cutom-label-cancel"
           size="sm"
           class="float-right"
           @click="show = false"
         >
-          닫기</b-button
+          취소</b-button
         >
         <!-- 여기에다가 편집 저장 버튼 추가해야함 그리고 거기에 Click이벤트로 SOM, EOM 찍히는지 확인하기 -->
+      </template>
+    </b-modal>
+    <b-modal
+      id="addRange"
+      size="lg"
+      v-model="show2"
+      centered
+      no-close-on-backdrop
+      footer-class="scr-modal-footer"
+    >
+      <template slot="modal-title">
+        <h5>기간 설정</h5>
+      </template>
+      <template slot="default">
+        <b-form-group
+          label="부조SPOT"
+          class="has-float-label"
+          style="width: 400px; float: left"
+        >
+          <b-form-input
+            style="width: 300px; float: left; height: 30px"
+            class="editTask"
+            :value="this.pgmName"
+            disabled
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="소재명"
+            trim
+          />
+
+          <b-button
+            variant="outline-primary default cutom-label"
+            style="
+              margin-left: 20px;
+              margin-top: 10px;
+              float: left;
+              height: 30px;
+            "
+            @click="show3 = true"
+            >...</b-button
+          >
+        </b-form-group>
+        <b-form-group
+          label="제작자"
+          class="has-float-label"
+          style="margin-top: 10px"
+        >
+          <common-vue-select
+            :class="vSelectClass"
+            style="font-size: 14px; width: 300px"
+            :suggestions="ProgramOptions"
+            @inputEvent="onPgmSelected"
+          ></common-vue-select>
+        </b-form-group>
+
+        <div style="margin-top: 30px">
+          <b-form-group
+            label="시작일"
+            class="has-float-label"
+            style="width: 300px; float: left"
+          >
+            <b-input-group style="width: 300px; float: left">
+              <input
+                style="height: 34px; font-size: 13px"
+                id="sdateinput"
+                type="text"
+                class="form-control input-picker date-input"
+                :value="setScrRange.sDate"
+                @input="onsInput"
+              />
+              <b-input-group-append>
+                <b-form-datepicker
+                  style="height: 34px; float: left"
+                  :value="setScrRange.sDate"
+                  @input="eventSInput"
+                  button-variant="outline-dark"
+                  button-only
+                  right
+                  aria-controls="example-input"
+                  @context="onContext"
+                ></b-form-datepicker>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group
+            label="종료일"
+            class="has-float-label"
+            style="
+              margin-left: 100px;
+              width: 300px;
+              font-size: 13px;
+              float: left;
+            "
+          >
+            <b-input-group class="mb-3" style="width: 300px; float: left">
+              <input
+                style="height: 34px; font-size: 13px"
+                id="edateinput"
+                type="text"
+                class="form-control input-picker date-input"
+                :value="setScrRange.eDate"
+                @input="oneInput"
+              />
+              <b-input-group-append>
+                <b-form-datepicker
+                  style="height: 34px"
+                  :value="setScrRange.eDate"
+                  @input="eventEInput"
+                  button-only
+                  button-variant="outline-dark"
+                  right
+                  aria-controls="example-input"
+                  @context="onContext"
+                ></b-form-datepicker>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </div>
+      </template>
+      <template v-slot:modal-footer>
+        <b-button
+          variant="outline-primary default cutom-label"
+          size="sm"
+          class="float-right"
+          @click="show2 = false"
+        >
+          추가</b-button
+        >
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          class="float-right"
+          @click="show2 = false"
+        >
+          취소</b-button
+        >
+      </template>
+    </b-modal>
+    <b-modal
+      id="setSpot"
+      v-model="show3"
+      size="xl"
+      centered
+      no-close-on-backdrop
+      footer-class="scr-modal-footer"
+    >
+      <template slot="modal-title"> 부조SPOT 검색 </template>
+      <template slot="default">
+        <div
+          style="
+            width: 1085px;
+            height: 90px;
+            border: 1px solid #d7d7d7;
+            padding-top: 20px;
+            padding-left: 20px;
+          "
+        >
+          <b-form-group
+            label="분류"
+            class="has-float-label"
+            style="margin-top: 11px; float: left"
+          >
+            <b-form-select
+              id="program-media"
+              class="media-select"
+              style="width: 200px; float: left"
+              :value="scrSpotData.media"
+              :options="scrMediaOptions"
+              @input="mediaChange"
+            />
+          </b-form-group>
+
+          <b-form-input
+            class="editTask"
+            style="margin-left: 20px; width: 200px; float: left"
+            v-model="scrSpotData.advertiser"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="광고주 명"
+            trim
+          /><b-form-input
+            class="editTask"
+            style="margin-left: 20px; width: 350px; float: left"
+            v-model="scrSpotData.title"
+            aria-describedby="input-live-help input-live-feedback"
+            placeholder="소재 명"
+            trim
+          />
+          <b-button
+            style="margin-left: 20px; margin-top: -40px; height: 35px"
+            variant="outline-primary default cutom-label"
+            >검색</b-button
+          >
+        </div>
+
+        <DxDataGrid
+          :data-source="spotData"
+          :show-borders="true"
+          style="height: 400px; margin-top: 20px"
+          :hover-state-enabled="true"
+          key-expr="spotID"
+          :allow-column-resizing="true"
+          :column-auto-width="true"
+          no-data-text="No Data"
+        >
+          <DxPager :visible="false" />
+          <DxScrolling mode="standard" />
+          <DxColumn data-field="spotID" caption="spotID" />
+          <DxColumn data-field="spotName" caption="spotName" />
+          <DxColumn data-field="codeID" caption="codeID" />
+          <DxColumn data-field="codeName" caption="codeName" />
+          <DxColumn data-field="CMOwner" caption="CMOwner" />
+        </DxDataGrid>
+      </template>
+      <template v-slot:modal-footer>
+        <b-button
+          variant="outline-primary default cutom-label"
+          size="sm"
+          class="float-right"
+          @click="show3 = false"
+        >
+          선택</b-button
+        >
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          class="float-right"
+          @click="show3 = false"
+        >
+          취소</b-button
+        >
       </template>
     </b-modal>
   </div>
 </template>
 
 <script>
+import {
+  DxDataGrid,
+  DxScrolling,
+  DxLoadPanel,
+  DxColumn,
+  DxPager,
+} from "devextreme-vue/data-grid";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
@@ -182,12 +468,46 @@ import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue
 import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
 import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
+  components: {
+    CopyToMySpacePopup,
+    CommonVueSelect,
+    FileUpdate,
+    FileDelete,
+    DxScrolling,
+    DxLoadPanel,
+    DxPager,
+    DxDataGrid,
+    DxColumn,
+  },
   mixins: [MixinBasicPage],
   data() {
     return {
+      vSelectClass: "scrSpotVueSelect",
+      setScrRange: {
+        spot: "",
+        event: "",
+        sDate: "",
+        eDate: "",
+      },
+      scrSpotData: {
+        title: "",
+        advertiser: "",
+        media: "",
+      },
+      spotData: {
+        spotID: "",
+        spotName: "",
+        codeID: "",
+        codeName: "",
+        CMOwner: "",
+      },
+      scrMediaOptions: {},
+      tempSDate: "",
+      tempEDate: "",
       deleteId: "",
       show: false,
+      show2: false,
+      show3: false,
       metaUpdate: false,
       updateScreenName: "",
       rowData: "",
@@ -399,9 +719,180 @@ export default {
           }
         });
     },
-    onShowModalDuration() {
-      this.show = true;
+    eventSInput(value) {
+      this.setScrRange.sdate = value;
+      this.tempSDate = value;
+
+      const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        console.log("hi");
+      }
+    },
+    eventEInput(value) {
+      this.setScrRange.edate = value;
+      this.tempEDate = value;
+
+      const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+      if (replaceAllFileEDate < replaceAllFileSDate) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        console.log("hi");
+      }
+    },
+    get7daysago() {
+      var newDate = new Date();
+      var dayOfMonth = newDate.getDate();
+      newDate.setDate(dayOfMonth - 7);
+      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+      return newDate;
+    },
+    onsInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempSDate == null) {
+          event.target.value = this.get7daysago();
+          return;
+        }
+        event.target.value = this.tempSDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.get7daysago();
+            this.setScrRange.sDate = this.get7daysago();
+            this.tempSDate = this.get7daysago();
+
+            const replaceAllFileSDate = this.setScrRange.sDate.replace(
+              /-/g,
+              ""
+            );
+            const replaceAllFileEDate = this.setScrRange.edate.replace(
+              /-/g,
+              ""
+            );
+            if (
+              replaceAllFileEDate < replaceAllFileSDate &&
+              replaceAllFileEDate != ""
+            ) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            } else {
+              console.log("hi");
+            }
+            return;
+          }
+          this.setScrRange.sDate = convertDate;
+          this.tempSDate = convertDate;
+          const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+          if (
+            replaceAllFileEDate < replaceAllFileSDate &&
+            replaceAllFileEDate != ""
+          ) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          } else {
+            console.log("hi");
+          }
+        }
+      }
+    },
+    oneInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempEDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          return;
+        }
+        event.target.value = this.tempEDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.setScrRange.edate = this.$fn.formatDate(
+              new Date(),
+              "yyyy-MM-dd"
+            );
+            this.tempEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+
+            const replaceAllFileSDate = this.setScrRange.sDate.replace(
+              /-/g,
+              ""
+            );
+            const replaceAllFileEDate = this.setScrRange.edate.replace(
+              /-/g,
+              ""
+            );
+            if (replaceAllFileEDate < replaceAllFileSDate) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            } else {
+              console.log("hi");
+            }
+            return;
+          }
+          this.setScrRange.edate = convertDate;
+          this.tempEDate = convertDate;
+
+          const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+          if (replaceAllFileEDate < replaceAllFileSDate) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          } else {
+            console.log("hi");
+          }
+        }
+      }
     },
   },
 };
 </script>
+<style>
+.scr-modal-footer {
+  padding-left: 1.5rem !important;
+}
+</style>

@@ -259,7 +259,6 @@
                       :allow-column-resizing="true"
                       :column-auto-width="true"
                       no-data-text="No Data"
-                      @row-expanding="logSearch"
                     >
                       <DxPager :visible="false" />
                       <DxScrolling mode="standard" />

@@ -477,7 +477,6 @@ export default {
           return;
         } else {
           if (!this.durationState) {
-            console.log("hi");
             this.$bvModal.show("durationOver");
             return;
           }
