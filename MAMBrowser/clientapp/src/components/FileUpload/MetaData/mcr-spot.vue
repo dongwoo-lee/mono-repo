@@ -21,34 +21,12 @@
             trim
           />
         </b-form-group>
-        <button
-          v-show="memoState"
-          style="
-            position: relative;
-            left: 315px;
-            top: -40px;
-            z-index: 99;
-            width: 3px;
-            heigth: 3px;
-            background-color: #ffffff;
-            border: 0;
-            outline: 0;
-          "
-        >
-          <b-icon
-            icon="x-circle"
-            font-scale="1"
-            style="position: relative; top: 0px; right: 0px; z-index: 999"
-            variant="secondary"
-            @click="resetMemo"
-          ></b-icon>
-        </button>
         <p
           v-show="memoState"
           style="
             position: relative;
             left: 315px;
-            top: -35px;
+            top: -15px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -79,34 +57,12 @@
             trim
           />
         </b-form-group>
-        <button
-          v-show="advertiserState"
-          style="
-            position: relative;
-            left: 315px;
-            top: -40px;
-            z-index: 9999;
-            width: 3px;
-            heigth: 3px;
-            background-color: #ffffff;
-            border: 0;
-            outline: 0;
-          "
-        >
-          <b-icon
-            icon="x-circle"
-            font-scale="1"
-            style="position: relative; top: 0px; right: 0px; z-index: 9999"
-            variant="secondary"
-            @click="resetAdvertiser"
-          ></b-icon>
-        </button>
         <p
           v-show="advertiserState"
           style="
             position: relative;
             left: 315px;
-            top: -35px;
+            top: -15px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -171,27 +127,6 @@
           </b-input-group-append>
         </b-input-group>
       </b-form-group>
-      <button
-        v-show="!isActive"
-        style="
-          position: absolute;
-          right: -220px;
-          top: 7px;
-          z-index: 9999;
-          width: 3px;
-          background-color: #ffffff;
-          border: 0;
-          outline: 0;
-        "
-      >
-        <b-icon
-          icon="x-circle"
-          font-scale="1"
-          style="position: absolute; z-index: 9999"
-          variant="secondary"
-          @click="resetDate"
-        ></b-icon>
-      </button>
 
       <b-form-group
         label="매체"
