@@ -159,6 +159,7 @@
       size="lg"
       v-model="show"
       centered
+      no-close-on-esc
       no-close-on-backdrop
       footer-class="scr-modal-footer"
     >
@@ -167,7 +168,7 @@
       </template>
       <template slot="default">
         <DxDataGrid
-          :data-source="setScrRange"
+          :data-source="setScrRangeData"
           :show-borders="true"
           style="height: 200px"
           :hover-state-enabled="true"
@@ -226,6 +227,7 @@
       size="lg"
       v-model="show2"
       centered
+      no-close-on-esc
       no-close-on-backdrop
       footer-class="scr-modal-footer"
     >
@@ -239,9 +241,16 @@
           style="width: 400px; float: left"
         >
           <b-form-input
-            style="width: 300px; float: left; height: 30px"
+            style="
+              width: 243px;
+              float: left;
+              border-top-right-radius: 0;
+              border-bottom-right-radius: 0;
+              border-right: 0;
+              height: 34px;
+            "
             class="editTask"
-            :value="this.pgmName"
+            :value="this.selectedSpot.spotName"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             placeholder="소재명"
@@ -250,15 +259,11 @@
 
           <b-button
             variant="outline-primary default cutom-label"
-            style="
-              margin-left: 20px;
-              margin-top: 10px;
-              float: left;
-              height: 30px;
-            "
+            style="margin-top: 10px; float: left; width: 58px; height: 34px"
             @click="show3 = true"
-            >...</b-button
           >
+            <b-icon-search></b-icon-search>
+          </b-button>
         </b-form-group>
         <b-form-group
           label="제작자"
@@ -285,13 +290,13 @@
                 id="sdateinput"
                 type="text"
                 class="form-control input-picker date-input"
-                :value="setScrRange.sDate"
+                :value="setScrRangeData.sDate"
                 @input="onsInput"
               />
               <b-input-group-append>
                 <b-form-datepicker
                   style="height: 34px; float: left"
-                  :value="setScrRange.sDate"
+                  :value="setScrRangeData.sDate"
                   @input="eventSInput"
                   button-variant="outline-dark"
                   button-only
@@ -318,13 +323,13 @@
                 id="edateinput"
                 type="text"
                 class="form-control input-picker date-input"
-                :value="setScrRange.eDate"
+                :value="setScrRangeData.eDate"
                 @input="oneInput"
               />
               <b-input-group-append>
                 <b-form-datepicker
                   style="height: 34px"
-                  :value="setScrRange.eDate"
+                  :value="setScrRangeData.eDate"
                   @input="eventEInput"
                   button-only
                   button-variant="outline-dark"
@@ -361,6 +366,7 @@
       v-model="show3"
       size="xl"
       centered
+      no-close-on-esc
       no-close-on-backdrop
       footer-class="scr-modal-footer"
     >
@@ -384,30 +390,43 @@
               id="program-media"
               class="media-select"
               style="width: 200px; float: left"
-              :value="scrSpotData.media"
+              :value="searchSpot.media"
               :options="scrMediaOptions"
               @input="mediaChange"
             />
           </b-form-group>
-
-          <b-form-input
-            class="editTask"
-            style="margin-left: 20px; width: 200px; float: left"
-            v-model="scrSpotData.advertiser"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="광고주 명"
-            trim
-          /><b-form-input
-            class="editTask"
-            style="margin-left: 20px; width: 350px; float: left"
-            v-model="scrSpotData.title"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="소재 명"
-            trim
-          />
+          <b-form-group
+            label="광고주"
+            class="has-float-label"
+            style="margin-left: 20px; margin-top: 10px; float: left"
+          >
+            <b-form-input
+              class="memo"
+              style="width: 200px; height: 34px; float: left"
+              v-model="searchSpot.advertiser"
+              aria-describedby="input-live-help input-live-feedback"
+              placeholder="광고주 명"
+              trim
+            />
+          </b-form-group>
+          <b-form-group
+            label="소재"
+            class="has-float-label"
+            style="margin-left: 20px; margin-top: 10px; float: left"
+          >
+            <b-form-input
+              class="memo"
+              style="width: 350px; height: 34px; float: left"
+              v-model="searchSpot.title"
+              aria-describedby="input-live-help input-live-feedback"
+              placeholder="소재 명"
+              trim
+            />
+          </b-form-group>
           <b-button
             style="margin-left: 20px; margin-top: -40px; height: 35px"
             variant="outline-primary default cutom-label"
+            @click="getScrSpot"
             >검색</b-button
           >
         </div>
@@ -421,9 +440,11 @@
           :allow-column-resizing="true"
           :column-auto-width="true"
           no-data-text="No Data"
+          @row-click="spotSelect"
         >
           <DxPager :visible="false" />
           <DxScrolling mode="standard" />
+          <DxSelection mode="single" />
           <DxColumn data-field="spotID" caption="spotID" />
           <DxColumn data-field="spotName" caption="spotName" />
           <DxColumn data-field="codeID" caption="codeID" />
@@ -460,6 +481,7 @@ import {
   DxLoadPanel,
   DxColumn,
   DxPager,
+  DxSelection,
 } from "devextreme-vue/data-grid";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
@@ -478,22 +500,25 @@ export default {
     DxPager,
     DxDataGrid,
     DxColumn,
+    DxSelection,
   },
   mixins: [MixinBasicPage],
   data() {
     return {
       vSelectClass: "scrSpotVueSelect",
-      setScrRange: {
+      setScrRangeData: {
         spot: "",
         event: "",
-        sDate: "",
-        eDate: "",
+        sDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
+        eDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       },
-      scrSpotData: {
+      // 검색 파라미터
+      searchSpot: {
         title: "",
         advertiser: "",
         media: "",
       },
+      //그리드 데이터
       spotData: {
         spotID: "",
         spotName: "",
@@ -501,7 +526,15 @@ export default {
         codeName: "",
         CMOwner: "",
       },
-      scrMediaOptions: {},
+      // 선택한 부조 스팟(row) 데이터
+      selectedSpot: {
+        spotID: "",
+        spotName: "",
+        codeID: "",
+        codeName: "",
+        CMOwner: "",
+      },
+      scrMediaOptions: [], // 분류 옵션 - created 에서 데이터 push
       tempSDate: "",
       tempEDate: "",
       deleteId: "",
@@ -610,12 +643,31 @@ export default {
     this.getMediaOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
-
+    axios.get("/api/categories/scr/spot").then((res) => {
+      res.data.resultObject.data.forEach((e) => {
+        this.scrMediaOptions.push({ value: e.id, text: e.name });
+      });
+    });
+    this.searchSpot.media = "ST01";
     this.$nextTick(() => {
       this.getData();
     });
   },
   methods: {
+    spotSelect(v) {
+      console.log(v);
+    },
+    getScrSpot() {
+      var data = {
+        media: this.searchSpot.media,
+        title: this.searchSpot.title,
+        advertiser: this.searchSpot.advertiser,
+      };
+      console.log(data);
+      // this.axios.get(``).then((res) => {
+      //   console.log('res :>> ', res);
+      // })
+    },
     SDateErrorLog() {
       this.$fn.notify("error", {
         message: "시작 날짜가 종료 날짜보다 큽니다.",
@@ -720,11 +772,11 @@ export default {
         });
     },
     eventSInput(value) {
-      this.setScrRange.sdate = value;
+      this.setScrRangeData.sDate = value;
       this.tempSDate = value;
 
-      const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
-      const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+      const replaceAllFileSDate = this.setScrRangeData.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.setScrRangeData.eDate.replace(/-/g, "");
       if (
         replaceAllFileEDate < replaceAllFileSDate &&
         replaceAllFileEDate != ""
@@ -738,11 +790,11 @@ export default {
       }
     },
     eventEInput(value) {
-      this.setScrRange.edate = value;
+      this.setScrRangeData.eDate = value;
       this.tempEDate = value;
 
-      const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
-      const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+      const replaceAllFileSDate = this.setScrRangeData.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.setScrRangeData.eDate.replace(/-/g, "");
       if (replaceAllFileEDate < replaceAllFileSDate) {
         this.$fn.notify("error", {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
@@ -783,14 +835,14 @@ export default {
             convertDate == "undefined"
           ) {
             event.target.value = this.get7daysago();
-            this.setScrRange.sDate = this.get7daysago();
+            this.setScrRangeData.sDate = this.get7daysago();
             this.tempSDate = this.get7daysago();
 
-            const replaceAllFileSDate = this.setScrRange.sDate.replace(
+            const replaceAllFileSDate = this.setScrRangeData.sDate.replace(
               /-/g,
               ""
             );
-            const replaceAllFileEDate = this.setScrRange.edate.replace(
+            const replaceAllFileEDate = this.setScrRangeData.eDate.replace(
               /-/g,
               ""
             );
@@ -807,10 +859,16 @@ export default {
             }
             return;
           }
-          this.setScrRange.sDate = convertDate;
+          this.setScrRangeData.sDate = convertDate;
           this.tempSDate = convertDate;
-          const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
-          const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+          const replaceAllFileSDate = this.setScrRangeData.sDate.replace(
+            /-/g,
+            ""
+          );
+          const replaceAllFileEDate = this.setScrRangeData.eDate.replace(
+            /-/g,
+            ""
+          );
           if (
             replaceAllFileEDate < replaceAllFileSDate &&
             replaceAllFileEDate != ""
@@ -848,17 +906,17 @@ export default {
             convertDate == "undefined"
           ) {
             event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-            this.setScrRange.edate = this.$fn.formatDate(
+            this.setScrRangeData.eDate = this.$fn.formatDate(
               new Date(),
               "yyyy-MM-dd"
             );
             this.tempEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
 
-            const replaceAllFileSDate = this.setScrRange.sDate.replace(
+            const replaceAllFileSDate = this.setScrRangeData.sDate.replace(
               /-/g,
               ""
             );
-            const replaceAllFileEDate = this.setScrRange.edate.replace(
+            const replaceAllFileEDate = this.setScrRangeData.eDate.replace(
               /-/g,
               ""
             );
@@ -872,11 +930,17 @@ export default {
             }
             return;
           }
-          this.setScrRange.edate = convertDate;
+          this.setScrRangeData.eDate = convertDate;
           this.tempEDate = convertDate;
 
-          const replaceAllFileSDate = this.setScrRange.sDate.replace(/-/g, "");
-          const replaceAllFileEDate = this.setScrRange.edate.replace(/-/g, "");
+          const replaceAllFileSDate = this.setScrRangeData.sDate.replace(
+            /-/g,
+            ""
+          );
+          const replaceAllFileEDate = this.setScrRangeData.eDate.replace(
+            /-/g,
+            ""
+          );
           if (replaceAllFileEDate < replaceAllFileSDate) {
             this.$fn.notify("error", {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
@@ -887,6 +951,16 @@ export default {
           }
         }
       }
+    },
+    validDateType(value) {
+      const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
+      return !dateRegex.test(value);
+    },
+    onContext(ctx) {
+      // The date formatted in the locale, or the `label-no-date-selected` string
+      this.formatted = ctx.selectedFormatted;
+      // The following will be an empty string until a valid date is entered
+      this.dateSelected = ctx.selectedYMD;
     },
   },
 };
