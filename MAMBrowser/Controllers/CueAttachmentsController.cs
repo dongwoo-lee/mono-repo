@@ -37,7 +37,6 @@ namespace MAMBrowser.Controllers
                 var rootFolder = Startup.AppSetting.TempExportPath;
                 //if (!Directory.Exists(rootFolder))
                 //    Directory.CreateDirectory(rootFolder);
-
                 var guid = Guid.NewGuid().ToString();
                 string xmlFileName= $"{title}_{guid}_MetaData.xml";
                 string jsonFileName = $"{title}_{guid}_MetaData.json"; 
@@ -215,7 +214,9 @@ namespace MAMBrowser.Controllers
             {
                 contentType = "application/octet-stream";
             }
-            return PhysicalFile(fileName, contentType);
+            return PhysicalFile(fileName, contentType, Path.GetFileName(fileName));
+            //return File(fileName, contentType, Path.GetFileName(fileName));
+           // return result;
 
 
         }

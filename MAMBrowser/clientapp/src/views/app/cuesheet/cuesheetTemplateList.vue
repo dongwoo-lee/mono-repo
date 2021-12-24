@@ -40,7 +40,7 @@
           <b-button
             variant="outline-secondary default"
             size="sm"
-            v-b-modal.modal-del
+            @click="selectDelDefCue"
             >선택 항목 삭제</b-button
           >
         </b-input-group>
@@ -105,6 +105,17 @@
           </div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :width="100"
+          @click="addTemCue()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
     <!-- 템플릿 삭제 modal -->
     <b-modal
@@ -121,6 +132,17 @@
           <div>선택된 템플릿을 삭제하시겠습니까?</div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :width="100"
+          @click="delTemCue()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -131,6 +153,7 @@ import { USER_ID } from "@/constants/config";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import DxTextBox from "devextreme-vue/text-box";
+import DxButton from "devextreme-vue/button";
 import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
@@ -142,6 +165,7 @@ export default {
     DxDataGrid,
     DxColumn,
     DxTextBox,
+    DxButton,
   },
   data() {
     return {
@@ -220,7 +244,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       var params = {
         personid: userId,
-        temptitle: this.searchTemptitle,
+        titie: this.searchTemptitle,
         row_per_page: this.searchItems.rowPerPage,
         select_page: this.searchItems.selectPage,
       };
@@ -244,16 +268,22 @@ export default {
         footertitle: "",
         memo: "",
       };
-
       var pram = {
         CueSheetDTO: tempItem,
       };
-
-      // var params = {
-      //   temParam: { personid: userId, tmptitle: this.tmpTitleTextBoxValue },
-      // };
       await this.addTemplate(pram);
       this.getData();
+      this.$bvModal.hide("modal-add");
+    },
+    selectDelDefCue() {
+      if (this.selectedIds.length > 0) {
+        this.$bvModal.show("modal-del");
+      } else {
+        window.$notify("error", `삭제할 템플릿을 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      }
     },
     //템플릿 삭제
     async delTemCue() {
@@ -285,6 +315,7 @@ export default {
           });
         this.getData();
         this.initSelectedIds();
+        this.$bvModal.hide("modal-del");
       }
     },
   },

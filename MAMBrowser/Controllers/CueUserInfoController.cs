@@ -26,7 +26,6 @@ namespace MAMBrowser.Controllers
         {
             try
             {
-
                 return _bll.GetUserPgmList(person, media);
             }
             catch(Exception)

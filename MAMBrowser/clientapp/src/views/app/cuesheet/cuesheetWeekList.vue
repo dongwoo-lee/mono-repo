@@ -52,7 +52,7 @@
           <b-button
             variant="outline-secondary default"
             size="sm"
-            v-b-modal.modal-del
+            @click="selectDelDefCue"
             >선택 항목 삭제</b-button
           >
         </b-input-group>
@@ -138,6 +138,17 @@
           </b-button-group>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :width="100"
+          @click="addWeekCue()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
     <!-- 기본큐시트 삭제 modal -->
     <b-modal
@@ -154,6 +165,17 @@
           <div>선택된 기본 큐시트를 삭제하시겠습니까?</div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :width="100"
+          @click="delWeekCue()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -161,6 +183,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
+import DxButton from "devextreme-vue/button";
 import axios from "axios";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
@@ -169,7 +192,7 @@ const moment = require("moment");
 const qs = require("qs");
 
 export default {
-  components: { CommonWeeks },
+  components: { CommonWeeks, DxButton },
   mixins: [MixinBasicPage],
   data() {
     return {
@@ -299,6 +322,9 @@ export default {
         await this.getMediasOption(pram);
         this.searchItems.productid = this.userProList;
       }
+      if (this.searchItems.productid == undefined) {
+        this.searchItems.productid = this.userProList;
+      }
       var params = {
         productids: this.searchItems.productid,
         row_per_page: this.searchItems.rowPerPage,
@@ -318,6 +344,7 @@ export default {
       var proOption = await this.getuserProOption(pram);
       if (V == "list") {
         this.programList = this.userProOption;
+        this.searchItems.productid = this.userProList;
       } else if (V == "modal") {
         this.modalProgramList = this.userProOption;
       }
@@ -331,10 +358,19 @@ export default {
       });
       this.$refs["modal-add"].show();
     },
+    selectDelDefCue() {
+      if (this.selectedIds.length > 0) {
+        this.$bvModal.show("modal-del");
+      } else {
+        window.$notify("error", `삭제할 기본 큐시트를 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      }
+    },
     // 기본큐시트 추가 (modal)
     async addWeekCue() {
       const userId = sessionStorage.getItem(USER_ID);
-
       var result = [];
       this.btnWeekStates.forEach((ele) => {
         var cueItem = {
@@ -351,16 +387,24 @@ export default {
         };
         result.push(cueItem);
       });
-      var pram = {
-        DefCueSheetDTO: result,
-      };
-      await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {
-        window.$notify("info", `기본 큐시트 추가완료.`, "", {
+      if (result.length == 0) {
+        window.$notify("error", `기본 큐시트를 적용할 요일을 선택하세요.`, "", {
           duration: 10000,
           permanent: false,
         });
-      });
-      this.getData();
+      } else {
+        var pram = {
+          DefCueSheetDTO: result,
+        };
+        await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {
+          window.$notify("info", `기본 큐시트 추가완료.`, "", {
+            duration: 10000,
+            permanent: false,
+          });
+        });
+        this.getData();
+        this.$refs["modal-add"].hide();
+      }
     },
     // 요일확인 및 목록 가져오기 (modal)
     async getWeekList(e) {
@@ -399,37 +443,36 @@ export default {
     },
     //기본큐시트 삭제
     async delWeekCue(e) {
-      if (this.selectedIds.length > 0) {
-        var delcueidList = [];
-        this.selectedIds.forEach((ids) => {
-          this.defCuesheetListArr.data[ids].detail.forEach((ele) => {
-            delcueidList.push(ele.cueid);
+      var delcueidList = [];
+      this.selectedIds.forEach((ids) => {
+        this.defCuesheetListArr.data[ids].detail.forEach((ele) => {
+          delcueidList.push(ele.cueid);
+        });
+      });
+      await axios
+        .delete(`/api/DefCueSheet/DelDefCue`, {
+          params: {
+            delParams: delcueidList,
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        })
+        .then((res) => {
+          window.$notify("info", `기본 큐시트 삭제완료.`, "", {
+            duration: 10000,
+            permanent: false,
+          });
+        })
+        .catch(() => {
+          window.$notify("error", `기본 큐시트 삭제실패.`, "", {
+            duration: 10000,
+            permanent: false,
           });
         });
-        await axios
-          .delete(`/api/DefCueSheet/DelDefCue`, {
-            params: {
-              delParams: delcueidList,
-            },
-            paramsSerializer: (params) => {
-              return qs.stringify(params);
-            },
-          })
-          .then((res) => {
-            window.$notify("info", `기본 큐시트 삭제완료.`, "", {
-              duration: 10000,
-              permanent: false,
-            });
-          })
-          .catch(() => {
-            window.$notify("error", `기본 큐시트 삭제실패.`, "", {
-              duration: 10000,
-              permanent: false,
-            });
-          });
-        this.getData();
-        this.initSelectedIds();
-      }
+      this.getData();
+      this.initSelectedIds();
+      this.$bvModal.hide("modal-del");
     },
   },
 };
@@ -455,5 +498,8 @@ export default {
   border: solid 1px #757575;
   background-color: rgb(223, 222, 222);
   color: #757575;
+}
+.dx-button {
+  font-family: "MBC 새로움 M";
 }
 </style>

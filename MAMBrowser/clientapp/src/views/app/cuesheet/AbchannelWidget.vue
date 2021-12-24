@@ -188,8 +188,8 @@
                 :class="{
                   maintitle_red:
                     data.data.onairdate != '' &&
-                    (data.data.onairdate != cueInfo.day ||
-                      data.data.onairdate != cueInfo.brddate ||
+                    cueInfo.cuetype != 'A' &&
+                    (data.data.onairdate != cueInfo.brddate ||
                       cueInfo.pgmcode != data.data.pgmcode),
                 }"
               >

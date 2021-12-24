@@ -300,7 +300,10 @@ export default {
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
         async getuserProOption({ commit }, payload) {
-            var pram = { person: null, media: payload.media }
+            var pram = { person: null }
+            if (payload.media != "") {
+                pram.media = payload.media
+            }
             if (payload.gropId == "S01G04C004") {
                 pram.person = payload.person
             }
@@ -338,7 +341,10 @@ export default {
             })
                 .then((res) => {
                     var dataList = res.data
-                    var medias = [];
+                    var medias = [{
+                        value: "",
+                        text: "전체"
+                    }];
                     var products = [];
                     var media_a = dataList.filter(ele => ele.media.includes("A"));
                     var media_f = dataList.filter(ele => ele.media.includes("F"));
@@ -459,12 +465,13 @@ export default {
         },
         // 템플릿 목록 전체 가져오기
         getcuesheetListArrTemp({ commit }, payload) {
-            return axios.get(`/api/TempCueSheet/GetTempList`, {
-                params: payload,
-                paramsSerializer: (params) => {
-                    return qs.stringify(params);
-                },
-            })
+            // return axios.get(`/api/TempCueSheet/GetTempList`, {
+            //     params: payload,
+            //     paramsSerializer: (params) => {
+            //         return qs.stringify(params);
+            //     },
+            // })
+            return axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.titie}&row_per_page=${payload.row_per_page}&select_page=${payload.select_page}`)
                 .then((res) => {
                     var seqnum = 0;
                     res.data.resultObject.data.forEach((ele) => {
@@ -487,7 +494,6 @@ export default {
                 },
             })
                 .then((res) => {
-                    console.log(res)
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })

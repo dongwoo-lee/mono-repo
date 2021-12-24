@@ -103,6 +103,23 @@
           ></b-form-checkbox-group>
         </b-form-group>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
+          :width="100"
+          @click="clearOk()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
 
     <!-- 즐겨찾기 비우기 -->
@@ -120,7 +137,25 @@
           <div class="mb-3">작성된 모든 내용을 삭제합니다.</div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
+          :width="100"
+          @click="favDelOk()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
+
     <!-- 템플릿으로 저장 -->
     <b-modal
       id="modal-template"
@@ -154,10 +189,21 @@
         </div>
       </div>
       <template #modal-footer="{ cancel }">
-        <b-button variant="danger" @click="cancel()">닫기 </b-button>
-        <b-button type="submit" variant="secondary" @click="addtemClick()"
-          >저장
-        </b-button>
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
+          :width="100"
+          @click="addtemClick()"
+        >
+        </DxButton>
       </template>
     </b-modal>
 
@@ -236,7 +282,7 @@
           <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
             "{{ cueInfo.title }}" 큐시트를 저장합니다.
 
-            <div>
+            <div v-if="type != 'O'">
               <b-form-checkbox-group
                 class="custom-checkbox-group mt-5"
                 style="font-size: 16px"
@@ -256,8 +302,26 @@
           <div class="mb-3" v-if="fav">즐겨찾기를 저장합니다.</div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
+          :width="100"
+          @click="saveOk()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
-    <!-- 추가정보 -->
+
+    <!-- 추가설정 -->
     <b-modal
       id="modal-setting"
       size="lg"
@@ -336,14 +400,22 @@
         </div>
       </div>
       <template #modal-footer="{ cancel }">
-        <b-button variant="danger" @click="cancel()">닫기 </b-button>
-        <b-button
-          type="submit"
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
           v-if="cueInfo.cuetype != 'A'"
-          variant="secondary"
+          :width="100"
           @click="editOk()"
-          >저장
-        </b-button>
+        >
+        </DxButton>
       </template>
     </b-modal>
 
@@ -362,6 +434,23 @@
           <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
         </div>
       </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
+          :width="100"
+          @click="exportZipWave()"
+        >
+        </DxButton>
+      </template>
     </b-modal>
 
     <!-- 기본큐시트 요일 변경 -->
@@ -410,10 +499,21 @@
         </div>
       </div>
       <template #modal-footer="{ cancel }">
-        <b-button variant="danger" @click="cancel()">닫기 </b-button>
-        <b-button type="submit" variant="secondary" @click="editWeekOk()"
-          >저장
-        </b-button>
+        <DxButton
+          :width="100"
+          text="취소"
+          :disabled="loadingIconVal"
+          @click="cancel()"
+        />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :disabled="loadingIconVal"
+          :width="100"
+          @click="editWeekOk()"
+        >
+        </DxButton>
       </template>
     </b-modal>
   </div>
@@ -424,6 +524,7 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import DxTextArea from "devextreme-vue/text-area";
+import { DxLoadIndicator } from "devextreme-vue/load-indicator";
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
@@ -444,6 +545,7 @@ export default {
   data() {
     return {
       goBackPoint: "",
+      loadingIconVal: false,
       tmpTitleTextBoxValue: "이름없는 템플릿",
       proid: "",
       id: "",
@@ -526,6 +628,7 @@ export default {
     DxDropDownButton,
     DxTextBox,
     DxTextArea,
+    DxLoadIndicator,
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
@@ -584,6 +687,7 @@ export default {
 
     //템플릿으로 저장
     async addtemClick() {
+      this.loadingIconVal = true;
       const userId = sessionStorage.getItem(USER_ID);
       var cueCon = await this.setCueConFav_save(false);
       // var temParam = { personid: userId, tmptitle: this.tmpTitleTextBoxValue };
@@ -606,12 +710,14 @@ export default {
       cueCon.CueSheetDTO = tempItem;
 
       await this.addTemplate(cueCon);
+      this.loadingIconVal = false;
       this.$bvModal.hide("modal-template");
     },
     resetModal_tem() {
       this.tmpTitleTextBoxValue = "이름없는 템플릿";
     },
     clearOk() {
+      this.loadingIconVal = true;
       if (this.selected.length > 0) {
         if (this.selected.includes("print")) {
           this.SET_PRINTARR([]);
@@ -623,11 +729,14 @@ export default {
       if (this.cartSelected.length > 0) {
         eventBus.$emit("clearCData", this.cartSelected);
       }
+      this.loadingIconVal = false;
+      this.$bvModal.hide("modal-clear");
     },
     //즐겨찾기 비우기
     favDelOk() {
       this.setclearFav();
       eventBus.$emit("clearFav");
+      this.$bvModal.hide("modal-favDel");
     },
     clickCheckTilte() {
       if (this.allCheck) {
@@ -678,24 +787,25 @@ export default {
     },
     //큐시트 저장
     async saveOk() {
+      this.loadingIconVal = true;
       switch (this.type) {
         case "O":
           this.saveOldCue();
           break;
         case "D":
           if (this.oldCueSelected.length != 0) {
-            this.saveDayCue(true);
+            await this.saveDayCue(true);
           } else {
-            this.saveDayCue();
+            await this.saveDayCue();
           }
           break;
 
         case "B":
-          this.saveDefCue();
+          await this.saveDefCue();
           break;
 
         case "T":
-          this.saveTempCue();
+          await this.saveTempCue();
           break;
 
         case "F":
@@ -721,9 +831,12 @@ export default {
         default:
           break;
       }
+      this.loadingIconVal = false;
+      this.$bvModal.hide("modal-save");
     },
     // zip 파일 다운로드
     async exportZipWave() {
+      this.loadingIconVal = true;
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
       for (var i = 1; i < 5; i++) {
@@ -761,6 +874,8 @@ export default {
             console.log(error);
           });
       }
+      this.loadingIconVal = false;
+      this.$refs["modal-export-zip-wave"].hide();
     },
     async editWeekListClick() {
       const userName = sessionStorage.getItem(USER_NAME);
@@ -829,21 +944,6 @@ export default {
           }
         });
       }
-      // if (this.type == "B") {
-      //   console.log(this.cueInfo.activeWeekList);
-      //   this.cueInfo.activeWeekList.forEach((week)=>{
-      //     if(Object.)
-      //   })
-      //   // this.weekButtons.forEach((week) => {
-      //   //   this.cueInfo.activeWeekList.forEach((item) => {
-      //   //     if (week.value == item) {
-      //   //       week.state = true;
-      //   //     } else {
-      //   //       week.state = false;
-      //   //     }
-      //   //   });
-      //   // });
-      // }
     },
     editOk() {
       this.SET_CUEINFO(this.editOptions);

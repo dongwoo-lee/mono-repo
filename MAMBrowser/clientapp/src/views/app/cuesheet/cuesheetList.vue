@@ -19,6 +19,7 @@
           endDateLabel="방송 종료일"
           :startDate.sync="searchItems.start_dt"
           :endDate.sync="searchItems.end_dt"
+          :maxPeriodMonth="6"
           :required="false"
           :isCurrentDate="false"
         />
@@ -195,8 +196,6 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
-      const userId = sessionStorage.getItem(USER_ID);
-
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (
         this.$fn.checkGreaterStartDate(

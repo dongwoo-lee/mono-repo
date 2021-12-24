@@ -19,6 +19,8 @@
           endDateLabel="방송 예정일(~까지)"
           :startDate.sync="searchItems.start_dt"
           :endDate.sync="searchItems.end_dt"
+          :maxPeriodMonth="3"
+          :disabVal="true"
           :required="false"
           :isCurrentDate="false"
         />
@@ -205,29 +207,31 @@ export default {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
+        this.isTableLoading = false;
+        this.isScrollLodaing = false;
         return;
+      } else {
+        if (this.searchItems.productid == "") {
+          var pram = { person: userName, gropId: gropId };
+          await this.getMediasOption(pram);
+          this.searchItems.productid = this.userProList;
+        }
+        if (this.searchItems.productid == undefined) {
+          this.searchItems.productid = this.userProList;
+        }
+        var params = {
+          start_dt: this.searchItems.start_dt,
+          end_dt: this.searchItems.end_dt,
+          products: this.searchItems.productid,
+          row_per_page: this.searchItems.rowPerPage,
+          select_page: this.searchItems.selectPage,
+        };
+        var arrListResult = await this.getcuesheetListArr(params);
+        this.setResponseData(arrListResult);
+        this.addScrollClass();
+        this.isTableLoading = false;
+        this.isScrollLodaing = false;
       }
-
-      if (this.searchItems.productid == "") {
-        var pram = { person: userName, gropId: gropId };
-        await this.getMediasOption(pram);
-        this.searchItems.productid = this.userProList;
-      }
-      if (this.searchItems.productid == undefined) {
-        this.searchItems.productid = this.userProList;
-      }
-      var params = {
-        start_dt: this.searchItems.start_dt,
-        end_dt: this.searchItems.end_dt,
-        products: this.searchItems.productid,
-        row_per_page: this.searchItems.rowPerPage,
-        select_page: this.searchItems.selectPage,
-      };
-      var arrListResult = await this.getcuesheetListArr(params);
-      this.setResponseData(arrListResult);
-      this.addScrollClass();
-      this.isTableLoading = false;
-      this.isScrollLodaing = false;
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {

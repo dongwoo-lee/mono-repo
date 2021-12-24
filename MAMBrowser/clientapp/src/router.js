@@ -465,16 +465,7 @@ const routes = [
           if (Object.keys(cueDataObj).length === 0) {
             cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
           }
-          // var params = {
-          //   productid: cueDataObj.productid,
-          //   week: cueDataObj.weeks,
-          // };
           var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode };
-          // if (Object.keys(cueDataObj).includes("detail")) {
-          //   params.brd_dt = cueDataObj.brddate
-          // } else {
-          //   params.brd_dt = cueDataObj.day
-          // }
           await axios.get(`/api/defcuesheet/GetdefCue`, {
             params: params,
             paramsSerializer: (params) => {
@@ -528,6 +519,7 @@ const routes = [
             cueDataObj.footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
           }
           cueDataObj.personid = userId;
+          cueDataObj.brddate = toDay
           store.commit('cueList/SET_CUEINFO', cueDataObj)
           sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
           next();

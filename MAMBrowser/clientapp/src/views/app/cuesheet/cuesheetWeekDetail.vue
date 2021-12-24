@@ -162,7 +162,6 @@ import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
 import { eventBus } from "@/eventBus";
-
 export default {
   beforeRouteLeave(to, from, next) {
     const answer = window.confirm(
@@ -205,8 +204,6 @@ export default {
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];
     }
-    console.log("this.cueInfo");
-    console.log(this.cueInfo);
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),

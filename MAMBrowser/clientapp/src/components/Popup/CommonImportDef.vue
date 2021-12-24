@@ -85,8 +85,21 @@
         v-model="importSelected"
         :options="importOptions"
       ></b-form-radio-group>
-      <b-button size="sm" variant="danger" @click="cancel()"> 닫기 </b-button>
-      <b-button size="sm" variant="secondary" @click="ok()"> 확인 </b-button>
+      <DxButton
+        :width="100"
+        text="취소"
+        :disabled="loadingIconVal"
+        @click="cancel()"
+      />
+      <DxButton
+        type="default"
+        text="확인"
+        styling-mode="outlined"
+        :disabled="loadingIconVal"
+        :width="100"
+        @click="ok()"
+      >
+      </DxButton>
     </template>
   </b-modal>
 </template>
@@ -95,6 +108,7 @@ import CommonWeeks from "../../components/DataTable/CommonWeeks.vue";
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
+import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
 const qs = require("qs");
 import axios from "axios";
@@ -102,7 +116,7 @@ import "moment/locale/ko";
 const moment = require("moment");
 
 export default {
-  components: { CommonWeeks },
+  components: { CommonWeeks, DxButton },
   mixins: [MixinBasicPage],
   props: {
     proid: {
@@ -116,6 +130,7 @@ export default {
   data() {
     return {
       state: false,
+      loadingIconVal: false,
       disabledVal: true,
       searchItems: {
         media: "", // 매체
@@ -256,7 +271,7 @@ export default {
         const userName = sessionStorage.getItem(USER_NAME);
         const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
         this.isTableLoading = this.isScrollLodaing ? false : true;
-        if (!this.searchItems.productid) {
+        if (this.searchItems.productid == "") {
           var pram = { person: userName, gropId: gropId };
           var mediaOption = await this.getMediasOption(pram);
           if (this.type != "T") {
@@ -265,6 +280,9 @@ export default {
           } else {
             this.searchItems.productid = this.userProList;
           }
+        }
+        if (this.searchItems.productid == undefined) {
+          this.searchItems.productid = this.userProList;
         }
         await axios
           .get(`/api/DefCueSheet/GetDefList`, {
@@ -310,11 +328,13 @@ export default {
       }
     },
     async ok() {
+      this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
         window.$notify("error", `기본큐시트를 선택하세요.`, "", {
           duration: 10000,
           permanent: false,
         });
+        this.loadingIconVal = false;
       } else {
         var rowNum_ab = 0;
         var rowNum_c = 0;
@@ -348,6 +368,7 @@ export default {
             duration: 10000,
             permanent: false,
           });
+          this.loadingIconVal = false;
         } else {
           var seqnum = this.selectedIds[0];
           var params = {
@@ -386,7 +407,7 @@ export default {
                 oldCueInfo.memo = res.data.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
-                if (resultPrintData.length > 99) {
+                if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                     duration: 10000,
@@ -406,7 +427,7 @@ export default {
                   });
                 }
                 var resultABData = beforeAbData.concat(res.data.normalCon);
-                if (resultABData.length > 499) {
+                if (resultABData.length > 500) {
                   resultABData.splice(500);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                     duration: 10000,
@@ -422,6 +443,7 @@ export default {
               };
               eventBus.$emit("updateCData", pram);
               this.selectedIds = null;
+              this.loadingIconVal = false;
               this.$refs["importDef"].hide();
             });
         }
@@ -434,6 +456,7 @@ export default {
       var pram = { person: userName, gropId: gropId, media: e };
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
+      this.searchItems.productid = this.userProList;
     },
   },
 };

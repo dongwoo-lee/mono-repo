@@ -167,8 +167,9 @@
               :class="{
                 maintitle_red:
                   fileData[index - 1].onairdate != '' &&
-                  (fileData[index - 1].onairdate != cueInfo.day ||
-                    fileData[index - 1].onairdate != cueInfo.brddate),
+                  cueInfo.cuetype != 'A' &&
+                  (fileData[index - 1].onairdate != cueInfo.brddate ||
+                    cueInfo.pgmcode != fileData[index - 1].pgmcode),
               }"
               @dblclick="onTextEdit(index)"
               v-if="fileData[index - 1].edittarget"

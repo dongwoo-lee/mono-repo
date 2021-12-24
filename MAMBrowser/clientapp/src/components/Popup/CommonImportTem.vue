@@ -67,14 +67,28 @@
         v-model="importSelected"
         :options="importOptions"
       ></b-form-radio-group>
-      <b-button size="sm" variant="danger" @click="cancel()"> 닫기 </b-button>
-      <b-button size="sm" variant="secondary" @click="ok()"> 확인 </b-button>
+      <DxButton
+        :width="100"
+        text="취소"
+        :disabled="loadingIconVal"
+        @click="cancel()"
+      />
+      <DxButton
+        type="default"
+        text="확인"
+        styling-mode="outlined"
+        :disabled="loadingIconVal"
+        :width="100"
+        @click="ok()"
+      >
+      </DxButton>
     </template>
   </b-modal>
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
+import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
 import "moment/locale/ko";
@@ -95,6 +109,7 @@ function get_date_str(date) {
 
 var toDay = get_date_str(date);
 export default {
+  components: { DxButton },
   mixins: [MixinBasicPage],
   props: {
     id: {
@@ -108,6 +123,7 @@ export default {
   data() {
     return {
       state: false,
+      loadingIconVal: false,
       temtitle: "",
       searchItems: {
         rowPerPage: 30,
@@ -242,11 +258,13 @@ export default {
       }
     },
     async ok() {
+      this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
         window.$notify("error", `템플릿을 선택하세요.`, "", {
           duration: 10000,
           permanent: false,
         });
+        this.loadingIconVal = false;
       } else {
         var rowNum_ab = 0;
         var rowNum_c = 0;
@@ -280,6 +298,7 @@ export default {
             duration: 10000,
             permanent: false,
           });
+          this.loadingIconVal = false;
         } else {
           var seqnum = this.selectedIds[0];
           //var cueid = this.tempCuesheetListArr.data[seqnum].cueid;
@@ -319,7 +338,7 @@ export default {
                 oldCueInfo.memo = res.data.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
-                if (resultPrintData.length > 99) {
+                if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                     duration: 10000,
@@ -339,7 +358,7 @@ export default {
                   });
                 }
                 var resultABData = beforeAbData.concat(res.data.normalCon);
-                if (resultABData.length > 499) {
+                if (resultABData.length > 500) {
                   resultABData.splice(500);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                     duration: 10000,
@@ -355,6 +374,7 @@ export default {
               };
               eventBus.$emit("updateCData", pram);
               this.selectedIds = null;
+              this.loadingIconVal = false;
               this.$refs["importTem"].hide();
             });
         }

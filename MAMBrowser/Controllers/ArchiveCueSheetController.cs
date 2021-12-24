@@ -24,7 +24,7 @@ namespace MAMBrowser.Controllers
 
         // 이전큐시트 목록 가져오기 (날짜별)
         [HttpGet("GetArchiveCueList")]
-        public ArchiveCueList_Result GetArchiveCueList([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] List<string> products, int row_per_page, int select_page)
+        public ArchiveCueList_Result GetArchiveCueList([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] List<string> products,string media, int row_per_page, int select_page)
         {
             try
             {

@@ -65,23 +65,6 @@ namespace MAMBrowser.Controllers
         {
             public DTO_RESULT_PAGE_LIST<DTO_EFFECT> Result { get; set; }
         }
-        public class SongPrams : DTO_FILEBASE
-        {
-            public string SequenceNO { get; set; }
-            public string Name { get; set; }
-            public string ArtistName { get; set; }
-            public string Duration { get; set; }
-            public string AlbumName { get; set; }
-            public string TrackNO { get; set; }
-            public string ReleaseDate { get; set; }
-            public string Composer { get; set; }
-            public string Writer { get; set; }
-            public string Arranger { get; set; }
-            public string LyricsSeq { get; set; }
-            public override string FilePath { get; set; }
-            public string AlbumImageFilePath { get; set; }
-            public string AlbumToken { get; set; }
-        }
 
         #region 소재검색 옵션
         [HttpGet("GetSearchOption")]

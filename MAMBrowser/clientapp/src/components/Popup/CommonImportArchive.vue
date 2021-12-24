@@ -89,14 +89,28 @@
         v-model="importSelected"
         :options="importOptions"
       ></b-form-radio-group>
-      <b-button size="sm" variant="danger" @click="cancel()"> 닫기 </b-button>
-      <b-button size="sm" variant="secondary" @click="ok()"> 확인 </b-button>
+      <DxButton
+        :width="100"
+        text="취소"
+        :disabled="loadingIconVal"
+        @click="cancel()"
+      />
+      <DxButton
+        type="default"
+        text="확인"
+        styling-mode="outlined"
+        :disabled="loadingIconVal"
+        :width="100"
+        @click="ok()"
+      >
+      </DxButton>
     </template>
   </b-modal>
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
+import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
 import { USER_ID, USER_NAME } from "@/constants/config";
@@ -125,6 +139,7 @@ export default {
   data() {
     return {
       state: false,
+      loadingIconVal: false,
       date,
       programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
@@ -245,6 +260,9 @@ export default {
       }
     },
   },
+  components: {
+    DxButton,
+  },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["abCartArr"]),
@@ -290,6 +308,9 @@ export default {
           await this.getMediasOption(pram);
           this.searchItems.productid = this.userProList;
         }
+        if (this.searchItems.productid == undefined) {
+          this.searchItems.productid = this.userProList;
+        }
         await axios
           .get(`/api/ArchiveCueSheet/GetArchiveCueList`, {
             params: {
@@ -323,19 +344,20 @@ export default {
       var pram = { person: null, gropId: null, media: e };
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
+      this.searchItems.productid = this.userProList;
     },
     async ok() {
+      this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
         window.$notify("error", `큐시트를 선택하세요.`, "", {
           duration: 10000,
           permanent: false,
         });
+        this.loadingIconVal = false;
       } else {
         var rowNum_ab = 0;
         var rowNum_print = 0;
-
         var rowNum_c = 0;
-
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
@@ -365,6 +387,7 @@ export default {
             duration: 10000,
             permanent: false,
           });
+          this.loadingIconVal = false;
         } else {
           var seqnum = this.selectedIds[0];
           var cueid = this.archiveCuesheetListArr.data[seqnum].cueid;
@@ -394,7 +417,7 @@ export default {
                 oldCueInfo.memo = res.data.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(res.data.printDTO);
-                if (resultPrintData.length > 99) {
+                if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                     duration: 10000,
@@ -414,7 +437,7 @@ export default {
                   });
                 }
                 var resultABData = beforeAbData.concat(res.data.normalCon);
-                if (resultABData.length > 499) {
+                if (resultABData.length > 500) {
                   resultABData.splice(500);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                     duration: 10000,
@@ -430,6 +453,7 @@ export default {
               };
               eventBus.$emit("updateCData", pram);
               this.selectedIds = null;
+              this.loadingIconVal = false;
               this.$refs["importArchive"].hide();
             });
         }
