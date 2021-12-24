@@ -59,6 +59,14 @@
             >휴지통 비우기</b-button
           >
         </b-input-group>
+        <b-input-group>
+          <b-button
+            variant="outline-danger default"
+            size="sm"
+            @click="getSummaryUser"
+            >유저</b-button
+          >
+        </b-input-group>
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
@@ -77,7 +85,7 @@
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
           @selectedIds="onSelectedIds"
-           @sortableclick="onSortable"
+          @sortableclick="onSortable"
           @refresh="onRefresh"
         >
           <template slot="actions" scope="props">
@@ -108,6 +116,7 @@
           title="영구삭제"
           :message="getDeleteMsg()"
           submitBtn="영구삭제"
+          :deleteState="deleteState"
           @ok="onDelete()"
         />
         <!-- 복원 확인창 -->
@@ -124,6 +133,7 @@
           title="휴지통 비우기"
           message="휴지통을 비우시겠습니까?<br>(파일은 영구삭제되며 되돌릴 수 없습니다.)"
           submitBtn="휴지통 비우기"
+          :deleteState="deleteState"
           @ok="onRecyclebin()"
         />
       </template>
@@ -140,6 +150,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteState: false,
       searchItems: {
         // cate: '',           // 분류
         title: "", // 제목
@@ -147,7 +158,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "deletedDtm",
-        sortValue: "desc"
+        sortValue: "desc",
       },
       singleSelectedId: null,
       recycleId: null,
@@ -158,34 +169,34 @@ export default {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "5%",
         },
         {
           name: "rowNO",
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "title"
+          sortField: "title",
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "memo"
+          sortField: "memo",
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center"
+          dataClass: "center aligned text-center",
         },
         {
           name: "audioFormat",
@@ -193,24 +204,24 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "9%",
-          sortField: "audioFormat"
+          sortField: "audioFormat",
         },
         {
           name: "deletedDtm",
           title: "삭제일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "deletedDtm"
+          sortField: "deletedDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
-        }
+          width: "10%",
+        },
       ],
-      USER_ID
+      USER_ID,
     };
   },
   created() {
@@ -226,9 +237,9 @@ export default {
       const userId = sessionStorage.getItem(USER_ID);
       this.$http
         .get(`/api/products/workspace/private/recyclebin/${userId}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -247,14 +258,16 @@ export default {
     // 선택항목 영구 삭제 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
-        this.selectedIds,
-        this.responseData.data
-      );
+      this.innerHtmlSelectedFileNames =
+        this.getInnerHtmlSelectdFileNamesFromMulti(
+          this.selectedIds,
+          this.responseData.data
+        );
       this.$bvModal.show("modalRemove");
     },
     // 영구 삭제
     onDelete() {
+      this.deleteState = true;
       const userId = sessionStorage.getItem(USER_ID);
       let ids = this.selectedIds;
 
@@ -266,16 +279,17 @@ export default {
 
       this.$http
         .delete(`/api/products/workspace/private/recyclebin/${userId}/${ids}`)
-        .then(res => {
+        .then((res) => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify("primary", { message: "파일이 삭제 되었습니다." });
             this.$bvModal.hide("modalRemove");
+            this.deleteState = false;
             this.initSelectedIds();
             this.getSummaryUser();
             this.onSearch();
           } else {
             this.$fn.notify("error", {
-              message: "삭제 실패: " + res.data.errorMsg
+              message: "삭제 실패: " + res.data.errorMsg,
             });
           }
         });
@@ -291,10 +305,11 @@ export default {
     // 선택항목 복원 확인창
     onMultiRecycleConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
-        this.selectedIds,
-        this.responseData.data
-      );
+      this.innerHtmlSelectedFileNames =
+        this.getInnerHtmlSelectdFileNamesFromMulti(
+          this.selectedIds,
+          this.responseData.data
+        );
       this.$bvModal.show("modalRecycle");
     },
     // 복원하기
@@ -312,7 +327,7 @@ export default {
         .put(
           `/api/products/workspace/private/recyclebin/${userId}/recycle/${ids}`
         )
-        .then(res => {
+        .then((res) => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify("primary", { message: "복원 성공" });
             this.$bvModal.hide("modalRecycle");
@@ -320,7 +335,7 @@ export default {
             this.onSearch();
           } else {
             this.$fn.notify("error", {
-              message: "복원 실패: " + res.data.errorMsg
+              message: "복원 실패: " + res.data.errorMsg,
             });
           }
           this.recycleId = null;
@@ -332,20 +347,22 @@ export default {
     },
     // 휴지통 비우기(물리적인파일 포함 전체 영구삭제)
     onRecyclebin() {
+      this.deleteState = true;
       const userId = sessionStorage.getItem(USER_ID);
 
       this.$http
         .delete(`/api/products/workspace/private/recyclebin/${userId}`)
-        .then(res => {
+        .then((res) => {
           if (res.status === 200 && !res.data.errorMsg) {
             // this.$fn.notify('primary', { message: '휴지통 비우기가 요청되었습니다.' });
             this.$bvModal.hide("modalRecyclebin");
+            this.deleteState = false;
             this.getSummaryUser();
             this.initSelectedIds();
             this.onSearch();
           } else {
             this.$fn.notify("error", {
-              message: "휴지통 비우기 실패: " + res.data.errorMsg
+              message: "휴지통 비우기 실패: " + res.data.errorMsg,
             });
           }
         });
@@ -361,7 +378,7 @@ export default {
         this.innerHtmlSelectedFileNames +
         "파일을 삭제하시겠습니까?<br>(파일은 영구삭제되며 되돌릴 수 없습니다.)"
       );
-    }
-  }
+    },
+  },
 };
 </script>
