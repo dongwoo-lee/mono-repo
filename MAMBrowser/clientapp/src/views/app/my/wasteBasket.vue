@@ -59,6 +59,14 @@
             >휴지통 비우기</b-button
           >
         </b-input-group>
+        <b-input-group>
+          <b-button
+            variant="outline-danger default"
+            size="sm"
+            @click="getSummaryUser"
+            >유저</b-button
+          >
+        </b-input-group>
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
@@ -108,6 +116,7 @@
           title="영구삭제"
           :message="getDeleteMsg()"
           submitBtn="영구삭제"
+          :deleteState="deleteState"
           @ok="onDelete()"
         />
         <!-- 복원 확인창 -->
@@ -124,6 +133,7 @@
           title="휴지통 비우기"
           message="휴지통을 비우시겠습니까?<br>(파일은 영구삭제되며 되돌릴 수 없습니다.)"
           submitBtn="휴지통 비우기"
+          :deleteState="deleteState"
           @ok="onRecyclebin()"
         />
       </template>
@@ -140,6 +150,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteState: false,
       searchItems: {
         // cate: '',           // 분류
         title: "", // 제목
@@ -256,6 +267,7 @@ export default {
     },
     // 영구 삭제
     onDelete() {
+      this.deleteState = true;
       const userId = sessionStorage.getItem(USER_ID);
       let ids = this.selectedIds;
 
@@ -271,6 +283,7 @@ export default {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify("primary", { message: "파일이 삭제 되었습니다." });
             this.$bvModal.hide("modalRemove");
+            this.deleteState = false;
             this.initSelectedIds();
             this.getSummaryUser();
             this.onSearch();
@@ -334,6 +347,7 @@ export default {
     },
     // 휴지통 비우기(물리적인파일 포함 전체 영구삭제)
     onRecyclebin() {
+      this.deleteState = true;
       const userId = sessionStorage.getItem(USER_ID);
 
       this.$http
@@ -342,6 +356,7 @@ export default {
           if (res.status === 200 && !res.data.errorMsg) {
             // this.$fn.notify('primary', { message: '휴지통 비우기가 요청되었습니다.' });
             this.$bvModal.hide("modalRecyclebin");
+            this.deleteState = false;
             this.getSummaryUser();
             this.initSelectedIds();
             this.onSearch();
