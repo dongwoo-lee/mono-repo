@@ -159,6 +159,7 @@
       size="lg"
       v-model="show"
       centered
+      hide-header-close
       no-close-on-esc
       no-close-on-backdrop
       footer-class="scr-modal-footer"
@@ -168,7 +169,7 @@
       </template>
       <template slot="default">
         <DxDataGrid
-          :data-source="setScrRangeData"
+          :data-source="requestScr"
           :show-borders="true"
           style="height: 200px"
           :hover-state-enabled="true"
@@ -176,7 +177,9 @@
           :allow-column-resizing="true"
           :column-auto-width="true"
           no-data-text="No Data"
+          @row-click="requestSelect"
         >
+          <DxSelection mode="single" />
           <DxPager :visible="false" />
           <DxScrolling mode="standard" />
           <DxColumn data-field="spot" caption="SPOT명" />
@@ -199,7 +202,7 @@
           size="sm"
           class="float-left"
           style="margin-right: 480px"
-          @click="show = false"
+          @click="deleteRequest"
         >
           삭제</b-button
         >
@@ -207,7 +210,7 @@
           variant="outline-primary default cutom-label"
           size="sm"
           class="float-right"
-          @click="show = false"
+          @click="request"
         >
           방송의뢰</b-button
         >
@@ -227,6 +230,7 @@
       size="lg"
       v-model="show2"
       centered
+      hide-header-close
       no-close-on-esc
       no-close-on-backdrop
       footer-class="scr-modal-footer"
@@ -266,7 +270,7 @@
           </b-button>
         </b-form-group>
         <b-form-group
-          label="제작자"
+          label="사용처"
           class="has-float-label"
           style="margin-top: 10px"
         >
@@ -274,7 +278,7 @@
             :class="vSelectClass"
             style="font-size: 14px; width: 300px"
             :suggestions="ProgramOptions"
-            @inputEvent="onPgmSelected"
+            @inputEvent="pgmSelect"
           ></common-vue-select>
         </b-form-group>
 
@@ -347,6 +351,7 @@
           variant="outline-primary default cutom-label"
           size="sm"
           class="float-right"
+          :disabled="!scrValid"
           @click="show2 = false"
         >
           추가</b-button
@@ -366,6 +371,7 @@
       v-model="show3"
       size="xl"
       centered
+      hide-header-close
       no-close-on-esc
       no-close-on-backdrop
       footer-class="scr-modal-footer"
@@ -442,9 +448,9 @@
           no-data-text="No Data"
           @row-click="spotSelect"
         >
+          <DxSelection mode="single" />
           <DxPager :visible="false" />
           <DxScrolling mode="standard" />
-          <DxSelection mode="single" />
           <DxColumn data-field="spotID" caption="spotID" />
           <DxColumn data-field="spotName" caption="spotName" />
           <DxColumn data-field="codeID" caption="codeID" />
@@ -457,6 +463,7 @@
           variant="outline-primary default cutom-label"
           size="sm"
           class="float-right"
+          :disabled="!selectRowValid"
           @click="show3 = false"
         >
           선택</b-button
@@ -465,7 +472,7 @@
           variant="outline-danger default cutom-label-cancel"
           size="sm"
           class="float-right"
-          @click="show3 = false"
+          @click="show3Cancel"
         >
           취소</b-button
         >
@@ -506,19 +513,26 @@ export default {
   data() {
     return {
       vSelectClass: "scrSpotVueSelect",
+      requestScr: {
+        spot: "",
+        event: "",
+        sDate: "",
+        eDate: "",
+      },
       setScrRangeData: {
         spot: "",
         event: "",
         sDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
         eDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       },
+      ProgramOptions: [],
       // 검색 파라미터
       searchSpot: {
         title: "",
         advertiser: "",
         media: "",
       },
-      //그리드 데이터
+      //부조SPOT검색 모달 그리드 데이터
       spotData: {
         spotID: "",
         spotName: "",
@@ -649,11 +663,57 @@ export default {
       });
     });
     this.searchSpot.media = "ST01";
+    this.getPgm();
     this.$nextTick(() => {
       this.getData();
     });
   },
+  computed: {
+    scrValid() {
+      if (
+        this.setScrRangeData.spot != "" &&
+        this.setScrRangeData.event != "" &&
+        this.setScrRangeData.sDate != "" &&
+        this.setScrRangeData.eDate != ""
+      ) {
+        return true;
+      }
+      return false;
+    },
+    selectRowValid() {
+      if (this.selectedSpot.spotID != "") {
+        return true;
+      }
+      return false;
+    },
+  },
   methods: {
+    requestSelect(v) {
+      console.log(v);
+    },
+    request() {
+      console.log("방송의뢰 버튼");
+    },
+    deleteRequest() {
+      console.log("삭제버튼");
+    },
+    show3Cancel() {
+      this.show3 = false;
+      this.selectedSpot = {
+        spotID: "",
+        spotName: "",
+        codeID: "",
+        codeName: "",
+        CMOwner: "",
+      };
+    },
+    async getPgm() {
+      var res = await axios.get(`/api/categories/pgmcodes`);
+      this.ProgramOptions = res.data.resultObject.data;
+    },
+    pgmSelect(v) {
+      this.setScrRangeData.event = v.id;
+    },
     spotSelect(v) {
       console.log(v);
     },
@@ -770,6 +830,9 @@ export default {
             this.getData();
           }
         });
+    },
+    mediaChange(v) {
+      this.searchSpot.media = v;
     },
     eventSInput(value) {
       this.setScrRangeData.sDate = value;
