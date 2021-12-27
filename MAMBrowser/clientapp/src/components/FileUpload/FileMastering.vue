@@ -740,6 +740,14 @@ export default {
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
+        if (2147483648 <= event.value[0].size) {
+          this.resetLocalFiles();
+          this.setProcessing(false);
+          this.$fn.notify("error", {
+            title: "최대 업로드 크기는 2GB 입니다.",
+          });
+          return;
+        }
         this.setMetaModalTitle(event.value[0].name);
         if (event.value[0].size / 50 <= 300000) {
           this.chunkSize = 300000;
