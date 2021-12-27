@@ -304,6 +304,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters("user", ["diskAvailable"]),
     ...mapState("FileIndexStore", {
       MetaModalTitle: (state) => state.MetaModalTitle,
       date: (state) => state.date,
@@ -472,19 +473,42 @@ export default {
         }
         this.resetUploaderCustomData();
         this.setUploaderCustomData(data);
-        if (this.cancel) {
-          this.cancel = false;
+
+        if (!this.durationState) {
+          this.$bvModal.show("durationOver");
           return;
-        } else {
-          if (!this.durationState) {
-            this.$bvModal.show("durationOver");
+        }
+        if (this.MetaData.typeSelected == "my-disk") {
+          if (!this.notDiskAvailable(this.localFiles[0].size)) {
+            this.$fn.notify("error", { title: "용량 부족" });
             return;
           }
-          this.setFileUploading(true);
-          this.$emit("upload");
+
+          //title 유효성 검사
+          var formData = new FormData();
+
+          formData.append("userId", sessionStorage.getItem("user_id"));
+          formData.append("title", this.MetaData.title);
+          axios.post(`/api/mastering/TitleValidation`, formData).then((res) => {
+            if (res.status == 200 && res.data.resultCode == 0) {
+              this.setFileUploading(true);
+              this.$emit("upload");
+            } else if ((res.data.resultCode = 3)) {
+              this.$fn.notify("error", { title: res.data.errorMsg });
+              return;
+            }
+          });
         }
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });
+      }
+    },
+    notDiskAvailable(files) {
+      const result = this.diskAvailable - files;
+      if (result < 0) {
+        return false;
+      } else {
+        return true;
       }
     },
     DurationOK() {

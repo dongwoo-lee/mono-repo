@@ -61,6 +61,21 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        [HttpPost("TitleValidation")]
+        public DTO_RESULT TitleValidation([FromForm] string userId, [FromForm] string title)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            if(title == "중복") {
+                result.ResultCode = RESUlT_CODES.DB_ERROR;
+                result.ErrorMsg = "중복된 제목입니다.";
+            }else if(title == "성공")
+            {
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                result.ResultObject = "성공";
+            }
+           
+            return result;
+        }
         [HttpPost("my-disk")]
         public ActionResult<DTO_RESULT> RegMyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string editor, [FromForm] string title, [FromForm] string memo)
         {
@@ -68,7 +83,7 @@ namespace MAMBrowser.Controllers
 
             try
             {
-                //1. 임시파일 쓰기
+                //1. 임시파일 쓰기 
                 if (!string.IsNullOrEmpty(chunkMetadata))
                 {
                     var metaDataObject = JsonConvert.DeserializeObject<ChunkMetadata>(chunkMetadata);
@@ -78,6 +93,7 @@ namespace MAMBrowser.Controllers
                     CheckFileExtensionValid(metaDataObject.FileName);
 
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
                     var host = CommonUtility.GetHost(tempPath);

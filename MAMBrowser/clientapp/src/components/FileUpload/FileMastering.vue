@@ -82,7 +82,7 @@
           <!-- // TODO : 가변 Chunk Size 확인
            -->
           <DxFileUploader
-            :chunk-size="200000"
+            :chunk-size="chunkSize"
             :upload-custom-data="uploaderCustomData"
             :ref="dxfu"
             name="file"
@@ -382,6 +382,7 @@ export default {
   },
   data() {
     return {
+      chunkSize: 300000,
       accept: "audio/mp3,audio/wav",
       tabIndex: 0,
       dxfu,
@@ -740,56 +741,48 @@ export default {
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
         this.setMetaModalTitle(event.value[0].name);
-      }
-      if (event.value.length != 0) {
-        if (this.notDiskAvailable(event.value[0].size)) {
-          if (
-            event.value[0].type == "audio/mpeg" ||
-            event.value[0].type == "audio/wav"
-          ) {
-            var formData = new FormData();
-            if (event.value[0].type == "audio/mpeg") {
-              var blob = event.value[0].slice(0, 300000);
-              formData.append("file", blob);
-              formData.append("fileExt", event.value[0].name);
-              //  formData.append("file", event.value[0]);
-              // formData.append("fileExt", event.value[0].name);
-            } else if (event.value[0].type == "audio/wav") {
-              var blob = event.value[0].slice(0, 10000);
-              formData.append("file", blob);
-              formData.append("fileExt", event.value[0].name);
-            }
-
-            axios.post("/api/Mastering/Validation", formData).then((res) => {
-              if (
-                res.data.resultObject.duration == null ||
-                res.data.resultObject.audioFormatInfo == null
-              ) {
-                this.$fn.notify("error", {
-                  title: "잘못된 파일 형식입니다.",
-                });
-                return;
-              }
-              this.setDuration(res.data.resultObject.duration);
-              this.setAudioFormat(res.data.resultObject.audioFormatInfo);
-              this.openFileModal();
-              this.dropzone = false;
-              this.setFileSelected(false);
-              this.MetaModal = true;
-              this.setProcessing(false);
-              // this.setFileUploading(true);
-            });
-          } else {
-            this.$fn.notify("error", {
-              title: "오디오 파일만 업로드 가능합니다.",
-            });
-            this.fileupload.removeFile(0);
-            this.setProcessing(false);
-          }
+        if (event.value[0].size / 50 <= 300000) {
+          this.chunkSize = 300000;
         } else {
-          this.$fn.notify("error", { title: "디스크 공간이 부족합니다." });
-          this.fileupload.removeFile(0);
+          this.chunkSize = Math.ceil(event.value[0].size / 50);
+        }
+        if (
+          event.value[0].type == "audio/mpeg" ||
+          event.value[0].type == "audio/wav"
+        ) {
+          var formData = new FormData();
+          if (event.value[0].type == "audio/mpeg") {
+            var blob = event.value[0].slice(0, 300000);
+            formData.append("file", blob);
+            formData.append("fileExt", event.value[0].name);
+          } else if (event.value[0].type == "audio/wav") {
+            var blob = event.value[0].slice(0, 10000);
+            formData.append("file", blob);
+            formData.append("fileExt", event.value[0].name);
+          }
 
+          axios.post("/api/Mastering/Validation", formData).then((res) => {
+            if (res.data.errorMsg != null && res.data.resultCode != 0) {
+              this.$fn.notify("error", {
+                title: "잘못된 파일 형식입니다.",
+              });
+              this.reset();
+              return;
+            }
+            this.setDuration(res.data.resultObject.duration);
+            this.setAudioFormat(res.data.resultObject.audioFormatInfo);
+            this.openFileModal();
+            this.dropzone = false;
+            this.setFileSelected(false);
+            this.MetaModal = true;
+            this.setProcessing(false);
+            // this.setFileUploading(true);
+          });
+        } else {
+          this.$fn.notify("error", {
+            title: "오디오 파일만 업로드 가능합니다.",
+          });
+          this.fileupload.removeFile(0);
           this.setProcessing(false);
         }
       } else if (event.value.length == 0) {
