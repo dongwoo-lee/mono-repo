@@ -284,17 +284,17 @@ export default {
         if (this.searchItems.productid == undefined) {
           this.searchItems.productid = this.userProList;
         }
+
+        var params = {
+          productids: this.searchItems.productid,
+          row_per_page: this.searchItems.rowPerPage,
+          select_page: this.searchItems.selectPage,
+        };
+        if (typeof params.productids == "string") {
+          params.productids = [params.productids];
+        }
         await axios
-          .get(`/api/DefCueSheet/GetDefList`, {
-            params: {
-              productids: this.searchItems.productid,
-              row_per_page: this.searchItems.rowPerPage,
-              select_page: this.searchItems.selectPage,
-            },
-            paramsSerializer: (params) => {
-              return qs.stringify(params);
-            },
-          })
+          .post(`/api/DefCueSheet/GetDefList`, params)
           .then(async (res) => {
             var productWeekList = await this.disableList(
               res.data.resultObject.data

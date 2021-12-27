@@ -21,16 +21,41 @@ namespace MAMBrowser.Controllers
         {
             _bll = bll;
         }
+        public class ArchPram
+        {
+            public List<string> products { get; set; }
+            public int row_per_page { get; set; }
+            public int select_page { get; set; }
+            public string start_dt { get; set; }
+            public string end_dt { get; set; }
 
+        }
         // 이전큐시트 목록 가져오기 (날짜별)
-        [HttpGet("GetArchiveCueList")]
-        public ArchiveCueList_Result GetArchiveCueList([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] List<string> products,string media, int row_per_page, int select_page)
+        //[HttpGet("GetArchiveCueList")]
+        //public ArchiveCueList_Result GetArchiveCueList([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] List<string> products, int row_per_page, int select_page)
+        //{
+        //    try
+        //    {
+        //        ArchiveCueList_Result result = new ArchiveCueList_Result();
+        //        result.ResultObject = new ArchiveCueList_Page();
+        //        result.ResultObject = _bll.GetArchiveCueSheetList(products, start_dt, end_dt, row_per_page, select_page);
+        //        result.ResultCode = RESUlT_CODES.SUCCESS;
+        //        return result;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        [HttpPost("GetArchiveCueList")]
+        public ArchiveCueList_Result GetArchiveCueList([FromBody] ArchPram pram)
         {
             try
             {
                 ArchiveCueList_Result result = new ArchiveCueList_Result();
                 result.ResultObject = new ArchiveCueList_Page();
-                result.ResultObject = _bll.GetArchiveCueSheetList(products, start_dt, end_dt, row_per_page, select_page);
+                result.ResultObject = _bll.GetArchiveCueSheetList(pram.products, pram.start_dt, pram.end_dt, pram.row_per_page, pram.select_page);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
                 return result;
             }

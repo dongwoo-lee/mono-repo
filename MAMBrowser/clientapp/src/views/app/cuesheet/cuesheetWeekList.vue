@@ -411,35 +411,29 @@ export default {
       this.weekButtons.forEach((week) => {
         week.state = false;
       });
-      await axios
-        .get(`/api/DefCueSheet/GetDefList`, {
-          params: {
-            productids: e,
-            row_per_page: this.searchItems.rowPerPage,
-            select_page: this.searchItems.selectPage,
-          },
-          paramsSerializer: (params) => {
-            return qs.stringify(params);
-          },
-        })
-        .then((res) => {
-          var weekArr = [];
-          res.data.resultObject.data.forEach((ele) => {
-            ele.detail.forEach((week) => {
-              weekArr.push(week.week);
-            });
+      var params = {
+        productids: [e],
+        row_per_page: this.searchItems.rowPerPage,
+        select_page: this.searchItems.selectPage,
+      };
+      await axios.post(`/api/DefCueSheet/GetDefList`, params).then((res) => {
+        var weekArr = [];
+        res.data.resultObject.data.forEach((ele) => {
+          ele.detail.forEach((week) => {
+            weekArr.push(week.week);
           });
-          this.weekButtons.forEach((week) => {
-            if (weekArr.includes(week.value)) {
-              week.disable = true;
-            } else {
-              week.disable = false;
-            }
-          });
-          if (weekArr.length == 7) {
-            //이미 모든요일이 설정되어 있을때 해야함
+        });
+        this.weekButtons.forEach((week) => {
+          if (weekArr.includes(week.value)) {
+            week.disable = true;
+          } else {
+            week.disable = false;
           }
         });
+        if (weekArr.length == 7) {
+          //이미 모든요일이 설정되어 있을때 해야함
+        }
+      });
     },
     //기본큐시트 삭제
     async delWeekCue(e) {

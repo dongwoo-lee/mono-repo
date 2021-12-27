@@ -19,6 +19,7 @@
           <common-start-end-date-picker
             startDateLabel="방송 시작일"
             endDateLabel="방송 종료일"
+            :maxPeriodMonth="6"
             :startDate.sync="searchItems.start_dt"
             :endDate.sync="searchItems.end_dt"
             :required="false"
@@ -311,19 +312,19 @@ export default {
         if (this.searchItems.productid == undefined) {
           this.searchItems.productid = this.userProList;
         }
+        var params = {
+          start_dt: this.searchItems.start_dt,
+          end_dt: this.searchItems.end_dt,
+          products: this.searchItems.productid,
+          row_per_page: this.searchItems.rowPerPage,
+          select_page: this.searchItems.selectPage,
+        };
+        if (typeof params.products == "string") {
+          params.products = [params.products];
+        }
+        //여기하는중
         await axios
-          .get(`/api/ArchiveCueSheet/GetArchiveCueList`, {
-            params: {
-              start_dt: this.searchItems.start_dt,
-              end_dt: this.searchItems.end_dt,
-              products: this.searchItems.productid,
-              row_per_page: this.searchItems.rowPerPage,
-              select_page: this.searchItems.selectPage,
-            },
-            paramsSerializer: (params) => {
-              return qs.stringify(params);
-            },
-          })
+          .post(`/api/ArchiveCueSheet/GetArchiveCueList`, params)
           .then((res) => {
             var seqnum = 0;
             res.data.resultObject.data.forEach((ele) => {

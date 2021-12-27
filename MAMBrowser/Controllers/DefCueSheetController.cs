@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace MAMBrowser.Controllers
 {
@@ -14,28 +15,45 @@ namespace MAMBrowser.Controllers
     public class DefCueSheetController : Controller
     {
         private readonly DefCueSheetBll _bll;
+        private readonly ILogger<ProductsController> _logger;
 
-        public DefCueSheetController(DefCueSheetBll bll)
+        public class Pram
         {
+            public List<string> productids {get;set; }
+            public int row_per_page { get; set; }
+            public int select_page { get; set; }
+
+        }
+
+        public DefCueSheetController(DefCueSheetBll bll, ILogger<ProductsController> logger)
+        {
+            _logger = logger;
             _bll = bll;
+            
         }
 
         // 기본큐시트 목록 가져오기
-        [HttpGet("GetDefList")]
-        public DefCueList_Result GetDefList([FromQuery] List<string> productids, int row_per_page, int select_page)
+        //[HttpGet("GetDefList")]
+        //public DefCueList_Result GetDefList([FromQuery] List<string> productids, int row_per_page, int select_page)
+        //{
+      
+        //        DefCueList_Result result = new DefCueList_Result();
+        //        result.ResultObject = new DefCueList_Page();
+        //        result.ResultObject = _bll.GetDefCueList(productids, row_per_page, select_page);
+        //        result.ResultCode = RESUlT_CODES.SUCCESS;
+        //        return result;
+        
+        //}
+
+        [HttpPost("GetDefList")]
+        public DefCueList_Result GetDefList([FromBody] Pram pram)
         {
-            try
-            {
-                DefCueList_Result result = new DefCueList_Result();
-                result.ResultObject = new DefCueList_Page();
-                result.ResultObject = _bll.GetDefCueList(productids, row_per_page, select_page);
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            DefCueList_Result result = new DefCueList_Result();
+            result.ResultObject = new DefCueList_Page();
+            result.ResultObject = _bll.GetDefCueList(pram.productids, pram.row_per_page, pram.select_page);
+            result.ResultCode = RESUlT_CODES.SUCCESS;
+            return result;
+
         }
 
 

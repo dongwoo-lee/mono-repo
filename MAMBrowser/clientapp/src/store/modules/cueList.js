@@ -409,12 +409,10 @@ export default {
         },
         // 일일 큐시트 목록 전체 가져오기
         getcuesheetListArr({ commit }, payload) {
-            return axios.get(`/api/daycuesheet/Getdaycuelist`, {
-                params: payload,
-                paramsSerializer: (params) => {
-                    return qs.stringify(params);
-                },
-            })
+            if (typeof payload.products == 'string') {
+                payload.products = [payload.products]
+            }
+            return axios.post(`/api/daycuesheet/Getdaycuelist`, payload)
                 .then((res) => {
 
                     res.data.resultObject.data.sort((a, b) => {
@@ -429,12 +427,10 @@ export default {
         },
         // 기본 큐시트 목록 전체 가져오기
         getcuesheetListArrDef({ commit, dispatch }, payload) {
-            return axios.get(`/api/DefCueSheet/GetDefList`, {
-                params: payload,
-                paramsSerializer: (params) => {
-                    return qs.stringify(params);
-                },
-            })
+            if (typeof payload.productids == 'string') {
+                payload.productids = [payload.productids]
+            }
+            return axios.post(`/api/DefCueSheet/GetDefList`, payload)
                 .then(async (res) => {
                     var productWeekList = await dispatch('disableList', res.data.resultObject.data);
                     var seqnum = 0;
@@ -487,12 +483,10 @@ export default {
         },
         //이전 큐시트 목록 가져오기
         getarchiveCuesheetListArr({ commit }, payload) {
-            return axios.get(`/api/ArchiveCueSheet/GetArchiveCueList`, {
-                params: payload,
-                paramsSerializer: (params) => {
-                    return qs.stringify(params);
-                },
-            })
+            if (typeof payload.products == 'string') {
+                payload.products = [payload.products]
+            }
+            return axios.post(`/api/ArchiveCueSheet/GetArchiveCueList`, payload)
                 .then((res) => {
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;

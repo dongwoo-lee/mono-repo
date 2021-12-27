@@ -314,18 +314,25 @@ namespace MAMBrowser.Controllers
         [HttpGet("GetSearchTable/PGM_CM")]
         public PgmCMResultDTO GetPgmCm([FromQuery] Pram pram)
         {
-            var a = new PgmCMSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetMedia(pram.media)
-                .SetPgmName(pram.pgmname)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            try
+            {
+                var a = new PgmCMSearchOptionBuilder()
+              .SetBrdDate(pram.brddate)
+              .SetMedia(pram.media)
+              .SetPgmName(pram.pgmname)
+              .SetRowPerPage(pram.rowperpage)
+              .SetSelectPage(pram.selectpage)
+              .SetSortKey(pram.sortKey)
+              .SetSortValue(pram.sortValue)
+              .Build();
 
-            var result=  MAMWebFactory.Instance.Search<PgmCMResultDTO>(a);
-            return result;
+                var result = MAMWebFactory.Instance.Search<PgmCMResultDTO>(a);
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
         }
         //CM
         [HttpGet("GetSearchTable/CM")]

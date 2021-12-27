@@ -20,7 +20,6 @@
           :startDate.sync="searchItems.start_dt"
           :endDate.sync="searchItems.end_dt"
           :maxPeriodMonth="3"
-          :disabVal="true"
           :required="false"
           :isCurrentDate="false"
         />
