@@ -159,6 +159,13 @@ namespace MAMBrowser.BLL
             return _dao.GetAudioCodeByUser(userId);
         }
 
-        
+        /// <summary>
+        /// 부조SPOT 소재 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        public IList<Dto_ScrSpot> GetScrSpotList(string spotName, string codeId, string cmOwner)
+        {
+            return _dao.GetScrSpotList(spotName, codeId, cmOwner);
+        }
     }
 }

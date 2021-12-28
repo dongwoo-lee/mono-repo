@@ -539,5 +539,30 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        /// <summary>
+        /// 부조SPOT 소재파일 목록 조회
+        /// </summary>
+        /// <param name="spotName"></param>
+        /// <param name="codeId"></param>
+        /// <param name="cmOwner"></param>
+        /// <returns></returns>
+        [HttpGet("scr-spot")]
+        public DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> GetScrSpotList([FromQuery] string spotName, [FromQuery] string codeId, [FromQuery] string cmOwner)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> result = new DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<Dto_ScrSpot>();
+                result.ResultObject.Data = _bll.GetScrSpotList(spotName, codeId, cmOwner);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
     }
 }
