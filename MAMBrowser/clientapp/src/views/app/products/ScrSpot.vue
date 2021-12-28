@@ -350,11 +350,11 @@
         <b-button
           variant="outline-primary default cutom-label"
           size="sm"
-          class="float-right"
           :disabled="!scrValid"
-          @click="show2 = false"
+          class="float-right"
+          @click="setScrRange"
         >
-          추가</b-button
+          확인</b-button
         >
         <b-button
           variant="outline-danger default cutom-label-cancel"
@@ -388,9 +388,71 @@
           "
         >
           <b-form-group
+            label="시작일(등록일자)"
+            class="has-float-label"
+            style="width: 180px; margin-top: 11px; float: left"
+          >
+            <b-input-group style="width: 180px; float: left">
+              <input
+                style="height: 34px; font-size: 13px"
+                id="sdateinput"
+                type="text"
+                class="form-control input-picker date-input"
+                :value="searchSpot.sDate"
+                @input="onsInput2"
+              />
+              <b-input-group-append>
+                <b-form-datepicker
+                  style="height: 34px; float: left"
+                  :value="searchSpot.sDate"
+                  @input="eventSInput2"
+                  button-variant="outline-dark"
+                  button-only
+                  left
+                  aria-controls="example-input"
+                  @context="onContext"
+                ></b-form-datepicker>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group
+            label="종료일(등록일자)"
+            class="has-float-label"
+            style="
+              margin-left: 20px;
+              width: 180px;
+              font-size: 13px;
+              float: left;
+              margin-top: 11px;
+            "
+          >
+            <b-input-group class="mb-3" style="width: 180px; float: left">
+              <input
+                style="height: 34px; font-size: 13px"
+                id="edateinput"
+                type="text"
+                class="form-control input-picker date-input"
+                :value="searchSpot.eDate"
+                @input="oneInput2"
+              />
+              <b-input-group-append>
+                <b-form-datepicker
+                  style="height: 34px"
+                  :value="searchSpot.eDate"
+                  @input="eventEInput2"
+                  button-only
+                  button-variant="outline-dark"
+                  right
+                  aria-controls="example-input"
+                  @context="onContext"
+                ></b-form-datepicker>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group
             label="분류"
             class="has-float-label"
-            style="margin-top: 11px; float: left"
+            style="margin-left: 20px; margin-top: 11px; float: left"
           >
             <b-form-select
               id="program-media"
@@ -408,7 +470,7 @@
           >
             <b-form-input
               class="memo"
-              style="width: 200px; height: 34px; float: left"
+              style="width: 150px; height: 34px; float: left"
               v-model="searchSpot.advertiser"
               aria-describedby="input-live-help input-live-feedback"
               placeholder="광고주 명"
@@ -422,7 +484,7 @@
           >
             <b-form-input
               class="memo"
-              style="width: 350px; height: 34px; float: left"
+              style="width: 160px; height: 34px; float: left"
               v-model="searchSpot.title"
               aria-describedby="input-live-help input-live-feedback"
               placeholder="소재 명"
@@ -448,14 +510,14 @@
           no-data-text="No Data"
           @row-click="spotSelect"
         >
-          <DxSelection mode="single" />
-          <DxPager :visible="false" />
+          <DxPager :visible="true" />
           <DxScrolling mode="standard" />
+          <DxSelection mode="single" />
           <DxColumn data-field="spotID" caption="spotID" />
           <DxColumn data-field="spotName" caption="spotName" />
-          <DxColumn data-field="codeID" caption="codeID" />
+          <DxColumn data-field="codeId" caption="codeId" />
           <DxColumn data-field="codeName" caption="codeName" />
-          <DxColumn data-field="CMOwner" caption="CMOwner" />
+          <DxColumn data-field="cmOwner" caption="cmOwner" />
         </DxDataGrid>
       </template>
       <template v-slot:modal-footer>
@@ -513,15 +575,10 @@ export default {
   data() {
     return {
       vSelectClass: "scrSpotVueSelect",
-      requestScr: {
-        spot: "",
-        event: "",
-        sDate: "",
-        eDate: "",
-      },
+      requestScr: [],
       setScrRangeData: {
         spot: "",
-        event: "",
+        event: null,
         sDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
         eDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       },
@@ -531,6 +588,8 @@ export default {
         title: "",
         advertiser: "",
         media: "",
+        sDate: "",
+        eDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       },
       //부조SPOT검색 모달 그리드 데이터
       spotData: {
@@ -551,6 +610,8 @@ export default {
       scrMediaOptions: [], // 분류 옵션 - created 에서 데이터 push
       tempSDate: "",
       tempEDate: "",
+      tempSDate2: "",
+      tempEDate2: "",
       deleteId: "",
       show: false,
       show2: false,
@@ -653,6 +714,11 @@ export default {
     };
   },
   created() {
+    var newDate = new Date();
+    var dayOfMonth = newDate.getDate();
+    newDate.setDate(dayOfMonth - 14);
+    newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+    this.searchSpot.sDate = newDate;
     // 매체 목록 조회
     this.getMediaOptions();
     // 사용자 목록 조회
@@ -672,7 +738,7 @@ export default {
     scrValid() {
       if (
         this.setScrRangeData.spot != "" &&
-        this.setScrRangeData.event != "" &&
+        this.setScrRangeData.event != null &&
         this.setScrRangeData.sDate != "" &&
         this.setScrRangeData.eDate != ""
       ) {
@@ -688,6 +754,12 @@ export default {
     },
   },
   methods: {
+    setScrRange() {
+      console.log(this.setScrRangeData);
+      this.requestScr.push(this.setScrRangeData);
+      console.log(this.requestScr);
+      this.show2 = false;
+    },
     requestSelect(v) {
       console.log(v);
     },
@@ -715,18 +787,34 @@ export default {
       this.setScrRangeData.event = v.id;
     },
     spotSelect(v) {
-      console.log(v);
+      this.selectedSpot = v.data;
+      this.setScrRangeData.spot = v.data.spotName;
+      console.log(this.selectedSpot);
+    },
+    resetSpotData() {
+      this.spotData = {
+        spotID: "",
+        spotName: "",
+        codeID: "",
+        codeName: "",
+        CMOwner: "",
+      };
     },
     getScrSpot() {
-      var data = {
-        media: this.searchSpot.media,
-        title: this.searchSpot.title,
-        advertiser: this.searchSpot.advertiser,
-      };
-      console.log(data);
-      // this.axios.get(``).then((res) => {
-      //   console.log('res :>> ', res);
-      // })
+      this.resetSpotData();
+      axios
+        .get(
+          `/api/categories/scr-spot?spotName=${this.searchSpot.title}&codeId=${
+            this.searchSpot.media
+          }&cmOwner=${this.searchSpot.advertiser}
+          &startDate=${this.searchSpot.sDate.replace(
+            /-/g,
+            ""
+          )}&endDate=${this.searchSpot.eDate.replace(/-/g, "")}`
+        )
+        .then((res) => {
+          this.spotData = res.data.resultObject.data;
+        });
     },
     SDateErrorLog() {
       this.$fn.notify("error", {
@@ -831,9 +919,20 @@ export default {
           }
         });
     },
+    log() {
+      console.log("this.setScrRangeData :>> ", this.setScrRangeData);
+    },
     mediaChange(v) {
       this.searchSpot.media = v;
     },
+    get7daysago() {
+      var newDate = new Date();
+      var dayOfMonth = newDate.getDate();
+      newDate.setDate(dayOfMonth - 7);
+      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+      return newDate;
+    },
+    //#region 1
     eventSInput(value) {
       this.setScrRangeData.sDate = value;
       this.tempSDate = value;
@@ -848,8 +947,6 @@ export default {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         return;
-      } else {
-        console.log("hi");
       }
     },
     eventEInput(value) {
@@ -863,17 +960,9 @@ export default {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         return;
-      } else {
-        console.log("hi");
       }
     },
-    get7daysago() {
-      var newDate = new Date();
-      var dayOfMonth = newDate.getDate();
-      newDate.setDate(dayOfMonth - 7);
-      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
-      return newDate;
-    },
+
     onsInput(event) {
       const targetValue = event.target.value;
 
@@ -917,8 +1006,6 @@ export default {
                 message: "시작 날짜가 종료 날짜보다 큽니다.",
               });
               return;
-            } else {
-              console.log("hi");
             }
             return;
           }
@@ -940,8 +1027,6 @@ export default {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
             });
             return;
-          } else {
-            console.log("hi");
           }
         }
       }
@@ -988,8 +1073,6 @@ export default {
                 message: "시작 날짜가 종료 날짜보다 큽니다.",
               });
               return;
-            } else {
-              console.log("hi");
             }
             return;
           }
@@ -1009,12 +1092,159 @@ export default {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
             });
             return;
-          } else {
-            console.log("hi");
           }
         }
       }
     },
+    //#endregion
+    //#region 2
+    get14daysago() {
+      var newDate = new Date();
+      var dayOfMonth = newDate.getDate();
+      newDate.setDate(dayOfMonth - 14);
+      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+      return newDate;
+    },
+    eventSInput2(value) {
+      this.searchSpot.sDate = value;
+      this.tempSDate2 = value;
+
+      const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      }
+    },
+    eventEInput2(value) {
+      this.searchSpot.eDate = value;
+      this.tempEDate2 = value;
+
+      const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+      if (replaceAllFileEDate < replaceAllFileSDate) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      }
+    },
+
+    onsInput2(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempSDate2 == null) {
+          event.target.value = this.get14daysago();
+          return;
+        }
+        event.target.value = this.tempSDate2;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.get14daysago();
+            this.searchSpot.sDate = this.get14daysago();
+            this.tempSDate2 = this.get14daysago();
+
+            const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+            const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+            if (
+              replaceAllFileEDate < replaceAllFileSDate &&
+              replaceAllFileEDate != ""
+            ) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            }
+            return;
+          }
+          this.searchSpot.sDate = convertDate;
+          this.tempSDate2 = convertDate;
+          const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+          if (
+            replaceAllFileEDate < replaceAllFileSDate &&
+            replaceAllFileEDate != ""
+          ) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          }
+        }
+      }
+    },
+    oneInput2(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempEDate2 == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          return;
+        }
+        event.target.value = this.tempEDate2;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.searchSpot.eDate = this.$fn.formatDate(
+              new Date(),
+              "yyyy-MM-dd"
+            );
+            this.tempEDate2 = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+
+            const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+            const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+            if (replaceAllFileEDate < replaceAllFileSDate) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            }
+            return;
+          }
+          this.searchSpot.eDate = convertDate;
+          this.tempEDate2 = convertDate;
+
+          const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+          if (replaceAllFileEDate < replaceAllFileSDate) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          }
+        }
+      }
+    },
+    //#endregion
     validDateType(value) {
       const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
       return !dateRegex.test(value);
@@ -1024,6 +1254,19 @@ export default {
       this.formatted = ctx.selectedFormatted;
       // The following will be an empty string until a valid date is entered
       this.dateSelected = ctx.selectedYMD;
+    },
+    convertDateSTH(value) {
+      const replaceVal = value.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      if (12 < mm) {
+        this.brdDT = "";
+      } else if (31 < dd) {
+        this.brdDT = "";
+      } else {
+        return `${yyyy}-${mm}-${dd}`;
+      }
     },
   },
 };
