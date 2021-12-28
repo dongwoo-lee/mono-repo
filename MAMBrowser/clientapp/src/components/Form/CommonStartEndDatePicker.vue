@@ -27,7 +27,11 @@
         />
       </b-form-group>
     </div>
-    <div v-if="isPeriodDate()" style="position: relative; margin: 5px 0 0 5px">
+    <div
+      v-if="isPeriodDate()"
+      style="position: relative; margin: 5px 0 0 5px"
+      class="periodDateText"
+    >
       {{ getPeriodDescription() }}
     </div>
   </div>

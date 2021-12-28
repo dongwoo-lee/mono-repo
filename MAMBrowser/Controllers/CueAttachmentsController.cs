@@ -150,7 +150,7 @@ namespace MAMBrowser.Controllers
                         {
                             foreach (var item in ele.AUDIOS)
                             {
-                                var outFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), Path.GetFileName(item.P_MASTERFILE));
+                                var outFilePath = Path.Combine(rootFolder, Path.GetFileName(item.P_MASTERFILE));
 
                                 using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                                 {
