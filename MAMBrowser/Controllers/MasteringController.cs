@@ -27,9 +27,11 @@ namespace MAMBrowser.Controllers
     public class MasteringController : ControllerBase
     {
         APIBll _apiBll;
-        public MasteringController(APIBll apiBll)
+        HttpContextDBLogger _dbLogger;
+        public MasteringController(APIBll apiBll, HttpContextDBLogger dbLogger)
         {
             _apiBll = apiBll;
+            _dbLogger = dbLogger;
         }
         public class ChunkMetadata
         {
@@ -366,6 +368,27 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        [HttpPost("scr-spot/duration")]
+        public ActionResult<DTO_RESULT> RegScrSpotOper(string spotID, string productID, string startDate, string endDate)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                ScrSpotOperRepository repo = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
+                repo.Add(new I_ScrSpotOperParam { SpotID_in = spotID, ProductID_in = productID, StartDate_in = startDate.Replace("-", ""), EndDate_in = endDate.Replace("-", "") });
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch(Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message; 
+            }
+
+            return result;
+        }
+
+
         [HttpPost("static-spot")]
         public ActionResult<DTO_RESULT> RegStaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
             [FromForm] string title, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor, 
@@ -936,9 +959,18 @@ namespace MAMBrowser.Controllers
                 if (spotID == null || productID  == null || brdDT == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                MoveRecycle(fileToken);
-                ScrSpotOperRepository repo = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
-                repo.Delete(new D_ScrSpotOperParam { SpotID=spotID, ProductID=productID, OnAirDate=brdDT});
+                ScrSpotRepoository repo = new ScrSpotRepoository(Startup.AppSetting.ConnectionString);
+                var count = repo.Count(spotID);
+                if (count <= 1)
+                {
+                    //부조SPOT 기간할당 항목이 1개일경우 실제파일까지 삭제처리.
+                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, spotID, fileToken);
+                }
+                else
+                {
+                    ScrSpotOperRepository repoScrSpotDuration = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
+                    repoScrSpotDuration.Delete(new D_ScrSpotOperParam { SpotID = spotID, ProductID = productID, OnAirDate = brdDT });
+                }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -1133,20 +1165,31 @@ namespace MAMBrowser.Controllers
         }
 
 
-        void DeleteAudioFile(string userId, string id, string fileToken)
+        void DeleteAudioFile(string userId, string audioClipId, string fileToken)
         {
-            var movedFilePath = MoveRecycle(fileToken);
+            var movedFilePath = MoveRecycle(fileToken, userId);
+            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일 삭제 - {audioClipId}", $"moved to {movedFilePath}");
             AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
-            repo.Delete(id, userId, movedFilePath);
+            repo.Delete(audioClipId, userId, movedFilePath);
         }
       
-        string MoveRecycle(string fileToken)
+        string MoveRecycle(string fileToken, string userId)
         {
             string filePath = "";
+            
             if (TokenGenerator.ValidateFileToken(fileToken, ref filePath))
             {
                 if (string.IsNullOrEmpty(filePath))
+                {
+                    _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로 필드가 비어있습니다.", null);
                     return string.Empty;
+                }
+
+                if (!System.IO.File.Exists(filePath))
+                {
+                    _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로에 파일이 없습니다.", $"{filePath}");
+                    return String.Empty;
+                }
 
                 var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
                 var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
@@ -1154,7 +1197,7 @@ namespace MAMBrowser.Controllers
                 var host = CommonUtility.GetHost(recycleFoler);
                 NetworkShareAccessor.Access(host, id, pass);
 
-                if(!Directory.Exists(recycleFoler))
+                if (!Directory.Exists(recycleFoler))
                     Directory.CreateDirectory(recycleFoler);
 
                 var newFileName = Path.GetFileName(filePath);
