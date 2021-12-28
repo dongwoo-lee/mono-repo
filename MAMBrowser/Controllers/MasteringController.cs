@@ -4,6 +4,7 @@ using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.DBParams;
 using M30.AudioFile.DAL.Repositories;
 using MAMBrowser.BLL;
+using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using MAMBrowser.MAMDto;
@@ -370,13 +371,16 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPost("scr-spot/duration")]
-        public ActionResult<DTO_RESULT> RegScrSpotOper(string spotID, string productID, string startDate, string endDate)
+        public ActionResult<DTO_RESULT> RegScrSpotOper([FromBody] List<ScpSpotDurationDTO> scpStpoDurationList)
         {
             DTO_RESULT result = new DTO_RESULT();
             try
             {
                 ScrSpotOperRepository repo = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
-                repo.Add(new I_ScrSpotOperParam { SpotID_in = spotID, ProductID_in = productID, StartDate_in = startDate.Replace("-", ""), EndDate_in = endDate.Replace("-", "") });
+                foreach (var data in scpStpoDurationList)
+                {
+                    repo.Add(new I_ScrSpotOperParam { SpotID_in = data.SpotID, ProductID_in = data.ProductID, StartDate_in = data.StartDate.Replace("-", ""), EndDate_in = data.EndDate.Replace("-", "") });
+                }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch(Exception ex)
@@ -969,7 +973,8 @@ namespace MAMBrowser.Controllers
                 else
                 {
                     ScrSpotOperRepository repoScrSpotDuration = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
-                    repoScrSpotDuration.Delete(new D_ScrSpotOperParam { SpotID = spotID, ProductID = productID, OnAirDate = brdDT });
+                    repoScrSpotDuration.Delete(new D_ScrSpotOperParam { SpotID_in = spotID, ProductID_in = productID, OnAirDate_in = brdDT });
+                    _dbLogger.WarnAsync(HttpContext, HttpContext.Items[Define.USER_ID] as string, $"부조SPOT 편성제거 - {spotID}, {productID}, {brdDT}", null);
                 }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -1181,13 +1186,13 @@ namespace MAMBrowser.Controllers
             {
                 if (string.IsNullOrEmpty(filePath))
                 {
-                    _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로 필드가 비어있습니다.", null);
+                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로 필드가 비어있습니다.", null);
                     return string.Empty;
                 }
 
                 if (!System.IO.File.Exists(filePath))
                 {
-                    _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로에 파일이 없습니다.", $"{filePath}");
+                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로에 파일이 없습니다.", $"{filePath}");
                     return String.Empty;
                 }
 
