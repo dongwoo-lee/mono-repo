@@ -546,15 +546,17 @@ namespace MAMBrowser.Controllers
         /// <param name="spotName"></param>
         /// <param name="codeId"></param>
         /// <param name="cmOwner"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
         /// <returns></returns>
         [HttpGet("scr-spot")]
-        public DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> GetScrSpotList([FromQuery] string spotName, [FromQuery] string codeId, [FromQuery] string cmOwner)
+        public DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> GetScrSpotList([FromQuery] string spotName, [FromQuery] string codeId, [FromQuery] string cmOwner, [FromQuery] string startDate, [FromQuery]  string endDate)
         {
             DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> result = new DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>>();
             try
             {
                 result.ResultObject = new DTO_RESULT_LIST<Dto_ScrSpot>();
-                result.ResultObject.Data = _bll.GetScrSpotList(spotName, codeId, cmOwner);
+                result.ResultObject.Data = _bll.GetScrSpotList(spotName, codeId, cmOwner, startDate, endDate);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

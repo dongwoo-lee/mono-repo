@@ -163,9 +163,9 @@ namespace MAMBrowser.BLL
         /// 부조SPOT 소재 목록 조회
         /// </summary>
         /// <returns></returns>
-        public IList<Dto_ScrSpot> GetScrSpotList(string spotName, string codeId, string cmOwner)
+        public IList<Dto_ScrSpot> GetScrSpotList(string spotName, string codeId, string cmOwner, string startDate, string endDate)
         {
-            return _dao.GetScrSpotList(spotName, codeId, cmOwner);
+            return _dao.GetScrSpotList(spotName, codeId, cmOwner, startDate, endDate);
         }
     }
 }
