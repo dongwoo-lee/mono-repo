@@ -1,17 +1,23 @@
-﻿using M30.AudioFile.Common;
+﻿using M30.AudioEngine;
+using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.DTO.Products;
 using M30.AudioFile.Common.Expand.Builder;
 using M30.AudioFile.Common.Expand.CommonType;
 using M30.AudioFile.Common.Expand.Menus;
 using M30.AudioFile.Common.Expand.Result;
 using M30.AudioFile.Common.Expand.SearchOptions;
+using M30.AudioFile.DAL.Dao;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MAMBrowser.Controllers
 {
@@ -20,11 +26,13 @@ namespace MAMBrowser.Controllers
     public class SearchMenuController : ControllerBase
     {
         private readonly IMusicService _fileService;
-        private readonly MusicSystemMastering _mastering;
-        public SearchMenuController(MusicWebService fileService)
+        private readonly APIDao _apiDao;
+        
+        public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
-            _fileService = fileService;
-            _mastering = new MusicSystemMastering();
+            //_fileService = fileService;
+            _fileService = new MusicSystemMockup();
+            _apiDao = apiDao;
         }
         public class Pram
         {
@@ -465,16 +473,62 @@ namespace MAMBrowser.Controllers
 
         //음반 기록실 rowData 가져오기
         [HttpPost("GetSongItem")]
-        public SongCacheDTO GetSongMastering([FromBody] DTO_SONG pram)
+        public DTO_SONG_CASHE GetSongMastering([FromBody] DTO_SONG pram)
         {
-            return _mastering.SongMastering(pram);
+            var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
+            var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
+            var requestInfo = _fileService.GetRequestInfo(musicInfo);
+            long fileSize;
+            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
+
+            var options = GetMasteringOptions(Startup.AppSetting.ConnectionString);
+            string storageId = options.Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
+            string storagePass = options.Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
+            int sampleRate = Convert.ToInt32(options.Find(dt => dt.Name == "SAMPLE_RATE").Value);
+            int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
+            int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
+
+            string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString(); 
+            string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString();
+
+            string fileExt = Path.GetExtension(pram.FilePath);
+            SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
+            var result = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+
+            return result;
         }
 
         //효과음 rowData 가져오기
         [HttpPost("GetEffectItem")]
-        public SongCacheDTO GetEffectMastering([FromQuery] DTO_EFFECT pram)
+        public DTO_SONG_CASHE GetEffectMastering([FromBody] DTO_EFFECT pram)
         {
-            return _mastering.EffectMastering(pram);
+            var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
+            var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
+            var requestInfo = _fileService.GetRequestInfo(musicInfo);
+            long fileSize;
+            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
+
+            var options = GetMasteringOptions(Startup.AppSetting.ConnectionString);
+            string storageId = options.Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
+            string storagePass = options.Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
+            int sampleRate = Convert.ToInt32(options.Find(dt => dt.Name == "SAMPLE_RATE").Value);
+            int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
+            int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
+
+            string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString(); ;
+            string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString(); ;
+
+            string fileExt = Path.GetExtension(pram.FilePath);
+            SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
+            var result = sm.MasteringEffect(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+            return result;
+        }
+
+        private List<DTO_NAMEVALUE> GetMasteringOptions(string connectionString)
+        {
+            var masteringOptions = _apiDao.GetOptions("S01G06C001");
+            var options = masteringOptions.ToList();
+            return options;
         }
     }
 }

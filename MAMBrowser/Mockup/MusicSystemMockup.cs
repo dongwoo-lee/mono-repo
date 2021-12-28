@@ -14,7 +14,8 @@ namespace MAMBrowser
         public Stream GetFileStream(string domain, int port, string jsonRequestContent, out long fileSize)
         {
             fileSize = 0;
-            return null;
+            FileStream fs = new FileStream(@"\\192.168.1.202\mam\songtest.mp3", FileMode.Open, FileAccess.Read);
+            return fs;
         }
 
         public object[] GetRequestInfo(Dictionary<string, string> musicInfo)
@@ -29,7 +30,7 @@ namespace MAMBrowser
 
             object[] returnData = new object[3];
             returnData[0] = "\\test_svr";
-            returnData[1] = "";
+            returnData[1] = 0;
             returnData[2] = @"Music001.wav";
             return returnData;
         }
