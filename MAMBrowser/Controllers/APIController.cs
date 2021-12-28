@@ -215,7 +215,11 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                result.ResultObject = _bll.GetUserSummary(id);
+                var clientIp = HttpContext.Connection.RemoteIpAddress;
+                var userSummary = _bll.GetUserSummary(id);
+                userSummary.ConDBName = _appSesstings.DBName;
+                userSummary.ConNetworkName = MAMUtility.NetworkName(_appSesstings.BroadcastStartNetwork, _appSesstings.BroadcastEndNetwork, clientIp);
+                result.ResultObject = userSummary;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
