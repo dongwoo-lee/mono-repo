@@ -15,7 +15,7 @@ let mixinCommon = {
         data: null,
         rowPerPage: 16,
         selectPage: 1,
-        totalRowCount: 0
+        totalRowCount: 0,
       },
       numRowsToBottom: 5,
       mediaOptions: [], // 매체 목록
@@ -27,11 +27,11 @@ let mixinCommon = {
       hasErrorClass: false,
       isTableLoading: false,
       isScrollLodaing: false,
-      copyToMySpacePopup: false
+      copyToMySpacePopup: false,
     };
   },
   computed: {
-    ...mapGetters("user", ["behaviorList"])
+    ...mapGetters("user", ["behaviorList"]),
   },
   watch: {
     ["searchItems.start_dt"](v) {
@@ -43,11 +43,11 @@ let mixinCommon = {
       if (!this.$fn.checkGreaterStartDate(this.searchItems.start_dt, v)) {
         this.hasErrorClass = false;
       }
-    }
+    },
   },
   created() {
     // 토큰 만료시 재로그인할때, 로직 태움
-    eventBus.$on("onLoadData", viewName => {
+    eventBus.$on("onLoadData", (viewName) => {
       this.getData();
     });
   },
@@ -57,7 +57,7 @@ let mixinCommon = {
       "downloadProduct",
       "downloadMusic",
       "downloadDl30",
-      "downloadConcatenate"
+      "downloadConcatenate",
     ]),
     ...mapActions("user", ["getSummaryUser"]),
     // 검색
@@ -72,9 +72,11 @@ let mixinCommon = {
     },
     // 스크롤 페이징
     onScrollPerPage() {
-      this.isScrollLodaing = true;
-      this.searchItems.selectPage++;
-      this.getData();
+      if (!this.isScrollLodaing) {
+        this.isScrollLodaing = true;
+        this.searchItems.selectPage++;
+        this.getData();
+      }
     },
     // 결과값 설정
     setResponseData(res, type = "") {
@@ -86,15 +88,11 @@ let mixinCommon = {
           this.responseData.totalRowCount = totalRowCount;
         } else {
           this.$refs.scrollPaging.displayLastPage(false);
-          const {
-            data,
-            rowPerPage,
-            selectPage,
-            totalRowCount
-          } = res.data.resultObject;
+          const { data, rowPerPage, selectPage, totalRowCount } =
+            res.data.resultObject;
           if (selectPage > 1) {
             const resData = [];
-            data.forEach(row => {
+            data.forEach((row) => {
               resData.push(row);
             });
             const totalArr = [...this.responseData.data, ...resData];
@@ -109,7 +107,7 @@ let mixinCommon = {
         }
       } else {
         this.$fn.notify("server-error", {
-          message: "조회 에러: " + res.data.errorMsg
+          message: "조회 에러: " + res.data.errorMsg,
         });
       }
     },
@@ -155,7 +153,7 @@ let mixinCommon = {
     // 카테고리 API 요청
     requestCall(url, attr) {
       this.isLoadingClass = true;
-      return this.$http.get(url).then(res => {
+      return this.$http.get(url).then((res) => {
         if (res.status === 200) {
           this[attr] = res.data.resultObject.data;
         } else {
@@ -266,14 +264,14 @@ let mixinCommon = {
     onMyDisCopy(url, oldName, metaData) {
       // eventBus.$emit('common-loading-overlay-show');
       this.$fn.notify("primary", {
-        message: `'${metaData.title}' MY디스크에 복사가 요청되었습니다. 용량에 따라 많은 시간이 소요 될 수 있습니다.`
+        message: `'${metaData.title}' MY디스크에 복사가 요청되었습니다. 용량에 따라 많은 시간이 소요 될 수 있습니다.`,
       });
       this.$http
         .post(url, metaData, { timeout: 3600000 })
-        .then(res => {
+        .then((res) => {
           if (res.data && res.data.resultCode === 0) {
             this.$fn.notify("primary", {
-              message: `MY공간으로 '${metaData.title}' 가 등록 되었습니다.`
+              message: `MY공간으로 '${metaData.title}' 가 등록 되었습니다.`,
             });
             this.getSummaryUser();
           }
@@ -285,8 +283,8 @@ let mixinCommon = {
     onCopyToMySpacePopup(rowData) {
       this.$refs.refCopyToMySpacePopup.setData(rowData);
       this.copyToMySpacePopup = true;
-    }
-  }
+    },
+  },
 };
 
 export default mixinCommon;
