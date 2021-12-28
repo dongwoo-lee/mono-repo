@@ -11,6 +11,7 @@ using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace MAMBrowser.Controllers
 {
@@ -135,7 +136,9 @@ namespace MAMBrowser.Controllers
                 StartDate = pram.startDate,
                 EndDate = pram.endDate,
                 Title = pram.title,
-                Memo = pram.memo
+                Memo = pram.memo,
+                RowPerPage = pram.rowperpage,
+                SelectPage = pram.selectpage,
 
             }; 
 
@@ -151,6 +154,8 @@ namespace MAMBrowser.Controllers
                 deviceSeq = pram.deviceSeq,
                 media = pram.media,
                 name = pram.name,
+                RowPerPage = pram.rowperpage,
+                SelectPage = pram.selectpage,
 
             };
 
@@ -276,7 +281,8 @@ namespace MAMBrowser.Controllers
                 .SetSortValue(pram.sortValue)
                 .Build();
 
-            return MAMWebFactory.Instance.Search<OldProResultDTO>(a);
+            var result =  MAMWebFactory.Instance.Search<OldProResultDTO>(a);
+            return result;
         }
         //주조SB
         [HttpGet("GetSearchTable/MCR_SB")]
@@ -292,8 +298,10 @@ namespace MAMBrowser.Controllers
             .Build();
 
 
-            return MAMWebFactory.Instance.Search<McrSBResultDTO>(a);
+            var result = MAMWebFactory.Instance.Search<McrSBResultDTO>(a);
+            return result;
         }
+
         //부조SB
         [HttpGet("GetSearchTable/SCR_SB")]
         public ScrSBResultDTO GetScrSb([FromQuery] Pram pram)
@@ -308,7 +316,8 @@ namespace MAMBrowser.Controllers
                 .SetSortValue(pram.sortValue)
                 .Build();
 
-            return MAMWebFactory.Instance.Search<ScrSBResultDTO>(a);
+            var result =  MAMWebFactory.Instance.Search<ScrSBResultDTO>(a);
+            return result;
         }
         //프로그램CM
         [HttpGet("GetSearchTable/PGM_CM")]

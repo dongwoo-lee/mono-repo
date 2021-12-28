@@ -58,6 +58,20 @@
                   <common-date-picker v-model="index.selectVal" />
                 </b-form-group>
               </div>
+              <div v-if="index.type == 'SED'">
+                <!-- 시작일 ~ 종료일 -->
+                <common-start-end-date-picker
+                  :startDateLabel="index.startText"
+                  :endDateLabel="index.endText"
+                  :startDate.sync="index.st_selectVal"
+                  :endDate.sync="index.end_selectVal"
+                  :maxPeriodMonth="index.maxMonth"
+                  :required="false"
+                  :isCurrentDate="false"
+                  class="datepicket_startEnd"
+                  style="margin-left: 0px"
+                />
+              </div>
             </div>
           </div>
           <div>
@@ -76,6 +90,7 @@
         <DxDataGrid
           id="search_data_grid"
           :data-source="searchtable_data.columns"
+          :remote-operations="true"
           :ref="dataGridRef"
           :height="gridHeight"
           :focused-row-enabled="false"
@@ -139,8 +154,8 @@
           />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling showScrollbar="always" />
-          <DxPaging :enabled="false" />
+          <DxScrolling showScrollbar="always" mode="infinite" />
+          <DxPaging :page-size="30" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -205,7 +220,7 @@
       </MusicPlayerPopup>
     </div>
     <div class="contentsLength" v-if="width_size == 330">
-      전체 : {{ searchtable_data.columns.length }}개
+      전체 : {{ searchtable_data.columns.length }}개 [{{ viewTableName }}]
     </div>
   </div>
 </template>
@@ -223,12 +238,37 @@ import {
   DxLoadPanel,
   DxPaging,
 } from "devextreme-vue/data-grid";
+import CustomStore from "devextreme/data/custom_store";
 import { USER_ID } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
 import axios from "axios";
 
 const dataGridRef = "dataGrid";
 
+const store = new CustomStore({
+  key: "rowNO",
+  load: (loadOptions) => {
+    let currentPage = loadOptions.skip <= 0 ? 1 : loadOptions.skip / 30 + 1;
+
+    return axios
+      .get(
+        `/api/products/old_pro?media=A&cate=&type=Y&editor=&name=&start_dt=20200601&end_dt=20211227&rowPerPage=30&selectPage=${currentPage}&sortKey=&sortValue=`
+      )
+      .then((rs) => {
+        console.info("rs", rs);
+        console.info("rs.data", rs.data);
+        console.info(
+          "rs.data.resultObject.totalRowCount",
+          rs.data.resultObject.totalRowCount
+        );
+        return {
+          data: rs.data.resultObject.data,
+          totalCount: rs.data.resultObject.totalRowCount,
+        };
+      });
+  },
+  pageSize: 15,
+});
 export default {
   mixins: [searchMenuList, MixinCommon],
   props: {
@@ -252,10 +292,11 @@ export default {
       },
       searchtable_columns: [],
       searchItems: {
-        rowPerPage: 1000,
+        rowPerPage: 10000,
         selectPage: 1,
       },
       dataGridRef,
+      viewTableName: "음반 기록실",
       subtableVal: false,
       subtable_data: [],
       subtable_columns: [],
@@ -440,6 +481,9 @@ export default {
       const selectOptions = this.searchDataList.options.filter(
         (Val) => Val.selectVal
       );
+      const selectOptionsStartEndDate = this.searchDataList.options.filter(
+        (Val) => Val.st_selectVal || Val.end_selectVal
+      );
       const result = { userid: userId };
       selectOptions.forEach((ele) => {
         if (typeof ele.selectVal != "object") {
@@ -453,6 +497,10 @@ export default {
           }
         }
       });
+      if (selectOptionsStartEndDate.length > 0) {
+        result["startDate"] = selectOptionsStartEndDate[0].st_selectVal;
+        result["endDate"] = selectOptionsStartEndDate[0].end_selectVal;
+      }
       this.getData(result);
       switch (this.searchDataList.id) {
         case "MCR_SB":
@@ -469,6 +517,7 @@ export default {
             this.gridHeight = 237;
           }
           this.subtable_columns = this.sbFields;
+
           break;
         case "PGM_CM":
           this.subtableVal = true;
@@ -476,6 +525,7 @@ export default {
             this.gridHeight = 237;
           }
           this.subtable_columns = this.cmFields;
+
           break;
         case "CM":
           this.subtableVal = true;
@@ -483,6 +533,7 @@ export default {
             this.gridHeight = 237;
           }
           this.subtable_columns = this.cmFields;
+
           break;
         default:
           this.subtableVal = false;
@@ -530,7 +581,6 @@ export default {
       axios(url, {
         params: pram,
       }).then((res) => {
-        console.log(res);
         const resData = res.data;
         for (const [key, value] of Object.entries(resData)) {
           this.searchDataList.options.forEach((ele) => {
@@ -541,6 +591,14 @@ export default {
                   value: item.id,
                 };
               });
+              if (
+                ele.name == "medias" ||
+                ele.name == "cm" ||
+                ele.name == "report" ||
+                ele.name == "dlDevice"
+              ) {
+                ele.selectVal = ele.value[0].value;
+              }
             }
           });
         }
@@ -563,9 +621,20 @@ export default {
       await axios(`/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`, {
         params: result,
       }).then((res) => {
+        if (
+          this.searchDataList.id == "MCR_SB" ||
+          this.searchDataList.id == "SCR_SB" ||
+          this.searchDataList.id == "PGM_CM" ||
+          this.searchDataList.id == "CM"
+        ) {
+          res.data.result.data.forEach((ele, index) => {
+            ele.rowNO = index + 1;
+          });
+        }
         this.searchtable_data.cartcode = this.searchDataList.cartcode;
         this.searchtable_data.columns = res.data.result.data;
         this.searchtable_columns = this.searchDataList.columns;
+        this.viewTableName = this.searchDataList.name;
         this.SET_SEARCHLISTDATA(this.searchtable_data);
       });
     },
@@ -660,6 +729,13 @@ export default {
   width: 25px;
   height: 25px;
   padding: 0;
+}
+.datepicket_startEnd .form-group {
+  margin-left: 15px;
+  width: 100%;
+}
+.datepicket_startEnd .periodDateText {
+  margin: 0px 0px 30px 0px !important;
 }
 /* select CSS */
 .dx-rtl

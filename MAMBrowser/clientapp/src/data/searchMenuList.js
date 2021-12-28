@@ -1,4 +1,23 @@
+const date = new Date();
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
+date.setDate(date.getDate() - 7);
+var wDay = get_date_str(date);
+date.setDate(date.getDate() - 83);
+var mDay = get_date_str(date);
 let searchMenuList = {
+
   data() {
     return {
       menuList_items: [
@@ -116,7 +135,8 @@ let searchMenuList = {
                       { text: '배열번호', value: "song_disc_arr_num_idx" },
                       { text: '국가명', value: "song_country_name_idx" }
                     ],
-                  type: "S"
+                  type: "S",
+                  selectVal: "song_idx"
                 },
                 {
                   id: "gradetype",
@@ -222,17 +242,26 @@ let searchMenuList = {
             cartcode: "S01G01C013",
             name: "(구)프로소재",
             options: [
+              // {
+              //   id: "startDate",
+              //   text: "시작일(마스터링)",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+              // },
+              // {
+              //   id: "endDate",
+              //   text: "종료일(마스터링)",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+              // },
               {
-                id: "startDate",
-                text: "시작일(마스터링)",
-                value: "",
-                type: "D",
-              },
-              {
-                id: "endDate",
-                text: "종료일(마스터링)",
-                value: "",
-                type: "D",
+                startText: "시작일(마스터링)",
+                endText: "종료일(마스터링)",
+                type: "SED",
+                st_selectVal: mDay,
+                end_selectVal: toDay
               },
               {
                 id: "type",
@@ -243,6 +272,7 @@ let searchMenuList = {
                   { value: 'N', text: '폐지' },
                 ],
                 type: "S",
+                selectVal: "Y"
               },
               {
                 id: "cate",
@@ -288,6 +318,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
               },
               {
                 id: "media",
@@ -305,7 +336,8 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              { dataField: "rowNO", caption: "순서", width: "8%", alignment: "center", allowSorting: false },
               { dataField: "id", caption: "SB ID", width: "18%", alignment: "center", allowSorting: false },
               { dataField: "name", caption: "SB명", width: "13%", alignment: "center", allowSorting: false },
               { dataField: "length", caption: "길이", width: "10%", alignment: "center", allowSorting: false },
@@ -321,17 +353,29 @@ let searchMenuList = {
             cartcode: "S01G01C010",
             name: "부조SPOT",
             options: [
+              // {
+              //   id: "startDate",
+              //   text: "시작일",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+
+              // },
+              // {
+              //   id: "endDate",
+              //   text: "종료일",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+
+              // },
               {
-                id: "startDate",
-                text: "시작일",
-                value: "",
-                type: "D",
-              },
-              {
-                id: "endDate",
-                text: "종료일",
-                value: "",
-                type: "D",
+                startText: "시작일",
+                endText: "종료일",
+                type: "SED",
+                st_selectVal: wDay,
+                end_selectVal: toDay,
+                maxMonth: 3
               },
               {
                 id: "media",
@@ -383,6 +427,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
               },
               {
                 id: "media",
@@ -399,7 +444,8 @@ let searchMenuList = {
               }
             ],
             columns: [
-              { cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              { dataField: "rowNO", caption: "순서", width: "8%", alignment: "center", allowSorting: false },
               { dataField: "name", caption: "CM명", width: "47%", alignment: "center", allowSorting: false },
               { dataField: "length", caption: "길이(초)", width: "11%", alignment: "center", allowSorting: false },
               { dataField: "capacity", caption: "용량(초)", width: "10%", alignment: "center", allowSorting: false },
@@ -418,6 +464,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
               },
               {
                 id: "media",
@@ -444,7 +491,8 @@ let searchMenuList = {
               }
             ],
             columns: [
-              { cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              { dataField: "rowNO", caption: "순서", width: "8%", alignment: "center", allowSorting: false },
               { dataField: "name", caption: "CM명", width: "47%", alignment: "center", allowSorting: false },
               { dataField: "length", caption: "길이(초)", width: "11%", alignment: "center", allowSorting: false },
               { dataField: "capacity", caption: "용량(초)", width: "10%", alignment: "center", allowSorting: false },
@@ -463,6 +511,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
               },
               {
                 id: "cate",
@@ -559,6 +608,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
               },
               {
                 id: "cate",
@@ -606,6 +656,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
 
               },
               {
@@ -650,19 +701,28 @@ let searchMenuList = {
             cartcode: "S01G01C023",
             name: "Filler(시간)",
             options: [
-              {
-                id: "startDate",
-                text: "시작일",
-                value: "",
-                type: "D",
+              // {
+              //   id: "startDate",
+              //   text: "시작일",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
 
-              },
+              // },
+              // {
+              //   id: "endDate",
+              //   text: "종료일",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+              // },
               {
-                id: "endDate",
-                text: "종료일",
-                value: "",
-                type: "D",
-
+                startText: "시작일",
+                endText: "종료일",
+                type: "SED",
+                st_selectVal: wDay,
+                end_selectVal: toDay,
+                maxMonth: 3
               },
               {
                 id: "media",
@@ -722,7 +782,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
-
+                selectVal: toDay,
               },
               {
                 id: "cate",
@@ -771,14 +831,12 @@ let searchMenuList = {
                 text: "시작일",
                 value: "",
                 type: "D",
-
               },
               {
                 id: "endDate",
                 text: "종료일",
                 value: "",
                 type: "D",
-
               },
               {
                 id: "title",
@@ -813,7 +871,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
-
+                selectVal: toDay,
               },
               {
                 id: "media",
@@ -865,6 +923,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
+                selectVal: toDay,
               },
               {
                 id: "deviceSeq",
@@ -909,7 +968,7 @@ let searchMenuList = {
                 text: "방송일",
                 value: "",
                 type: "D",
-
+                selectVal: toDay,
               },
               {
                 id: "media",
@@ -921,7 +980,8 @@ let searchMenuList = {
               },
             ],
             columns: [
-              { cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+              { dataField: "rowNO", caption: "순서", width: "8%", alignment: "center", allowSorting: false },
               { dataField: "id", caption: "SB ID", width: "30%", alignment: "center", allowSorting: false },
               { dataField: "name", caption: "SB명", width: "20%", alignment: "center", allowSorting: false },
               { dataField: "length", caption: "길이", width: "12%", alignment: "center", allowSorting: false },
@@ -936,18 +996,27 @@ let searchMenuList = {
             cartcode: "S01G01C020",
             name: "주조SPOT",
             options: [
+              // {
+              //   id: "startDate",
+              //   text: "시작일",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+              // },
+              // {
+              //   id: "endDate",
+              //   text: "종료일",
+              //   value: "",
+              //   type: "D",
+              //   selectVal: toDay,
+              // },
               {
-                id: "startDate",
-                text: "시작일",
-                value: "",
-                type: "D",
-
-              },
-              {
-                id: "endDate",
-                text: "종료일",
-                value: "",
-                type: "D",
+                startText: "시작일",
+                endText: "종료일",
+                type: "SED",
+                st_selectVal: wDay,
+                end_selectVal: toDay,
+                maxMonth: 3
 
               },
               {
@@ -995,6 +1064,7 @@ let searchMenuList = {
   computed: {
   },
   mounted() {
+
   },
   methods: {
   }
