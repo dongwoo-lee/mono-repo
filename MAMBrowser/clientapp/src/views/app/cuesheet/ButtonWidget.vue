@@ -172,6 +172,7 @@
         <div class="mb-3 mt-3" style="font-size: 20px">
           현재 큐시트를 템플릿으로 저장합니다.
         </div>
+        <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
         <div>
           <div
             class="dx-field-label mt-3 mb-5 pl-5 pr-0"
@@ -282,17 +283,6 @@
         <div class="mb-3 mt-3" style="font-size: 20px">
           <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
             "{{ cueInfo.title }}" 큐시트를 저장합니다.
-
-            <div v-if="type != 'O'">
-              <b-form-checkbox-group
-                class="custom-checkbox-group mt-5"
-                style="font-size: 16px"
-                v-model="oldCueSelected"
-                :options="oldCueOptions"
-                value-field="value"
-                text-field="text"
-              />
-            </div>
           </div>
           <div class="mb-3" v-if="cueInfo.cuetype == 'B' && !fav">
             "{{ cueInfo.title }}" 기본 큐시트를 저장합니다.
@@ -301,6 +291,17 @@
             "{{ cueInfo.title }}" 템플릿을 저장합니다.
           </div>
           <div class="mb-3" v-if="fav">즐겨찾기를 저장합니다.</div>
+          <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
+          <div v-if="type != 'O' && cueInfo.cuetype == 'D' && !fav">
+            <b-form-checkbox-group
+              class="custom-checkbox-group mt-5"
+              style="font-size: 16px"
+              v-model="oldCueSelected"
+              :options="oldCueOptions"
+              value-field="value"
+              text-field="text"
+            />
+          </div>
         </div>
       </div>
       <template #modal-footer="{ cancel }">
@@ -439,6 +440,7 @@
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
           <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
+          <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
         </div>
       </div>
       <template #modal-footer="{ cancel }">
@@ -450,10 +452,11 @@
         />
         <DxButton
           type="default"
-          text="확인"
           styling-mode="outlined"
-          :disabled="loadingIconVal"
+          text="확인"
           :width="100"
+          :height="30"
+          :disabled="loadingIconVal"
           @click="exportZipWave()"
         >
         </DxButton>
@@ -537,6 +540,8 @@ import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
+
 import { eventBus } from "@/eventBus";
 import axios from "axios";
 
@@ -647,6 +652,7 @@ export default {
     DxTextBox,
     DxTextArea,
     DxLoadIndicator,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
@@ -893,6 +899,7 @@ export default {
           });
       }
       this.loadingIconVal = false;
+
       this.$refs["modal-export-zip-wave"].hide();
     },
     async editWeekListClick() {

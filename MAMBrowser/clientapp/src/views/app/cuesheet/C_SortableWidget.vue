@@ -1,246 +1,257 @@
 <template>
-  <div class="cartC_view">
-    <DxSortable
-      :data="fileData[index - 1]"
-      group="tasksGroup"
-      dropFeedbackMode="indicate"
-      :allow-drop-inside-item="true"
-      @add="onAdd($event, index)"
-      @remove="onRemove($event, index)"
-      :on-drag-start="onDragStart"
-      v-for="index in widgetIndex"
-      :key="index"
-      class="cart_div"
-      :class="sortableColor(index)"
-    >
-      <div style="height: 100%; border-radius: 10px">
-        <div
-          v-if="fileData[index - 1].cartcode != null"
-          style="height: 100%; cursor: pointer"
-        >
-          <div class="top">
-            <div class="indexNumber">
-              <b>
-                {{ index }}
-              </b>
+  <div>
+    <DxLoadPanel :visible.sync="loadingVisible" :position="position" />
+    <div class="cartC_view">
+      <DxSortable
+        :data="fileData[index - 1]"
+        group="tasksGroup"
+        dropFeedbackMode="indicate"
+        :allow-drop-inside-item="true"
+        @add="onAdd($event, index)"
+        @remove="onRemove($event, index)"
+        :on-drag-start="onDragStart"
+        v-for="index in widgetIndex"
+        :key="index"
+        class="cart_div"
+        :class="sortableColor(index)"
+      >
+        <div style="height: 100%; border-radius: 10px">
+          <div
+            v-if="fileData[index - 1].cartcode != null"
+            style="height: 100%; cursor: pointer"
+          >
+            <div class="top">
+              <div class="indexNumber">
+                <b>
+                  {{ index }}
+                </b>
+              </div>
+              <div class="product_icon" style="width: 20px">
+                <i
+                  class="iconsminds-shop"
+                  v-if="fileData[index - 1].cartcode == 'S01G01C007'"
+                >
+                </i>
+                <i
+                  class="iconsminds-big-data"
+                  v-if="fileData[index - 1].cartcode == 'S01G01C006'"
+                ></i>
+                <i
+                  class="iconsminds-cd-2"
+                  v-if="
+                    fileData[index - 1].cartcode == 'S01G01C014' ||
+                    fileData[index - 1].cartcode == 'S01G01C015'
+                  "
+                ></i>
+                <i
+                  class="iconsminds-coins"
+                  v-if="
+                    fileData[index - 1].cartcode == 'S01G01C017' ||
+                    fileData[index - 1].cartcode == 'S01G01C016' ||
+                    fileData[index - 1].cartcode == 'S01G01C018' ||
+                    fileData[index - 1].cartcode == 'S01G01C019'
+                  "
+                ></i>
+                <i
+                  class="iconsminds-film"
+                  v-if="
+                    fileData[index - 1].cartcode == 'S01G01C009' ||
+                    fileData[index - 1].cartcode == 'S01G01C010' ||
+                    fileData[index - 1].cartcode == 'S01G01C012' ||
+                    fileData[index - 1].cartcode == 'S01G01C013'
+                  "
+                ></i>
+                <i
+                  class="iconsminds-engineering"
+                  v-if="
+                    fileData[index - 1].cartcode == 'S01G01C020' ||
+                    fileData[index - 1].cartcode == 'S01G01C021' ||
+                    fileData[index - 1].cartcode == 'S01G01C022' ||
+                    fileData[index - 1].cartcode == 'S01G01C023' ||
+                    fileData[index - 1].cartcode == 'S01G01C024'
+                  "
+                ></i>
+              </div>
+              <div style="width: 15px">
+                <div
+                  v-if="
+                    !fileData[index - 1].fadeintime &&
+                    fileData[index - 1].startposition > 0
+                  "
+                >
+                  <b-icon icon="screwdriver"></b-icon>
+                </div>
+                <div
+                  v-if="
+                    fileData[index - 1].fadeintime &&
+                    !fileData[index - 1].startposition > 0
+                  "
+                >
+                  <b-icon
+                    style="transform: rotate(90deg)"
+                    icon="wrench"
+                  ></b-icon>
+                </div>
+                <div
+                  v-if="
+                    fileData[index - 1].fadeintime &&
+                    fileData[index - 1].startposition > 0
+                  "
+                >
+                  <b-icon icon="tools"></b-icon>
+                </div>
+              </div>
+              <div style="width: 15px">
+                <div
+                  v-if="
+                    !fileData[index - 1].fadeouttime &&
+                    fileData[index - 1].duration >
+                      fileData[index - 1].endposition
+                  "
+                >
+                  <b-icon icon="screwdriver"></b-icon>
+                </div>
+                <div
+                  v-if="
+                    fileData[index - 1].fadeouttime &&
+                    (!fileData[index - 1].duration >
+                      fileData[index - 1].endposition ||
+                      fileData[index - 1].duration ==
+                        fileData[index - 1].endposition)
+                  "
+                >
+                  <b-icon
+                    style="transform: rotate(90deg)"
+                    icon="wrench"
+                  ></b-icon>
+                </div>
+                <div
+                  v-if="
+                    fileData[index - 1].fadeouttime &&
+                    fileData[index - 1].duration >
+                      fileData[index - 1].endposition
+                  "
+                >
+                  <b-icon icon="tools"></b-icon>
+                </div>
+              </div>
+              <div class="actionBtn">
+                <DxButton
+                  icon="music"
+                  type="default"
+                  hint="미리듣기/음원편집"
+                  @click="onPreview(fileData[index - 1])"
+                  v-if="
+                    fileData[index - 1].onairdate == '' &&
+                    fileData[index - 1].filepath != null &&
+                    fileData[index - 1].filepath != ''
+                  "
+                />
+                <DxButton
+                  icon="music"
+                  type="success"
+                  hint="그룹 미리듣기"
+                  v-if="fileData[index - 1].onairdate != ''"
+                  @click="
+                    showGrpPlayerPopup({
+                      grpType: 'cm',
+                      brd_Dt: fileData[index - 1].onairdate,
+                      grpId: fileData[index - 1].cartid,
+                      title: fileData[index - 1].maintitle,
+                    })
+                  "
+                />
+                <DxButton
+                  icon="remove"
+                  type="danger"
+                  styling-mode="outlined"
+                  hint="소재삭제"
+                  @click="arrdelete(index)"
+                  v-if="cueInfo.cuetype != 'A'"
+                />
+              </div>
             </div>
-            <div class="product_icon" style="width: 20px">
-              <i
-                class="iconsminds-shop"
-                v-if="fileData[index - 1].cartcode == 'S01G01C007'"
-              >
-              </i>
-              <i
-                class="iconsminds-big-data"
-                v-if="fileData[index - 1].cartcode == 'S01G01C006'"
-              ></i>
-              <i
-                class="iconsminds-cd-2"
-                v-if="
-                  fileData[index - 1].cartcode == 'S01G01C014' ||
-                  fileData[index - 1].cartcode == 'S01G01C015'
-                "
-              ></i>
-              <i
-                class="iconsminds-coins"
-                v-if="
-                  fileData[index - 1].cartcode == 'S01G01C017' ||
-                  fileData[index - 1].cartcode == 'S01G01C016' ||
-                  fileData[index - 1].cartcode == 'S01G01C018' ||
-                  fileData[index - 1].cartcode == 'S01G01C019'
-                "
-              ></i>
-              <i
-                class="iconsminds-film"
-                v-if="
-                  fileData[index - 1].cartcode == 'S01G01C009' ||
-                  fileData[index - 1].cartcode == 'S01G01C010' ||
-                  fileData[index - 1].cartcode == 'S01G01C012' ||
-                  fileData[index - 1].cartcode == 'S01G01C013'
-                "
-              ></i>
-              <i
-                class="iconsminds-engineering"
-                v-if="
-                  fileData[index - 1].cartcode == 'S01G01C020' ||
-                  fileData[index - 1].cartcode == 'S01G01C021' ||
-                  fileData[index - 1].cartcode == 'S01G01C022' ||
-                  fileData[index - 1].cartcode == 'S01G01C023' ||
-                  fileData[index - 1].cartcode == 'S01G01C024'
-                "
-              ></i>
-            </div>
-            <div style="width: 15px">
+            <div class="bottom">
               <div
-                v-if="
-                  !fileData[index - 1].fadeintime &&
-                  fileData[index - 1].startposition > 0
-                "
+                class="bottom_item maintitle"
+                :class="{
+                  maintitle_red:
+                    fileData[index - 1].onairdate != '' &&
+                    cueInfo.cuetype != 'A' &&
+                    (fileData[index - 1].onairdate != cueInfo.brddate ||
+                      cueInfo.pgmcode != fileData[index - 1].pgmcode),
+                }"
+                @dblclick="onTextEdit(index)"
+                v-if="fileData[index - 1].edittarget"
               >
-                <b-icon icon="screwdriver"></b-icon>
+                {{ fileData[index - 1].maintitle }}
               </div>
               <div
-                v-if="
-                  fileData[index - 1].fadeintime &&
-                  !fileData[index - 1].startposition > 0
-                "
+                class="bottom_item"
+                v-if="fileData[index - 1].edittarget == false"
               >
-                <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+                <b-form-input
+                  :value="fileData[index - 1].maintitle"
+                  ref="inputText"
+                  spellcheck="false"
+                  @keyup.enter="
+                    onValueChange($event, index, fileData[index - 1].maintitle)
+                  "
+                  @blur="onValueBlur(index)"
+                />
               </div>
               <div
-                v-if="
-                  fileData[index - 1].fadeintime &&
-                  fileData[index - 1].startposition > 0
-                "
+                class="bottom_item"
+                v-if="searchToggleSwitch"
+                style="font-size: 12px"
               >
-                <b-icon icon="tools"></b-icon>
+                {{ fileData[index - 1].subtitle }}
               </div>
-            </div>
-            <div style="width: 15px">
-              <div
-                v-if="
-                  !fileData[index - 1].fadeouttime &&
-                  fileData[index - 1].duration > fileData[index - 1].endposition
-                "
-              >
-                <b-icon icon="screwdriver"></b-icon>
+              <div class="bottom_item" style="font-size: 10px">
+                {{
+                  $moment(
+                    fileData[index - 1].endposition -
+                      fileData[index - 1].startposition
+                  )
+                    | moment("subtract", "9 hours")
+                    | moment("HH:mm:ss")
+                }}
               </div>
-              <div
-                v-if="
-                  fileData[index - 1].fadeouttime &&
-                  (!fileData[index - 1].duration >
-                    fileData[index - 1].endposition ||
-                    fileData[index - 1].duration ==
-                      fileData[index - 1].endposition)
-                "
-              >
-                <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
-              </div>
-              <div
-                v-if="
-                  fileData[index - 1].fadeouttime &&
-                  fileData[index - 1].duration > fileData[index - 1].endposition
-                "
-              >
-                <b-icon icon="tools"></b-icon>
-              </div>
-            </div>
-            <div class="actionBtn">
-              <DxButton
-                icon="music"
-                type="default"
-                hint="미리듣기/음원편집"
-                @click="onPreview(fileData[index - 1])"
-                v-if="
-                  fileData[index - 1].onairdate == '' &&
-                  fileData[index - 1].filepath != null &&
-                  fileData[index - 1].filepath != ''
-                "
-              />
-              <DxButton
-                icon="music"
-                type="success"
-                hint="그룹 미리듣기"
-                v-if="fileData[index - 1].onairdate != ''"
-                @click="
-                  showGrpPlayerPopup({
-                    grpType: 'cm',
-                    brd_Dt: fileData[index - 1].onairdate,
-                    grpId: fileData[index - 1].cartid,
-                    title: fileData[index - 1].maintitle,
-                  })
-                "
-              />
-              <DxButton
-                icon="remove"
-                type="danger"
-                styling-mode="outlined"
-                hint="소재삭제"
-                @click="arrdelete(index)"
-                v-if="cueInfo.cuetype != 'A'"
-              />
             </div>
           </div>
-          <div class="bottom">
-            <div
-              class="bottom_item maintitle"
-              :class="{
-                maintitle_red:
-                  fileData[index - 1].onairdate != '' &&
-                  cueInfo.cuetype != 'A' &&
-                  (fileData[index - 1].onairdate != cueInfo.brddate ||
-                    cueInfo.pgmcode != fileData[index - 1].pgmcode),
-              }"
-              @dblclick="onTextEdit(index)"
-              v-if="fileData[index - 1].edittarget"
-            >
-              {{ fileData[index - 1].maintitle }}
-            </div>
-            <div
-              class="bottom_item"
-              v-if="fileData[index - 1].edittarget == false"
-            >
-              <b-form-input
-                :value="fileData[index - 1].maintitle"
-                ref="inputText"
-                spellcheck="false"
-                @keyup.enter="
-                  onValueChange($event, index, fileData[index - 1].maintitle)
-                "
-                @blur="onValueBlur(index)"
-              />
-            </div>
-            <div
-              class="bottom_item"
-              v-if="searchToggleSwitch"
-              style="font-size: 12px"
-            >
-              {{ fileData[index - 1].subtitle }}
-            </div>
-            <div class="bottom_item" style="font-size: 10px">
-              {{
-                $moment(
-                  fileData[index - 1].endposition -
-                    fileData[index - 1].startposition
-                )
-                  | moment("subtract", "9 hours")
-                  | moment("HH:mm:ss")
-              }}
-            </div>
+          <div v-else class="blankView">
+            {{ index }}
           </div>
         </div>
-        <div v-else class="blankView">
-          {{ index }}
-        </div>
-      </div>
-    </DxSortable>
-    <CMGroupPlayerPopup
-      :showPlayerPopup="showGrpPlayer"
-      :title="grpParam.title"
-      :grpType="grpParam.grpType"
-      :brd_Dt="grpParam.brd_Dt"
-      :grpId="grpParam.grpId"
-      @closePlayer="closeGrpPlayerPopup"
-    >
-    </CMGroupPlayerPopup>
+      </DxSortable>
+      <CMGroupPlayerPopup
+        :showPlayerPopup="showGrpPlayer"
+        :title="grpParam.title"
+        :grpType="grpParam.grpType"
+        :brd_Dt="grpParam.brd_Dt"
+        :grpId="grpParam.grpId"
+        @closePlayer="closeGrpPlayerPopup"
+      >
+      </CMGroupPlayerPopup>
 
-    <EditPlayerPopup
-      :showPlayerPopup="showPlayerPopup"
-      :title="soundItem.maintitle"
-      :fileKey="soundItem.filetoken"
-      :streamingUrl="streamingUrl"
-      :waveformUrl="waveformUrl"
-      :tempDownloadUrl="tempDownloadUrl"
-      :rowNum="soundItem.rownum"
-      :type="channelKey"
-      :startPoint="soundItem.startposition"
-      :endPoint="soundItem.endposition"
-      :fadeIn="soundItem.fadeintime"
-      :fadeOut="soundItem.fadeouttime"
-      requestType="token"
-      @closePlayer="onClosePlayer"
-    >
-    </EditPlayerPopup>
+      <EditPlayerPopup
+        :showPlayerPopup="showPlayerPopup"
+        :title="soundItem.maintitle"
+        :fileKey="soundItem.filetoken"
+        :streamingUrl="streamingUrl"
+        :waveformUrl="waveformUrl"
+        :tempDownloadUrl="tempDownloadUrl"
+        :rowNum="soundItem.rownum"
+        :type="channelKey"
+        :startPoint="soundItem.startposition"
+        :endPoint="soundItem.endposition"
+        :fadeIn="soundItem.fadeintime"
+        :fadeOut="soundItem.fadeouttime"
+        requestType="token"
+        @closePlayer="onClosePlayer"
+      >
+      </EditPlayerPopup>
+    </div>
   </div>
 </template>
 
@@ -248,6 +259,7 @@
 import { USER_ID } from "@/constants/config";
 import { DxSortable } from "devextreme-vue/sortable";
 import DxButton from "devextreme-vue/button";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { eventBus } from "@/eventBus";
 import MixinCommon from "../../../mixin/MixinCommon";
@@ -281,6 +293,8 @@ export default {
   data() {
     return {
       fileData: [],
+      position: { of: ".cartC_view" },
+      loadingVisible: false,
       showGrpPlayer: false,
       groupFilterVal: false,
       grpParam: {},
@@ -407,7 +421,7 @@ export default {
       this.fileData = this.cueFavorites;
     });
   },
-  components: { DxSortable, DxButton },
+  components: { DxSortable, DxButton, DxLoadPanel },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
     ...mapGetters("cueList", ["cChannelData"]),
@@ -444,9 +458,11 @@ export default {
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     async onAdd(e, totalIndex) {
+      this.loadingVisible = true;
       this.groupFilterVal = false;
       //아카이브 수정불가
       if (this.cueInfo.cuetype == "A") {
+        this.loadingVisible = false;
         return;
       }
       if (e.fromData === undefined) {
@@ -460,11 +476,13 @@ export default {
           }
         });
         if (selectedRowsData.length > 1) {
-          selectedRowsData.forEach(async (data, index) => {
+          var index = 0;
+          for (const data of selectedRowsData) {
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("subtitle")) {
               if (search_row.subtitle == "") {
+                this.loadingVisible = false;
                 return;
               }
               row = { ...search_row };
@@ -476,14 +494,14 @@ export default {
                 await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
                   .then((res) => {
-                    search_row = res.data;
+                    return res.data;
                   });
               }
               if (this.searchListData.cartcode == "S01G01C015") {
                 await axios
                   .post(`/api/SearchMenu/GetEffectItem`, search_row)
                   .then((res) => {
-                    search_row = res.data;
+                    return res.data;
                   });
               }
               row.filetoken = search_row.fileToken;
@@ -508,7 +526,8 @@ export default {
             } else {
               totalIndex--;
             }
-          });
+            index++;
+          }
           this.fileData = this.fileData.slice(0, 16);
         } else {
           var row = { ...this.rowData };
@@ -518,6 +537,7 @@ export default {
           }
           if (Object.keys(search_row).includes("subtitle")) {
             if (search_row.subtitle == "") {
+              this.loadingVisible = false;
               return;
             }
             row = { ...search_row };
@@ -585,6 +605,7 @@ export default {
           }
         );
       }
+      this.loadingVisible = false;
     },
     //여기 하는중
     groupFilter(row) {

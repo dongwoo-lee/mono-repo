@@ -193,7 +193,7 @@ namespace MAMBrowser.Controllers
                 string zipFileName = $"{title}_{guid}.zip";
                 var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
-                ZipFileManager.Instance.CreateZIPFile(Path.GetDirectoryName(rootFolder), zipFilePath);
+                ZipFileManager.Instance.CreateZIPFile(rootFolder, zipFilePath);
                 di_folder.Delete(true);
                 return Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 

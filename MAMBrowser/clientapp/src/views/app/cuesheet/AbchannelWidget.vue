@@ -11,6 +11,12 @@
       >
         {{ abCartArr.length }} / 500
       </div>
+      <DxLoadPanel
+        :show-indicator="true"
+        :show-pane="true"
+        :shading="true"
+        :close-on-outside-click="false"
+      />
       <DxDataGrid
         id="channelAB"
         :focused-row-enabled="false"
@@ -444,31 +450,31 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
+      console.log(e.itemData);
       this.dataGrid.beginCustomLoading("Loading...");
+
+      this.dataGrid.beginUpdate();
       this.lengthCheck = false;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
         if (selectedRowsData.length > 1) {
-          await selectedRowsData.forEach(async (data, index) => {
+          var index = 0;
+          for (const data of selectedRowsData) {
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
-              // search_row = await this.setApiData(
-              //   search_row,
-              //   this.searchListData.cartcode
-              // );
               if (this.searchListData.cartcode == "S01G01C014") {
-                search_row = axios
+                await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
                   .then((res) => {
                     return res.data;
                   });
               }
               if (this.searchListData.cartcode == "S01G01C015") {
-                search_row = axios
+                await axios
                   .post(`/api/SearchMenu/GetEffectItem`, search_row)
                   .then((res) => {
                     return res.data;
@@ -497,7 +503,8 @@ export default {
               // this.setRowNum();
               this.rowData.rownum = this.rowData.rownum + 1;
             }
-          });
+            index++;
+          }
         } else {
           var row = { ...this.rowData };
           var search_row = e.itemData;
@@ -536,7 +543,6 @@ export default {
           }
           var checkValue = this.maxLengthCheck();
           if (checkValue) {
-            console.log(row);
             arrData.splice(e.toIndex, 0, row);
             this.rowData.rownum = this.rowData.rownum + 1;
           }
@@ -562,7 +568,8 @@ export default {
           permanent: false,
         });
       }
-      this.dataGrid.endCustomLoading();
+      this.dataGrid.endUpdate();
+      this.dataGrid.endCustomLoading("Loading...");
     },
     async setApiData(data, code) {
       if (code == "S01G01C014") {
@@ -578,8 +585,6 @@ export default {
     },
     setRowNum() {
       this.abCartArr.forEach((ele, index) => {
-        console.log("셋팅");
-        console.log(ele);
         ele.rownum = index + 1;
       });
     },
