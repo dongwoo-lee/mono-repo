@@ -155,12 +155,8 @@
     </PlayerPopup>
 
     <scr-spot-duration
-      :Scr="spotDurationData"
-      :reset="reset"
       @setDurationSuccess="setDurationSuccess"
       @setDurationFail="setDurationFail"
-      @deleteRequest="deleteRequest"
-      @resetSpot="resetSpot"
     ></scr-spot-duration>
 
     <add-duration></add-duration>
