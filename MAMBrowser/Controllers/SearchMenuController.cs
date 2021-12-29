@@ -12,6 +12,7 @@ using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
+using MAMBrowser.Mockup;
 using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -30,8 +31,8 @@ namespace MAMBrowser.Controllers
         
         public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
-            _fileService = fileService;
-            //_fileService = new MusicSystemMockup();
+            //_fileService = fileService;
+            _fileService = new MusicSystemMockup();
             _apiDao = apiDao;
         }
         public class Pram
@@ -477,6 +478,9 @@ namespace MAMBrowser.Controllers
         {
             try
             {
+                MasteringMockup mockup = new MasteringMockup();
+                return mockup.SongMastering(pram);
+
                 var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
                 var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
                 var requestInfo = _fileService.GetRequestInfo(musicInfo);
@@ -509,6 +513,9 @@ namespace MAMBrowser.Controllers
         [HttpPost("GetEffectItem")]
         public DTO_SONG_CASHE GetEffectMastering([FromBody] DTO_EFFECT pram)
         {
+            MasteringMockup mockup = new MasteringMockup();
+            return mockup.EffectMastering(pram);
+
             var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
             var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
             var requestInfo = _fileService.GetRequestInfo(musicInfo);
