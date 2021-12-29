@@ -99,6 +99,7 @@ export default {
       Duration: (state) => state.Duration,
       requestScr: (state) => state.requestScr,
     }),
+    ...mapGetters("ScrSpotDuration", ["requestValid"]),
   },
   data() {
     return {
@@ -116,15 +117,20 @@ export default {
       this.setSelectedScr(v.rowIndex);
     },
     request() {
-      axios
-        .post(`/api/Mastering/scr-spot/duration`, this.requestScr)
-        .then((res) => {
-          if (res.status == 200 && res.data.errorMsg == null) {
-            this.$emit("setDurationSuccess");
-          } else {
-            this.$emit("setDurationFail", res.data.errorMsg);
-          }
-        });
+      if (this.requestScr.length != 0) {
+        axios
+          .post(`/api/Mastering/scr-spot/duration`, this.requestScr)
+          .then((res) => {
+            console.log(res);
+            if (res.status == 200 && res.data.errorMsg == null) {
+              this.$emit("setDurationSuccess");
+            } else {
+              this.$emit("setDurationFail", res.data.errorMsg);
+            }
+          });
+      } else {
+        this.$emit("requestValid");
+      }
     },
   },
 };

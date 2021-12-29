@@ -157,6 +157,7 @@
     <scr-spot-duration
       @setDurationSuccess="setDurationSuccess"
       @setDurationFail="setDurationFail"
+      @requestValid="requestValid"
     ></scr-spot-duration>
 
     <add-duration></add-duration>
@@ -299,6 +300,9 @@ export default {
   },
   methods: {
     ...mapMutations("ScrSpotDuration", ["showDuration", "hideDuration"]),
+    requestValid() {
+      this.$fn.notify("info", { title: "기간 설정 데이터를 입력하세요." });
+    },
     setDurationSuccess() {
       this.hideDuration();
       this.$fn.notify("primary", {

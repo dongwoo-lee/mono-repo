@@ -29,6 +29,12 @@ export default {
       }
       return false;
     },
+    requestValid(state) {
+      if (state.requestScr.length == 0) {
+        return false;
+      }
+      return true;
+    },
   },
   mutations: {
     showDuration(state) {
