@@ -132,13 +132,18 @@
       <b-form-group
         label="1차 분류"
         class="has-float-label"
-        style="position: absolute; margin-left: 320px; z-index: 9999"
+        style="
+          position: absolute;
+          margin-top: 60px;
+          margin-left: 0px;
+          z-index: 999;
+        "
       >
         <b-form-select
           :disabled="isActive"
           id="program-media"
           class="media-select"
-          style="width: 230px; height: 37px"
+          style="width: 300px; height: 37px"
           :value="fillerMedia"
           :options="fillerOptions"
           @input="getSecondMedia"
@@ -147,12 +152,12 @@
       <b-form-group
         label="2차 분류"
         class="has-float-label"
-        style="position: absolute; top: 60px; z-index: 999"
+        style="position: absolute; top: 120px; z-index: 999"
       >
         <b-form-select
           id="program-media"
           class="media-select"
-          style="width: 200px; height: 37px"
+          style="width: 300px; height: 37px"
           :value="selectedFillerMedia"
           :options="fileMediaOptions"
           @input="mediaChange"
