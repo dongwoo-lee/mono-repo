@@ -36,7 +36,7 @@
         class="editTask"
         v-model="MetaData.title"
         :state="titleState"
-        :maxlength="200"
+        :maxlength="30"
         aria-describedby="input-live-help input-live-feedback"
         placeholder="소재 명"
         trim
@@ -52,7 +52,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.title.length }}/200
+        {{ MetaData.title.length }}/30
       </p>
     </div>
     <div style="height: 50px">
@@ -60,7 +60,7 @@
         class="editTask"
         v-model="MetaData.advertiser"
         :state="advertiserState"
-        :maxLength="50"
+        :maxLength="15"
         aria-describedby="input-live-help input-live-feedback"
         placeholder="광고주 명"
         trim
@@ -76,7 +76,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.advertiser.length }}/50
+        {{ MetaData.advertiser.length }}/15
       </p>
     </div>
     <div style="height: 50px">

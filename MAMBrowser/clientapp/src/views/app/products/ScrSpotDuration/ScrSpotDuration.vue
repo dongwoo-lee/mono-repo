@@ -27,7 +27,7 @@
         >
           <DxSelection mode="single" />
           <DxPager :visible="false" />
-          <DxScrolling mode="standard" />
+          <DxScrolling mode="infinite" />
           <DxColumn data-field="spotName" caption="SPOT명" />
           <DxColumn data-field="ProductID" caption="사용처" />
           <DxColumn data-field="StartDate" caption="시작일" />

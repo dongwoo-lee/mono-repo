@@ -15,7 +15,7 @@
             class="editTask"
             v-model="MetaData.title"
             :state="titleState"
-            :maxLength="200"
+            :maxLength="30"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="소재명"
             trim
@@ -25,14 +25,14 @@
           v-show="titleState"
           style="
             position: relative;
-            left: 290px;
+            left: 310px;
             top: -15px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
           "
         >
-          {{ MetaData.title.length }}/200
+          {{ MetaData.title.length }}/30
         </p>
       </div>
     </transition>
@@ -62,7 +62,7 @@
           v-show="memoState"
           style="
             position: relative;
-            left: 290px;
+            left: 310px;
             top: -15px;
             z-index: 9999;
             width: 30px;

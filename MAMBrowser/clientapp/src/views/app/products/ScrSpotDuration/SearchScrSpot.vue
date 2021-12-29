@@ -145,8 +145,8 @@
         no-data-text="No Data"
         @row-click="spotSelect"
       >
-        <DxPager :visible="true" />
-        <DxScrolling mode="standard" />
+        <DxPager :visible="false" />
+        <DxScrolling mode="infinite" />
         <DxSelection mode="single" />
         <DxColumn data-field="spotID" caption="spotID" />
         <DxColumn data-field="spotName" caption="spotName" />

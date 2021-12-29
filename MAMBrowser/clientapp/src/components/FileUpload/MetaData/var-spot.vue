@@ -50,7 +50,7 @@
             class="editTask"
             v-model="MetaData.advertiser"
             :state="advertiserState"
-            :maxLength="50"
+            :maxLength="15"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="광고주"
             trim
@@ -67,7 +67,7 @@
             margin-right: 0px;
           "
         >
-          {{ MetaData.advertiser.length }}/50
+          {{ MetaData.advertiser.length }}/15
         </p>
       </div>
     </transition>
