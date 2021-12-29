@@ -189,10 +189,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
-      spotData: {},
-      spotDurationData: [],
       deleteId: "",
-      reset: false,
       metaUpdate: false,
       updateScreenName: "",
       rowData: "",

@@ -28,7 +28,7 @@
             height: 34px;
           "
           class="editTask"
-          :value="this.selectedSpot.spotName"
+          :value="this.setScrRangeData.spotName"
           disabled
           aria-describedby="input-live-help input-live-feedback"
           placeholder="소재명"

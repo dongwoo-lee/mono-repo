@@ -7,13 +7,6 @@ export default {
     Duration: false,
     Add: false,
     Search: false,
-    selectedSpot: {
-      spotID: "",
-      spotName: "",
-      codeID: "",
-      codeName: "",
-      CMOwner: "",
-    },
     setScrRangeData: {
       SpotID: "",
       spotName: "",
@@ -58,7 +51,6 @@ export default {
       state.Search = false;
     },
     setSelectedSpot(state, payload) {
-      state.selectedSpot = payload;
       state.setScrRangeData.SpotID = payload.spotID;
       state.setScrRangeData.spotName = payload.spotName;
     },
@@ -75,13 +67,6 @@ export default {
       state.requestScr.splice(state.selectedScr, 1);
     },
     resetScrRangeData(state) {
-      state.selectedSpot = {
-        spotID: "",
-        spotName: "",
-        codeID: "",
-        codeName: "",
-        CMOwner: "",
-      };
       state.setScrRangeData = {
         SpotID: "",
         spotName: "",

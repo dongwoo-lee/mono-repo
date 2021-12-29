@@ -44,7 +44,7 @@
         >
           추가</b-button
         ><b-button
-          variant="outline-primary default cutom-label-cancel"
+          variant="outline-danger default cutom-label-cancel"
           size="sm"
           class="float-left"
           style="margin-right: 480px"
