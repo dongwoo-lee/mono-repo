@@ -478,8 +478,9 @@ namespace MAMBrowser.Controllers
         {
             try
             {
-                MasteringMockup mockup = new MasteringMockup();
-                return mockup.SongMastering(pram);
+                //목업데이터
+                //MasteringMockup mockup = new MasteringMockup();
+                //return mockup.SongMastering(pram);
 
                 var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
                 var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
@@ -513,8 +514,9 @@ namespace MAMBrowser.Controllers
         [HttpPost("GetEffectItem")]
         public DTO_SONG_CASHE GetEffectMastering([FromBody] DTO_EFFECT pram)
         {
-            MasteringMockup mockup = new MasteringMockup();
-            return mockup.EffectMastering(pram);
+            //목업데이터
+            //MasteringMockup mockup = new MasteringMockup();
+            //return mockup.EffectMastering(pram);
 
             var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
             var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
