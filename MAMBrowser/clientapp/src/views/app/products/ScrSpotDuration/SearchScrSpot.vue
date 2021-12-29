@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="setSpot"
-    v-model="show3"
+    v-model="Search"
     size="xl"
     centered
     hide-header-close
@@ -104,6 +104,7 @@
           <b-form-input
             class="memo"
             style="width: 150px; height: 34px; float: left"
+            @keyup.enter="getScrSpot"
             v-model="searchSpot.advertiser"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="광고주 명"
@@ -118,6 +119,7 @@
           <b-form-input
             class="memo"
             style="width: 160px; height: 34px; float: left"
+            @keyup.enter="getScrSpot"
             v-model="searchSpot.title"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="소재 명"
@@ -167,7 +169,7 @@
         variant="outline-danger default cutom-label-cancel"
         size="sm"
         class="float-right"
-        @click="hideSearch"
+        @click="cancel"
       >
         취소</b-button
       >
@@ -185,6 +187,7 @@ import {
   DxSelection,
 } from "devextreme-vue/data-grid";
 import axios from "axios";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   components: {
     DxScrolling,
@@ -193,12 +196,6 @@ export default {
     DxDataGrid,
     DxColumn,
     DxSelection,
-  },
-  props: {
-    show3: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -211,7 +208,7 @@ export default {
         sDate: "",
         eDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       },
-      selectedSpot: {
+      rowSelect: {
         spotID: "",
         spotName: "",
         codeID: "",
@@ -246,35 +243,53 @@ export default {
       });
     });
     this.searchSpot.media = "ST01";
+    this.getScrSpot();
   },
   computed: {
+    ...mapState("ScrSpotDuration", {
+      Search: (state) => state.Search,
+      selectedSpot: (state) => state.selectedSpot,
+    }),
     selectRowValid() {
-      if (this.selectedSpot.spotID != "") {
+      if (this.rowSelect.spotID != "") {
         return true;
       }
       return false;
     },
   },
   methods: {
-    setSpot() {
-      this.$emit("setSpot", this.selectedSpot);
+    ...mapMutations("ScrSpotDuration", ["hideSearch", "setSelectedSpot"]),
+    cancel() {
       this.hideSearch();
-    },
-    hideSearch() {
-      this.selectedSpot = {
-        spotID: "",
-        spotName: "",
-        codeID: "",
-        codeName: "",
-        CMOwner: "",
+      this.searchSpot = {
+        title: "",
+        advertiser: "",
+        media: "",
+        sDate: "",
+        eDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       };
-      this.$emit("hideSearch");
+
+      var newDate = new Date();
+      var dayOfMonth = newDate.getDate();
+      newDate.setDate(dayOfMonth - 14);
+      newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
+
+      this.searchSpot.sDate = newDate;
+
+      this.searchSpot.media = "ST01";
+
+      this.getScrSpot();
+    },
+    setSpot() {
+      this.setSelectedSpot(this.rowSelect);
+      this.hideSearch();
     },
     mediaChange(v) {
       this.searchSpot.media = v;
+      this.getScrSpot();
     },
     spotSelect(v) {
-      this.selectedSpot = v.data;
+      this.rowSelect = v.data;
     },
     resetSpotData() {
       this.spotData = [
@@ -288,20 +303,34 @@ export default {
       ];
     },
     async getScrSpot() {
-      this.resetSpotData();
-      await axios
-        .get(
-          `/api/categories/scr-spot?spotName=${this.searchSpot.title}&codeId=${
-            this.searchSpot.media
-          }&cmOwner=${this.searchSpot.advertiser}
+      const replaceAllFileSDate = this.searchSpot.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.searchSpot.eDate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        this.resetSpotData();
+        await axios
+          .get(
+            `/api/categories/scr-spot?spotName=${
+              this.searchSpot.title
+            }&codeId=${this.searchSpot.media}&cmOwner=${
+              this.searchSpot.advertiser
+            }
           &startDate=${this.searchSpot.sDate.replace(
             /-/g,
             ""
           )}&endDate=${this.searchSpot.eDate.replace(/-/g, "")}`
-        )
-        .then((res) => {
-          this.spotData = res.data.resultObject.data;
-        });
+          )
+          .then((res) => {
+            this.spotData = res.data.resultObject.data;
+          });
+      }
     },
     get14daysago() {
       var newDate = new Date();
@@ -324,6 +353,8 @@ export default {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         return;
+      } else {
+        this.getScrSpot();
       }
     },
     eventEInput2(value) {
@@ -337,6 +368,8 @@ export default {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         return;
+      } else {
+        this.getScrSpot();
       }
     },
 
@@ -392,6 +425,8 @@ export default {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
             });
             return;
+          } else {
+            this.getScrSpot();
           }
         }
       }
@@ -445,6 +480,8 @@ export default {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
             });
             return;
+          } else {
+            this.getScrSpot();
           }
         }
       }

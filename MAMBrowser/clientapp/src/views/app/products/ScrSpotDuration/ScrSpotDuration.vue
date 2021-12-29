@@ -3,7 +3,7 @@
     <b-modal
       id="setScrRange"
       size="lg"
-      v-model="show"
+      v-model="Duration"
       centered
       hide-header-close
       no-close-on-esc
@@ -28,7 +28,7 @@
           <DxSelection mode="single" />
           <DxPager :visible="false" />
           <DxScrolling mode="standard" />
-          <DxColumn data-field="spot" caption="SPOT명" />
+          <DxColumn data-field="spotName" caption="SPOT명" />
           <DxColumn data-field="ProductID" caption="사용처" />
           <DxColumn data-field="StartDate" caption="시작일" />
           <DxColumn data-field="EndDate" caption="종료일" />
@@ -40,7 +40,7 @@
           size="sm"
           class="float-left"
           style="margin-right: 5px"
-          @click="showAddDuration"
+          @click="showAdd"
         >
           추가</b-button
         ><b-button
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   DxDataGrid,
   DxScrolling,
@@ -93,48 +94,37 @@ export default {
     DxPager,
     DxSelection,
   },
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    Scr: {
-      type: Array,
-      default: [],
-    },
+  computed: {
+    ...mapState("ScrSpotDuration", {
+      Duration: (state) => state.Duration,
+      requestScr: (state) => state.requestScr,
+    }),
   },
   data() {
     return {
-      key: ["event", "spot"],
-      requestScr: this.Scr,
-      selectedScr: "",
+      key: ["ProductID", "spot"],
     };
   },
   methods: {
-    hideDuration() {
-      this.$emit("hideDuration");
-    },
-    showAddDuration() {
-      this.$emit("showAddDuration");
-    },
+    ...mapMutations("ScrSpotDuration", [
+      "hideDuration",
+      "showAdd",
+      "setSelectedScr",
+      "deleteRequest",
+    ]),
     requestSelect(v) {
-      this.selectedScr = v.data;
+      this.setSelectedScr(v.rowIndex);
     },
     request() {
-      console.log(this.requestScr);
       axios
         .post(`/api/Mastering/scr-spot/duration`, this.requestScr)
         .then((res) => {
-          console.log(res);
           if (res.status == 200 && res.data.errorMsg == null) {
             this.$emit("setDurationSuccess");
           } else {
             this.$emit("setDurationFail", res.data.errorMsg);
           }
         });
-    },
-    deleteRequest() {
-      this.$emit("deleteRequest", this.selectedScr);
     },
   },
 };

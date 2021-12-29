@@ -65,7 +65,7 @@
           <b-button
             variant="outline-primary default"
             size="sm"
-            @click="show = true"
+            @click="showDuration"
             >기간 설정</b-button
           >
         </b-input-group>
@@ -155,28 +155,17 @@
     </PlayerPopup>
 
     <scr-spot-duration
-      :show="show"
       :Scr="spotDurationData"
+      :reset="reset"
       @setDurationSuccess="setDurationSuccess"
       @setDurationFail="setDurationFail"
       @deleteRequest="deleteRequest"
-      @hideDuration="hideDuration"
-      @showAddDuration="showAddDuration"
+      @resetSpot="resetSpot"
     ></scr-spot-duration>
 
-    <add-duration
-      :show2="show2"
-      :spotData="spotData"
-      @hideAddDuration="hideAddDuration"
-      @showSearchDuration="showSearchDuration"
-      @setScrDuration="setScrDuration"
-    ></add-duration>
+    <add-duration></add-duration>
 
-    <search-duration
-      :show3="show3"
-      @setSpot="setSpot"
-      @hideSearch="hideSearch"
-    ></search-duration>
+    <search-duration></search-duration>
   </div>
 </template>
 
@@ -190,6 +179,7 @@ import axios from "axios";
 import ScrSpotDuration from "./ScrSpotDuration/ScrSpotDuration.vue";
 import AddDuration from "./ScrSpotDuration/AddDuration";
 import SearchDuration from "./ScrSpotDuration/SearchScrSpot.vue";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   components: {
     CopyToMySpacePopup,
@@ -206,9 +196,7 @@ export default {
       spotData: {},
       spotDurationData: [],
       deleteId: "",
-      show: false,
-      show2: false,
-      show3: false,
+      reset: false,
       metaUpdate: false,
       updateScreenName: "",
       rowData: "",
@@ -317,35 +305,9 @@ export default {
     });
   },
   methods: {
-    hideDuration() {
-      this.show = false;
-    },
-    hideAddDuration() {
-      this.show2 = false;
-    },
-    hideSearch() {
-      this.show3 = false;
-    },
-    showAddDuration() {
-      this.show2 = true;
-    },
-    showSearchDuration() {
-      this.show3 = true;
-    },
-    setSpot(v) {
-      this.spotData = v;
-    },
-    setScrDuration(v) {
-      this.spotData = {};
-      this.spotDurationData.push(v);
-    },
-    deleteRequest(v) {
-      var index = this.spotDurationData.indexOf(v);
-      this.spotDurationData.splice(index, 1);
-    },
+    ...mapMutations("ScrSpotDuration", ["showDuration", "hideDuration"]),
     setDurationSuccess() {
-      this.spotDurationData = [];
-      this.show = false;
+      this.hideDuration();
       this.$fn.notify("primary", {
         title: "부조SPOT 기간설정 성공",
       });

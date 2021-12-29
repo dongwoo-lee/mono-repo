@@ -2,7 +2,7 @@
   <b-modal
     id="addRange"
     size="lg"
-    v-model="show2"
+    v-model="Add"
     centered
     hide-header-close
     no-close-on-esc
@@ -38,7 +38,7 @@
         <b-button
           variant="outline-primary default cutom-label"
           style="margin-top: 10px; float: left; width: 58px; height: 34px"
-          @click="showSearchDuration"
+          @click="showSearch"
         >
           <b-icon-search></b-icon-search>
         </b-button>
@@ -129,7 +129,7 @@
         variant="outline-danger default cutom-label-cancel"
         size="sm"
         class="float-right"
-        @click="hideAddDuration"
+        @click="cancel"
       >
         취소</b-button
       >
@@ -140,37 +140,14 @@
 <script>
 import CommonVueSelect from "../../../../components/Form/CommonVueSelect.vue";
 import axios from "axios";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   components: {
     CommonVueSelect,
   },
-  props: {
-    show2: {
-      type: Boolean,
-      default: false,
-    },
-    spotData: {
-      type: Object,
-    },
-  },
   data() {
     return {
       vSelectClass: "scrSpotVueSelect",
-      setScrRangeData: {
-        SpotID: "",
-        spot: "",
-        ProductID: null,
-        StartDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
-        EndDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
-      },
-      // 선택한 부조 스팟(row) 데이터
-      selectedSpot: {
-        spotID: "",
-        spotName: "",
-        codeID: "",
-        codeName: "",
-        CMOwner: "",
-      },
       tempSDate: "",
       tempEDate: "",
       ProgramOptions: [],
@@ -179,53 +156,55 @@ export default {
   created() {
     this.getPgm();
   },
-  watch: {
-    spotData(v) {
-      this.selectedSpot = v;
-      this.setScrRangeData.spot = v.spotName;
-      this.setScrRangeData.SpotID = v.spotID;
-    },
-  },
   computed: {
-    scrValid() {
-      if (
-        this.setScrRangeData.SpotID != "" &&
-        this.setScrRangeData.ProductID != null &&
-        this.setScrRangeData.StartDate != "" &&
-        this.setScrRangeData.EndDate != ""
-      ) {
-        return true;
-      }
-      return false;
-    },
+    ...mapState("ScrSpotDuration", {
+      Add: (state) => state.Add,
+      selectedSpot: (state) => state.selectedSpot,
+      setScrRangeData: (state) => state.setScrRangeData,
+    }),
+    ...mapGetters("ScrSpotDuration", ["scrValid"]),
   },
   methods: {
-    hideAddDuration() {
-      this.$emit("hideAddDuration");
-    },
-    showSearchDuration() {
-      this.$emit("showSearchDuration");
-    },
+    ...mapMutations("ScrSpotDuration", [
+      "showSearch",
+      "hideAdd",
+      "setScrRangeDataProductID",
+      "setRequestScr",
+      "resetScrRangeData",
+    ]),
     async getPgm() {
       var res = await axios.get(`/api/categories/pgmcodes`);
       this.ProgramOptions = res.data.resultObject.data;
     },
+    cancel() {
+      this.hideAdd();
+      this.resetScrRangeData();
+    },
     pgmSelect(v) {
-      this.setScrRangeData.ProductID = v.id;
+      this.setScrRangeDataProductID(v.id);
     },
     setScrDuration() {
-      this.$emit("setScrDuration", this.setScrRangeData);
-      this.resetScrRangeData();
-      this.hideAddDuration();
-    },
-    resetScrRangeData() {
-      this.setScrRangeData = {
-        SpotID: "",
-        spot: "",
-        ProductID: null,
-        StartDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
-        EndDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
-      };
+      const replaceAllFileSDate = this.setScrRangeData.StartDate.replace(
+        /-/g,
+        ""
+      );
+      const replaceAllFileEDate = this.setScrRangeData.EndDate.replace(
+        /-/g,
+        ""
+      );
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      } else {
+        this.setRequestScr(this.setScrRangeData);
+        this.resetScrRangeData();
+        this.hideAdd();
+      }
     },
     get7daysago() {
       var newDate = new Date();
