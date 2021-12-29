@@ -474,7 +474,7 @@ namespace MAMBrowser.Controllers
 
         //음반 기록실 rowData 가져오기
         [HttpPost("GetSongItem")]
-        public ActionResult<DTO_SONG_CASHE>GetSongMastering([FromBody] DTO_SONG pram)
+        public ActionResult<DTO_SONG_CACHE>GetSongMastering([FromBody] DTO_SONG pram)
         {
             try
             {
@@ -512,7 +512,7 @@ namespace MAMBrowser.Controllers
 
         //효과음 rowData 가져오기
         [HttpPost("GetEffectItem")]
-        public DTO_SONG_CASHE GetEffectMastering([FromBody] DTO_EFFECT pram)
+        public DTO_SONG_CACHE GetEffectMastering([FromBody] DTO_EFFECT pram)
         {
             //목업데이터
             //MasteringMockup mockup = new MasteringMockup();
