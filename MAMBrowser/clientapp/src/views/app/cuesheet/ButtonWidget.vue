@@ -183,6 +183,7 @@
             <DxTextBox
               placeholder="이름없는 템플릿"
               width="320px"
+              :maxLength="40"
               v-model="tmpTitleTextBoxValue"
             />
           </div>

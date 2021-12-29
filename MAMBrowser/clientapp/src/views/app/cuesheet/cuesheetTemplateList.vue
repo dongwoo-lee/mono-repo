@@ -99,6 +99,7 @@
           <div class="dx-field-value mt-3 mb-5 pr-5">
             <DxTextBox
               placeholder="이름없는 템플릿"
+              :maxLength="40"
               width="320px"
               v-model="tmpTitleTextBoxValue"
             />

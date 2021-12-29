@@ -484,6 +484,8 @@ export default {
         (Val) => Val.st_selectVal || Val.end_selectVal
       );
       const result = { userid: userId };
+      console.log(selectOptions);
+
       selectOptions.forEach((ele) => {
         if (typeof ele.selectVal != "object") {
           result[ele.id] = ele.selectVal;

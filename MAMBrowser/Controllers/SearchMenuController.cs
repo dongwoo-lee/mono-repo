@@ -30,8 +30,8 @@ namespace MAMBrowser.Controllers
         
         public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
-            //_fileService = fileService;
-            _fileService = new MusicSystemMockup();
+            _fileService = fileService;
+            //_fileService = new MusicSystemMockup();
             _apiDao = apiDao;
         }
         public class Pram
@@ -473,29 +473,36 @@ namespace MAMBrowser.Controllers
 
         //음반 기록실 rowData 가져오기
         [HttpPost("GetSongItem")]
-        public DTO_SONG_CASHE GetSongMastering([FromBody] DTO_SONG pram)
+        public ActionResult<DTO_SONG_CASHE>GetSongMastering([FromBody] DTO_SONG pram)
         {
-            var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
-            var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
-            var requestInfo = _fileService.GetRequestInfo(musicInfo);
-            long fileSize;
-            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
+            try
+            {
+                var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
+                var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
+                var requestInfo = _fileService.GetRequestInfo(musicInfo);
+                long fileSize;
+                var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
 
-            var options = GetMasteringOptions(Startup.AppSetting.ConnectionString);
-            string storageId = options.Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
-            string storagePass = options.Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
-            int sampleRate = Convert.ToInt32(options.Find(dt => dt.Name == "SAMPLE_RATE").Value);
-            int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
-            int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
+                var options = GetMasteringOptions(Startup.AppSetting.ConnectionString);
+                string storageId = options.Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
+                string storagePass = options.Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
+                int sampleRate = Convert.ToInt32(options.Find(dt => dt.Name == "SAMPLE_RATE").Value);
+                int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
+                int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
 
-            string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString(); 
-            string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString();
+                string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString();
+                string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString();
 
-            string fileExt = Path.GetExtension(pram.FilePath);
-            SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
-            var result = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+                string fileExt = Path.GetExtension(pram.FilePath);
+                SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
+                var result = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         //효과음 rowData 가져오기

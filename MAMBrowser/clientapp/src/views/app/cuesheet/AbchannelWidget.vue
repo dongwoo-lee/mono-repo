@@ -161,6 +161,7 @@
             <div v-if="cellInfo.data.subtitle != ''">
               <DxTextBox
                 :value="cellInfo.data.maintitle"
+                :maxLength="40"
                 :on-value-changed="
                   (value) => onValueChanged_mainText(value, cellInfo)
                 "
@@ -172,6 +173,7 @@
             <div v-else>
               <DxTextBox
                 :value="cellInfo.data.memo"
+                :maxLength="25"
                 :on-value-changed="
                   (value) => onValueChanged_memoText(value, cellInfo)
                 "
