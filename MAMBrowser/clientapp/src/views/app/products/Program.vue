@@ -358,13 +358,13 @@ export default {
           this.$fn.notify("primary", {
             title: "메타 데이터 수정 성공",
           });
-          this.getData();
+          this.onSearch();
         } else {
           this.UpdateModalOff();
           $fn.notify("error", {
             message: "메타 데이터 수정 실패: " + res.data.errorMsg,
           });
-          this.getData();
+          this.onSearch();
         }
       });
     },
@@ -384,18 +384,15 @@ export default {
             this.$fn.notify("primary", {
               title: "파일 삭제 성공",
             });
-            this.getData();
+            this.onSearch();
           } else {
             this.UpdateModalOff();
             $fn.notify("error", {
               message: "파일 삭제 실패: " + res.data.errorMsg,
             });
-            this.getData();
+            this.onSearch();
           }
         });
-    },
-    onEditSuccess() {
-      this.getData();
     },
   },
 };
