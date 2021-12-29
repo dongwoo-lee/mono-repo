@@ -45,15 +45,15 @@ namespace MAMBrowser.Controllers
 
                 DirectoryInfo di_folder = new DirectoryInfo(rootFolder);
                 DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(rootFolder));
-                if (!di.Exists)
+                if (!di_folder.Exists)
                 {
                     di_folder.Create();
                 }
-                else
-                {
-                    di.Delete(true);
-                    di_folder.Create();
-                }
+                //else
+                //{
+                //    di.Delete(true);
+                //    di_folder.Create();
+                //}
                 foreach (CueSheetConDTO ele in pram)
                 {
                     if (ele.FILEPATH != null && ele.FILEPATH != "")

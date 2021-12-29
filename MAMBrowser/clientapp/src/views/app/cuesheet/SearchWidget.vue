@@ -166,7 +166,7 @@
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling mode="infinite" legacyMode="true" />
-          <DxPaging :page-size="200" />
+          <DxPaging :page-size="pageSize" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -210,9 +210,21 @@
         :showPlayerPopup="showPlayerPopup"
         :title="goTitle"
         :fileKey="soundItem.fileToken"
-        :streamingUrl="streamingUrl"
-        :waveformUrl="waveformUrl"
-        :tempDownloadUrl="tempDownloadUrl"
+        :streamingUrl="
+          searchListData.cartcode != 'S01G01C015'
+            ? streamingUrl
+            : streamingUrl_music
+        "
+        :waveformUrl="
+          searchListData.cartcode != 'S01G01C015'
+            ? waveformUrl
+            : waveformUrl_music
+        "
+        :tempDownloadUrl="
+          searchListData.cartcode != 'S01G01C015'
+            ? tempDownloadUrl
+            : tempDownloadUrl_music
+        "
         requestType="token"
         v-if="searchListData.cartcode != 'S01G01C014'"
         @closePlayer="onClosePlayer"
@@ -275,6 +287,8 @@ export default {
       streamingUrl_music: "/api/musicsystem/streaming",
       waveformUrl_music: "/api/musicsystem/waveform",
       tempDownloadUrl_music: "/api/musicsystem/temp-download",
+      loadpanelVal: false,
+      pageSize: 30,
       gridHeight: 0,
       allSelected: false,
       indeterminate: false,
@@ -290,7 +304,7 @@ export default {
       },
       searchtable_columns: [],
       searchItems: {
-        rowPerPage: 200,
+        rowPerPage: 30,
         selectPage: 1,
         totalRowCount: 0,
       },
@@ -474,7 +488,9 @@ export default {
       document.getElementById("app-container").classList.add("drag_");
     },
     //검색
-    onSubmit(e) {
+    async onSubmit(e) {
+      this.loadpanelVal = true;
+      this.searchtable_columns = [];
       const userId = sessionStorage.getItem(USER_ID);
       e.preventDefault();
       const selectOptions = this.searchDataList.options.filter(
@@ -484,7 +500,6 @@ export default {
         (Val) => Val.st_selectVal || Val.end_selectVal
       );
       const result = { userid: userId };
-      console.log(selectOptions);
 
       selectOptions.forEach((ele) => {
         if (typeof ele.selectVal != "object") {
@@ -493,7 +508,7 @@ export default {
           if (typeof ele.selectVal[0] == "string") {
             result[ele.id] = ele.selectVal[0];
           } else {
-            if (ele.length > 0) {
+            if (ele.selectVal.length > 0) {
               var sum = ele.selectVal.reduce((a, b) => a + b);
               result[ele.id] = sum;
             }
@@ -504,7 +519,7 @@ export default {
         result["startDate"] = selectOptionsStartEndDate[0].st_selectVal;
         result["endDate"] = selectOptionsStartEndDate[0].end_selectVal;
       }
-      this.getData(result);
+      var setDataList = await this.getData(result);
       switch (this.searchDataList.id) {
         case "MCR_SB":
           this.subtableVal = true;
@@ -544,6 +559,7 @@ export default {
           break;
       }
       this.subtable_data = [];
+      this.loadpanelVal = false;
     },
     onSelectionChanged(e) {
       if (e.selectedRowsData.length > 0) {
@@ -625,14 +641,24 @@ export default {
       //this.searchtable_data.columns.clearRawDataCache();
       // this.subtable_data = [];
       var basedata = this.searchItems;
-      const result = Object.assign({}, basedata, Val);
       this.searchtable_data.cartcode = this.searchDataList.cartcode;
+      if (
+        this.searchListData.cartcode == "S01G01C016" ||
+        this.searchListData.cartcode == "S01G01C017" ||
+        this.searchListData.cartcode == "S01G01C018" ||
+        this.searchListData.cartcode == "S01G01C019"
+      ) {
+        this.pageSize = 200;
+      } else {
+        this.pageSize = 30;
+      }
+      const result = Object.assign({}, basedata, Val);
       this.searchtable_data.columns = await new CustomStore({
         key: "rowNO",
         load: (loadOptions) => {
           loadOptions.requireGroupCount = false;
-          if (loadOptions.skip >= 0 && loadOptions.skip % 200 == 0) {
-            result.selectPage = loadOptions.skip / 200 + 1;
+          if (loadOptions.skip >= 0 && loadOptions.skip % this.pageSize == 0) {
+            result.selectPage = loadOptions.skip / this.pageSize + 1;
             return axios(
               `/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`,
               {
@@ -655,7 +681,7 @@ export default {
             });
           }
         },
-        pageSize: 200,
+        pageSize: this.pageSize,
       });
       this.searchtable_columns = this.searchDataList.columns;
       this.SET_SEARCHLISTDATA(this.searchtable_data);

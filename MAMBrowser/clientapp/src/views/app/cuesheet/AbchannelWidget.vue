@@ -39,7 +39,6 @@
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
-        <DxLoadPanel :enabled="true" />
         <DxEditing
           :allow-adding="true"
           :allow-updating="true"
@@ -66,7 +65,7 @@
         </template>
         <DxColumn :width="60" cell-template="trans_Template" />
         <template #trans_Template="{ data }">
-          <div v-if="data.data.subtitle != ''">
+          <div v-if="data.data.cartcode != ''">
             <DxButton
               hint="운행정보 변경"
               @click="iconClick(data)"
@@ -158,7 +157,7 @@
         />
         <template #text_edit_Template="{ data: cellInfo }">
           <div>
-            <div v-if="cellInfo.data.subtitle != ''">
+            <div v-if="cellInfo.data.cartcode != ''">
               <DxTextBox
                 :value="cellInfo.data.maintitle"
                 :maxLength="40"
@@ -184,7 +183,7 @@
 
         <template #text_Template="{ data }">
           <div>
-            <div v-if="data.data.subtitle != ''">
+            <div v-if="data.data.cartcode != ''">
               <div
                 style="text-overflow: ellipsis; overflow: hidden"
                 :class="{
@@ -220,7 +219,7 @@
           cell-template="totalTime_Template"
         />
         <template #totalTime_Template="{ data }">
-          <div v-if="data.data.subtitle != ''" style="color: #333333">
+          <div v-if="data.data.cartcode != ''" style="color: #333333">
             {{
               $moment(data.data.endposition - data.data.startposition)
                 | moment("subtract", "9 hours")
@@ -285,7 +284,7 @@
         <DxColumn :width="60" cell-template="play_Template" />
         <template #play_Template="{ data }">
           <div>
-            <div v-if="data.data.subtitle != '' && data.data.onairdate == ''">
+            <div v-if="data.data.cartcode != '' && data.data.onairdate == ''">
               <DxButton
                 icon="music"
                 type="default"
@@ -294,7 +293,7 @@
                 @click="onPreview(data.data)"
               />
             </div>
-            <div v-if="data.data.subtitle != '' && data.data.onairdate != ''">
+            <div v-if="data.data.cartcode != '' && data.data.onairdate != ''">
               <DxButton
                 icon="music"
                 type="success"
@@ -386,7 +385,6 @@ export default {
   data() {
     return {
       dataGridRef,
-      loadpanelVal: false,
       showGrpPlayer: false,
       lengthCheck: false,
       grpParam: {},
@@ -446,30 +444,34 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
+      this.dataGrid.beginCustomLoading("Loading...");
       this.lengthCheck = false;
-      this.loadpanelVal = true;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
         if (selectedRowsData.length > 1) {
-          selectedRowsData.forEach(async (data, index) => {
+          await selectedRowsData.forEach(async (data, index) => {
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
+              // search_row = await this.setApiData(
+              //   search_row,
+              //   this.searchListData.cartcode
+              // );
               if (this.searchListData.cartcode == "S01G01C014") {
-                await axios
+                search_row = axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
                   .then((res) => {
-                    search_row = res.data;
+                    return res.data;
                   });
               }
               if (this.searchListData.cartcode == "S01G01C015") {
-                await axios
+                search_row = axios
                   .post(`/api/SearchMenu/GetEffectItem`, search_row)
                   .then((res) => {
-                    search_row = res.data;
+                    return res.data;
                   });
               }
               row.filetoken = search_row.fileToken;
@@ -491,6 +493,8 @@ export default {
             var checkValue = this.maxLengthCheck();
             if (checkValue) {
               arrData.splice(e.toIndex + index, 0, row);
+              // this.SET_ABCARTARR(arrData);
+              // this.setRowNum();
               this.rowData.rownum = this.rowData.rownum + 1;
             }
           });
@@ -501,17 +505,17 @@ export default {
             row.memo = search_row.contents;
           } else {
             if (this.searchListData.cartcode == "S01G01C014") {
-              await axios
+              search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)
                 .then((res) => {
-                  search_row = res.data;
+                  return res.data;
                 });
             }
             if (this.searchListData.cartcode == "S01G01C015") {
-              await axios
+              search_row = await axios
                 .post(`/api/SearchMenu/GetEffectItem`, search_row)
                 .then((res) => {
-                  search_row = res.data;
+                  return res.data;
                 });
             }
             row.filetoken = search_row.fileToken;
@@ -530,9 +534,9 @@ export default {
               search_row: search_row,
             });
           }
-
           var checkValue = this.maxLengthCheck();
           if (checkValue) {
+            console.log(row);
             arrData.splice(e.toIndex, 0, row);
             this.rowData.rownum = this.rowData.rownum + 1;
           }
@@ -558,10 +562,24 @@ export default {
           permanent: false,
         });
       }
-      //e.fromComponent.clearSelection();
+      this.dataGrid.endCustomLoading();
+    },
+    async setApiData(data, code) {
+      if (code == "S01G01C014") {
+        await axios.post(`/api/SearchMenu/GetSongItem`, data).then((res) => {
+          data = res.data;
+        });
+      } else if (code == "S01G01C015") {
+        await axios.post(`/api/SearchMenu/GetEffectItem`, data).then((res) => {
+          data = res.data;
+        });
+      }
+      return data;
     },
     setRowNum() {
       this.abCartArr.forEach((ele, index) => {
+        console.log("셋팅");
+        console.log(ele);
         ele.rownum = index + 1;
       });
     },
