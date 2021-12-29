@@ -25,7 +25,7 @@
         icon="columnchooser"
         v-b-modal.modal-template
         hint="템플릿으로 저장"
-        v-if="!fav"
+        v-if="!fav && accrssCheck"
       />
       <DxDropDownButton
         :items="activefolderitem"
@@ -545,6 +545,7 @@ export default {
   data() {
     return {
       goBackPoint: "",
+      accrssCheck: true,
       loadingIconVal: false,
       tmpTitleTextBoxValue: "이름없는 템플릿",
       proid: "",
@@ -617,6 +618,16 @@ export default {
 
       default:
         break;
+    }
+    const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+    if (
+      gropId == "S01G04C004" ||
+      gropId == "S01G04C006" ||
+      gropId == "S01G04C001"
+    ) {
+      this.accrssCheck = true;
+    } else {
+      this.accrssCheck = false;
     }
     this.editOptions = { ...this.cueInfo };
   },

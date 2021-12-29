@@ -23,7 +23,7 @@ let searchMenuList = {
       menuList_items: [
         { id: "1", name: "음반 기록실" },
         //{ id: "2", name: "공유소재" },
-        { id: "2", name: "(구)프로소재" },
+        { id: "2", name: "프로소재" },
         {
           id: "3",
           name: "광고협찬",
@@ -34,7 +34,7 @@ let searchMenuList = {
             },
             {
               id: "3_2",
-              name: "부조SPOT",
+              name: "부조SPOT(구 협찬)",
             },
             {
               id: "3_3",
@@ -68,7 +68,7 @@ let searchMenuList = {
             },
             {
               id: "4_3",
-              name: "Filler(시간)",
+              name: "Filler(시간)(변동/고정소재)",
             },
             {
               id: "4_3",
@@ -121,7 +121,8 @@ let searchMenuList = {
                       { text: '국외', value: 2 },
                       { text: '클래식', value: 4 }
                     ],
-                  type: "C"
+                  type: "C",
+                  selectVal: []
                 },
                 {
                   id: "searchtype2",
@@ -240,7 +241,7 @@ let searchMenuList = {
             num: 2,
             id: "OLD_PRO",
             cartcode: "S01G01C013",
-            name: "(구)프로소재",
+            name: "프로소재",
             options: [
               // {
               //   id: "startDate",
@@ -351,7 +352,7 @@ let searchMenuList = {
             num: 4,
             id: "SCR_SPOT",
             cartcode: "S01G01C010",
-            name: "부조SPOT",
+            name: "부조SPOT(구 협찬)",
             options: [
               // {
               //   id: "startDate",
@@ -699,7 +700,7 @@ let searchMenuList = {
             num: 11,
             id: "FILLER_TIME",
             cartcode: "S01G01C023",
-            name: "Filler(시간)",
+            name: "Filler(시간)(변동/고정소재)",
             options: [
               // {
               //   id: "startDate",

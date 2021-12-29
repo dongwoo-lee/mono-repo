@@ -43,6 +43,17 @@
                     <span class="bv-no-focus-ring col-form-label"
                       >{{ index.text }} :
                     </span>
+                    <b-form-checkbox
+                      class="custom-checkbox-group pt-1 ml-1 mr-2"
+                      v-model="allSelected"
+                      :indeterminate="indeterminate"
+                      v-if="index.id == 'searchtype1'"
+                      aria-describedby="selectedSearchType1"
+                      aria-controls="selectedSearchType1"
+                      @change="toggleAll($event, index)"
+                    >
+                      All
+                    </b-form-checkbox>
                     <b-form-checkbox-group
                       class="custom-checkbox-group pt-1 ml-1"
                       :options="index.value"
@@ -154,8 +165,8 @@
           />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling showScrollbar="always" mode="infinite" />
-          <DxPaging :page-size="30" />
+          <DxScrolling mode="infinite" />
+          <DxPaging :page-size="200" />
         </DxDataGrid>
       </div>
       <div v-if="subtableVal">
@@ -220,7 +231,7 @@
       </MusicPlayerPopup>
     </div>
     <div class="contentsLength" v-if="width_size == 330">
-      전체 : {{ searchtable_data.columns.length }}개 [{{ viewTableName }}]
+      전체 : {{ searchItems.totalRowCount }}개 [{{ viewTableName }}]
     </div>
   </div>
 </template>
@@ -245,30 +256,6 @@ import axios from "axios";
 
 const dataGridRef = "dataGrid";
 
-const store = new CustomStore({
-  key: "rowNO",
-  load: (loadOptions) => {
-    let currentPage = loadOptions.skip <= 0 ? 1 : loadOptions.skip / 30 + 1;
-
-    return axios
-      .get(
-        `/api/products/old_pro?media=A&cate=&type=Y&editor=&name=&start_dt=20200601&end_dt=20211227&rowPerPage=30&selectPage=${currentPage}&sortKey=&sortValue=`
-      )
-      .then((rs) => {
-        console.info("rs", rs);
-        console.info("rs.data", rs.data);
-        console.info(
-          "rs.data.resultObject.totalRowCount",
-          rs.data.resultObject.totalRowCount
-        );
-        return {
-          data: rs.data.resultObject.data,
-          totalCount: rs.data.resultObject.totalRowCount,
-        };
-      });
-  },
-  pageSize: 15,
-});
 export default {
   mixins: [searchMenuList, MixinCommon],
   props: {
@@ -280,6 +267,8 @@ export default {
       waveformUrl_music: "/api/musicsystem/waveform",
       tempDownloadUrl_music: "/api/musicsystem/temp-download",
       gridHeight: 0,
+      allSelected: false,
+      indeterminate: false,
       searchDataList: {
         id: "",
         name: "",
@@ -292,8 +281,9 @@ export default {
       },
       searchtable_columns: [],
       searchItems: {
-        rowPerPage: 10000,
+        rowPerPage: 200,
         selectPage: 1,
+        totalRowCount: 0,
       },
       dataGridRef,
       viewTableName: "음반 기록실",
@@ -492,8 +482,10 @@ export default {
           if (typeof ele.selectVal[0] == "string") {
             result[ele.id] = ele.selectVal[0];
           } else {
-            var sum = ele.selectVal.reduce((a, b) => a + b);
-            result[ele.id] = sum;
+            if (ele.length > 0) {
+              var sum = ele.selectVal.reduce((a, b) => a + b);
+              result[ele.id] = sum;
+            }
           }
         }
       });
@@ -614,29 +606,51 @@ export default {
       });
     },
     async getData(Val) {
-      this.searchtable_data.columns = [];
-      this.subtable_data = [];
+      // this.searchtable_data.columns = [];
+      // if (this.searchtable_data.columns == []) {
+      //   console.log("ddd");
+      //   console.log(this.searchtable_data.columns);
+      // }
+      //this.searchtable_data.columns.clearRawDataCache();
+      // this.subtable_data = [];
       var basedata = this.searchItems;
       const result = Object.assign({}, basedata, Val);
-      await axios(`/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`, {
-        params: result,
-      }).then((res) => {
-        if (
-          this.searchDataList.id == "MCR_SB" ||
-          this.searchDataList.id == "SCR_SB" ||
-          this.searchDataList.id == "PGM_CM" ||
-          this.searchDataList.id == "CM"
-        ) {
-          res.data.result.data.forEach((ele, index) => {
-            ele.rowNO = index + 1;
-          });
-        }
-        this.searchtable_data.cartcode = this.searchDataList.cartcode;
-        this.searchtable_data.columns = res.data.result.data;
-        this.searchtable_columns = this.searchDataList.columns;
-        this.viewTableName = this.searchDataList.name;
-        this.SET_SEARCHLISTDATA(this.searchtable_data);
+      this.searchtable_data.cartcode = this.searchDataList.cartcode;
+      this.searchtable_data.columns = await new CustomStore({
+        key: "rowNO",
+        load: (loadOptions) => {
+          loadOptions.requireGroupCount = false;
+          if (loadOptions.skip >= 0 && loadOptions.skip % 200 == 0) {
+            result.selectPage = loadOptions.skip / 200 + 1;
+            return axios(
+              `/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`,
+              {
+                params: result,
+              }
+            ).then((res) => {
+              if (
+                this.searchDataList.id == "MCR_SB" ||
+                this.searchDataList.id == "SCR_SB" ||
+                this.searchDataList.id == "PGM_CM" ||
+                this.searchDataList.id == "CM"
+              ) {
+                res.data.result.data.forEach((ele, index) => {
+                  ele.rowNO = index + 1;
+                });
+              }
+              this.viewTableName = this.searchDataList.name;
+              this.searchItems.totalRowCount = res.data.result.totalRowCount;
+              return res.data.result.data;
+            });
+          }
+        },
+        pageSize: 200,
       });
+      this.searchtable_columns = this.searchDataList.columns;
+      this.SET_SEARCHLISTDATA(this.searchtable_data);
+    },
+    toggleAll(event, value) {
+      value.selectVal = event ? [1, 2, 4] : [];
     },
   },
 };

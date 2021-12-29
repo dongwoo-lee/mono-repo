@@ -589,7 +589,11 @@ export default {
     //여기 하는중
     groupFilter(row) {
       var result = true;
-      if (this.channelKey == "channel_my" && row.onairdate != "") {
+      if (
+        this.channelKey == "channel_my" &&
+        row.onairdate != "" &&
+        row.cartcode != null
+      ) {
         result = false;
         this.groupFilterVal = true;
       }
