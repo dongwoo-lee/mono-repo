@@ -340,6 +340,7 @@
               <DxTextBox
                 width="320px"
                 v-model="editOptions.djname"
+                :maxLength="20"
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
@@ -349,6 +350,7 @@
             <div class="dx-field-value">
               <DxTextBox
                 width="320px"
+                :maxLength="20"
                 v-model="editOptions.membername"
                 :disabled="cueInfo.cuetype == 'A'"
               />
@@ -359,6 +361,7 @@
             <div class="dx-field-value">
               <DxTextBox
                 width="320px"
+                :maxLength="20"
                 v-model="editOptions.directorname"
                 :disabled="cueInfo.cuetype == 'A'"
               />
@@ -369,6 +372,7 @@
             <div class="dx-field-value">
               <DxTextArea
                 :height="50"
+                :maxLength="45"
                 width="320px"
                 v-model="editOptions.headertitle"
                 :disabled="cueInfo.cuetype == 'A'"
@@ -380,6 +384,7 @@
             <div class="dx-field-value">
               <DxTextArea
                 :height="100"
+                :maxLength="90"
                 width="320px"
                 v-model="editOptions.footertitle"
                 :disabled="cueInfo.cuetype == 'A'"
@@ -390,7 +395,8 @@
             <div class="dx-field-label" style="font-size: 15px">메모 :</div>
             <div class="dx-field-value">
               <DxTextArea
-                :height="200"
+                :height="60"
+                :maxLength="25"
                 width="320px"
                 v-model="editOptions.memo"
                 :disabled="cueInfo.cuetype == 'A'"

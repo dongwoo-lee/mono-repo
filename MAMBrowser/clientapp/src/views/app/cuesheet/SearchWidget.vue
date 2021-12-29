@@ -165,7 +165,7 @@
           />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling mode="infinite" />
+          <DxScrolling mode="infinite" legacyMode="true" />
           <DxPaging :page-size="200" />
         </DxDataGrid>
       </div>
@@ -253,6 +253,15 @@ import CustomStore from "devextreme/data/custom_store";
 import { USER_ID } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
 import axios from "axios";
+import DataGrid from "devextreme/ui/data_grid";
+
+DataGrid.defaultOptions({
+  options: {
+    scrolling: {
+      legacyMode: true,
+    },
+  },
+});
 
 const dataGridRef = "dataGrid";
 
