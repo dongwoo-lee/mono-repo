@@ -31,8 +31,8 @@ namespace MAMBrowser.Controllers
         
         public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
-            //_fileService = fileService;
-            _fileService = new MusicSystemMockup();
+            _fileService = fileService;
+            //_fileService = new MusicSystemMockup();
             _apiDao = apiDao;
         }
         public class Pram
