@@ -306,7 +306,11 @@
                 hint="그룹 미리듣기"
                 @click="
                   showGrpPlayerPopup({
-                    grpType: 'cm',
+                    grpType:
+                      data.data.cartcode == 'S01G01C017' ||
+                      data.data.cartcode == 'S01G01C016'
+                        ? 'sb'
+                        : 'cm',
                     brd_Dt: data.data.onairdate,
                     grpId: data.data.cartid,
                     title: data.data.maintitle,

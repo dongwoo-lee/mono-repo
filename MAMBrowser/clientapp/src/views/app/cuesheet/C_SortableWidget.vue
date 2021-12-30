@@ -154,7 +154,11 @@
                   v-if="fileData[index - 1].onairdate != ''"
                   @click="
                     showGrpPlayerPopup({
-                      grpType: 'cm',
+                      grpType:
+                        fileData[index - 1] == 'S01G01C017' ||
+                        fileData[index - 1] == 'S01G01C016'
+                          ? 'sb'
+                          : 'cm',
                       brd_Dt: fileData[index - 1].onairdate,
                       grpId: fileData[index - 1].cartid,
                       title: fileData[index - 1].maintitle,
