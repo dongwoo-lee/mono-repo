@@ -83,11 +83,6 @@ namespace MAMBrowser.BLL
             var selectOptions = _dao.GetOptions(optionGrpCd);
             if (selectOptions == null || selectOptions.Count == 0)
                 _dao.InsertOptions(optionGrpCd, options);
-            else if (selectOptions.Count!= options.Count)
-            {
-                _dao.DeleteOptions(optionGrpCd);
-                _dao.InsertOptions(optionGrpCd, options);
-            }
             else
                 _dao.UpdateOptions(optionGrpCd, options);
         }
