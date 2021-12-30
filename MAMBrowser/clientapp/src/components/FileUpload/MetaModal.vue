@@ -348,9 +348,8 @@ export default {
       if (!v) {
         this.resetEvent();
       } else {
-        if (this.typeOptions.length == 1) {
-          this.typeOptionsByRole(this.getMenuGrpName);
-        }
+        this.resetTypeOptions();
+        this.typeOptionsByRole(this.getMenuGrpName);
       }
     },
   },
@@ -364,6 +363,7 @@ export default {
       "resetTitle",
       "resetMemo",
       "resetType",
+      "resetTypeOptions",
       "resetUploaderCustomData",
     ]),
     resetEvent() {
@@ -519,6 +519,10 @@ export default {
     },
     typeOptionsByRole(role) {
       if (role == "관리자") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "program", text: "프로그램" });
         this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
@@ -529,31 +533,55 @@ export default {
         this.typeOptions.push({ value: "report", text: "취재물" });
         this.typeOptions.push({ value: "filler", text: "필러" });
       } else if (role == "편성PD") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "program", text: "프로그램" });
         this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
-        this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
-        this.typeOptions.push({ value: "report", text: "취재물" });
         this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
-        this.typeOptions.push({ value: "filler", text: "필러" });
+        this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
         this.typeOptions.push({ value: "static-spot", text: "고정소재" });
         this.typeOptions.push({ value: "var-spot", text: "변동소재" });
+        this.typeOptions.push({ value: "report", text: "취재물" });
+        this.typeOptions.push({ value: "filler", text: "필러" });
       } else if (role == "제작PD") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "program", text: "프로그램" });
         this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
         this.typeOptions.push({ value: "filler", text: "필러" });
       } else if (role == "리포터") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
         this.typeOptions.push({ value: "report", text: "취재물" });
       } else if (role == "라디오뉴스") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "report", text: "취재물" });
       } else if (role == "제작 Staff") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
       } else if (role == "TD") {
+        this.typeOptions.push({
+          value: "null",
+          text: "소재유형을 선택해주세요",
+        });
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
         this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
       }

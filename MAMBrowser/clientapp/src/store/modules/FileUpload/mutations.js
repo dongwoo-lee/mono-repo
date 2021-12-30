@@ -139,6 +139,9 @@ export default {
   resetType(state) {
     state.MetaData.typeSelected = "null";
   },
+  resetTypeOptions(state) {
+    state.typeOptions = [];
+  },
   resetFileMediaOptions(state) {
     state.fileMediaOptions = [];
   },

@@ -10,7 +10,7 @@ export default {
     fileSelected: false,
     fileUploading: false,
     isActive: false,
-    typeOptions: [{ value: "null", text: "소재유형을 선택해주세요" }],
+    typeOptions: [],
     fileMediaOptions: [],
     timeToneOptions: [],
     reqStatusOptions: [],
