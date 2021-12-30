@@ -250,18 +250,24 @@ export default {
           value: this.MP3_DECODER,
         },
       ];
-      console.log(list);
       axios.post("/api/options/S01G06C001", list).then((res) => {
-        if (res.status == 200 && res.data.errorMsg == "") {
+        if (res.status == 200 && res.data.errorMsg == null) {
           this.$fn.notify("primary", { title: "마스터링 옵션 저장 성공" });
+        } else {
+          this.$fn.notify("error", { title: res.data.errorMsg });
         }
       });
     },
     cancel() {
       axios.get("/api/options/S01G06C001").then((res) => {
-        res.data.resultObject.data.forEach((e) => {
-          this[e.name] = e.value;
-        });
+        if (res.status == 200 && res.data.errorMsg == null) {
+          res.data.resultObject.data.forEach((e) => {
+            this[e.name] = e.value;
+          });
+          this.$fn.notify("primary", { title: "마스터링 옵션 변경 취소" });
+        } else {
+          this.$fn.notify("error", { title: res.data.errorMsg });
+        }
       });
     },
   },
