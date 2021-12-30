@@ -396,8 +396,6 @@ export default {
             editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "pro") {
-          var name = this.MetaData.title;
-          this.setTitle(`[${this.MetaData.mediaName}] [${name}]`);
           var data = {
             editor: sessionStorage.getItem("user_id"),
             category: this.MetaData.mediaSelected,
@@ -417,8 +415,6 @@ export default {
             editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "scr-spot") {
-          var name = this.MetaData.title;
-          this.setTitle(`[${this.MetaData.mediaName}] [${name}]`);
           var data = {
             title: this.MetaData.title,
             memo: this.MetaData.memo,
@@ -459,10 +455,6 @@ export default {
             reporter: this.MetaData.reporter,
           };
         } else if (this.MetaData.typeSelected == "filler") {
-          var name = this.MetaData.title;
-          this.setTitle(
-            `[${this.date}] [${this.MetaData.mediaName}] [${name}]`
-          );
           var data = {
             category: this.MetaData.mediaSelected,
             title: this.MetaData.title,
@@ -473,7 +465,7 @@ export default {
         }
         this.resetUploaderCustomData();
         this.setUploaderCustomData(data);
-
+        console.log(data);
         if (!this.durationState) {
           this.$bvModal.show("durationOver");
           return;
@@ -498,6 +490,9 @@ export default {
               return;
             }
           });
+        } else {
+          this.setFileUploading(true);
+          this.$emit("upload");
         }
       } else if (!this.metaValid) {
         this.$fn.notify("error", { title: "메타 데이터 확인" });

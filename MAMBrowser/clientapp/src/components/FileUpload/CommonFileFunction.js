@@ -275,7 +275,6 @@ export default {
         );
       } else if (this.MetaData.typeSelected == "report") {
         this.setEventSelected(v.data);
-        this.setTitle(`[${this.date}] [${this.EventSelected.name}]`);
       }
     },
     getPro() {

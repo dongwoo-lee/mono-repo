@@ -17,7 +17,7 @@
       :value="rowData.reporter"
       @input="changeReporter"
       aria-describedby="input-live-help input-live-feedback"
-      placeholder="소재명"
+      placeholder="취재인"
       trim
     />
 
@@ -39,7 +39,7 @@
       :value="this.brdDT"
       disabled
       aria-describedby="input-live-help input-live-feedback"
-      placeholder="소재명"
+      placeholder="방송일"
       trim
     />
     <br />
@@ -50,7 +50,7 @@
       :value="this.pgmName"
       disabled
       aria-describedby="input-live-help input-live-feedback"
-      placeholder="소재명"
+      placeholder="사용처"
       trim
     />
 
