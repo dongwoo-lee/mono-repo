@@ -133,7 +133,7 @@
         </b-form-group>
       </div>
       <div style="margin-left: 705px; margin-top: 30px; margin-bottom: -20px">
-        <b-button variant="outline-success" @click="save">저장</b-button>
+        <b-button variant="outline-primary" @click="save">저장</b-button>
         <b-button variant="outline-danger" @click="cancel">취소</b-button>
       </div>
     </div>
@@ -141,8 +141,10 @@
 </template>
 
 <script>
+import MixinCommon from "../../../../mixin/MixinCommon";
 import axios from "axios";
 export default {
+  mixin: [MixinCommon],
   data() {
     return {
       BIT_DEPTH: "",
@@ -248,9 +250,11 @@ export default {
           value: this.MP3_DECODER,
         },
       ];
-
+      console.log(list);
       axios.post("/api/options/S01G06C001", list).then((res) => {
-        // TODO :  response action
+        if (res.status == 200 && res.data.errorMsg == "") {
+          this.$fn.notify("primary", { title: "마스터링 옵션 저장 성공" });
+        }
       });
     },
     cancel() {
