@@ -154,7 +154,11 @@
                   v-if="fileData[index - 1].onairdate != ''"
                   @click="
                     showGrpPlayerPopup({
-                      grpType: 'cm',
+                      grpType:
+                        fileData[index - 1] == 'S01G01C017' ||
+                        fileData[index - 1] == 'S01G01C016'
+                          ? 'sb'
+                          : 'cm',
                       brd_Dt: fileData[index - 1].onairdate,
                       grpId: fileData[index - 1].cartid,
                       title: fileData[index - 1].maintitle,
@@ -491,14 +495,14 @@ export default {
             } else {
               row.rownum = totalIndex + index;
               if (this.searchListData.cartcode == "S01G01C014") {
-                await axios
+                search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
                   .then((res) => {
                     return res.data;
                   });
               }
               if (this.searchListData.cartcode == "S01G01C015") {
-                await axios
+                search_row = await axios
                   .post(`/api/SearchMenu/GetEffectItem`, search_row)
                   .then((res) => {
                     return res.data;
@@ -546,14 +550,14 @@ export default {
           } else {
             row.rownum = this.fileData[totalIndex - 1].rownum;
             if (this.searchListData.cartcode == "S01G01C014") {
-              await axios
+              search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)
                 .then((res) => {
                   search_row = res.data;
                 });
             }
             if (this.searchListData.cartcode == "S01G01C015") {
-              await axios
+              search_row = await axios
                 .post(`/api/SearchMenu/GetEffectItem`, search_row)
                 .then((res) => {
                   search_row = res.data;

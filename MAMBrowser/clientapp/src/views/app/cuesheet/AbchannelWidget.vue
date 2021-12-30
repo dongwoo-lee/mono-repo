@@ -306,7 +306,11 @@
                 hint="그룹 미리듣기"
                 @click="
                   showGrpPlayerPopup({
-                    grpType: 'cm',
+                    grpType:
+                      data.data.cartcode == 'S01G01C017' ||
+                      data.data.cartcode == 'S01G01C016'
+                        ? 'sb'
+                        : 'cm',
                     brd_Dt: data.data.onairdate,
                     grpId: data.data.cartid,
                     title: data.data.maintitle,
@@ -467,14 +471,14 @@ export default {
               row.memo = search_row.contents;
             } else {
               if (this.searchListData.cartcode == "S01G01C014") {
-                await axios
+                search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
                   .then((res) => {
                     return res.data;
                   });
               }
               if (this.searchListData.cartcode == "S01G01C015") {
-                await axios
+                search_row = await axios
                   .post(`/api/SearchMenu/GetEffectItem`, search_row)
                   .then((res) => {
                     return res.data;
