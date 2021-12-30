@@ -471,14 +471,14 @@ export default {
               row.memo = search_row.contents;
             } else {
               if (this.searchListData.cartcode == "S01G01C014") {
-                await axios
+                search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
                   .then((res) => {
                     return res.data;
                   });
               }
               if (this.searchListData.cartcode == "S01G01C015") {
-                await axios
+                search_row = await axios
                   .post(`/api/SearchMenu/GetEffectItem`, search_row)
                   .then((res) => {
                     return res.data;
