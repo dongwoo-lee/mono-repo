@@ -11,12 +11,6 @@
       >
         {{ abCartArr.length }} / 500
       </div>
-      <DxLoadPanel
-        :show-indicator="true"
-        :show-pane="true"
-        :shading="true"
-        :close-on-outside-click="false"
-      />
       <DxDataGrid
         id="channelAB"
         :focused-row-enabled="false"
@@ -376,7 +370,6 @@ import {
   DxPaging,
   DxSelection,
   DxRowDragging,
-  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
@@ -424,6 +417,7 @@ export default {
     if (this.abCartArr.length > 0) {
       this.rowData.rownum = this.abCartArr.length + 1;
     }
+    console.log(this.abCartArr);
   },
   created() {
     eventBus.$on("abDataSet", (val) => {
@@ -440,7 +434,6 @@ export default {
     DxSelection,
     DxButton,
     DxTextBox,
-    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -456,7 +449,6 @@ export default {
     async onAddChannelAB(e) {
       console.log(e.itemData);
       this.dataGrid.beginCustomLoading("Loading...");
-
       this.dataGrid.beginUpdate();
       this.lengthCheck = false;
       var arrData = this.abCartArr;

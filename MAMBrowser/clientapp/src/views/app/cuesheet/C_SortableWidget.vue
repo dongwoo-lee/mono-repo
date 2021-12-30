@@ -155,8 +155,8 @@
                   @click="
                     showGrpPlayerPopup({
                       grpType:
-                        fileData[index - 1] == 'S01G01C017' ||
-                        fileData[index - 1] == 'S01G01C016'
+                        fileData[index - 1].cartcode == 'S01G01C017' ||
+                        fileData[index - 1].cartcode == 'S01G01C016'
                           ? 'sb'
                           : 'cm',
                       brd_Dt: fileData[index - 1].onairdate,
@@ -553,14 +553,14 @@ export default {
               search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)
                 .then((res) => {
-                  search_row = res.data;
+                  return res.data;
                 });
             }
             if (this.searchListData.cartcode == "S01G01C015") {
               search_row = await axios
                 .post(`/api/SearchMenu/GetEffectItem`, search_row)
                 .then((res) => {
-                  search_row = res.data;
+                  return res.data;
                 });
             }
             row.filetoken = search_row.fileToken;
