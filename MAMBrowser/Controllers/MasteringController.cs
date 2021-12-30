@@ -2,6 +2,7 @@
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.DBParams;
+using M30.AudioFile.DAL.Dto;
 using M30.AudioFile.DAL.Repositories;
 using MAMBrowser.BLL;
 using MAMBrowser.DTO;
@@ -1150,7 +1151,7 @@ namespace MAMBrowser.Controllers
             return $"{date}_{meta.FileGuid}_{Path.GetFileNameWithoutExtension(meta.FileName)}.tmp";
         }
        
-        Dictionary<string,string> GetStorageUserInfo(IList<DTO_NAMEVALUE> option)
+        Dictionary<string,string> GetStorageUserInfo(IList<Dto_MasteringOptions> option)
         {
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
             dictionary.Add("id", option.ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString());

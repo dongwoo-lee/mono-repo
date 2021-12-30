@@ -3,6 +3,8 @@ using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL;
 using M30.AudioFile.DAL.Dao;
+using M30.AudioFile.DAL.Dto;
+using MAMBrowser.MAMDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +80,7 @@ namespace MAMBrowser.BLL
             return _dao.UpdateRole(updateDtoList);
         }
 
-        public void SetOptions(string optionGrpCd, List<DTO_NAMEVALUE> options)
+        public void SetOptions(string optionGrpCd, List<Dto_MasteringOptions> options)
         {
             var selectOptions = _dao.GetOptions(optionGrpCd);
             if (selectOptions == null || selectOptions.Count == 0)
@@ -86,7 +88,7 @@ namespace MAMBrowser.BLL
             else
                 _dao.UpdateOptions(optionGrpCd, options);
         }
-        public IList<DTO_NAMEVALUE> GetOptions(string optionGrpCd)
+        public IList<Dto_MasteringOptions> GetOptions(string optionGrpCd)
         {
             return _dao.GetOptions(optionGrpCd);
         }

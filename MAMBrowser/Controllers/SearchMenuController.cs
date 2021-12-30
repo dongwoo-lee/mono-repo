@@ -8,6 +8,7 @@ using M30.AudioFile.Common.Expand.Menus;
 using M30.AudioFile.Common.Expand.Result;
 using M30.AudioFile.Common.Expand.SearchOptions;
 using M30.AudioFile.DAL.Dao;
+using M30.AudioFile.DAL.Dto;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.DTO;
@@ -540,7 +541,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        private List<DTO_NAMEVALUE> GetMasteringOptions(string connectionString)
+        private List<Dto_MasteringOptions> GetMasteringOptions(string connectionString)
         {
             var masteringOptions = _apiDao.GetOptions("S01G06C001");
             var options = masteringOptions.ToList();

@@ -14,6 +14,8 @@ using System.Net;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using Microsoft.AspNetCore.Http;
+using MAMBrowser.MAMDto;
+using M30.AudioFile.DAL.Dto;
 
 namespace MAMBrowser.Controllers
 {
@@ -509,15 +511,15 @@ namespace MAMBrowser.Controllers
         ///// <param name="optionGrpCd">옵션그룹코드</param>
         ///// <returns></returns>
         [HttpGet("options/{optionGrpCd}")]
-        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>> GetOptions(string optionGrpCd)
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<Dto_MasteringOptions>>> GetOptions(string optionGrpCd)
         {
             if (string.IsNullOrEmpty(optionGrpCd))
                 return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
             string systemCode = optionGrpCd.ToUpper();
-            DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_NAMEVALUE>>();
+            DTO_RESULT<DTO_RESULT_LIST<Dto_MasteringOptions>> result = new DTO_RESULT<DTO_RESULT_LIST<Dto_MasteringOptions>>();
             try
             {
-                result.ResultObject = new DTO_RESULT_LIST<DTO_NAMEVALUE>();
+                result.ResultObject = new DTO_RESULT_LIST<Dto_MasteringOptions>();
                 result.ResultObject.Data = _bll.GetOptions(optionGrpCd);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -535,7 +537,7 @@ namespace MAMBrowser.Controllers
         ///// <param name="options">옵션 데이터 목록</param>
         ///// <returns></returns>
         [HttpPost("options/{optionGrpCd}")]
-        public ActionResult<DTO_RESULT> SetOptions(string optionGrpCd, [FromBody] List<DTO_NAMEVALUE> options)
+        public ActionResult<DTO_RESULT> SetOptions(string optionGrpCd, [FromBody] List<Dto_MasteringOptions> options)
         {
             if (string.IsNullOrEmpty(optionGrpCd))
                 return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
