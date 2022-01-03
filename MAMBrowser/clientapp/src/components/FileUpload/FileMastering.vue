@@ -383,7 +383,7 @@ export default {
   data() {
     return {
       chunkSize: 300000,
-      accept: "audio/mp3,audio/wav",
+      accept: "audio/mpeg,audio/wav",
       tabIndex: 0,
       dxfu,
       MetaModal: false,
