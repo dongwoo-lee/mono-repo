@@ -28,6 +28,12 @@
         :show-column-headers="false"
         noDataText="데이터가 없습니다."
       >
+        <DxLoadPanel
+          :show-indicator="true"
+          :show-pane="true"
+          :shading="true"
+          :close-on-outside-click="false"
+        />
         <DxRowDragging
           dropFeedbackMode="indicate"
           :allow-reordering="true"
@@ -370,6 +376,7 @@ import {
   DxPaging,
   DxSelection,
   DxRowDragging,
+  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
@@ -434,6 +441,7 @@ export default {
     DxSelection,
     DxButton,
     DxTextBox,
+    DxLoadPanel,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
