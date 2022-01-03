@@ -33,10 +33,10 @@ export default {};
 #report-modal-mask {
   position: fixed;
   z-index: 9600;
-  top: -60px;
-  left: -80px;
-  width: 2000px;
-  height: 120%;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: table;
 }
@@ -47,11 +47,11 @@ export default {};
 }
 
 .report-modal-container {
-  position: fixed;
-  right: 730px;
+  position: relative;
+  top: -170px;
+  margin: auto;
   width: 400px;
   height: 300px;
-  margin-top: -400px;
   background-color: white;
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */

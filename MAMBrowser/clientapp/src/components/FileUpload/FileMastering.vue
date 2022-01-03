@@ -5,10 +5,10 @@
       style="
         position: fixed;
         z-index: 9800;
-        top: -80px;
-        left: -80px;
-        width: 2000px;
-        height: 120%;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
         background-color: rgba(0, 0, 0, 0.4);
         display: table;
       "
@@ -34,10 +34,10 @@
       style="
         position: fixed;
         z-index: 9800;
-        top: -80px;
-        left: -80px;
-        width: 2000px;
-        height: 120%;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         display: table;
       "

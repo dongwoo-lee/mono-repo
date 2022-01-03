@@ -33,10 +33,10 @@ export default {};
 #delete-modal-mask {
   position: fixed;
   z-index: 9600;
-  top: -80px;
-  left: -80px;
-  width: 2000px;
-  height: 120%;
+  top: -4%;
+  left: 0%;
+  width: 100%;
+  height: 110%;
   background-color: rgba(0, 0, 0, 0.5);
   display: table;
 }
@@ -47,10 +47,9 @@ export default {};
 }
 
 .delete-modal-container {
-  position: fixed;
-  right: 730px;
+  position: relative;
+  margin: auto;
   width: 400px;
-  height: 260px;
   margin-top: -400px;
   background-color: white;
   border-radius: 2px;
