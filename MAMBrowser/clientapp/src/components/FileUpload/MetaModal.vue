@@ -320,6 +320,7 @@ export default {
       processing: (state) => state.processing,
       fileUploading: (state) => state.fileUploading,
       typeOptions: (state) => state.typeOptions,
+      uploaderCustomData: (state) => state.uploaderCustomData,
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
@@ -463,9 +464,8 @@ export default {
             brdDT: this.date,
           };
         }
-        this.resetUploaderCustomData();
-        this.setUploaderCustomData(data);
-        console.log(data);
+        await this.resetUploaderCustomData();
+        await this.setUploaderCustomData(data);
         if (!this.durationState) {
           this.$bvModal.show("durationOver");
           return;
