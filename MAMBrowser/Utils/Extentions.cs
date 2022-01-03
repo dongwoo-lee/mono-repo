@@ -845,16 +845,16 @@ namespace MAMBrowser.Utils
                             cueItem.ONAIRDATE = item.ONAIRDATE;
                             cueItem.STARTPOSITION = 0;
                             var duration = 0;
-                            var keylist = item.Clips.GroupBy((d) => d.ID).Select((dt) => dt.Key).ToList();
-                            foreach (var key in keylist)
-                            {
-                                var data = item.Clips.Find(dt => dt.ID == key);
-                                duration += data.LENGTH;
-                            }
-                            //foreach (var clip in item.Clips)
+                            //var keylist = item.Clips.GroupBy((d) => d.ID).Select((dt) => dt.Key).ToList();
+                            //foreach (var key in keylist)
                             //{
-                            //    duration = duration + clip.LENGTH;
+                            //    var data = item.Clips.Find(dt => dt.ID == key);
+                            //    duration += data.LENGTH;
                             //}
+                            foreach (var clip in item.Clips)
+                            {
+                                duration = duration + clip.LENGTH;
+                            }
                             cueItem.ENDPOSITION = duration;
                             cueItem.FADEINTIME = 0;
                             cueItem.FADEOUTTIME = 0;
@@ -929,7 +929,7 @@ namespace MAMBrowser.Utils
             }
         }
 
-        //즐겨찾기 광고 pgmcode 가져오기
+        //즐겨찾기 광고 pgmcode 가져오기 (삭제)
         public static List<UserFavConEntity> SetSponsorToEntity(this SponsorCollectionEntity spons, List<UserFavConEntity> entity)
         {
             if (spons.CM?.Any() == true)
@@ -989,16 +989,16 @@ namespace MAMBrowser.Utils
                 itemResult.EDITTARGET = true;
                 itemResult.CARTTYPE = "CM";
                 var duration = 0;
-                var keylist = item.Clips.GroupBy((d) => d.ID).Select((dt) => dt.Key).ToList();
-                foreach(var key in keylist)
-                {
-                    var data = item.Clips.Find(dt => dt.ID == key);
-                    duration += data.LENGTH;
-                }
-                //foreach (var clip in item.Clips)
+                //var keylist = item.Clips.GroupBy((d) => d.ID).Select((dt) => dt.Key).ToList();
+                //foreach(var key in keylist)
                 //{
-                //    duration = duration + clip.LENGTH;
+                //    var data = item.Clips.Find(dt => dt.ID == key);
+                //    duration += data.LENGTH;
                 //}
+                foreach (var clip in item.Clips)
+                {
+                    duration = duration + clip.LENGTH;
+                }
                 itemResult.DURATION = duration;
                 itemResult.ENDPOSITION = duration;
                 result.Add(itemResult);
@@ -1194,6 +1194,9 @@ namespace MAMBrowser.Utils
                 collectionDTO.PrintDTO.Add(printItem);
             }
 
+            //정렬
+            collectionDTO.PrintDTO = collectionDTO.PrintDTO.OrderBy(print => print.ROWNUM).ToList();
+            collectionDTO.NormalCon = collectionDTO.NormalCon.OrderBy(nomal => nomal.ROWNUM).ToList();
             return collectionDTO;
         }
     }

@@ -57,7 +57,7 @@
               </div>
             </div>
             <b-table
-              style="height:580px"
+              style="height: 580px"
               class="custom-table"
               ref="custom-table"
               thead-class="custom-table-color"
@@ -89,7 +89,7 @@
                 <b-button
                   v-if="
                     data.item.id == selectedItem.id &&
-                      data.item.length !== '00:00'
+                    data.item.length !== '00:00'
                   "
                   :id="`download-${data.index}`"
                   class="icon-buton"
@@ -99,18 +99,12 @@
                       grpType: 'cm',
                       brd_Dt: searchItems.brd_dt,
                       grpId: data.item.id,
-                      downloadName: `${data.item.name}_${data.item.brdDT}_${data.item.mediaName}_${data.item.id}`
+                      downloadName: `${data.item.name}_${data.item.brdDT}_${data.item.mediaName}_${data.item.id}`,
                     })
                   "
                 >
                   <b-icon icon="download" class="icon"></b-icon>
                 </b-button>
-                <b-button variant="outline-primary default" @click="showGrpPlayerPopup({
-                    grpType : 'cm',
-                    brd_Dt : searchItems.brd_dt,
-                    grpId : data.item.id,
-                    title : data.item.name
-                  })">그룹미리듣기 팝업</b-button>
               </template>
               <!-- ID Tooltip -->
               <template v-slot:cell(name)="data">
@@ -158,7 +152,7 @@
                   class="icon-buton"
                   v-b-tooltip.hover.top="{
                     title: IS_ADMIN ? data.item.filePath : '미리듣기',
-                    customClass: rowCustomClass(data)
+                    customClass: rowCustomClass(data),
                   }"
                   @click.stop="onPreview(data.item)"
                 >
@@ -170,25 +164,16 @@
         </b-row>
       </template>
     </common-form>
-
-     <CMGroupPlayerPopup 
-    :showPlayerPopup="showGrpPlayer"
-    :title="grpParam.title"
-    :grpType="grpParam.grpType"
-    :brd_Dt="grpParam.brd_Dt"
-    :grpId="grpParam.grpId"
-    @closePlayer="closeGrpPlayerPopup">
-    </CMGroupPlayerPopup>
-
-    <PlayerPopup 
-    :showPlayerPopup="showPlayerPopup"
-    :title="soundItem.name"
-    :fileKey="soundItem.fileToken"
-    :streamingUrl="streamingUrl"
-    :waveformUrl="waveformUrl"
-    :tempDownloadUrl="tempDownloadUrl"
-    requestType="token"
-    @closePlayer="onClosePlayer">
+    <PlayerPopup
+      :showPlayerPopup="showPlayerPopup"
+      :title="soundItem.name"
+      :fileKey="soundItem.fileToken"
+      :streamingUrl="streamingUrl"
+      :waveformUrl="waveformUrl"
+      :tempDownloadUrl="tempDownloadUrl"
+      requestType="token"
+      @closePlayer="onClosePlayer"
+    >
     </PlayerPopup>
   </div>
 </template>
@@ -208,13 +193,13 @@ export default {
         brd_dt: "",
         cate: "P",
         pgm: "",
-        pgmName: ""
+        pgmName: "",
       },
       localType: null,
       localTypeOptions: [
         { value: null, text: "선택해주세요." },
         { value: "mcr", text: "주조SB" },
-        { value: "scr", text: "부조SB" }
+        { value: "scr", text: "부조SB" },
       ],
       fields: [
         { key: "index", label: "순서", tdClass: "list-item-heading" },
@@ -222,41 +207,45 @@ export default {
           key: "name",
           label: "CM명",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         {
           key: "length",
           label: "길이(초)",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         {
           key: "capacity",
           label: "용량(초)",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         { key: "status", label: "상태", sortable: true, tdClass: "text-muted" },
         {
           key: "editorName",
           label: "담당자",
           sortable: true,
-          tdClass: "text-muted"
+          tdClass: "text-muted",
         },
-        { key: "actions", label: "추가작업", tdClass: "text-muted" }
+        { key: "actions", label: "추가작업", tdClass: "text-muted" },
       ],
       fieldsContents: [
-        { key: 'rowNO', label: '순서', tdClass: 'list-item-heading' },
-        { key: 'advertiser', label: '광고주', tdClass: 'text-muted', thStyle: { width: '20%' } },
-        { key: 'name', label: '소재명', tdClass: 'text-muted' },
-        { key: 'length', label: '길이(초)', tdClass: 'text-muted' },
-        { key: 'codingUserName', label: '제작자', tdClass: 'text-muted' },
-        { key: 'codingDT', label: '제작일', tdClass: 'text-muted' },
-        { key: 'actions', label: '추가작업', tdClass: 'text-muted'},
+        { key: "rowNO", label: "순서", tdClass: "list-item-heading" },
+        {
+          key: "advertiser",
+          label: "광고주",
+          tdClass: "text-muted",
+          thStyle: { width: "20%" },
+        },
+        { key: "name", label: "소재명", tdClass: "text-muted" },
+        { key: "length", label: "길이(초)", tdClass: "text-muted" },
+        { key: "codingUserName", label: "제작자", tdClass: "text-muted" },
+        { key: "codingDT", label: "제작일", tdClass: "text-muted" },
+        { key: "actions", label: "추가작업", tdClass: "text-muted" },
       ],
-      showGrpPlayer : false,
-      grpParam : {},
-    }
+      grpParam: {}, //쓰는지 안쓰는지 모르겠음
+    };
   },
   methods: {
     rowCustomClass(data) {
@@ -281,15 +270,8 @@ export default {
       if (this.selectName) {
         return `${this.selectName} 상세 내역`;
       }
-      return '상세 내역';
+      return "상세 내역";
     },
-    showGrpPlayerPopup(data){
-      this.grpParam = data;
-      this.showGrpPlayer = true;
-    },
-    closeGrpPlayerPopup(){
-      this.showGrpPlayer = false;
-    }
-  }
+  },
 };
 </script>

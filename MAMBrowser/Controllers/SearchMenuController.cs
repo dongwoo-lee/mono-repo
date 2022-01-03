@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace MAMBrowser.Controllers
 {
@@ -472,7 +473,14 @@ namespace MAMBrowser.Controllers
         {
             return MAMWebFactory.Instance.GetSubMenu(PageType.SCR_SB, new MenuParamDTO() { Media = media, BrdDate= brd_dt});
         }
-
+        //음반기록실, 효과음 Drag > Loading Test
+        [HttpPost("test")]
+        public bool GetTest()
+        {
+            int mydelay = 3000;
+            Thread.Sleep(mydelay);
+            return true;
+        }
         //음반 기록실 rowData 가져오기
         [HttpPost("GetSongItem")]
         public ActionResult<DTO_SONG_CACHE>GetSongMastering([FromBody] DTO_SONG pram)

@@ -84,7 +84,8 @@ namespace MAMBrowser.BLL
                 .SetPrintParams(paramData.PrintParams)
                 .Build();
 
-            return _dao.CreateDayCueSheet(param);
+            var result = _dao.CreateDayCueSheet(param);
+            return result;
         }
         //구 DAP 삭제
         public int DelOldCue(CueSheetCollectionDTO pram)

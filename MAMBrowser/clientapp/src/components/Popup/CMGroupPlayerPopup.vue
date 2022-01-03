@@ -1,6 +1,6 @@
 <template>
   <!-- 미리듣기 팝업 -->
-  <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
+  <b-modal id="modal-player" size="xl" v-model="show" no-close-on-backdrop>
     <template slot="modal-title">
       <h5>{{ title }}</h5>
     </template>
@@ -28,11 +28,9 @@
 </template>
 <script>
 export default {
-  props: ["showPlayerPopup", "title","grpId", "grpType","brd_Dt"],
+  props: ["showPlayerPopup", "title", "grpId", "grpType", "brd_Dt"],
   data() {
-    return {
-      
-    };
+    return {};
   },
   computed: {
     show: {

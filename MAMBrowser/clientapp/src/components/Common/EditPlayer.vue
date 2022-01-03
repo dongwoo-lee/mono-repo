@@ -580,4 +580,8 @@ export default {
   /* background-color: #d7d7d7; */
   text-align: center;
 }
+.wavesurfer-region {
+  background-color: red !important ;
+  opacity: 0.2 !important;
+}
 </style>

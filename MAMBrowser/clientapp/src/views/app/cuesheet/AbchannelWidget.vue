@@ -32,6 +32,7 @@
           :show-indicator="true"
           :show-pane="true"
           :shading="true"
+          :enabled="true"
           :close-on-outside-click="false"
         />
         <DxRowDragging
@@ -424,7 +425,6 @@ export default {
     if (this.abCartArr.length > 0) {
       this.rowData.rownum = this.abCartArr.length + 1;
     }
-    console.log(this.abCartArr);
   },
   created() {
     eventBus.$on("abDataSet", (val) => {
@@ -470,6 +470,14 @@ export default {
             if (Object.keys(search_row).includes("contents")) {
               row.memo = search_row.contents;
             } else {
+              //테스트 중
+              if (this.searchListData.cartcode == "S01G01C021") {
+                search_row = await axios
+                  .post(`/api/SearchMenu/test`)
+                  .then((res) => {
+                    return { filetoken: "ddd", filepath: "dddd" };
+                  });
+              }
               if (this.searchListData.cartcode == "S01G01C014") {
                 search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -515,6 +523,14 @@ export default {
           if (Object.keys(search_row).includes("contents")) {
             row.memo = search_row.contents;
           } else {
+            //테스트 중
+            if (this.searchListData.cartcode == "S01G01C021") {
+              search_row = await axios
+                .post(`/api/SearchMenu/test`)
+                .then((res) => {
+                  return { filetoken: "ddd", filepath: "dddd" };
+                });
+            }
             if (this.searchListData.cartcode == "S01G01C014") {
               search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -573,7 +589,7 @@ export default {
         });
       }
       this.dataGrid.endUpdate();
-      this.dataGrid.endCustomLoading("Loading...");
+      this.dataGrid.endCustomLoading();
     },
     async setApiData(data, code) {
       if (code == "S01G01C014") {
