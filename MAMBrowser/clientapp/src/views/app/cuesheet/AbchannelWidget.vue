@@ -179,7 +179,7 @@
             <div v-else>
               <DxTextBox
                 :value="cellInfo.data.memo"
-                :maxLength="25"
+                :maxLength="40"
                 :on-value-changed="
                   (value) => onValueChanged_memoText(value, cellInfo)
                 "
@@ -471,13 +471,13 @@ export default {
               row.memo = search_row.contents;
             } else {
               //테스트 중
-              if (this.searchListData.cartcode == "S01G01C021") {
-                search_row = await axios
-                  .post(`/api/SearchMenu/test`)
-                  .then((res) => {
-                    return { filetoken: "ddd", filepath: "dddd" };
-                  });
-              }
+              // if (this.searchListData.cartcode == "S01G01C021") {
+              //   search_row = await axios
+              //     .post(`/api/SearchMenu/test`)
+              //     .then((res) => {
+              //       return { filetoken: "ddd", filepath: "dddd" };
+              //     });
+              // }
               if (this.searchListData.cartcode == "S01G01C014") {
                 search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -524,13 +524,13 @@ export default {
             row.memo = search_row.contents;
           } else {
             //테스트 중
-            if (this.searchListData.cartcode == "S01G01C021") {
-              search_row = await axios
-                .post(`/api/SearchMenu/test`)
-                .then((res) => {
-                  return { filetoken: "ddd", filepath: "dddd" };
-                });
-            }
+            // if (this.searchListData.cartcode == "S01G01C021") {
+            //   search_row = await axios
+            //     .post(`/api/SearchMenu/test`)
+            //     .then((res) => {
+            //       return { filetoken: "ddd", filepath: "dddd" };
+            //     });
+            // }
             if (this.searchListData.cartcode == "S01G01C014") {
               search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)

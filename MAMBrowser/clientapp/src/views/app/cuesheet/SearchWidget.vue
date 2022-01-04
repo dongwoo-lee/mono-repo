@@ -66,7 +66,7 @@
               </div>
               <div v-if="index.type == 'D'">
                 <b-form-group :label="index.text" class="has-float-label">
-                  <common-date-picker v-model="index.selectVal" />
+                  <common-date-picker v-model="index.selectVal" required />
                 </b-form-group>
               </div>
               <div v-if="index.type == 'SED'">

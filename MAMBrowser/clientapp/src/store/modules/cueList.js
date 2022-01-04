@@ -3,6 +3,7 @@ const qs = require("qs");
 import "moment/locale/ko";
 const moment = require("moment");
 const date = new Date();
+const _ = require('lodash');
 
 function get_date_str(date) {
     var sYear = date.getFullYear();
@@ -1046,7 +1047,7 @@ export default {
         },
         //con 모두 지우기
         setclearCon({ state, commit }) {
-            const printTemplate = [...state.printTem]
+            const printTemplate = _.cloneDeep(state.printTem);
             var insData = {}
             var cueDataObj = { ...state.cueInfo }
             if (Object.keys(cueDataObj).length === 0) {

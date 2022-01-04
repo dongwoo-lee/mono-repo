@@ -94,7 +94,7 @@
           <div>
             <DxTextBox
               :value="cellInfo.data.contents"
-              :maxLength="25"
+              :maxLength="40"
               :on-value-changed="
                 (value) => onValueChanged_contentsText(value, cellInfo)
               "
