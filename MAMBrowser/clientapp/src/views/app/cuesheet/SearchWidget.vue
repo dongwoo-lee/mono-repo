@@ -20,68 +20,80 @@
           <h4 class="m-3">{{ searchDataList.name }}</h4>
           <div v-bind:class="selectSizeClass_option">
             <div v-for="index in searchDataList.options" :key="index.num">
-              <div v-if="index.type == 'S'">
-                <b-form-group :label="index.text" class="has-float-label pb-2">
-                  <b-form-select
-                    v-model="index.selectVal"
-                    :options="index.value"
-                    value-field="value"
-                    text-field="text"
-                    @change="eventClick($event, index)"
-                  />
-                </b-form-group>
-              </div>
-              <div v-if="index.type == 'T'">
-                <b-form-group :label="index.text" class="has-float-label pb-2">
-                  <b-form-input :value="index.value" v-model="index.selectVal">
-                  </b-form-input>
-                </b-form-group>
-              </div>
-              <div v-if="index.type == 'C'">
-                <fieldset class="form-group">
-                  <div class="form-row">
-                    <span class="bv-no-focus-ring col-form-label"
-                      >{{ index.text }} :
-                    </span>
-                    <b-form-checkbox
-                      class="custom-checkbox-group pt-1 ml-1 mr-2"
-                      v-model="allSelected"
-                      :indeterminate="indeterminate"
-                      v-if="index.id == 'searchtype1'"
-                      aria-describedby="selectedSearchType1"
-                      aria-controls="selectedSearchType1"
-                      @change="toggleAll($event, index)"
-                    >
-                      All
-                    </b-form-checkbox>
-                    <b-form-checkbox-group
-                      class="custom-checkbox-group pt-1 ml-1"
+              <div :key="refreshKey">
+                <div v-if="index.type == 'S'">
+                  <b-form-group
+                    :label="index.text"
+                    class="has-float-label pb-2"
+                  >
+                    <b-form-select
+                      v-model="index.selectVal"
                       :options="index.value"
                       value-field="value"
-                      v-model="index.selectVal"
                       text-field="text"
+                      @change="eventClick($event, index)"
                     />
-                  </div>
-                </fieldset>
-              </div>
-              <div v-if="index.type == 'D'">
-                <b-form-group :label="index.text" class="has-float-label">
-                  <common-date-picker v-model="index.selectVal" required />
-                </b-form-group>
-              </div>
-              <div v-if="index.type == 'SED'">
-                <!-- 시작일 ~ 종료일 -->
-                <common-start-end-date-picker
-                  :startDateLabel="index.startText"
-                  :endDateLabel="index.endText"
-                  :startDate.sync="index.st_selectVal"
-                  :endDate.sync="index.end_selectVal"
-                  :maxPeriodMonth="index.maxMonth"
-                  :required="false"
-                  :isCurrentDate="false"
-                  class="datepicket_startEnd"
-                  style="margin-left: 0px"
-                />
+                  </b-form-group>
+                </div>
+                <div v-if="index.type == 'T'">
+                  <b-form-group
+                    :label="index.text"
+                    class="has-float-label pb-2"
+                  >
+                    <b-form-input
+                      :value="index.value"
+                      v-model="index.selectVal"
+                    >
+                    </b-form-input>
+                  </b-form-group>
+                </div>
+                <div v-if="index.type == 'C'">
+                  <fieldset class="form-group">
+                    <div class="form-row">
+                      <span class="bv-no-focus-ring col-form-label"
+                        >{{ index.text }} :
+                      </span>
+                      <b-form-checkbox
+                        class="custom-checkbox-group pt-1 ml-1 mr-2"
+                        v-model="allSelected"
+                        :indeterminate="indeterminate"
+                        v-if="index.id == 'searchtype1'"
+                        aria-describedby="selectedSearchType1"
+                        aria-controls="selectedSearchType1"
+                        @change="toggleAll($event, index)"
+                      >
+                        All
+                      </b-form-checkbox>
+                      <b-form-checkbox-group
+                        class="custom-checkbox-group pt-1 ml-1"
+                        :options="index.value"
+                        value-field="value"
+                        v-model="index.selectVal"
+                        text-field="text"
+                      />
+                    </div>
+                  </fieldset>
+                </div>
+                <div v-if="index.type == 'D'">
+                  <b-form-group :label="index.text" class="has-float-label">
+                    <common-date-picker v-model="index.selectVal" />
+                    <!-- <common-date-picker value="2019-01-04" required /> -->
+                  </b-form-group>
+                </div>
+                <div v-if="index.type == 'SED'">
+                  <!-- 시작일 ~ 종료일 -->
+                  <common-start-end-date-picker
+                    :startDateLabel="index.startText"
+                    :endDateLabel="index.endText"
+                    :startDate.sync="index.st_selectVal"
+                    :endDate.sync="index.end_selectVal"
+                    :maxPeriodMonth="index.maxMonth"
+                    :required="false"
+                    :isCurrentDate="false"
+                    class="datepicket_startEnd"
+                    style="margin-left: 0px"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -287,6 +299,7 @@ export default {
       streamingUrl_music: "/api/musicsystem/streaming",
       waveformUrl_music: "/api/musicsystem/waveform",
       tempDownloadUrl_music: "/api/musicsystem/temp-download",
+      refreshKey: 0,
       loadpanelVal: false,
       pageSize: 30,
       gridHeight: 0,
@@ -593,7 +606,9 @@ export default {
       });
       if (result[0]) {
         this.searchDataList = result[0];
-        this.getOptionsData(url, { type: this.searchDataList.id });
+        this.refreshKey++;
+        console.log(this.searchDataList);
+        //this.getOptionsData(url, { type: this.searchDataList.id });
       }
     },
     getOptionsData(url, pram) {
@@ -823,5 +838,9 @@ export default {
   > td:not(.dx-focused) {
   background-color: #bf4e6a !important;
   color: #333 !important;
+}
+/* scroll > mode : infinite > empty row 문제 해결 CSS */
+.dx-freespace-row {
+  display: none !important;
 }
 </style>

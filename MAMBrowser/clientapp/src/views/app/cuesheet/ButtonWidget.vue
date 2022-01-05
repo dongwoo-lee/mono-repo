@@ -29,6 +29,7 @@
       />
       <DxDropDownButton
         :items="activefolderitem"
+        width="35"
         :drop-down-options="{ width: 160 }"
         icon="activefolder"
         :showArrowIcon="false"
@@ -38,6 +39,7 @@
       />
       <DxDropDownButton
         :items="downloaditem"
+        width="35"
         :drop-down-options="{ width: 70 }"
         icon="download"
         :showArrowIcon="false"
@@ -182,7 +184,7 @@
           </div>
           <div class="dx-field-value mt-3 mb-5 pr-5">
             <DxTextBox
-              placeholder="이름없는 템플릿"
+              :placeholder="tmpTitleTextBoxValue"
               width="320px"
               :maxLength="40"
               v-model="tmpTitleTextBoxValue"
@@ -541,9 +543,24 @@ import CommonImportArchive from "../../../components/Popup/CommonImportArchive.v
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
-
 import { eventBus } from "@/eventBus";
 import axios from "axios";
+import "moment/locale/ko";
+const moment = require("moment");
+const date = new Date();
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "-" + sMonth + "-" + sDate;
+}
+
+var toDay = get_date_str(date);
 
 export default {
   props: {
@@ -559,11 +576,12 @@ export default {
       goBackPoint: "",
       accrssCheck: true,
       loadingIconVal: false,
-      tmpTitleTextBoxValue: "이름없는 템플릿",
+      tmpTitleTextBoxValue: "",
       proid: "",
       id: "",
       cuetype: "",
       allCheck: true,
+      templateTitle: "템플릿_" + toDay,
       selected: ["print", "ab"],
       cartSelected: ["c1", "c2", "c3", "c4"],
       oldCueOptions: [
@@ -642,6 +660,51 @@ export default {
       this.accrssCheck = false;
     }
     this.editOptions = { ...this.cueInfo };
+    if (this.cueInfo.cuetype != "T") {
+      var mediaName = "";
+      switch (this.cueInfo.media) {
+        case "A":
+          mediaName = "[AM]";
+          break;
+        case "F":
+          mediaName = "[FM]";
+          break;
+        case "D":
+          mediaName = "[DMB]";
+          break;
+        case "C":
+          mediaName = "[공통]";
+          break;
+        case "Z":
+          mediaName = "[기타]";
+          break;
+        default:
+          break;
+      }
+      if (this.cueInfo.cuetype == "B") {
+        this.templateTitle = mediaName + this.cueInfo.title + "_" + toDay;
+      } else {
+        this.templateTitle =
+          mediaName +
+          this.cueInfo.title +
+          "_" +
+          moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
+      }
+    }
+    // if (this.cueInfo.cuetype == "D" || this.cueInfo.cuetype == "A") {
+    //   this.templateTitle =
+    //     "[" +
+    //     this.cueInfo.media +
+    //     "]" +
+    //     this.cueInfo.title +
+    //     "_" +
+    //     moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
+    // }
+    // if (this.cueInfo.cuetype == "B") {
+    //   this.templateTitle =
+    //     "[" + this.cueInfo.media + "]" + this.cueInfo.title + "_" + toDay;
+    // }
+    // this.tmpTitleTextBoxValue = this.templateTitle;
   },
   components: {
     CommonImportDef,
@@ -727,7 +790,7 @@ export default {
         footertitle: this.cueInfo.footertitle,
         memo: this.cueInfo.memo,
       };
-      this.tmpTitleTextBoxValue = "이름없는 템플릿";
+      this.tmpTitleTextBoxValue = this.templateTitle;
       // var pram = {
       //   CueSheetDTO: tempItem,
       // };
@@ -738,7 +801,7 @@ export default {
       this.$bvModal.hide("modal-template");
     },
     resetModal_tem() {
-      this.tmpTitleTextBoxValue = "이름없는 템플릿";
+      this.tmpTitleTextBoxValue = this.templateTitle;
     },
     clearOk() {
       this.loadingIconVal = true;

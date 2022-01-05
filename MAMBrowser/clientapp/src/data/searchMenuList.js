@@ -8,7 +8,7 @@ function get_date_str(date) {
   sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
   sDate = sDate > 9 ? sDate : "0" + sDate;
 
-  return sYear + "" + sMonth + "" + sDate;
+  return sYear + "-" + sMonth + "-" + sDate;
 }
 
 var toDay = get_date_str(date);
@@ -16,6 +16,7 @@ date.setDate(date.getDate() - 7);
 var wDay = get_date_str(date);
 date.setDate(date.getDate() - 83);
 var mDay = get_date_str(date);
+
 let searchMenuList = {
 
   data() {

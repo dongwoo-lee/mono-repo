@@ -229,37 +229,17 @@ export default {
           width: "3%",
         },
         {
-          name: "edittime",
-          title: "수정일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "20%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
-          },
-        },
-        {
-          name: "eventname",
-          title: "프로그램명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-        },
-        {
           name: "media",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%",
+          width: "10%",
           callback: (value) => {
             switch (value) {
               case "A":
-                return "표준FM";
+                return "AM";
               case "F":
-                return "FM4U";
+                return "FM";
               case "D":
                 return "DMB";
               case "C":
@@ -272,6 +252,12 @@ export default {
           },
         },
         {
+          name: "eventname",
+          title: "프로그램명",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+        },
+        {
           name: "__slot:weeks",
           title: "적용 요일",
           titleClass: "center aligned text-center",
@@ -279,8 +265,20 @@ export default {
           width: "18%",
         },
         {
+          name: "edittime",
+          title: "최종 편집 일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+          },
+        },
+        {
           name: "__slot:actions",
-          title: "",
+          title: "작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%",

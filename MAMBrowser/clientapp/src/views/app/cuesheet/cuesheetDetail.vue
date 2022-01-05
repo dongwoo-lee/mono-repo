@@ -43,7 +43,7 @@
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
-                  수정일 :
+                  최종 편집 일시 :
                   <span>{{
                     cueInfo.edittime == null
                       ? ""

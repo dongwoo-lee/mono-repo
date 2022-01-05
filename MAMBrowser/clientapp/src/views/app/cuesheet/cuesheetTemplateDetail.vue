@@ -15,14 +15,14 @@
               <div class="subtitle ml-2">
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
-                  생성일 :
+                  최초 생성 일시 :
                   <span>{{
                     $moment(cueInfo.createtime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
-                  수정일 :
+                  최종 편집 일시 :
                   <span>{{
                     $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>

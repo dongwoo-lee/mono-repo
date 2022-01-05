@@ -1,5 +1,8 @@
 <template>
   <div id="overView">
+    <!-- <div class="button_view_vertical" v-if="!searchToggleSwitch">
+      <ButtonWidget :type="cueInfo.cuetype" />
+    </div> -->
     <b-row style="marin-top: -10px">
       <b-card class="w-100">
         <div class="detail_view">
@@ -43,7 +46,7 @@
                 </span>
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
-                  수정일 :
+                  최종 편집 일시 :
                   <span>{{
                     cueInfo.edittime == null
                       ? ""
@@ -309,7 +312,13 @@ export default {
   top: 0px;
   right: 0px;
 }
-
+.button_view_vertical {
+  width: 50px;
+  position: absolute;
+  top: 0;
+  left: 125px;
+  z-index: 5;
+}
 .separator {
   border-bottom: 1px solid #d7d7d7;
 }

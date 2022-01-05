@@ -184,43 +184,39 @@ export default {
           width: "3%",
         },
         {
-          name: "createtime",
-          title: "생성일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "20%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
-          },
-        },
-
-        {
-          name: "edittime",
-          title: "수정일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "20%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
-          },
-        },
-        {
           name: "tmptitle",
           title: "템플릿 이름",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
         },
         {
+          name: "createtime",
+          title: "최초 생성 일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+          },
+        },
+
+        {
+          name: "edittime",
+          title: "최종 편집 일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+          },
+        },
+        {
           name: "__slot:actions",
-          title: "",
+          title: "작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "13%",

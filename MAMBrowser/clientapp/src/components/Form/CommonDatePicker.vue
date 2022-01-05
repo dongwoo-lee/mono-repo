@@ -14,6 +14,7 @@
       <b-input-group-append>
         <b-form-datepicker
           v-model="date"
+          :initial-date="date | yyyyMMdd"
           button-only
           left
           aria-controls="example-input"

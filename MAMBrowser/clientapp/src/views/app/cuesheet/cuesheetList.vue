@@ -116,35 +116,17 @@ export default {
       },
       fields: [
         {
-          name: "brdtime",
-          title: "방송완료일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "15%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
-          },
-        },
-        {
-          name: "title",
-          title: "프로그램명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-        },
-        {
           name: "media",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%",
+          width: "10%",
           callback: (value) => {
             switch (value) {
               case "A":
-                return "표준FM";
+                return "AM";
               case "F":
-                return "FM4U";
+                return "FM";
               case "D":
                 return "DMB";
               case "C":
@@ -154,6 +136,18 @@ export default {
               default:
                 break;
             }
+          },
+        },
+        {
+          name: "brdtime",
+          title: "방송완료일",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "15%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
           },
         },
         {
@@ -169,8 +163,15 @@ export default {
           },
         },
         {
+          name: "title",
+          title: "프로그램명",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+        },
+
+        {
           name: "__slot:actions",
-          title: "",
+          title: "작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%",
