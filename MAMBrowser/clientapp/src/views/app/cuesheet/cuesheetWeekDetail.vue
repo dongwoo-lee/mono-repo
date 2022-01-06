@@ -4,7 +4,7 @@
       <b-card class="w-100">
         <div class="detail_view">
           <div class="left_view">
-            <div class="left_top" v-show="searchToggleSwitch">
+            <div id="left_top" v-show="searchToggleSwitch">
               <div class="listTitle mb-3">
                 <piaf-breadcrumb />
               </div>
@@ -59,8 +59,14 @@
                   ></b-form-checkbox-group>
                 </span>
               </div>
-              <div class="button_view">
-                <ButtonWidget :type="cueInfo.cuetype" />
+              <div
+                id="button_view"
+                :class="{ button_view_vertical: !searchToggleSwitch }"
+              >
+                <ButtonWidget
+                  :type="cueInfo.cuetype"
+                  :saveText="searchToggleSwitch ? '저장' : ''"
+                />
               </div>
             </div>
             <div class="left_bottom">
@@ -232,6 +238,9 @@ export default {
         this.printHeight = 310;
         this.abChannelHeight = 354;
         document
+          .getElementById("overView")
+          .insertBefore(document.getElementById("button_view"), null);
+        document
           .querySelector(".detail_view")
           .classList.add("detail_view_search_toggle_on");
         var allQuery = document.querySelectorAll(".cartC_view");
@@ -241,6 +250,9 @@ export default {
       } else {
         this.printHeight = 560;
         this.abChannelHeight = 734;
+        document
+          .getElementById("left_top")
+          .insertBefore(document.getElementById("button_view"), null);
         document
           .querySelector(".detail_view")
           .classList.remove("detail_view_search_toggle_on");
@@ -271,7 +283,7 @@ export default {
   height: 100%;
   float: right;
 }
-.left_top {
+#left_top {
   position: relative;
   width: 100%;
   height: 130px;
@@ -283,14 +295,20 @@ export default {
   float: bottom;
 }
 /* 도구 버튼 모음 */
-.button_view {
+#button_view {
   /* width: 316px; */
   height: 30px;
   position: absolute;
   top: 0px;
   right: 0px;
 }
-
+.button_view_vertical {
+  width: 50px;
+  position: absolute;
+  top: 0;
+  left: 125px;
+  z-index: 5;
+}
 .separator {
   border-bottom: 1px solid #d7d7d7;
 }

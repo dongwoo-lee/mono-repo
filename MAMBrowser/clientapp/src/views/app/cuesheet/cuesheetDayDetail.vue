@@ -1,13 +1,16 @@
 <template>
   <div id="overView">
-    <!-- <div class="button_view_vertical" v-if="!searchToggleSwitch">
+    <!-- <div
+      class="button_view"
+      :class="{ button_view_vertical: !searchToggleSwitch }"
+    >
       <ButtonWidget :type="cueInfo.cuetype" />
     </div> -->
     <b-row style="marin-top: -10px">
       <b-card class="w-100">
         <div class="detail_view">
           <div class="left_view">
-            <div class="left_top" v-show="searchToggleSwitch">
+            <div id="left_top" v-show="searchToggleSwitch">
               <div class="listTitle mb-3">
                 <piaf-breadcrumb />
               </div>
@@ -30,15 +33,6 @@
                     $moment(cueInfo.brdtime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
-                <!-- <span class="sub_text">
-                  <span class="subtitle_css">●</span>
-                  매체 :
-                  <span v-if="cueInfo.media == 'A'">AM</span>
-                  <span v-if="cueInfo.media == 'F'">FM</span>
-                  <span v-if="cueInfo.media == 'D'">DMB</span>
-                  <span v-if="cueInfo.media == 'C'">공통</span>
-                  <span v-if="cueInfo.media == 'Z'">기타</span>
-                </span> -->
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   담당자 :
@@ -52,7 +46,6 @@
                       ? ""
                       : $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
-                  <!-- <span>{{ cueInfo.edittime }}</span> -->
                 </span>
                 <span class="autosave">
                   <b-form-checkbox-group
@@ -64,8 +57,14 @@
                   ></b-form-checkbox-group>
                 </span>
               </div>
-              <div class="button_view">
-                <ButtonWidget :type="cueInfo.cuetype" />
+              <div
+                id="button_view"
+                :class="{ button_view_vertical: !searchToggleSwitch }"
+              >
+                <ButtonWidget
+                  :type="cueInfo.cuetype"
+                  :saveText="searchToggleSwitch ? '저장' : ''"
+                />
               </div>
             </div>
             <div class="left_bottom">
@@ -238,9 +237,14 @@ export default {
       this.$refs.inputText.focus();
     },
     searchToggleEvent() {
+      // var parent = document.getElementById("overView");
+      //var content = content.parentNode;
       if (this.searchToggleSwitch) {
         this.printHeight = 310;
         this.abChannelHeight = 354;
+        document
+          .getElementById("overView")
+          .insertBefore(document.getElementById("button_view"), null);
         document
           .querySelector(".detail_view")
           .classList.add("detail_view_search_toggle_on");
@@ -251,6 +255,9 @@ export default {
       } else {
         this.printHeight = 560;
         this.abChannelHeight = 734;
+        document
+          .getElementById("left_top")
+          .insertBefore(document.getElementById("button_view"), null);
         document
           .querySelector(".detail_view")
           .classList.remove("detail_view_search_toggle_on");
@@ -293,7 +300,7 @@ export default {
   height: 100%;
   float: right;
 }
-.left_top {
+#left_top {
   position: relative;
   width: 100%;
   height: 130px;
@@ -305,7 +312,7 @@ export default {
   float: bottom;
 }
 /* 도구 버튼 모음 */
-.button_view {
+#button_view {
   /* width: 280px; */
   height: 30px;
   position: absolute;

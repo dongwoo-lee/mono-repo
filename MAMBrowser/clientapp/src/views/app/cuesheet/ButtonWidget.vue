@@ -60,7 +60,7 @@
         type="default"
         v-b-modal.modal-save
         hint="저장"
-        text="저장"
+        :text="saveText"
         v-if="type != 'A'"
       />
     </div>
@@ -566,6 +566,7 @@ export default {
   props: {
     // cuesheetData: Object,
     type: String,
+    saveText: String,
     fav: {
       type: Boolean,
       default: false,
