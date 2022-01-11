@@ -495,13 +495,13 @@ export default {
             } else {
               row.rownum = totalIndex + index;
               //테스트 중
-              if (this.searchListData.cartcode == "S01G01C021") {
-                search_row = await axios
-                  .post(`/api/SearchMenu/test`)
-                  .then((res) => {
-                    return { filetoken: "ddd", filepath: "dddd" };
-                  });
-              }
+              // if (this.searchListData.cartcode == "S01G01C021") {
+              //   search_row = await axios
+              //     .post(`/api/SearchMenu/test`)
+              //     .then((res) => {
+              //       return { filetoken: "ddd", filepath: "dddd" };
+              //     });
+              // }
               if (this.searchListData.cartcode == "S01G01C014") {
                 search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -558,13 +558,13 @@ export default {
           } else {
             row.rownum = this.fileData[totalIndex - 1].rownum;
             //테스트 중
-            if (this.searchListData.cartcode == "S01G01C021") {
-              search_row = await axios
-                .post(`/api/SearchMenu/test`)
-                .then((res) => {
-                  return { filetoken: "ddd", filepath: "dddd" };
-                });
-            }
+            // if (this.searchListData.cartcode == "S01G01C021") {
+            //   search_row = await axios
+            //     .post(`/api/SearchMenu/test`)
+            //     .then((res) => {
+            //       return { filetoken: "ddd", filepath: "dddd" };
+            //     });
+            // }
             if (this.searchListData.cartcode == "S01G01C014") {
               search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -617,7 +617,7 @@ export default {
       if (this.groupFilterVal) {
         window.$notify(
           "error",
-          `즐겨찾기 탭에는 그룹소재를 추가할 수 없습니다.`,
+          `CM, SB 소재는 즐겨찾기에 추가할 수 없습니다.`,
           "",
           {
             duration: 10000,

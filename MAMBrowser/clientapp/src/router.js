@@ -294,7 +294,7 @@ const routes = [
             !cueDataObj.directorname ||
             cueDataObj.directorname == ""
           ) {
-            cueDataObj.directorname = store.getters['cueList/proUserList'];
+            cueDataObj.directorname = store.getters['cueList/proUserList'].length < 20 ? store.getters['cueList/proUserList'] : store.getters['cueList/proUserList'].substr(0, 20);
           }
           if (
             !cueDataObj.headertitle ||
@@ -428,7 +428,7 @@ const routes = [
             !cueDataObj.directorname ||
             cueDataObj.directorname == ""
           ) {
-            cueDataObj.directorname = store.getters['cueList/proUserList'];
+            cueDataObj.directorname = store.getters['cueList/proUserList'].length < 20 ? store.getters['cueList/proUserList'] : store.getters['cueList/proUserList'].substr(0, 20);
           }
           if (
             !cueDataObj.headertitle ||
@@ -502,7 +502,7 @@ const routes = [
             cueDataObj.directorname == "" ||
             cueDataObj.directorname == null || cueDataObj.directorname == "라디오기술부"
           ) {
-            cueDataObj.directorname = store.getters['cueList/proUserList'];
+            cueDataObj.directorname = store.getters['cueList/proUserList'].length < 20 ? store.getters['cueList/proUserList'] : store.getters['cueList/proUserList'].substr(0, 20);
           }
           if (
             !cueDataObj.headertitle ||

@@ -214,7 +214,7 @@ export default {
         this.printHeight = 310;
         this.abChannelHeight = 354;
         document
-          .getElementById("overView")
+          .querySelector(".detail_view")
           .insertBefore(document.getElementById("button_view"), null);
         document
           .querySelector(".detail_view")
@@ -281,8 +281,8 @@ export default {
 .button_view_vertical {
   width: 50px;
   position: absolute;
-  top: 0;
-  left: 125px;
+  top: 0px;
+  left: -68px;
   z-index: 5;
 }
 .separator {

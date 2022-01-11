@@ -915,6 +915,10 @@ export default {
     // zip 파일 다운로드
     async exportZipWave() {
       this.loadingIconVal = true;
+      // var pramQuery = {
+      //   name: sessionStorage.getItem(USER_ID),
+      //   title: this.cueInfo.title,
+      // };
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
       for (var i = 1; i < 5; i++) {
@@ -937,7 +941,9 @@ export default {
       } else {
         await axios
           .post(
-            `/api/CueAttachments/exportZipFile?title=${this.cueInfo.title}`,
+            `/api/CueAttachments/exportZipFile?name=${sessionStorage.getItem(
+              USER_ID
+            )}&title=${this.cueInfo.title}`,
             pramList
           )
           .then((response) => {

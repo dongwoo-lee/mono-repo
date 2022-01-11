@@ -846,7 +846,7 @@ export default {
   color: #333 !important;
 }
 /* scroll > mode : infinite > empty row 문제 해결 CSS */
-.dx-freespace-row {
+.search_view .dx-freespace-row {
   display: none !important;
 }
 </style>
