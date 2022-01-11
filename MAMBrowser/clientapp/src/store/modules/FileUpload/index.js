@@ -23,6 +23,7 @@ export default {
     tempFileSDate: "",
     fileEDate: "",
     tempFileEDate: "",
+    scrRange: [],
     MetaData: {
       title: "",
       memo: "",

@@ -1,107 +1,236 @@
 <template>
-  <div style="margin-top: 20px">
-    <b-form-group
-      label="분류"
-      class="has-float-label"
-      style="float: left; margin-right: 20px; margin-top: 10px"
-    >
-      <b-form-select
-        id="program-media"
-        class="media-select"
-        style="width: 170px"
-        :value="scrMedia"
-        :options="fileMediaOptions"
-        @input="mediaChange"
-      />
-    </b-form-group>
+  <div>
+    <div style="position: absolute; top: 320px; left: -400px; margin-top: 20px">
+      <b-form-group
+        label="분류"
+        class="has-float-label"
+        style="float: left; margin-right: 20px; margin-top: 10px"
+      >
+        <b-form-select
+          id="program-media"
+          class="media-select"
+          style="width: 170px"
+          :value="scrMedia"
+          :options="fileMediaOptions"
+          @input="mediaChange"
+        />
+      </b-form-group>
 
-    <b-form-group
-      label="제작자"
-      class="has-float-label"
-      style="font-size: 16px"
-    >
-      <b-form-input
-        title="제작자"
-        style="width: 160px; font-size: 14px"
-        class="editTask"
-        :value="userID"
+      <b-form-group
+        label="제작자"
+        class="has-float-label"
+        style="font-size: 16px"
+      >
+        <b-form-input
+          title="제작자"
+          style="width: 160px; font-size: 14px"
+          class="editTask"
+          :value="userID"
+          disabled
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="제작자"
+          trim
+        />
+      </b-form-group>
+      <div style="height: 50px">
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.title"
+          :state="titleState"
+          :maxlength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="소재 명"
+          trim
+        />
+        <p
+          v-show="titleState"
+          style="
+            position: relative;
+            left: 310px;
+            top: 0px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
+        >
+          {{ MetaData.title.length }}/30
+        </p>
+      </div>
+      <div style="height: 50px">
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.advertiser"
+          :state="advertiserState"
+          :maxLength="15"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="광고주 명"
+          trim
+        />
+        <p
+          v-show="advertiserState"
+          style="
+            position: relative;
+            left: 310px;
+            top: 0px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
+        >
+          {{ MetaData.advertiser.length }}/15
+        </p>
+      </div>
+      <div style="height: 50px">
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+        />
+        <p
+          v-show="memoState"
+          style="
+            position: relative;
+            left: 310px;
+            top: 0px;
+            z-index: 9999;
+            width: 30px;
+            margin-right: 0px;
+          "
+        >
+          {{ MetaData.memo.length }}/30
+        </p>
+      </div>
+    </div>
+    <div style="width: 550px; height: 70px; margin-top: 20px">
+      <b-form-group
+        label="사용처"
+        class="has-float-label"
+        style="font-size: 13px"
+      >
+        <common-vue-select
+          :class="vSelectClass"
+          style="font-size: 14px; width: 450px"
+          :suggestions="ProgramOptions"
+          @inputEvent="pgmSelect"
+          :vSelectProps="vSelectProps"
+        ></common-vue-select>
+      </b-form-group>
+
+      <b-form-group
+        label="시작일"
+        class="has-float-label"
+        style="width: 205px; font-size: 13px; float: left"
+      >
+        <b-input-group style="width: 205px; float: left">
+          <input
+            style="height: 34px; font-size: 13px"
+            id="sdateinput"
+            type="text"
+            class="form-control input-picker date-input"
+            :value="StartDate"
+            @input="onsInput"
+          />
+          <b-input-group-append>
+            <b-form-datepicker
+              style="height: 34px; float: left"
+              :value="StartDate"
+              @input="eventSInput"
+              button-variant="outline-dark"
+              button-only
+              right
+              aria-controls="example-input"
+              @context="onContext"
+            ></b-form-datepicker>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form-group>
+      <b-form-group
+        label="종료일"
+        class="has-float-label"
+        style="width: 205px; font-size: 13px; margin-left: 40px; float: left"
+      >
+        <b-input-group class="mb-3" style="width: 205px; float: left">
+          <input
+            style="height: 34px; font-size: 13px"
+            id="edateinput"
+            type="text"
+            class="form-control input-picker date-input"
+            :value="EndDate"
+            @input="oneInput"
+          />
+          <b-input-group-append>
+            <b-form-datepicker
+              style="height: 34px"
+              :value="EndDate"
+              @input="eventEInput"
+              button-only
+              button-variant="outline-dark"
+              right
+              aria-controls="example-input"
+              @context="onContext"
+            ></b-form-datepicker>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form-group>
+      <b-button
+        v-show="validRange"
+        style="margin-left: 20px; height: 34px"
+        variant="outline-primary"
+        @click="addRange"
+      >
+        추가
+        <!-- <b-icon-chevron-double-down></b-icon-chevron-double-down> -->
+      </b-button>
+      <b-button
+        v-show="!validRange"
+        style="margin-left: 20px; height: 34px"
+        variant="dark"
         disabled
-        aria-describedby="input-live-help input-live-feedback"
-        placeholder="제작자"
-        trim
-      />
-    </b-form-group>
-    <div style="height: 50px">
-      <b-form-input
-        class="editTask"
-        v-model="MetaData.title"
-        :state="titleState"
-        :maxlength="30"
-        aria-describedby="input-live-help input-live-feedback"
-        placeholder="소재 명"
-        trim
-      />
-      <p
-        v-show="titleState"
-        style="
-          position: relative;
-          left: 310px;
-          top: 0px;
-          z-index: 9999;
-          width: 30px;
-          margin-right: 0px;
-        "
+        @click="addRange"
       >
-        {{ MetaData.title.length }}/30
-      </p>
+        추가
+        <!-- <b-icon-chevron-double-down></b-icon-chevron-double-down> -->
+      </b-button>
     </div>
-    <div style="height: 50px">
-      <b-form-input
-        class="editTask"
-        v-model="MetaData.advertiser"
-        :state="advertiserState"
-        :maxLength="15"
-        aria-describedby="input-live-help input-live-feedback"
-        placeholder="광고주 명"
-        trim
-      />
-      <p
-        v-show="advertiserState"
+
+    <div style="width: 550px; height: 340px; margin-top: 50px">
+      <DxDataGrid
+        name="mcrDxDataGrid"
+        v-show="this.EventData.id != ''"
         style="
-          position: relative;
-          left: 310px;
-          top: 0px;
-          z-index: 9999;
-          width: 30px;
-          margin-right: 0px;
+          height: 395px;
+          border: 1px solid silver;
+          font-family: 'MBC 새로움 M';
         "
+        :data-source="scrRange"
+        :selection="{ mode: 'single' }"
+        :show-borders="true"
+        :hover-state-enabled="true"
+        key-expr="Pgm"
+        :allow-column-resizing="true"
+        :column-auto-width="true"
+        no-data-text="No Data"
+        @row-click="onRowClick"
       >
-        {{ MetaData.advertiser.length }}/15
-      </p>
-    </div>
-    <div style="height: 50px">
-      <b-form-input
-        class="editTask"
-        v-model="MetaData.memo"
-        :state="memoState"
-        :maxLength="30"
-        aria-describedby="input-live-help input-live-feedback"
-        placeholder="메모"
-        trim
-      />
-      <p
-        v-show="memoState"
-        style="
-          position: relative;
-          left: 310px;
-          top: 0px;
-          z-index: 9999;
-          width: 30px;
-          margin-right: 0px;
-        "
-      >
-        {{ MetaData.memo.length }}/30
-      </p>
+        <DxLoadPanel :enabled="true" />
+        <DxScrolling mode="virtual" />
+        <DxEditing
+          :allow-deleting="true"
+          :confirm-delete="false"
+          :use-icons="true"
+          mode="row"
+        />
+        <DxColumn data-field="PgmName" :width="260" caption="사용처" />
+        <DxColumn data-field="SDate" :width="110" caption="시작일" />
+        <DxColumn data-field="EDate" :width="110" caption="종료일" />
+        <DxColumn type="buttons" :width="75" caption="추가액션">
+          <DxButton name="delete" />
+        </DxColumn>
+      </DxDataGrid>
     </div>
   </div>
 </template>
@@ -111,20 +240,45 @@ import CommonFileFunction from "../CommonFileFunction";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxSelection,
+  DxScrolling,
+  DxLoadPanel,
+  DxButton,
+  DxEditing,
+} from "devextreme-vue/data-grid";
 import axios from "axios";
 export default {
   components: {
     CommonVueSelect,
+    DxDataGrid,
+    DxColumn,
+    DxSelection,
+    DxScrolling,
+    DxLoadPanel,
+    DxButton,
+    DxEditing,
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
+      vSelectProps: {},
+      vSelectClass: "MasteringScrRangeMeta",
       scrMedia: "",
       scrMediaName: "",
+      selectedPgm: "",
+      StartDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
+      EndDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
+      tempSDate: "",
+      tempEDate: "",
+      ProgramOptions: [],
     };
   },
   created() {
     this.reset();
+    this.getPgm();
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/scr/spot").then((res) => {
@@ -140,11 +294,195 @@ export default {
     this.setMediaSelected(this.scrMedia);
     this.setMediaName(this.scrMediaName);
   },
+  computed: {
+    ...mapState("FileIndexStore", {
+      scrRange: (state) => state.scrRange,
+    }),
+    validRange() {
+      return this.selectedPgm == "" ? false : true;
+    },
+  },
   methods: {
+    ...mapMutations("FileIndexStore", ["setScrRange", "resetScrRange"]),
+    addRange() {
+      var data = {
+        Pgm: this.selectedPgm.id,
+        PgmName: this.selectedPgm.name,
+        SDate: this.StartDate,
+        EDate: this.EndDate,
+      };
+      this.setScrRange(data);
+      this.selectedPgm = "";
+      this.vSelectProps = { id: null, name: null };
+    },
+    async getPgm() {
+      var res = await axios.get(`/api/categories/pgmcodes`);
+      this.ProgramOptions = res.data.resultObject.data;
+    },
     mediaChange(v) {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
       this.setMediaName(data.text);
+    },
+    pgmSelect(v) {
+      this.selectedPgm = v;
+    },
+    eventSInput(value) {
+      this.StartDate = value;
+      this.tempSDate = value;
+
+      const replaceAllFileSDate = this.StartDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.EndDate.replace(/-/g, "");
+      if (
+        replaceAllFileEDate < replaceAllFileSDate &&
+        replaceAllFileEDate != ""
+      ) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      }
+    },
+    eventEInput(value) {
+      this.EndDate = value;
+      this.tempEDate = value;
+
+      const replaceAllFileSDate = this.StartDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.EndDate.replace(/-/g, "");
+      if (replaceAllFileEDate < replaceAllFileSDate) {
+        this.$fn.notify("error", {
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
+        });
+        return;
+      }
+    },
+
+    onsInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempSDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          return;
+        }
+        event.target.value = this.tempSDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.StartDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.tempSDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+
+            const replaceAllFileSDate = this.StartDate.replace(/-/g, "");
+            const replaceAllFileEDate = this.EndDate.replace(/-/g, "");
+            if (
+              replaceAllFileEDate < replaceAllFileSDate &&
+              replaceAllFileEDate != ""
+            ) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            }
+            return;
+          }
+          this.StartDate = convertDate;
+          this.tempSDate = convertDate;
+          const replaceAllFileSDate = this.StartDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.EndDate.replace(/-/g, "");
+          if (
+            replaceAllFileEDate < replaceAllFileSDate &&
+            replaceAllFileEDate != ""
+          ) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          }
+        }
+      }
+    },
+    oneInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempEDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          return;
+        }
+        event.target.value = this.tempEDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.EndDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.tempEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+
+            const replaceAllFileSDate = this.StartDate.replace(/-/g, "");
+            const replaceAllFileEDate = this.EndDate.replace(/-/g, "");
+            if (replaceAllFileEDate < replaceAllFileSDate) {
+              this.$fn.notify("error", {
+                message: "시작 날짜가 종료 날짜보다 큽니다.",
+              });
+              return;
+            }
+            return;
+          }
+          this.EndDate = convertDate;
+          this.tempEDate = convertDate;
+
+          const replaceAllFileSDate = this.StartDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.EndDate.replace(/-/g, "");
+          if (replaceAllFileEDate < replaceAllFileSDate) {
+            this.$fn.notify("error", {
+              message: "시작 날짜가 종료 날짜보다 큽니다.",
+            });
+            return;
+          }
+        }
+      }
+    },
+    validDateType(value) {
+      const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
+      return !dateRegex.test(value);
+    },
+    onContext(ctx) {
+      // The date formatted in the locale, or the `label-no-date-selected` string
+      this.formatted = ctx.selectedFormatted;
+      // The following will be an empty string until a valid date is entered
+      this.dateSelected = ctx.selectedYMD;
+    },
+    convertDateSTH(value) {
+      const replaceVal = value.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      if (12 < mm) {
+      } else if (31 < dd) {
+      } else {
+        return `${yyyy}-${mm}-${dd}`;
+      }
     },
   },
 };

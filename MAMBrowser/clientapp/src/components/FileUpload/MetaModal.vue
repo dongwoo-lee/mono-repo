@@ -115,9 +115,6 @@
                   v-if="this.MetaData.typeSelected == 'my-disk'"
                 ></my-disk>
                 <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
-                <scr-spot
-                  v-if="this.MetaData.typeSelected == 'scr-spot'"
-                ></scr-spot>
               </div>
             </div>
             <transition name="slide-fade">
@@ -130,6 +127,9 @@
                   <mcr-spot
                     v-if="this.MetaData.typeSelected == 'mcr-spot'"
                   ></mcr-spot>
+                  <scr-spot
+                    v-if="this.MetaData.typeSelected == 'scr-spot'"
+                  ></scr-spot>
                   <static-spot
                     v-if="this.MetaData.typeSelected == 'static-spot'"
                   ></static-spot>
@@ -144,7 +144,7 @@
                 <div
                   style="
                     position: absolute;
-                    top: 640px;
+                    top: 660px;
                     left: 20px;
                     width: 950px;
                   "
@@ -311,6 +311,7 @@ export default {
       fileSDate: (state) => state.fileSDate,
       fileEDate: (state) => state.fileEDate,
       localFiles: (state) => state.localFiles,
+      scrRange: (state) => state.scrRange,
       MetaData: (state) => state.MetaData,
       masteringListData: (state) => state.masteringListData,
       ProgramData: (state) => state.ProgramData,
@@ -422,6 +423,7 @@ export default {
             advertiser: this.MetaData.advertiser,
             editor: sessionStorage.getItem("user_id"),
             category: this.MetaData.mediaSelected,
+            scrRange: JSON.stringify(this.scrRange),
           };
         } else if (this.MetaData.typeSelected == "static-spot") {
           var data = {
@@ -464,6 +466,7 @@ export default {
             brdDT: this.date,
           };
         }
+        console.log(data);
         await this.resetUploaderCustomData();
         await this.setUploaderCustomData(data);
         if (!this.durationState) {

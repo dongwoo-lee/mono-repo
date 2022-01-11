@@ -79,7 +79,7 @@
       >
         <h2 slot="header">마스터링</h2>
         <h4 slot="body">
-          <!-- // TODO : 가변 Chunk Size 확인
+          <!--
            -->
           <DxFileUploader
             :chunk-size="chunkSize"

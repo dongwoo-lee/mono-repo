@@ -180,9 +180,8 @@ export default {
       deep: true,
       handler(v) {
         if (
-          v.typeSelected == "my-disk" ||
           v.typeSelected == "null" ||
-          v.typeSelected == "scr-spot" ||
+          v.typeSelected == "my-disk" ||
           v.typeSelected == "pro"
         ) {
           this.setIsActive(true);
@@ -225,6 +224,7 @@ export default {
       "resetTempFileSDate",
       "resetFileEDate",
       "resetTempFileEDate",
+      "resetScrRange",
       "resetTitle",
       "resetMemo",
       "resetReporter",
@@ -466,6 +466,7 @@ export default {
       this.resetTitle();
       this.resetMemo();
       this.resetDate();
+      this.resetScrRange();
       this.fileStateFalse();
       this.resetProgramData();
       this.resetProgramSelected();

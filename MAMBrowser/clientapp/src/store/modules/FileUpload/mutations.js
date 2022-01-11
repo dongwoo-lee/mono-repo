@@ -91,6 +91,9 @@ export default {
   setProgramState(state, payload) {
     state.programState = payload;
   },
+  setScrRange(state, payload) {
+    state.scrRange.push(payload);
+  },
   resetDate(state) {
     state.date = "";
   },
@@ -183,6 +186,9 @@ export default {
   },
   resetUploaderCustomData(state) {
     state.uploaderCustomData = {};
+  },
+  resetScrRange(state) {
+    state.scrRange = [];
   },
   startDBConnection(state, payload) {
     clearInterval(db);

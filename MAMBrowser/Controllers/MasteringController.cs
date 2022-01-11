@@ -300,7 +300,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("scr-spot")]
         public ActionResult<DTO_RESULT> RegScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
              [FromForm] string title, [FromForm] string memo, [FromForm] string advertiser, [FromForm] string editor, 
-            [FromForm] string category)
+            [FromForm] string category, [FromForm] string scrRange)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -310,7 +310,7 @@ namespace MAMBrowser.Controllers
                 if (!string.IsNullOrEmpty(chunkMetadata))
                 {
                     var metaDataObject = JsonConvert.DeserializeObject<ChunkMetadata>(chunkMetadata);
-
+                   
                     string clientIp = HttpContext.Connection.RemoteIpAddress.ToString();
                     //파일 확장자
                     CheckFileExtensionValid(metaDataObject.FileName);
@@ -333,7 +333,8 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        
+
+                        var scrRangeList = JsonConvert.DeserializeObject<List<Scr>>(scrRange);
 
                         ScrMeta scr = new ScrMeta();
 
@@ -342,6 +343,7 @@ namespace MAMBrowser.Controllers
                         scr.Advertiser = advertiser;
                         scr.Category = category;
                         scr.Editor = editor;
+                        scr.ScrRange = scrRangeList;
                         scr.FilePath = tempFilePath;
                         scr.RegDtm = DateTime.Now.ToString(Define.DTM19);
                         scr.SoundType = Define.AUDIO_FILE_TYPE_SCR_SPOT;
