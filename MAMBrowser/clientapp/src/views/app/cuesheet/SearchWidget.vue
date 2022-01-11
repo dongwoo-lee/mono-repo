@@ -108,8 +108,12 @@
         </b-form>
       </div>
     </div>
-    <div v-bind:class="search_table_size">
-      <div>
+    <div
+      class="search_table"
+      v-bind:class="search_table_size"
+      style="overflow: overlay"
+    >
+      <div style="overflow: overlay">
         <DxDataGrid
           id="search_data_grid"
           :data-source="searchtable_data.columns"
@@ -122,6 +126,7 @@
           :row-alternation-enabled="true"
           :columns="searchtable_columns"
           :showRowLines="true"
+          :columnAutoWidth="true"
           @selection-changed="onSelectionChanged"
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
@@ -177,11 +182,11 @@
           />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling mode="infinite" legacyMode="true" />
+          <DxScrolling mode="infinite" />
           <DxPaging :page-size="pageSize" />
         </DxDataGrid>
       </div>
-      <div v-if="subtableVal">
+      <div v-if="subtableVal" style="overflow: overlay">
         <DxDataGrid
           id="search_data_grid"
           :data-source="subtable_data"
@@ -193,6 +198,7 @@
           :row-alternation-enabled="true"
           :columns="subtable_columns"
           :showRowLines="true"
+          :columnAutoWidth="true"
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
@@ -215,7 +221,7 @@
           />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
-          <DxScrolling mode="virtual" />
+          <DxScrolling mode="infinite" />
         </DxDataGrid>
       </div>
       <PlayerPopup
@@ -288,7 +294,7 @@ DataGrid.defaultOptions({
 });
 
 const dataGridRef = "dataGrid";
-
+//var main_table_width_size = document.getElementById("main_table").clientWidth;
 export default {
   mixins: [searchMenuList, MixinCommon],
   props: {
@@ -330,43 +336,36 @@ export default {
         {
           dataField: "rowNO",
           caption: "순서",
-          width: "7.5%",
           alignment: "center",
         },
         {
           dataField: "categoryID",
           caption: "구분",
-          width: "8%",
           alignment: "center",
         },
         {
           dataField: "categoryName",
           caption: "광고주명/분류명",
-          width: "20%",
           alignment: "center",
         },
         {
           dataField: "id",
           caption: "소재ID",
-          width: "17%",
           alignment: "center",
         },
         {
           dataField: "name",
           caption: "소재명",
-          width: "30%",
           alignment: "center",
         },
         {
           dataField: "length",
           caption: "길이",
-          width: "10%",
           alignment: "center",
         },
         {
           cellTemplate: "play_Template",
           caption: "작업",
-          width: "7%",
           alignment: "center",
         },
       ],
@@ -374,44 +373,45 @@ export default {
         {
           dataField: "rowNO",
           caption: "순서",
-          width: "7.5%",
           alignment: "center",
         },
         {
           dataField: "advertiser",
           caption: "광고주",
-          width: "25%",
           alignment: "center",
         },
         {
           dataField: "name",
           caption: "소재명",
-          width: "33%",
           alignment: "center",
         },
         {
           dataField: "length",
           caption: "길이(초)",
-          width: "10%",
           alignment: "center",
         },
         {
           dataField: "codingDT",
           caption: "제작일",
-          width: "90px",
-          width: "18%",
           alignment: "center",
         },
         {
           cellTemplate: "play_Template",
           caption: "작업",
-          width: "7%",
           alignment: "center",
         },
       ],
     };
   },
   created() {},
+  updated() {
+    //console.log(this.dataGrid._$element[0].clientWidth);
+    // var test_size = document.getElementById("main_table").clientWidth;
+    // if (table_width > 0) {
+    //   this.table_width_size = table_width;
+    //   console.log(this.table_width_size);
+    // }
+  },
   mounted() {
     this.searchDataList = this.searchData[0];
     this.searchtable_columns = this.searchDataList.columns;
@@ -556,7 +556,6 @@ export default {
             this.gridHeight = 237;
           }
           this.subtable_columns = this.cmFields;
-
           break;
         case "CM":
           this.subtableVal = true;
@@ -571,6 +570,12 @@ export default {
           this.gridHeight = this.width_size;
           break;
       }
+      // this.table_width_size = document
+      //   .getElementById("search_data_grid")
+      //   .clientWidth.toString();
+      //console.log(this.dataGrid._$element[0].clientWidth);
+      // this.test_size = document.getElementById("main_table").clientWidth;
+      // console.log(this.test_size);
       this.subtable_data = [];
       this.loadpanelVal = false;
     },
@@ -607,8 +612,7 @@ export default {
       if (result[0]) {
         this.searchDataList = result[0];
         this.refreshKey++;
-        console.log(this.searchDataList);
-        //this.getOptionsData(url, { type: this.searchDataList.id });
+        this.getOptionsData(url, { type: this.searchDataList.id });
       }
     },
     getOptionsData(url, pram) {
@@ -724,11 +728,13 @@ export default {
   line-height: 25px;
 }
 .search_view {
-  height: 330px;
+  /* height: 330px; */
+  width: 100%;
   display: grid;
 }
 .width_size_big {
-  grid-template-columns: 2fr 5fr;
+  grid-template-columns: 2.1fr 5fr;
+  /* grid-template-columns: 500px 1135px; */
   column-gap: 15px;
 }
 .width_size_sm {

@@ -29,7 +29,8 @@
       />
       <DxDropDownButton
         :items="activefolderitem"
-        width="35"
+        style="background-color: #ffffff"
+        width="36"
         :drop-down-options="{ width: 160 }"
         icon="activefolder"
         :showArrowIcon="false"
@@ -39,7 +40,8 @@
       />
       <DxDropDownButton
         :items="downloaditem"
-        width="35"
+        style="background-color: #ffffff"
+        width="36"
         :drop-down-options="{ width: 70 }"
         icon="download"
         :showArrowIcon="false"
@@ -49,6 +51,7 @@
       />
       <DxButton
         icon="checklist"
+        style="background-color: #ffffff"
         type="default"
         styling-mode="outlined"
         hint="적용요일 변경"
@@ -547,20 +550,6 @@ import { eventBus } from "@/eventBus";
 import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
-const date = new Date();
-
-function get_date_str(date) {
-  var sYear = date.getFullYear();
-  var sMonth = date.getMonth() + 1;
-  var sDate = date.getDate();
-
-  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
-  sDate = sDate > 9 ? sDate : "0" + sDate;
-
-  return sYear + "-" + sMonth + "-" + sDate;
-}
-
-var toDay = get_date_str(date);
 
 export default {
   props: {
@@ -582,7 +571,7 @@ export default {
       id: "",
       cuetype: "",
       allCheck: true,
-      templateTitle: "템플릿_" + toDay,
+      templateTitle: "",
       selected: ["print", "ab"],
       cartSelected: ["c1", "c2", "c3", "c4"],
       oldCueOptions: [
@@ -661,6 +650,7 @@ export default {
       this.accrssCheck = false;
     }
     this.editOptions = { ...this.cueInfo };
+    this.templateTitle = this.cueInfo.title + "_(복사)";
     if (this.cueInfo.cuetype != "T") {
       var mediaName = "";
       switch (this.cueInfo.media) {
@@ -683,7 +673,7 @@ export default {
           break;
       }
       if (this.cueInfo.cuetype == "B") {
-        this.templateTitle = mediaName + this.cueInfo.title + "_" + toDay;
+        this.templateTitle = mediaName + this.cueInfo.title + "_(기본)";
       } else {
         this.templateTitle =
           mediaName +
