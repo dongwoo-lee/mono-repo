@@ -66,7 +66,7 @@
             variant="outline-primary default"
             size="sm"
             @click="showDuration"
-            >기간 설정</b-button
+            >방송 의뢰</b-button
           >
         </b-input-group>
       </template>
