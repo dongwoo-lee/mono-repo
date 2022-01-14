@@ -39,7 +39,7 @@
         </span>
 
         <span style="width: 200px; float: left; margin-right: 90px">
-          <b-form-group label="SILENCE_DURATION" class="has-float-label">
+          <b-form-group label="무음 감지 길이" class="has-float-label">
             <b-form-input v-model="SILENCE_DURATION" />
           </b-form-group>
           <p
@@ -55,7 +55,7 @@
           </p>
         </span>
         <span style="width: 200px; float: left; margin-right: 90px">
-          <b-form-group label="SILENCE_DB" class="has-float-label">
+          <b-form-group label="무음 감지 데시벨" class="has-float-label">
             <b-form-input v-model="SILENCE_DB" />
           </b-form-group>
         </span>
@@ -65,7 +65,7 @@
           </b-form-group>
         </span>
       </div>
-      <h4 style="color: black; margin-top: 40px">파일 경로 설정</h4>
+      <h4 style="color: black; margin-top: 40px">스토리지 설정</h4>
       <div
         style="
           margin-top: 20px;
@@ -76,21 +76,21 @@
         "
       >
         <b-form-group
-          label="AM"
+          label="PGM-AM"
           class="has-float-label"
           style="position: absolute; top: 415px; left: 475px"
         >
           <b-form-input v-model="PGM_AM_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
-          label="FM"
+          label="PGM-FM"
           class="has-float-label"
           style="position: absolute; top: 415px; left: 883px"
         >
           <b-form-input v-model="PGM_FM_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
-          label="DMB"
+          label="PGM-DMB"
           class="has-float-label"
           style="position: absolute; top: 465px; left: 475px"
         >

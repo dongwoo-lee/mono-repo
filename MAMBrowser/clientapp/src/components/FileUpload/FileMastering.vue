@@ -49,8 +49,8 @@
     >
       <p
         style="
-          margin-top: 500px;
-          margin-left: 200px;
+          margin: auto;
+          margin-top: 450px;
           text-align: center;
           color: white;
           font-size: 48px;
@@ -267,7 +267,11 @@
                         data-field="title"
                         caption="제목"
                       />
-                      <DxColumn :width="120" data-field="type" caption="타입" />
+                      <DxColumn
+                        :width="120"
+                        data-field="type"
+                        caption="소재유형"
+                      />
                       <DxColumn
                         :width="120"
                         data-field="user"
@@ -762,11 +766,13 @@ export default {
           if (event.value[0].type == "audio/mpeg") {
             var blob = event.value[0].slice(0, 300000);
             formData.append("file", blob);
-            formData.append("fileExt", event.value[0].name);
+            formData.append("fileName", event.value[0].name);
+            formData.append("fileSize", event.value[0].size);
           } else if (event.value[0].type == "audio/wav") {
             var blob = event.value[0].slice(0, 10000);
             formData.append("file", blob);
-            formData.append("fileExt", event.value[0].name);
+            formData.append("fileName", event.value[0].name);
+            formData.append("fileSize", event.value[0].size);
           }
 
           axios.post("/api/Mastering/Validation", formData).then((res) => {
