@@ -766,13 +766,13 @@ export default {
           if (event.value[0].type == "audio/mpeg") {
             var blob = event.value[0].slice(0, 300000);
             formData.append("file", blob);
-            formData.append("fileName", event.value[0].name);
-            formData.append("fileSize", event.value[0].size);
+            formData.append("fileExt", event.value[0].name);
+            // formData.append("fileExt", event.value[0].size);
           } else if (event.value[0].type == "audio/wav") {
             var blob = event.value[0].slice(0, 10000);
             formData.append("file", blob);
-            formData.append("fileName", event.value[0].name);
-            formData.append("fileSize", event.value[0].size);
+            formData.append("fileExt", event.value[0].name);
+            // formData.append("fileExt", event.value[0].size);
           }
 
           axios.post("/api/Mastering/Validation", formData).then((res) => {

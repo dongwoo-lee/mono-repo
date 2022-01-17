@@ -4,8 +4,8 @@
       <h4 style="color: black">마스터링 옵션</h4>
       <div
         style="
-          margin-top: 20px;
           padding: 25px;
+          padding-bottom: 10px;
           width: 840px;
           border: 1px solid silver;
         "
@@ -45,7 +45,7 @@
           <p
             style="
               position: absolute;
-              top: 270px;
+              top: 255px;
               left: 475px;
               color: red;
               font-size: 10.5px;
@@ -65,75 +65,100 @@
           </b-form-group>
         </span>
       </div>
-      <h4 style="color: black; margin-top: 40px">스토리지 설정</h4>
+      <h4 style="color: black; margin-top: 20px">스토리지 설정</h4>
       <div
         style="
-          margin-top: 20px;
           padding: 25px;
           width: 840px;
-          height: 230px;
+          height: 330px;
           border: 1px solid silver;
         "
       >
         <b-form-group
           label="PGM-AM"
           class="has-float-label"
-          style="position: absolute; top: 415px; left: 475px"
+          style="position: absolute; top: 355px; left: 475px"
         >
           <b-form-input v-model="PGM_AM_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="PGM-FM"
           class="has-float-label"
-          style="position: absolute; top: 415px; left: 883px"
+          style="position: absolute; top: 355px; left: 883px"
         >
           <b-form-input v-model="PGM_FM_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="PGM-DMB"
           class="has-float-label"
-          style="position: absolute; top: 465px; left: 475px"
+          style="position: absolute; top: 405px; left: 475px"
         >
           <b-form-input v-model="PGM_DMB_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="SPOT"
           class="has-float-label"
-          style="position: absolute; top: 465px; left: 883px"
+          style="position: absolute; top: 405px; left: 883px"
         >
           <b-form-input v-model="SPOT_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="취재물"
           class="has-float-label"
-          style="position: absolute; top: 515px; left: 475px"
+          style="position: absolute; top: 455px; left: 475px"
         >
           <b-form-input v-model="REPORT_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="필러"
           class="has-float-label"
-          style="position: absolute; top: 515px; left: 883px"
+          style="position: absolute; top: 455px; left: 883px"
         >
           <b-form-input v-model="FILLER_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="변동소재"
           class="has-float-label"
-          style="position: absolute; top: 565px; left: 475px"
+          style="position: absolute; top: 505px; left: 475px"
         >
           <b-form-input v-model="VAR_PATH" style="width: 375px" />
         </b-form-group>
         <b-form-group
           label="고정소재"
           class="has-float-label"
-          style="position: absolute; top: 565px; left: 883px"
+          style="position: absolute; top: 505px; left: 883px"
         >
           <b-form-input v-model="STATIC_PATH" style="width: 375px" />
         </b-form-group>
+        <b-form-group
+          label="Song"
+          class="has-float-label"
+          style="position: absolute; top: 555px; left: 475px"
+        >
+          <b-form-input v-model="SONG_PATH" style="width: 375px" />
+        </b-form-group>
+        <b-form-group
+          label="임시 업로드"
+          class="has-float-label"
+          style="position: absolute; top: 555px; left: 883px"
+        >
+          <b-form-input v-model="MAM_UPLOAD_PATH" style="width: 375px" />
+        </b-form-group>
+        <b-form-group
+          label="임시 작업"
+          class="has-float-label"
+          style="position: absolute; top: 605px; left: 475px"
+        >
+          <b-form-input v-model="MST_UPLOAD_PATH" style="width: 375px" />
+        </b-form-group>
       </div>
       <div style="margin-left: 705px; margin-top: 30px; margin-bottom: -20px">
-        <b-button variant="outline-primary" @click="save">저장</b-button>
+        <b-button
+          variant="outline-primary"
+          :disabled="!isDuration"
+          @click="save"
+          >저장</b-button
+        >
         <b-button variant="outline-danger" @click="cancel">취소</b-button>
       </div>
     </div>
@@ -161,6 +186,9 @@ export default {
       STATIC_PATH: "",
       VAR_PATH: "",
       MP3_DECODER: "",
+      SONG_PATH: "",
+      MAM_UPLOAD_PATH: "",
+      MST_UPLOAD_PATH: "",
       SampleRateOptions: [
         { value: "44100", text: "44100" },
         { value: "48000", text: "48000" },
@@ -170,7 +198,8 @@ export default {
         { value: "24", text: "24" },
       ],
       ChannelsOptions: [{ value: "2", text: "2" }],
-      isDuration: false,
+      sdu: false,
+      sdb: false,
     };
   },
   created() {
@@ -181,12 +210,18 @@ export default {
     });
   },
   computed: {
+    isDuration() {
+      if (this.sdu) {
+        return true;
+      }
+      return false;
+    },
     getSILENCE_DURATION() {
       if (this.SILENCE_DURATION < 50 || 10000 < this.SILENCE_DURATION) {
-        this.isDuration = false;
+        this.sdu = false;
         return "50에서 10000 사이의 값만 입력해야 합니다.";
       } else {
-        this.isDuration = true;
+        this.sdu = true;
       }
     },
   },
@@ -248,6 +283,18 @@ export default {
         {
           name: "MP3_DECODER",
           value: this.MP3_DECODER,
+        },
+        {
+          name: "MST_UPLOAD_PATH",
+          value: this.MST_UPLOAD_PATH,
+        },
+        {
+          name: "MAM_UPLOAD_PATH",
+          value: this.MAM_UPLOAD_PATH,
+        },
+        {
+          name: "SONG_PATH",
+          value: this.SONG_PATH,
         },
       ];
       axios.post("/api/options/S01G06C001", list).then((res) => {
