@@ -10,43 +10,64 @@
           border: 1px solid silver;
         "
       >
-        <span style="width: 200px; float: left; margin-right: 90px">
+        <span style="width: 250px; float: left; margin-right: 20px">
           <b-form-group label="Sample Rate" class="has-float-label">
             <b-form-select
-              style="width: 200px"
+              style="width: 250px"
               v-model="SAMPLE_RATE"
               :options="SampleRateOptions"
             />
           </b-form-group>
         </span>
-        <span style="width: 200px; float: left; margin-right: 90px">
+        <span style="width: 250px; float: left; margin-right: 20px">
           <b-form-group label="Bit Depth" class="has-float-label">
             <b-form-select
-              style="width: 200px"
+              style="width: 250px"
               v-model="BIT_DEPTH"
               :options="BitDepthOptions"
             />
           </b-form-group>
         </span>
-        <span style="width: 200px">
+        <span style="width: 250px">
           <b-form-group label="Channels" class="has-float-label">
             <b-form-select
-              style="width: 200px"
+              style="width: 250px"
               v-model="CHANNEL"
               :options="ChannelsOptions"
             />
           </b-form-group>
         </span>
-
-        <span style="width: 200px; float: left; margin-right: 90px">
+        <span style="width: 250px; float: left; margin-right: 20px">
+          <b-form-group label="무음 감지" class="has-float-label">
+            <b-form-select
+              style="width: 250px"
+              v-model="DETECT_SILENCE"
+              :options="DSOptions"
+            />
+          </b-form-group>
+        </span>
+        <span style="width: 115px; float: left; margin-right: 20px">
           <b-form-group label="무음 감지 길이" class="has-float-label">
-            <b-form-input v-model="SILENCE_DURATION" />
+            <b-form-input
+              style="width: 115px"
+              v-show="isDetect"
+              :state="this.sdu"
+              @change="durationInput"
+              v-model="SILENCE_DURATION"
+            />
+            <b-form-input
+              style="width: 115px"
+              disabled
+              v-show="!isDetect"
+              @change="durationInput"
+              v-model="SILENCE_DURATION"
+            />
           </b-form-group>
           <p
             style="
               position: absolute;
               top: 255px;
-              left: 475px;
+              left: 745px;
               color: red;
               font-size: 10.5px;
             "
@@ -54,14 +75,39 @@
             {{ getSILENCE_DURATION }}
           </p>
         </span>
-        <span style="width: 200px; float: left; margin-right: 90px">
+        <span style="width: 115px; float: left; margin-right: 20px">
           <b-form-group label="무음 감지 데시벨" class="has-float-label">
-            <b-form-input v-model="SILENCE_DB" />
+            <b-form-input
+              style="width: 115px"
+              v-show="isDetect"
+              :state="this.sdb"
+              @change="dbInput"
+              v-model="SILENCE_DB"
+            />
+            <b-form-input
+              style="width: 115px"
+              v-show="!isDetect"
+              disabled
+              @change="dbInput"
+              v-model="SILENCE_DB"
+            />
           </b-form-group>
+          <p
+            style="
+              position: absolute;
+              top: 255px;
+              left: 880px;
+              color: red;
+              font-size: 10.5px;
+            "
+          >
+            {{ getSILENCE_DB }}
+          </p>
         </span>
-        <span style="width: 200px">
+
+        <span style="width: 250px">
           <b-form-group label="MP3 Decoder" class="has-float-label">
-            <b-form-input style="width: 200px" v-model="MP3_DECODER" />
+            <b-form-input style="width: 250px" v-model="MP3_DECODER" />
           </b-form-group>
         </span>
       </div>
@@ -79,83 +125,131 @@
           class="has-float-label"
           style="position: absolute; top: 355px; left: 475px"
         >
-          <b-form-input v-model="PGM_AM_PATH" style="width: 375px" />
+          <b-form-input
+            :state="AMState"
+            v-model="PGM_AM_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="PGM-FM"
           class="has-float-label"
           style="position: absolute; top: 355px; left: 883px"
         >
-          <b-form-input v-model="PGM_FM_PATH" style="width: 375px" />
+          <b-form-input
+            :state="FMState"
+            v-model="PGM_FM_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="PGM-DMB"
           class="has-float-label"
           style="position: absolute; top: 405px; left: 475px"
         >
-          <b-form-input v-model="PGM_DMB_PATH" style="width: 375px" />
+          <b-form-input
+            :state="DMBState"
+            v-model="PGM_DMB_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="SPOT"
           class="has-float-label"
           style="position: absolute; top: 405px; left: 883px"
         >
-          <b-form-input v-model="SPOT_PATH" style="width: 375px" />
+          <b-form-input
+            :state="SpotState"
+            v-model="SPOT_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="취재물"
           class="has-float-label"
           style="position: absolute; top: 455px; left: 475px"
         >
-          <b-form-input v-model="REPORT_PATH" style="width: 375px" />
+          <b-form-input
+            :state="ReportState"
+            v-model="REPORT_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="필러"
           class="has-float-label"
           style="position: absolute; top: 455px; left: 883px"
         >
-          <b-form-input v-model="FILLER_PATH" style="width: 375px" />
+          <b-form-input
+            :state="FillerState"
+            v-model="FILLER_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="변동소재"
           class="has-float-label"
           style="position: absolute; top: 505px; left: 475px"
         >
-          <b-form-input v-model="VAR_PATH" style="width: 375px" />
+          <b-form-input
+            :state="VarState"
+            v-model="VAR_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="고정소재"
           class="has-float-label"
           style="position: absolute; top: 505px; left: 883px"
         >
-          <b-form-input v-model="STATIC_PATH" style="width: 375px" />
+          <b-form-input
+            :state="StaticState"
+            v-model="STATIC_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="Song"
           class="has-float-label"
           style="position: absolute; top: 555px; left: 475px"
         >
-          <b-form-input v-model="SONG_PATH" style="width: 375px" />
+          <b-form-input
+            :state="SongState"
+            v-model="SONG_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="임시 업로드"
           class="has-float-label"
           style="position: absolute; top: 555px; left: 883px"
         >
-          <b-form-input v-model="MAM_UPLOAD_PATH" style="width: 375px" />
+          <b-form-input
+            :state="MamState"
+            v-model="MAM_UPLOAD_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
         <b-form-group
           label="임시 작업"
           class="has-float-label"
           style="position: absolute; top: 605px; left: 475px"
         >
-          <b-form-input v-model="MST_UPLOAD_PATH" style="width: 375px" />
+          <b-form-input
+            :state="MstState"
+            v-model="MST_UPLOAD_PATH"
+            style="width: 375px"
+          />
         </b-form-group>
       </div>
       <div style="margin-left: 705px; margin-top: 30px; margin-bottom: -20px">
+        <b-button v-show="isDuration" variant="outline-primary" @click="save"
+          >저장</b-button
+        >
         <b-button
-          variant="outline-primary"
-          :disabled="!isDuration"
+          v-show="!isDuration"
+          variant="outline-dark"
+          disabled
           @click="save"
           >저장</b-button
         >
@@ -180,6 +274,7 @@ export default {
       PGM_FM_PATH: "",
       REPORT_PATH: "",
       SAMPLE_RATE: "",
+      DETECT_SILENCE: "",
       SILENCE_DB: "",
       SILENCE_DURATION: "",
       SPOT_PATH: "",
@@ -197,9 +292,14 @@ export default {
         { value: "16", text: "16" },
         { value: "24", text: "24" },
       ],
+      DSOptions: [
+        { value: "Y", text: "사용함" },
+        { value: "N", text: "사용안함" },
+      ],
       ChannelsOptions: [{ value: "2", text: "2" }],
       sdu: false,
       sdb: false,
+      isDetect: false,
     };
   },
   created() {
@@ -209,23 +309,106 @@ export default {
       });
     });
   },
+  watch: {
+    DETECT_SILENCE(v) {
+      if (v == "Y") {
+        this.isDetect = true;
+      } else if (v == "N") {
+        this.isDetect = false;
+        this.SILENCE_DURATION = 4000;
+        this.SILENCE_DB = -42;
+      }
+    },
+  },
   computed: {
+    AMState() {
+      return this.PGM_AM_PATH == "" ? false : true;
+    },
+    FMState() {
+      return this.PGM_FM_PATH == "" ? false : true;
+    },
+    DMBState() {
+      return this.PGM_DMB_PATH == "" ? false : true;
+    },
+    SpotState() {
+      return this.SPOT_PATH == "" ? false : true;
+    },
+    ReportState() {
+      return this.REPORT_PATH == "" ? false : true;
+    },
+    FillerState() {
+      return this.FILLER_PATH == "" ? false : true;
+    },
+    VarState() {
+      return this.VAR_PATH == "" ? false : true;
+    },
+    StaticState() {
+      return this.STATIC_PATH == "" ? false : true;
+    },
+    SongState() {
+      return this.SONG_PATH == "" ? false : true;
+    },
+    MamState() {
+      return this.MAM_UPLOAD_PATH == "" ? false : true;
+    },
+    MstState() {
+      return this.MST_UPLOAD_PATH == "" ? false : true;
+    },
     isDuration() {
-      if (this.sdu) {
+      if (
+        this.sdu &&
+        this.sdb &&
+        this.AMState &&
+        this.FMState &&
+        this.DMBState &&
+        this.SpotState &&
+        this.ReportState &&
+        this.FillerState &&
+        this.VarState &&
+        this.StaticState &&
+        this.SongState &&
+        this.MamState &&
+        this.MstState
+      ) {
         return true;
       }
       return false;
     },
+    getSILENCE_DB() {
+      if (this.SILENCE_DB < -100 || -20 < this.SILENCE_DB) {
+        this.sdb = false;
+        return "-20 ~ -100 입력 가능";
+      } else if (this.SILENCE_DB == "") {
+        this.sdb = false;
+        return "-20 ~ -100 입력 가능";
+      } else {
+        this.sdb = true;
+      }
+    },
     getSILENCE_DURATION() {
-      if (this.SILENCE_DURATION < 50 || 10000 < this.SILENCE_DURATION) {
+      if (this.SILENCE_DURATION < 2000 || 10000 < this.SILENCE_DURATION) {
         this.sdu = false;
-        return "50에서 10000 사이의 값만 입력해야 합니다.";
+        return "2000 ~ 10000 입력 가능";
+      } else if (this.SILENCE_DURATION == "") {
+        this.sdu = false;
       } else {
         this.sdu = true;
       }
     },
   },
   methods: {
+    dbInput(event) {
+      if (isNaN(event) || event == "") {
+        this.SILENCE_DB = -42;
+        return;
+      }
+    },
+    durationInput(v) {
+      if (isNaN(v) || v == "") {
+        this.SILENCE_DURATION = 4000;
+        return;
+      }
+    },
     save() {
       let list = [
         {
@@ -239,6 +422,10 @@ export default {
         {
           name: "CHANNEL",
           value: this.CHANNEL,
+        },
+        {
+          name: "DETECT_SILENCE",
+          value: this.DETECT_SILENCE,
         },
         {
           name: "SILENCE_DURATION",
