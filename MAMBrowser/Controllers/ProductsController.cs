@@ -608,7 +608,7 @@ namespace MAMBrowser.Controllers
                                     else if (ext == Define.MP2)
                                     {
                                         
-                                        AudioEngine.ConvertMp2ToWav(tempMemoryStream, waveFileWriter);
+                                        MAMAudioEngine.ConvertMp2ToWav(tempMemoryStream, waveFileWriter);
                                     }
                                 }
                             }

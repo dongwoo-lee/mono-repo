@@ -13,26 +13,11 @@ using System.Text;
 
 namespace MAMBrowser.Foundation
 {
-    public class AudioEngine
+    public class MAMAudioEngine
     {
         private const int peekValuesBufferSize = 15000;
         private const int _silence = -42;
-        public enum BitDepths : byte
-        {
-            NRJ_RAW_8BITS = 1,
-            NRJ_RAW_16BITS = 2,
-            NRJ_RAW_24BITS = 3
-        }
-        public enum Channels : byte
-        {
-            MONO = 1,
-            STEREO = 2
-        }
-        public enum Resolution : short
-        {
-            MP2 = 1152,
-            PCM = 1152
-        }
+     
 
         public static List<float> GetVolumeFromEgy(Stream stream)
         {
@@ -522,79 +507,6 @@ namespace MAMBrowser.Foundation
         public static float Get32ValueIeeeFloat(float sample)
         {
             return sample;
-        }
-
-
-        public static string GetAudioFormat(MemoryStream memoryStream, string fileName)
-        {
-            var ext = Path.GetExtension(fileName);
-           
-            if (ext.ToUpper() == Define.WAV)
-            {
-                WaveFileReader reader = new WaveFileReader(memoryStream);
-                return $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-            }
-            else if (ext.ToUpper() == Define.MP2)
-            {
-                Mp3FileReader reader = new Mp3FileReader(memoryStream, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
-                var frame = reader.ReadNextFrame();
-                return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-            }
-            else if (ext.ToUpper() == Define.MP3)
-            {
-                Mp3FileReader reader = new Mp3FileReader(memoryStream);
-                var frame = reader.ReadNextFrame();
-                return $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-            }
-           
-            return "unknown";
-        }
-        public static AudioInfo GetAudioInfo(MemoryStream memoryStream, string fileName)
-        {
-            AudioInfo info = new AudioInfo();
-            var ext = Path.GetExtension(fileName);
-
-            if (ext.ToUpper() == Define.WAV)
-            {
-                WaveFileReader reader = new WaveFileReader(memoryStream);
-                info.AudioFormatInfo = $"{reader.WaveFormat.SampleRate}, {reader.WaveFormat.BitsPerSample}, {reader.WaveFormat.Channels}";
-                info.Duration = reader.TotalTime.ToString(Define.TIME8);
-            }
-            else if (ext.ToUpper() == Define.MP2)
-            {
-                Mp3FileReader reader = new Mp3FileReader(memoryStream, new Mp3FileReader.FrameDecompressorBuilder(waveFormat => new Mp3FrameDecompressor(waveFormat)));
-                var frame = reader.ReadNextFrame();
-                info.AudioFormatInfo = $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                info.Duration = reader.TotalTime.ToString(Define.TIME8);
-            }
-            else if (ext.ToUpper() == Define.MP3)
-            {
-                Mp3FileReader reader = new Mp3FileReader(memoryStream);
-                var frame = reader.ReadNextFrame();
-                info.AudioFormatInfo = $"{frame.BitRate / 1000} kbps ({frame.SampleRate},{frame.ChannelMode.ToString()})";
-                info.Duration = reader.TotalTime.ToString(Define.TIME8);
-            }
-            return info;
-        }
-        public static MemoryStream GetHeaderStream(Stream stream)
-        {
-            int stepLength = 100000;
-            int totalHeadLength = stepLength * 5;
-            int totalRead = 0;
-            
-            byte[] buffer = new byte[stepLength];
-            MemoryStream ms = new MemoryStream();
-            while (true)
-            {
-                if (totalRead >= totalHeadLength)
-                    break;
-
-                var read = stream.Read(buffer, 0, buffer.Length);
-                ms.Write(buffer, 0, read);
-                totalRead += read;
-            }
-            ms.Flush();
-            return ms;
         }
     }
 }
