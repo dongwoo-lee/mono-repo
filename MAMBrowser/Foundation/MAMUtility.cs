@@ -32,7 +32,7 @@ namespace MAMBrowser.Foundation
                     {
                         using (FileStream outStream = new FileStream(convertFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                         {
-                            AudioEngine.ConvertMp2ToWav(inStream, outStream);
+                            MAMAudioEngine.ConvertMp2ToWav(inStream, outStream);
                         }
                     }
                 }
@@ -48,7 +48,7 @@ namespace MAMBrowser.Foundation
             {
                 using (var stream = new FileStream(egyFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
-                    return AudioEngine.GetDecibelFromEgy(stream);
+                    return MAMAudioEngine.GetDecibelFromEgy(stream);
                 }
             }
             else
@@ -59,11 +59,11 @@ namespace MAMBrowser.Foundation
                     switch (ext)
                     {
                         case Define.WAV:
-                            return AudioEngine.GetDecibelFromWav(stream, 2);
+                            return MAMAudioEngine.GetDecibelFromWav(stream, 2);
                         //case MP2:       파형검색시 mp2파일은 wav로 치환됨.
                         //    break;
                         case Define.MP3:
-                            return AudioEngine.GetDecibelFromMp3(stream, 2);
+                            return MAMAudioEngine.GetDecibelFromMp3(stream, 2);
                         default:
                             return new List<float>();
                     }

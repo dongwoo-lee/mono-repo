@@ -12,6 +12,7 @@ using M30.AudioFile.DAL.Dao;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using M30.AudioFile.Common;
+using M30.AudioEngine;
 
 namespace MAMBrowser.BLL
 {
@@ -27,6 +28,26 @@ namespace MAMBrowser.BLL
             _dao = dao;
             _apiDao = apiDao;
             _fileProtocol = sr(MAMDefine.PrivateWorkConnection).FileSystem;
+        }
+        private MemoryStream GetHeaderStream(Stream stream)
+        {
+            int stepLength = 100000;
+            int totalHeadLength = stepLength * 5;
+            int totalRead = 0;
+
+            byte[] buffer = new byte[stepLength];
+            MemoryStream ms = new MemoryStream();
+            while (true)
+            {
+                if (totalRead >= totalHeadLength)
+                    break;
+
+                var read = stream.Read(buffer, 0, buffer.Length);
+                ms.Write(buffer, 0, read);
+                totalRead += read;
+            }
+            ms.Flush();
+            return ms;
         }
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PRIVATE_SPACE metaData)
         {
@@ -49,25 +70,26 @@ namespace MAMBrowser.BLL
                 long ID = _dao.GetID();
                 string date = DateTime.Now.ToString(Define.DTM8);
                 string newFileName = $"{ID.ToString() }_{fileName}";
+                string fileExt = Path.GetExtension(newFileName);
                 var relativeSourceFolder = $"{_fileProtocol.TmpUploadFolder}";
                 var relativeTargetFolder = @$"{_fileProtocol.UploadFolder}\{userId}\{userId}-{date}";
                 var relativeSourcePath = @$"{relativeSourceFolder}\{newFileName}";
                 var relativeTargetPath = @$"{relativeTargetFolder}\{newFileName}";
 
-                var headerStream = AudioEngine.GetHeaderStream(stream);
-                headerStream.Position = 0;
-                var audioFormat = AudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
-                headerStream.Position = 0;
+                var audioHeaderStream = GetHeaderStream(stream);
+                audioHeaderStream.Position = 0;
+                var soundInfo = AudioEngine.GetAudioInfo(audioHeaderStream, fileExt, metaData.FILE_SIZE);
+                audioHeaderStream.Position = 0;
                 _fileProtocol.MakeDirectory(relativeSourceFolder);
-                _fileProtocol.Upload(headerStream, stream, relativeSourcePath);
+                _fileProtocol.Upload(audioHeaderStream, stream, relativeSourcePath);
                 _fileProtocol.MakeDirectory(relativeTargetFolder);
                 _fileProtocol.Move(relativeSourcePath, relativeTargetPath);
                 stream.Dispose();
-                headerStream.Dispose();
+                audioHeaderStream.Dispose();
 
                 metaData.SEQ = ID;
                 metaData.USER_ID = userId;
-                metaData.AUDIO_FORMAT = audioFormat;
+                metaData.AUDIO_FORMAT = soundInfo.AudioFormat;
                 metaData.FILE_PATH = @$"\\{_fileProtocol.UploadHost}\{relativeTargetPath}";
                 _dao.Insert(metaData);
                

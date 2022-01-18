@@ -1,4 +1,5 @@
-﻿using M30.AudioFile.Common;
+﻿using M30.AudioEngine;
+using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.DBParams;
@@ -46,7 +47,7 @@ namespace MAMBrowser.Controllers
         }
         //fileHeader size = 1152
         [HttpPost("Validation")]
-        public ActionResult<DTO_RESULT<AudioInfo>> Validation([FromForm] IFormFile file,[FromForm] string fileExt)
+        public ActionResult<DTO_RESULT<AudioInfo>> Validation([FromForm] IFormFile file, [FromForm] string fileName, [FromForm] long fileSize)
         {
             DTO_RESULT<AudioInfo> result = new DTO_RESULT<AudioInfo>();
             
@@ -56,7 +57,12 @@ namespace MAMBrowser.Controllers
                 try
                 {
                     ms.Position = 0;
-                    result.ResultObject = AudioEngine.GetAudioInfo(ms, fileExt);
+                    AudioInfo aInfo = new AudioInfo();
+                    string fileExt = Path.GetExtension(fileName);
+                    var soundInfo = AudioEngine.GetAudioInfo(ms, fileExt, fileSize);
+                    aInfo.Duration = soundInfo.TotalTime.ToString(Define.TIME8);
+                    aInfo.AudioFormatInfo = soundInfo.AudioFormat;
+                    result.ResultObject = aInfo;
                 }
                 catch (Exception ex)
                 {
