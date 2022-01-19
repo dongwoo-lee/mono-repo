@@ -466,6 +466,7 @@ const routes = [
             cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
           }
           var params = { productid: cueDataObj.productid, week: cueDataObj.weeks, pgmcode: cueDataObj.pgmcode };
+          var selectedWeekList = await axios.get(`/api/defcuesheet/getselectedweek?productid=${cueDataObj.productid}`).then((res) => { return res.data })
           await axios.get(`/api/defcuesheet/GetdefCue`, {
             params: params,
             paramsSerializer: (params) => {
@@ -474,11 +475,17 @@ const routes = [
           })
             .then((res) => {
               var cueData = res.data.cueSheetDTO
+              axios.get(`api/DefCuesheet/Getselectedweek?productid=PM1415NA`)
+                .then((res) => {
+                  //return res.data
+                  console.log(res)
+                })
               cueData.r_ONAIRTIME = cueData.detail[0].onairtime;
               cueData.activeWeekList = cueDataObj.activeWeekList
               cueData.cueid = cueDataObj.cueid
               cueData.weeks = cueDataObj.weeks
-              cueData.productWeekList = cueDataObj.productWeekList
+              //cueData.productWeekList = cueDataObj.productWeekList
+              cueData.productWeekList = [{ weekList: selectedWeekList }]
               cueDataObj = cueData
               store.dispatch('cueList/setCueConData', res.data);
               var dataVal = false;
