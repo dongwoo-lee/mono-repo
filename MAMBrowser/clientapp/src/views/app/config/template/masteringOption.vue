@@ -1,11 +1,11 @@
 <template>
-  <div class="card-body">
+  <div class="card-body masteringOption">
     <div style="margin-left: 395px">
       <h4 style="color: black">마스터링 옵션</h4>
       <div
         style="
-          padding: 25px;
-          padding-bottom: 10px;
+          padding: 20px;
+          padding-bottom: 5px;
           width: 840px;
           border: 1px solid silver;
         "
@@ -66,7 +66,7 @@
           <p
             style="
               position: absolute;
-              top: 255px;
+              top: 245px;
               left: 745px;
               color: red;
               font-size: 10.5px;
@@ -95,7 +95,7 @@
           <p
             style="
               position: absolute;
-              top: 255px;
+              top: 245px;
               left: 880px;
               color: red;
               font-size: 10.5px;
@@ -114,16 +114,17 @@
       <h4 style="color: black; margin-top: 20px">스토리지 설정</h4>
       <div
         style="
-          padding: 25px;
+          padding: 20px;
+          padding-bottom: 10px;
           width: 840px;
-          height: 330px;
+          height: 370px;
           border: 1px solid silver;
         "
       >
         <b-form-group
           label="PGM-AM"
           class="has-float-label"
-          style="position: absolute; top: 355px; left: 475px"
+          style="float: left; margin-right: 40px"
         >
           <b-form-input
             :state="AMState"
@@ -131,11 +132,7 @@
             style="width: 375px"
           />
         </b-form-group>
-        <b-form-group
-          label="PGM-FM"
-          class="has-float-label"
-          style="position: absolute; top: 355px; left: 883px"
-        >
+        <b-form-group label="PGM-FM" class="has-float-label">
           <b-form-input
             :state="FMState"
             v-model="PGM_FM_PATH"
@@ -145,7 +142,7 @@
         <b-form-group
           label="PGM-DMB"
           class="has-float-label"
-          style="position: absolute; top: 405px; left: 475px"
+          style="float: left; margin-right: 40px"
         >
           <b-form-input
             :state="DMBState"
@@ -153,11 +150,7 @@
             style="width: 375px"
           />
         </b-form-group>
-        <b-form-group
-          label="SPOT"
-          class="has-float-label"
-          style="position: absolute; top: 405px; left: 883px"
-        >
+        <b-form-group label="SPOT" class="has-float-label">
           <b-form-input
             :state="SpotState"
             v-model="SPOT_PATH"
@@ -167,7 +160,7 @@
         <b-form-group
           label="취재물"
           class="has-float-label"
-          style="position: absolute; top: 455px; left: 475px"
+          style="float: left; margin-right: 40px"
         >
           <b-form-input
             :state="ReportState"
@@ -175,11 +168,7 @@
             style="width: 375px"
           />
         </b-form-group>
-        <b-form-group
-          label="필러"
-          class="has-float-label"
-          style="position: absolute; top: 455px; left: 883px"
-        >
+        <b-form-group label="필러" class="has-float-label">
           <b-form-input
             :state="FillerState"
             v-model="FILLER_PATH"
@@ -189,7 +178,7 @@
         <b-form-group
           label="변동소재"
           class="has-float-label"
-          style="position: absolute; top: 505px; left: 475px"
+          style="float: left; margin-right: 40px"
         >
           <b-form-input
             :state="VarState"
@@ -197,11 +186,7 @@
             style="width: 375px"
           />
         </b-form-group>
-        <b-form-group
-          label="고정소재"
-          class="has-float-label"
-          style="position: absolute; top: 505px; left: 883px"
-        >
+        <b-form-group label="고정소재" class="has-float-label">
           <b-form-input
             :state="StaticState"
             v-model="STATIC_PATH"
@@ -211,7 +196,7 @@
         <b-form-group
           label="Song"
           class="has-float-label"
-          style="position: absolute; top: 555px; left: 475px"
+          style="float: left; margin-right: 40px"
         >
           <b-form-input
             :state="SongState"
@@ -219,11 +204,7 @@
             style="width: 375px"
           />
         </b-form-group>
-        <b-form-group
-          label="임시 업로드"
-          class="has-float-label"
-          style="position: absolute; top: 555px; left: 883px"
-        >
+        <b-form-group label="임시 업로드" class="has-float-label">
           <b-form-input
             :state="MamState"
             v-model="MAM_UPLOAD_PATH"
@@ -233,7 +214,7 @@
         <b-form-group
           label="임시 작업"
           class="has-float-label"
-          style="position: absolute; top: 605px; left: 475px"
+          style="float: left; margin-right: 40px"
         >
           <b-form-input
             :state="MstState"
@@ -241,8 +222,33 @@
             style="width: 375px"
           />
         </b-form-group>
+        <b-form-group label="임시 삭제 파일" class="has-float-label">
+          <b-form-input
+            :state="recycleState"
+            v-model="RECYCLE_PATH"
+            style="width: 375px"
+          />
+        </b-form-group>
+        <b-form-group
+          label="스토리지 ID"
+          class="has-float-label"
+          style="float: left; margin-right: 40px"
+        >
+          <b-form-input
+            :state="IdState"
+            v-model="STORAGE_ID"
+            style="width: 375px"
+          />
+        </b-form-group>
+        <b-form-group label="스토리지 암호" class="has-float-label">
+          <b-form-input
+            :state="PassState"
+            v-model="STORAGE_PASS"
+            style="width: 375px"
+          />
+        </b-form-group>
       </div>
-      <div style="margin-left: 705px; margin-top: 30px; margin-bottom: -20px">
+      <div style="margin-left: 705px; margin-top: 20px; margin-bottom: -20px">
         <b-button v-show="isDuration" variant="outline-primary" @click="save"
           >저장</b-button
         >
@@ -284,6 +290,9 @@ export default {
       SONG_PATH: "",
       MAM_UPLOAD_PATH: "",
       MST_UPLOAD_PATH: "",
+      RECYCLE_PATH: "",
+      STORAGE_ID: "",
+      STORAGE_PASS: "",
       SampleRateOptions: [
         { value: "44100", text: "44100" },
         { value: "48000", text: "48000" },
@@ -353,6 +362,15 @@ export default {
     },
     MstState() {
       return this.MST_UPLOAD_PATH == "" ? false : true;
+    },
+    recycleState() {
+      return this.RECYCLE_PATH == "" ? false : true;
+    },
+    IdState() {
+      return this.STORAGE_ID == "" ? false : true;
+    },
+    PassState() {
+      return this.STORAGE_PASS == "" ? false : true;
     },
     isDuration() {
       if (
@@ -483,6 +501,18 @@ export default {
           name: "SONG_PATH",
           value: this.SONG_PATH,
         },
+        {
+          name: "RECYCLE_PATH",
+          value: this.RECYCLE_PATH,
+        },
+        {
+          name: "STORAGE_ID",
+          value: this.STORAGE_ID,
+        },
+        {
+          name: "STORAGE_PASS",
+          value: this.STORAGE_PASS,
+        },
       ];
       axios.post("/api/options/S01G06C001", list).then((res) => {
         if (res.status == 200 && res.data.errorMsg == null) {
@@ -508,4 +538,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.masteringOption {
+  padding-bottom: 0px !important;
+}
+</style>
