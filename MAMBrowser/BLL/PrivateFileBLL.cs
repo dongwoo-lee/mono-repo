@@ -49,6 +49,7 @@ namespace MAMBrowser.BLL
             ms.Flush();
             return ms;
         }
+
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PRIVATE_SPACE metaData)
         {
             // 파일 크기로 유효성검사 필요. 이함수 들어오기전 metaData의 FileSize필드 값이 꼭 채워져야함.
@@ -86,12 +87,12 @@ namespace MAMBrowser.BLL
                 _fileProtocol.Move(relativeSourcePath, relativeTargetPath);
                 stream.Dispose();
                 audioHeaderStream.Dispose();
-
+                
                 metaData.SEQ = ID;
                 metaData.USER_ID = userId;
                 metaData.AUDIO_FORMAT = soundInfo.AudioFormat;
                 metaData.FILE_PATH = @$"\\{_fileProtocol.UploadHost}\{relativeTargetPath}";
-                _dao.Insert(metaData);
+                _dao.Insert(metaData, (int)soundInfo.TotalTime.TotalMilliseconds);
                
                 return validateResult;
             }

@@ -231,11 +231,11 @@ export default {
           width: "10%",
         },
         {
-          name: "editedDtm",
+          name: "regDtm",
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "editedDtm",
+          sortField: "regDtm",
           width: "12%",
         },
         {

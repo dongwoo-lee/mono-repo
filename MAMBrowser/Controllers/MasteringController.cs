@@ -1182,11 +1182,15 @@ namespace MAMBrowser.Controllers
         void DeleteAudioFile(string userId, string audioClipId, string fileToken)
         {
             var movedFilePath = MoveRecycle(fileToken, userId);
-            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일 삭제 - {audioClipId}", $"moved to {movedFilePath}");
+            if (!string.IsNullOrEmpty(movedFilePath))
+            {
+                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId}", $"moved to {movedFilePath}").Wait();
+            }
             AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
             repo.Delete(audioClipId, userId, movedFilePath);
+            _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터 삭제", null);
         }
-      
+
         string MoveRecycle(string fileToken, string userId)
         {
             string filePath = "";
@@ -1201,8 +1205,8 @@ namespace MAMBrowser.Controllers
 
                 if (!System.IO.File.Exists(filePath))
                 {
-                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로에 파일이 없습니다.", $"{filePath}");
-                    return String.Empty;
+                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일을 찾을 수 없습니다.", $"{filePath}");
+                    return string.Empty;
                 }
 
                 var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();

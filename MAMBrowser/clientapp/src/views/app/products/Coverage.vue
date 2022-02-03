@@ -369,7 +369,12 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/report/${e.deleteId}?filetoken=${e.fileToken}`)
+        .delete(`/api/Mastering/report/${e.deleteId}?filetoken=${e.fileToken}`, {
+          headers : { 
+            'Content-Type': 'application/json',
+            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+          }
+        })
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

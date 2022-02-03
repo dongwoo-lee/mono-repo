@@ -400,8 +400,12 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&filetoken=${e.fileToken}`
-        )
+          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&filetoken=${e.fileToken}`, {
+          headers : { 
+            'Content-Type': 'application/json',
+            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+          }
+        })
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

@@ -222,7 +222,7 @@
             style="width: 375px"
           />
         </b-form-group>
-        <b-form-group label="임시 삭제 파일" class="has-float-label">
+        <b-form-group label="삭제 파일 보관" class="has-float-label">
           <b-form-input
             :state="recycleState"
             v-model="RECYCLE_PATH"
