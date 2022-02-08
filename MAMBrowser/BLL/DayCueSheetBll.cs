@@ -44,26 +44,32 @@ namespace MAMBrowser.BLL
         }
 
         // 일일큐시트 상세내용 가져오기 
-        public CueSheetCollectionDTO GetDayCueSheet(string productid, int cueid, string pgmcode, string brd_dt)
+        public CueSheetCollectionDTO GetDayCueSheet(string productid, string pgmcode, string brd_dt)
         {
             DayCueSheetInfoParam param = new DayCueSheetInfoParamBuilder()
-                .SetCueID(cueid)
+                .SetCueID(-1)
                 .SetProductID(productid)
                 .SetRequestType(RequestType.Web)
                 .Build();
-
+            param.BrdDate = brd_dt;
             var result = _dao.GetDayCueSheet(param);
-            if (pgmcode!=null&& brd_dt != null)
+            if (result.CueSheetEntity == null)
             {
-            SponsorParam spon_param = new SponsorParam();
-            spon_param.BrdDate = brd_dt;
-            spon_param.PgmCode = pgmcode;
-            result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(_dao.GetDayCueSheet(param).CueSheetConEntities);
+                return null;
             }
+            else
+            {
+                if (pgmcode != null && brd_dt != null)
+                {
+                    SponsorParam spon_param = new SponsorParam();
+                    spon_param.BrdDate = brd_dt;
+                    spon_param.PgmCode = pgmcode;
+                    result.CueSheetConEntities = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(_dao.GetDayCueSheet(param).CueSheetConEntities);
+                }
 
-            return result?.DayConverting();
+                return result?.DayConverting();
 
-
+            }
         }
         public List<CueSheetConDTO> GetAddSponsorList(string pgmcode, string brd_dt)
         {

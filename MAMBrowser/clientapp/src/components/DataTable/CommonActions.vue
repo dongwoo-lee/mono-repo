@@ -261,6 +261,8 @@ export default {
     },
     // 큐시트 관련 CueInfo Setting
     getCueData(V) {
+      //router 로직 이동 중
+      //sessionStorage.setItem("USER_INFO", JSON.stringify(this.rowData));
       this.SET_CUEINFO(this.rowData);
       this.$router.push({ path: "/app/cuesheet/" + V + "/detail" });
     },

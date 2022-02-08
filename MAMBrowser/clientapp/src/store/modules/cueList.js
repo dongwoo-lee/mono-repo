@@ -584,7 +584,14 @@ export default {
                 .then(async (res) => {
                     await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                     var newInfo = { ...state.cueInfo }
-                    var params = { productid: newInfo.productid, cueid: res.data }
+                    //router 로직 이동 중 (주석 필요)
+                    //var params = { productid: newInfo.productid, cueid: res.data }
+                    let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
+                    var params = {
+                        productid: rowData.productid,
+                        pgmcode: rowData.pgmcode,
+                        brd_dt: rowData.day,
+                    };
                     await axios.get(`/api/daycuesheet/GetdayCue`, {
                         params: params,
                         paramsSerializer: (params) => {
@@ -595,6 +602,7 @@ export default {
                         newInfo.edittime = cueRes.data.cueSheetDTO.edittime
                         delete newInfo.cueid
                         commit('SET_CUEINFO', newInfo)
+                        //router 로직 이동 중 (주석 필요)
                         sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                     })
                     window.$notify(

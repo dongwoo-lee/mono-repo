@@ -43,14 +43,6 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        //프로그램별 기본큐시트 적용요일 리스트 가져오기
-        [HttpGet("GetSelectedWeek")]
-        public string[] GetSelectedWeekList([FromQuery] string productid)
-        {
-            return _bll.GetDefWeek(productid);
-
-        }
-
         // 기본큐시트 상세내용 가져오기
         [HttpGet("GetDefCue")]
         public CueSheetCollectionDTO GetDefCue([FromQuery] string productid, [FromQuery] List<string> week, string pgmcode, string brd_dt)
