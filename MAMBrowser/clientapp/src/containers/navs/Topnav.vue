@@ -33,9 +33,9 @@
         <div class="user d-inline-block">
           <table class="topnav-right-table">
             <tr>
-              <td rowspan="2">
+              <td rowspan="2" v-if="isMasteringValid()">
                 <b-button
-                  v-show="getBadge != 0"
+                  v-if="isMasteringValid()"
                   class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                   id="fileuploadbutton"
                   @click="openFileModal"
@@ -53,42 +53,7 @@
                     aria-hidden="true"
                   >
                   </b-icon>
-                  마스터링
-                  <!-- <b-badge
-                    style="
-                      position: relative;
-                      top: -17px;
-                      right: -10px;
-                      z-index: 1030;
-                      bordercolor: red;
-                      color: red;
-                      background-color: white;
-                      border-radius: 80%;
-                    "
-                    variant="outline-danger"
-                    >{{ getBadge }}</b-badge
-                  > -->
-                </b-button>
-                <b-button
-                  v-show="getBadge == 0"
-                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
-                  id="fileuploadbutton"
-                  @click="openFileModal"
-                  style="
-                    padding: 7px !important;
-                    padding-right: 20px;
-                    border-color: silver;
-                    color: black;
-                    background-color: white;
-                  "
-                >
-                  <b-icon
-                    icon="file-earmark-music"
-                    style="margin-right: 15px"
-                    aria-hidden="true"
-                  >
-                  </b-icon>
-                  마스터링
+                  방송의뢰
                 </b-button>
               </td>
               <!-- 타이머 -->
@@ -182,7 +147,13 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions, mapState } from "vuex";
+import {
+  mapGetters,
+  mapMutations,
+  mapActions,
+  mapState,
+  createLogger,
+} from "vuex";
 import { MenuIcon, MobileMenuIcon } from "../../components/Svg";
 import { SYSTEM_MANAGEMENT_CODE } from "../../constants/config";
 import { getDirection, setDirection } from "../../utils";
@@ -200,6 +171,9 @@ export default {
   created() {
     this.renewal();
   },
+  computed: {
+    ...mapGetters("user", ["behaviorList"]),
+  },
   methods: {
     ...mapMutations("menu", [
       "changeSideMenuStatus",
@@ -207,10 +181,28 @@ export default {
     ]),
     ...mapActions("user", ["setLang", "signOut", "renewal"]),
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
-    ...mapMutations("FileIndexStore", ["setFileModal", "setFileSelected"]),
+    ...mapMutations("FileIndexStore", [
+      "setFileModal",
+      "setFileSelected",
+      "setButton",
+    ]),
+    isMasteringValid() {
+      var visible;
+      this.behaviorList.forEach((e) => {
+        if (e.id == "S01G02C004" && e.visible == "Y") {
+          visible = e.visible;
+        }
+      });
+      if (visible == "Y") {
+        return true;
+      } else {
+        return false;
+      }
+    },
     openFileModal() {
       this.setFileModal(true);
       this.setFileSelected(true);
+      this.setButton("nav");
     },
     logout() {
       this.SET_LOGOUT();

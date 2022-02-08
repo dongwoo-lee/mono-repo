@@ -98,7 +98,7 @@
       </template>
     </common-form>
 
-    <!-- 마스터링 메타 데이터 수정 -->
+    <!-- 방송의뢰 메타 데이터 수정 -->
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -109,7 +109,7 @@
       ></file-update>
     </transition>
 
-    <!-- 마스터링 파일 삭제 -->
+    <!-- 방송의뢰 파일 삭제 -->
     <transition name="slide-fade">
       <file-delete
         v-if="metaDelete"
@@ -377,12 +377,15 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        .delete(
+          `/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

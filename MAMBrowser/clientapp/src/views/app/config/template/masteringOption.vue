@@ -1,7 +1,7 @@
 <template>
   <div class="card-body masteringOption">
     <div style="margin-left: 395px">
-      <h4 style="color: black">마스터링 옵션</h4>
+      <h4 style="color: black">방송의뢰 옵션</h4>
       <div
         style="
           padding: 20px;
@@ -516,7 +516,7 @@ export default {
       ];
       axios.post("/api/options/S01G06C001", list).then((res) => {
         if (res.status == 200 && res.data.errorMsg == null) {
-          this.$fn.notify("primary", { title: "마스터링 옵션 저장 성공" });
+          this.$fn.notify("primary", { title: "방송의뢰 옵션 저장 성공" });
         } else {
           this.$fn.notify("error", { title: res.data.errorMsg });
         }
@@ -528,7 +528,7 @@ export default {
           res.data.resultObject.data.forEach((e) => {
             this[e.name] = e.value;
           });
-          this.$fn.notify("primary", { title: "마스터링 옵션 변경 취소" });
+          this.$fn.notify("primary", { title: "방송의뢰 옵션 변경 취소" });
         } else {
           this.$fn.notify("error", { title: res.data.errorMsg });
         }

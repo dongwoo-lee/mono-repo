@@ -77,7 +77,7 @@
         @close="closeFileModal"
         style="font-family: 'Times New Roman', Times, serif; font-weight: bold"
       >
-        <h2 slot="header">마스터링</h2>
+        <h2 slot="header">방송의뢰</h2>
         <h4 slot="body">
           <!--
            -->
@@ -777,23 +777,23 @@ export default {
             formData.append("fileSize", event.value[0].size);
           }
 
-          axios.post("/api/Mastering/Validation", formData).then((res) => {
-            if (res.data.errorMsg != null && res.data.resultCode != 0) {
-              this.$fn.notify("error", {
-                title: "잘못된 파일 형식입니다.",
-              });
-              this.reset();
-              return;
-            }
-            this.setDuration(res.data.resultObject.duration);
-            this.setAudioFormat(res.data.resultObject.audioFormatInfo);
-            this.openFileModal();
-            this.dropzone = false;
-            this.setFileSelected(false);
-            this.MetaModal = true;
-            this.setProcessing(false);
-            // this.setFileUploading(true);
-          });
+          // axios.post("/api/Mastering/Validation", formData).then((res) => {
+          //   if (res.data.errorMsg != null && res.data.resultCode != 0) {
+          //     this.$fn.notify("error", {
+          //       title: "잘못된 파일 형식입니다.",
+          //     });
+          //     this.reset();
+          //     return;
+          //   }
+          // this.setDuration(res.data.resultObject.duration);
+          // this.setAudioFormat(res.data.resultObject.audioFormatInfo);
+          this.openFileModal();
+          this.dropzone = false;
+          this.setFileSelected(false);
+          this.MetaModal = true;
+          this.setProcessing(false);
+          // this.setFileUploading(true);
+          // });
         } else {
           this.$fn.notify("error", {
             title: "오디오 파일만 업로드 가능합니다.",

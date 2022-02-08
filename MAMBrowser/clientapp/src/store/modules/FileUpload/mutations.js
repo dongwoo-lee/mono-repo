@@ -10,6 +10,9 @@ export default {
   setFileSelected(state, payload) {
     state.fileSelected = payload;
   },
+  setButton(state, payload) {
+    state.button = payload;
+  },
   setTitle(state, payload) {
     state.MetaData.title = payload;
   },
@@ -33,6 +36,9 @@ export default {
   },
   setIsActive(state, payload) {
     state.isActive = payload;
+  },
+  setTypeSelected(state, payload) {
+    state.MetaData.typeSelected = payload;
   },
   setProcessing(state, payload) {
     state.processing = payload;
