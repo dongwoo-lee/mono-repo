@@ -109,6 +109,10 @@ namespace MAMBrowser.BLL
             workStatus.Add("6");
             return _dao.GetMasteringStatus(startDt, endDt, userId, workStatus);
         }
-       
+        public IList<DTO_MENU> GetMasteringAuthority(string menuGrpCd)
+        {
+            return _dao.GetMasteringAuthority(menuGrpCd);
+        }
+
     }
 }
