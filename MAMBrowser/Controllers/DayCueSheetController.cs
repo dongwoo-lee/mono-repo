@@ -85,11 +85,11 @@ namespace MAMBrowser.Controllers
 
         //일일큐시트 상세내용 가져오기
         [HttpGet("GetDayCue")]
-        public CueSheetCollectionDTO GetDayCue([FromQuery] string productid, [FromQuery] int cueid, string pgmcode, string brd_dt)
+        public CueSheetCollectionDTO GetDayCue([FromQuery] string productid, string pgmcode, string brd_dt)
         {
             try
             {
-                return _bll.GetDayCueSheet(productid, cueid, pgmcode, brd_dt);
+                return _bll.GetDayCueSheet(productid, pgmcode, brd_dt);
             }
             catch(Exception ex)
             {

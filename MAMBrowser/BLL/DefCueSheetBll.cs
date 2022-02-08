@@ -42,15 +42,6 @@ namespace MAMBrowser.BLL
             return result;
 
         }
-        //프로그램 요일 정보 가져오기
-       public string[] GetDefWeek(string productid)
-        {
-            var data = _dao.GetDefCueSheetWeekList(productid);
-            string[] result = data.Where(x => x != null)
-                .Select(x => x.WEEK.ToString()).ToArray();
-        
-            return result;
-        }
 
         // 기본큐시트 상세내용 가져오기
         public CueSheetCollectionDTO GetDefCue(string productid, List<string> week, string pgmcode, string brd_dt)
