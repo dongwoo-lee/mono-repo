@@ -145,7 +145,7 @@
       </template>
     </common-form>
 
-    <!-- 마스터링 메타 데이터 수정 -->
+    <!-- 방송의뢰 메타 데이터 수정 -->
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -156,7 +156,7 @@
       ></file-update>
     </transition>
 
-    <!-- 마스터링 파일 삭제 -->
+    <!-- 방송의뢰 파일 삭제 -->
     <transition name="slide-fade">
       <file-delete
         v-if="metaDelete"
@@ -293,7 +293,7 @@ export default {
 
         {
           name: "masteringDtm",
-          title: "마스터링일자",
+          title: "방송의뢰일자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",

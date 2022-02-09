@@ -13,7 +13,7 @@
             <b-tabs content-class="mt-3" fill>
               <b-tab title="사용자 목록" @click="onTab('userList')" active />
               <b-tab title="역할 목록" @click="onTab('role')" />
-              <b-tab title="마스터링 옵션" @click="onTab('masteringOption')" />
+              <b-tab title="방송의뢰 옵션" @click="onTab('masteringOption')" />
               <!-- <b-tab title="시스템" @click="onTab('system')" /> -->
               <component :is="tabName"></component>
             </b-tabs>
@@ -34,13 +34,13 @@ export default {
   components: { UserList, Role, System, masteringOption },
   data() {
     return {
-      tabName: "userList"
+      tabName: "userList",
     };
   },
   methods: {
     onTab(tabName) {
       this.tabName = tabName;
-    }
-  }
+    },
+  },
 };
 </script>
