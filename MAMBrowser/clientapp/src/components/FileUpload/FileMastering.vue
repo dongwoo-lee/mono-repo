@@ -229,7 +229,12 @@
                         background-color: white;
                         height: 34px;
                       "
-                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                      class="
+                        btn btn-outline-primary btn-sm
+                        default
+                        cutom-label
+                        mr-2
+                      "
                       @click="logSearch"
                     >
                       검색
@@ -277,9 +282,9 @@
                         data-field="user"
                         caption="등록자"
                       />
-                      <DxColumn :width="300" data-field="date" caption="날짜" />
+                      <DxColumn :width="200" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="70"
+                        :width="50"
                         data-field="silence"
                         alignment="left"
                         caption="무음"
@@ -294,6 +299,7 @@
                         data-field="status"
                         caption="상태"
                       />
+                      <DxColumn :width="120" data-field="note" caption="비고" />
                     </DxDataGrid>
 
                     <DxDataGrid
@@ -314,14 +320,14 @@
                       <DxPager :visible="false" />
                       <DxScrolling mode="standard" />
                       <DxColumn
-                        :width="500"
+                        :width="530"
                         data-field="title"
                         caption="제목"
                       />
                       <DxColumn :width="120" data-field="type" caption="타입" />
-                      <DxColumn :width="350" data-field="date" caption="날짜" />
+                      <DxColumn :width="300" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="70"
+                        :width="50"
                         data-field="silence"
                         caption="무음"
                       />
@@ -335,6 +341,7 @@
                         data-field="status"
                         caption="상태"
                       />
+                      <DxColumn :width="80" data-field="note" caption="비고" />
                     </DxDataGrid>
                   </div>
                 </b-card>
@@ -567,6 +574,7 @@ export default {
               status: this.getStatus(e.workStatus),
               silence: e.silenceCount,
               worker: e.workerName,
+              note: e.note,
             };
             masteringLogData.push(data);
           });
@@ -777,23 +785,23 @@ export default {
             formData.append("fileSize", event.value[0].size);
           }
 
-          // axios.post("/api/Mastering/Validation", formData).then((res) => {
-          //   if (res.data.errorMsg != null && res.data.resultCode != 0) {
-          //     this.$fn.notify("error", {
-          //       title: "잘못된 파일 형식입니다.",
-          //     });
-          //     this.reset();
-          //     return;
-          //   }
-          // this.setDuration(res.data.resultObject.duration);
-          // this.setAudioFormat(res.data.resultObject.audioFormatInfo);
-          this.openFileModal();
-          this.dropzone = false;
-          this.setFileSelected(false);
-          this.MetaModal = true;
-          this.setProcessing(false);
-          // this.setFileUploading(true);
-          // });
+          axios.post("/api/Mastering/Validation", formData).then((res) => {
+            if (res.data.errorMsg != null && res.data.resultCode != 0) {
+              this.$fn.notify("error", {
+                title: "잘못된 파일 형식입니다.",
+              });
+              this.reset();
+              return;
+            }
+            this.setDuration(res.data.resultObject.duration);
+            this.setAudioFormat(res.data.resultObject.audioFormatInfo);
+            this.openFileModal();
+            this.dropzone = false;
+            this.setFileSelected(false);
+            this.MetaModal = true;
+            this.setProcessing(false);
+            // this.setFileUploading(true);
+          });
         } else {
           this.$fn.notify("error", {
             title: "오디오 파일만 업로드 가능합니다.",
