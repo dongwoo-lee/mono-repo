@@ -36,7 +36,12 @@
               <td rowspan="2">
                 <b-button
                   v-show="getBadge != 0"
-                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                  class="
+                    btn btn-outline-primary btn-sm
+                    default
+                    cutom-label
+                    mr-2
+                  "
                   id="fileuploadbutton"
                   @click="openFileModal"
                   style="
@@ -71,7 +76,12 @@
                 </b-button>
                 <b-button
                   v-show="getBadge == 0"
-                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                  class="
+                    btn btn-outline-primary btn-sm
+                    default
+                    cutom-label
+                    mr-2
+                  "
                   id="fileuploadbutton"
                   @click="openFileModal"
                   style="

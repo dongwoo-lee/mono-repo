@@ -257,8 +257,6 @@ export default {
           params: this.searchItems,
         })
         .then((res) => {
-          console.log("res");
-          console.log(res);
           this.setResponseData(res, "normal");
           this.isTableLoading = false;
         });

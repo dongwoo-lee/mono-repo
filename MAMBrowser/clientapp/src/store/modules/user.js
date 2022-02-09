@@ -82,6 +82,7 @@ export default {
     tokenExpires: 0,
     timerProccessing: false,
     authority: AUTHORITY_MANAGER,
+    timer: 0
   },
   getters: {
     getMenuGrpName: (state) => state.currentUser.menuGrpName,
@@ -101,6 +102,7 @@ export default {
     conNetworkName: (state) => state.currentUser.conNetworkName,
     isSystemTopAdmin: (state) =>
       state.currentUser.authorCD === SYSTEM_TOP_ADMIN_CODE,
+    timer: (state) => state.timer
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -168,6 +170,9 @@ export default {
       state.timerProccessing = payload;
       state.tokenExpires = 0;
     },
+    SET_TIMER(state, payload) {
+      state.timer = payload
+    }
   },
   actions: {
     async login({ commit }, payload) {
@@ -197,7 +202,6 @@ export default {
         return;
       }
       commit("SET_INIT_TOKEN_TIMER", false);
-
       const params = {
         UserID: sessionStorage.getItem(USER_ID),
         Pass: "undefined",

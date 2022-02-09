@@ -25,7 +25,6 @@ export default {
         tempCuesheetListArr: [], //템플릿 리스트 목록
         archiveCuesheetListArr: [], //이전 큐시트 리스트 목록
 
-
         userProOption: [], //리스트 옵션 - 프로그램명
         mediasOption: [], //리스트 옵션 - 매체
         userProList: [], //유저 - 전체 프로그램
@@ -296,7 +295,7 @@ export default {
         },
         SET_CUESHEETAUTOSAVE(state, payload) {
             state.cueSheetAutoSave = payload;
-        }
+        },
     },
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
@@ -603,7 +602,7 @@ export default {
                         delete newInfo.cueid
                         commit('SET_CUEINFO', newInfo)
                         //router 로직 이동 중 (주석 필요)
-                        sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
+                        //sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                     })
                     window.$notify(
                         "info",
