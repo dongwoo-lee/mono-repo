@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="취재물" />
+        <piaf-breadcrumb heading="취재물" tooltip="라디오 뉴스용 취재물" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -369,12 +369,15 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/report/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        .delete(
+          `/api/Mastering/report/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

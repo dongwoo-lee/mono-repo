@@ -199,7 +199,7 @@ export default {
           var masteringListData = [];
           res.data.resultObject.data.forEach((e) => {
             if (e.category == "MY") {
-              e.category = "My 디스크";
+              e.category = "MY 디스크";
             } else if (e.category == "AC") {
               e.category = "프로소재";
             } else if (e.category == "PM") {

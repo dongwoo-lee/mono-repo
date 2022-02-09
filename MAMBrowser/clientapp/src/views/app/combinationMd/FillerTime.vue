@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="FILLER(시간)" />
+        <piaf-breadcrumb
+          heading="FILLER(시간)"
+          tooltip="APC시각고지,시보,TIME TONE"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -398,12 +401,14 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/filler-time/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+          `/api/Mastering/filler-time/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

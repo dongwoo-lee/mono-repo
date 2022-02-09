@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="아카이브(DL)" />
+        <piaf-breadcrumb
+          heading="아카이브(DL 3.0)"
+          tooltip="라디오 송출 내역 저장 및 열람"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>

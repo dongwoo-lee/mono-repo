@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="부조 SPOT" />
+        <piaf-breadcrumb
+          heading="부조 SPOT"
+          tooltip="부조의 프로그램용 SPOT 소재"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -400,12 +403,14 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

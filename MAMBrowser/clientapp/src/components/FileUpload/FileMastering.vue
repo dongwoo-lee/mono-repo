@@ -229,7 +229,12 @@
                         background-color: white;
                         height: 34px;
                       "
-                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                      class="
+                        btn btn-outline-primary btn-sm
+                        default
+                        cutom-label
+                        mr-2
+                      "
                       @click="logSearch"
                     >
                       검색
@@ -890,7 +895,7 @@ export default {
     getCategory(v) {
       switch (v) {
         case "MY":
-          return "My 디스크";
+          return "MY 디스크";
         case "AC":
           return "프로소재";
         case "PM":

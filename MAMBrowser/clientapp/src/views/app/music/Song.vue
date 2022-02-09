@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="음반 기록실" />
+        <piaf-breadcrumb
+          heading="음반 기록실"
+          tooltip="정보컨텐츠부 음반 기록실 검색"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>

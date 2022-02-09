@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="주조SPOT" />
+        <piaf-breadcrumb heading="주조SPOT" tooltip="주조용 SPOT(캠페인 등)" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -367,12 +367,14 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/mcr-spot/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+          `/api/Mastering/mcr-spot/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

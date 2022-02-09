@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="프로그램CM" />
+        <piaf-breadcrumb heading="프로그램CM" tooltip="프로그램용 전/후 CM" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>

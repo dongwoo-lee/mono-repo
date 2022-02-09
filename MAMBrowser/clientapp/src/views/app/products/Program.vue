@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="프로그램" />
+        <piaf-breadcrumb
+          heading="프로그램"
+          tooltip="녹음 제작, 방송의뢰 프로그램"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -377,12 +380,15 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        .delete(
+          `/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

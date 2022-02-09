@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="(구)프로소재" />
+        <piaf-breadcrumb heading="프로소재" tooltip="MIROS의 프로소재" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -368,10 +368,10 @@ export default {
     masteringDelete(e) {
       axios
         .delete(`/api/Mastering/pro/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
-          }
+          headers: {
+            "Content-Type": "application/json",
+            "X-Csrf-Token": sessionStorage.getItem("access_token"),
+          },
         })
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {

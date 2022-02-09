@@ -513,7 +513,7 @@ export default {
     getCategory(v) {
       switch (v) {
         case "MY":
-          return "My 디스크";
+          return "MY 디스크";
         case "AC":
           return "프로소재";
         case "PM":
