@@ -455,7 +455,6 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
-      console.log(e.itemData);
       this.dataGrid.beginCustomLoading("Loading...");
       this.dataGrid.beginUpdate();
       this.lengthCheck = false;
@@ -655,6 +654,7 @@ export default {
       //e.component.clearSelection();
     },
     onDragEndchannelAB(e) {
+      document.getElementById("app-container").classList.remove("drag_");
       // var selectedRowsData = this.sortSelectedRowsData(e, "data");
       // if (selectedRowsData.length > 1 && e.dropInsideItem) {
       //   e.component.clearSelection();

@@ -230,10 +230,11 @@ export default {
       widgetIndex: 16,
     };
   },
-  async mounted() {
-    //this.loadingVisible = true;
-    //await this.getCueCon();
-    // 큐시트 자동저장
+  async created() {
+    this.loadingVisible = true;
+    //큐시트 상세내용 가져오기
+    await this.getCueCon();
+    //자동저장
     this.autoSaveFun = setInterval(() => {
       eventBus.$emit("getTimer");
       if (this.cueSheetAutoSave && this.timer > 0) {
@@ -244,10 +245,6 @@ export default {
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];
     }
-  },
-  async created() {
-    this.loadingVisible = true;
-    await this.getCueCon();
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),

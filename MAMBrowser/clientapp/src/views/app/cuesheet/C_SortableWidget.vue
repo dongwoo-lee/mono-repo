@@ -10,6 +10,7 @@
         @add="onAdd($event, index)"
         @remove="onRemove($event, index)"
         :on-drag-start="onDragStart"
+        :on-drag-end="onDragEnd"
         v-for="index in widgetIndex"
         :key="index"
         class="cart_div"
@@ -721,6 +722,9 @@ export default {
     },
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
+    },
+    onDragEnd() {
+      document.getElementById("app-container").classList.remove("drag_");
     },
   },
 };

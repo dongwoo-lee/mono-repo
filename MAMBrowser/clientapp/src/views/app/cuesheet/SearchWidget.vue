@@ -179,6 +179,7 @@
             :show-drag-icons="false"
             group="tasksGroup"
             :on-drag-start="onDragStart"
+            :on-drag-end="onDragEnd"
           />
           <DxLoadPanel :enabled="true" />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
@@ -707,6 +708,9 @@ export default {
     },
     toggleAll(event, value) {
       value.selectVal = event ? [1, 2, 4] : [];
+    },
+    onDragEnd() {
+      document.getElementById("app-container").classList.remove("drag_");
     },
   },
 };
