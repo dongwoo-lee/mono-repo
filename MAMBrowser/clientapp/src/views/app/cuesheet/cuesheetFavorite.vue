@@ -147,7 +147,6 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view_fav {
-  width: 135px;
   height: 30px;
   position: absolute;
   top: 10px;

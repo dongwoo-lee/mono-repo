@@ -180,6 +180,7 @@ import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
+
 export default {
   beforeRouteLeave(to, from, next) {
     eventBus.$emit("getTimer");
@@ -475,7 +476,6 @@ export default {
 }
 /* 도구 버튼 모음 */
 #button_view {
-  /* width: 280px; */
   height: 30px;
   position: absolute;
   top: 0px;
@@ -526,7 +526,7 @@ input {
   margin: 0;
   padding: 0;
 }
-
+/* loadPanel */
 .dx-loadpanel-wrapper {
   font-family: "MBC 새로움 M";
   z-index: 6 !important;
