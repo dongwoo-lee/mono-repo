@@ -275,6 +275,7 @@ export default {
     return {
       selectedItemKeys: [],
       lengthCheck: false,
+      fileHeader: "",
       rowData: {
         rownum: 1,
         code: "",
@@ -304,6 +305,33 @@ export default {
     if (this.printArr.length > 0) {
       this.rowData.rownum = this.printArr.length + 1;
       this.setStartTime();
+    }
+    switch (this.cueInfo.cuetype) {
+      case "D":
+        if (Object.keys(this.cueInfo).includes("detail")) {
+          this.fileHeader =
+            moment(this.cueInfo.brdtime, "YYYY-MM-DD'T'HH:mm:ss").format(
+              "YYYYMMDD"
+            ) + "_";
+        } else {
+          this.fileHeader =
+            moment(this.cueInfo.day, "YYYY-MM-DD'T'HH:mm:ss").format(
+              "YYYYMMDD"
+            ) + "_";
+        }
+        break;
+      case "B":
+        this.fileHeader = "[기본]";
+        break;
+      case "A":
+        this.fileHeader =
+          moment(this.cueInfo.brdtime, "YYYY-MM-DD'T'HH:mm:ss").format(
+            "YYYYMMDD"
+          ) + "_";
+        break;
+      default:
+        this.fileHeader = "";
+        break;
     }
   },
   created() {
@@ -649,7 +677,6 @@ export default {
         this.cueInfo.membername != undefined ? this.cueInfo.membername : "";
       var directorname =
         this.cueInfo.directorname != undefined ? this.cueInfo.directorname : "";
-
       rows.push(
         new TableRow({
           children: [
@@ -905,7 +932,10 @@ export default {
       });
 
       Packer.toBlob(doc).then((blob) => {
-        saveAs(blob, this.nullChecker(this.cueInfo.headertitle) + ".docx");
+        saveAs(
+          blob,
+          this.fileHeader + this.nullChecker(this.cueInfo.headertitle) + ".docx"
+        );
       });
     },
     exportGrid(v) {
@@ -1056,7 +1086,11 @@ export default {
         if (v == "print") {
           doc.autoPrint();
         } else {
-          doc.save(this.nullChecker(this.cueInfo.headertitle) + ".pdf");
+          doc.save(
+            this.fileHeader +
+              this.nullChecker(this.cueInfo.headertitle) +
+              ".pdf"
+          );
         }
 
         const hiddFrame = document.createElement("iframe");
@@ -1167,7 +1201,9 @@ export default {
         workbook.xlsx.writeBuffer().then((buffer) => {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),
-            this.nullChecker(this.cueInfo.headertitle) + "xlsx.xlsx"
+            this.fileHeader +
+              this.nullChecker(this.cueInfo.headertitle) +
+              ".xlsx"
           );
         });
       });

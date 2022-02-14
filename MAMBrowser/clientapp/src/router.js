@@ -621,6 +621,7 @@ const routes = [
           store.dispatch('cueList/setclearFav');
           cueDataObj.personid = userId;
           store.commit('cueList/SET_CUEINFO', cueDataObj)
+          await store.dispatch('cueList/getProUserList', cueDataObj.productid);
           sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
           next();
         }
