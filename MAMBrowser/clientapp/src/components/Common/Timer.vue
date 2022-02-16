@@ -66,7 +66,8 @@ export default {
     },
     startTimer() {
       this.clearTimer();
-      this.totalTime = this.getExpireTime();
+      //this.totalTime = this.getExpireTime();
+      this.totalTime = 30;
       this.timer = setInterval(() => this.countdown(), 1000);
     },
     resetTimer() {

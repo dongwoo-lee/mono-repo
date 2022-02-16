@@ -214,7 +214,7 @@ export default {
   data() {
     return {
       loadingVisible: false,
-      loadPanelMessage: "큐시트를 가져오는 중 입니다...",
+      loadPanelMessage: "데이터를 가져오는 중 입니다...",
       position: { of: "#cardView" },
       showIndicator: true,
       shading: true,
@@ -241,7 +241,8 @@ export default {
       if (this.cueSheetAutoSave && this.timer > 0) {
         this.saveDayCue();
       }
-    }, 300000); //15분마다 저장
+    }, 20000); //20초
+    //}, 300000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];
@@ -433,18 +434,6 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
-    },
-    onloadEvent() {
-      const answer = window.confirm(
-        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-      );
-      if (answer) {
-        clearInterval(this.autoSaveFun);
-        eventBus.$off();
-        this.onload = true;
-      } else {
-        this.onload = false;
-      }
     },
   },
 };

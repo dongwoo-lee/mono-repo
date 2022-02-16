@@ -80,7 +80,6 @@
 import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import { USER_ID } from "@/constants/config";
 const moment = require("moment");
 const date = new Date();
 
@@ -97,7 +96,7 @@ function get_date_str(date) {
 
 var endDay = get_date_str(date);
 
-date.setDate(date.getDate() - 7); //2달
+date.setDate(date.getDate() - 7);
 var startDay = get_date_str(date);
 
 export default {

@@ -87,7 +87,7 @@ export default {
   data() {
     return {
       loadingVisible: false,
-      loadPanelMessage: "큐시트를 가져오는 중 입니다...",
+      loadPanelMessage: "데이터를 가져오는 중 입니다...",
       position: { of: "#cardView" },
       showIndicator: true,
       shading: true,
