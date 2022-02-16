@@ -173,6 +173,7 @@
 </template>
 
 <script>
+import { USER_ID } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
@@ -263,15 +264,15 @@ export default {
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
-    ...mapActions("cueList", ["setclearFav"]),
     ...mapActions("cueList", ["setclearCon"]),
     ...mapActions("cueList", ["setSponsorList"]),
     ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
-
+    ...mapActions("cueList", ["getCueDayFav"]),
     //세션 종료 관련해서 자동저장 확인해봐야함, 기본 작성, 수정, 새로고침 확인해봐야함
     async getCueCon() {
       let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
+      var userId = sessionStorage.getItem(USER_ID);
       var params = {
         productid: rowData.productid,
         pgmcode: rowData.pgmcode,
@@ -311,8 +312,13 @@ export default {
           }
           await this.getProUserList(rowData.productid);
         });
+      var params = {
+        personid: userId,
+        pgmcode: "",
+        brd_dt: "",
+      };
+      await this.getCueDayFav(params);
       this.loadingVisible = false;
-      this.setclearFav();
     },
     toggleChange(value) {
       if (value.length == 0) {

@@ -187,7 +187,6 @@
             </div>
           </div>
         </template>
-
         <template #text_Template="{ data }">
           <div>
             <div v-if="data.data.cartcode != ''">

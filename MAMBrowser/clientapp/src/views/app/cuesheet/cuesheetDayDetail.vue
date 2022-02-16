@@ -260,12 +260,12 @@ export default {
     ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
-    ...mapActions("cueList", ["setclearFav"]),
     ...mapActions("cueList", ["setclearCon"]),
     ...mapActions("cueList", ["setSponsorList"]),
     ...mapActions("cueList", ["getcuesheetListArrDef"]),
     ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
+    ...mapActions("cueList", ["getCueDayFav"]),
     async getCueCon() {
       let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
       const userId = sessionStorage.getItem(USER_ID);
@@ -283,6 +283,7 @@ export default {
         media: rowData.media,
         productid: rowData.productid,
         personid: userId,
+        pgmcode: rowData.pgmcode,
       };
       await axios
         .get(`/api/daycuesheet/GetdayCue`, {
@@ -353,10 +354,6 @@ export default {
                 pgmcode: rowData.pgmcode,
                 brd_dt: rowData.day,
               });
-              //}
-              //await store.dispatch('cueList/getProUserList', cueDataObj.productid);
-              //}
-              //store.dispatch('cueList/setclearFav');
             }
           } else {
             //큐시트 수정 데이터 채움
@@ -364,8 +361,14 @@ export default {
             this.SET_CUEINFO(res.data.cueSheetDTO);
             this.setCueConData(res.data);
           }
+          //즐겨찾기 가져오기
+          var params = {
+            personid: userId,
+            pgmcode: "",
+            brd_dt: "",
+          };
+          await this.getCueDayFav(params);
           this.loadingVisible = false;
-          this.setclearFav();
         });
     },
     settingInfo(cueDataObj) {

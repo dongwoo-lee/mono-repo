@@ -349,52 +349,6 @@ const routes = [
         name: 'cuesheet-template-detail',
         path: "cuesheet/template/detail",
         component: () => import("./views/app/cuesheet/cuesheetTemplateDetail"),
-        //beforeEnter: (async (to, from, next) => {
-        //const userId = sessionStorage.getItem(USER_ID);
-        //var cueDataObj = { ...store.getters['cueList/cueInfo'] }
-        //if (Object.keys(cueDataObj).length === 0) {
-        //cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
-        //}
-        //var params = {};
-        //if (Object.keys(cueDataObj).includes("detail")) {
-        //params.cueid = cueDataObj.detail[0].cueid
-        //} else {
-        //params.cueid = cueDataObj.cueid
-        //}
-        //await axios.get(`/api/tempcuesheet/GettempCue`, {
-        //params: params,
-        //paramsSerializer: (params) => {
-        //return qs.stringify(params);
-        //},
-        //})
-        //.then((res) => {
-        //console.log(res)
-        //cueDataObj = res.data.cueSheetDTO
-        //store.dispatch('cueList/setCueConData', res.data);
-        //});
-        //store.dispatch('cueList/setclearFav');
-
-        //if (
-        //!cueDataObj.headertitle ||
-        //cueDataObj.headertitle == "" ||
-        //cueDataObj.headertitle == null || cueDataObj.headertitle == undefined
-        //) {
-        //cueDataObj.headertitle = cueDataObj.title;
-
-        //}
-        //if (
-        //!cueDataObj.footertitle ||
-        //cueDataObj.footertitle == "" ||
-        //cueDataObj.footertitle == null
-        //) {
-        //cueDataObj.footertitle = "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267"
-        //}
-        //cueDataObj.personid = userId;
-        //store.commit('cueList/SET_CUEINFO', cueDataObj)
-        //sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
-        //next();
-        //}
-        //)
       },
       {
         // 큐시트 조회 리스트
@@ -407,47 +361,17 @@ const routes = [
         name: 'cuesheet-previous-detail',
         path: "cuesheet/previous/detail",
         component: () => import("./views/app/cuesheet/cuesheetDetail"),
-        beforeEnter: (async (to, from, next) => {
-          const userId = sessionStorage.getItem(USER_ID);
-          var cueDataObj = { ...store.getters['cueList/cueInfo'] }
-          if (Object.keys(cueDataObj).length === 0) {
-            cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
-          }
-          var params = {};
-          if (Object.keys(cueDataObj).includes("detail")) {
-            params.cueid = cueDataObj.detail[0].cueid
-          } else {
-            params.cueid = cueDataObj.cueid
-          }
-          await axios.get(`/api/ArchiveCueSheet/GetArchiveCue`, {
-            params: params,
-            paramsSerializer: (params) => {
-              return qs.stringify(params);
-            },
-          })
-            .then((res) => {
-              console.log(res)
-              cueDataObj = res.data.cueSheetDTO
-              store.dispatch('cueList/setCueConData', res.data);
-            });
-          store.dispatch('cueList/setclearFav');
-          cueDataObj.personid = userId;
-          store.commit('cueList/SET_CUEINFO', cueDataObj)
-          sessionStorage.setItem("USER_INFO", JSON.stringify(cueDataObj));
-          next();
-        }
-        )
       },
       {
         // 즐겨찾기
         name: 'cuesheet-favorite',
         path: "cuesheet/favorite",
         component: () => import("./views/app/cuesheet/cuesheetFavorite"),
-        beforeEnter: ((to, from, next) => {
-          store.dispatch('cueList/setclearFav');
-          next();
-        }
-        )
+        //beforeEnter: ((to, from, next) => {
+        //store.dispatch('cueList/setclearFav');
+        //next();
+        //}
+        //)
       },
       {
         name: "config",

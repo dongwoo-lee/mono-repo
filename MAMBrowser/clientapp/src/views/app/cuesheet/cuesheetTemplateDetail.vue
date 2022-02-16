@@ -151,6 +151,7 @@
 </template>
 
 <script>
+import { USER_ID } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
@@ -250,10 +251,11 @@ export default {
     ...mapActions("cueList", ["setclearFav"]),
     ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
+    ...mapActions("cueList", ["getCueDayFav"]),
     async getCueCon() {
       let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
+      var userId = sessionStorage.getItem(USER_ID);
       var params = {
-        pgmcode: rowData.pgmcode,
         cueid: rowData.cueid,
       };
       await axios
@@ -269,8 +271,14 @@ export default {
           this.SET_CUEINFO(cueData);
           this.setCueConData(res.data);
         });
+      var params = {
+        personid: userId,
+        pgmcode: "",
+        brd_dt: "",
+      };
+      await this.getCueDayFav(params);
       this.loadingVisible = false;
-      this.setclearFav();
+      //this.setclearFav();
     },
     toggleChange(value) {
       if (value.length == 0) {
