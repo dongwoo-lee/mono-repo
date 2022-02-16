@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="효과음" />
+        <piaf-breadcrumb heading="효과음" tooltip="정보컨텐츠부 효과음 검색" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>

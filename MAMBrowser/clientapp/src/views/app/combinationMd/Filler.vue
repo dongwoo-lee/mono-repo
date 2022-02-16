@@ -3,6 +3,7 @@
     <template-filler-form
       heading="FILLER(pr)"
       screenName="pr"
+      tooltip="AM/FM/공통 프로그램 PR 소재"
     ></template-filler-form>
   </div>
 </template>

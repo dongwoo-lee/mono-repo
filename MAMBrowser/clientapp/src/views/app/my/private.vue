@@ -46,14 +46,14 @@
       </template>
       <!-- 버튼 -->
       <template slot="form-btn-area">
-        <!-- <b-input-group>
+        <b-input-group>
           <b-button
             variant="outline-primary default"
             size="sm"
-            @click="onShowModalFileUpload"
-            >파일 업로드</b-button
+            @click="FileModal"
+            >방송의뢰</b-button
           >
-        </b-input-group> -->
+        </b-input-group>
         <b-input-group>
           <b-button
             variant="outline-secondary default"
@@ -146,7 +146,7 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import MetaDataPrivateModifyPopup from "../../../components/Popup/MetaDataPrivateModifyPopup";
 import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
-import { mapActions } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
 import axios from "axios";
 
@@ -255,7 +255,19 @@ export default {
     });
   },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "setFileModal",
+      "setFileSelected",
+      "setButton",
+      "setTypeSelected",
+    ]),
     ...mapActions("file", ["open_popup"]),
+    FileModal() {
+      this.setFileModal(true);
+      this.setFileSelected(true);
+      this.setButton("private");
+      this.setTypeSelected("my-disk");
+    },
     SDateErrorLog() {
       this.$fn.notify("error", {
         message: "시작 날짜가 종료 날짜보다 큽니다.",

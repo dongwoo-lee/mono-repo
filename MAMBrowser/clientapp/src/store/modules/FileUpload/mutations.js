@@ -10,6 +10,9 @@ export default {
   setFileSelected(state, payload) {
     state.fileSelected = payload;
   },
+  setButton(state, payload) {
+    state.button = payload;
+  },
   setTitle(state, payload) {
     state.MetaData.title = payload;
   },
@@ -33,6 +36,9 @@ export default {
   },
   setIsActive(state, payload) {
     state.isActive = payload;
+  },
+  setTypeSelected(state, payload) {
+    state.MetaData.typeSelected = payload;
   },
   setProcessing(state, payload) {
     state.processing = payload;
@@ -199,7 +205,7 @@ export default {
           var masteringListData = [];
           res.data.resultObject.data.forEach((e) => {
             if (e.category == "MY") {
-              e.category = "My 디스크";
+              e.category = "MY 디스크";
             } else if (e.category == "AC") {
               e.category = "프로소재";
             } else if (e.category == "PM") {

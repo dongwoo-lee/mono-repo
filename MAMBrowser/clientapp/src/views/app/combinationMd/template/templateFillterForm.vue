@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb :heading="heading" />
+        <piaf-breadcrumb :heading="heading" :tooltip="tooltip" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -133,7 +133,7 @@
         @UpdateModalClose="UpdateModalOff"
       ></file-update>
     </transition>
-    <!-- 마스터링 파일 삭제 -->
+    <!-- 방송의뢰 파일 삭제 -->
     <transition name="slide-fade">
       <file-delete
         v-if="metaDelete"
@@ -166,7 +166,7 @@ import axios from "axios";
 export default {
   components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinFillerPage],
-  props: ["heading", "screenName"],
+  props: ["heading", "screenName", "tooltip"],
   data() {
     return {
       deleteId: "",
@@ -248,7 +248,7 @@ export default {
         },
         {
           name: "masteringDtm",
-          title: "마스터링일자",
+          title: "방송의뢰일자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "masteringDtm",
@@ -368,12 +368,15 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/filler/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        .delete(
+          `/api/Mastering/filler/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

@@ -3,6 +3,7 @@
     <template-filler-form
       heading="FILLER(기타)"
       screenName="etc"
+      tooltip="기타 Filler소재"
     ></template-filler-form>
   </div>
 </template>

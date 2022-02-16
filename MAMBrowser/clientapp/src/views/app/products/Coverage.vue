@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="취재물" />
+        <piaf-breadcrumb heading="취재물" tooltip="라디오 뉴스용 취재물" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -70,7 +70,7 @@
             @inputEnterEvent="onSearch"
           />
         </b-form-group>
-        <!-- 마스터링 완료한 소재만 보기 -->
+        <!-- 방송의뢰 완료한 소재만 보기 -->
         <b-form-checkbox
           class="custom-checkbox-group-non-align"
           v-model="searchItems.isMastering"
@@ -80,7 +80,7 @@
           aria-controls="selectedSearchType1"
           @input="onSearch"
         >
-          마스터링 완료한 소재만 보기
+          방송의뢰 완료한 소재만 보기
         </b-form-checkbox>
         <!-- 검색 버튼 -->
         <b-form-group>
@@ -139,7 +139,7 @@
       </template>
     </common-form>
 
-    <!-- 마스터링 메타 데이터 수정 -->
+    <!-- 방송의뢰 메타 데이터 수정 -->
     <transition name="slide-fade">
       <file-update
         v-if="metaUpdate"
@@ -150,7 +150,7 @@
       ></file-update>
     </transition>
 
-    <!-- 마스터링 파일 삭제 -->
+    <!-- 방송의뢰 파일 삭제 -->
     <transition name="slide-fade">
       <file-delete
         v-if="metaDelete"
@@ -277,7 +277,7 @@ export default {
         },
         {
           name: "masteringDtm",
-          title: "마스터링일시",
+          title: "방송의뢰일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "11%",
@@ -369,12 +369,15 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/report/${e.deleteId}?filetoken=${e.fileToken}`, {
-          headers : { 
-            'Content-Type': 'application/json',
-            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        .delete(
+          `/api/Mastering/report/${e.deleteId}?filetoken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
           }
-        })
+        )
         .then((res) => {
           if (res && res.status === 200 && !res.data.errorMsg) {
             this.DeleteModalOff();

@@ -77,7 +77,7 @@
         @close="closeFileModal"
         style="font-family: 'Times New Roman', Times, serif; font-weight: bold"
       >
-        <h2 slot="header">마스터링</h2>
+        <h2 slot="header">방송의뢰</h2>
         <h4 slot="body">
           <!--
            -->
@@ -229,7 +229,12 @@
                         background-color: white;
                         height: 34px;
                       "
-                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                      class="
+                        btn btn-outline-primary btn-sm
+                        default
+                        cutom-label
+                        mr-2
+                      "
                       @click="logSearch"
                     >
                       검색
@@ -277,9 +282,9 @@
                         data-field="user"
                         caption="등록자"
                       />
-                      <DxColumn :width="300" data-field="date" caption="날짜" />
+                      <DxColumn :width="200" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="70"
+                        :width="50"
                         data-field="silence"
                         alignment="left"
                         caption="무음"
@@ -294,6 +299,7 @@
                         data-field="status"
                         caption="상태"
                       />
+                      <DxColumn :width="120" data-field="note" caption="비고" />
                     </DxDataGrid>
 
                     <DxDataGrid
@@ -314,14 +320,14 @@
                       <DxPager :visible="false" />
                       <DxScrolling mode="standard" />
                       <DxColumn
-                        :width="500"
+                        :width="530"
                         data-field="title"
                         caption="제목"
                       />
                       <DxColumn :width="120" data-field="type" caption="타입" />
-                      <DxColumn :width="350" data-field="date" caption="날짜" />
+                      <DxColumn :width="300" data-field="date" caption="날짜" />
                       <DxColumn
-                        :width="70"
+                        :width="50"
                         data-field="silence"
                         caption="무음"
                       />
@@ -335,6 +341,7 @@
                         data-field="status"
                         caption="상태"
                       />
+                      <DxColumn :width="80" data-field="note" caption="비고" />
                     </DxDataGrid>
                   </div>
                 </b-card>
@@ -567,6 +574,7 @@ export default {
               status: this.getStatus(e.workStatus),
               silence: e.silenceCount,
               worker: e.workerName,
+              note: e.note,
             };
             masteringLogData.push(data);
           });
@@ -890,7 +898,7 @@ export default {
     getCategory(v) {
       switch (v) {
         case "MY":
-          return "My 디스크";
+          return "MY 디스크";
         case "AC":
           return "프로소재";
         case "PM":
