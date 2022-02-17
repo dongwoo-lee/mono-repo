@@ -166,19 +166,8 @@ import axios from "axios";
 const qs = require("qs");
 
 export default {
-  //beforeRouteLeave(to, from, next) {
-  //const answer = window.confirm(
-  //"저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-  //);
-  //if (answer) {
-  //clearInterval(this.autoSaveFun);
-  //eventBus.$off();
-  //next();
-  //}
-  //},
   beforeRouteLeave(to, from, next) {
-    eventBus.$emit("getTimer");
-    if (this.timer != 0) {
+    if (this.timer > 1) {
       const answer = window.confirm(
         "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
       );
@@ -228,11 +217,9 @@ export default {
     await this.getCueCon();
     //자동저장
     this.autoSaveFun = setInterval(() => {
-      eventBus.$emit("getTimer");
-      if (this.cueSheetAutoSave && this.timer > 0) {
+      if (this.cueSheetAutoSave && this.timer > 1) {
         this.saveTempCue();
       }
-      //}, 20000); //20초
     }, 300000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
@@ -253,6 +240,7 @@ export default {
     ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["getCueDayFav"]),
+    //상세내용 가져오기
     async getCueCon() {
       let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
       var userId = sessionStorage.getItem(USER_ID);

@@ -54,10 +54,6 @@ export default {
     eventBus.$on("onResetTimer", () => {
       this.resetTimer();
     });
-    //로그아웃까지 남은 시간 가져오기
-    eventBus.$on("getTimer", () => {
-      this.SET_TIMER(this.totalTime);
-    });
   },
   methods: {
     ...mapMutations("user", ["SET_TIMER"]),
@@ -67,7 +63,6 @@ export default {
     startTimer() {
       this.clearTimer();
       this.totalTime = this.getExpireTime();
-      //this.totalTime = 30;
       this.timer = setInterval(() => this.countdown(), 1000);
     },
     resetTimer() {
@@ -82,6 +77,7 @@ export default {
     countdown() {
       if (this.totalTime >= 1) {
         this.totalTime--;
+        this.SET_TIMER(this.totalTime);
       } else {
         this.totalTime = 0;
         this.clearTimer();

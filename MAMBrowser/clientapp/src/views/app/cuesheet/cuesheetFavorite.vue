@@ -31,10 +31,6 @@
                       </div>
                     </template>
                   </DxItem>
-                  <!-- <DxItem title="부가정보">
-                    <template #default>
-                    </template>
-                  </DxItem> -->
                 </DxTabPanel>
               </div>
             </div>
@@ -102,8 +98,6 @@ export default {
       abChannelHeight: 734,
     };
   },
-  //mounted() {
-  //},
   async created() {
     this.loadingVisible = true;
     await this.getCueCon();
