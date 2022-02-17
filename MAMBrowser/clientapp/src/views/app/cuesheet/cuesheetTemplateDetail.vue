@@ -232,8 +232,8 @@ export default {
       if (this.cueSheetAutoSave && this.timer > 0) {
         this.saveTempCue();
       }
-    }, 20000); //20초
-    //}, 300000); //15분마다 저장
+      //}, 20000); //20초
+    }, 300000); //15분마다 저장
     await this.getautosave(this.cueInfo.personid);
     if (!this.cueSheetAutoSave) {
       this.autosaveValue = [];
