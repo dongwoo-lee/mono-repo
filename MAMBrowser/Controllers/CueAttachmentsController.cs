@@ -30,22 +30,20 @@ namespace MAMBrowser.Controllers
 
         public class Pram
         {
-            public string name { get; set; }
-            public string title { get; set; }
+            public string userid { get; set; }
+            public string guid { get; set; }
+            public string downloadName { get; set; }
         }
         //zip파일 내보내기
         [HttpPost("exportZipFile")]
-        public ActionResult<string> ExportZipFile([FromQuery] Pram queryPram, [FromBody] List<CueSheetConDTO> pram)
+        public ActionResult<string> ExportZipFile([FromQuery] string userid, [FromBody] List<CueSheetConDTO> pram)
         {
             try
             {
                 var guid = Guid.NewGuid().ToString();
-                //var rootFolder = Startup.AppSetting.TempExportPath;
-                var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, $"{queryPram.name}_{guid}");
-                //if (!Directory.Exists(rootFolder))
-                //    Directory.CreateDirectory(rootFolder);
-                string xmlFileName= $"{queryPram.title}_{guid}_MetaData.xml";
-                string jsonFileName = $"{queryPram.title}_{guid}_MetaData.json"; 
+                var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{userid}\{guid}");
+                string xmlFileName= $"MetaData.xml";
+                string jsonFileName = $"MetaData.json"; 
                 string xmlFileFullPath = Path.Combine(rootFolder, xmlFileName);
                 string jsonFileFullPath = Path.Combine(rootFolder, jsonFileName);
 
@@ -55,11 +53,7 @@ namespace MAMBrowser.Controllers
                 {
                     di_folder.Create();
                 }
-                //else
-                //{
-                //    di.Delete(true);
-                //    di_folder.Create();
-                //}
+                
                 foreach (CueSheetConDTO ele in pram)
                 {
                     if (ele.FILEPATH != null && ele.FILEPATH != "")
@@ -196,7 +190,7 @@ namespace MAMBrowser.Controllers
                 {
                     serializer.Serialize(writer, pram);
                 }
-                string zipFileName = $"{queryPram.title}_{guid}.zip";
+                string zipFileName = $"{guid}.zip";
                 var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
 
                 ZipFileManager.Instance.CreateZIPFile(rootFolder, zipFilePath);
@@ -212,19 +206,18 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpGet("exportZipFileDownload")]
-        public FileResult ExportZipFileDownload([FromQuery] string fileName)
+        public FileResult ExportZipFileDownload([FromQuery] Pram queryPram)
         {
+            var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
+            var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
+            
             var provider = new FileExtensionContentTypeProvider();
             string contentType;
-            if (!provider.TryGetContentType(fileName, out contentType))
+            if (!provider.TryGetContentType(zipFilePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-            return PhysicalFile(fileName, contentType, Path.GetFileName(fileName));
-            //return File(fileName, contentType, Path.GetFileName(fileName));
-           // return result;
-
-
+            return PhysicalFile(zipFilePath, contentType, $"{queryPram.downloadName}.zip");
         }
     }
   
