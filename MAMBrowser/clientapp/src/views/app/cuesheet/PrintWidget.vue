@@ -340,13 +340,13 @@ export default {
     });
     eventBus.$on("exportGo", (val) => {
       switch (val) {
-        case ".docx":
+        case "docx":
           this.exportWord();
           break;
-        case ".pdf":
+        case "pdf":
           this.exportGrid("save");
           break;
-        case ".excel":
+        case "excel":
           this.exportExcel();
           break;
         default:
