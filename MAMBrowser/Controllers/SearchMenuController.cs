@@ -180,7 +180,11 @@ namespace MAMBrowser.Controllers
             var result = new MusicResultDTO();
             result.Result = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
             long totalCount = 0;
-            result.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+                if (string.IsNullOrEmpty(pram.searchText))
+                    result.Result.Data = new List<DTO_SONG>();
+                else
+                    result.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+
             result.Result.TotalRowCount = totalCount;
             return result;
         }
@@ -192,7 +196,10 @@ namespace MAMBrowser.Controllers
             var result = new EFFECTResultDTO();
             result.Result = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
             long totalCount = 0;
-            result.Result.Data = _fileService.SearchEffect(pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+                if (string.IsNullOrEmpty(pram.searchText))
+                    result.Result.Data = new List<DTO_EFFECT>();
+                else
+                    result.Result.Data = _fileService.SearchEffect(pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
             result.Result.TotalRowCount = totalCount;
             return result;
         }
