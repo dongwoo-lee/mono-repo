@@ -388,6 +388,7 @@ export default {
                   wavesurfer.load(fileUrl, res.data);
                   this.spinnerFlag = false;
                   this.isSuccess = true;
+                  this.$emit("isSuccess", this.isSuccess);
                 } else {
                   this.$notify(
                     "error",
@@ -457,33 +458,33 @@ export default {
           this.errorMsg = error.response.data;
         });
     },
-    LoadDirect(waveformUrl, fileUrl) {
-      httpClient
-        .get(waveformUrl, {
-          cancelToken: source.token,
-        })
-        .then((res) => {
-          wavesurfer.load(fileUrl, res.data);
-          this.spinnerFlag = false;
-          this.isSuccess = true;
-        })
-        .catch((error) => {
-          console.debug("httpClient", error);
-          if (error.response) {
-            this.$notify(
-              "error",
-              `${error.response.status} : ${error.response.statusText}`,
-              error.response.data,
-              {
-                duration: 10000,
-                permanent: false,
-              }
-            );
-          } else {
-            console.debug("httpClient.get url:", waveformUrl, error);
-          }
-        });
-    },
+    // LoadDirect(waveformUrl, fileUrl) {
+    //httpClient
+    //.get(waveformUrl, {
+    //cancelToken: source.token,
+    //})
+    //.then((res) => {
+    //wavesurfer.load(fileUrl, res.data);
+    //this.spinnerFlag = false;
+    //this.isSuccess = true;
+    //})
+    //.catch((error) => {
+    //console.debug("httpClient", error);
+    //if (error.response) {
+    //this.$notify(
+    //"error",
+    //`${error.response.status} : ${error.response.statusText}`,
+    //error.response.data,
+    //{
+    //duration: 10000,
+    //permanent: false,
+    //}
+    //);
+    //} else {
+    //console.debug("httpClient.get url:", waveformUrl, error);
+    //}
+    //});
+    //},
     Play() {
       if (wavesurfer.isPlaying()) {
         wavesurfer.pause();
