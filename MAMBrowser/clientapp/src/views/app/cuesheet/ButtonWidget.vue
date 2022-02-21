@@ -40,9 +40,11 @@
       />
       <DxDropDownButton
         :items="downloaditem"
+        display-expr="name"
+        key-expr="id"
         style="background-color: #ffffff"
         width="36"
-        :drop-down-options="{ width: 70 }"
+        :drop-down-options="{ width: 130 }"
         icon="download"
         :showArrowIcon="false"
         hint="내려받기"
@@ -553,7 +555,6 @@ const moment = require("moment");
 
 export default {
   props: {
-    // cuesheetData: Object,
     type: String,
     saveText: String,
     fav: {
@@ -598,7 +599,12 @@ export default {
         "기본 큐시트 가져오기",
         "이전 큐시트 가져오기",
       ],
-      downloaditem: [".zip", ".pdf", ".docx", ".excel"],
+      downloaditem: [
+        { id: "zip", name: "큐시트 로컬 저장" },
+        { id: "pdf", name: "PDF로 저장" },
+        { id: "docx", name: "Word로 저장" },
+        { id: "excel", name: "엑셀로 저장" },
+      ],
       weekButtons: [
         { caption: "월", value: "MON", state: false, disable: false },
         { caption: "화", value: "TUE", state: false, disable: false },
@@ -840,12 +846,11 @@ export default {
     },
     onDownloadItemClick(e) {
       //wav도 추가해야함
-      if (e.itemData == ".zip" || e.itemData == ".wav") {
+      if (e.itemData.id == "zip" || e.itemData.id == "wav") {
         this.$refs["modal-export-zip-wave"].show();
       } else {
-        eventBus.$emit("exportGo", e.itemData);
+        eventBus.$emit("exportGo", e.itemData.id);
       }
-      // eventBus.$emit("exportGo", e.itemData);
     },
     onActivefolderItemClick(e) {
       switch (e.itemData) {
@@ -942,18 +947,33 @@ export default {
           permanent: false,
         });
       } else {
+        console.info("this.cueInfo", this.cueInfo);
+        var downloadName = "";
+        switch (this.cueInfo.cuetype) {
+          case "D":
+            downloadName = `${this.cueInfo.day}_${this.cueInfo.title}`;
+            break;
+          case "B":
+            downloadName = `[기본]_${this.cueInfo.title}`;
+            break;
+          case "T":
+            downloadName = `${this.cueInfo.title}`;
+            break;
+        }
         await axios
           .post(
-            `/api/CueAttachments/exportZipFile?name=${sessionStorage.getItem(
+            `/api/CueAttachments/exportZipFile?userid=${sessionStorage.getItem(
               USER_ID
-            )}&title=${this.cueInfo.title}`,
+            )}`,
             pramList
           )
           .then((response) => {
             const link = document.createElement("a");
-            link.href =
-              "/api/CueAttachments/exportZipFileDownload?fileName=" +
-              response.data;
+            link.href = `/api/CueAttachments/exportZipFileDownload?guid=${
+              response.data
+            }&userid=${sessionStorage.getItem(
+              USER_ID
+            )}&downloadname=${downloadName}`;
             document.body.appendChild(link);
             link.click();
           })

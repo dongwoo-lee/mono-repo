@@ -20,6 +20,7 @@
         @startPosition="(val) => (startPosition = val)"
         @endPosition="(val) => (endPosition = val)"
         @fadeValue="(val) => (selected = val)"
+        @isSuccess="(val) => (isSuccess = val)"
       />
     </template>
     <template v-slot:modal-footer>
@@ -35,7 +36,7 @@
         variant="outline-success default cutom-label"
         size="sm"
         class="float-right"
-        v-if="cueInfo.cuetype != 'A'"
+        v-if="cueInfo.cuetype != 'A' && isSuccess"
         @click="editOK()"
       >
         편집 저장</b-button
@@ -92,6 +93,7 @@ export default {
       selected: [],
       startPosition: null,
       endPosition: null,
+      isSuccess: false,
     };
   },
   computed: {
@@ -117,6 +119,7 @@ export default {
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     closePlayer() {
       this.$refs.play.close();
+      this.isSuccess = false;
       this.$emit("closePlayer");
     },
     editOK() {

@@ -63,21 +63,41 @@
           <p class="mb-0" style="position: absolute; right: 75px; bottom: 5px">
             (MIROS ID로 로그인)
           </p>
-          <a
-            href="#"
-            style="position: absolute; top: 450px; left: 10px; z-index: 2000"
-            class="btn-link"
+          <a id="alink" class="btn-link" @click="showModal"
             >매뉴얼 PDF 다운로드</a
           >
         </div>
       </b-card>
     </b-colxx>
+    <b-modal ref="manualModal" size="lg" ok-only scrollable>
+      <div>
+        <b-table
+          class="custom-table"
+          thead-class="custom-table-color"
+          show-empty
+          empty-text="데이터가 없습니다."
+          striped
+          hover
+          :items="manualData"
+        >
+          <template #cell(downloadLink)="row">
+            <span
+              v-if="row.item.downloadLink"
+              class="btn-link alinkclass"
+              @click="linkClick(row.item.downloadLink)"
+              >다운로드</span
+            >
+          </template>
+        </b-table>
+      </div>
+    </b-modal>
   </b-row>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { validationMixin } from "vuelidate";
+import axios from "axios";
 const { required } = require("vuelidate/lib/validators");
 
 export default {
@@ -86,6 +106,7 @@ export default {
       userId: "",
       password: "",
       errorMsg: "",
+      manualData: [],
     };
   },
   mixins: [validationMixin],
@@ -137,6 +158,37 @@ export default {
           });
       }
     },
+    showModal() {
+      axios.get("/manual.json").then((rs) => {
+        this.manualData = rs.data;
+        this.$refs["manualModal"].show();
+      });
+    },
+    hideModal() {
+      this.$refs["manualModal"].hide();
+    },
+    linkClick(linkUrl) {
+      const link = document.createElement("a");
+      link.target = "_blank";
+      link.href = linkUrl;
+      link.click();
+    },
   },
 };
 </script>
+<style scoped>
+#alink {
+  position: absolute;
+  top: 450px;
+  left: 10px;
+  z-index: 2000;
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.alinkclass {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+</style>
