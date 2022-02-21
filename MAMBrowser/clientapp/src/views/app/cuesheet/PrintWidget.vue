@@ -624,15 +624,15 @@ export default {
           item.options = {
             icon: "add",
             hint: "행 추가",
-            onClick: () => {
+            onClick: async () => {
               this.lengthCheck = false;
               var arrData = this.printArr;
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
               var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
+              var index = this.dataGrid.getRowIndexByKey(rastkey);
               row.rownum = this.rowData.rownum;
               if (rastkey != -1) {
-                var index = this.dataGrid.getRowIndexByKey(rastkey);
                 var checkValue = this.maxLengthCheck();
                 if (checkValue) {
                   arrData.splice(index + 1, 0, row);
@@ -645,12 +645,19 @@ export default {
                   this.rowData.rownum = this.rowData.rownum + 1;
                 }
               }
-              this.setStartTime();
+              await this.setStartTime();
               if (this.lengthCheck) {
                 window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                   duration: 10000,
                   permanent: false,
                 });
+              }
+              //빈칸 추가 후 memo Cell 편집
+              await this.dataGrid.refresh();
+              if (index != -1) {
+                this.dataGrid.editCell(index + 1, 1);
+              } else {
+                this.dataGrid.editCell(0, 1);
               }
             },
           };

@@ -56,15 +56,9 @@
         <DxSelection mode="multiple" showCheckBoxesMode="none" />
         <DxColumn
           cell-template="rowIndexTemplate"
-          caption="순서"
           :width="45"
           alignment="center"
         />
-        <!-- <template #rowIndexTemplate="{ data }">
-          <div>
-            <div>{{ data.rowIndex + 1 }}</div>
-          </div>
-        </template> -->
         <template #rowIndexTemplate="{ data }">
           <div>
             <div>{{ data.data.rownum }}</div>
@@ -158,7 +152,6 @@
           </div>
         </template>
         <DxColumn
-          caption="소재명"
           edit-cell-template="text_edit_Template"
           cell-template="text_Template"
         />
@@ -218,7 +211,6 @@
           </div>
         </template>
         <DxColumn
-          caption="시간"
           alignment="center"
           format="hh:mm:ss"
           dataType="date"
@@ -235,7 +227,6 @@
           </div>
         </template>
         <DxColumn
-          caption="시작점"
           alignment="center"
           :width="25"
           cell-template="start_Template"
@@ -253,12 +244,7 @@
             </div>
           </div>
         </template>
-        <DxColumn
-          caption="끝점"
-          alignment="center"
-          :width="25"
-          cell-template="end_Template"
-        />
+        <DxColumn alignment="center" :width="25" cell-template="end_Template" />
         <template #end_Template="{ data }">
           <div>
             <div
@@ -455,7 +441,6 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     async onAddChannelAB(e) {
-      console.log(e.itemData);
       this.dataGrid.beginCustomLoading("Loading...");
       this.dataGrid.beginUpdate();
       this.lengthCheck = false;
@@ -750,15 +735,15 @@ export default {
           item.options = {
             icon: "add",
             hint: "행 추가",
-            onClick: () => {
+            onClick: async () => {
               this.lengthCheck = false;
               var arrData = this.abCartArr;
               var row = { ...this.rowData };
               var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
               var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
+              var index = this.dataGrid.getRowIndexByKey(rastkey);
               row.rownum = this.rowData.rownum;
               if (rastkey != -1) {
-                var index = this.dataGrid.getRowIndexByKey(rastkey);
                 var checkValue = this.maxLengthCheck();
                 if (checkValue) {
                   arrData.splice(index + 1, 0, row);
@@ -771,12 +756,19 @@ export default {
                   this.rowData.rownum = this.rowData.rownum + 1;
                 }
               }
-              this.setRowNum();
+              await this.setRowNum();
               if (this.lengthCheck) {
                 window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
                   duration: 10000,
                   permanent: false,
                 });
+              }
+              //빈칸 추가 후 memo Cell 편집
+              await this.dataGrid.refresh();
+              if (index != -1) {
+                this.dataGrid.editCell(rastkey, 3);
+              } else {
+                this.dataGrid.editCell(0, 3);
               }
             },
           };
