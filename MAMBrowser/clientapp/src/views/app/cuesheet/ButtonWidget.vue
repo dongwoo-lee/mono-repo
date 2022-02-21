@@ -944,18 +944,33 @@ export default {
           permanent: false,
         });
       } else {
+        console.info("this.cueInfo", this.cueInfo);
+        var downloadName = "";
+        switch (this.cueInfo.cuetype) {
+          case "D":
+            downloadName = `${this.cueInfo.day}_${this.cueInfo.title}`;
+            break;
+          case "B":
+            downloadName = `[기본]_${this.cueInfo.title}`;
+            break;
+          case "T":
+            downloadName = `${this.cueInfo.title}`;
+            break;
+        }
         await axios
           .post(
-            `/api/CueAttachments/exportZipFile?name=${sessionStorage.getItem(
+            `/api/CueAttachments/exportZipFile?userid=${sessionStorage.getItem(
               USER_ID
-            )}&title=${this.cueInfo.title}`,
+            )}`,
             pramList
           )
           .then((response) => {
             const link = document.createElement("a");
-            link.href =
-              "/api/CueAttachments/exportZipFileDownload?fileName=" +
-              response.data;
+            link.href = `/api/CueAttachments/exportZipFileDownload?guid=${
+              response.data
+            }&userid=${sessionStorage.getItem(
+              USER_ID
+            )}&downloadname=${downloadName}`;
             document.body.appendChild(link);
             link.click();
           })
