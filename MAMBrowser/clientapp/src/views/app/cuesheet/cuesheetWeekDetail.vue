@@ -284,8 +284,9 @@ export default {
           },
         })
         .then(async (res) => {
+          await this.getProUserList(rowData.productid);
           var cueData = res.data.cueSheetDTO;
-          cueData.r_ONAIRTIME = rowData.detail[0].onairtime;
+          cueData.r_ONAIRTIME = cueData.detail[0].onairtime;
           cueData.activeWeekList = rowData.activeWeekList;
           cueData.cueid = rowData.cueid;
           cueData.weeks = rowData.weeks;
@@ -308,7 +309,6 @@ export default {
               pgmcode: rowData.pgmcode,
             });
           }
-          await this.getProUserList(rowData.productid);
         });
       var params = {
         personid: userId,
