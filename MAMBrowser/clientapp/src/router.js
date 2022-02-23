@@ -367,11 +367,6 @@ const routes = [
         name: 'cuesheet-favorite',
         path: "cuesheet/favorite",
         component: () => import("./views/app/cuesheet/cuesheetFavorite"),
-        //beforeEnter: ((to, from, next) => {
-        //store.dispatch('cueList/setclearFav');
-        //next();
-        //}
-        //)
       },
       {
         name: "config",
