@@ -575,15 +575,8 @@ export default {
         },
         //일일큐시트 저장
         async saveDayCue({ commit, state, dispatch }, payload) {
-            let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            //구 DAP 용 데이더 전달
-            pram.CueSheetDTO.liveflag = rowData.liveflag
-            pram.CueSheetDTO.onairday = rowData.onairday
-            pram.CueSheetDTO.r_ONAIRTIME = rowData.r_ONAIRTIME
-            pram.CueSheetDTO.seqnum = rowData.seqnum
-            pram.CueSheetDTO.startdate = rowData.startdate
             await axios
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {

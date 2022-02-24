@@ -283,6 +283,15 @@ export default {
         productid: rowData.productid,
         personid: userId,
         pgmcode: rowData.pgmcode,
+        //구DB 및 기타 데이터
+        //여기 추가하던 중이엇음 내일 와가지고 이거 테스트 해봐야함
+        day: rowData.day,
+        liveflag: rowData.liveflag,
+        onairday: rowData.onairday,
+        r_ONAIRTIME: rowData.r_ONAIRTIME,
+        seqnum: rowData.seqnum,
+        startdate: rowData.startdate,
+        day: rowData.day,
       };
       await axios
         .get(`/api/daycuesheet/GetdayCue`, {
@@ -356,8 +365,14 @@ export default {
             }
           } else {
             //큐시트 수정 데이터 채움
-            this.settingInfo(res.data.cueSheetDTO);
-            this.SET_CUEINFO(res.data.cueSheetDTO);
+            var dayCueData = res.data.cueSheetDTO;
+            dayCueData.liveflag = cueDataObj.liveflag;
+            dayCueData.onairday = cueDataObj.onairday;
+            dayCueData.seqnum = cueDataObj.seqnum;
+            dayCueData.startdate = cueDataObj.startdate;
+            dayCueData.day = cueDataObj.day;
+            this.settingInfo(dayCueData);
+            this.SET_CUEINFO(dayCueData);
             this.setCueConData(res.data);
           }
           //즐겨찾기 가져오기

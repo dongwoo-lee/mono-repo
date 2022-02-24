@@ -959,6 +959,9 @@ export default {
           case "T":
             downloadName = `${this.cueInfo.title}`;
             break;
+          case "A":
+            downloadName = `${this.cueInfo.brddate}_${this.cueInfo.title}`;
+            break;
         }
         await axios
           .post(
