@@ -76,7 +76,10 @@
                 </div>
                 <div v-if="index.type == 'D'">
                   <b-form-group :label="index.text" class="has-float-label">
-                    <common-date-picker v-model="index.selectVal" />
+                    <common-date-picker
+                      v-model="index.selectVal"
+                      :required="index.requiredVal"
+                    />
                     <!-- <common-date-picker value="2019-01-04" required /> -->
                   </b-form-group>
                 </div>
@@ -88,7 +91,7 @@
                     :startDate.sync="index.st_selectVal"
                     :endDate.sync="index.end_selectVal"
                     :maxPeriodMonth="index.maxMonth"
-                    :required="false"
+                    :required="index.requiredVal"
                     :isCurrentDate="false"
                     class="datepicket_startEnd"
                     style="margin-left: 0px"

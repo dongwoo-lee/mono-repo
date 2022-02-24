@@ -310,6 +310,7 @@ let searchMenuList = {
               type: "SED",
               st_selectVal: mDay,
               end_selectVal: toDay,
+              requiredVal: false
             },
             {
               id: "type",
@@ -414,6 +415,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "media",
@@ -511,6 +513,7 @@ let searchMenuList = {
               st_selectVal: wDay,
               end_selectVal: toDay,
               maxMonth: 3,
+              requiredVal: true
             },
             {
               id: "media",
@@ -610,6 +613,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "media",
@@ -677,6 +681,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "media",
@@ -751,6 +756,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "cate",
@@ -923,6 +929,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "cate",
@@ -1016,6 +1023,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "cate",
@@ -1125,6 +1133,7 @@ let searchMenuList = {
               st_selectVal: wDay,
               end_selectVal: toDay,
               maxMonth: 3,
+              requiredVal: true
             },
             {
               id: "media",
@@ -1238,6 +1247,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "cate",
@@ -1403,6 +1413,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: false
             },
             {
               id: "media",
@@ -1509,6 +1520,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "deviceSeq",
@@ -1596,6 +1608,7 @@ let searchMenuList = {
               value: "",
               type: "D",
               selectVal: toDay,
+              requiredVal: true
             },
             {
               id: "media",
@@ -1678,6 +1691,7 @@ let searchMenuList = {
               st_selectVal: wDay,
               end_selectVal: toDay,
               maxMonth: 3,
+              requiredVal: true
             },
             {
               id: "media",
@@ -1765,7 +1779,7 @@ let searchMenuList = {
   },
   watch: {},
   computed: {},
-  mounted() {},
+  mounted() { },
   methods: {},
 };
 export default searchMenuList;
