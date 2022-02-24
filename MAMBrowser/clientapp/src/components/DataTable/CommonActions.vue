@@ -259,11 +259,10 @@ export default {
         opacity: this.rowData.existFile ? 1 : 0.2,
       };
     },
-    // 큐시트 관련 CueInfo Setting
+    //큐시트 USER_INFO set
     getCueData(V) {
-      //router 로직 이동 중
-      //sessionStorage.setItem("USER_INFO", JSON.stringify(this.rowData));
-      this.SET_CUEINFO(this.rowData);
+      sessionStorage.setItem("USER_INFO", JSON.stringify(this.rowData));
+      //this.SET_CUEINFO(this.rowData);
       this.$router.push({ path: "/app/cuesheet/" + V + "/detail" });
     },
   },

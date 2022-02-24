@@ -1,8 +1,9 @@
 <template>
   <div id="overView">
     <b-row style="marin-top: -10px">
-      <b-card class="w-100">
-        <div class="detail_view">
+      <b-card class="w-100" id="cardView">
+        <div v-if="loadingVisible" style="height: 750px"></div>
+        <div v-else class="detail_view">
           <div class="left_view">
             <div class="left_top" v-show="searchToggleSwitch">
               <div class="listTitle mb-3">
@@ -27,15 +28,6 @@
                     $moment(cueInfo.brdtime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
-                <!-- <span class="sub_text">
-                  <span class="subtitle_css">●</span>
-                  매체 :
-                  <span v-if="cueInfo.media == 'A'">AM</span>
-                  <span v-if="cueInfo.media == 'F'">FM</span>
-                  <span v-if="cueInfo.media == 'D'">DMB</span>
-                  <span v-if="cueInfo.media == 'C'">공통</span>
-                  <span v-if="cueInfo.media == 'Z'">기타</span>
-                </span> -->
                 <span class="sub_text">
                   <span class="subtitle_css">●</span>
                   담당자 :
@@ -121,6 +113,16 @@
         </div>
       </b-card>
     </b-row>
+    <DxLoadPanel
+      :position="position"
+      :visible.sync="loadingVisible"
+      :show-indicator="showIndicator"
+      :shading="true"
+      :show-pane="showPane"
+      :message="loadPanelMessage"
+      :close-on-outside-click="closeOnOutsideClick"
+      shading-color="rgba(0,0,0,0.4)"
+    />
   </div>
 </template>
 
@@ -131,14 +133,10 @@ import AbchannelWidget from "./AbchannelWidget.vue";
 import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
-
-//새로고침 감지
-// window.onbeforeunload = function (e) {
-//   var dialogText = "Dialog text here";
-//   e.returnValue = dialogText;
-//   return dialogText;
-// };
+import axios from "axios";
+const qs = require("qs");
 
 export default {
   beforeRouteLeave(to, from, next) {
@@ -152,21 +150,57 @@ export default {
     PrintWidget,
     AbchannelWidget,
     SortableWidget,
+    DxLoadPanel,
   },
 
   data() {
     return {
+      loadingVisible: false,
+      loadPanelMessage: "데이터를 가져오는 중 입니다...",
+      position: { of: "#cardView" },
+      showIndicator: true,
+      shading: true,
+      showPane: true,
+      closeOnOutsideClick: false,
+
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
       widgetIndex: 16,
     };
   },
+  async created() {
+    this.loadingVisible = true;
+    //큐시트 상세내용 가져오기
+    await this.getCueCon();
+  },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
   },
   methods: {
+    ...mapActions("cueList", ["setCueConData"]),
+    ...mapActions("cueList", ["getProUserList"]),
+    ...mapMutations("cueList", ["SET_CUEINFO"]),
+    async getCueCon() {
+      let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
+      var params = {
+        cueid: rowData.cueid,
+      };
+      await axios
+        .get(`/api/ArchiveCueSheet/GetArchiveCue`, {
+          params: params,
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        })
+        .then((res) => {
+          this.SET_CUEINFO(res.data.cueSheetDTO);
+          this.setCueConData(res.data);
+          this.getProUserList(rowData.productid);
+        });
+      this.loadingVisible = false;
+    },
     nextOk() {
       this.nextgo = true;
     },
@@ -251,15 +285,9 @@ input {
   margin: 0;
   padding: 0;
 }
-/* 모달 CSS */
-/* #modal-setting .dx-field-label {
-  font-family: "MBC 새로움 M" !important;
-  text-align: end;
-  width: 28%;
+/* loadPanel */
+.dx-loadpanel-wrapper {
+  font-family: "MBC 새로움 M";
+  z-index: 6 !important;
 }
-#modal-setting
-  .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
-  font-family: "MBC 새로움 M" !important;
-  width: 65%;
-} */
 </style>

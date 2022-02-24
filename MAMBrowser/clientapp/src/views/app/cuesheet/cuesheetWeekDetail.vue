@@ -1,8 +1,9 @@
 <template>
   <div id="overView">
     <b-row style="marin-top: -10px">
-      <b-card class="w-100">
-        <div class="detail_view">
+      <b-card class="w-100" id="cardView">
+        <div v-if="loadingVisible" style="height: 750px"></div>
+        <div v-else class="detail_view">
           <div class="left_view">
             <div id="left_top" v-show="searchToggleSwitch">
               <div class="listTitle mb-3">
@@ -153,11 +154,26 @@
         </div>
       </b-card>
     </b-row>
-    <DxSpeedDialAction icon="search" @click="searchToggleEvent" />
+    <DxSpeedDialAction
+      v-if="!loadingVisible"
+      icon="search"
+      @click="searchToggleEvent"
+    />
+    <DxLoadPanel
+      :position="position"
+      :visible.sync="loadingVisible"
+      :show-indicator="showIndicator"
+      :shading="true"
+      :show-pane="showPane"
+      :message="loadPanelMessage"
+      :close-on-outside-click="closeOnOutsideClick"
+      shading-color="rgba(0,0,0,0.4)"
+    />
   </div>
 </template>
 
 <script>
+import { USER_ID } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
@@ -166,20 +182,31 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
 import { eventBus } from "@/eventBus";
+import axios from "axios";
+const qs = require("qs");
+
 export default {
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm(
-      "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-    );
-    if (answer) {
+    if (this.timer > 1) {
+      const answer = window.confirm(
+        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+      );
+      if (answer) {
+        clearInterval(this.autoSaveFun);
+        eventBus.$off();
+        next();
+      }
+    } else {
       clearInterval(this.autoSaveFun);
       eventBus.$off();
       next();
     }
   },
   components: {
+    DxLoadPanel,
     SearchWidget,
     ButtonWidget,
     DxTabPanel,
@@ -192,6 +219,14 @@ export default {
   },
   data() {
     return {
+      loadingVisible: false,
+      loadPanelMessage: "데이터를 가져오는 중 입니다...",
+      position: { of: "#cardView" },
+      showIndicator: true,
+      shading: true,
+      showPane: true,
+      closeOnOutsideClick: false,
+
       options: [{ text: "자동저장(5분 마다)", value: true }],
       autosaveValue: [true],
       autoSaveFun: null,
@@ -200,9 +235,13 @@ export default {
       abChannelHeight: 734,
     };
   },
-  async mounted() {
+  async created() {
+    this.loadingVisible = true;
+    //큐시트 상세내용 가져오기
+    await this.getCueCon();
+    //자동저장
     this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave) {
+      if (this.cueSheetAutoSave && this.timer > 1) {
         this.saveDefCue();
       }
     }, 300000); //15분마다 저장
@@ -215,12 +254,70 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("cueList", ["cueSheetAutoSave"]),
+    ...mapGetters("user", ["timer"]),
   },
   methods: {
     ...mapActions("cueList", ["getautosave"]),
     ...mapActions("cueList", ["setautosave"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapActions("cueList", ["saveDefCue"]),
+    ...mapActions("cueList", ["getProUserList"]),
+    ...mapActions("cueList", ["setCueConData"]),
+    ...mapActions("cueList", ["setclearCon"]),
+    ...mapActions("cueList", ["setSponsorList"]),
+    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
+    ...mapMutations("cueList", ["SET_CUEINFO"]),
+    ...mapActions("cueList", ["getCueDayFav"]),
+    //상세내용 가져오기
+    async getCueCon() {
+      let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
+      var userId = sessionStorage.getItem(USER_ID);
+      var params = {
+        productid: rowData.productid,
+        pgmcode: rowData.pgmcode,
+        week: rowData.weeks,
+      };
+      await axios
+        .get(`/api/defcuesheet/GetdefCue`, {
+          params: params,
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        })
+        .then(async (res) => {
+          await this.getProUserList(rowData.productid);
+          var cueData = res.data.cueSheetDTO;
+          cueData.r_ONAIRTIME = cueData.detail[0].onairtime;
+          cueData.activeWeekList = rowData.activeWeekList;
+          cueData.cueid = rowData.cueid;
+          cueData.weeks = rowData.weeks;
+          cueData.productWeekList = rowData.productWeekList;
+          //cueDataObj = cueData
+          this.settingInfo(cueData);
+          this.SET_CUEINFO(cueData);
+          this.setCueConData(res.data);
+          var dataVal = false;
+          for (var i = 1; i < 5; i++) {
+            res.data.instanceCon["channel_" + i].forEach((ele) => {
+              if (ele.cartcode != null) {
+                dataVal = true;
+                return;
+              }
+            });
+          }
+          if (res.data.normalCon.length == 0 && !dataVal) {
+            this.setSponsorList({
+              pgmcode: rowData.pgmcode,
+            });
+          }
+        });
+      var params = {
+        personid: userId,
+        pgmcode: "",
+        brd_dt: "",
+      };
+      await this.getCueDayFav(params);
+      this.loadingVisible = false;
+    },
     toggleChange(value) {
       if (value.length == 0) {
         this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
@@ -262,6 +359,22 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
+    },
+    settingInfo(cueDataObj) {
+      if (!cueDataObj.directorname || cueDataObj.directorname == "") {
+        cueDataObj.directorname =
+          this.proUserList.length < 20
+            ? this.proUserList
+            : this.proUserList.substr(0, 20);
+      }
+      if (!cueDataObj.headertitle || cueDataObj.headertitle == "") {
+        cueDataObj.headertitle = cueDataObj.title;
+      }
+      if (!cueDataObj.footertitle || cueDataObj.footertitle == "") {
+        cueDataObj.footertitle =
+          "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267";
+      }
+      return cueDataObj;
     },
   },
 };
@@ -367,5 +480,10 @@ input {
   border: solid 1px #757575;
   background-color: rgb(223, 222, 222);
   color: #757575;
+}
+/* loadPanel */
+.dx-loadpanel-wrapper {
+  font-family: "MBC 새로움 M";
+  z-index: 6 !important;
 }
 </style>

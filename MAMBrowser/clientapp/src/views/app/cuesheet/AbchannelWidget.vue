@@ -180,7 +180,6 @@
             </div>
           </div>
         </template>
-
         <template #text_Template="{ data }">
           <div>
             <div v-if="data.data.cartcode != ''">
@@ -640,6 +639,7 @@ export default {
       //e.component.clearSelection();
     },
     onDragEndchannelAB(e) {
+      document.getElementById("app-container").classList.remove("drag_");
       // var selectedRowsData = this.sortSelectedRowsData(e, "data");
       // if (selectedRowsData.length > 1 && e.dropInsideItem) {
       //   e.component.clearSelection();

@@ -114,7 +114,6 @@ import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
-import { USER_ID, USER_NAME } from "@/constants/config";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
@@ -133,7 +132,7 @@ function get_date_str(date) {
 
 var endDay = get_date_str(date);
 
-date.setDate(date.getDate() - 60); //2달
+date.setDate(date.getDate() - 7);
 var startDay = get_date_str(date);
 export default {
   mixins: [MixinBasicPage],

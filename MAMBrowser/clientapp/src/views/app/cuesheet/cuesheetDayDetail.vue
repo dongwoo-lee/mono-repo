@@ -1,14 +1,9 @@
 <template>
   <div id="overView">
-    <!-- <div
-      class="button_view"
-      :class="{ button_view_vertical: !searchToggleSwitch }"
-    >
-      <ButtonWidget :type="cueInfo.cuetype" />
-    </div> -->
     <b-row style="marin-top: -10px">
-      <b-card class="w-100">
-        <div class="detail_view">
+      <b-card class="w-100" id="cardView">
+        <div v-if="loadingVisible" style="height: 750px"></div>
+        <div v-else class="detail_view">
           <div class="left_view">
             <div id="left_top" v-show="searchToggleSwitch">
               <div class="listTitle mb-3">
@@ -151,12 +146,27 @@
         </div>
       </b-card>
     </b-row>
-    <DxSpeedDialAction icon="search" @click="searchToggleEvent" />
+    <DxSpeedDialAction
+      v-if="!loadingVisible"
+      icon="search"
+      @click="searchToggleEvent"
+    />
+    <DxLoadPanel
+      :position="position"
+      :visible.sync="loadingVisible"
+      :show-indicator="showIndicator"
+      :shading="true"
+      :show-pane="showPane"
+      :message="loadPanelMessage"
+      :close-on-outside-click="closeOnOutsideClick"
+      shading-color="rgba(0,0,0,0.4)"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
@@ -164,20 +174,32 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
+import axios from "axios";
+import "moment/locale/ko";
+const moment = require("moment");
+const qs = require("qs");
 
 export default {
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm(
-      "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-    );
-    if (answer) {
+    if (this.timer > 1) {
+      const answer = window.confirm(
+        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+      );
+      if (answer) {
+        clearInterval(this.autoSaveFun);
+        eventBus.$off();
+        next();
+      }
+    } else {
       clearInterval(this.autoSaveFun);
       eventBus.$off();
       next();
     }
   },
   components: {
+    DxLoadPanel,
     SearchWidget,
     ButtonWidget,
     DxTabPanel,
@@ -190,6 +212,14 @@ export default {
 
   data() {
     return {
+      loadingVisible: false,
+      loadPanelMessage: "데이터를 가져오는 중 입니다...",
+      position: { of: "#cardView" },
+      showIndicator: true,
+      shading: true,
+      showPane: true,
+      closeOnOutsideClick: false,
+
       onload: null,
       options: [{ text: "자동저장(5분 마다)", value: true }],
       autosaveValue: [true],
@@ -200,9 +230,13 @@ export default {
       widgetIndex: 16,
     };
   },
-  async mounted() {
+  async created() {
+    this.loadingVisible = true;
+    //큐시트 상세내용 가져오기
+    await this.getCueCon();
+    //자동저장
     this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave) {
+      if (this.cueSheetAutoSave && this.timer > 1) {
         this.saveDayCue();
       }
     }, 300000); //15분마다 저장
@@ -215,12 +249,158 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("cueList", ["cueSheetAutoSave"]),
+    ...mapGetters("cueList", ["defCuesheetListArr"]),
+    ...mapGetters("user", ["timer"]),
   },
   methods: {
     ...mapActions("cueList", ["getautosave"]),
     ...mapActions("cueList", ["setautosave"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapActions("cueList", ["saveDayCue"]),
+    ...mapActions("cueList", ["getProUserList"]),
+    ...mapActions("cueList", ["setCueConData"]),
+    ...mapActions("cueList", ["setclearCon"]),
+    ...mapActions("cueList", ["setSponsorList"]),
+    ...mapActions("cueList", ["getcuesheetListArrDef"]),
+    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
+    ...mapMutations("cueList", ["SET_CUEINFO"]),
+    ...mapActions("cueList", ["getCueDayFav"]),
+    //상세내용 가져오기
+    async getCueCon() {
+      let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
+      const userId = sessionStorage.getItem(USER_ID);
+      var params = {
+        productid: rowData.productid,
+        pgmcode: rowData.pgmcode,
+        brd_dt: rowData.day,
+      };
+      let cueDataObj = {
+        detail: [{ cueid: -1 }],
+        brddate: rowData.day,
+        brdtime: rowData.r_ONAIRTIME,
+        cuetype: "D",
+        title: rowData.eventname,
+        media: rowData.media,
+        productid: rowData.productid,
+        personid: userId,
+        pgmcode: rowData.pgmcode,
+        //구DB 및 기타 데이터
+        //여기 추가하던 중이엇음 내일 와가지고 이거 테스트 해봐야함
+        day: rowData.day,
+        liveflag: rowData.liveflag,
+        onairday: rowData.onairday,
+        r_ONAIRTIME: rowData.r_ONAIRTIME,
+        seqnum: rowData.seqnum,
+        startdate: rowData.startdate,
+        day: rowData.day,
+      };
+      await axios
+        .get(`/api/daycuesheet/GetdayCue`, {
+          params: params,
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        })
+        .then(async (res) => {
+          await this.getProUserList(rowData.productid);
+          if (typeof res.data == "string") {
+            //작성된 기본큐시트 있는지 확인
+            var defCueId = [];
+            await this.getcuesheetListArrDef({
+              productids: rowData.productid,
+              row_per_page: 300,
+              select_page: 1,
+            });
+            var defCueList = this.defCuesheetListArr;
+            defCueList.data.forEach((ele) => {
+              var result = ele.detail.filter((v) => {
+                return (
+                  v.week ==
+                  moment(rowData.r_ONAIRTIME, "YYYY-MM-DD'T'HH:mm:ss")
+                    .lang("en")
+                    .format("ddd")
+                    .toUpperCase()
+                );
+              });
+              if (result.length > 0) {
+                defCueId = result;
+              }
+            });
+            if (defCueId.length > 0) {
+              //기본큐시트 가져오기
+              var params = {
+                productid: rowData.productid,
+                week: defCueId[0].week,
+                pgmcode: rowData.pgmcode,
+                brd_dt: rowData.day,
+              };
+              await axios
+                .get(`/api/defcuesheet/GetdefCue`, {
+                  params: params,
+                  paramsSerializer: (params) => {
+                    return qs.stringify(params);
+                  },
+                })
+                .then((res) => {
+                  var defcueData = res.data.cueSheetDTO;
+                  cueDataObj.r_ONAIRTIME = defcueData.detail[0].onairtime;
+                  cueDataObj.directorname = defcueData.directorname;
+                  cueDataObj.djname = defcueData.djname;
+                  cueDataObj.footertitle = defcueData.footertitle;
+                  cueDataObj.headertitle = defcueData.headertitle;
+                  cueDataObj.membername = defcueData.membername;
+                  cueDataObj.memo = defcueData.memo;
+                  this.settingInfo(cueDataObj);
+                  this.SET_CUEINFO(cueDataObj);
+                  this.setCueConData(res.data);
+                });
+            } else {
+              //큐시트 작성
+              this.settingInfo(cueDataObj);
+              this.SET_CUEINFO(cueDataObj);
+              this.setclearCon();
+              this.setSponsorList({
+                pgmcode: rowData.pgmcode,
+                brd_dt: rowData.day,
+              });
+            }
+          } else {
+            //큐시트 수정 데이터 채움
+            var dayCueData = res.data.cueSheetDTO;
+            dayCueData.liveflag = cueDataObj.liveflag;
+            dayCueData.onairday = cueDataObj.onairday;
+            dayCueData.seqnum = cueDataObj.seqnum;
+            dayCueData.startdate = cueDataObj.startdate;
+            dayCueData.day = cueDataObj.day;
+            this.settingInfo(dayCueData);
+            this.SET_CUEINFO(dayCueData);
+            this.setCueConData(res.data);
+          }
+          //즐겨찾기 가져오기
+          var params = {
+            personid: userId,
+            pgmcode: "",
+            brd_dt: "",
+          };
+          await this.getCueDayFav(params);
+          this.loadingVisible = false;
+        });
+    },
+    settingInfo(cueDataObj) {
+      if (!cueDataObj.directorname || cueDataObj.directorname == "") {
+        cueDataObj.directorname =
+          this.proUserList.length < 20
+            ? this.proUserList
+            : this.proUserList.substr(0, 20);
+      }
+      if (!cueDataObj.headertitle || cueDataObj.headertitle == "") {
+        cueDataObj.headertitle = cueDataObj.title;
+      }
+      if (!cueDataObj.footertitle || cueDataObj.footertitle == "") {
+        cueDataObj.footertitle =
+          "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267";
+      }
+      return cueDataObj;
+    },
     toggleChange(value) {
       if (value.length == 0) {
         this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
@@ -268,18 +448,6 @@ export default {
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
     },
-    onloadEvent() {
-      const answer = window.confirm(
-        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-      );
-      if (answer) {
-        clearInterval(this.autoSaveFun);
-        eventBus.$off();
-        this.onload = true;
-      } else {
-        this.onload = false;
-      }
-    },
   },
 };
 </script>
@@ -313,7 +481,6 @@ export default {
 }
 /* 도구 버튼 모음 */
 #button_view {
-  /* width: 280px; */
   height: 30px;
   position: absolute;
   top: 0px;
@@ -363,5 +530,10 @@ input {
 .listTitle .breadcrumb {
   margin: 0;
   padding: 0;
+}
+/* loadPanel */
+.dx-loadpanel-wrapper {
+  font-family: "MBC 새로움 M";
+  z-index: 6 !important;
 }
 </style>

@@ -756,15 +756,16 @@ export default {
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
+    ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT"]),
     ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["saveTempCue"]),
     ...mapActions("cueList", ["saveOldCue"]),
-
     ...mapActions("cueList", ["addTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
     ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("user", ["renewal"]),
 
     //테스트중
     ...mapActions("cueList", ["exportZip"]),
@@ -914,6 +915,8 @@ export default {
         default:
           break;
       }
+      this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
+      this.renewal();
       this.loadingIconVal = false;
       this.$bvModal.hide("modal-save");
     },
@@ -955,6 +958,9 @@ export default {
             break;
           case "T":
             downloadName = `${this.cueInfo.title}`;
+            break;
+          case "A":
+            downloadName = `${this.cueInfo.brddate}_${this.cueInfo.title}`;
             break;
         }
         await axios

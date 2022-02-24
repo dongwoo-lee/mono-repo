@@ -315,6 +315,8 @@ export default {
           } else if (this.cueInfo.cuetype == "B") {
             params.brd_dt = toDay;
           }
+          console.log("템플릿 가져오기 : this.cueInfo");
+          console.log(this.cueInfo);
           await axios
             .get(`/api/tempcuesheet/GettempCue`, {
               params: params,

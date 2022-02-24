@@ -39,6 +39,7 @@
           :on-add="onAddPrint"
           :on-reorder="onReorderPrint"
           :on-drag-start="onDragStart"
+          :on-drag-end="onDragEnd"
           group="tasksGroup"
           v-if="cueInfo.cuetype != 'A'"
         />
@@ -1238,6 +1239,9 @@ export default {
       if (e.event.key == "Delete") {
         this.selectionDel();
       }
+    },
+    onDragEnd() {
+      document.getElementById("app-container").classList.remove("drag_");
     },
   },
 };

@@ -36,7 +36,12 @@
               <td rowspan="2" v-if="isMasteringValid()">
                 <b-button
                   v-if="isMasteringValid()"
-                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                  class="
+                    btn btn-outline-primary btn-sm
+                    default
+                    cutom-label
+                    mr-2
+                  "
                   id="fileuploadbutton"
                   @click="openFileModal"
                   style="

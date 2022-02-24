@@ -1,8 +1,9 @@
 <template>
   <div id="overView">
     <b-row style="marin-top: -10px">
-      <b-card class="w-100">
-        <div class="detail_view">
+      <b-card class="w-100" id="cardView">
+        <div v-if="loadingVisible" style="height: 750px"></div>
+        <div v-else class="detail_view">
           <div class="left_view">
             <div class="left_top" v-show="searchToggleSwitch">
               <div class="listTitle mb-3">
@@ -30,10 +31,6 @@
                       </div>
                     </template>
                   </DxItem>
-                  <!-- <DxItem title="부가정보">
-                    <template #default>
-                    </template>
-                  </DxItem> -->
                 </DxTabPanel>
               </div>
             </div>
@@ -46,10 +43,21 @@
         </div>
       </b-card>
     </b-row>
+    <DxLoadPanel
+      :position="position"
+      :visible.sync="loadingVisible"
+      :show-indicator="showIndicator"
+      :shading="true"
+      :show-pane="showPane"
+      :message="loadPanelMessage"
+      :close-on-outside-click="closeOnOutsideClick"
+      shading-color="rgba(0,0,0,0.4)"
+    />
   </div>
 </template>
 
 <script>
+import { USER_ID } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import SearchWidget from "./SearchWidget.vue";
 import ButtonWidget from "./ButtonWidget.vue";
@@ -58,6 +66,7 @@ import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
 
 export default {
   components: {
@@ -69,9 +78,18 @@ export default {
     AbchannelWidget,
     SortableWidget,
     DxSpeedDialAction,
+    DxLoadPanel,
   },
   data() {
     return {
+      loadingVisible: false,
+      loadPanelMessage: "데이터를 가져오는 중 입니다...",
+      position: { of: "#cardView" },
+      showIndicator: true,
+      shading: true,
+      showPane: true,
+      closeOnOutsideClick: false,
+
       type: "F",
       classText: "",
       options: [{ text: "자동저장", value: false }],
@@ -80,13 +98,25 @@ export default {
       abChannelHeight: 734,
     };
   },
-  mounted() {
+  async created() {
+    this.loadingVisible = true;
+    await this.getCueCon();
     var ele = document.getElementById("app-container");
     this.classText = ele.classList.item(1);
   },
-
   computed: {},
   methods: {
+    ...mapActions("cueList", ["getCueDayFav"]),
+    async getCueCon() {
+      var userId = sessionStorage.getItem(USER_ID);
+      var params = {
+        personid: userId,
+        pgmcode: "",
+        brd_dt: "",
+      };
+      await this.getCueDayFav(params);
+      this.loadingVisible = false;
+    },
     onTextEdit() {
       this.$refs.inputText.focus();
     },
@@ -147,7 +177,6 @@ export default {
 }
 /* 도구 버튼 모음 */
 .button_view_fav {
-  width: 135px;
   height: 30px;
   position: absolute;
   top: 10px;
@@ -191,5 +220,10 @@ input {
 .listTitle .breadcrumb {
   margin: 0;
   padding: 0;
+}
+/* loadPanel */
+.dx-loadpanel-wrapper {
+  font-family: "MBC 새로움 M";
+  z-index: 6 !important;
 }
 </style>

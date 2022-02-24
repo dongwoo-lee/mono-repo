@@ -10,6 +10,7 @@
         @add="onAdd($event, index)"
         @remove="onRemove($event, index)"
         :on-drag-start="onDragStart"
+        :on-drag-end="onDragEnd"
         v-for="index in widgetIndex"
         :key="index"
         class="cart_div"
@@ -340,7 +341,7 @@ export default {
         }
       }
       //즐겨찾기
-      await this.getCueDayFav(params);
+      //await this.getCueDayFav(params);
       this.fileData = this.cueFavorites;
     } else {
       // 일반 C카트
@@ -457,7 +458,7 @@ export default {
   methods: {
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
-    ...mapActions("cueList", ["getCueDayFav"]),
+    //...mapActions("cueList", ["getCueDayFav"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
@@ -721,6 +722,9 @@ export default {
     },
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
+    },
+    onDragEnd() {
+      document.getElementById("app-container").classList.remove("drag_");
     },
   },
 };
