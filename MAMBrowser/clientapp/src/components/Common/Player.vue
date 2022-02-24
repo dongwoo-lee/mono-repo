@@ -18,18 +18,41 @@
               <div align="center"></div>
             </b-col>
             <b-col>
-              <p align="right">
-                <vue-slider
-                  width="170px"
-                  :min="zoomMin"
-                  :max="zoomMax"
-                  :interval="zoomInterval"
-                  v-model="zoomSliderValue"
-                  @change="changedZoom"
-                  :drag-on-click="true"
-                  tooltip="none"
-                />
-              </p>
+              <div>
+                <div class="iconButton" style="float: right; margin-left: 10px">
+                  <!-- <b-button size="sm" variant="outline-primary"> -->
+                  <b-icon
+                    icon="zoom-in"
+                    class=""
+                    style="width: 22px; height: 22px; padding: 1px"
+                    @click="zoomInClick"
+                  ></b-icon>
+                  <!-- </b-button> -->
+                </div>
+                <div style="float: right">
+                  <vue-slider
+                    width="150px"
+                    :min="zoomMin"
+                    :max="zoomMax"
+                    :interval="zoomInterval"
+                    v-model="zoomSliderValue"
+                    @change="changedZoom"
+                    :drag-on-click="true"
+                    tooltip="none"
+                  />
+                </div>
+                <div
+                  class="iconButton"
+                  style="float: right; margin-right: 10px"
+                >
+                  <b-icon
+                    icon="zoom-out"
+                    class=""
+                    style="width: 22px; height: 22px; padding: 1px"
+                    @click="zoomOutClick"
+                  ></b-icon>
+                </div>
+              </div>
             </b-col>
           </b-row>
         </b-container>
@@ -120,8 +143,8 @@ export default {
       sliderValue: 1,
 
       zoomMin: 0,
-      zoomMax: 160,
-      zoomInterval: 20,
+      zoomMax: 80,
+      zoomInterval: 0.1,
       zoomSliderValue: 0,
       errorMsg: "",
     };
@@ -178,6 +201,21 @@ export default {
         vm.LoadAudioInfo();
       });
       wavesurfer.on("ready", function () {
+        var totalSec = wavesurfer.getDuration();
+        if (totalSec >= 3000) {
+          vm.zoomMax = 100;
+          vm.zoomMin = 0;
+          vm.zoomInterval = 10;
+        } else if (totalSec >= 60) {
+          vm.zoomMax = 180;
+          vm.zoomInterval = 6;
+        } else if (totalSec >= 20) {
+          vm.zoomMax = 180;
+          vm.zoomInterval = 45;
+        } else {
+          vm.zoomMax = 180;
+          vm.zoomInterval = 90;
+        }
         vm.LoadAudioInfo();
         vm.Play();
       });
@@ -233,7 +271,6 @@ export default {
           },
         })
         .then((res) => {
-          console.info("tempdownload status", res.status);
           if (res.status == 200) {
             httpClient
               .get(waveformUrl, {
@@ -363,8 +400,22 @@ export default {
     },
     changedZoom(v) {
       var zoomLevel = Number(v);
-      console.info("zoomLevel", zoomLevel);
       wavesurfer.zoom(zoomLevel);
+    },
+    zoomInClick() {
+      if (this.zoomSliderValue >= this.zoomMax) return;
+
+      this.zoomSliderValue = this.zoomSliderValue + this.zoomInterval;
+      wavesurfer.zoom(this.zoomSliderValue);
+    },
+    zoomOutClick() {
+      if (this.zoomSliderValue <= this.zoomMin) return;
+
+      if (this.zoomSliderValue - this.zoomInterval < 0)
+        this.zoomSliderValue = 0;
+      else this.zoomSliderValue = this.zoomSliderValue - this.zoomInterval;
+
+      wavesurfer.zoom(this.zoomSliderValue);
     },
     tooltipFormatter(v) {
       return (v * 100).toFixed(0);
@@ -420,5 +471,11 @@ export default {
 }
 .slider {
   padding-top: 6px;
+}
+.iconButton :hover {
+  cursor: pointer;
+  background: #008ecc;
+  color: white;
+  border: solid #008ecc 1px;
 }
 </style>
