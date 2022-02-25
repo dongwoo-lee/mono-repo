@@ -652,13 +652,14 @@ export default {
                   duration: 10000,
                   permanent: false,
                 });
-              }
-              //빈칸 추가 후 memo Cell 편집
-              await this.dataGrid.refresh();
-              if (index != -1) {
-                this.dataGrid.editCell(index + 1, 1);
               } else {
-                this.dataGrid.editCell(0, 1);
+                //빈칸 추가 후 memo Cell 편집
+                await this.dataGrid.refresh();
+                if (index != -1) {
+                  this.dataGrid.editCell(index + 1, 1);
+                } else {
+                  this.dataGrid.editCell(0, 1);
+                }
               }
             },
           };
