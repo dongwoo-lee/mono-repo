@@ -208,7 +208,7 @@ export default {
           vm.zoomInterval = 10;
         } else if (totalSec >= 60) {
           vm.zoomMax = 180;
-          vm.zoomInterval = 6;
+          vm.zoomInterval = 9;
         } else if (totalSec >= 20) {
           vm.zoomMax = 180;
           vm.zoomInterval = 45;
