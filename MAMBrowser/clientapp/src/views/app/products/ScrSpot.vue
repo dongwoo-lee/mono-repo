@@ -63,7 +63,7 @@
           >
         </b-form-group>
       </template>
-      <template slot="form-btn-area">
+      <!-- <template slot="form-btn-area">
         <b-input-group>
           <b-button
             variant="outline-primary default"
@@ -72,7 +72,7 @@
             >방송 의뢰</b-button
           >
         </b-input-group>
-      </template>
+      </template> -->
 
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
