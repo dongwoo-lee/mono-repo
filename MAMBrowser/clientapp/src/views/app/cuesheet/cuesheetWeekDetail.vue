@@ -188,6 +188,21 @@ import { eventBus } from "@/eventBus";
 import axios from "axios";
 const qs = require("qs");
 
+const date = new Date();
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+
+var toDay = get_date_str(date);
+
 export default {
   beforeRouteLeave(to, from, next) {
     if (this.timer > 1) {
@@ -291,6 +306,7 @@ export default {
           cueData.cueid = rowData.cueid;
           cueData.weeks = rowData.weeks;
           cueData.productWeekList = rowData.productWeekList;
+          cueData.brddate = toDay;
           //cueDataObj = cueData
           this.settingInfo(cueData);
           this.SET_CUEINFO(cueData);
