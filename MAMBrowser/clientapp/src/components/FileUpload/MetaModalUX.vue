@@ -91,6 +91,24 @@
                     />
                   </b-form-group>
                 </div>
+                <div style="height: 50px; margin-top: 20px">
+                  <b-form-group
+                    label="제작자"
+                    class="has-float-label"
+                    style="font-size: 15px"
+                  >
+                    <b-form-input
+                      title="제작자"
+                      style="width: 350px; font-size: 14px"
+                      class="editTask"
+                      :value="userID"
+                      disabled
+                      aria-describedby="input-live-help input-live-feedback"
+                      placeholder="제작자"
+                      trim
+                    />
+                  </b-form-group>
+                </div>
                 <div style="width: 300px; margin-top: 20px">
                   <b-form-group
                     label="소재 유형"
@@ -260,6 +278,7 @@ export default {
   data() {
     return {
       cancel: false,
+      userID: sessionStorage.getItem("user_name"),
     };
   },
   computed: {

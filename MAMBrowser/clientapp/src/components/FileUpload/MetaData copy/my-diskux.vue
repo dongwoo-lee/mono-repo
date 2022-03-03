@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-show="this.MetaData.typeSelected == 'my-disk'"
-    style="margin-top: 50px"
-  >
+  <div v-show="this.MetaData.typeSelected == 'my-disk'">
     <div style="height: 50px; margin-top: 20px">
       <b-form-group
         label="제목"
@@ -33,7 +30,7 @@
       </p>
     </div>
 
-    <div style="margin-left: 400px; height: 50px; margin-top: 20px">
+    <div style="margin-left: 390px; height: 50px; margin-top: 20px">
       <b-form-group
         label="메모"
         class="has-float-label"

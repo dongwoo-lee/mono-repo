@@ -1,5 +1,24 @@
 <template>
-  <div></div>
+  <div>
+    <div>
+      <b-form-group
+        label="메모"
+        class="has-float-label"
+        style="font-size: 16px"
+      >
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+        />
+      </b-form-group>
+      <p v-show="memoState">{{ MetaData.memo.length }}/30</p>
+    </div>
+  </div>
   <!-- <div>
     <transition name="fade">
       <div>
