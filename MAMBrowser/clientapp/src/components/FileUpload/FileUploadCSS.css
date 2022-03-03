@@ -54,16 +54,19 @@
   left: 40px;
 } */
 .file-modal-button {
-  width: 220px;
+  width: 1000px;
   position: relative;
-  top: 20px;
-  right: -775px;
+
+  right: 30px;
+  text-align: right;
+  bottom: 45px;
 }
 .date-modal-button {
-  width: 220px;
+  width: 1000px;
   position: relative;
-  top: 20px;
-  right: -180px;
+  top: 100px;
+  right: 30px;
+  text-align: right;
 }
 .file-modal {
   margin-top: 230px;

@@ -62,7 +62,7 @@ export default {
 
 .meta-modal-container {
   position: relative;
-  margin: auto;
+  margin-top: 20px;
   width: 1000px;
   height: 660px;
   background-color: white;
@@ -74,8 +74,7 @@ export default {
 
 .meta-modal-container2 {
   position: relative;
-  margin-top: -400px;
-  margin: auto;
+  margin-top: -240px;
   width: 1000px;
   height: 400px;
   background-color: white;

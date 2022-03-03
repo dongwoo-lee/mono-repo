@@ -9,7 +9,7 @@
       >
         <h3 slot="header">메타 데이터 입력</h3>
         <h4 slot="body">
-          <div style="width: 1000px; height: 660px; float: left">
+          <div :class="[isActive ? 'new' : 'old']">
             <div
               style="
                 height: 70px;
@@ -108,15 +108,12 @@
                 </div>
               </div>
             </div>
-
+            <h3 style="color: black; margin-top: 15px">메타 데이터</h3>
             <div>
-              <div style="width: 350px">
-                <my-disk
-                  v-if="this.MetaData.typeSelected == 'my-disk'"
-                ></my-disk>
-                <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
-              </div>
+              <my-disk v-if="this.MetaData.typeSelected == 'my-disk'"></my-disk>
+              <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
             </div>
+
             <transition name="slide-fade">
               <div>
                 <div
@@ -124,7 +121,6 @@
                   class="date-div"
                   style="margin-top: 100px"
                 >
-                  <h3 style="color: black">메타 데이터</h3>
                   <program
                     v-if="this.MetaData.typeSelected == 'program'"
                   ></program>
@@ -151,7 +147,7 @@
         </h4>
 
         <h3 slot="footer">
-          <div style="margin-left: 20px; width: 950px">
+          <div :class="[isActive ? 'file-progress' : 'date-progress']">
             <b-progress
               class="w-100"
               variant="success"
@@ -166,40 +162,7 @@
               ></b-progress-bar
             ></b-progress>
           </div>
-          <!-- <div style="margin-left: 20px; width: 350px">
-            <b-progress
-              v-if="isActive"
-              class="w-100"
-              variant="success"
-              :max="100"
-              height="16px"
-            >
-              <b-progress-bar
-                :max="100"
-                :value="percent"
-                :label="`${percent} %`"
-                show-progress
-              ></b-progress-bar
-            ></b-progress>
-          </div> -->
-          <div class="file-modal-button">
-            <!-- 로그 버튼 -->
-            <!-- <b-button
-              variant="outline-success"
-              @click="log"
-              style="margin-left: -80px"
-            >
-              <span class="label">확인</span>
-            </b-button> -->
-
-            <!-- <b-button
-              class="defaultButton"
-              variant="outline-success"
-              v-show="processing && !fileUploading"
-            >
-              <b-spinner small type="grow"></b-spinner>
-              <span class="label">확인중...</span>
-            </b-button> -->
+          <div :class="[isActive ? 'file-modal-button' : 'date-modal-button']">
             <b-button
               variant="outline-primary"
               v-show="!processing && fileUploading"
@@ -595,6 +558,28 @@ export default {
 </script>
 
 <style>
+.new {
+  width: 1000px;
+  height: 300px;
+  float: left;
+}
+.old {
+  width: 1000px;
+  height: 300px;
+  /* height: 470px; */
+  float: left;
+}
+.file-progress {
+  margin-bottom: 60px;
+  margin-left: 20px;
+  width: 950px;
+}
+.date-progress {
+  margin-top: 80px;
+  margin-bottom: -80px;
+  margin-left: 20px;
+  width: 950px;
+}
 .defaultButton {
   background-color: #fff !important;
   border-color: #bbbbbb !important;
