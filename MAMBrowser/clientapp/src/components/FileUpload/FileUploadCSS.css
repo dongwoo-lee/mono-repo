@@ -1,42 +1,42 @@
 .btn-outline-dark {
-    background-color: white;
-    border-color: #bbbbbb;
-    color: gray;
+  background-color: white;
+  border-color: #bbbbbb;
+  color: gray;
 }
 .h120 .vs__dropdown-menu {
-    height: 120px;
+  height: 120px;
 }
 .h300 .vs__dropdown-menu {
-    height: 300px;
+  height: 300px;
 }
 .btn-outline-dark:hover {
-    background-color: white;
-    border-color: gray;
-    color: #3a3a3a;
+  background-color: white;
+  border-color: gray;
+  color: #3a3a3a;
 }
 
 .mastering-list {
-    height: 320px;
+  height: 320px;
 }
 #dateinput {
-    border: 1px solid silver;
+  border: 1px solid silver;
 }
 #program-media {
-    border: 1px solid silver;
+  border: 1px solid silver;
 }
 .form-control:focus {
-    z-index: 0 !important;
+  z-index: 0 !important;
 }
 .data-grid-div {
-    height: 210px;
-    border: 1px solid silver;
+  height: 210px;
+  border: 1px solid silver;
 }
 .date-div {
-    position: relative;
-    top: -80px;
-    margin-left: 420px;
-    width: 550px;
-    height: 340px;
+  position: relative;
+  top: -80px;
+  margin-left: 420px;
+  width: 550px;
+  height: 340px;
 }
 /* .modal-file-processing-button {
   position: absolute;
@@ -54,229 +54,229 @@
   left: 40px;
 } */
 .file-modal-button {
-    width: 220px;
-    position: relative;
-    top: 20px;
-    right: -775px;
+  width: 220px;
+  position: relative;
+  top: 20px;
+  right: -775px;
 }
 .date-modal-button {
-    width: 220px;
-    position: relative;
-    top: 20px;
-    right: -180px;
+  width: 220px;
+  position: relative;
+  top: 20px;
+  right: -180px;
 }
 .file-modal {
-    margin-top: 230px;
-    width: 400px;
-    height: 280px;
-    float: left;
-    overflow-y: auto;
-    padding-left: 20px;
+  margin-top: 230px;
+  width: 400px;
+  height: 200px;
+  float: left;
+  overflow-y: auto;
+  padding-left: 20px;
 }
 .file-modal ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 .date-modal {
-    margin-top: 260px;
-    width: 380px;
-    height: 200px;
-    float: left;
-    overflow-y: auto;
-    margin-left: 20px;
+  margin-top: 260px;
+  width: 380px;
+  height: 200px;
+  float: left;
+  overflow-y: auto;
+  margin-left: 20px;
 }
 #__BVID__25___BV_modal_outer_ {
-    z-index: 2000 !important;
+  z-index: 2000 !important;
 }
 .myModal-body {
-    margin: 0px !important;
+  margin: 0px !important;
 }
 
 #dropzone-external.dropzone-active {
-    position: absolute;
-    z-index: 9989;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    border: 3px solid #1f1f1f !important;
-    background-color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  z-index: 9989;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #1f1f1f !important;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 .is-valid {
-    border-color: #008eca !important;
-    /* height: 36px !important; */
+  border-color: #008eca !important;
+  /* height: 36px !important; */
 }
 .is-invalid {
-    border-color: #dc3545 !important;
-    /* height: 36px !important; */
+  border-color: #dc3545 !important;
+  /* height: 36px !important; */
 }
 .editTask {
-    margin-top: 10px;
-    border-radius: 3px;
-    width: 350px;
-    height: 36px;
-    /* font-family: "Courier New"; */
-    font-weight: 400;
-    font-size: 18;
+  margin-top: 10px;
+  border-radius: 3px;
+  width: 350px;
+  height: 36px;
+  /* font-family: "Courier New"; */
+  font-weight: 400;
+  font-size: 18;
 }
 
 .title {
-    font-size: 18px;
-    font-weight: 500;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .editors {
-    margin-right: 320px;
+  margin-right: 320px;
 }
 
 .editors .left,
 .editors .right {
-    display: inline-block;
-    width: 49%;
-    padding-right: 20px;
-    box-sizing: border-box;
+  display: inline-block;
+  width: 49%;
+  padding-right: 20px;
+  box-sizing: border-box;
 }
 
 .editors .left {
-    margin-right: 4px;
+  margin-right: 4px;
 }
 
 .editors .left > *,
 .editors .right > *,
 .editors .center > * {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .editors .center {
-    padding: 20px 27px 0 0;
+  padding: 20px 27px 0 0;
 }
 
 .validate {
-    float: right;
+  float: right;
 }
 
 .options {
-    padding: 20px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 260px;
-    top: 0;
-    background-color: rgba(191, 191, 191, 0.15);
+  padding: 20px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 260px;
+  top: 0;
+  background-color: rgba(191, 191, 191, 0.15);
 }
 
 .caption {
-    font-size: 18px;
-    font-weight: 500;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .option {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 .slide-fade-enter-active {
-    transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 .slide-fade-leave-active {
-    transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
 }
 .slide-fade-enter, .slide-fade-leave-to
 /* .slide-fade-leave-active below version 2.1.8 */ {
-    transform: translateY(-30px);
-    opacity: 0;
+  transform: translateY(-30px);
+  opacity: 0;
 }
 .fade-enter-active {
-    transition: opacity 0.8s;
+  transition: opacity 0.8s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
+  opacity: 0;
 }
 
 .chunk-panel {
-    width: 505px;
-    height: 165px;
-    overflow-y: auto;
-    padding: 18px;
-    margin-top: 40px;
-    background-color: rgba(191, 191, 191, 0.15);
+  width: 505px;
+  height: 165px;
+  overflow-y: auto;
+  padding: 18px;
+  margin-top: 40px;
+  background-color: rgba(191, 191, 191, 0.15);
 }
 .segment-size,
 .loaded-size {
-    margin-left: 3px;
+  margin-left: 3px;
 }
 .note {
-    display: block;
-    font-size: 10pt;
-    color: #484848;
-    margin-left: 9px;
+  display: block;
+  font-size: 10pt;
+  color: #484848;
+  margin-left: 9px;
 }
 .note > span {
-    font-weight: 700;
+  font-weight: 700;
 }
 #dropzone-external {
-    position: absolute;
-    top: -100px;
-    z-index: 800;
+  position: absolute;
+  top: -100px;
+  z-index: 800;
 
-    width: 1920px;
-    height: 900px;
-    background-color: rgba(183, 183, 183, 0.1);
-    border-width: 2px;
-    border-style: dashed;
-    padding: 10px;
+  width: 1920px;
+  height: 900px;
+  background-color: rgba(183, 183, 183, 0.1);
+  border-width: 2px;
+  border-style: dashed;
+  padding: 10px;
 }
 #dropzone-external > * {
-    pointer-events: none;
+  pointer-events: none;
 }
 #dropzone-external.dropzone-active {
-    border-style: solid;
+  border-style: solid;
 }
 .widget-container > span {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 16px;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 16px;
 }
 #dropzone-image {
-    max-width: 100%;
-    max-height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 #dropzone-text > span {
-    font-weight: 100;
-    opacity: 0.5;
+  font-weight: 100;
+  opacity: 0.5;
 }
 #upload-progress {
-    display: flex;
-    margin-top: 10px;
+  display: flex;
+  margin-top: 10px;
 }
 .flex-box {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .dx-fileuploader-files-container {
-    height: 50px;
-    width: 400px;
-    overflow-y: auto;
+  height: 50px;
+  width: 400px;
+  overflow-y: auto;
 }
 .dx-fileuploader-wrapper {
-    width: 400px;
-    height: 130px;
-    background-color: #ececec;
+  width: 400px;
+  height: 130px;
+  background-color: #ececec;
 }
 .dx-fileuploader-files-container {
-    width: 400px !important;
-    background-color: #ececec;
-    padding: 0px 3px 0px !important;
+  width: 400px !important;
+  background-color: #ececec;
+  padding: 0px 3px 0px !important;
 }
 .dx-fileuploader-file-name {
-    color: black;
+  color: black;
 }
 .dx-fileuploader-file-size {
-    color: black;
+  color: black;
 }
 /* .dx-progressbar {
 } */
 .dx-fileuploader-file-status-message {
-    color: black;
+  color: black;
 }
 /* 버튼 없는 버전 */
 /* .dx-fileuploader-file{
@@ -288,73 +288,73 @@
 } */
 /* 버튼 있는 버전 */
 .dx-fileuploader-file {
-    position: absolute;
-    padding-left: 10px;
-    left: 40px;
-    top: 120px;
-    width: 352px;
-    background-color: #ececec;
+  position: absolute;
+  padding-left: 10px;
+  left: 40px;
+  top: 120px;
+  width: 352px;
+  background-color: #ececec;
 }
 .dx-fileuploader-files-container::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 /* Track */
 .dx-fileuploader-files-container::-webkit-scrollbar-track {
-    background: #faafaf;
-    border-radius: 5px;
+  background: #faafaf;
+  border-radius: 5px;
 }
 /* Handle */
 .dx-fileuploader-files-container::-webkit-scrollbar-thumb {
-    background: #0f0f0f;
-    border-radius: 5px;
+  background: #0f0f0f;
+  border-radius: 5px;
 }
 /* Handle on hover */
 .dx-fileuploader-files-container::-webkit-scrollbar-thumb:hover {
-    background: #999;
+  background: #999;
 }
 .dx-fileuploader-upload-button.dx-button-has-text {
-    display: none !important;
+  display: none !important;
 }
 /* .dx-fileuploader-button-container{
   display: none !important;
 } */
 .dx-fileuploader-upload-button.dx-button-has-text {
-    display: none !important;
+  display: none !important;
 }
 .dx-fileuploader-input-label {
-    display: none !important;
+  display: none !important;
 }
 .nav-pills .nav-link {
-    border-radius: 0px !important;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
+  border-radius: 0px !important;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
 }
 .nav-pills .nav-link.active {
-    color: #008eca !important;
-    background-color: white !important;
-    border-right: 5px solid silver !important;
+  color: #008eca !important;
+  background-color: white !important;
+  border-right: 5px solid silver !important;
 }
 .nav-item {
-    border: none !important;
-    margin-bottom: 0px !important;
+  border: none !important;
+  margin-bottom: 0px !important;
 }
 .nav-tabs .nav-link.active::before,
 .nav-tabs .nav-item.show .nav-link::before {
-    content: " ";
-    background: #008eca;
-    border-radius: 0px;
-    position: absolute;
-    width: 80% !important;
-    height: 5px;
-    left: 10%;
-    top: 0px;
+  content: " ";
+  background: #008eca;
+  border-radius: 0px;
+  position: absolute;
+  width: 80% !important;
+  height: 5px;
+  left: 10%;
+  top: 0px;
 }
 .nav-tabs {
-    border-bottom: none;
+  border-bottom: none;
 }
 .dropdown-toggle {
-    border-radius: 0.1rem !important;
+  border-radius: 0.1rem !important;
 }
 .btn {
-    border-radius: 0.1rem !important;
+  border-radius: 0.1rem !important;
 }
