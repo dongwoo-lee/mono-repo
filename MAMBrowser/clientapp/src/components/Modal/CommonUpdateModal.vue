@@ -50,8 +50,8 @@ export default {};
   position: relative;
   margin: auto;
   width: 400px;
-  height: 300px;
-  margin-top: -400px;
+  height: auto;
+  margin-top: -9%;
   background-color: white;
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */

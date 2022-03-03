@@ -5,21 +5,33 @@
       class="editTask"
       :value="rowData.name"
       @input="changeName"
+      :maxLength="30"
       aria-describedby="input-live-help input-live-feedback"
       placeholder="소재명"
       trim
     />
-
-    <br />
+    <p
+      v-if="this.name != null"
+      style="font-size: 14px; text-align: right; margin-right: 35px"
+    >
+      {{ this.name.length }}/30
+    </p>
     <h6>메모</h6>
     <b-form-input
       class="editTask"
       :value="rowData.memo"
       @input="changeMemo"
+      :maxLength="30"
       aria-describedby="input-live-help input-live-feedback"
       placeholder="메모"
       trim
     />
+    <p
+      v-if="this.memo != null"
+      style="font-size: 14px; text-align: right; margin-right: 35px"
+    >
+      {{ this.memo.length }}/30
+    </p>
   </div>
 </template>
 
