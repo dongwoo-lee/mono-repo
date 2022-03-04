@@ -102,23 +102,22 @@
         </b-form-group>
       </div>
     </div>
-    <div style="height: 50px; margin-top: 170px">
+    <div style="height: 50px; margin-top: 165px">
       <b-form-group
         label="메모"
         class="has-float-label"
-        style="font-size: 16px"
+        style="font-size: 15px"
       >
         <b-form-input
-          style="width: 425px; height: 36px"
+          class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
-          :maxLength="30"
-          aria-describedby="input-live-help input-live-feedback"
+          :maxLength="200"
           placeholder="메모"
           trim
         />
       </b-form-group>
-      <p style="margin-left: 395px" v-show="memoState">
+      <p style="margin-left: 392px" v-show="memoState">
         {{ MetaData.memo.length }}/30
       </p>
     </div>
@@ -219,7 +218,7 @@
       </template>
       <template v-slot:modal-footer>
         <b-button
-          variant="outline-primary default cutom-label-cancel"
+          variant="outline-primary default cutom-label"
           size="sm"
           class="float-right"
           @click="modalOff"

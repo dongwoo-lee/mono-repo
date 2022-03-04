@@ -44,8 +44,7 @@
         v-show="titleState"
         style="
           position: relative;
-          left: 310px;
-          top: -15px;
+          left: 390px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -75,8 +74,7 @@
         v-show="memoState"
         style="
           position: relative;
-          left: 310px;
-          top: -15px;
+          left: 390px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;

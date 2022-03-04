@@ -7,7 +7,7 @@
         style="font-family: MBC 새로움 M"
         :isActive="this.isActive"
       >
-        <h3 slot="header">메타 데이터 입력 {{ isActive }}</h3>
+        <h3 slot="header">파일 업로드</h3>
         <h4 slot="body">
           <div :class="[isActive ? 'new' : 'old']">
             <div :class="[isActive ? 'fold' : 'expand']">

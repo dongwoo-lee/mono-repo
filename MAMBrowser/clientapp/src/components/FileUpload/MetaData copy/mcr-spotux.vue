@@ -200,7 +200,7 @@
       </template>
       <template v-slot:modal-footer>
         <b-button
-          variant="outline-primary default cutom-label-cancel"
+          variant="outline-primary default cutom-label"
           size="sm"
           class="float-right"
           @click="modalOff"
