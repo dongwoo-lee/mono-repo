@@ -36,7 +36,6 @@
   top: -80px;
   margin-left: 390px;
   width: 550px;
-  height: 340px;
 }
 /* .modal-file-processing-button {
   position: absolute;
@@ -56,15 +55,14 @@
 .file-modal-button {
   width: 1000px;
   position: relative;
-
+  top: 15px;
   right: 30px;
   text-align: right;
-  bottom: 45px;
 }
 .date-modal-button {
   width: 1000px;
   position: relative;
-  top: 100px;
+  top: 95px;
   right: 30px;
   text-align: right;
 }

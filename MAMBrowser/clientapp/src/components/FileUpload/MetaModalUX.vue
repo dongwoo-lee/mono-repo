@@ -589,7 +589,8 @@ export default {
   float: left;
 }
 .file-progress {
-  margin-bottom: 60px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   margin-left: 20px;
   width: 950px;
 }

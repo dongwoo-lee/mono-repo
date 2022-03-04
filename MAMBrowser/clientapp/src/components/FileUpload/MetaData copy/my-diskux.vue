@@ -1,10 +1,10 @@
 <template>
   <div v-show="this.MetaData.typeSelected == 'my-disk'">
-    <div style="height: 50px; margin-top: 20px">
+    <div style="height: 50px; margin-top: 25px">
       <b-form-group
         label="제목"
         class="has-float-label"
-        style="font-size: 16px"
+        style="font-size: 15px"
       >
         <b-form-input
           class="editTask"
@@ -34,7 +34,7 @@
       <b-form-group
         label="메모"
         class="has-float-label"
-        style="font-size: 16px"
+        style="font-size: 15px"
       >
         <b-form-input
           class="editTask"
