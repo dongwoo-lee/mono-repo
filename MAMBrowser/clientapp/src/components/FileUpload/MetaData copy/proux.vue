@@ -1,13 +1,9 @@
 <template>
-  <div style="margin-top: 20px">
-    <b-form-group
-      label="분류"
-      class="has-float-label"
-      style="margin-right: 20px; font-size: 16px"
-    >
+  <div style="margin-top: 40px">
+    <b-form-group label="분류" class="has-float-label" style="font-size: 16px">
       <common-vue-select
-        class="h120"
-        style="width: 350px; font-size: 14px"
+        class="h270"
+        style="width: 425px; height: 36px; font-size: 14px"
         :value="proMedia"
         :suggestions="fileMediaOptions"
         @inputEvent="mediaChange"
@@ -17,12 +13,12 @@
     <b-form-group
       label="타입"
       class="has-float-label"
-      style="font-size: 16px; margin-top: 20px"
+      style="font-size: 16px; margin-top: 27px"
     >
       <b-form-select
         id="program-media"
         class="media-select"
-        style="width: 350px"
+        style="width: 425px"
         :value="proType"
         :options="proTypeOptions"
         @input="proTypeChange"
@@ -32,7 +28,7 @@
       <b-form-group
         label="소재"
         class="has-float-label"
-        style="font-size: 16px; margin-top: 20px"
+        style="font-size: 16px; margin-top: 27px"
       >
         <b-form-input
           class="editTask"
@@ -88,24 +84,6 @@
       >
         {{ MetaData.memo.length }}/30
       </p>
-    </div>
-    <div style="height: 50px">
-      <b-form-group
-        label="제작자"
-        class="has-float-label"
-        style="font-size: 16px; margin-top: 20px"
-      >
-        <b-form-input
-          title="제작자"
-          style="width: 350px; font-size: 14px"
-          class="editTask"
-          :value="userID"
-          disabled
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="제작자"
-          trim
-        />
-      </b-form-group>
     </div>
   </div>
 </template>

@@ -1,110 +1,12 @@
 <template>
   <div>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 350px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="메모" class="has-float-label">
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.memo"
-            :state="memoState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="메모"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="memoState"
-          style="
-            position: relative;
-            left: 315px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.memo.length }}/30
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 415px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="광고주" class="has-float-label">
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.advertiser"
-            :state="advertiserState"
-            :maxLength="15"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="광고주"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="advertiserState"
-          style="
-            position: relative;
-            left: 315px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.advertiser.length }}/15
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div>
-        <b-form-group
-          label="제작자"
-          class="has-float-label"
-          style="
-            position: absolute;
-            top: 485px;
-            left: -400px;
-            z-index: 9999;
-            font-size: 16px;
-          "
-        >
-          <b-form-input
-            title="제작자"
-            style="width: 350px; font-size: 14px"
-            class="editTask"
-            :value="userID"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="제작자"
-            trim
-          />
-        </b-form-group>
-      </div>
-    </transition>
-    <div style="position: absolute; top: 40px">
+    <div style="margin-top: 35px; font-size: 15px">
       <b-form-group
         label="방송일"
         class="has-float-label"
-        style="position: absolute; z-index: 9989; font-color: black"
+        style="width: 220px; float: left; margin-right: 20px"
       >
-        <b-input-group class="mb-3" style="width: 300px; float: left">
+        <b-input-group class="mb-3" style="width: 220px; float: left">
           <input
             :disabled="isActive"
             id="dateinput"
@@ -131,13 +33,13 @@
       <b-form-group
         label="매체"
         class="has-float-label"
-        style="position: absolute; margin-left: 320px; z-index: 9999"
+        style="width: 95px; float: left; margin-right: 20px"
       >
         <b-form-select
           :disabled="isActive"
           id="program-media"
           class="media-select"
-          style="width: 140px; height: 37px"
+          style="width: 95px; height: 36px"
           :value="mcrMedia"
           :options="fileMediaOptions"
           @input="mediaChange"
@@ -146,64 +48,20 @@
       <b-button
         :disabled="isActive"
         :variant="getVariant"
-        style="position: absolute; width: 70px; right: -550px; z-index: 9989"
-        @click="getPro"
+        style="width: 70px"
+        @click="onSearch"
         >검색</b-button
       >
     </div>
-    <div
-      v-show="this.MetaData.typeSelected == 'mcr-spot'"
-      style="position: absolute; top: 100px"
-    >
-      <DxDataGrid
-        name="mcrDxDataGrid"
-        v-show="this.EventData.id != ''"
-        style="
-          height: 295px;
-          border: 1px solid silver;
-          font-family: 'MBC 새로움 M';
-        "
-        :data-source="EventData"
-        :selection="{ mode: 'single' }"
-        :show-borders="true"
-        :hover-state-enabled="true"
-        key-expr="id"
-        :allow-column-resizing="true"
-        :column-auto-width="true"
-        no-data-text="No Data"
-        @row-click="onRowClick"
-      >
-        <DxLoadPanel :enabled="true" />
-        <DxScrolling mode="virtual" />
-        <DxColumn data-field="name" caption="이벤트 명" />
-        <DxColumn data-field="id" caption="이벤트 ID" />
-        <DxColumn data-field="duration" caption="편성 분량" />
-      </DxDataGrid>
-    </div>
-    <!-- 프로그램 -->
-    <div
-      v-show="!isActive && EventSelected.id != ''"
-      style="
-        position: absolute;
-        top: 420px;
-        width: 550px;
-        height: 110px;
-        padding-top: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
-        float: left;
-        border: 1px solid silver;
-        font-family: 'MBC 새로움 M';
-      "
-    >
-      <div style="width: 200px; float: left">
+    <div style="width: 430px; font-family: 'MBC 새로움 M'; font-size: 15px">
+      <div style="width: 425px; float: left">
         <b-form-group
           label="이벤트 명"
           class="has-float-label"
-          style="margin-top: 20px"
+          style="margin-top: 7px"
         >
           <b-form-input
-            style="width: 200px"
+            style="width: 425px"
             class="editTask"
             v-model="EventSelected.name"
             disabled
@@ -212,14 +70,14 @@
           />
         </b-form-group>
       </div>
-      <div style="width: 170px; margin-left: 20px; float: left">
+      <div style="width: 250px; float: left">
         <b-form-group
           label="이벤트 ID"
           class="has-float-label"
-          style="margin-top: 20px"
+          style="margin-top: 23px"
         >
           <b-form-input
-            style="width: 170px"
+            style="width: 250px"
             class="editTask"
             v-model="EventSelected.id"
             disabled
@@ -228,14 +86,14 @@
           />
         </b-form-group>
       </div>
-      <div style="width: 100px; margin-left: 20px; float: left">
+      <div style="width: 155px; margin-left: 20px; float: left">
         <b-form-group
           label="편성 분량"
           class="has-float-label"
-          style="margin-top: 20px"
+          style="margin-top: 23px"
         >
           <b-form-input
-            style="width: 100px"
+            style="width: 155px"
             class="editTask"
             v-model="EventSelected.duration"
             disabled
@@ -245,7 +103,125 @@
         </b-form-group>
       </div>
     </div>
+    <div style="margin-top: 160px; height: 50px">
+      <b-form-group
+        label="메모"
+        class="has-float-label"
+        style="font-size: 15px"
+      >
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+        />
+      </b-form-group>
+      <span
+        v-show="memoState"
+        style="
+          position: relative;
+          left: 390px;
+          z-index: 9999;
+          width: 30px;
+          margin-right: 0px;
+          font-size: 14px;
+        "
+      >
+        {{ MetaData.memo.length }}/30
+      </span>
+    </div>
+    <div style="font-size: 15px; margin-top: 15px">
+      <b-form-group label="광고주" class="has-float-label">
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.advertiser"
+          :state="advertiserState"
+          :maxLength="15"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="광고주"
+          trim
+        />
+      </b-form-group>
+      <p
+        v-show="advertiserState"
+        style="
+          position: relative;
+          left: 390px;
+          z-index: 9999;
+          width: 30px;
+          margin-right: 0px;
+        "
+      >
+        {{ MetaData.advertiser.length }}/15
+      </p>
+    </div>
+    <b-modal
+      size="lg"
+      v-model="modal"
+      centered
+      hide-header-close
+      no-close-on-esc
+      no-close-on-backdrop
+      footer-class="scr-modal-footer"
+    >
+      <template slot="modal-title">
+        <h5>프로그램 선택</h5>
+      </template>
+      <template slot="default">
+        <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
+          <DxDataGrid
+            name="mcrDxDataGrid"
+            v-show="this.EventData.id != ''"
+            style="
+              height: 280px;
+              border: 1px solid silver;
+              font-family: 'MBC 새로움 M';
+            "
+            :data-source="EventData"
+            :selection="{ mode: 'single' }"
+            :show-borders="true"
+            :hover-state-enabled="true"
+            key-expr="id"
+            :allow-column-resizing="true"
+            :column-auto-width="true"
+            no-data-text="No Data"
+            @row-click="onRowClick"
+          >
+            <DxLoadPanel :enabled="true" />
+            <DxScrolling mode="virtual" />
+            <DxColumn data-field="name" caption="이벤트 명" />
+            <DxColumn data-field="id" caption="이벤트 ID" />
+            <DxColumn data-field="duration" caption="편성 분량" />
+          </DxDataGrid>
+        </div>
+      </template>
+      <template v-slot:modal-footer>
+        <b-button
+          variant="outline-primary default cutom-label-cancel"
+          size="sm"
+          class="float-right"
+          @click="modalOff"
+        >
+          확인</b-button
+        >
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          class="float-right"
+          @click="modalReset"
+        >
+          취소</b-button
+        >
+      </template>
+    </b-modal>
   </div>
+  <!--     
+    
+    
+    -->
 </template>
 
 <script>
@@ -265,6 +241,7 @@ export default {
   mixins: [CommonFileFunction, MixinBasicPage, MixinFillerPage],
   data() {
     return {
+      modal: false,
       mcrMedia: "A",
       mediaName: "AM",
     };
@@ -295,6 +272,20 @@ export default {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
       this.mediaName = data.text;
+    },
+    onSearch() {
+      this.modalOn();
+      this.getPro();
+    },
+    modalOn() {
+      this.modal = true;
+    },
+    modalOff() {
+      this.modal = false;
+    },
+    modalReset() {
+      this.resetEventSelected();
+      this.modal = false;
     },
     getData() {},
   },

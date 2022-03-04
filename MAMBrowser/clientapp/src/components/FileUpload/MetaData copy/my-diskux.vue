@@ -1,6 +1,6 @@
 <template>
   <div v-show="this.MetaData.typeSelected == 'my-disk'">
-    <div style="height: 50px; margin-top: 25px">
+    <div style="height: 50px; margin-top: 27px">
       <b-form-group
         label="제목"
         class="has-float-label"
@@ -17,20 +17,13 @@
       </b-form-group>
       <p
         v-show="titleState"
-        style="
-          position: relative;
-          left: 310px;
-          top: -15px;
-          z-index: 9999;
-          width: 30px;
-          margin-right: 0px;
-        "
+        style="position: relative; left: 380px; z-index: 9999; width: 30px"
       >
         {{ MetaData.title.length }}/200
       </p>
     </div>
 
-    <div style="margin-left: 390px; height: 50px; margin-top: 20px">
+    <div style="height: 50px; margin-top: 17px">
       <b-form-group
         label="메모"
         class="has-float-label"
@@ -49,8 +42,7 @@
         v-show="memoState"
         style="
           position: relative;
-          left: 310px;
-          top: -15px;
+          left: 380px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -58,6 +50,24 @@
       >
         {{ MetaData.memo.length }}/200
       </p>
+    </div>
+    <div style="height: 50px; margin-top: 20px">
+      <b-form-group
+        label="제작자"
+        class="has-float-label"
+        style="font-size: 15px"
+      >
+        <b-form-input
+          title="제작자"
+          style="width: 430px; font-size: 14px"
+          class="editTask"
+          :value="userID"
+          disabled
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="제작자"
+          trim
+        />
+      </b-form-group>
     </div>
   </div>
 </template>

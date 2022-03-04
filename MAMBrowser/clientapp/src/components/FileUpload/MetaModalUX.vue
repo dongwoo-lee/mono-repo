@@ -7,20 +7,10 @@
         style="font-family: MBC 새로움 M"
         :isActive="this.isActive"
       >
-        <h3 slot="header">메타 데이터 입력</h3>
+        <h3 slot="header">메타 데이터 입력 {{ isActive }}</h3>
         <h4 slot="body">
           <div :class="[isActive ? 'new' : 'old']">
-            <div
-              style="
-                height: 70px;
-                position: relative;
-                top: 15px;
-                left: 20px;
-                margin-bottom: 20px;
-                float: left;
-                margin-right: 40px;
-              "
-            >
+            <div :class="[isActive ? 'fold' : 'expand']">
               <h3 style="color: black">파일 정보</h3>
               <div style="padding-top: 10px">
                 <b-form-group
@@ -29,8 +19,8 @@
                   style="font-size: 15px; margin-top: 10px"
                 >
                   <b-form-input
-                    title="오디오 포맷"
-                    style="width: 350px; font-size: 14px"
+                    title="파일명"
+                    style="width: 430px; font-size: 14px"
                     class="editTask title-ellipsis"
                     v-model="this.MetaModalTitle"
                     disabled
@@ -47,7 +37,7 @@
                   >
                     <b-form-input
                       v-if="this.durationState"
-                      style="width: 350px"
+                      style="width: 430px"
                       class="editTask"
                       v-model="MetaData.duration"
                       disabled
@@ -58,7 +48,7 @@
                     </b-form-input>
                     <b-form-input
                       v-if="!this.durationState"
-                      style="width: 350px; background-color: #ffb600"
+                      style="width: 430px; background-color: #ffb600"
                       class="editTask"
                       v-model="MetaData.duration"
                       disabled
@@ -81,7 +71,7 @@
                   >
                     <b-form-input
                       title="오디오 포맷"
-                      style="width: 350px"
+                      style="width: 430px"
                       class="editTask"
                       v-model="MetaData.audioFormat"
                       disabled
@@ -91,7 +81,10 @@
                     />
                   </b-form-group>
                 </div>
-                <div style="height: 50px; margin-top: 20px">
+                <div
+                  style="height: 50px; margin-top: 20px"
+                  v-if="!this.isActive"
+                >
                   <b-form-group
                     label="제작자"
                     class="has-float-label"
@@ -99,7 +92,7 @@
                   >
                     <b-form-input
                       title="제작자"
-                      style="width: 350px; font-size: 14px"
+                      style="width: 430px; font-size: 14px"
                       class="editTask"
                       :value="userID"
                       disabled
@@ -109,14 +102,14 @@
                     />
                   </b-form-group>
                 </div>
-                <div style="width: 300px; margin-top: 20px">
+                <div style="width: 300px; margin-top: 25px">
                   <b-form-group
                     label="소재 유형"
                     class="has-float-label"
                     style="font-size: 15px"
                   >
                     <b-form-select
-                      style="width: 350px"
+                      style="width: 430px"
                       id="filetype"
                       v-model="MetaData.typeSelected"
                       :options="typeOptions"
@@ -126,41 +119,41 @@
                 </div>
               </div>
             </div>
-            <h3 style="color: black; margin-top: 15px">메타 데이터</h3>
-            <div>
-              <my-disk v-if="this.MetaData.typeSelected == 'my-disk'"></my-disk>
-              <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
-            </div>
-
-            <transition name="slide-fade">
+            <div :class="[isActive ? 'fold2' : 'expand2']">
+              <h3>메타 데이터</h3>
               <div>
-                <div
-                  v-show="!isActive"
-                  class="date-div"
-                  style="margin-top: 100px"
-                >
-                  <program
-                    v-if="this.MetaData.typeSelected == 'program'"
-                  ></program>
-                  <mcr-spot
-                    v-if="this.MetaData.typeSelected == 'mcr-spot'"
-                  ></mcr-spot>
-                  <scr-spot
-                    v-if="this.MetaData.typeSelected == 'scr-spot'"
-                  ></scr-spot>
-                  <static-spot
-                    v-if="this.MetaData.typeSelected == 'static-spot'"
-                  ></static-spot>
-                  <var-spot v-if="this.MetaData.typeSelected == 'var-spot'">
-                  </var-spot>
-                  <report v-if="this.MetaData.typeSelected == 'report'">
-                  </report>
-                  <filler
-                    v-if="this.MetaData.typeSelected == 'filler'"
-                  ></filler>
-                </div>
+                <my-disk
+                  v-if="this.MetaData.typeSelected == 'my-disk'"
+                ></my-disk>
+                <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
               </div>
-            </transition>
+
+              <transition name="slide-fade">
+                <div>
+                  <div v-show="!isActive" class="date-div">
+                    <program
+                      v-if="this.MetaData.typeSelected == 'program'"
+                    ></program>
+                    <mcr-spot
+                      v-if="this.MetaData.typeSelected == 'mcr-spot'"
+                    ></mcr-spot>
+                    <scr-spot
+                      v-if="this.MetaData.typeSelected == 'scr-spot'"
+                    ></scr-spot>
+                    <static-spot
+                      v-if="this.MetaData.typeSelected == 'static-spot'"
+                    ></static-spot>
+                    <var-spot v-if="this.MetaData.typeSelected == 'var-spot'">
+                    </var-spot>
+                    <report v-if="this.MetaData.typeSelected == 'report'">
+                    </report>
+                    <filler
+                      v-if="this.MetaData.typeSelected == 'filler'"
+                    ></filler>
+                  </div>
+                </div>
+              </transition>
+            </div>
           </div>
         </h4>
 
@@ -577,6 +570,47 @@ export default {
 </script>
 
 <style>
+.expand {
+  width: 470px;
+  height: 410px;
+  margin-top: 15px;
+  padding-top: 20px;
+  margin-left: 20px;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  border: 1px solid silver;
+  float: left;
+}
+.fold {
+  width: 470px;
+  height: 340px;
+  margin-top: 15px;
+  padding-top: 20px;
+  margin-left: 20px;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  border: 1px solid silver;
+  float: left;
+}
+.expand2 {
+  border: 1px solid silver;
+  width: 470px;
+  height: 410px;
+  margin-top: 15px;
+  padding-top: 20px;
+  margin-left: 510px;
+  padding-left: 20px;
+}
+.fold2 {
+  border: 1px solid silver;
+  width: 470px;
+  height: 340px;
+  margin-top: 15px;
+  padding-top: 20px;
+  margin-left: 510px;
+  padding-left: 20px;
+}
+
 .new {
   width: 1000px;
   height: 300px;
@@ -592,13 +626,13 @@ export default {
   margin-top: 0px;
   margin-bottom: 0px;
   margin-left: 20px;
-  width: 950px;
+  width: 960px;
 }
 .date-progress {
   margin-top: 80px;
   margin-bottom: -80px;
   margin-left: 20px;
-  width: 950px;
+  width: 960px;
 }
 .defaultButton {
   background-color: #fff !important;

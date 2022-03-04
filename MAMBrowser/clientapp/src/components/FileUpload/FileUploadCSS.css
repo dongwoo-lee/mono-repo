@@ -6,6 +6,9 @@
 .h120 .vs__dropdown-menu {
   height: 120px;
 }
+.h270 .vs__dropdown-menu {
+  height: 270px;
+}
 .h300 .vs__dropdown-menu {
   height: 300px;
 }
@@ -32,10 +35,6 @@
   border: 1px solid silver;
 }
 .date-div {
-  position: relative;
-  top: -80px;
-  margin-left: 390px;
-  width: 550px;
 }
 /* .modal-file-processing-button {
   position: absolute;
@@ -56,14 +55,14 @@
   width: 1000px;
   position: relative;
   top: 15px;
-  right: 30px;
+  right: 20px;
   text-align: right;
 }
 .date-modal-button {
   width: 1000px;
   position: relative;
   top: 95px;
-  right: 30px;
+  right: 20px;
   text-align: right;
 }
 .file-modal {
@@ -113,7 +112,7 @@
 .editTask {
   margin-top: 10px;
   border-radius: 3px;
-  width: 350px;
+  width: 425px;
   height: 36px;
   /* font-family: "Courier New"; */
   font-weight: 400;

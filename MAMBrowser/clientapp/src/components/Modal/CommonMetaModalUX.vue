@@ -93,7 +93,7 @@ export default {
 .meta-modal-body {
   font-family: "MBC 새로움 M";
   width: 1000px;
-  height: 400px;
+  height: 380px;
   background-color: white;
 }
 

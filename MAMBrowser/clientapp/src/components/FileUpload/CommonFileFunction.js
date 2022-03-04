@@ -179,11 +179,7 @@ export default {
     MetaData: {
       deep: true,
       handler(v) {
-        if (
-          v.typeSelected == "null" ||
-          v.typeSelected == "my-disk" ||
-          v.typeSelected == "pro"
-        ) {
+        if (v.typeSelected == "null" || v.typeSelected == "my-disk") {
           this.setIsActive(true);
         } else {
           this.setIsActive(false);
