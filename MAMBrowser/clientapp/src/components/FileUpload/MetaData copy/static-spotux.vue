@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div style="font-size: 16px; margin-top: 20px">
+    <div style="font-size: 16px">
       <b-button
-        style="position: absolute; top: 117px; left: 872px"
+        style="position: absolute; top: 117px; left: 875px"
         class="btn btn-outline-primary btn-sm default cutom-label mr-2"
         @click="modalOn"
         >방송의뢰</b-button
@@ -45,7 +45,7 @@
           <b-form-group
             label="편성 분량"
             class="has-float-label"
-            style="margin-top: 20px"
+            style="margin-top: 25px"
           >
             <b-form-input
               style="width: 425px"
@@ -58,39 +58,34 @@
           </b-form-group>
         </div>
       </div>
-      <div style="height: 50px">
-        <b-form-group
-          label="메모"
-          class="has-float-label"
-          style="float: left; margin-top: 20px"
-        >
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.memo"
-            :state="memoState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="메모"
-            trim
-        /></b-form-group>
-        <p
-          v-show="memoState"
-          style="
-            position: relative;
-            left: 390px;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.memo.length }}/30
-        </p>
-      </div>
+    </div>
+    <div style="height: 50px">
+      <b-form-group
+        label="메모"
+        class="has-float-label"
+        style="float: left; margin-top: 22px; font-size: 15px"
+      >
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+      /></b-form-group>
+      <p
+        v-show="memoState"
+        style="position: relative; left: 390px; width: 30px; margin-right: 0px"
+      >
+        {{ MetaData.memo.length }}/30
+      </p>
     </div>
     <div style="height: 50px">
       <b-form-group
         label="광고주"
         class="has-float-label"
-        style="float: left; margin-top: 20px; font-size: 15px"
+        style="float: left; margin-top: 17px; font-size: 15px"
       >
         <b-form-input
           class="editTask"

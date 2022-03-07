@@ -1,111 +1,8 @@
 <template>
   <div>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 350px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="소재명" class="has-float-label">
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.title"
-            :state="titleState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="소재명"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="titleState"
-          style="
-            position: relative;
-            left: 310px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.title.length }}/30
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 415px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="메모" class="has-float-label">
-          <b-form-input
-            style="width: 350px"
-            class="editTask"
-            v-model="MetaData.memo"
-            :state="memoState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="메모"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="memoState"
-          style="
-            position: relative;
-            left: 310px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.memo.length }}/30
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div>
-        <b-form-group
-          label="제작자"
-          class="has-float-label"
-          style="
-            position: absolute;
-            top: 485px;
-            left: -400px;
-            z-index: 9999;
-            font-size: 16px;
-          "
-        >
-          <b-form-input
-            title="제작자"
-            style="width: 350px; font-size: 14px"
-            class="editTask"
-            :value="userID"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="제작자"
-            trim
-          />
-        </b-form-group>
-      </div>
-    </transition>
-    <div style="position: absolute; top: 40px">
-      <b-form-group
-        label="방송일"
-        class="has-float-label"
-        style="position: absolute; z-index: 9989; font-color: black"
-      >
-        <b-input-group class="mb-3" style="width: 300px; float: left">
+    <div style="margin-top: 37px; font-size:15px">
+      <b-form-group label="방송일" class="has-float-label">
+        <b-input-group class="mb-3" style="width: 425px; float: left">
           <input
             :disabled="isActive"
             id="dateinput"
@@ -132,18 +29,13 @@
       <b-form-group
         label="1차 분류"
         class="has-float-label"
-        style="
-          position: absolute;
-          margin-top: 60px;
-          margin-left: 0px;
-          z-index: 999;
-        "
+        style="margin-top: 13px"
       >
         <b-form-select
           :disabled="isActive"
           id="program-media"
           class="media-select"
-          style="width: 300px; height: 37px"
+          style="width: 425px; height: 37px"
           :value="fillerMedia"
           :options="fillerOptions"
           @input="getSecondMedia"
@@ -152,19 +44,74 @@
       <b-form-group
         label="2차 분류"
         class="has-float-label"
-        style="position: absolute; top: 120px; z-index: 999"
+        style="margin-top: 32px"
       >
         <b-form-select
           id="program-media"
           class="media-select"
-          style="width: 300px; height: 37px"
+          style="width: 425px; height: 37px"
           :value="selectedFillerMedia"
           :options="fileMediaOptions"
           @input="mediaChange"
         />
       </b-form-group>
     </div>
+    <div style="font-size: 16px; margin-top: 25px; height: 50px">
+      <b-form-group label="소재명" class="has-float-label">
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.title"
+          :state="titleState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="소재명"
+          trim
+        />
+      </b-form-group>
+      <p
+        v-show="titleState"
+        style="
+          position: relative;
+          left: 390px;
+          z-index: 9999;
+          width: 30px;
+          margin-right: 0px;
+        "
+      >
+        {{ MetaData.title.length }}/30
+      </p>
+    </div>
+
+    <div style="font-size: 16px; margin-top: 15px; height: 50px">
+      <b-form-group label="메모" class="has-float-label">
+        <b-form-input
+          style="width: 425px"
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+        />
+      </b-form-group>
+      <p
+        v-show="memoState"
+        style="
+          position: relative;
+          left: 390px;
+          z-index: 9999;
+          width: 30px;
+          margin-right: 0px;
+        "
+      >
+        {{ MetaData.memo.length }}/30
+      </p>
+    </div>
   </div>
+  <!-- <div>
+    
+  </div> -->
 </template>
 
 <script>

@@ -43,7 +43,7 @@
         </DxDataGrid>
       </div>
       <div
-        style="height: 50px; margin-top: 15px; float: left; margin-right: 20px"
+        style="height: 50px; margin-top: 20px; float: left; margin-right: 20px"
       >
         <b-form-group
           label="분류"
@@ -60,7 +60,7 @@
           />
         </b-form-group>
       </div>
-      <div style="height: 50px; margin-top: 15px">
+      <div style="height: 50px; margin-top: 20px">
         <b-form-group
           label="소재"
           class="has-float-label"
@@ -91,7 +91,7 @@
         </p>
       </div>
       <div
-        style="height: 50px; margin-top: 20px; float: left; margin-right: 20px"
+        style="height: 50px; margin-top: 15px; float: left; margin-right: 20px"
       >
         <b-form-group
           label="광고주"
@@ -123,7 +123,7 @@
           {{ MetaData.advertiser.length }}/15
         </p>
       </div>
-      <div style="height: 50px; margin-top: 20px">
+      <div style="height: 50px; margin-top: 15px">
         <b-form-group
           label="메모"
           class="has-float-label"
