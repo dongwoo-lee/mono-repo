@@ -59,13 +59,12 @@
     <div
       style="
         width: 550px;
-        height: 40px;
         margin-top: 20px;
         font-size: 16px;
         font-family: 'MBC 새로움 M';
       "
     >
-      <div style="width: 425px; float: left">
+      <div style="width: 425px; float: left; margin-top: -10px">
         <b-form-group label="이벤트 명" class="has-float-label">
           <b-form-input
             class="editTask"
@@ -77,7 +76,7 @@
           />
         </b-form-group>
       </div>
-      <div style="width: 425px; float: left; margin-top: 25px">
+      <div style="width: 425px; float: left; margin-top: 10px">
         <b-form-group label="방송 시간" class="has-float-label">
           <b-form-input
             style="width: 425px"
@@ -89,7 +88,7 @@
           />
         </b-form-group>
       </div>
-      <div style="width: 425px; float: left; margin-top: 25px">
+      <div style="width: 425px; float: left; margin-top: 5px">
         <b-form-group label="편성 분량" class="has-float-label">
           <b-form-input
             style="width: 425px"
@@ -102,7 +101,7 @@
         </b-form-group>
       </div>
     </div>
-    <div style="height: 50px; margin-top: 165px">
+    <div style="height: 50px; margin-top: 225px">
       <b-form-group
         label="메모"
         class="has-float-label"

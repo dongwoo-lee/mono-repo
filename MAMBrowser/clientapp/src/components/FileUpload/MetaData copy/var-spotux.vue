@@ -29,7 +29,7 @@
           <b-form-group
             label="방송 시작일"
             class="has-float-label"
-            style="margin-top: 20px"
+            style="margin-top: 5px"
           >
             <b-form-input
               style="width: 425px"
@@ -45,7 +45,7 @@
           <b-form-group
             label="편성 분량"
             class="has-float-label"
-            style="margin-top: 25px"
+            style="margin-top: 5px"
           >
             <b-form-input
               style="width: 425px"
@@ -63,7 +63,7 @@
       <b-form-group
         label="메모"
         class="has-float-label"
-        style="float: left; margin-top: 22px; font-size: 15px"
+        style="float: left; margin-top: 10px; font-size: 15px"
       >
         <b-form-input
           class="editTask"
@@ -91,7 +91,7 @@
       <b-form-group
         label="광고주"
         class="has-float-label"
-        style="float: left; margin-top: 17px; font-size: 15px"
+        style="float: left; margin-top: 0px; font-size: 15px"
       >
         <b-form-input
           class="editTask"

@@ -53,12 +53,12 @@
         >검색</b-button
       >
     </div>
-    <div style="font-family: 'MBC 새로움 M'; font-size: 15px; margin-top: 10px">
+    <div style="font-family: 'MBC 새로움 M'; font-size: 15px">
       <div style="width: 425px; float: left">
         <b-form-group
           label="이벤트 명"
           class="has-float-label"
-          style="margin-top: 5px"
+          style="margin-top: -10px"
         >
           <b-form-input
             style="width: 425px"
@@ -74,7 +74,7 @@
         <b-form-group
           label="이벤트 ID"
           class="has-float-label"
-          style="margin-top: 20px"
+          style="margin-top: 5px"
         >
           <b-form-input
             style="width: 425px"
@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div style="font-size: 15px; margin-top: 160px">
+    <div style="font-size: 15px; margin-top: 165px">
       <b-form-group label="소재명" class="has-float-label">
         <b-form-input
           class="editTask"
@@ -114,7 +114,7 @@
         {{ MetaData.title.length }}/30
       </p>
     </div>
-    <div style="font-size: 15px; margin-top: 18px; float: left">
+    <div style="font-size: 15px; margin-top: 0px; float: left">
       <b-form-group label="메모" class="has-float-label">
         <b-form-input
           style="width: 200px"
@@ -141,7 +141,7 @@
       </p>
     </div>
     <div
-      style="font-size: 15px; margin-top: 16px; float: left; margin-left: 25px"
+      style="font-size: 15px; margin-top: 0px; float: left; margin-left: 25px"
     >
       <b-form-group label="취재인" class="has-float-label">
         <b-form-input
