@@ -16,22 +16,33 @@
       class="editTask"
       :value="rowData.reporter"
       @input="changeReporter"
+      :maxLength="10"
       aria-describedby="input-live-help input-live-feedback"
       placeholder="취재인"
       trim
     />
-
-    <br />
+    <p
+      v-if="this.reporter != null"
+      style="font-size: 14px; text-align: right; margin-right: 35px"
+    >
+      {{ this.reporter.length }}/10
+    </p>
     <h6>소재명</h6>
     <b-form-input
       class="editTask"
       :value="rowData.name"
       @input="changeName"
+      :maxLength="30"
       aria-describedby="input-live-help input-live-feedback"
       placeholder="소재명"
       trim
     />
-    <br />
+    <p
+      v-if="this.name != null"
+      style="font-size: 14px; text-align: right; margin-right: 35px"
+    >
+      {{ this.name.length }}/30
+    </p>
     <h6>방송일</h6>
     <b-form-input
       style="width: 350px"

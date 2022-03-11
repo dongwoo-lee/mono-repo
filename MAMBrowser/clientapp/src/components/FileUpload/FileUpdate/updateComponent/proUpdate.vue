@@ -5,11 +5,17 @@
       class="editTask"
       :value="rowData.name"
       @input="changeName"
+      :maxLength="30"
       aria-describedby="input-live-help input-live-feedback"
       placeholder="소재명"
       trim
     />
-    <br />
+    <p
+      v-if="this.name != null"
+      style="font-size: 14px; text-align: right; margin-right: 35px"
+    >
+      {{ this.name.length }}/30
+    </p>
     <h6>분류</h6>
 
     <b-form-group

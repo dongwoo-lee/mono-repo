@@ -229,12 +229,7 @@
                         background-color: white;
                         height: 34px;
                       "
-                      class="
-                        btn btn-outline-primary btn-sm
-                        default
-                        cutom-label
-                        mr-2
-                      "
+                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                       @click="logSearch"
                     >
                       검색
@@ -351,7 +346,7 @@
         </h4>
       </CommonFileModal>
     </transition>
-    <MetaModal
+    <!-- <MetaModal
       @upload="upload"
       @reset="reset"
       @cancel="fileUploadCancel"
@@ -359,7 +354,16 @@
       :MetaModal="MetaModal"
       :fileState="fileState"
       :percent="percent"
-    ></MetaModal>
+    ></MetaModal> -->
+    <MetaModalUX
+      @upload="upload"
+      @reset="reset"
+      @cancel="fileUploadCancel"
+      @close="MetaModalClose"
+      :MetaModal="MetaModal"
+      :fileState="fileState"
+      :percent="percent"
+    ></MetaModalUX>
   </div>
 </template>
 
@@ -368,6 +372,7 @@ import CommonFileModal from "../Modal/CommonFileModal.vue";
 import CommonFileFunction from "./CommonFileFunction";
 import CommonVueSelect from "../Form/CommonVueSelect.vue";
 import MetaModal from "./MetaModal";
+import MetaModalUX from "./MetaModalUX";
 import list from "./list.vue";
 import axios from "axios";
 const dxfu = "my-fileupload";
@@ -389,6 +394,7 @@ export default {
     CommonFileModal,
     CommonVueSelect,
     MetaModal,
+    MetaModalUX,
     list,
   },
   data() {
