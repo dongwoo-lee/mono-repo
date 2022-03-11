@@ -28,7 +28,7 @@ namespace MAMBrowser.Utils
                     PRODUCTID = item.PRODUCTID,
                     EVENTNAME = item.EVENTNAME,
                     DAY = item.DAY,
-                    R_ONAIRTIME = item.R_ONAIRTIME,
+                    R_ONAIRTIME = item.ONAIRTIME,
                     CUEID = item.CUEID,
                     MEDIA = item.MEDIA,
                     EDIT = item.EDIT,

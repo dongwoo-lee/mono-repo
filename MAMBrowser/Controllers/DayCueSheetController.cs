@@ -28,6 +28,7 @@ namespace MAMBrowser.Controllers
             public int select_page { get; set; }
             public string start_dt { get; set; }
             public string end_dt { get; set; }
+            public string media { get; set; }
 
         }
         //시작일, 종료일 날짜
@@ -46,25 +47,7 @@ namespace MAMBrowser.Controllers
             return dateList;
         }
 
-        // 일일큐시트 목록 가져오기 (날짜별)
-        //[HttpGet("GetDayCueList")]
-        //public DayCueList_Result GetDayCueList([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] List<string> products, int row_per_page, int select_page)
-        //{
-        //    try
-        //    {
-        //        DayCueList_Result result = new DayCueList_Result();
-        //        result.ResultObject = new DayCueList_Page();
-        //        List<string> dates = setDateList(start_dt, end_dt);
-        //        result.ResultObject = _bll.GetDayCueSheetList(products, dates, row_per_page, select_page);
-        //        result.ResultCode = RESUlT_CODES.SUCCESS;
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
-
+        //일일큐시트 목록 가져오기
         [HttpPost("GetDayCueList")]
         public DayCueList_Result GetDayCueList([FromBody] DayPram pram)
         {
@@ -72,8 +55,9 @@ namespace MAMBrowser.Controllers
             {
                 DayCueList_Result result = new DayCueList_Result();
                 result.ResultObject = new DayCueList_Page();
-                List<string> dates = setDateList(pram.start_dt, pram.end_dt);
-                result.ResultObject = _bll.GetDayCueSheetList(pram.products, dates, pram.row_per_page, pram.select_page);
+                List<string> dates = setDateList(pram.start_dt, pram.end_dt);            
+                //media 추가
+                result.ResultObject = _bll.GetDayCueSheetList(pram.products, dates, pram.row_per_page, pram.select_page,pram.media);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
                 return result;
             }

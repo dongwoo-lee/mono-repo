@@ -8,20 +8,6 @@ const moment = require("moment");
 Vue.use(VueRouter);
 import axios from "axios";
 const qs = require("qs");
-const date = new Date();
-
-function get_date_str(date) {
-  var sYear = date.getFullYear();
-  var sMonth = date.getMonth() + 1;
-  var sDate = date.getDate();
-
-  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
-  sDate = sDate > 9 ? sDate : "0" + sDate;
-
-  return sYear + "" + sMonth + "" + sDate;
-}
-
-var toDay = get_date_str(date);
 
 const routes = [
   {

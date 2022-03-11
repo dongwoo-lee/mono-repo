@@ -1336,16 +1336,12 @@ let searchMenuList = {
           name: "MY디스크",
           options: [
             {
-              id: "startDate",
-              text: "시작일",
-              value: "",
-              type: "D",
-            },
-            {
-              id: "endDate",
-              text: "종료일",
-              value: "",
-              type: "D",
+              startText: "시작일",
+              endText: "종료일",
+              type: "SED",
+              st_selectVal: "",
+              end_selectVal: "",
+              requiredVal: false
             },
             {
               id: "title",

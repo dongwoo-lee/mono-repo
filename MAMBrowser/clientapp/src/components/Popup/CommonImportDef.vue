@@ -147,39 +147,17 @@ export default {
           width: "3%",
         },
         {
-          name: "edittime",
-          title: "수정일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "20%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
-          },
-        },
-        {
-          name: "eventname",
-          title: "프로그램명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          sortField: "eventname",
-        },
-        {
           name: "media",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "media",
           width: "10%",
           callback: (value) => {
             switch (value) {
               case "A":
-                return "표준FM";
+                return "AM";
               case "F":
-                return "FM4U";
+                return "FM";
               case "D":
                 return "DMB";
               case "C":
@@ -192,11 +170,29 @@ export default {
           },
         },
         {
+          name: "eventname",
+          title: "프로그램명",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+        },
+        {
           name: "__slot:weeks",
           title: "적용 요일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
+          width: "18%",
+        },
+        {
+          name: "edittime",
+          title: "최종 편집 일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
           width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+          },
         },
       ],
       allCheck: true,
@@ -278,13 +274,13 @@ export default {
             var temmedia = await this.eventClick(this.cueInfo.media);
             this.searchItems.productid = this.cueInfo.productid;
           } else {
+            var temmedia = await this.eventClick();
             this.searchItems.productid = this.userProList;
           }
         }
         if (this.searchItems.productid == undefined) {
           this.searchItems.productid = this.userProList;
         }
-
         var params = {
           productids: this.searchItems.productid,
           row_per_page: this.searchItems.rowPerPage,
@@ -337,7 +333,6 @@ export default {
         this.loadingIconVal = false;
       } else {
         var rowNum_ab = 0;
-        var rowNum_c = 0;
         var rowNum_print = 0;
         var beforePrintData = [];
         var beforeAbData = [];
@@ -372,7 +367,7 @@ export default {
         } else {
           var seqnum = this.selectedIds[0];
           var params = {
-            productid: this.searchItems.productid,
+            productid: this.defCuesheetListArr.data[seqnum].productid,
             week: this.defCuesheetListArr.data[seqnum].weeks,
             pgmcode: this.cueInfo.pgmcode,
           };
@@ -451,9 +446,12 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기
     async eventClick(e) {
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      await this.getProductName(e);
+    },
+    async getProductName(media) {
       const userName = sessionStorage.getItem(USER_NAME);
-      var pram = { person: userName, gropId: gropId, media: e };
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      var pram = { person: userName, gropId: gropId, media: media };
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
       this.searchItems.productid = this.userProList;

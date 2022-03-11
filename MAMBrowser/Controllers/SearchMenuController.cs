@@ -482,7 +482,7 @@ namespace MAMBrowser.Controllers
         }
         //음반기록실, 효과음 Drag > Loading Test
         [HttpPost("test")]
-        public bool GetTest()
+        public ActionResult<bool> GetTest()
         {
             int mydelay = 3000;
             Thread.Sleep(mydelay);

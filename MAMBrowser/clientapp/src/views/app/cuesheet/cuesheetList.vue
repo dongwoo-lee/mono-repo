@@ -189,6 +189,7 @@ export default {
     this.searchItems.start_dt = startDay;
     this.searchItems.end_dt = endDay;
     this.getData();
+    this.getProductName();
   },
   methods: {
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
@@ -231,8 +232,11 @@ export default {
       this.isScrollLodaing = false;
     },
     //매체 선택시 프로그램 목록 가져오기
-    async eventClick(e) {
-      var pram = { person: null, gropId: null, media: e };
+    eventClick(e) {
+      this.getProductName(e);
+    },
+    async getProductName(media) {
+      var pram = { person: null, gropId: null, media: media };
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
       this.searchItems.productid = this.userProList;

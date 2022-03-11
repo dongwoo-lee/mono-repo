@@ -25,7 +25,7 @@ namespace MAMBrowser.BLL
         }
 
         // 일일큐시트 목록 가져오기
-        public DayCueList_Page GetDayCueSheetList(List<string> products, List<string> dates, int row_per_page, int select_page)
+        public DayCueList_Page GetDayCueSheetList(List<string> products, List<string> dates, int row_per_page, int select_page, string media)
         {
             var result = new DayCueList_Page();
             DayCueSheetListParam param = new DayCueSheetListParamBuilder()
@@ -34,8 +34,10 @@ namespace MAMBrowser.BLL
                 .SetRowPage(row_per_page)
                 .SetSelectPage(select_page)
                 .Build();
+            //media 추가
+            param.Media = media;
 
-            var data = _dao.GetDayCueSheetList(param);
+            var data = _dao.GetDayCueSheetListV2(param);
             result.RowPerPage = row_per_page;
             result.SelectPage = select_page;
             result.TotalRowCount = data.TotalCount;

@@ -158,37 +158,17 @@ export default {
           width: "3%",
         },
         {
-          name: "brdtime",
-          title: "방송완료일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "15%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
-          },
-        },
-        {
-          name: "title",
-          title: "프로그램명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          sortField: "title",
-        },
-        {
           name: "media",
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "media",
-          width: "15%",
+          width: "10%",
           callback: (value) => {
             switch (value) {
               case "A":
-                return "표준FM";
+                return "AM";
               case "F":
-                return "FM4U";
+                return "FM";
               case "D":
                 return "DMB";
               case "C":
@@ -198,6 +178,18 @@ export default {
               default:
                 break;
             }
+          },
+        },
+        {
+          name: "brdtime",
+          title: "방송완료일",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "15%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
           },
         },
         {
@@ -213,11 +205,10 @@ export default {
           },
         },
         {
-          name: "__slot:actions",
-          title: "",
+          name: "title",
+          title: "프로그램명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "10%",
+          dataClass: "center aligned text-center bold",
         },
       ],
       allCheck: true,
@@ -275,7 +266,6 @@ export default {
   mounted() {
     this.searchItems.start_dt = startDay;
     this.searchItems.end_dt = endDay;
-    //this.getData();
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -291,6 +281,7 @@ export default {
     async getData() {
       if (this.state) {
         this.isTableLoading = this.isScrollLodaing ? false : true;
+        var temmedia = await this.eventClick();
         if (
           this.$fn.checkGreaterStartDate(
             this.searchItems.start_dt,
@@ -321,7 +312,6 @@ export default {
         if (typeof params.products == "string") {
           params.products = [params.products];
         }
-        //여기하는중
         await axios
           .post(`/api/ArchiveCueSheet/GetArchiveCueList`, params)
           .then((res) => {
@@ -339,13 +329,6 @@ export default {
           });
       }
     },
-    //매체 선택시 프로그램 목록 가져오기
-    async eventClick(e) {
-      var pram = { person: null, gropId: null, media: e };
-      var proOption = await this.getuserProOption(pram);
-      this.programList = this.userProOption;
-      this.searchItems.productid = this.userProList;
-    },
     async ok() {
       this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
@@ -357,7 +340,6 @@ export default {
       } else {
         var rowNum_ab = 0;
         var rowNum_print = 0;
-        var rowNum_c = 0;
         var beforePrintData = [];
         var beforeAbData = [];
         if (this.importSelected == "update") {
@@ -458,6 +440,23 @@ export default {
             });
         }
       }
+    },
+    //매체 선택시 프로그램 목록 가져오기
+    // async eventClick(e) {
+    //   var pram = { person: null, gropId: null, media: e };
+    //   var proOption = await this.getuserProOption(pram);
+    //   this.programList = this.userProOption;
+    //   this.searchItems.productid = this.userProList;
+    // },
+    //매체 선택시 프로그램 목록 가져오기
+    eventClick(e) {
+      this.getProductName(e);
+    },
+    async getProductName(media) {
+      var pram = { person: null, gropId: null, media: media };
+      var proOption = await this.getuserProOption(pram);
+      this.programList = this.userProOption;
+      this.searchItems.productid = this.userProList;
     },
   },
 };
