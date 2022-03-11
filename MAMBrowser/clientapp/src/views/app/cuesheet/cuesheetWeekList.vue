@@ -109,7 +109,7 @@
             <b-form-select
               style="width: 150px"
               v-model="cuesheetData.media"
-              :options="mediasOption"
+              :options="modal_mediasoption"
               @change="eventClick($event, 'modal')"
             />
           </b-form-group>
@@ -284,6 +284,7 @@ export default {
           width: "10%",
         },
       ],
+      modal_mediasoption: [],
     };
   },
 
@@ -303,9 +304,16 @@ export default {
       });
     },
   },
-  mounted() {
+  async mounted() {
     this.selectedIds = [];
     this.getData();
+    await this.getProductName();
+    this.programList = this.userProOption;
+    this.searchItems.productid = this.userProList;
+    this.modalProgramList = this.userProOption;
+    this.modal_mediasoption = this.mediasOption.filter(
+      (ele, index) => index > 0
+    );
   },
   methods: {
     ...mapActions("cueList", ["getcuesheetListArrDef"]),
@@ -336,19 +344,25 @@ export default {
     },
     //매체 선택시 프로그램 목록 가져오기 (일반,modal)
     async eventClick(e, V) {
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      const userName = sessionStorage.getItem(USER_NAME);
-      var pram = { person: userName, gropId: gropId, media: e };
-      var proOption = await this.getuserProOption(pram);
+      await this.getProductName(e);
       if (V == "list") {
         this.programList = this.userProOption;
         this.searchItems.productid = this.userProList;
       } else if (V == "modal") {
         this.modalProgramList = this.userProOption;
+        this.cuesheetData.productid = "";
       }
     },
-    addModal() {
-      this.cuesheetData.media = "";
+    async getProductName(media) {
+      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+      const userName = sessionStorage.getItem(USER_NAME);
+      var pram = { person: userName, gropId: gropId, media: media };
+      var proOption = await this.getuserProOption(pram);
+    },
+    async addModal() {
+      this.cuesheetData.media = this.mediasOption[1].value;
+      await this.getProductName(this.cuesheetData.media);
+      this.modalProgramList = this.userProOption;
       this.cuesheetData.productid = "";
       this.weekButtons.forEach((ele) => {
         ele.state = false;
@@ -406,32 +420,39 @@ export default {
     },
     // 요일확인 및 목록 가져오기 (modal)
     async getWeekList(e) {
-      this.weekButtons.forEach((week) => {
-        week.state = false;
-      });
-      var params = {
-        productids: [e],
-        row_per_page: this.searchItems.rowPerPage,
-        select_page: this.searchItems.selectPage,
-      };
-      await axios.post(`/api/DefCueSheet/GetDefList`, params).then((res) => {
-        var weekArr = [];
-        res.data.resultObject.data.forEach((ele) => {
-          ele.detail.forEach((week) => {
-            weekArr.push(week.week);
-          });
+      if (e == undefined || "" || null) {
+        this.weekButtons.forEach((ele) => {
+          ele.state = false;
+          ele.disable = true;
         });
+      } else {
         this.weekButtons.forEach((week) => {
-          if (weekArr.includes(week.value)) {
-            week.disable = true;
-          } else {
-            week.disable = false;
+          week.state = false;
+        });
+        var params = {
+          productids: [e],
+          row_per_page: this.searchItems.rowPerPage,
+          select_page: this.searchItems.selectPage,
+        };
+        await axios.post(`/api/DefCueSheet/GetDefList`, params).then((res) => {
+          var weekArr = [];
+          res.data.resultObject.data.forEach((ele) => {
+            ele.detail.forEach((week) => {
+              weekArr.push(week.week);
+            });
+          });
+          this.weekButtons.forEach((week) => {
+            if (weekArr.includes(week.value)) {
+              week.disable = true;
+            } else {
+              week.disable = false;
+            }
+          });
+          if (weekArr.length == 7) {
+            //이미 모든요일이 설정되어 있을때 해야함
           }
         });
-        if (weekArr.length == 7) {
-          //이미 모든요일이 설정되어 있을때 해야함
-        }
-      });
+      }
     },
     //기본큐시트 삭제
     async delWeekCue(e) {

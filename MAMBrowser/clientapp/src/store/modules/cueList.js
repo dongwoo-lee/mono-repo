@@ -414,6 +414,7 @@ export default {
             }
             return axios.post(`/api/daycuesheet/Getdaycuelist`, payload)
                 .then((res) => {
+                    console.log(res)
                     res.data.resultObject.data.sort((a, b) => {
                         return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
                     })

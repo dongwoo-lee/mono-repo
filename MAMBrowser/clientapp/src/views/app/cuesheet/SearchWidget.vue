@@ -656,20 +656,13 @@ export default {
       });
     },
     async getData(Val) {
-      // this.searchtable_data.columns = [];
-      // if (this.searchtable_data.columns == []) {
-      //   console.log("ddd");
-      //   console.log(this.searchtable_data.columns);
-      // }
-      //this.searchtable_data.columns.clearRawDataCache();
-      // this.subtable_data = [];
       var basedata = this.searchItems;
       this.searchtable_data.cartcode = this.searchDataList.cartcode;
       if (
-        this.searchListData.cartcode == "S01G01C016" ||
-        this.searchListData.cartcode == "S01G01C017" ||
-        this.searchListData.cartcode == "S01G01C018" ||
-        this.searchListData.cartcode == "S01G01C019"
+        this.searchDataList.cartcode == "S01G01C016" ||
+        this.searchDataList.cartcode == "S01G01C017" ||
+        this.searchDataList.cartcode == "S01G01C018" ||
+        this.searchDataList.cartcode == "S01G01C019"
       ) {
         this.pageSize = 200;
       } else {

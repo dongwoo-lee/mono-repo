@@ -137,39 +137,35 @@ export default {
           width: "3%",
         },
         {
+          name: "tmptitle",
+          title: "템플릿 이름",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+        },
+        {
           name: "createtime",
-          title: "생성일",
+          title: "최초 생성 일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "20%",
           callback: (value) => {
             return value === null
               ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
           },
         },
 
         {
           name: "edittime",
-          title: "수정일",
+          title: "최종 편집 일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "20%",
           callback: (value) => {
             return value === null
               ? ""
-              : moment(value, "YYYYMMDDHH:mm:ss").format(
-                  "YYYY-MM-DD : HH시 mm분"
-                );
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
           },
-        },
-        {
-          name: "tmptitle",
-          title: "템플릿 이름",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
         },
       ],
       allCheck: true,
@@ -267,7 +263,6 @@ export default {
         this.loadingIconVal = false;
       } else {
         var rowNum_ab = 0;
-        var rowNum_c = 0;
         var rowNum_print = 0;
         var beforePrintData = [];
         var beforeAbData = [];
@@ -315,8 +310,6 @@ export default {
           } else if (this.cueInfo.cuetype == "B") {
             params.brd_dt = toDay;
           }
-          console.log("템플릿 가져오기 : this.cueInfo");
-          console.log(this.cueInfo);
           await axios
             .get(`/api/tempcuesheet/GettempCue`, {
               params: params,

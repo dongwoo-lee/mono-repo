@@ -186,6 +186,7 @@ export default {
   },
   mounted() {
     this.getData();
+    this.getProductName();
   },
   methods: {
     ...mapActions("cueList", ["getcuesheetListArr"]),
@@ -224,6 +225,7 @@ export default {
           products: this.searchItems.productid,
           row_per_page: this.searchItems.rowPerPage,
           select_page: this.searchItems.selectPage,
+          media: this.searchItems.media,
         };
         var arrListResult = await this.getcuesheetListArr(params);
         this.setResponseData(arrListResult);
@@ -233,10 +235,13 @@ export default {
       }
     },
     //매체 선택시 프로그램 목록 가져오기
-    async eventClick(e) {
+    eventClick(e) {
+      this.getProductName(e);
+    },
+    async getProductName(media) {
       const userName = sessionStorage.getItem(USER_NAME);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      var pram = { person: userName, gropId: gropId, media: e };
+      var pram = { person: userName, gropId: gropId, media: media };
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
       this.searchItems.productid = this.userProList;
