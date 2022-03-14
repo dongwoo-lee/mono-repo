@@ -198,6 +198,7 @@
                 <b-form-input
                   :value="fileData[index - 1].maintitle"
                   ref="inputText"
+                  maxlength="40"
                   spellcheck="false"
                   @keyup.enter="
                     onValueChange($event, index, fileData[index - 1].maintitle)
