@@ -17,7 +17,13 @@
       </b-form-group>
       <p
         v-show="titleState"
-        style="position: relative; left: 380px; z-index: 9999; width: 30px"
+        style="
+          position: relative;
+          left: 380px;
+          top: -15px;
+          z-index: 9999;
+          width: 30px;
+        "
       >
         {{ MetaData.title.length }}/200
       </p>
@@ -43,6 +49,7 @@
         style="
           position: relative;
           left: 380px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;

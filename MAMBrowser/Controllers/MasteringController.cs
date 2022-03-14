@@ -75,14 +75,27 @@ namespace MAMBrowser.Controllers
         public DTO_RESULT TitleValidation([FromForm] string userId, [FromForm] string title)
         {
             DTO_RESULT result = new DTO_RESULT();
-            if(title == "중복") {
-                result.ResultCode = RESUlT_CODES.DB_ERROR;
-                result.ErrorMsg = "중복된 제목입니다.";
-            }else if(title == "성공")
+            try
             {
                 result.ResultCode = RESUlT_CODES.SUCCESS;
                 result.ResultObject = "성공";
+                //if (title == "중복")
+                //{
+                //    result.ResultCode = RESUlT_CODES.DB_ERROR;
+                //    result.ErrorMsg = "중복된 제목입니다.";
+                //}
+                //else if (title == "성공")
+                //{
+                //    result.ResultCode = RESUlT_CODES.SUCCESS;
+                //    result.ResultObject = "성공";
+                //}
             }
+            catch(Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+           
            
             return result;
         }

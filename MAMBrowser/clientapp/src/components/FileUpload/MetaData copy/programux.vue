@@ -116,7 +116,7 @@
           trim
         />
       </b-form-group>
-      <p style="margin-left: 392px" v-show="memoState">
+      <p style="margin-left: 392px; margin-top: -15px" v-show="memoState">
         {{ MetaData.memo.length }}/30
       </p>
     </div>

@@ -34,7 +34,7 @@
             <b-form-input
               style="width: 425px"
               class="editTask"
-              v-model="fileSDate"
+              v-model="eventDate"
               disabled
               aria-describedby="input-live-help input-live-feedback"
               trim
@@ -76,7 +76,13 @@
       /></b-form-group>
       <p
         v-show="memoState"
-        style="position: relative; left: 390px; width: 30px; margin-right: 0px"
+        style="
+          position: relative;
+          left: 390px;
+          top: -15px;
+          width: 30px;
+          margin-right: 0px;
+        "
       >
         {{ MetaData.memo.length }}/30
       </p>
@@ -85,7 +91,7 @@
       <b-form-group
         label="광고주"
         class="has-float-label"
-        style="float: left; margin-top: 0px; font-size: 15px"
+        style="float: left; margin-top: 5px; font-size: 15px"
       >
         <b-form-input
           class="editTask"
@@ -99,7 +105,13 @@
       </b-form-group>
       <p
         v-show="advertiserState"
-        style="position: relative; left: 390px; width: 30px; margin-right: 0px"
+        style="
+          position: relative;
+          left: 390px;
+          top: -15px;
+          width: 30px;
+          margin-right: 0px;
+        "
       >
         {{ MetaData.advertiser.length }}/15
       </p>
@@ -203,7 +215,7 @@
           name="mcrDxDataGrid"
           v-show="this.EventData.id != ''"
           style="
-            margin-top: 30px;
+            margin-top: 40px;
             height: 295px;
             border: 1px solid silver;
             font-family: 'MBC 새로움 M';
@@ -277,6 +289,7 @@ export default {
       staticMedia: "A",
       sdate: "",
       edate: "",
+      eventDate: "",
     };
   },
   created() {
@@ -318,17 +331,20 @@ export default {
     this.getPro();
   },
   methods: {
-    onSearch() {
-      this.modalOn();
-      this.getPro();
-    },
     modalOn() {
+      setTimeout(() => {
+        this.eventDate = this.fileSDate;
+      }, 500);
       this.modal = true;
     },
     modalOff() {
+      if (this.EventSelected.name == "") {
+        this.eventDate = "";
+      }
       this.modal = false;
     },
     modalReset() {
+      this.eventDate = "";
       this.resetEventSelected();
       this.modal = false;
     },
@@ -340,6 +356,7 @@ export default {
     },
     eventSInput(value) {
       this.sdate = value;
+      this.eventDate = value;
       this.setFileSDate(value);
       this.setTempFileSDate(value);
 
@@ -403,6 +420,7 @@ export default {
             convertDate == "undefined"
           ) {
             this.sdate = this.get7daysago();
+            this.eventDate = this.get7daysago();
             this.setFileSDate(this.get7daysago());
             this.setTempFileSDate(this.get7daysago());
 
@@ -422,6 +440,7 @@ export default {
             return;
           }
           this.sdate = convertDate;
+          this.eventDate = convertDate;
           this.setFileSDate(convertDate);
           this.setTempFileSDate(convertDate);
 

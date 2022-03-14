@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="margin-top: 37px; font-size:15px">
+    <div style="margin-top: 37px; font-size: 15px">
       <b-form-group label="방송일" class="has-float-label">
         <b-input-group class="mb-3" style="width: 425px; float: left">
           <input
@@ -73,6 +73,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -100,6 +101,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;

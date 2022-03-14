@@ -45,6 +45,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -75,6 +76,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;

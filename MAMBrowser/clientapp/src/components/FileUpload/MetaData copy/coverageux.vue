@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div style="font-size: 15px; margin-top: 165px">
+    <div style="font-size: 15px; margin-top: 165px; margin-bottom: 0px">
       <b-form-group label="소재명" class="has-float-label">
         <b-form-input
           class="editTask"
@@ -103,12 +103,13 @@
       <p
         v-show="titleState"
         style="
-          position: absolute;
-          left: 920px;
+          position: relative;
+          left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
+          margin-bottom: -18px;
           margin-right: 0px;
-          margin-bottom: 0px;
         "
       >
         {{ MetaData.title.length }}/30
@@ -132,6 +133,7 @@
         style="
           position: relative;
           left: 165px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -160,6 +162,7 @@
         style="
           position: relative;
           left: 165px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
