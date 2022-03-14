@@ -445,15 +445,21 @@ export default {
       this.lengthCheck = false;
       var arrData = this.abCartArr;
       if (e.fromData === undefined) {
+        //소재검색에서 추가 시
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
         if (selectedRowsData.length > 1) {
+          //mult select
           var index = 0;
           for (const data of selectedRowsData) {
+            // 소재 개수만큼 반복
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("contents")) {
+              // 빈칸을 옮겼을 경우
               row.memo = search_row.contents;
             } else {
+              // 아이템 소재를 옮겼을 경우
+
               //테스트 중
               // if (this.searchListData.cartcode == "S01G01C021") {
               //   search_row = await axios
@@ -552,6 +558,7 @@ export default {
           }
         }
       } else if (e.fromData.cartcode != undefined) {
+        //c에서 가져올때 여기서 빈칸 거름
         var search_row = e.fromData;
         var row = { ...search_row };
         row.rownum = this.rowData.rownum;
