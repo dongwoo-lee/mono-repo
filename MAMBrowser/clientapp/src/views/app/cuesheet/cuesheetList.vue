@@ -195,6 +195,7 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
+      this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (
         this.$fn.checkGreaterStartDate(

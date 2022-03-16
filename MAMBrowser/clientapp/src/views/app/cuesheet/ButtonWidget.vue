@@ -937,9 +937,7 @@ export default {
         });
       }
       cuesheetData.NormalCon.forEach((ele) => {
-        if (ele.cartcode != null && ele.cartcode != "") {
-          pramList.push(ele);
-        }
+        pramList.push(ele);
       });
       if (pramList.length == 0) {
         window.$notify("error", `내려받을 소재가 없습니다.`, "", {
@@ -947,7 +945,6 @@ export default {
           permanent: false,
         });
       } else {
-        console.info("this.cueInfo", this.cueInfo);
         var downloadName = "";
         switch (this.cueInfo.cuetype) {
           case "D":

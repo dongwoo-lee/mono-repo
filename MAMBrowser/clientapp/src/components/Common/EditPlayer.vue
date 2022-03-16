@@ -246,28 +246,66 @@ export default {
       wavesurfer.regions.list["Trim"].play();
     },
     somClick() {
-      //console.log(wavesurfer.regions.list.Trim);
-      this.options.start = wavesurfer.getCurrentTime();
-      this.options.end = wavesurfer.regions.list.Trim.end;
-      wavesurfer.regions.clear();
-      wavesurfer.addRegion(this.options);
+      var startVal = wavesurfer.getCurrentTime();
+      var endVal = wavesurfer.regions.list.Trim.end;
+      if (endVal > startVal) {
+        this.options.start = startVal;
+        this.options.end = endVal;
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+        this.somTime = new Date(
+          wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
+        );
+        this.somTime = this.somTime.toISOString().substr(11, 8);
+        this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+      } else {
+        this.options.start = startVal;
+        this.options.end = this.eom;
 
-      this.somTime = new Date(
-        wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
-      );
-      this.somTime = this.somTime.toISOString().substr(11, 8);
-      this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+
+        this.somTime = new Date(
+          wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
+        );
+        this.eomTime = new Date(this.options.end.toFixed(2) * 1000);
+
+        this.somTime = this.somTime.toISOString().substr(11, 8);
+        this.eomTime = this.eomTime.toISOString().substr(11, 8);
+        this.$emit("endPosition", this.options.end);
+        this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+      }
     },
     eomClick() {
-      this.options.start = wavesurfer.regions.list.Trim.start;
-      this.options.end = wavesurfer.getCurrentTime();
-      wavesurfer.regions.clear();
-      wavesurfer.addRegion(this.options);
-      this.eomTime = new Date(
-        wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
-      );
-      this.eomTime = this.eomTime.toISOString().substr(11, 8);
-      this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+      var startVal = wavesurfer.regions.list.Trim.start;
+      var endVal = wavesurfer.getCurrentTime();
+      if (endVal > startVal) {
+        this.options.start = startVal;
+        this.options.end = endVal;
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+        this.eomTime = new Date(
+          wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
+        );
+        this.eomTime = this.eomTime.toISOString().substr(11, 8);
+        this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+      } else {
+        this.options.start = 0;
+        this.options.end = endVal;
+
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+
+        this.eomTime = new Date(
+          wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
+        );
+        this.somTime = new Date(this.options.start.toFixed(2) * 1000);
+
+        this.eomTime = this.eomTime.toISOString().substr(11, 8);
+        this.somTime = this.somTime.toISOString().substr(11, 8);
+        this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+        this.$emit("startPosition", this.options.start);
+      }
     },
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
@@ -315,14 +353,16 @@ export default {
       wavesurfer.on("finish", function () {
         vm.LoadAudioInfo();
       });
-      wavesurfer.on("seek", (e) => {
-        if (wavesurfer.regions.getCurrentRegion() != null) {
-          wavesurfer.play(
-            wavesurfer.getCurrentTime(),
-            wavesurfer.regions.getCurrentRegion().end
-          );
-        }
-      });
+      //영역 중간 click 시 정지 여부 > 정지 시 오류 발생됨
+      // wavesurfer.on("seek", (e) => {
+      //   console.log(wavesurfer.regions.getCurrentRegion());
+      //   if (wavesurfer.regions.getCurrentRegion() != null) {
+      //     wavesurfer.play(
+      //       wavesurfer.getCurrentTime(),
+      //       wavesurfer.regions.getCurrentRegion().end
+      //     );
+      //   }
+      // });
       wavesurfer.on("ready", () => {
         var totalSec = wavesurfer.getDuration();
         if (totalSec >= 3000) {

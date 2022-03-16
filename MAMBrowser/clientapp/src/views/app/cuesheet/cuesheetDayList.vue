@@ -192,8 +192,8 @@ export default {
     ...mapActions("cueList", ["getcuesheetListArr"]),
     ...mapActions("cueList", ["getMediasOption"]),
     ...mapActions("cueList", ["getuserProOption"]),
-
     async getData() {
+      this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       const userName = sessionStorage.getItem(USER_NAME);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
