@@ -35,12 +35,15 @@
         class="has-float-label"
         style="font-size: 15px"
       >
-        <b-form-input
+        <b-form-textarea
           class="editTask"
           v-model="MetaData.memo"
           :state="memoState"
           :maxLength="200"
+          :rows="5"
+          :max-rows="5"
           placeholder="메모"
+          no-resize
           trim
         />
       </b-form-group>
@@ -58,7 +61,7 @@
         {{ MetaData.memo.length }}/200
       </p>
     </div>
-    <div style="height: 50px; margin-top: 20px">
+    <div style="height: 50px; margin-top: 85px">
       <b-form-group
         label="제작자"
         class="has-float-label"
