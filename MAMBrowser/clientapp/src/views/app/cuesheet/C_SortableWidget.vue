@@ -236,6 +236,7 @@
         :grpType="grpParam.grpType"
         :brd_Dt="grpParam.brd_Dt"
         :grpId="grpParam.grpId"
+        :parentName="playTem_name"
         @closePlayer="closeGrpPlayerPopup"
       >
       </CMGroupPlayerPopup>
@@ -254,6 +255,7 @@
         :fadeIn="soundItem.fadeintime"
         :fadeOut="soundItem.fadeouttime"
         requestType="token"
+        :parentName="playTem_name"
         @closePlayer="onClosePlayer"
       >
       </EditPlayerPopup>
@@ -304,6 +306,7 @@ export default {
       showGrpPlayer: false,
       groupFilterVal: false,
       grpParam: {},
+      playTem_name: "",
       rowData: {
         carttype: "",
         cartcode: "", //그룹코드
@@ -327,6 +330,25 @@ export default {
     };
   },
   async created() {
+    switch (this.channelKey) {
+      case "channel_1":
+        this.playTem_name = "C1";
+        break;
+      case "channel_2":
+        this.playTem_name = "C2";
+        break;
+      case "channel_3":
+        this.playTem_name = "C3";
+        break;
+      case "channel_4":
+        this.playTem_name = "C4";
+        break;
+      case "channel_my":
+        this.playTem_name = "즐겨찾기";
+        break;
+      default:
+        break;
+    }
     if (this.channelKey == "channel_my") {
       this.fileData = this.cueFavorites;
       var userId = sessionStorage.getItem(USER_ID);

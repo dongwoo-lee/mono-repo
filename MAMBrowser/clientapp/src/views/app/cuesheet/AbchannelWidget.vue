@@ -327,6 +327,7 @@
       :grpType="grpParam.grpType"
       :brd_Dt="grpParam.brd_Dt"
       :grpId="grpParam.grpId"
+      :parentName="playTem_name"
       @closePlayer="closeGrpPlayerPopup"
     >
     </CMGroupPlayerPopup>
@@ -345,6 +346,7 @@
       :fadeOut="soundItem.fadeouttime"
       type="A"
       requestType="token"
+      :parentName="playTem_name"
       @closePlayer="onClosePlayer"
     >
     </EditPlayerPopup>
@@ -384,6 +386,7 @@ export default {
       showGrpPlayer: false,
       lengthCheck: false,
       grpParam: {},
+      playTem_name: "DAP (A,B)",
       rowData: {
         carttype: "",
         onairdate: "",

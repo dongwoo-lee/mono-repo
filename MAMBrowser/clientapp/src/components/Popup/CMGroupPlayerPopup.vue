@@ -2,7 +2,12 @@
   <!-- 미리듣기 팝업 -->
   <b-modal id="modal-player" size="xl" v-model="show" no-close-on-backdrop>
     <template slot="modal-title">
-      <h5>{{ title }}</h5>
+      <div style="display: inline-flex">
+        <h6 v-if="parentName != ''">
+          <b-badge class="mr-2" variant="dark">{{ parentName }}</b-badge>
+        </h6>
+        <h5 style="line-height: 1.4">{{ title }}</h5>
+      </div>
     </template>
     <template slot="default">
       <CMGroupPlayer
@@ -28,7 +33,14 @@
 </template>
 <script>
 export default {
-  props: ["showPlayerPopup", "title", "grpId", "grpType", "brd_Dt"],
+  props: [
+    "showPlayerPopup",
+    "title",
+    "grpId",
+    "grpType",
+    "brd_Dt",
+    "parentName",
+  ],
   data() {
     return {};
   },
@@ -52,3 +64,8 @@ export default {
   },
 };
 </script>
+<style>
+.footer_parentName {
+  float: left;
+}
+</style>
