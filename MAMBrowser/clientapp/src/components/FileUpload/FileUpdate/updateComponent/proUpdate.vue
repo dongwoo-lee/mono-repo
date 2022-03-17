@@ -2,7 +2,7 @@
   <div>
     <h6>소재명</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.name"
       @input="changeName"
       :maxLength="30"
@@ -24,7 +24,7 @@
       style="font-size: 15px; margin-top: 20px"
     >
       <b-form-input
-        class="editTask"
+        class="meta-update"
         :value="rowData.categoryName"
         disabled
         aria-describedby="input-live-help input-live-feedback"
@@ -38,7 +38,7 @@
     >
       <common-vue-select
         class="h300"
-        style="width: 350px; font-size: 14px; margin-top: 10px"
+        style="width: 355px; font-size: 14px; margin-top: 10px"
         :vSelectProps="category"
         :suggestions="mediaOptions"
         @inputEvent="changeMedia"
@@ -49,7 +49,7 @@
     <b-form-select
       id="program-media"
       class="media-select"
-      style="width: 350px"
+      style="width: 355px"
       :value="proType"
       :options="proTypeOptions"
       @input="proTypeChange"

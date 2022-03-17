@@ -58,7 +58,7 @@
           >
             <b-form-input
               style="width: 180px"
-              class="editTask"
+              class="meta-update"
               v-model="this.pgmName"
               disabled
               aria-describedby="input-live-help input-live-feedback"
@@ -76,7 +76,7 @@
           >
             <b-form-input
               style="width: 150px"
-              class="editTask"
+              class="meta-update"
               v-model="this.pgmid"
               disabled
               aria-describedby="input-live-help input-live-feedback"
