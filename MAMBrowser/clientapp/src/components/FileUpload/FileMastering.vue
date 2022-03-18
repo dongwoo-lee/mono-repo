@@ -890,6 +890,7 @@ export default {
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {
         this.isDropZoneActive = true;
+        this.setTypeSelected("my-disk");
       }
     },
     onDropZoneLeave(e) {

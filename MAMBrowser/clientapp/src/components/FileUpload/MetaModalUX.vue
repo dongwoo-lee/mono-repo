@@ -572,6 +572,8 @@ export default {
         }
       } else if (this.button == "private") {
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
+      } else {
+        this.typeOptions.push({ value: "my-disk", text: "My디스크" });
       }
     },
   },
