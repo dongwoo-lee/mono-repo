@@ -14,17 +14,14 @@
             <b-col>
               <div align="center"></div>
             </b-col>
-            <b-col>
-              <div>
+            <b-col cols="5">
+              <div style="margin-top: 8px; margin-bootm: 0">
                 <div class="iconButton" style="float: right; margin-left: 10px">
-                  <!-- <b-button size="sm" variant="outline-primary"> -->
-                  <b-icon
-                    icon="zoom-in"
-                    class=""
-                    style="width: 22px; height: 22px; padding: 1px"
+                  <i
+                    class="iconsminds-magnifi-glass"
+                    style="font-size: 20px; line-height: initial"
                     @click="zoomInClick"
-                  ></b-icon>
-                  <!-- </b-button> -->
+                  />
                 </div>
                 <div style="float: right">
                   <vue-slider
@@ -42,12 +39,11 @@
                   class="iconButton"
                   style="float: right; margin-right: 10px"
                 >
-                  <b-icon
-                    icon="zoom-out"
-                    class=""
-                    style="width: 22px; height: 22px; padding: 1px"
+                  <i
+                    class="iconsminds-magnifi-glass--"
+                    style="font-size: 20px; line-height: initial"
                     @click="zoomOutClick"
-                  ></b-icon>
+                  />
                 </div>
               </div>
             </b-col>
@@ -399,6 +395,5 @@ export default {
   cursor: pointer;
   background: #008ecc;
   color: white;
-  border: solid #008ecc 1px;
 }
 </style>
