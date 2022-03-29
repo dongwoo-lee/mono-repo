@@ -51,7 +51,7 @@
             variant="outline-primary default"
             size="sm"
             @click="FileModal"
-            >방송의뢰</b-button
+            >파일 업로드</b-button
           >
         </b-input-group>
         <b-input-group>

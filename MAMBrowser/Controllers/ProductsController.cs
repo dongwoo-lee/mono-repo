@@ -644,6 +644,7 @@ namespace MAMBrowser.Controllers
                 //링크로 보내주기때문에 헤더에 토큰값이 없음.
 
                 var tempFilePath = CommonUtility.GetTempFilePath(_appSesstings.TempDownloadPath, userId, remoteIp, fileName);
+                var fileExt = Path.GetExtension(fileName);
                 var fileExtProvider = new FileExtensionContentTypeProvider();
                 string contentType;
                 if (!fileExtProvider.TryGetContentType(downloadName, out contentType))
@@ -652,7 +653,7 @@ namespace MAMBrowser.Controllers
                 }
                 System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
                 {
-                    FileName = Uri.EscapeDataString(downloadName),
+                    FileName = Uri.EscapeDataString(downloadName)+ fileExt,
                     Inline = false
                 };
                 Response.Headers.Add("Content-Disposition", cd.ToString());

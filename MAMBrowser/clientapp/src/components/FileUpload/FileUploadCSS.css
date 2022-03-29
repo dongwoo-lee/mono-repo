@@ -118,7 +118,15 @@
   font-weight: 400;
   font-size: 18;
 }
-
+.meta-update {
+  margin-top: 10px;
+  border-radius: 3px;
+  width: 355px;
+  height: 36px;
+  /* font-family: "Courier New"; */
+  font-weight: 400;
+  font-size: 18;
+}
 .title {
   font-size: 18px;
   font-weight: 500;

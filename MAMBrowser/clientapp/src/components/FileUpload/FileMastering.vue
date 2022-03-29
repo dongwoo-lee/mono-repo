@@ -506,6 +506,7 @@ export default {
       "addLocalFiles",
       "resetLocalFiles",
       "setFileUploading",
+      "setTypeSelected",
       "setMetaModalTitle",
       "setMasteringListData",
       "setMasteringLogData",
@@ -870,6 +871,7 @@ export default {
     select() {
       this.fileupload._isCustomClickEvent = true;
       this.fileupload._$fileInput[0].click();
+      this.setTypeSelected("my-disk");
     },
     openFileModal() {
       if (!this.FileModal) {
@@ -888,6 +890,7 @@ export default {
     onDropZoneEnter(e) {
       if (e.dropZoneElement.id === "dropzone-external") {
         this.isDropZoneActive = true;
+        this.setTypeSelected("my-disk");
       }
     },
     onDropZoneLeave(e) {

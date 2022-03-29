@@ -2,7 +2,7 @@
   <div>
     <h6>소재명</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.name"
       @input="changeName"
       :maxLength="30"
@@ -18,7 +18,7 @@
     </p>
     <h6>메모</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.memo"
       @input="changeMemo"
       :maxLength="30"

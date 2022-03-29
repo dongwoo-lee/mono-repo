@@ -64,7 +64,7 @@
             (MIROS ID로 로그인)
           </p>
           <a id="alink" class="btn-link" @click="showModal"
-            >매뉴얼 PDF 다운로드</a
+            >관련 매뉴얼/프로그램 다운로드</a
           >
         </div>
       </b-card>

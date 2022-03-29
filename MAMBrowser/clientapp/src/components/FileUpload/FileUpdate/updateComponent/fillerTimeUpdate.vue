@@ -2,7 +2,7 @@
   <div>
     <h6>소재명</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.name"
       disabled
       aria-describedby="input-live-help input-live-feedback"
@@ -13,7 +13,7 @@
     <br />
     <h6>메모</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.memo"
       @input="changeMemo"
       :maxLength="30"

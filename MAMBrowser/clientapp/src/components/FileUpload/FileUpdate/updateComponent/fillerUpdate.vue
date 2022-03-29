@@ -2,7 +2,7 @@
   <div>
     <h6>소재명</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.name"
       @input="changeName"
       :maxLength="30"
@@ -11,8 +11,13 @@
       trim
     />
     <p
-      v-if="this.title != null"
-      style="font-size: 14px; text-align: right; margin-right: 35px"
+      v-if="this.name != null"
+      style="
+        font-size: 14px;
+        text-align: right;
+        margin-right: 35px;
+        margin-bottom: -5px;
+      "
     >
       {{ this.name.length }}/30
     </p>
@@ -48,10 +53,9 @@
     </b-input-group>
     <br />
     <br />
-    <br />
-    <h6>메모</h6>
+    <h6 style="margin-top: 10px">메모</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.memo"
       @input="changeMemo"
       :maxLength="30"

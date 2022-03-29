@@ -2,7 +2,7 @@
   <div>
     <h6>제목</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.title"
       @input="changeTitle"
       :maxLength="200"
@@ -19,7 +19,7 @@
 
     <h6>메모</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.memo"
       @input="changeMemo"
       :maxLength="200"
