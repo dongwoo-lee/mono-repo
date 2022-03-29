@@ -175,13 +175,14 @@ export default {
       this.showDialog = false;
     },
     getDL3Meta(rowData) {
+      console.info("rowData", rowData);
       this.metaData.title =
         this.MySpaceScreenName +
         rowData.mediaName +
         "_" +
-        rowData.name +
+        rowData.recName +
         "_" +
-        rowData.brdDT;
+        rowData.schDate;
       this.metaData.memo =
         "녹음 분량 : " +
         rowData.duration +
