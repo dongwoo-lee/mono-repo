@@ -31,15 +31,6 @@
     <template v-slot:modal-footer>
       <div>
         <b-button
-          variant="outline-danger default cutom-label-cancel"
-          size="sm"
-          @click="show = false"
-        >
-          닫기</b-button
-        >
-      </div>
-      <div style="margin-left: auto">
-        <b-button
           variant="outline-warning default cutom-label"
           size="sm"
           v-if="cueInfo.cuetype != 'A' && isSuccess"
@@ -53,6 +44,15 @@
           @click="editOK()"
         >
           편집 저장</b-button
+        >
+      </div>
+      <div style="margin-left: auto">
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          @click="show = false"
+        >
+          닫기</b-button
         >
       </div>
     </template>

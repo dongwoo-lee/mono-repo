@@ -388,21 +388,36 @@ export default {
       var arrData = this.printArr;
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       if (selectedRowsData.length > 1) {
+        //mult
         selectedRowsData.forEach((data, index) => {
           var row = { ...this.rowData };
           var search_row = data;
           if (Object.keys(search_row).includes("subtitle")) {
+            //ab
             if (search_row.subtitle == "") {
+              //빈칸
               row.contents = search_row.memo;
             } else {
+              //아이템
               row.contents = search_row.maintitle;
               row.usedtime = search_row.endposition - search_row.startposition;
             }
           } else {
+            //소재검색
             row.usedtime = search_row.intDuration;
-            row.contents = search_row.name;
+            switch (this.searchListData.cartcode) {
+              case "S01G01C007":
+                row.contents = search_row.title;
+                break;
+              case "S01G01C006":
+                row.contents = search_row.recName;
+                break;
+              default:
+                row.contents = search_row.name;
+                break;
+            }
           }
-
+          //최대 개수 체크
           var checkValue = this.maxLengthCheck();
           if (checkValue) {
             arrData.splice(e.toIndex + index, 0, row);
@@ -410,19 +425,25 @@ export default {
           }
         });
       } else {
+        //단일
         var row = { ...this.rowData };
         var search_row = e.itemData;
         if (e.fromData !== undefined) {
+          // 언제쓰이는지 모르겠음
           search_row = e.fromData;
         }
         if (Object.keys(search_row).includes("subtitle")) {
+          //ab
           if (search_row.subtitle == "") {
+            //빈칸
             row.contents = search_row.memo;
           } else {
+            //아이템
             row.contents = search_row.maintitle;
             row.usedtime = search_row.endposition - search_row.startposition;
           }
         } else {
+          //소재검색
           row.usedtime = search_row.intDuration;
           switch (this.searchListData.cartcode) {
             case "S01G01C007":

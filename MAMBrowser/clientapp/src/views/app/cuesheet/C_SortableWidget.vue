@@ -494,6 +494,7 @@ export default {
         return;
       }
       if (e.fromData === undefined) {
+        //ab, 소재검색에서 drag adding 발생했을 경우
         var selectedRowsData = this.sortSelectedRowsData(e);
         //ab > c 빈칸 제거
         selectedRowsData = selectedRowsData.filter((ele) => {
@@ -504,21 +505,20 @@ export default {
           }
         });
         if (selectedRowsData.length > 1) {
+          //mult select
           var index = 0;
           for (const data of selectedRowsData) {
             var row = { ...this.rowData };
             var search_row = data;
             if (Object.keys(search_row).includes("subtitle")) {
-              if (search_row.subtitle == "") {
-                this.loadingVisible = false;
-                return;
-              }
+              //ab
               row = { ...search_row };
               row.rownum = totalIndex + index;
               row.edittarget = true;
             } else {
+              //소재검색
               row.rownum = totalIndex + index;
-              //테스트 중
+
               // if (this.searchListData.cartcode == "S01G01C021") {
               //   search_row = await axios
               //     .post(`/api/SearchMenu/test`)
@@ -526,6 +526,8 @@ export default {
               //       return { filetoken: "ddd", filepath: "dddd" };
               //     });
               // }
+
+              // 음반기록실, 효과음 api 호출
               if (this.searchListData.cartcode == "S01G01C014") {
                 search_row = await axios
                   .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -556,6 +558,7 @@ export default {
                 search_row: search_row,
               });
             }
+            // 즐겨찾기 > 광고그룹 추가 불가능
             var filterVal = this.groupFilter(row);
             if (filterVal) {
               this.fileData.splice(totalIndex - 1 + index, 1, row);
@@ -564,15 +567,20 @@ export default {
             }
             index++;
           }
+          //16개를 초과하는 소재 제거
           this.fileData = this.fileData.slice(0, 16);
         } else {
+          // 단일
           var row = { ...this.rowData };
           var search_row = e.itemData;
           if (e.fromData !== undefined) {
+            //언제 발생하는지 확인 못함
             search_row = e.fromData;
           }
           if (Object.keys(search_row).includes("subtitle")) {
+            //ab
             if (search_row.subtitle == "") {
+              //빈칸 제거 (단일)
               this.loadingVisible = false;
               return;
             }
@@ -580,6 +588,8 @@ export default {
             row.rownum = this.fileData[totalIndex - 1].rownum;
             row.edittarget = true;
           } else {
+            // 소재검색
+
             row.rownum = this.fileData[totalIndex - 1].rownum;
             //테스트 중
             // if (this.searchListData.cartcode == "S01G01C021") {
@@ -589,6 +599,8 @@ export default {
             //       return { filetoken: "ddd", filepath: "dddd" };
             //     });
             // }
+
+            // 음반기록실, 효과음 api 호출
             if (this.searchListData.cartcode == "S01G01C014") {
               search_row = await axios
                 .post(`/api/SearchMenu/GetSongItem`, search_row)
@@ -625,15 +637,15 @@ export default {
           }
         }
       } else {
+        // sortable widget 내에서 drag adding 발생했을 경우 소재 서로 스위치
         e.fromData.rownum = this.fileData[totalIndex - 1].rownum;
-        var filterVal = this.groupFilter(e.fromData);
-        if (filterVal) {
-          this.fileData.splice(totalIndex - 1, 1, e.fromData);
-        }
+        this.fileData.splice(totalIndex - 1, 1, e.fromData);
       }
       if (this.channelKey == "channel_my") {
+        //즐겨찾기 store
         this.SET_CUEFAVORITES(this.fileData);
       } else {
+        // C channel store
         var resultData = { ...this.cChannelData };
         resultData[this.channelKey] = this.fileData;
         this.SET_CCHANNELDATA(resultData);
@@ -651,7 +663,6 @@ export default {
       }
       this.loadingVisible = false;
     },
-    //여기 하는중
     groupFilter(row) {
       var result = true;
       if (
