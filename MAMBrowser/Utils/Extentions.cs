@@ -496,6 +496,7 @@ namespace MAMBrowser.Utils
             DefCueSheetCreateParam result = new DefCueSheetCreateParam();
             result.DefCueSheetParam = new List<DefCueSheetParam>();
             result.DelDefCueParams = new List<DefDeleteParam>();
+            //DB에서 EditTime 적용 시 데이터 양에 따라 밀리세컨드가 달라지는 경우 발생되기 때문에
             DateTime editTime = DateTime.Now;
 
             foreach (var item in dto.DefCueSheetDTO)

@@ -34,10 +34,10 @@
             :use-icons="true"
             mode="row"
           />
-          <DxColumn data-field="PgmName" :width="135" caption="사용처" />
+          <DxColumn data-field="PgmName" :width="160" caption="사용처" />
           <DxColumn data-field="SDate" :width="110" caption="시작일" />
           <DxColumn data-field="EDate" :width="110" caption="종료일" />
-          <DxColumn type="buttons" :width="63" caption="추가액션">
+          <DxColumn type="buttons" :width="40" caption="삭제">
             <DxButton name="delete" />
           </DxColumn>
         </DxDataGrid>
@@ -82,6 +82,7 @@
           style="
             position: relative;
             left: 390px;
+            top: -15px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -114,6 +115,7 @@
           style="
             position: relative;
             left: 165px;
+            top: -15px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;
@@ -145,6 +147,7 @@
           style="
             position: relative;
             left: 390px;
+            top: -15px;
             z-index: 9999;
             width: 30px;
             margin-right: 0px;

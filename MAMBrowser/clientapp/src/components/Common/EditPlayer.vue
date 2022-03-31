@@ -44,16 +44,13 @@
               </p>
             </b-col>
             <b-col cols="5">
-              <div>
+              <div style="margin-top: 8px; margin-bootm: 0">
                 <div class="iconButton" style="float: right; margin-left: 10px">
-                  <!-- <b-button size="sm" variant="outline-primary"> -->
-                  <b-icon
-                    icon="zoom-in"
-                    class=""
-                    style="width: 22px; height: 22px; padding: 1px"
+                  <i
+                    class="iconsminds-magnifi-glass"
+                    style="font-size: 20px; line-height: initial"
                     @click="zoomInClick"
-                  ></b-icon>
-                  <!-- </b-button> -->
+                  />
                 </div>
                 <div style="float: right">
                   <vue-slider
@@ -71,12 +68,11 @@
                   class="iconButton"
                   style="float: right; margin-right: 10px"
                 >
-                  <b-icon
-                    icon="zoom-out"
-                    class=""
-                    style="width: 22px; height: 22px; padding: 1px"
+                  <i
+                    class="iconsminds-magnifi-glass--"
+                    style="font-size: 20px; line-height: initial"
                     @click="zoomOutClick"
-                  ></b-icon>
+                  />
                 </div>
               </div>
             </b-col>
@@ -246,28 +242,66 @@ export default {
       wavesurfer.regions.list["Trim"].play();
     },
     somClick() {
-      //console.log(wavesurfer.regions.list.Trim);
-      this.options.start = wavesurfer.getCurrentTime();
-      this.options.end = wavesurfer.regions.list.Trim.end;
-      wavesurfer.regions.clear();
-      wavesurfer.addRegion(this.options);
+      var startVal = wavesurfer.getCurrentTime();
+      var endVal = wavesurfer.regions.list.Trim.end;
+      if (endVal > startVal) {
+        this.options.start = startVal;
+        this.options.end = endVal;
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+        this.somTime = new Date(
+          wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
+        );
+        this.somTime = this.somTime.toISOString().substr(11, 8);
+        this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+      } else {
+        this.options.start = startVal;
+        this.options.end = this.eom;
 
-      this.somTime = new Date(
-        wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
-      );
-      this.somTime = this.somTime.toISOString().substr(11, 8);
-      this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+
+        this.somTime = new Date(
+          wavesurfer.regions.list.Trim.start.toFixed(2) * 1000
+        );
+        this.eomTime = new Date(this.options.end.toFixed(2) * 1000);
+
+        this.somTime = this.somTime.toISOString().substr(11, 8);
+        this.eomTime = this.eomTime.toISOString().substr(11, 8);
+        this.$emit("endPosition", this.options.end);
+        this.$emit("startPosition", wavesurfer.regions.list.Trim.start);
+      }
     },
     eomClick() {
-      this.options.start = wavesurfer.regions.list.Trim.start;
-      this.options.end = wavesurfer.getCurrentTime();
-      wavesurfer.regions.clear();
-      wavesurfer.addRegion(this.options);
-      this.eomTime = new Date(
-        wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
-      );
-      this.eomTime = this.eomTime.toISOString().substr(11, 8);
-      this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+      var startVal = wavesurfer.regions.list.Trim.start;
+      var endVal = wavesurfer.getCurrentTime();
+      if (endVal > startVal) {
+        this.options.start = startVal;
+        this.options.end = endVal;
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+        this.eomTime = new Date(
+          wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
+        );
+        this.eomTime = this.eomTime.toISOString().substr(11, 8);
+        this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+      } else {
+        this.options.start = 0;
+        this.options.end = endVal;
+
+        wavesurfer.regions.clear();
+        wavesurfer.addRegion(this.options);
+
+        this.eomTime = new Date(
+          wavesurfer.regions.list.Trim.end.toFixed(2) * 1000
+        );
+        this.somTime = new Date(this.options.start.toFixed(2) * 1000);
+
+        this.eomTime = this.eomTime.toISOString().substr(11, 8);
+        this.somTime = this.somTime.toISOString().substr(11, 8);
+        this.$emit("endPosition", wavesurfer.regions.list.Trim.end);
+        this.$emit("startPosition", this.options.start);
+      }
     },
     InjectWaveSurfer() {
       wavesurfer = WaveSurfer.create({
@@ -315,14 +349,16 @@ export default {
       wavesurfer.on("finish", function () {
         vm.LoadAudioInfo();
       });
-      wavesurfer.on("seek", (e) => {
-        if (wavesurfer.regions.getCurrentRegion() != null) {
-          wavesurfer.play(
-            wavesurfer.getCurrentTime(),
-            wavesurfer.regions.getCurrentRegion().end
-          );
-        }
-      });
+      //영역 중간 click 시 정지 여부 > 정지 시 오류 발생됨
+      // wavesurfer.on("seek", (e) => {
+      //   console.log(wavesurfer.regions.getCurrentRegion());
+      //   if (wavesurfer.regions.getCurrentRegion() != null) {
+      //     wavesurfer.play(
+      //       wavesurfer.getCurrentTime(),
+      //       wavesurfer.regions.getCurrentRegion().end
+      //     );
+      //   }
+      // });
       wavesurfer.on("ready", () => {
         var totalSec = wavesurfer.getDuration();
         if (totalSec >= 3000) {
@@ -404,12 +440,7 @@ export default {
         waveformUrl = `${this.waveformUrl}?token=${this.fileKey}&userid=${userId}`;
         downloadUrl = `${this.tempDownloadUrl}?token=${this.fileKey}`; //인증토큰에 user id가 있어서 전달필요 없음.
       }
-      // if(this.direct =="Y"){
-      // this.LoadDirect(waveformUrl, fileUrl);     //서버에서 막혀있음.
-      // }
-      // else{
       this.LoadDownloadedFile(downloadUrl, waveformUrl, fileUrl);
-      // }
     },
     LoadDownloadedFile(downloadUrl, waveformUrl, fileUrl) {
       httpClient
@@ -497,33 +528,6 @@ export default {
           this.errorMsg = error.response.data;
         });
     },
-    // LoadDirect(waveformUrl, fileUrl) {
-    //httpClient
-    //.get(waveformUrl, {
-    //cancelToken: source.token,
-    //})
-    //.then((res) => {
-    //wavesurfer.load(fileUrl, res.data);
-    //this.spinnerFlag = false;
-    //this.isSuccess = true;
-    //})
-    //.catch((error) => {
-    //console.debug("httpClient", error);
-    //if (error.response) {
-    //this.$notify(
-    //"error",
-    //`${error.response.status} : ${error.response.statusText}`,
-    //error.response.data,
-    //{
-    //duration: 10000,
-    //permanent: false,
-    //}
-    //);
-    //} else {
-    //console.debug("httpClient.get url:", waveformUrl, error);
-    //}
-    //});
-    //},
     Play() {
       if (wavesurfer.isPlaying()) {
         wavesurfer.pause();
@@ -574,6 +578,19 @@ export default {
     muteToggle() {
       this.isMute = !this.isMute;
       wavesurfer.setMute(this.isMute);
+    },
+    clearEdit() {
+      this.selected = [];
+      var endVal = wavesurfer.getDuration();
+      wavesurfer.regions.clear();
+      this.options.start = 0;
+      this.options.end = endVal;
+      this.eomTime = new Date(this.options.end.toFixed(2) * 1000);
+      this.eomTime = this.eomTime.toISOString().substr(11, 8);
+      this.somTime = new Date(this.options.start.toFixed(2) * 1000);
+      this.somTime = this.somTime.toISOString().substr(11, 8);
+      wavesurfer.addRegion(this.options);
+      return endVal;
     },
   },
   props: {
@@ -643,6 +660,5 @@ export default {
   cursor: pointer;
   background: #008ecc;
   color: white;
-  border: solid #008ecc 1px;
 }
 </style>

@@ -58,7 +58,7 @@
         <b-form-group
           label="이벤트 명"
           class="has-float-label"
-          style="margin-top: 7px"
+          style="margin-top: -10px"
         >
           <b-form-input
             style="width: 425px"
@@ -74,7 +74,7 @@
         <b-form-group
           label="이벤트 ID"
           class="has-float-label"
-          style="margin-top: 23px"
+          style="margin-top: 10px"
         >
           <b-form-input
             style="width: 250px"
@@ -90,7 +90,7 @@
         <b-form-group
           label="편성 분량"
           class="has-float-label"
-          style="margin-top: 23px"
+          style="margin-top: 10px"
         >
           <b-form-input
             style="width: 155px"
@@ -124,6 +124,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -150,6 +151,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;

@@ -174,6 +174,14 @@
             ></b-progress>
           </div>
           <div :class="[isActive ? 'file-modal-button' : 'date-modal-button']">
+            <!-- <b-button
+              variant="outline-success"
+              @click="log"
+              style="margin-left: -80px"
+            >
+              <span class="label">확인</span>
+            </b-button> -->
+
             <b-button
               variant="outline-primary"
               v-show="!processing && fileUploading"
@@ -438,7 +446,6 @@ export default {
             brdDT: this.date,
           };
         }
-        console.log(data);
         await this.resetUploaderCustomData();
         await this.setUploaderCustomData(data);
         if (!this.durationState) {
@@ -456,11 +463,13 @@ export default {
 
           formData.append("userId", sessionStorage.getItem("user_id"));
           formData.append("title", this.MetaData.title);
+          formData.append("fileSize", this.localFiles[0].size);
+          formData.append("fileName", this.localFiles[0].name);
           axios.post(`/api/mastering/TitleValidation`, formData).then((res) => {
             if (res.status == 200 && res.data.resultCode == 0) {
               this.setFileUploading(true);
               this.$emit("upload");
-            } else if ((res.data.resultCode = 3)) {
+            } else {
               this.$fn.notify("error", { title: res.data.errorMsg });
               return;
             }
@@ -562,6 +571,8 @@ export default {
           this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
         }
       } else if (this.button == "private") {
+        this.typeOptions.push({ value: "my-disk", text: "My디스크" });
+      } else {
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
       }
     },

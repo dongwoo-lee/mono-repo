@@ -264,6 +264,7 @@ export default {
     async getData() {
       if (this.state) {
         //기본 큐시트 목록 가져오기
+        this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
         const userName = sessionStorage.getItem(USER_NAME);
         const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
         this.isTableLoading = this.isScrollLodaing ? false : true;

@@ -2,6 +2,7 @@
 using M30.AudioFile.Common;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
+using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL.DBParams;
 using M30.AudioFile.DAL.Dto;
 using M30.AudioFile.DAL.Repositories;
@@ -30,10 +31,12 @@ namespace MAMBrowser.Controllers
     public class MasteringController : ControllerBase
     {
         APIBll _apiBll;
+        PrivateFileBll _privateBll;
         HttpContextDBLogger _dbLogger;
-        public MasteringController(APIBll apiBll, HttpContextDBLogger dbLogger)
+        public MasteringController(APIBll apiBll, PrivateFileBll privateBll, HttpContextDBLogger dbLogger)
         {
             _apiBll = apiBll;
+            _privateBll = privateBll;
             _dbLogger = dbLogger;
         }
         public class ChunkMetadata
@@ -72,19 +75,12 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpPost("TitleValidation")]
-        public DTO_RESULT TitleValidation([FromForm] string userId, [FromForm] string title)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> TitleValidation([FromForm] string userId, [FromForm] string title, [FromForm] long fileSize, [FromForm]string fileName)
         {
-            DTO_RESULT result = new DTO_RESULT();
-            if(title == "중복") {
-                result.ResultCode = RESUlT_CODES.DB_ERROR;
-                result.ErrorMsg = "중복된 제목입니다.";
-            }else if(title == "성공")
-            {
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-                result.ResultObject = "성공";
-            }
-           
-            return result;
+            M30_MAM_PRIVATE_SPACE metaData = new M30_MAM_PRIVATE_SPACE();
+            metaData.TITLE =  title;
+            metaData.FILE_SIZE = fileSize;
+            return _privateBll.VerifyModel(userId, metaData, fileName);
         }
         [HttpPost("my-disk")]
         public ActionResult<DTO_RESULT> RegMyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string editor, [FromForm] string title, [FromForm] string memo)

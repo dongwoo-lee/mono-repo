@@ -29,12 +29,12 @@
           <b-form-group
             label="방송 시작일"
             class="has-float-label"
-            style="margin-top: 20px"
+            style="margin-top: 5px"
           >
             <b-form-input
               style="width: 425px"
               class="editTask"
-              v-model="fileSDate"
+              v-model="eventDate"
               disabled
               aria-describedby="input-live-help input-live-feedback"
               trim
@@ -45,7 +45,7 @@
           <b-form-group
             label="편성 분량"
             class="has-float-label"
-            style="margin-top: 25px"
+            style="margin-top: 5px"
           >
             <b-form-input
               style="width: 425px"
@@ -63,7 +63,7 @@
       <b-form-group
         label="메모"
         class="has-float-label"
-        style="float: left; margin-top: 22px; font-size: 15px"
+        style="float: left; margin-top: 10px; font-size: 15px"
       >
         <b-form-input
           class="editTask"
@@ -79,6 +79,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -91,7 +92,7 @@
       <b-form-group
         label="광고주"
         class="has-float-label"
-        style="float: left; margin-top: 17px; font-size: 15px"
+        style="float: left; margin-top: 5px; font-size: 15px"
       >
         <b-form-input
           class="editTask"
@@ -108,6 +109,7 @@
         style="
           position: relative;
           left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -126,7 +128,7 @@
       footer-class="scr-modal-footer"
     >
       <template slot="modal-title">
-        <h5>부조SPOT 방송의뢰</h5>
+        <h5>프로그램 선택</h5>
       </template>
       <template slot="default">
         <div>
@@ -211,7 +213,7 @@
           >검색</b-button
         >
 
-        <div style="margin-top: 20px">
+        <div style="margin-top: 40px">
           <DxDataGrid
             name="mcrDxDataGrid"
             style="
@@ -285,6 +287,7 @@ export default {
       mediaName: "AM",
       sdate: "",
       edate: "",
+      eventDate: "",
     };
   },
   created() {
@@ -326,17 +329,20 @@ export default {
     this.getPro();
   },
   methods: {
-    onSearch() {
-      this.modalOn();
-      this.getPro();
-    },
     modalOn() {
+      setTimeout(() => {
+        this.eventDate = this.fileSDate;
+      }, 500);
       this.modal = true;
     },
     modalOff() {
+      if (this.EventSelected.name == "") {
+        this.eventDate = "";
+      }
       this.modal = false;
     },
     modalReset() {
+      this.eventDate = "";
       this.resetEventSelected();
       this.modal = false;
     },
@@ -348,6 +354,7 @@ export default {
     },
     eventSInput(value) {
       this.sdate = value;
+      this.eventDate = value;
       this.setFileSDate(value);
       this.setTempFileSDate(value);
 
@@ -411,6 +418,7 @@ export default {
             convertDate == "undefined"
           ) {
             this.sdate = this.get7daysago();
+            this.eventDate = this.get7daysago();
             this.setFileSDate(this.get7daysago());
             this.setTempFileSDate(this.get7daysago());
 
@@ -430,6 +438,7 @@ export default {
             return;
           }
           this.sdate = convertDate;
+          this.eventDate = convertDate;
           this.setFileSDate(convertDate);
           this.setTempFileSDate(convertDate);
 

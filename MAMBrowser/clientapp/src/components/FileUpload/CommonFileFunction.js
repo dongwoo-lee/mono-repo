@@ -462,6 +462,7 @@ export default {
       this.resetTitle();
       this.resetMemo();
       this.resetDate();
+      this.resetFileSDate();
       this.resetScrRange();
       this.fileStateFalse();
       this.resetProgramData();

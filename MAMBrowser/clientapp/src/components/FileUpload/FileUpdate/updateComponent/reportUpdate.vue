@@ -13,7 +13,7 @@
     <br />
     <h6>취재인</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.reporter"
       @input="changeReporter"
       :maxLength="10"
@@ -29,7 +29,7 @@
     </p>
     <h6>소재명</h6>
     <b-form-input
-      class="editTask"
+      class="meta-update"
       :value="rowData.name"
       @input="changeName"
       :maxLength="30"
@@ -46,7 +46,7 @@
     <h6>방송일</h6>
     <b-form-input
       style="width: 350px"
-      class="editTask"
+      class="meta-update"
       :value="this.brdDT"
       disabled
       aria-describedby="input-live-help input-live-feedback"
@@ -57,7 +57,7 @@
     <h6>사용처</h6>
     <b-form-input
       style="width: 265px; float: left"
-      class="editTask"
+      class="meta-update"
       :value="this.pgmName"
       disabled
       aria-describedby="input-live-help input-live-feedback"

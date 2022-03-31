@@ -53,12 +53,12 @@
         >검색</b-button
       >
     </div>
-    <div style="font-family: 'MBC 새로움 M'; font-size: 15px; margin-top: 10px">
+    <div style="font-family: 'MBC 새로움 M'; font-size: 15px">
       <div style="width: 425px; float: left">
         <b-form-group
           label="이벤트 명"
           class="has-float-label"
-          style="margin-top: 5px"
+          style="margin-top: -10px"
         >
           <b-form-input
             style="width: 425px"
@@ -74,7 +74,7 @@
         <b-form-group
           label="이벤트 ID"
           class="has-float-label"
-          style="margin-top: 20px"
+          style="margin-top: 5px"
         >
           <b-form-input
             style="width: 425px"
@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div style="font-size: 15px; margin-top: 160px">
+    <div style="font-size: 15px; margin-top: 165px; margin-bottom: 0px">
       <b-form-group label="소재명" class="has-float-label">
         <b-form-input
           class="editTask"
@@ -103,18 +103,19 @@
       <p
         v-show="titleState"
         style="
-          position: absolute;
-          left: 920px;
+          position: relative;
+          left: 390px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
+          margin-bottom: -18px;
           margin-right: 0px;
-          margin-bottom: 0px;
         "
       >
         {{ MetaData.title.length }}/30
       </p>
     </div>
-    <div style="font-size: 15px; margin-top: 18px; float: left">
+    <div style="font-size: 15px; margin-top: 0px; float: left">
       <b-form-group label="메모" class="has-float-label">
         <b-form-input
           style="width: 200px"
@@ -132,6 +133,7 @@
         style="
           position: relative;
           left: 165px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -141,7 +143,7 @@
       </p>
     </div>
     <div
-      style="font-size: 15px; margin-top: 16px; float: left; margin-left: 25px"
+      style="font-size: 15px; margin-top: 0px; float: left; margin-left: 25px"
     >
       <b-form-group label="취재인" class="has-float-label">
         <b-form-input
@@ -160,6 +162,7 @@
         style="
           position: relative;
           left: 165px;
+          top: -15px;
           z-index: 9999;
           width: 30px;
           margin-right: 0px;
@@ -178,7 +181,7 @@
       footer-class="scr-modal-footer"
     >
       <template slot="modal-title">
-        <h5>부조SPOT 방송의뢰</h5>
+        <h5>프로그램 선택</h5>
       </template>
       <template slot="default">
         <div>

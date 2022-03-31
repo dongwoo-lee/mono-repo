@@ -280,6 +280,7 @@ export default {
 
     async getData() {
       if (this.state) {
+        this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
         this.isTableLoading = this.isScrollLodaing ? false : true;
         var temmedia = await this.eventClick();
         if (

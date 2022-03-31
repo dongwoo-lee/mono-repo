@@ -106,8 +106,8 @@ export default {
       date,
       programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
-        start_dt: "", // 시작일
-        end_dt: "", // 종료일
+        start_dt: startDay, // 시작일
+        end_dt: endDay, // 종료일
         media: "", // 매체
         productid: "", // 프로그램명
         rowPerPage: 30,
@@ -186,8 +186,6 @@ export default {
     ...mapGetters("cueList", ["userProList"]),
   },
   mounted() {
-    this.searchItems.start_dt = startDay;
-    this.searchItems.end_dt = endDay;
     this.getData();
     this.getProductName();
   },
@@ -197,6 +195,7 @@ export default {
     ...mapActions("cueList", ["getuserProOption"]),
 
     async getData() {
+      this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;
       if (
         this.$fn.checkGreaterStartDate(

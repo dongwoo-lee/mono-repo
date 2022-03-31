@@ -2,7 +2,12 @@
   <!-- 미리듣기 팝업 -->
   <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
     <template slot="modal-title">
-      <h5>{{ title }}</h5>
+      <div style="display: inline-flex">
+        <h6 v-if="parentName != ''">
+          <b-badge class="mr-2" variant="dark">{{ parentName }}</b-badge>
+        </h6>
+        <h5 style="line-height: 1.4">{{ title }}</h5>
+      </div>
     </template>
     <template slot="default">
       <EditPlayer
@@ -24,23 +29,32 @@
       />
     </template>
     <template v-slot:modal-footer>
-      <b-button
-        variant="outline-danger default cutom-label-cancel"
-        size="sm"
-        class="float-right"
-        @click="show = false"
-      >
-        닫기</b-button
-      >
-      <b-button
-        variant="outline-success default cutom-label"
-        size="sm"
-        class="float-right"
-        v-if="cueInfo.cuetype != 'A' && isSuccess"
-        @click="editOK()"
-      >
-        편집 저장</b-button
-      >
+      <div>
+        <b-button
+          variant="outline-warning default cutom-label"
+          size="sm"
+          v-if="cueInfo.cuetype != 'A' && isSuccess"
+          @click="editClear()"
+        >
+          편집 초기화</b-button
+        >
+        <b-button
+          size="sm"
+          v-if="cueInfo.cuetype != 'A' && isSuccess"
+          @click="editOK()"
+        >
+          편집 저장</b-button
+        >
+      </div>
+      <div style="margin-left: auto">
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          @click="show = false"
+        >
+          닫기</b-button
+        >
+      </div>
     </template>
   </b-modal>
 </template>
@@ -81,6 +95,10 @@ export default {
       type: String,
       default: () => "N",
     },
+    parentName: {
+      type: String,
+      default: "",
+    },
     rowNum: Number,
     type: String,
     startPoint: Number,
@@ -119,6 +137,9 @@ export default {
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     closePlayer() {
       this.$refs.play.close();
+      this.startPosition = null;
+      this.endPosition = null;
+      this.selected = [];
       this.isSuccess = false;
       this.$emit("closePlayer");
     },
@@ -160,6 +181,11 @@ export default {
       this.startPosition = null;
       this.endPosition = null;
       this.show = false;
+    },
+    editClear() {
+      var endVal = this.$refs.play.clearEdit();
+      this.startPosition = 0;
+      this.endPosition = endVal;
     },
     setTime(rowData) {
       var startTime = 0;
