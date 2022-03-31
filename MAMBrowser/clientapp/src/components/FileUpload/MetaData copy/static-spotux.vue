@@ -126,7 +126,7 @@
       footer-class="scr-modal-footer"
     >
       <template slot="modal-title">
-        <h5>부조SPOT 방송의뢰</h5>
+        <h5>프로그램 선택</h5>
       </template>
       <template slot="default">
         <div>

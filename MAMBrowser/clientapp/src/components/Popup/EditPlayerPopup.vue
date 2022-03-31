@@ -29,23 +29,32 @@
       />
     </template>
     <template v-slot:modal-footer>
-      <b-button
-        variant="outline-danger default cutom-label-cancel"
-        size="sm"
-        class="float-right"
-        @click="show = false"
-      >
-        닫기</b-button
-      >
-      <b-button
-        variant="outline-success default cutom-label"
-        size="sm"
-        class="float-right"
-        v-if="cueInfo.cuetype != 'A' && isSuccess"
-        @click="editOK()"
-      >
-        편집 저장</b-button
-      >
+      <div>
+        <b-button
+          variant="outline-warning default cutom-label"
+          size="sm"
+          v-if="cueInfo.cuetype != 'A' && isSuccess"
+          @click="editClear()"
+        >
+          편집 초기화</b-button
+        >
+        <b-button
+          size="sm"
+          v-if="cueInfo.cuetype != 'A' && isSuccess"
+          @click="editOK()"
+        >
+          편집 저장</b-button
+        >
+      </div>
+      <div style="margin-left: auto">
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          @click="show = false"
+        >
+          닫기</b-button
+        >
+      </div>
     </template>
   </b-modal>
 </template>
@@ -128,6 +137,9 @@ export default {
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     closePlayer() {
       this.$refs.play.close();
+      this.startPosition = null;
+      this.endPosition = null;
+      this.selected = [];
       this.isSuccess = false;
       this.$emit("closePlayer");
     },
@@ -169,6 +181,11 @@ export default {
       this.startPosition = null;
       this.endPosition = null;
       this.show = false;
+    },
+    editClear() {
+      var endVal = this.$refs.play.clearEdit();
+      this.startPosition = 0;
+      this.endPosition = endVal;
     },
     setTime(rowData) {
       var startTime = 0;
