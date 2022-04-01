@@ -19,7 +19,7 @@
                   style="font-size: 15px; margin-top: 10px"
                 >
                   <b-form-input
-                    title="파일명"
+                    :title="this.MetaModalTitle"
                     style="width: 430px; font-size: 14px"
                     class="editTask title-ellipsis"
                     v-model="this.MetaModalTitle"
@@ -70,7 +70,7 @@
                     style="font-size: 15px"
                   >
                     <b-form-input
-                      title="오디오 포맷"
+                      :title="MetaData.audioFormat"
                       style="width: 430px"
                       class="editTask"
                       v-model="MetaData.audioFormat"
