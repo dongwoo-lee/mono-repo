@@ -28,10 +28,11 @@ let searchMenuList = {
           id: "3",
           name: "광고협찬",
           items: [
-            {
-              id: "3_1",
-              name: "부조SB",
-            },
+            //2022-04-01 부조SB 운영방침에 의해 폐기됨.
+            // {
+            //   id: "3_1",
+            //   name: "부조SB",
+            // },
             {
               id: "3_2",
               name: "부조SPOT(구 협찬)",
@@ -218,6 +219,7 @@ let searchMenuList = {
             },
           ],
         },
+        //2022-04-01 부조SB 운영방침에 의해 폐기됨.
         // {
         //   num: 1,
         //   id: "PUBLIC_FILE",
@@ -403,87 +405,87 @@ let searchMenuList = {
             },
           ],
         },
-        {
-          num: 3,
-          id: "SCR_SB",
-          cartcode: "S01G01C017",
-          name: "부조SB",
-          options: [
-            {
-              id: "brddate",
-              text: "방송일",
-              value: "",
-              type: "D",
-              selectVal: toDay,
-              requiredVal: true
-            },
-            {
-              id: "media",
-              text: "매체",
-              value: [],
-              type: "S",
-              name: "medias",
-            },
-            {
-              id: "pgm",
-              text: "사용처",
-              value: [],
-              type: "S",
-              name: "pgmCodes",
-            },
-          ],
-          columns: [
-            //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
-            {
-              dataField: "rowNO",
-              caption: "순서",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "id",
-              caption: "SB ID",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "name",
-              caption: "SB명",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "length",
-              caption: "길이",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "pgmName",
-              caption: "사용처명",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "capacity",
-              caption: "용량",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "status",
-              caption: "상태",
-              alignment: "center",
-              allowSorting: false,
-            },
-            {
-              dataField: "editorName",
-              caption: "담당자",
-              alignment: "center",
-              allowSorting: false,
-            },
-          ],
-        },
+        // {
+        //   num: 3,
+        //   id: "SCR_SB",
+        //   cartcode: "S01G01C017",
+        //   name: "부조SB",
+        //   options: [
+        //     {
+        //       id: "brddate",
+        //       text: "방송일",
+        //       value: "",
+        //       type: "D",
+        //       selectVal: toDay,
+        //       requiredVal: true
+        //     },
+        //     {
+        //       id: "media",
+        //       text: "매체",
+        //       value: [],
+        //       type: "S",
+        //       name: "medias",
+        //     },
+        //     {
+        //       id: "pgm",
+        //       text: "사용처",
+        //       value: [],
+        //       type: "S",
+        //       name: "pgmCodes",
+        //     },
+        //   ],
+        //   columns: [
+        //     //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
+        //     {
+        //       dataField: "rowNO",
+        //       caption: "순서",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "id",
+        //       caption: "SB ID",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "name",
+        //       caption: "SB명",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "length",
+        //       caption: "길이",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "pgmName",
+        //       caption: "사용처명",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "capacity",
+        //       caption: "용량",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "status",
+        //       caption: "상태",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //     {
+        //       dataField: "editorName",
+        //       caption: "담당자",
+        //       alignment: "center",
+        //       allowSorting: false,
+        //     },
+        //   ],
+        // },
         {
           num: 4,
           id: "SCR_SPOT",
