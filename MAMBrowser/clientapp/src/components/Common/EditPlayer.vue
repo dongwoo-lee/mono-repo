@@ -54,7 +54,7 @@
                 </div>
                 <div style="float: right">
                   <vue-slider
-                    width="150px"
+                    width="130px"
                     :min="zoomMin"
                     :max="zoomMax"
                     :interval="zoomInterval"
@@ -102,7 +102,7 @@
           <b-col class="myCol2">
             <div class="slider">
               <vue-slider
-                width="150px"
+                width="130px"
                 :min="min"
                 :max="max"
                 :interval="interval"
