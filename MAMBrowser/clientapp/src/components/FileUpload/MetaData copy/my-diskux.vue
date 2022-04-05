@@ -92,6 +92,7 @@ export default {
   },
   created() {
     this.reset();
+    this.setTitle(this.MetaModalTitle);
   },
   methods: {},
 };

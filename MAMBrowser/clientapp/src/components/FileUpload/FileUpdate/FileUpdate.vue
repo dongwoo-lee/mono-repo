@@ -2,7 +2,7 @@
   <common-update-modal @close="MetaModalOff">
     <h3 slot="header">메타 데이터 수정</h3>
 
-    <h4 v-if="updateScreenName == 'private'" slot="body" class="h240">
+    <h4 v-if="updateScreenName == 'private'" slot="body" class="h320">
       <my-disk-update
         :rowData="rowData"
         @updateMyDiskMeta="getUpdateMeta"
@@ -141,6 +141,14 @@ export default {
   margin-bottom: -20px;
   width: 400px;
   height: 240px;
+  background-color: white;
+}
+.h320 {
+  padding-left: 20px;
+  padding-top: 20px;
+  margin-bottom: -20px;
+  width: 400px;
+  height: 320px;
   background-color: white;
 }
 .h500 {

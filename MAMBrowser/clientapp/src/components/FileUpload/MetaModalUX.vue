@@ -657,7 +657,18 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.memo-ellipsis {
+  font-size: 16px;
+  width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.memo-ellipsis:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
 /* .title-ellipsis:hover {
   text-overflow: clip;
   white-space: normal;

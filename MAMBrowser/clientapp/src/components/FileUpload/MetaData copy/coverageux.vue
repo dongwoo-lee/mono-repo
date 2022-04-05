@@ -257,6 +257,7 @@ export default {
   },
   created() {
     this.reset();
+    this.setTitle(this.MetaModalTitle);
     this.getEditorForReporter();
     this.resetFileMediaOptions();
 
