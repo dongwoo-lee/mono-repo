@@ -494,6 +494,14 @@ export default {
           value: this.PGM_DMB_PATH,
         },
         {
+          name: "MYDISK_PATH",
+          value: this.MYDISK_PATH,
+        },
+        {
+          name: "PRO_PATH",
+          value: this.PRO_PATH,
+        },
+        {
           name: "SPOT_PATH",
           value: this.SPOT_PATH,
         },
