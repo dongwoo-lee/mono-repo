@@ -117,7 +117,7 @@
           padding: 20px;
           padding-bottom: 10px;
           width: 840px;
-          height: 370px;
+          height: 410px;
           border: 1px solid silver;
         "
       >
@@ -147,6 +147,24 @@
           <b-form-input
             :state="DMBState"
             v-model="PGM_DMB_PATH"
+            style="width: 375px"
+          />
+        </b-form-group>
+        <b-form-group
+          label="Pro"
+          class="has-float-label"
+          style="float: left; margin-right: 40px"
+        >
+          <b-form-input
+            :state="ProState"
+            v-model="PRO_PATH"
+            style="width: 375px"
+          />
+        </b-form-group>
+        <b-form-group label="MyDisk" class="has-float-label">
+          <b-form-input
+            :state="MyDiskState"
+            v-model="MYDISK_PATH"
             style="width: 375px"
           />
         </b-form-group>
@@ -248,7 +266,7 @@
           />
         </b-form-group>
       </div>
-      <div style="margin-left: 705px; margin-top: 20px; margin-bottom: -20px">
+      <div style="margin-left: 705px; margin-top: 15px; margin-bottom: -15px">
         <b-button v-show="isDuration" variant="outline-primary" @click="save"
           >저장</b-button
         >
@@ -283,6 +301,8 @@ export default {
       DETECT_SILENCE: "",
       SILENCE_DB: "",
       SILENCE_DURATION: "",
+      MYDISK_PATH: "",
+      PRO_PATH: "",
       SPOT_PATH: "",
       STATIC_PATH: "",
       VAR_PATH: "",
@@ -339,6 +359,12 @@ export default {
     DMBState() {
       return this.PGM_DMB_PATH == "" ? false : true;
     },
+    MyDiskState() {
+      return this.MYDISK_PATH == "" ? false : true;
+    },
+    ProState() {
+      return this.PRO_PATH == "" ? false : true;
+    },
     SpotState() {
       return this.SPOT_PATH == "" ? false : true;
     },
@@ -379,6 +405,8 @@ export default {
         this.AMState &&
         this.FMState &&
         this.DMBState &&
+        this.MyDiskState &&
+        this.ProState &&
         this.SpotState &&
         this.ReportState &&
         this.FillerState &&
@@ -540,6 +568,7 @@ export default {
 
 <style>
 .masteringOption {
+  padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
 </style>
