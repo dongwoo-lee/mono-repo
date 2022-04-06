@@ -325,6 +325,7 @@ export default {
   },
   created() {
     this.reset();
+    this.setTitle(this.MetaModalTitle);
     this.getPgm();
     this.getEditorForPd();
     this.resetFileMediaOptions();

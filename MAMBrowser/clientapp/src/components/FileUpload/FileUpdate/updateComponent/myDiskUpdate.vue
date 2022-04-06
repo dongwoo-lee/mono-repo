@@ -18,13 +18,15 @@
     </p>
 
     <h6>메모</h6>
-    <b-form-input
+    <b-form-textarea
       class="meta-update"
       :value="rowData.memo"
       @input="changeMemo"
       :maxLength="200"
-      aria-describedby="input-live-help input-live-feedback"
+      :rows="5"
+      :max-rows="5"
       placeholder="메모"
+      no-resize
       trim
     />
     <p
