@@ -544,8 +544,7 @@ export default {
             index: index,
             toIndex: totalIndex,
           });
-          arrData.splice(e.toIndex + index, 0, rowData);
-          arrData.splice(totalIndex - 1, 1, rowData);
+          arrData.splice(totalIndex - 1 + index, 1, rowData);
           index++;
         }
         if (this.channelKey == "channel_my") {
