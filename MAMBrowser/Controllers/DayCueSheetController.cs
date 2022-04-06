@@ -21,6 +21,7 @@ namespace MAMBrowser.Controllers
         {
             _bll = bll;
         }
+        
         public class DayPram
         {
             public List<string> products { get; set; }
@@ -31,6 +32,7 @@ namespace MAMBrowser.Controllers
             public string media { get; set; }
 
         }
+        
         //시작일, 종료일 날짜
         [HttpGet("setDateList")] //Swagger 오류 수정
         public List<string> setDateList(string start_dt, string end_dt)
@@ -80,6 +82,7 @@ namespace MAMBrowser.Controllers
                 throw;
             }
         }
+        
         [HttpGet("GetAddSponsor")]
         public List<CueSheetConDTO> GetAddSponsor(string pgmcode, string brd_dt)
         {
@@ -94,10 +97,10 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+        
         //일일큐시트 생성 & 업데이트
         [HttpPost("SaveDayCue")]
         public int SaveDayCue([FromBody] CueSheetCollectionDTO pram)

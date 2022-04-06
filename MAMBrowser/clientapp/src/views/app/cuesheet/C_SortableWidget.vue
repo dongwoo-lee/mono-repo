@@ -485,7 +485,127 @@ export default {
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
+    ...mapActions("cueList", ["setContents"]),
     async onAdd(e, totalIndex) {
+      this.loadingVisible = true;
+      var rowArray = [];
+      const arrData = this.fileData;
+      if (e.fromData === undefined) {
+        //ab, 소재검색
+        var selectedRowsData = this.sortSelectedRowsData(e);
+        // 즐겨찾기일 경우 광고 그룹 제거
+        if (this.channelKey == "channel_my") {
+          selectedRowsData = this.sponsorFilter_Fav(selectedRowsData);
+        }
+        // 빈칸 제거
+        selectedRowsData = this.blankFilter(selectedRowsData);
+        //모든 필터확인해서 남은 개수 보다 넘는 배열은 잘라내기
+        selectedRowsData = this.checkMaxWidgetIndex(selectedRowsData);
+
+        if (selectedRowsData.length > 1) {
+          //mult select
+          for (const data of selectedRowsData) {
+            if (Object.keys(search_row).includes("subtitle")) {
+              //ab
+              data.contentType = "AB";
+              rowArray.push(data);
+            } else {
+              //소재검색
+              data.contentType = "S";
+              rowArray.push(data);
+            }
+          }
+        } else {
+          //단일
+          if (Object.keys(e.itemData).includes("subtitle")) {
+            //ab
+            e.itemData.contentType = "AB";
+            rowArray.push(e.itemData);
+          } else {
+            //소재검색
+            e.itemData.contentType = "s";
+            rowArray.push(e.itemData);
+          }
+        }
+      } else {
+        // sortable widget
+        e.fromData.rownum = this.fileData[totalIndex - 1].rownum;
+        this.fileData.splice(totalIndex - 1, 1, e.fromData);
+      }
+      //store 추가
+      if (rowArray.length > 0) {
+        var index = 0;
+        for await (const ele of rowArray) {
+          var rowData = await this.setContents({
+            type: "c",
+            search_row: ele,
+            formRowData: this.rowData,
+            cartcode: this.searchListData.cartcode,
+            index: index,
+            toIndex: totalIndex,
+          });
+          arrData.splice(e.toIndex + index, 0, rowData);
+          arrData.splice(totalIndex - 1, 1, rowData);
+          index++;
+        }
+        if (this.channelKey == "channel_my") {
+          //즐겨찾기
+          this.SET_CUEFAVORITES(arrData);
+        } else {
+          // C channel
+          var resultData = { ...this.cChannelData };
+          resultData[this.channelKey] = arrData;
+          this.SET_CCHANNELDATA(resultData);
+        }
+        this.loadingVisible = false;
+      }
+    },
+    //즐겨찾기 광고 그룹 필터
+    sponsorFilter_Fav(obj) {
+      var groupBool = false;
+      var result = [];
+      //광고 그룹 제외
+      result = obj.filter((ele) => {
+        if (ele.onairdate == "" && ele.cartcode == null) {
+          groupBool = true;
+        }
+        return ele.onairdate != "" && ele.cartcode != null;
+      });
+
+      //광고 그룹 있을 시
+      if (groupBool) {
+        window.$notify(
+          "error",
+          `CM, SB 소재는 즐겨찾기에 추가할 수 없습니다.`,
+          "",
+          {
+            duration: 10000,
+            permanent: false,
+          }
+        );
+      }
+      return result;
+    },
+    //빈칸제거
+    blankFilter(obj) {
+      var result = [];
+      result = obj.filter((ele) => {
+        if (Object.keys(ele).includes("cartcode")) {
+          return ele.cartcode != "";
+        } else {
+          return (ele = ele);
+        }
+      });
+      return result;
+    },
+    checkMaxWidgetIndex(obj) {
+      var result = [];
+      if (obj.length > this.widgetIndex) {
+        result = obj.slice(0, 16);
+      }
+      return result;
+    },
+    async onAdd_real(e, totalIndex) {
       this.loadingVisible = true;
       this.groupFilterVal = false;
       //아카이브 수정불가
@@ -725,8 +845,14 @@ export default {
         }
       }
     },
-    onDragStart() {
+    onDragStart(e) {
       document.getElementById("app-container").classList.add("drag_");
+      if (
+        this.cueInfo.cuetype == "A" ||
+        !Object.keys(e.fromData).includes("cartcode")
+      ) {
+        e.cancel = true;
+      }
     },
     onTextEdit(index) {
       if (this.cueInfo.cuetype == "A") {

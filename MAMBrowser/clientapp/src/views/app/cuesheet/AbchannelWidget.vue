@@ -370,7 +370,6 @@ import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import "moment/locale/ko";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 
 const moment = require("moment");
 const dataGridRef = "dataGrid";
@@ -386,6 +385,7 @@ export default {
       showGrpPlayer: false,
       lengthCheck: false,
       grpParam: {},
+      maxLength: 500,
       playTem_name: "DAP (A,B)",
       rowData: {
         carttype: "",
@@ -441,171 +441,83 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
-    ...mapActions("cueList", ["cartCodeFilter"]),
+    ...mapActions("cueList", ["setContents"]),
+    ...mapActions("cueList", ["maxLengthChecker"]),
     async onAddChannelAB(e) {
-      this.dataGrid.beginCustomLoading("Loading...");
-      this.dataGrid.beginUpdate();
-      this.lengthCheck = false;
-      var arrData = this.abCartArr;
-      if (e.fromData === undefined) {
-        //소재검색 + print
-        var selectedRowsData = this.sortSelectedRowsData(e, "data");
-        if (selectedRowsData.length > 1) {
-          // mult
-          var index = 0;
-          for (const data of selectedRowsData) {
-            // 소재 개수만큼 반복
-            var row = { ...this.rowData };
-            var search_row = data;
-            if (Object.keys(search_row).includes("contents")) {
-              // print mult
-              row.memo = search_row.contents;
-            } else {
-              // 소재검색 mult (아이템)
-
-              //테스트 중
-              // if (this.searchListData.cartcode == "S01G01C021") {
-              //   search_row = await axios
-              //     .post(`/api/SearchMenu/test`)
-              //     .then((res) => {
-              //       return { filetoken: "ddd", filepath: "dddd" };
-              //     });
-              // }
-
-              // 음반기록실, 효과음 api 호출
-              if (this.searchListData.cartcode == "S01G01C014") {
-                search_row = await axios
-                  .post(`/api/SearchMenu/GetSongItem`, search_row)
-                  .then((res) => {
-                    return res.data;
-                  });
-              }
-              if (this.searchListData.cartcode == "S01G01C015") {
-                search_row = await axios
-                  .post(`/api/SearchMenu/GetEffectItem`, search_row)
-                  .then((res) => {
-                    return res.data;
-                  });
-              }
-              row.filetoken = search_row.fileToken;
-              row.filepath = search_row.filePath;
-              if (!search_row.intDuration) {
-                row.endposition = 0;
-                row.duration = 0;
-              } else {
-                row.endposition = search_row.intDuration;
-                row.duration = search_row.intDuration;
-              }
-              row.cartid = search_row.id;
-              row.cartcode = this.searchListData.cartcode;
-              this.cartCodeFilter({
-                row: row,
-                search_row: search_row,
+      var rowArray = [];
+      const arrData = _.cloneDeep(this.abCartArr);
+      var checkIndex = arrData.length;
+      //최대 개수 확인
+      var lengthCheck = await this.maxLengthChecker({
+        arrLength: checkIndex,
+        maxLength: this.maxLength,
+      });
+      if (lengthCheck) {
+        this.dataGrid.beginCustomLoading("Loading...");
+        //선택한 row 하나의 배열로 합치기 (start)
+        if (e.fromData === undefined) {
+          // 소재검색 + print
+          var selectedRowsData = this.sortSelectedRowsData(e, "data");
+          if (selectedRowsData.length > 1) {
+            //mult
+            for (const data of selectedRowsData) {
+              lengthCheck = await this.maxLengthChecker({
+                arrLength: checkIndex,
+                maxLength: this.maxLength,
               });
+              if (!lengthCheck) {
+                break;
+              } else {
+                if (Object.keys(data).includes("contents")) {
+                  //print
+                  data.contentType = "P";
+                  rowArray.push(data);
+                } else {
+                  //소재검색
+                  data.contentType = "S";
+                  rowArray.push(data);
+                }
+                checkIndex++;
+              }
             }
-            // 최대 개수 체크
-            var checkValue = this.maxLengthCheck();
-            if (checkValue) {
-              arrData.splice(e.toIndex + index, 0, row);
-              // this.SET_ABCARTARR(arrData);
-              // this.setRowNum();
-              this.rowData.rownum = this.rowData.rownum + 1;
-            }
-            index++;
-          }
-        } else {
-          //단일
-          var row = { ...this.rowData };
-          var search_row = e.itemData;
-          if (Object.keys(search_row).includes("contents")) {
-            // print 단일
-            row.memo = search_row.contents;
           } else {
-            // 소재검색 단일
-
-            //테스트 중
-            // if (this.searchListData.cartcode == "S01G01C021") {
-            //   search_row = await axios
-            //     .post(`/api/SearchMenu/test`)
-            //     .then((res) => {
-            //       return { filetoken: "ddd", filepath: "dddd" };
-            //     });
-            // }
-
-            // 음반기록실, 효과음 api 호출
-            if (this.searchListData.cartcode == "S01G01C014") {
-              search_row = await axios
-                .post(`/api/SearchMenu/GetSongItem`, search_row)
-                .then((res) => {
-                  return res.data;
-                });
-            }
-            if (this.searchListData.cartcode == "S01G01C015") {
-              search_row = await axios
-                .post(`/api/SearchMenu/GetEffectItem`, search_row)
-                .then((res) => {
-                  return res.data;
-                });
-            }
-            row.filetoken = search_row.fileToken;
-            row.filepath = search_row.filePath;
-            if (!search_row.intDuration) {
-              row.endposition = 0;
-              row.duration = 0;
+            //단일
+            if (Object.keys(e.itemData).includes("contents")) {
+              //print
+              e.itemData.contentType = "P";
+              rowArray.push(e.itemData);
             } else {
-              row.endposition = search_row.intDuration;
-              row.duration = search_row.intDuration;
+              //소재검색
+              e.itemData.contentType = "S";
+              rowArray.push(e.itemData);
             }
-            row.cartid = search_row.id;
-            row.cartcode = this.searchListData.cartcode;
-            this.cartCodeFilter({
-              row: row,
-              search_row: search_row,
-            });
           }
-          //최대 개수 체크
-          var checkValue = this.maxLengthCheck();
-          if (checkValue) {
-            arrData.splice(e.toIndex, 0, row);
-            this.rowData.rownum = this.rowData.rownum + 1;
-          }
+        } else if (e.fromData.cartcode != undefined) {
+          //C
+          e.fromData.contentType = "C";
+          rowArray.push(e.fromData);
         }
-      } else if (e.fromData.cartcode != undefined) {
-        // C 빈칸 제외 아이템
-        var search_row = e.fromData;
-        var row = { ...search_row };
-        row.rownum = this.rowData.rownum;
-        row.transtype = "S";
-        delete row.editTarget;
+        //선택한 row 하나의 배열로 합치기 (end)
 
-        var checkValue = this.maxLengthCheck();
-        if (checkValue) {
-          arrData.splice(e.toIndex, 0, row);
-          this.rowData.rownum = this.rowData.rownum + 1;
+        //합친 배열 store에 추가
+        var index = 0;
+        for await (const ele of rowArray) {
+          var rowData = await this.setContents({
+            type: "ab",
+            search_row: ele,
+            formRowData: this.rowData,
+            cartcode: this.searchListData.cartcode,
+          });
+          arrData.splice(e.toIndex + index, 0, rowData);
+          index++;
         }
-      }
-      this.SET_ABCARTARR(arrData);
-      this.setRowNum();
-      if (this.lengthCheck) {
-        window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-          duration: 10000,
-          permanent: false,
+        arrData.forEach((row, index) => {
+          row.rownum = index + 1;
         });
+        this.SET_ABCARTARR(arrData);
+        this.dataGrid.endUpdate();
+        this.dataGrid.endCustomLoading();
       }
-      this.dataGrid.endUpdate();
-      this.dataGrid.endCustomLoading();
-    },
-    async setApiData(data, code) {
-      if (code == "S01G01C014") {
-        await axios.post(`/api/SearchMenu/GetSongItem`, data).then((res) => {
-          data = res.data;
-        });
-      } else if (code == "S01G01C015") {
-        await axios.post(`/api/SearchMenu/GetEffectItem`, data).then((res) => {
-          data = res.data;
-        });
-      }
-      return data;
     },
     setRowNum() {
       this.abCartArr.forEach((ele, index) => {
@@ -655,15 +567,10 @@ export default {
 
         this.setRowNum();
       }
-
       //e.component.clearSelection();
     },
     onDragEndchannelAB(e) {
       document.getElementById("app-container").classList.remove("drag_");
-      // var selectedRowsData = this.sortSelectedRowsData(e, "data");
-      // if (selectedRowsData.length > 1 && e.dropInsideItem) {
-      //   e.component.clearSelection();
-      // }
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -743,7 +650,6 @@ export default {
         selectindex.rownum = index;
       });
       this.selectedItemKeys = selectedRowsData;
-      //this.selectedItemKeys = e.selectedRowsData;
     },
     onToolbarPreparing(e) {
       let toolbarItems = e.toolbarOptions.items;
@@ -856,11 +762,7 @@ export default {
   overflow: auto;
 }
 .abchannel_view {
-  /* position: absolute; */
-  /* border: solid 0.5px #ddd; */
-  /* top: 10px; */
   padding: 10px;
-  /* margin-right: 10px; */
   border-radius: 2px;
   background-color: #2a4878;
 }

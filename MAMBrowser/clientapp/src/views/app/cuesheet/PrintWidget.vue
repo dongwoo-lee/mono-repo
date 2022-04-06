@@ -276,6 +276,7 @@ export default {
     return {
       selectedItemKeys: [],
       lengthCheck: false,
+      maxLength: 100,
       fileHeader: "",
       rowData: {
         rownum: 1,
@@ -383,93 +384,72 @@ export default {
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapActions("cueList", ["setStartTime"]),
-    onAddPrint(e) {
-      this.lengthCheck = false;
-      var arrData = this.printArr;
-      var selectedRowsData = this.sortSelectedRowsData(e, "data");
-      if (selectedRowsData.length > 1) {
-        //mult
-        selectedRowsData.forEach((data, index) => {
-          var row = { ...this.rowData };
-          var search_row = data;
-          if (Object.keys(search_row).includes("subtitle")) {
-            //ab
-            if (search_row.subtitle == "") {
-              //빈칸
-              row.contents = search_row.memo;
+    ...mapActions("cueList", ["setContents"]),
+    ...mapActions("cueList", ["maxLengthChecker"]),
+    async onAddPrint(e) {
+      var rowArray = [];
+      const arrData = _.cloneDeep(this.printArr);
+      var checkIndex = arrData.length;
+      //최대 개수 확인
+      var lengthCheck = await this.maxLengthChecker({
+        arrLength: checkIndex,
+        maxLength: this.maxLength,
+      });
+      if (lengthCheck) {
+        var selectedRowsData = this.sortSelectedRowsData(e, "data");
+        if (selectedRowsData.length > 1) {
+          //mult
+          for (const data of selectedRowsData) {
+            lengthCheck = await this.maxLengthChecker({
+              arrLength: checkIndex,
+              maxLength: this.maxLength,
+            });
+            if (!lengthCheck) {
+              break;
             } else {
-              //아이템
-              row.contents = search_row.maintitle;
-              row.usedtime = search_row.endposition - search_row.startposition;
+              if (Object.keys(e.itemData).includes("subtitle")) {
+                //print
+                data.contentType = "AB";
+                rowArray.push(data);
+              } else {
+                //소재검색
+                data.contentType = "S";
+                rowArray.push(data);
+              }
+              checkIndex++;
             }
-          } else {
-            //소재검색
-            row.usedtime = search_row.intDuration;
-            switch (this.searchListData.cartcode) {
-              case "S01G01C007":
-                row.contents = search_row.title;
-                break;
-              case "S01G01C006":
-                row.contents = search_row.recName;
-                break;
-              default:
-                row.contents = search_row.name;
-                break;
-            }
-          }
-          //최대 개수 체크
-          var checkValue = this.maxLengthCheck();
-          if (checkValue) {
-            arrData.splice(e.toIndex + index, 0, row);
-            this.rowData.rownum = this.rowData.rownum + 1;
-          }
-        });
-      } else {
-        //단일
-        var row = { ...this.rowData };
-        var search_row = e.itemData;
-        if (e.fromData !== undefined) {
-          // 언제쓰이는지 모르겠음
-          search_row = e.fromData;
-        }
-        if (Object.keys(search_row).includes("subtitle")) {
-          //ab
-          if (search_row.subtitle == "") {
-            //빈칸
-            row.contents = search_row.memo;
-          } else {
-            //아이템
-            row.contents = search_row.maintitle;
-            row.usedtime = search_row.endposition - search_row.startposition;
           }
         } else {
-          //소재검색
-          row.usedtime = search_row.intDuration;
-          switch (this.searchListData.cartcode) {
-            case "S01G01C007":
-              row.contents = search_row.title;
-              break;
-            case "S01G01C006":
-              row.contents = search_row.recName;
-              break;
-            default:
-              row.contents = search_row.name;
-              break;
+          //단일
+          if (Object.keys(e.itemData).includes("subtitle")) {
+            //print
+            e.itemData.contentType = "AB";
+            rowArray.push(e.itemData);
+          } else {
+            //소재검색
+            e.itemData.contentType = "S";
+            rowArray.push(e.itemData);
           }
         }
+        //선택한 row 하나의 배열로 합치기 (end)
 
-        var checkValue = this.maxLengthCheck();
-        if (checkValue) {
-          arrData.splice(e.toIndex, 0, row);
-          this.rowData.rownum = this.rowData.rownum + 1;
+        //합친 배열 store에 추가
+        var index = 0;
+        for await (const ele of rowArray) {
+          var rowData = await this.setContents({
+            type: "print",
+            search_row: ele,
+            formRowData: this.rowData,
+            cartcode: this.searchListData.cartcode,
+          });
+          arrData.splice(e.toIndex + index, 0, rowData);
+          index++;
         }
-      }
-      this.setStartTime();
-      if (this.lengthCheck) {
-        window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-          duration: 10000,
-          permanent: false,
+        arrData.forEach((row, index) => {
+          row.rownum = index + 1;
         });
+        this.SET_PRINTARR(arrData);
+        this.setStartTime();
       }
     },
     maxLengthCheck() {
