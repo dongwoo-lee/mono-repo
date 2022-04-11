@@ -865,7 +865,7 @@ export default {
                     payload.row.carttype = "SS";
 
                     break;
-                //(구)프로소재
+                //프로소재
                 case "S01G01C013":
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;

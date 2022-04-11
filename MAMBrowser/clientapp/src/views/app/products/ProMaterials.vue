@@ -163,7 +163,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
-      MySpaceScreenName: "[(구)프로]",
+      MySpaceScreenName: "[프로]",
       deleteId: "",
       userAudioList: [],
       metaUpdate: false,
@@ -260,11 +260,11 @@ export default {
     };
   },
   created() {
-    // (구)프로소재, 공유소재 매체 목록 조회
+    // 프로소재, 공유소재 매체 목록 조회
     this.getMediaPrimaryOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
-    // (구)프로 목록 조회
+    // 프로 목록 조회
     this.getProOptions();
 
     this.$nextTick(() => {

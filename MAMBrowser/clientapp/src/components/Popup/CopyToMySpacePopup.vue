@@ -134,7 +134,7 @@ export default {
         this.getScrMeta(rowData);
       } else if (this.MySpaceScreenName == "[취재물]") {
         this.getCoverageMeta(rowData);
-      } else if (this.MySpaceScreenName == "[(구)프로]") {
+      } else if (this.MySpaceScreenName == "[프로]") {
         this.getProMeta(rowData);
       } else if (this.MySpaceScreenName == "[음원]") {
         this.getSongMeta(rowData);

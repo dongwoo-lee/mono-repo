@@ -143,7 +143,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// (구)프로소재 조회
+        /// 프로소재 조회
         /// </summary>
         /// <param name="media">매체 : ex)A,C,F,D</param>
         /// <param name="cate">분류 : ex) AC00279990, AC00279444,AC00192685 </param>

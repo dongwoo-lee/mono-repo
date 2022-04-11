@@ -117,7 +117,7 @@ namespace MAMBrowser.DAL.Expand.Factories.Window
                 // 취재물
                 case PageType.REPOTE:
                     return new ReportPage();
-                // (구)프로소재
+                // 프로소재
                 case PageType.OLD_PRO:
                     return new OldProPage();
                 // 주조SB

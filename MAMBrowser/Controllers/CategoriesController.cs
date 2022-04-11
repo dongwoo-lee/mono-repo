@@ -171,7 +171,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// (구)프로목록 조회
+        /// 프로목록 조회
         /// </summary>
         /// <returns></returns>
         [HttpGet("pro")]
@@ -359,7 +359,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// (구)프로소재, 공유소재 매체목록 조회
+        /// 프로소재, 공유소재 매체목록 조회
         /// </summary>
         /// <returns></returns>
         [HttpGet("public-codes/primary")]
@@ -518,7 +518,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// 특정 사용자가 담당하는 오디오코드 목록 반환((구)프로소재 목록)
+        /// 특정 사용자가 담당하는 오디오코드 목록 반환(프로소재 목록)
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>

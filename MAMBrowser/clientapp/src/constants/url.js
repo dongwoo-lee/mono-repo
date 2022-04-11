@@ -46,7 +46,7 @@ const url = [
         icon: "iconsminds-blackboard",
     },
     {
-        // (구)프로소재
+        // 프로소재
         id: "S01G01C013",
         to: "/app/products/pro-mt",
         icon: "iconsminds-blackboard",
