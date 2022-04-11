@@ -465,6 +465,8 @@ export default {
       switch (this.searchDataList.cartcode) {
         case "S01G01C007":
           return this.soundItem.title;
+        case "S01G01C006":
+          return this.soundItem.recName;
 
         default:
           return this.soundItem.name;
