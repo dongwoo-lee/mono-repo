@@ -487,6 +487,7 @@ export default {
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setContents"]),
     async onAdd(e, totalIndex) {
+      //즐겨찾기에 광고 들어감, 일반C에 광고 안들어감 등 확인 중
       this.loadingVisible = true;
       var rowArray = [];
       const arrData = this.fileData;
@@ -505,7 +506,7 @@ export default {
         if (selectedRowsData.length > 1) {
           //mult select
           for (const data of selectedRowsData) {
-            if (Object.keys(search_row).includes("subtitle")) {
+            if (Object.keys(data).includes("subtitle")) {
               //ab
               data.contentType = "AB";
               rowArray.push(data);
@@ -556,15 +557,14 @@ export default {
           resultData[this.channelKey] = arrData;
           this.SET_CCHANNELDATA(resultData);
         }
-        this.loadingVisible = false;
       }
+      this.loadingVisible = false;
     },
     //즐겨찾기 광고 그룹 필터
     sponsorFilter_Fav(obj) {
       var groupBool = false;
-      var result = [];
       //광고 그룹 제외
-      result = obj.filter((ele) => {
+      obj = obj.filter((ele) => {
         if (ele.onairdate == "" && ele.cartcode == null) {
           groupBool = true;
         }
@@ -583,7 +583,7 @@ export default {
           }
         );
       }
-      return result;
+      return obj;
     },
     //빈칸제거
     blankFilter(obj) {
@@ -598,11 +598,10 @@ export default {
       return result;
     },
     checkMaxWidgetIndex(obj) {
-      var result = [];
       if (obj.length > this.widgetIndex) {
-        result = obj.slice(0, 16);
+        obj.slice(0, 16);
       }
-      return result;
+      return obj;
     },
     async onAdd_real(e, totalIndex) {
       this.loadingVisible = true;
