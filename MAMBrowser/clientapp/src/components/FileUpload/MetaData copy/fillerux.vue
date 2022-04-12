@@ -144,7 +144,7 @@ export default {
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
+    this.setTitle(this.sliceExt(30));
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/filler/pro").then((res) => {

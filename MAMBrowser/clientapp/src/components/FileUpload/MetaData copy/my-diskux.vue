@@ -92,7 +92,7 @@ export default {
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
+    this.setTitle(this.sliceExt(200));
   },
   methods: {},
 };

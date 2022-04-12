@@ -768,7 +768,7 @@ export default {
           return;
         }
         this.setMetaModalTitle(event.value[0].name);
-        this.setTitle(event.value[0].name);
+        this.setTitle(this.sliceExt(200));
         if (event.value[0].size / 50 <= 300000) {
           this.chunkSize = 300000;
         } else {

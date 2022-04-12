@@ -237,6 +237,10 @@ export default {
       "resetEventData",
       "resetEventSelected",
     ]),
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
+    },
     fileStateFalse() {
       this.setProcessing(false);
       this.setFileUploading(false);

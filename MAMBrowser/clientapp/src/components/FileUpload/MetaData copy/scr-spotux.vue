@@ -325,7 +325,7 @@ export default {
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
+    this.setTitle(this.sliceExt(30));
     this.getPgm();
     this.getEditorForPd();
     this.resetFileMediaOptions();
