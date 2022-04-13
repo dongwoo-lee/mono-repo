@@ -210,7 +210,6 @@
               caption="편성 분량"
             />
             <DxSelection mode="single" />
-            <DxPager :visible="false" />
             <DxScrolling mode="standard" />
           </DxDataGrid>
         </div>
@@ -242,7 +241,7 @@ import CommonFileFunction from "../CommonFileFunction";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { DxScrolling, DxLoadPanel, DxPager } from "devextreme-vue/data-grid";
+import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
 import axios from "axios";
 const dxdg = "my-proDataGrid";
 export default {
@@ -250,7 +249,6 @@ export default {
     CommonVueSelect,
     DxScrolling,
     DxLoadPanel,
-    DxPager,
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {

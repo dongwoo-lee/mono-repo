@@ -63,7 +63,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.name"
+            v-model="EventSelected.eventName"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -79,7 +79,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.id"
+            v-model="EventSelected.productId"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -204,8 +204,10 @@
           >
             <DxLoadPanel :enabled="true" />
             <DxScrolling mode="virtual" />
-            <DxColumn data-field="name" caption="이벤트 명" />
-            <DxColumn data-field="id" caption="이벤트 ID" />
+            <DxColumn data-field="id" caption="id" />
+            <DxColumn data-field="eventName" caption="이벤트 명" />
+            <DxColumn data-field="productId" caption="이벤트 ID" />
+            <DxColumn data-field="onairTime" caption="방송시작 시간" />
           </DxDataGrid>
         </div>
       </template>

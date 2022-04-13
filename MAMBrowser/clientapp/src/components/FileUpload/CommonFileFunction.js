@@ -362,9 +362,12 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
-        axios.get(`/api/categories/pgmcodes?brd_dt=${date}`).then((res) => {
-          this.setEventData(res.data.resultObject.data);
-        });
+        axios.get(
+          `/api/categories/pgm-sch?media=D&date=${date}`
+        )
+          .then((res) => {
+            this.setEventData(res.data.resultObject.data);
+          });
         this.resetEventSelected();
       }
     },
