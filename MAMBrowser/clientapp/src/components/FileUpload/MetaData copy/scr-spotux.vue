@@ -207,7 +207,7 @@
                   @input="eventSInput"
                   button-variant="outline-dark"
                   button-only
-                  right
+                  left
                   aria-controls="example-input"
                   @context="onContext"
                 ></b-form-datepicker>

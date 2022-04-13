@@ -430,8 +430,8 @@ export default {
         } else if (this.MetaData.typeSelected == "report") {
           var data = {
             title: this.MetaData.title,
-            category: this.MetaData.mediaSelected,
-            ProductId: this.EventSelected.id,
+            category: this.MetaData.coverageTypeSelected,
+            ProductId: this.EventSelected.productId,
             brdDT: this.date,
             editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,

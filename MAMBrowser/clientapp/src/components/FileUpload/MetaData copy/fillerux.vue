@@ -74,7 +74,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -102,7 +101,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -131,7 +129,7 @@ export default {
     return {
       fillerOptions: [
         { value: "pr", text: "Filler(PR)" },
-        { value: "general", text: "Filler(일반)" },
+        { value: "general", text: "Filler(소재)" },
         { value: "etc", text: "Filler(기타)" },
       ],
       fillerMedia: "pr",

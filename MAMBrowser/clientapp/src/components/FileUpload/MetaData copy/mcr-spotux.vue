@@ -22,7 +22,7 @@
               button-only
               :disabled="isActive"
               :button-variant="getVariant"
-              right
+              left
               aria-controls="example-input"
               @context="onContext"
             ></b-form-datepicker>
@@ -125,7 +125,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
           font-size: 14px;
@@ -152,7 +151,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "

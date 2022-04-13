@@ -467,7 +467,6 @@ export default {
             brdDT: this.date,
           };
         }
-        console.log(data);
         await this.resetUploaderCustomData();
         await this.setUploaderCustomData(data);
         if (!this.durationState) {

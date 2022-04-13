@@ -61,8 +61,14 @@ export default {
   setFileMediaOptions(state, payload) {
     state.fileMediaOptions.push(payload);
   },
+  setCoverageTypeOptions(state, payload) {
+    state.coverageTypeOptions.push(payload);
+  },
   setMediaSelected(state, payload) {
     state.MetaData.mediaSelected = payload;
+  },
+  setCoverageTypeSelected(state, payload) {
+    state.MetaData.coverageTypeSelected = payload;
   },
   setMediaName(state, payload) {
     state.MetaData.mediaName = payload;
@@ -130,6 +136,9 @@ export default {
   resetMediaSelected(state) {
     state.MetaData.mediaSelected = "";
   },
+  resetCoverageTypeSelected(state) {
+    state.MetaData.coverageTypeSelected = "";
+  },
   resetMediaName(state) {
     state.MetaData.mediaName = "";
   },
@@ -153,6 +162,9 @@ export default {
   },
   resetFileMediaOptions(state) {
     state.fileMediaOptions = [];
+  },
+  resetCoverageTypeOptions(state) {
+    state.coverageTypeOptions = [];
   },
   resetProgramData(state) {
     state.ProgramData = [

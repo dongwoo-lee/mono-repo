@@ -137,6 +137,7 @@ export default {
       MetaData: (state) => state.MetaData,
       MetaModalTitle: (state) => state.MetaModalTitle,
       fileMediaOptions: (state) => state.fileMediaOptions,
+      coverageTypeOptions: (state) => state.coverageTypeOptions,
       masteringListData: (state) => state.masteringListData,
       masteringLogData: (state) => state.masteringLogData,
       ProgramData: (state) => state.ProgramData,
@@ -208,7 +209,9 @@ export default {
       "setFileSelected",
       "setFileUploading",
       "setFileMediaOptions",
+      "setCoverageTypeOptions",
       "setMediaSelected",
+      "setCoverageTypeSelected",
       "setMediaName",
       "setProType",
       "setProTypeName",
@@ -230,7 +233,9 @@ export default {
       "resetProTypeName",
       "resetAdvertiser",
       "resetFileMediaOptions",
+      "resetCoverageTypeOptions",
       "resetMediaSelected",
+      "resetCoverageTypeSelected",
       "resetMediaName",
       "resetProgramData",
       "resetProgramSelected",
@@ -326,6 +331,7 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
+        console.log(this.MetaData.mediaSelected);
         axios
           .get(
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TT`
@@ -366,9 +372,10 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
-        axios.get(
-          `/api/categories/pgm-sch?media=D&date=${date}`
-        )
+        axios
+          .get(
+            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
+          )
           .then((res) => {
             this.setEventData(res.data.resultObject.data);
           });
@@ -473,6 +480,7 @@ export default {
       this.resetFileSDate();
       this.resetScrRange();
       this.fileStateFalse();
+      this.resetCoverageTypeSelected();
       this.resetProgramData();
       this.resetProgramSelected();
       this.resetEventData();
@@ -492,6 +500,7 @@ export default {
       this.resetType();
       this.resetDate();
       this.fileStateFalse();
+      this.resetCoverageTypeSelected();
       this.resetProgramData();
       this.resetProgramSelected();
       this.resetEventData();
