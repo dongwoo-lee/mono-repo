@@ -458,38 +458,28 @@ export default {
         if (e.fromData === undefined) {
           // 소재검색 + print
           var selectedRowsData = this.sortSelectedRowsData(e, "data");
-          if (selectedRowsData.length > 1) {
-            //mult
-            for (const data of selectedRowsData) {
-              lengthCheck = await this.maxLengthChecker({
-                arrLength: checkIndex,
-                maxLength: this.maxLength,
-              });
-              if (!lengthCheck) {
-                break;
-              } else {
-                if (Object.keys(data).includes("contents")) {
-                  //print
-                  data.contentType = "P";
-                  rowArray.push(data);
-                } else {
-                  //소재검색
-                  data.contentType = "S";
-                  rowArray.push(data);
-                }
-                checkIndex++;
-              }
-            }
-          } else {
-            //단일
-            if (Object.keys(e.itemData).includes("contents")) {
-              //print
-              e.itemData.contentType = "P";
-              rowArray.push(e.itemData);
+          // 단일 선택
+          if (e.itemElement.ariaSelected == "false") {
+            selectedRowsData = [e.itemData];
+          }
+          for (const data of selectedRowsData) {
+            lengthCheck = await this.maxLengthChecker({
+              arrLength: checkIndex,
+              maxLength: this.maxLength,
+            });
+            if (!lengthCheck) {
+              break;
             } else {
-              //소재검색
-              e.itemData.contentType = "S";
-              rowArray.push(e.itemData);
+              if (Object.keys(data).includes("contents")) {
+                //print
+                data.contentType = "P";
+                rowArray.push(data);
+              } else {
+                //소재검색
+                data.contentType = "S";
+                rowArray.push(data);
+              }
+              checkIndex++;
             }
           }
         } else if (e.fromData.cartcode != undefined) {

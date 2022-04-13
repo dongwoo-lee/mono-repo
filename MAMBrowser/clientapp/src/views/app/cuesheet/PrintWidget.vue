@@ -397,38 +397,28 @@ export default {
       });
       if (lengthCheck) {
         var selectedRowsData = this.sortSelectedRowsData(e, "data");
-        if (selectedRowsData.length > 1) {
-          //mult
-          for (const data of selectedRowsData) {
-            lengthCheck = await this.maxLengthChecker({
-              arrLength: checkIndex,
-              maxLength: this.maxLength,
-            });
-            if (!lengthCheck) {
-              break;
-            } else {
-              if (Object.keys(e.itemData).includes("subtitle")) {
-                //print
-                data.contentType = "AB";
-                rowArray.push(data);
-              } else {
-                //소재검색
-                data.contentType = "S";
-                rowArray.push(data);
-              }
-              checkIndex++;
-            }
-          }
-        } else {
-          //단일
-          if (Object.keys(e.itemData).includes("subtitle")) {
-            //print
-            e.itemData.contentType = "AB";
-            rowArray.push(e.itemData);
+        // 단일 선택
+        if (e.itemElement.ariaSelected == "false") {
+          selectedRowsData = [e.itemData];
+        }
+        for (const data of selectedRowsData) {
+          lengthCheck = await this.maxLengthChecker({
+            arrLength: checkIndex,
+            maxLength: this.maxLength,
+          });
+          if (!lengthCheck) {
+            break;
           } else {
-            //소재검색
-            e.itemData.contentType = "S";
-            rowArray.push(e.itemData);
+            if (Object.keys(e.itemData).includes("subtitle")) {
+              //print
+              data.contentType = "AB";
+              rowArray.push(data);
+            } else {
+              //소재검색
+              data.contentType = "S";
+              rowArray.push(data);
+            }
+            checkIndex++;
           }
         }
         //선택한 row 하나의 배열로 합치기 (end)

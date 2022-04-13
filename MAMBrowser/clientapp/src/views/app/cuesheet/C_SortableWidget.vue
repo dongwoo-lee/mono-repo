@@ -487,13 +487,16 @@ export default {
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setContents"]),
     async onAdd(e, totalIndex) {
-      //즐겨찾기에 광고 들어감, 일반C에 광고 안들어감 등 확인 중
       this.loadingVisible = true;
       var rowArray = [];
       const arrData = this.fileData;
       if (e.fromData === undefined) {
         //ab, 소재검색
         var selectedRowsData = this.sortSelectedRowsData(e);
+        // 단일 선택
+        if (e.itemElement.ariaSelected == "false") {
+          selectedRowsData = [e.itemData];
+        }
         // 즐겨찾기일 경우 광고 그룹 제거
         if (this.channelKey == "channel_my") {
           selectedRowsData = this.sponsorFilter_Fav(selectedRowsData);
@@ -503,29 +506,15 @@ export default {
         //모든 필터확인해서 남은 개수 보다 넘는 배열은 잘라내기
         selectedRowsData = this.checkMaxWidgetIndex(selectedRowsData);
 
-        if (selectedRowsData.length > 1) {
-          //mult select
-          for (const data of selectedRowsData) {
-            if (Object.keys(data).includes("subtitle")) {
-              //ab
-              data.contentType = "AB";
-              rowArray.push(data);
-            } else {
-              //소재검색
-              data.contentType = "S";
-              rowArray.push(data);
-            }
-          }
-        } else {
-          //단일
-          if (Object.keys(e.itemData).includes("subtitle")) {
+        for (const data of selectedRowsData) {
+          if (Object.keys(data).includes("subtitle")) {
             //ab
-            e.itemData.contentType = "AB";
-            rowArray.push(e.itemData);
+            data.contentType = "AB";
+            rowArray.push(data);
           } else {
             //소재검색
-            e.itemData.contentType = "s";
-            rowArray.push(e.itemData);
+            data.contentType = "S";
+            rowArray.push(data);
           }
         }
       } else {
@@ -565,10 +554,10 @@ export default {
       var groupBool = false;
       //광고 그룹 제외
       obj = obj.filter((ele) => {
-        if (ele.onairdate == "" && ele.cartcode == null) {
+        if (ele.onairdate != "" && ele.cartcode != null) {
           groupBool = true;
         }
-        return ele.onairdate != "" && ele.cartcode != null;
+        return ele.onairdate == "" && ele.cartcode != null;
       });
 
       //광고 그룹 있을 시
