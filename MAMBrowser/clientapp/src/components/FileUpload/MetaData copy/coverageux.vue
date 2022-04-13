@@ -273,7 +273,7 @@ export default {
     this.reset();
     this.setTitle(this.sliceExt(30));
     this.resetCoverageTypeOptions();
-
+    this.resetFileMediaOptions();
     axios.get("/api/categories/report").then((res) => {
       this.setCoverageTypeSelected(res.data.resultObject.data[0].id);
       this.coverageType = res.data.resultObject.data[0].id;
@@ -286,8 +286,16 @@ export default {
       });
     });
 
-    this.coverageMedia = this.fileMediaOptions[0].value;
-    this.setMediaSelected(this.coverageMedia);
+    axios.get("/api/categories/media").then((res) => {
+      this.coverageMedia = res.data.resultObject.data[0].id;
+      this.setMediaSelected(this.coverageMedia);
+      res.data.resultObject.data.forEach((e) => {
+        this.setFileMediaOptions({
+          value: e.id,
+          text: e.name,
+        });
+      });
+    });
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
