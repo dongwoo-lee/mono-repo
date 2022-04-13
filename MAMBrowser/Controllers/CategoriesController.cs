@@ -448,7 +448,7 @@ namespace MAMBrowser.Controllers
 
 
         /// <summary>
-        /// 프로그램 목록 반환(PGM)
+        /// 프로그램 송출표 목록 반환(송출표가 작성되지 않은 경우 기본+특별편성)
         /// </summary>
         /// <param name="media">매체코드 - ex) A, F, M</param>
         /// <param name="date">시작일자 - ex) 20210101</param>

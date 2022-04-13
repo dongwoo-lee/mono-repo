@@ -117,14 +117,14 @@ namespace MAMBrowser.BLL
         }
 
         /// <summary>
-        /// 프로그램 목록 반환(PGM)
+        /// 프로그램 송출표 목록 반환(송출표가 작성되지 않은 경우 기본+특별편성)
         /// </summary>
         /// <param name="media">매체ID</param>
         /// <param name="date">시작일자</param>
         /// <returns></returns>
         public IList<DTO_BrdSch> GetPgmSch(string media, string date)
         {
-            return _dao.GetPgmSch(media, date, "P", "PM");
+            return _dao.GetPgmSch(media, date);
         }
         /// <summary>
         /// 프로그램 목록 반환(주조SPOT, 변동소재, 고정소재)
