@@ -5,7 +5,7 @@
     <h4 slot="body">
       <div style="margin-left: 25px; margin-top: 20px">
         <h6>방송일</h6>
-        <b-input-group class="mb-3" style="width: 350px; float: left">
+        <b-input-group class="mb-3" style="width: 220px; float: left">
           <input
             type="text"
             class="form-control input-picker"
@@ -24,6 +24,20 @@
             ></b-form-datepicker>
           </b-input-group-append>
         </b-input-group>
+        <b-form-group
+          label="매체"
+          class="has-float-label"
+          style="margin-left: 20px; font-size: 15px; float: left"
+        >
+          <b-form-select
+            id="program-media"
+            class="media-select"
+            style="width: 110px; height: 37px"
+            :value="this.reportUpdateMediaSelected"
+            @input="mediaChange"
+            :options="reportUpdateMediaOptions"
+          />
+        </b-form-group>
       </div>
       <br />
       <br />
@@ -47,8 +61,8 @@
         >
           <DxLoadPanel :enabled="true" />
           <DxScrolling mode="virtual" />
-          <DxColumn data-field="name" caption="이벤트 명" />
-          <DxColumn data-field="id" caption="이벤트 ID" />
+          <DxColumn data-field="eventName" caption="이벤트 명" />
+          <DxColumn data-field="productId" caption="이벤트 ID" />
         </DxDataGrid>
         <div style="width: 180px; margin-top: 10px; float: left">
           <b-form-group
@@ -134,14 +148,27 @@ export default {
       pgmData: [],
       pgmid: "",
       pgmName: "",
+      reportUpdateMediaOptions: [],
+      reportUpdateMediaSelected: "",
       tempDate: this.convertDateSTH(this.rowData.brdDT),
       brdDT: this.convertDateSTH(this.rowData.brdDT),
     };
   },
   created() {
     this.getEvent();
+
+    axios.get("/api/categories/media").then((res) => {
+      this.reportUpdateMediaSelected = res.data.resultObject.data[0].id;
+      res.data.resultObject.data.forEach((e) => {
+        this.reportUpdateMediaOptions.push({ value: e.id, text: e.name });
+      });
+    });
   },
   methods: {
+    mediaChange(v) {
+      this.reportUpdateMediaSelected = v;
+      this.getEvent();
+    },
     getEvent() {
       const replaceVal = this.brdDT.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
@@ -149,9 +176,14 @@ export default {
       const dd = replaceVal.substring(6, 8);
       var date = yyyy + "" + mm + "" + dd;
       this.pgmData = [];
-      axios.get(`/api/categories/pgmcodes?brd_dt=${date}`).then((res) => {
-        this.pgmData = res.data.resultObject.data;
-      });
+      axios
+        .get(
+          `/api/categories/pgm-sch?media=${this.reportUpdateMediaSelected}&date=${date}`
+        )
+        .then((res) => {
+          console.log(res);
+          this.pgmData = res.data.resultObject.data;
+        });
     },
     reportModalOff() {
       this.$emit("reportModalClose");
@@ -165,8 +197,8 @@ export default {
       this.reportModalOff();
     },
     onRowClick(v) {
-      this.pgmid = v.data.id;
-      this.pgmName = v.data.name;
+      this.pgmid = v.data.productId;
+      this.pgmName = v.data.eventName;
     },
     resetPgm() {
       this.pgmid = "";
