@@ -64,11 +64,17 @@ export default {
   setCoverageTypeOptions(state, payload) {
     state.coverageTypeOptions.push(payload);
   },
+  setFillerTypeOptions(state, payload) {
+    state.fillerTypeOptions.push(payload);
+  },
   setMediaSelected(state, payload) {
     state.MetaData.mediaSelected = payload;
   },
   setCoverageTypeSelected(state, payload) {
     state.MetaData.coverageTypeSelected = payload;
+  },
+  setFillerTypeSelected(state, payload) {
+    state.MetaData.fillerTypeSelected = payload;
   },
   setMediaName(state, payload) {
     state.MetaData.mediaName = payload;
@@ -165,6 +171,9 @@ export default {
   },
   resetCoverageTypeOptions(state) {
     state.coverageTypeOptions = [];
+  },
+  resetFillerTypeOptions(state) {
+    state.fillerTypeOptions = [];
   },
   resetProgramData(state) {
     state.ProgramData = [
