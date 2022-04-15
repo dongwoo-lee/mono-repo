@@ -312,7 +312,7 @@
           <div>
             <DxButton
               icon="trash"
-              @click="selectionDel"
+              @click="onClickDel"
               :disabled="!selectedItemKeys.length"
               hint="선택 행 삭제"
               v-if="cueInfo.cuetype != 'A'"
@@ -443,6 +443,7 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["setContents"]),
     ...mapActions("cueList", ["maxLengthChecker"]),
+    //드래그 추가 시
     async onAddChannelAB(e) {
       var rowArray = [];
       const arrData = _.cloneDeep(this.abCartArr);
@@ -501,32 +502,15 @@ export default {
           arrData.splice(e.toIndex + index, 0, rowData);
           index++;
         }
-        arrData.forEach((row, index) => {
-          row.rownum = index + 1;
-        });
+        this.setRownum(arrData);
         this.SET_ABCARTARR(arrData);
         this.dataGrid.endUpdate();
         this.dataGrid.endCustomLoading();
       }
     },
-    setRowNum() {
-      this.abCartArr.forEach((ele, index) => {
-        ele.rownum = index + 1;
-      });
-    },
-    maxLengthCheck() {
-      var result = true;
-      if (this.abCartArr.length > 499) {
-        result = false;
-        this.lengthCheck = true;
-      }
-      return result;
-    },
-    onDragStart() {
-      document.getElementById("app-container").classList.add("drag_");
-    },
+    //드래그 내부 이동 시
     onReorderChannelAB(e) {
-      var arrData = this.abCartArr;
+      const arrData = _.cloneDeep(this.abCartArr);
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       var selectedRowsKey = this.sortSelectedRowsData(e, "key");
       var testIndex = [];
@@ -549,18 +533,37 @@ export default {
             arrData.splice(newindex + index + 1, 0, row);
           }
         });
-        this.selectionDel();
-        e.component.clearSelection();
+        this.multSelected_del(arrData, selectedRowsData);
       } else {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
-
-        this.setRowNum();
       }
-      //e.component.clearSelection();
+      this.setRownum(arrData);
+      this.SET_ABCARTARR(arrData);
+      e.component.clearSelection();
     },
-    onDragEndchannelAB(e) {
+    //드래그 시작 시
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
+    },
+    //드래그 종료 시
+    onDragEndchannelAB() {
       document.getElementById("app-container").classList.remove("drag_");
+    },
+    //선택된 row 삭제
+    multSelected_del(obj) {
+      this.selectedItemKeys.forEach((item) => {
+        var index = obj.findIndex((ele) => ele.rownum == item.rownum);
+        obj.splice(index, 1);
+      });
+      return obj;
+    },
+    //rownum 순서 정리
+    setRownum(obj) {
+      obj.forEach((ele, index) => {
+        ele.rownum = index + 1;
+      });
+      return obj;
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -608,18 +611,6 @@ export default {
         }
       }
     },
-    selectionDel() {
-      var totalList = [...this.abCartArr];
-      this.selectedItemKeys.forEach((item) => {
-        var result = totalList.filter((ele) => {
-          return ele.rownum != item.rownum;
-        });
-        totalList = result;
-      });
-      this.SET_ABCARTARR(totalList);
-      this.setRowNum();
-      this.dataGrid.clearSelection();
-    },
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
       selectedRowsData.forEach((selectindex) => {
@@ -652,35 +643,29 @@ export default {
             icon: "add",
             hint: "행 추가",
             onClick: async () => {
-              this.lengthCheck = false;
-              var arrData = this.abCartArr;
-              var row = { ...this.rowData };
-              var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
-              var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
-              var index = this.dataGrid.getRowIndexByKey(rastkey);
-              row.rownum = this.rowData.rownum;
-              if (rastkey != -1) {
-                var checkValue = this.maxLengthCheck();
-                if (checkValue) {
+              //수정 중
+              const arrData = _.cloneDeep(this.abCartArr);
+              var checkIndex = arrData.length;
+              //최대 개수 확인
+              var lengthCheck = await this.maxLengthChecker({
+                arrLength: checkIndex,
+                maxLength: this.maxLength,
+              });
+              if (lengthCheck) {
+                var row = { ...this.rowData };
+                var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
+                var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
+                var index = this.dataGrid.getRowIndexByKey(rastkey);
+                row.rownum = checkIndex + 1;
+                if (rastkey != -1) {
                   arrData.splice(index + 1, 0, row);
-                  this.rowData.rownum = this.rowData.rownum + 1;
-                }
-              } else {
-                var checkValue = this.maxLengthCheck();
-                if (checkValue) {
+                } else {
                   arrData.splice(1, 0, row);
-                  this.rowData.rownum = this.rowData.rownum + 1;
                 }
-              }
-              await this.setRowNum();
-              if (this.lengthCheck) {
-                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                  duration: 10000,
-                  permanent: false,
-                });
-              } else {
-                //빈칸 추가 후 memo Cell 편집
+                await this.setRownum(arrData);
+                await this.SET_ABCARTARR(arrData);
                 await this.dataGrid.refresh();
+                // //빈칸 추가 후 memo Cell 편집
                 if (index != -1) {
                   this.dataGrid.editCell(rastkey, 3);
                 } else {
@@ -723,12 +708,6 @@ export default {
           break;
       }
     },
-    //시간 string > milliseconds
-    millisecondsFuc(duration) {
-      var itemTime = moment(duration, "HH:mm:ss.SS");
-      var defTime = moment("00:00:00.00", "HH:mm:ss.SS");
-      return moment.duration(itemTime.diff(defTime)).asMilliseconds();
-    },
     showGrpPlayerPopup(data) {
       this.grpParam = data;
       this.showGrpPlayer = true;
@@ -736,10 +715,23 @@ export default {
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
     },
+    // del 단축키
     onKeyDownDel(e) {
+      const arrData = _.cloneDeep(this.abCartArr);
       if (e.event.key == "Delete") {
-        this.selectionDel();
+        this.multSelected_del(arrData);
+        this.setRownum(arrData);
+        this.SET_ABCARTARR(arrData);
+        e.component.clearSelection();
       }
+    },
+    // del 버튼
+    onClickDel() {
+      const arrData = _.cloneDeep(this.abCartArr);
+      this.multSelected_del(arrData);
+      this.setRownum(arrData);
+      this.SET_ABCARTARR(arrData);
+      this.dataGrid.clearSelection();
     },
   },
 };
