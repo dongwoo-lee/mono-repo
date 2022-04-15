@@ -312,7 +312,7 @@
           <div>
             <DxButton
               icon="trash"
-              @click="selectionDel"
+              @click="onClickDel"
               :disabled="!selectedItemKeys.length"
               hint="선택 행 삭제"
               v-if="cueInfo.cuetype != 'A'"
@@ -370,7 +370,6 @@ import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import "moment/locale/ko";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 
 const moment = require("moment");
 const dataGridRef = "dataGrid";
@@ -386,6 +385,7 @@ export default {
       showGrpPlayer: false,
       lengthCheck: false,
       grpParam: {},
+      maxLength: 500,
       playTem_name: "DAP (A,B)",
       rowData: {
         carttype: "",
@@ -441,189 +441,76 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
-    ...mapActions("cueList", ["cartCodeFilter"]),
+    ...mapActions("cueList", ["setContents"]),
+    ...mapActions("cueList", ["maxLengthChecker"]),
+    //드래그 추가 시
     async onAddChannelAB(e) {
-      this.dataGrid.beginCustomLoading("Loading...");
-      this.dataGrid.beginUpdate();
-      this.lengthCheck = false;
-      var arrData = this.abCartArr;
-      if (e.fromData === undefined) {
-        //소재검색 + print
-        var selectedRowsData = this.sortSelectedRowsData(e, "data");
-        if (selectedRowsData.length > 1) {
-          // mult
-          var index = 0;
-          for (const data of selectedRowsData) {
-            var row = { ...this.rowData };
-            var search_row = data;
-            if (Object.keys(search_row).includes("contents")) {
-              // print mult
-              row.memo = search_row.contents;
-            } else {
-              // 소재검색 mult (아이템)
-
-              //테스트 중
-              // if (this.searchListData.cartcode == "S01G01C021") {
-              //   search_row = await axios
-              //     .post(`/api/SearchMenu/test`)
-              //     .then((res) => {
-              //       return { filetoken: "ddd", filepath: "dddd" };
-              //     });
-              // }
-
-              // 음반기록실, 효과음 api 호출
-              if (this.searchListData.cartcode == "S01G01C014") {
-                search_row = await axios
-                  .post(`/api/SearchMenu/GetSongItem`, search_row)
-                  .then((res) => {
-                    return res.data;
-                  });
-              }
-              if (this.searchListData.cartcode == "S01G01C015") {
-                search_row = await axios
-                  .post(`/api/SearchMenu/GetEffectItem`, search_row)
-                  .then((res) => {
-                    return res.data;
-                  });
-              }
-              row.filetoken = search_row.fileToken;
-              row.filepath = search_row.filePath;
-              if (!search_row.intDuration) {
-                row.endposition = 0;
-                row.duration = 0;
-              } else {
-                row.endposition = search_row.intDuration;
-                row.duration = search_row.intDuration;
-              }
-              row.cartid = search_row.id;
-              row.cartcode = this.searchListData.cartcode;
-              this.cartCodeFilter({
-                row: row,
-                search_row: search_row,
-              });
-            }
-            // 최대 개수 체크
-            var checkValue = this.maxLengthCheck();
-            if (checkValue) {
-              arrData.splice(e.toIndex + index, 0, row);
-              // this.SET_ABCARTARR(arrData);
-              // this.setRowNum();
-              this.rowData.rownum = this.rowData.rownum + 1;
-            }
-            index++;
-          }
-        } else {
-          //단일
-          var row = { ...this.rowData };
-          var search_row = e.itemData;
-          if (Object.keys(search_row).includes("contents")) {
-            // print 단일
-            row.memo = search_row.contents;
-          } else {
-            // 소재검색 단일
-
-            //테스트 중
-            // if (this.searchListData.cartcode == "S01G01C021") {
-            //   search_row = await axios
-            //     .post(`/api/SearchMenu/test`)
-            //     .then((res) => {
-            //       return { filetoken: "ddd", filepath: "dddd" };
-            //     });
-            // }
-
-            // 음반기록실, 효과음 api 호출
-            if (this.searchListData.cartcode == "S01G01C014") {
-              search_row = await axios
-                .post(`/api/SearchMenu/GetSongItem`, search_row)
-                .then((res) => {
-                  return res.data;
-                });
-            }
-            if (this.searchListData.cartcode == "S01G01C015") {
-              search_row = await axios
-                .post(`/api/SearchMenu/GetEffectItem`, search_row)
-                .then((res) => {
-                  return res.data;
-                });
-            }
-            row.filetoken = search_row.fileToken;
-            row.filepath = search_row.filePath;
-            if (!search_row.intDuration) {
-              row.endposition = 0;
-              row.duration = 0;
-            } else {
-              row.endposition = search_row.intDuration;
-              row.duration = search_row.intDuration;
-            }
-            row.cartid = search_row.id;
-            row.cartcode = this.searchListData.cartcode;
-            this.cartCodeFilter({
-              row: row,
-              search_row: search_row,
-            });
-          }
-          //최대 개수 체크
-          var checkValue = this.maxLengthCheck();
-          if (checkValue) {
-            arrData.splice(e.toIndex, 0, row);
-            this.rowData.rownum = this.rowData.rownum + 1;
-          }
-        }
-      } else if (e.fromData.cartcode != undefined) {
-        // C 빈칸 제외 아이템
-        var search_row = e.fromData;
-        var row = { ...search_row };
-        row.rownum = this.rowData.rownum;
-        row.transtype = "S";
-        delete row.editTarget;
-
-        var checkValue = this.maxLengthCheck();
-        if (checkValue) {
-          arrData.splice(e.toIndex, 0, row);
-          this.rowData.rownum = this.rowData.rownum + 1;
-        }
-      }
-      this.SET_ABCARTARR(arrData);
-      this.setRowNum();
-      if (this.lengthCheck) {
-        window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-          duration: 10000,
-          permanent: false,
-        });
-      }
-      this.dataGrid.endUpdate();
-      this.dataGrid.endCustomLoading();
-    },
-    async setApiData(data, code) {
-      if (code == "S01G01C014") {
-        await axios.post(`/api/SearchMenu/GetSongItem`, data).then((res) => {
-          data = res.data;
-        });
-      } else if (code == "S01G01C015") {
-        await axios.post(`/api/SearchMenu/GetEffectItem`, data).then((res) => {
-          data = res.data;
-        });
-      }
-      return data;
-    },
-    setRowNum() {
-      this.abCartArr.forEach((ele, index) => {
-        ele.rownum = index + 1;
+      var rowArray = [];
+      const arrData = _.cloneDeep(this.abCartArr);
+      var checkIndex = arrData.length;
+      //최대 개수 확인
+      var lengthCheck = await this.maxLengthChecker({
+        arrLength: checkIndex,
+        maxLength: this.maxLength,
       });
-    },
-    maxLengthCheck() {
-      var result = true;
-      if (this.abCartArr.length > 499) {
-        result = false;
-        this.lengthCheck = true;
+      if (lengthCheck) {
+        this.dataGrid.beginCustomLoading("Loading...");
+        //선택한 row 하나의 배열로 합치기 (start)
+        if (e.fromData === undefined) {
+          // 소재검색 + print
+          var selectedRowsData = this.sortSelectedRowsData(e, "data");
+          // 단일 선택
+          if (e.itemElement.ariaSelected == "false") {
+            selectedRowsData = [e.itemData];
+          }
+          for (const data of selectedRowsData) {
+            lengthCheck = await this.maxLengthChecker({
+              arrLength: checkIndex,
+              maxLength: this.maxLength,
+            });
+            if (!lengthCheck) {
+              break;
+            } else {
+              if (Object.keys(data).includes("contents")) {
+                //print
+                data.contentType = "P";
+                rowArray.push(data);
+              } else {
+                //소재검색
+                data.contentType = "S";
+                rowArray.push(data);
+              }
+              checkIndex++;
+            }
+          }
+        } else if (e.fromData.cartcode != undefined) {
+          //C
+          e.fromData.contentType = "C";
+          rowArray.push(e.fromData);
+        }
+        //선택한 row 하나의 배열로 합치기 (end)
+
+        //합친 배열 store에 추가
+        var index = 0;
+        for await (const ele of rowArray) {
+          var rowData = await this.setContents({
+            type: "ab",
+            search_row: ele,
+            formRowData: this.rowData,
+            cartcode: this.searchListData.cartcode,
+          });
+          arrData.splice(e.toIndex + index, 0, rowData);
+          index++;
+        }
+        this.setRownum(arrData);
+        this.SET_ABCARTARR(arrData);
+        this.dataGrid.endUpdate();
+        this.dataGrid.endCustomLoading();
       }
-      return result;
     },
-    onDragStart() {
-      document.getElementById("app-container").classList.add("drag_");
-    },
+    //드래그 내부 이동 시
     onReorderChannelAB(e) {
-      var arrData = this.abCartArr;
+      const arrData = _.cloneDeep(this.abCartArr);
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       var selectedRowsKey = this.sortSelectedRowsData(e, "key");
       var testIndex = [];
@@ -646,23 +533,37 @@ export default {
             arrData.splice(newindex + index + 1, 0, row);
           }
         });
-        this.selectionDel();
-        e.component.clearSelection();
+        this.multSelected_del(arrData, selectedRowsData);
       } else {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
-
-        this.setRowNum();
       }
-
-      //e.component.clearSelection();
+      this.setRownum(arrData);
+      this.SET_ABCARTARR(arrData);
+      e.component.clearSelection();
     },
-    onDragEndchannelAB(e) {
+    //드래그 시작 시
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
+    },
+    //드래그 종료 시
+    onDragEndchannelAB() {
       document.getElementById("app-container").classList.remove("drag_");
-      // var selectedRowsData = this.sortSelectedRowsData(e, "data");
-      // if (selectedRowsData.length > 1 && e.dropInsideItem) {
-      //   e.component.clearSelection();
-      // }
+    },
+    //선택된 row 삭제
+    multSelected_del(obj) {
+      this.selectedItemKeys.forEach((item) => {
+        var index = obj.findIndex((ele) => ele.rownum == item.rownum);
+        obj.splice(index, 1);
+      });
+      return obj;
+    },
+    //rownum 순서 정리
+    setRownum(obj) {
+      obj.forEach((ele, index) => {
+        ele.rownum = index + 1;
+      });
+      return obj;
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -710,18 +611,6 @@ export default {
         }
       }
     },
-    selectionDel() {
-      var totalList = [...this.abCartArr];
-      this.selectedItemKeys.forEach((item) => {
-        var result = totalList.filter((ele) => {
-          return ele.rownum != item.rownum;
-        });
-        totalList = result;
-      });
-      this.SET_ABCARTARR(totalList);
-      this.setRowNum();
-      this.dataGrid.clearSelection();
-    },
     onSelectionChanged(e) {
       const selectedRowsData = e.selectedRowsData;
       selectedRowsData.forEach((selectindex) => {
@@ -742,7 +631,6 @@ export default {
         selectindex.rownum = index;
       });
       this.selectedItemKeys = selectedRowsData;
-      //this.selectedItemKeys = e.selectedRowsData;
     },
     onToolbarPreparing(e) {
       let toolbarItems = e.toolbarOptions.items;
@@ -755,35 +643,28 @@ export default {
             icon: "add",
             hint: "행 추가",
             onClick: async () => {
-              this.lengthCheck = false;
-              var arrData = this.abCartArr;
-              var row = { ...this.rowData };
-              var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
-              var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
-              var index = this.dataGrid.getRowIndexByKey(rastkey);
-              row.rownum = this.rowData.rownum;
-              if (rastkey != -1) {
-                var checkValue = this.maxLengthCheck();
-                if (checkValue) {
+              const arrData = _.cloneDeep(this.abCartArr);
+              var checkIndex = arrData.length;
+              //최대 개수 확인
+              var lengthCheck = await this.maxLengthChecker({
+                arrLength: checkIndex,
+                maxLength: this.maxLength,
+              });
+              if (lengthCheck) {
+                var row = { ...this.rowData };
+                var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
+                var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
+                var index = this.dataGrid.getRowIndexByKey(rastkey);
+                row.rownum = checkIndex + 1;
+                if (rastkey != -1) {
                   arrData.splice(index + 1, 0, row);
-                  this.rowData.rownum = this.rowData.rownum + 1;
-                }
-              } else {
-                var checkValue = this.maxLengthCheck();
-                if (checkValue) {
+                } else {
                   arrData.splice(1, 0, row);
-                  this.rowData.rownum = this.rowData.rownum + 1;
                 }
-              }
-              await this.setRowNum();
-              if (this.lengthCheck) {
-                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                  duration: 10000,
-                  permanent: false,
-                });
-              } else {
-                //빈칸 추가 후 memo Cell 편집
+                await this.setRownum(arrData);
+                await this.SET_ABCARTARR(arrData);
                 await this.dataGrid.refresh();
+                // //빈칸 추가 후 memo Cell 편집
                 if (index != -1) {
                   this.dataGrid.editCell(rastkey, 3);
                 } else {
@@ -826,12 +707,6 @@ export default {
           break;
       }
     },
-    //시간 string > milliseconds
-    millisecondsFuc(duration) {
-      var itemTime = moment(duration, "HH:mm:ss.SS");
-      var defTime = moment("00:00:00.00", "HH:mm:ss.SS");
-      return moment.duration(itemTime.diff(defTime)).asMilliseconds();
-    },
     showGrpPlayerPopup(data) {
       this.grpParam = data;
       this.showGrpPlayer = true;
@@ -839,10 +714,23 @@ export default {
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
     },
+    // del 단축키
     onKeyDownDel(e) {
+      const arrData = _.cloneDeep(this.abCartArr);
       if (e.event.key == "Delete") {
-        this.selectionDel();
+        this.multSelected_del(arrData);
+        this.setRownum(arrData);
+        this.SET_ABCARTARR(arrData);
+        e.component.clearSelection();
       }
+    },
+    // del 버튼
+    onClickDel() {
+      const arrData = _.cloneDeep(this.abCartArr);
+      this.multSelected_del(arrData);
+      this.setRownum(arrData);
+      this.SET_ABCARTARR(arrData);
+      this.dataGrid.clearSelection();
     },
   },
 };
@@ -855,11 +743,7 @@ export default {
   overflow: auto;
 }
 .abchannel_view {
-  /* position: absolute; */
-  /* border: solid 0.5px #ddd; */
-  /* top: 10px; */
   padding: 10px;
-  /* margin-right: 10px; */
   border-radius: 2px;
   background-color: #2a4878;
 }

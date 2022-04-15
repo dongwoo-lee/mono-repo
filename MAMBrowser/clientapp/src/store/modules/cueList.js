@@ -1125,5 +1125,162 @@ export default {
                 });
             }
         },
+        maxLengthChecker({ }, payload) {
+            if (payload.arrLength >= payload.maxLength) {
+                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
+                    duration: 10000,
+                    permanent: false,
+                });
+                return false;
+            } else {
+                return true;
+            }
+        },
+        async setContents({ dispatch }, payload) {
+            var row;
+            var type = payload.type
+            var search_row = payload.search_row
+            var formRowData = payload.formRowData
+            var cartcode = payload.cartcode
+
+            var sortable_index = payload.index
+            var sortable_toIndex = payload.toIndex
+
+            switch (type) {
+                case "ab":
+                    switch (search_row.contentType) {
+                        case "P":
+                            row = { ...formRowData };
+                            row.memo = search_row.contents;
+                            return row;
+
+                        case "C":
+                            row = { ...search_row };
+                            row.transtype = "S";
+                            delete row.editTarget;
+                            delete row.contentType;
+                            return row;
+
+                        case "S":
+                            row = { ...formRowData };
+                            if (cartcode == "S01G01C014") {
+                                search_row = await axios
+                                    .post(`/api/SearchMenu/GetSongItem`, search_row)
+                                    .then((res) => {
+                                        return res.data;
+                                    });
+                            }
+                            if (cartcode == "S01G01C015") {
+                                search_row = await axios
+                                    .post(`/api/SearchMenu/GetEffectItem`, search_row)
+                                    .then((res) => {
+                                        return res.data;
+                                    });
+                            }
+                            row.filetoken = search_row.fileToken;
+                            row.filepath = search_row.filePath;
+                            if (!search_row.intDuration) {
+                                row.endposition = 0;
+                                row.duration = 0;
+                            } else {
+                                row.endposition = search_row.intDuration;
+                                row.duration = search_row.intDuration;
+                            }
+                            row.cartid = search_row.id;
+                            row.cartcode = cartcode;
+                            dispatch(`cartCodeFilter`, ({
+                                row: row,
+                                search_row: search_row,
+                            }));
+                            return row;
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                case "print":
+                    switch (search_row.contentType) {
+                        case "AB":
+                            row = { ...formRowData };
+                            if (search_row.subtitle == "") {
+                                //빈칸
+                                row.contents = search_row.memo;
+                            } else {
+                                //아이템
+                                row.contents = search_row.maintitle;
+                                row.usedtime = search_row.endposition - search_row.startposition;
+                            }
+                            return row;
+
+                        case "S":
+                            row = { ...formRowData };
+                            row.usedtime = search_row.intDuration;
+                            switch (cartcode) {
+                                case "S01G01C007":
+                                    row.contents = search_row.title;
+                                    break;
+                                case "S01G01C006":
+                                    row.contents = search_row.recName;
+                                    break;
+                                default:
+                                    row.contents = search_row.name;
+                                    break;
+                            }
+                            return row;
+                        default:
+                            break;
+                    }
+                    break;
+                case "c":
+                    switch (search_row.contentType) {
+                        case "AB":
+                            row = { ...search_row };
+                            row.rownum = sortable_toIndex + sortable_index;
+                            row.edittarget = true;
+                            return row;
+
+                        case "S":
+                            row = { ...formRowData };
+                            row.rownum = sortable_toIndex + sortable_index;
+                            if (cartcode == "S01G01C014") {
+                                search_row = await axios
+                                    .post(`/api/SearchMenu/GetSongItem`, search_row)
+                                    .then((res) => {
+                                        return res.data;
+                                    });
+                            }
+                            if (cartcode == "S01G01C015") {
+                                search_row = await axios
+                                    .post(`/api/SearchMenu/GetEffectItem`, search_row)
+                                    .then((res) => {
+                                        return res.data;
+                                    });
+                            }
+                            row.filetoken = search_row.fileToken;
+                            row.filepath = search_row.filePath;
+                            if (!search_row.intDuration) {
+                                row.endposition = 0;
+                                row.duration = 0;
+                            } else {
+                                row.endposition = search_row.intDuration;
+                                row.duration = search_row.intDuration;
+                            }
+                            row.cartid = search_row.id;
+                            row.cartcode = cartcode;
+                            dispatch(`cartCodeFilter`, ({
+                                row: row,
+                                search_row: search_row,
+                            }));
+                            return row;
+
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

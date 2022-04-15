@@ -190,7 +190,7 @@
           <div>
             <DxButton
               :height="34"
-              @click="selectionDel"
+              @click="onClickDel"
               :disabled="!selectedItemKeys.length"
               icon="trash"
               hint="선택 행 삭제"
@@ -276,6 +276,7 @@ export default {
     return {
       selectedItemKeys: [],
       lengthCheck: false,
+      maxLength: 100,
       fileHeader: "",
       rowData: {
         rownum: 1,
@@ -383,105 +384,68 @@ export default {
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapActions("cueList", ["setStartTime"]),
-    onAddPrint(e) {
-      this.lengthCheck = false;
-      var arrData = this.printArr;
-      var selectedRowsData = this.sortSelectedRowsData(e, "data");
-      if (selectedRowsData.length > 1) {
-        //mult
-        selectedRowsData.forEach((data, index) => {
-          var row = { ...this.rowData };
-          var search_row = data;
-          if (Object.keys(search_row).includes("subtitle")) {
-            //ab
-            if (search_row.subtitle == "") {
-              //빈칸
-              row.contents = search_row.memo;
+    ...mapActions("cueList", ["setContents"]),
+    ...mapActions("cueList", ["maxLengthChecker"]),
+    //드래그 추가 시
+    async onAddPrint(e) {
+      var rowArray = [];
+      const arrData = _.cloneDeep(this.printArr);
+      var checkIndex = arrData.length;
+      //최대 개수 확인
+      var lengthCheck = await this.maxLengthChecker({
+        arrLength: checkIndex,
+        maxLength: this.maxLength,
+      });
+      if (lengthCheck) {
+        var selectedRowsData = this.sortSelectedRowsData(e, "data");
+        // 단일 선택
+        if (e.itemElement.ariaSelected == "false") {
+          selectedRowsData = [e.itemData];
+        }
+        for (const data of selectedRowsData) {
+          lengthCheck = await this.maxLengthChecker({
+            arrLength: checkIndex,
+            maxLength: this.maxLength,
+          });
+          if (!lengthCheck) {
+            break;
+          } else {
+            if (Object.keys(e.itemData).includes("subtitle")) {
+              //print
+              data.contentType = "AB";
+              rowArray.push(data);
             } else {
-              //아이템
-              row.contents = search_row.maintitle;
-              row.usedtime = search_row.endposition - search_row.startposition;
+              //소재검색
+              data.contentType = "S";
+              rowArray.push(data);
             }
-          } else {
-            //소재검색
-            row.usedtime = search_row.intDuration;
-            switch (this.searchListData.cartcode) {
-              case "S01G01C007":
-                row.contents = search_row.title;
-                break;
-              case "S01G01C006":
-                row.contents = search_row.recName;
-                break;
-              default:
-                row.contents = search_row.name;
-                break;
-            }
-          }
-          //최대 개수 체크
-          var checkValue = this.maxLengthCheck();
-          if (checkValue) {
-            arrData.splice(e.toIndex + index, 0, row);
-            this.rowData.rownum = this.rowData.rownum + 1;
-          }
-        });
-      } else {
-        //단일
-        var row = { ...this.rowData };
-        var search_row = e.itemData;
-        if (e.fromData !== undefined) {
-          // 언제쓰이는지 모르겠음
-          search_row = e.fromData;
-        }
-        if (Object.keys(search_row).includes("subtitle")) {
-          //ab
-          if (search_row.subtitle == "") {
-            //빈칸
-            row.contents = search_row.memo;
-          } else {
-            //아이템
-            row.contents = search_row.maintitle;
-            row.usedtime = search_row.endposition - search_row.startposition;
-          }
-        } else {
-          //소재검색
-          row.usedtime = search_row.intDuration;
-          switch (this.searchListData.cartcode) {
-            case "S01G01C007":
-              row.contents = search_row.title;
-              break;
-            case "S01G01C006":
-              row.contents = search_row.recName;
-              break;
-            default:
-              row.contents = search_row.name;
-              break;
+            checkIndex++;
           }
         }
+        //선택한 row 하나의 배열로 합치기 (end)
 
-        var checkValue = this.maxLengthCheck();
-        if (checkValue) {
-          arrData.splice(e.toIndex, 0, row);
-          this.rowData.rownum = this.rowData.rownum + 1;
+        //합친 배열 store에 추가
+        var index = 0;
+        for await (const ele of rowArray) {
+          var rowData = await this.setContents({
+            type: "print",
+            search_row: ele,
+            formRowData: this.rowData,
+            cartcode: this.searchListData.cartcode,
+          });
+          arrData.splice(e.toIndex + index, 0, rowData);
+          index++;
         }
-      }
-      this.setStartTime();
-      if (this.lengthCheck) {
-        window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-          duration: 10000,
-          permanent: false,
+        arrData.forEach((row, index) => {
+          row.rownum = index + 1;
         });
+        this.SET_PRINTARR(arrData);
+        this.setStartTime();
       }
     },
-    maxLengthCheck() {
-      var result = true;
-      if (this.printArr.length > 99) {
-        result = false;
-        this.lengthCheck = true;
-      }
-      return result;
-    },
+    //드래그 내부 이동 시
     onReorderPrint(e) {
-      var arrData = this.printArr;
+      const arrData = _.cloneDeep(this.printArr);
       var selectedRowsData = this.sortSelectedRowsData(e, "data");
       var selectedRowsKey = this.sortSelectedRowsData(e, "key");
       var testIndex = [];
@@ -495,53 +459,47 @@ export default {
       if (selectedRowsData.length > 1) {
         var startindex = e.fromIndex;
         var newindex = e.toIndex;
-        this.selectionDel();
-
-        if (startindex > e.toIndex) {
-          selectedRowsKey.forEach((selectindex) => {
-            var index = e.component.getRowIndexByKey(selectindex);
-            if (index < e.toIndex) {
-              newindex = newindex - 1;
-            }
-          });
-          selectedRowsData.forEach((obj, index) => {
-            arrData.splice(newindex + index, 0, obj);
-          });
-        } else {
-          selectedRowsKey.forEach((selectindex) => {
-            var index = e.component.getRowIndexByKey(selectindex);
-            if (index < e.toIndex) {
-              newindex = newindex - 1;
-            }
-          });
-          newindex = newindex + 1;
-          selectedRowsData.forEach((obj, index) => {
-            arrData.splice(newindex + index, 0, obj);
-          });
-        }
+        selectedRowsData.forEach((ele, index) => {
+          var row = { ...ele };
+          row.rownum = arrData.length + index + 1;
+          if (startindex > e.toIndex) {
+            arrData.splice(newindex + index, 0, row);
+          } else {
+            arrData.splice(newindex + index + 1, 0, row);
+          }
+        });
+        this.multSelected_del(arrData, selectedRowsData);
       } else {
         arrData.splice(e.fromIndex, 1);
         arrData.splice(e.toIndex, 0, e.itemData);
       }
+      this.setRownum(arrData);
+      this.SET_PRINTARR(arrData);
+      e.component.clearSelection();
       this.setStartTime();
     },
-    selectionDel() {
-      var arrData = this.printArr;
-      let a = arrData;
-      let b = this.selectedItemKeys;
-      for (let i = 0; i < b.length; i++) {
-        for (let j = 0; j < a.length; j++) {
-          if (b[i].rownum == a[j].rownum) {
-            a.splice(j, 1);
-            break;
-          }
-        }
-        arrData = a;
-      }
-      this.SET_PRINTARR(arrData);
-      if (this.printArr.length > 0) {
-        this.setStartTime();
-      }
+    //드래그 시작 시
+    onDragStart() {
+      document.getElementById("app-container").classList.add("drag_");
+    },
+    //드래그 종료 시
+    onDragEnd() {
+      document.getElementById("app-container").classList.remove("drag_");
+    },
+    //선택된 row 삭제
+    multSelected_del(obj) {
+      this.selectedItemKeys.forEach((item) => {
+        var index = obj.findIndex((ele) => ele.rownum == item.rownum);
+        obj.splice(index, 1);
+      });
+      return obj;
+    },
+    //rownum 순서 정리
+    setRownum(obj) {
+      obj.forEach((ele, index) => {
+        ele.rownum = index + 1;
+      });
+      return obj;
     },
     sortSelectedRowsData(e, dataType) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -633,9 +591,6 @@ export default {
     onValueChanged_etcText(value, cellInfo) {
       cellInfo.data.etc = value.value;
     },
-    onDragStart() {
-      document.getElementById("app-container").classList.add("drag_");
-    },
     viewtableOnToolbarPreparing(e) {
       let toolbarItems = e.toolbarOptions.items;
       toolbarItems.forEach((item) => {
@@ -647,35 +602,28 @@ export default {
             icon: "add",
             hint: "행 추가",
             onClick: async () => {
-              this.lengthCheck = false;
-              var arrData = this.printArr;
-              var row = { ...this.rowData };
-              var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
-              var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
-              var index = this.dataGrid.getRowIndexByKey(rastkey);
-              row.rownum = this.rowData.rownum;
-              if (rastkey != -1) {
-                var checkValue = this.maxLengthCheck();
-                if (checkValue) {
+              const arrData = _.cloneDeep(this.printArr);
+              var checkIndex = arrData.length;
+              //최대 개수 확인
+              var lengthCheck = await this.maxLengthChecker({
+                arrLength: checkIndex,
+                maxLength: this.maxLength,
+              });
+              if (lengthCheck) {
+                var row = { ...this.rowData };
+                var SelectedRowKeys = this.dataGrid.getSelectedRowKeys();
+                var rastkey = SelectedRowKeys[SelectedRowKeys.length - 1];
+                var index = this.dataGrid.getRowIndexByKey(rastkey);
+                row.rownum = checkIndex + 1;
+                if (rastkey != -1) {
                   arrData.splice(index + 1, 0, row);
-                  this.rowData.rownum = this.rowData.rownum + 1;
-                }
-              } else {
-                var checkValue = this.maxLengthCheck();
-                if (checkValue) {
+                } else {
                   arrData.splice(1, 0, row);
-                  this.rowData.rownum = this.rowData.rownum + 1;
                 }
-              }
-              await this.setStartTime();
-              if (this.lengthCheck) {
-                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                  duration: 10000,
-                  permanent: false,
-                });
-              } else {
-                //빈칸 추가 후 memo Cell 편집
+                await this.setRownum(arrData);
+                await this.SET_PRINTARR(arrData);
                 await this.dataGrid.refresh();
+                // //빈칸 추가 후 memo Cell 편집
                 if (index != -1) {
                   this.dataGrid.editCell(index + 1, 1);
                 } else {
@@ -1257,13 +1205,23 @@ export default {
       }
       return codeText;
     },
+    // del 단축키
     onKeyDownDel(e) {
+      const arrData = _.cloneDeep(this.printArr);
       if (e.event.key == "Delete") {
-        this.selectionDel();
+        this.multSelected_del(arrData);
+        this.setRownum(arrData);
+        this.SET_PRINTARR(arrData);
+        e.component.clearSelection();
       }
     },
-    onDragEnd() {
-      document.getElementById("app-container").classList.remove("drag_");
+    // del 버튼
+    onClickDel() {
+      const arrData = _.cloneDeep(this.printArr);
+      this.multSelected_del(arrData);
+      this.setRownum(arrData);
+      this.SET_PRINTARR(arrData);
+      this.dataGrid.clearSelection();
     },
   },
 };
