@@ -364,7 +364,6 @@ export default {
         }
       }
       //즐겨찾기
-      //await this.getCueDayFav(params);
       this.fileData = this.cueFavorites;
     } else {
       // 일반 C카트
@@ -409,7 +408,6 @@ export default {
         }
       });
       this.SET_CCHANNELDATA(resultData);
-      //eventBus.$off("clearCData");
     });
 
     eventBus.$on("updateCData", (val) => {
@@ -481,11 +479,11 @@ export default {
   methods: {
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
-    //...mapActions("cueList", ["getCueDayFav"]),
     ...mapActions("cueList", ["cartCodeFilter"]),
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setContents"]),
+    // 드래그 추가 시
     async onAdd(e, totalIndex) {
       this.loadingVisible = true;
       var rowArray = [];
@@ -549,7 +547,25 @@ export default {
       }
       this.loadingVisible = false;
     },
-    //즐겨찾기 광고 그룹 필터
+    // 드래그 시작 시
+    onDragStart(e) {
+      document.getElementById("app-container").classList.add("drag_");
+      if (
+        this.cueInfo.cuetype == "A" ||
+        !Object.keys(e.fromData).includes("cartcode")
+      ) {
+        e.cancel = true;
+      } else {
+        if (e.fromData.cartcode == null) {
+          e.cancel = true;
+        }
+      }
+    },
+    // 드래그 종료 시
+    onDragEnd() {
+      document.getElementById("app-container").classList.remove("drag_");
+    },
+    // 즐겨찾기 광고 그룹 필터
     sponsorFilter_Fav(obj) {
       var groupBool = false;
       //광고 그룹 제외
@@ -574,7 +590,7 @@ export default {
       }
       return obj;
     },
-    //빈칸제거
+    // 빈칸제거
     blankFilter(obj) {
       var result = [];
       result = obj.filter((ele) => {
@@ -586,23 +602,12 @@ export default {
       });
       return result;
     },
+    // 배열 초과 객체 제거
     checkMaxWidgetIndex(obj) {
       if (obj.length > this.widgetIndex) {
-        obj.slice(0, 16);
+        obj = obj.slice(0, this.widgetIndex);
       }
       return obj;
-    },
-    groupFilter(row) {
-      var result = true;
-      if (
-        this.channelKey == "channel_my" &&
-        row.onairdate != "" &&
-        row.cartcode != null
-      ) {
-        result = false;
-        this.groupFilterVal = true;
-      }
-      return result;
     },
     sortSelectedRowsData(e) {
       var selectedRowsData = e.fromComponent.getSelectedRowsData();
@@ -640,27 +645,20 @@ export default {
         return selectedRowsData;
       }
     },
+    // 드래그 관련 객체 삭제
     onRemove($event, index) {
+      const arrData = this.fileData;
       if (this.cueInfo.cuetype == "A") {
         return;
       }
       if ($event.toData) {
         if (!$event.toData.cartcode) {
-          this.fileData.splice(index - 1, 1, { rownum: index });
+          arrData.splice(index - 1, 1, { rownum: index });
         } else {
           var data = $event.toData;
           data.rownum = index;
-          this.fileData.splice(index - 1, 1, data);
+          arrData.splice(index - 1, 1, data);
         }
-      }
-    },
-    onDragStart(e) {
-      document.getElementById("app-container").classList.add("drag_");
-      if (
-        this.cueInfo.cuetype == "A" ||
-        !Object.keys(e.fromData).includes("cartcode")
-      ) {
-        e.cancel = true;
       }
     },
     onTextEdit(index) {
@@ -691,9 +689,6 @@ export default {
     },
     closeGrpPlayerPopup() {
       this.showGrpPlayer = false;
-    },
-    onDragEnd() {
-      document.getElementById("app-container").classList.remove("drag_");
     },
   },
 };

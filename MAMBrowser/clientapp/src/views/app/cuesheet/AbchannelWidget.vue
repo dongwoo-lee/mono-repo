@@ -643,7 +643,6 @@ export default {
             icon: "add",
             hint: "행 추가",
             onClick: async () => {
-              //수정 중
               const arrData = _.cloneDeep(this.abCartArr);
               var checkIndex = arrData.length;
               //최대 개수 확인
