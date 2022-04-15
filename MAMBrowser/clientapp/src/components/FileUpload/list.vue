@@ -169,8 +169,7 @@
           </td>
         </tr>
       </template>
-      <DxPager :visible="false" />
-      <DxScrolling mode="standard" />
+      <DxScrolling mode="virtual" />
     </DxDataGrid>
     <div
       v-show="this.role != 'ADMIN'"
@@ -330,8 +329,7 @@
           </td>
         </tr>
       </template>
-      <DxPager :visible="false" />
-      <DxScrolling mode="standard" />
+      <DxScrolling mode="virtual" />
     </DxDataGrid>
   </div>
 </template>

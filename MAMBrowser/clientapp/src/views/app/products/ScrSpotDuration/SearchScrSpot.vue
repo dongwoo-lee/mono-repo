@@ -145,8 +145,7 @@
         no-data-text="No Data"
         @row-click="spotSelect"
       >
-        <DxPager :visible="false" />
-        <DxScrolling mode="infinite" />
+        <DxScrolling mode="virtual" />
         <DxSelection mode="single" />
         <DxColumn data-field="spotID" caption="spotID" />
         <DxColumn data-field="spotName" caption="spotName" />
@@ -183,7 +182,6 @@ import {
   DxScrolling,
   DxLoadPanel,
   DxColumn,
-  DxPager,
   DxSelection,
 } from "devextreme-vue/data-grid";
 import axios from "axios";
@@ -192,7 +190,6 @@ export default {
   components: {
     DxScrolling,
     DxLoadPanel,
-    DxPager,
     DxDataGrid,
     DxColumn,
     DxSelection,

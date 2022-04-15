@@ -181,7 +181,6 @@ export default {
           `/api/categories/pgm-sch?media=${this.reportUpdateMediaSelected}&date=${date}`
         )
         .then((res) => {
-          console.log(res);
           this.pgmData = res.data.resultObject.data;
         });
     },

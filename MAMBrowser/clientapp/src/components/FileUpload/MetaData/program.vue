@@ -178,8 +178,7 @@
         <DxColumn data-field="onairTime" caption="방송 시간" />
         <DxColumn :width="80" data-field="durationSec" caption="편성 분량" />
         <DxSelection mode="single" />
-        <DxPager :visible="false" />
-        <DxScrolling mode="standard" />
+        <DxScrolling mode="virtual" />
       </DxDataGrid>
     </div>
     <!-- 프로그램 -->

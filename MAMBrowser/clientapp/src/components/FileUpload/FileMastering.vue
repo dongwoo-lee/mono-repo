@@ -260,8 +260,7 @@
                       :column-auto-width="true"
                       no-data-text="No Data"
                     >
-                      <DxPager :visible="false" />
-                      <DxScrolling mode="standard" />
+                      <DxScrolling mode="virtual" />
                       <DxColumn
                         :width="500"
                         data-field="title"
@@ -312,8 +311,7 @@
                       :column-auto-width="true"
                       no-data-text="No Data"
                     >
-                      <DxPager :visible="false" />
-                      <DxScrolling mode="standard" />
+                      <DxScrolling mode="virtual" />
                       <DxColumn
                         :width="530"
                         data-field="title"
@@ -376,7 +374,7 @@ import MetaModalUX from "./MetaModalUX";
 import list from "./list.vue";
 import axios from "axios";
 const dxfu = "my-fileupload";
-import { DxScrolling, DxLoadPanel, DxPager } from "devextreme-vue/data-grid";
+import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
 var DB;
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
@@ -390,7 +388,6 @@ export default {
   components: {
     DxScrolling,
     DxLoadPanel,
-    DxPager,
     CommonFileModal,
     CommonVueSelect,
     MetaModal,

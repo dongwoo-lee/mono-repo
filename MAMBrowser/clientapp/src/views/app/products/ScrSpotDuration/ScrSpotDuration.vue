@@ -26,8 +26,7 @@
           @row-click="requestSelect"
         >
           <DxSelection mode="single" />
-          <DxPager :visible="false" />
-          <DxScrolling mode="infinite" />
+          <DxScrolling mode="virtual" />
           <DxColumn data-field="spotName" caption="SPOT명" />
           <DxColumn data-field="ProductID" caption="사용처" />
           <DxColumn data-field="StartDate" caption="시작일" />
@@ -81,7 +80,6 @@ import {
   DxScrolling,
   DxLoadPanel,
   DxColumn,
-  DxPager,
   DxSelection,
 } from "devextreme-vue/data-grid";
 import axios from "axios";
@@ -91,7 +89,6 @@ export default {
     DxScrolling,
     DxLoadPanel,
     DxColumn,
-    DxPager,
     DxSelection,
   },
   computed: {
