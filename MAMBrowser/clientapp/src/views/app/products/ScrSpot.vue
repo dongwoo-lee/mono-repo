@@ -354,8 +354,6 @@ export default {
           params: this.searchItems,
         })
         .then((res) => {
-          console.log("res");
-          console.log(res);
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;

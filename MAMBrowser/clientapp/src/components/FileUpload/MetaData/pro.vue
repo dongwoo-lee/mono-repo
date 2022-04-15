@@ -1,13 +1,9 @@
 <template>
-  <div style="margin-top: 20px">
-    <b-form-group
-      label="분류"
-      class="has-float-label"
-      style="margin-right: 20px; font-size: 16px"
-    >
+  <div style="margin-top: 40px">
+    <b-form-group label="분류" class="has-float-label" style="font-size: 16px">
       <common-vue-select
-        class="h120"
-        style="width: 350px; font-size: 14px"
+        class="h270"
+        style="width: 425px; height: 36px; font-size: 14px"
         :value="proMedia"
         :suggestions="fileMediaOptions"
         @inputEvent="mediaChange"
@@ -17,12 +13,12 @@
     <b-form-group
       label="타입"
       class="has-float-label"
-      style="font-size: 16px; margin-top: 20px"
+      style="font-size: 16px; margin-top: 27px"
     >
       <b-form-select
         id="program-media"
         class="media-select"
-        style="width: 350px"
+        style="width: 425px"
         :value="proType"
         :options="proTypeOptions"
         @input="proTypeChange"
@@ -32,7 +28,7 @@
       <b-form-group
         label="소재"
         class="has-float-label"
-        style="font-size: 16px; margin-top: 20px"
+        style="font-size: 16px; margin-top: 27px"
       >
         <b-form-input
           class="editTask"
@@ -48,9 +44,8 @@
         v-show="titleState"
         style="
           position: relative;
-          left: 310px;
+          left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -79,9 +74,8 @@
         v-show="memoState"
         style="
           position: relative;
-          left: 310px;
+          left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -89,31 +83,13 @@
         {{ MetaData.memo.length }}/30
       </p>
     </div>
-    <div style="height: 50px">
-      <b-form-group
-        label="제작자"
-        class="has-float-label"
-        style="font-size: 16px; margin-top: 20px"
-      >
-        <b-form-input
-          title="제작자"
-          style="width: 350px; font-size: 14px"
-          class="editTask"
-          :value="userID"
-          disabled
-          aria-describedby="input-live-help input-live-feedback"
-          placeholder="제작자"
-          trim
-        />
-      </b-form-group>
-    </div>
   </div>
 </template>
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
 export default {
@@ -144,6 +120,7 @@ export default {
   },
   created() {
     this.reset();
+    this.setTitle(this.sliceExt(30));
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/pro").then((res) => {

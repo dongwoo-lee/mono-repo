@@ -1,278 +1,270 @@
 <template>
   <div>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 350px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="메모" class="has-float-label">
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.memo"
-            :state="memoState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="메모"
-            trim
-        /></b-form-group>
-        <p
-          v-show="memoState"
-          style="
-            position: relative;
-            left: 315px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.memo.length }}/30
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 415px;
-          left: -400px;
-          font-size: 16px;
-          z-index: 9999;
-        "
-      >
-        <b-form-group label="광고주" class="has-float-label">
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.advertiser"
-            :state="advertiserState"
-            :maxLength="15"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="광고주"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="advertiserState"
-          style="
-            position: relative;
-            left: 315px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.advertiser.length }}/15
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div>
-        <b-form-group
-          label="제작자"
-          class="has-float-label"
-          style="
-            position: absolute;
-            top: 485px;
-            left: -400px;
-            z-index: 9999;
-            font-size: 16px;
-          "
-        >
-          <b-form-input
-            title="제작자"
-            style="width: 350px; font-size: 14px"
-            class="editTask"
-            :value="userID"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="제작자"
-            trim
-          />
-        </b-form-group>
-      </div>
-    </transition>
-    <!-- 시작/종료일 -->
-    <div style="position: absolute; top: 40px; width: 550px">
-      <div>
-        <b-form-group
-          label="시작일"
-          class="has-float-label"
-          style="width: 180px; float: left; margin-right: 10px"
-        >
-          <b-input-group class="mb-3" style="width: 180px; float: left">
-            <input
-              style="height: 33px; font-size: 13px"
-              id="sdateinput"
-              type="text"
-              class="form-control input-picker"
-              :value="fileSDate"
-              @input="onsInput"
-            />
-            <b-input-group-append>
-              <b-form-datepicker
-                style="height: 33px"
-                :value="fileSDate"
-                @input="eventSInput"
-                button-only
-                button-variant="outline-dark"
-                left
-                aria-controls="example-input"
-                @context="onContext"
-              ></b-form-datepicker>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-        <b-form-group
-          label="종료일"
-          class="has-float-label"
-          style="width: 180px; float: left; margin-right: 10px"
-        >
-          <b-input-group class="mb-3" style="width: 180px; float: left">
-            <input
-              style="height: 33px; font-size: 13px"
-              id="edateinput"
-              type="text"
-              class="form-control input-picker"
-              :value="fileEDate"
-              @input="oneInput"
-            />
-            <b-input-group-append>
-              <b-form-datepicker
-                style="height: 33px"
-                :value="fileEDate"
-                @input="eventEInput"
-                button-only
-                button-variant="outline-dark"
-                right
-                aria-controls="example-input"
-                @context="onContext"
-              ></b-form-datepicker>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </div>
-      <div>
-        <b-form-group
-          label="매체"
-          class="has-float-label"
-          style="float: left; margin-right: 10px"
-        >
-          <b-form-select
-            id="program-media"
-            class="media-select"
-            style="width: 80px; height: 33px"
-            :value="staticMedia"
-            :options="fileMediaOptions"
-            @input="mediaChange"
-          />
-        </b-form-group>
-      </div>
+    <div style="font-size: 16px">
       <b-button
-        :disabled="isActive"
-        :variant="getVariant"
-        @click="getPro"
-        style="height: 33px"
-        >검색</b-button
+        style="position: absolute; top: 117px; left: 875px"
+        class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+        @click="modalOn"
+        >방송의뢰</b-button
       >
+
+      <div v-show="!isActive" style="font-family: 'MBC 새로움 M'">
+        <div style="width: 425px; float: left">
+          <b-form-group
+            label="이벤트 명"
+            class="has-float-label"
+            style="margin-top: 20px"
+          >
+            <b-form-input
+              style="width: 425px"
+              class="editTask"
+              v-model="EventSelected.name"
+              disabled
+              aria-describedby="input-live-help input-live-feedback"
+              trim
+            />
+          </b-form-group>
+        </div>
+        <div style="width: 425px; float: left">
+          <b-form-group
+            label="방송 시작일"
+            class="has-float-label"
+            style="margin-top: 5px"
+          >
+            <b-form-input
+              style="width: 425px"
+              class="editTask"
+              v-model="eventDate"
+              disabled
+              aria-describedby="input-live-help input-live-feedback"
+              trim
+            />
+          </b-form-group>
+        </div>
+        <div style="width: 425px; float: left">
+          <b-form-group
+            label="편성 분량"
+            class="has-float-label"
+            style="margin-top: 5px"
+          >
+            <b-form-input
+              style="width: 425px"
+              class="editTask"
+              v-model="EventSelected.duration"
+              disabled
+              aria-describedby="input-live-help input-live-feedback"
+              trim
+            />
+          </b-form-group>
+        </div>
+      </div>
     </div>
-    <div style="position: absolute; top: 100px">
-      <DxDataGrid
-        name="mcrDxDataGrid"
-        v-show="this.EventData.id != ''"
+    <div style="height: 50px">
+      <b-form-group
+        label="메모"
+        class="has-float-label"
+        style="float: left; margin-top: 10px; font-size: 15px"
+      >
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+      /></b-form-group>
+      <p
+        v-show="memoState"
         style="
-          height: 295px;
-          border: 1px solid silver;
-          font-family: 'MBC 새로움 M';
+          position: relative;
+          left: 390px;
+          top: -15px;
+          width: 30px;
+          margin-right: 0px;
         "
-        :data-source="EventData"
-        :selection="{ mode: 'single' }"
-        :show-borders="true"
-        :hover-state-enabled="true"
-        key-expr="id"
-        :allow-column-resizing="true"
-        :column-auto-width="true"
-        no-data-text="No Data"
-        @row-click="onRowClick"
       >
-        <DxLoadPanel :enabled="true" />
-        <DxScrolling mode="virtual" />
-        <DxColumn data-field="name" caption="이벤트 명" />
-        <DxColumn data-field="id" caption="이벤트 ID" />
-        <DxColumn data-field="duration" caption="편성분량" />
-      </DxDataGrid>
+        {{ MetaData.memo.length }}/30
+      </p>
     </div>
-    <!-- 프로그램 -->
-    <div
-      v-show="!isActive && EventSelected.id != ''"
-      style="
-        position: absolute;
-        top: 420px;
-        width: 550px;
-        height: 110px;
-        padding-top: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
-        float: left;
-        border: 1px solid silver;
-        font-family: 'MBC 새로움 M';
-      "
+    <div style="height: 50px">
+      <b-form-group
+        label="광고주"
+        class="has-float-label"
+        style="float: left; margin-top: 5px; font-size: 15px"
+      >
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.advertiser"
+          :state="advertiserState"
+          :maxLength="15"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="광고주"
+          trim
+        />
+      </b-form-group>
+      <p
+        v-show="advertiserState"
+        style="
+          position: relative;
+          left: 390px;
+          top: -15px;
+          width: 30px;
+          margin-right: 0px;
+        "
+      >
+        {{ MetaData.advertiser.length }}/15
+      </p>
+    </div>
+    <b-modal
+      size="lg"
+      v-model="modal"
+      centered
+      hide-header-close
+      no-close-on-esc
+      no-close-on-backdrop
+      footer-class="scr-modal-footer"
     >
-      <div style="width: 180px; float: left">
-        <b-form-group
-          label="이벤트 명"
-          class="has-float-label"
-          style="margin-top: 20px"
+      <template slot="modal-title">
+        <h5>프로그램 선택</h5>
+      </template>
+      <template slot="default">
+        <div>
+          <b-form-group
+            label="시작일"
+            class="has-float-label"
+            style="width: 250px; float: left; margin-right: 20px"
+          >
+            <b-input-group class="mb-3" style="width: 250px; float: left">
+              <input
+                style="height: 33px; font-size: 13px"
+                id="sdateinput"
+                type="text"
+                class="form-control input-picker"
+                :value="fileSDate"
+                @input="onsInput"
+              />
+              <b-input-group-append>
+                <b-form-datepicker
+                  style="height: 33px"
+                  :value="fileSDate"
+                  @input="eventSInput"
+                  button-only
+                  button-variant="outline-dark"
+                  left
+                  aria-controls="example-input"
+                  @context="onContext"
+                ></b-form-datepicker>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group
+            label="종료일"
+            class="has-float-label"
+            style="width: 250px; float: left; margin-right: 20px"
+          >
+            <b-input-group class="mb-3" style="width: 250px; float: left">
+              <input
+                style="height: 33px; font-size: 13px"
+                id="edateinput"
+                type="text"
+                class="form-control input-picker"
+                :value="fileEDate"
+                @input="oneInput"
+              />
+              <b-input-group-append>
+                <b-form-datepicker
+                  style="height: 33px"
+                  :value="fileEDate"
+                  @input="eventEInput"
+                  button-only
+                  button-variant="outline-dark"
+                  right
+                  aria-controls="example-input"
+                  @context="onContext"
+                ></b-form-datepicker>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </div>
+        <div>
+          <b-form-group
+            label="매체"
+            class="has-float-label"
+            style="float: left; margin-right: 20px"
+          >
+            <b-form-select
+              id="program-media"
+              class="media-select"
+              style="width: 115px; height: 33px"
+              :value="staticMedia"
+              :options="fileMediaOptions"
+              @input="mediaChange"
+            />
+          </b-form-group>
+        </div>
+        <b-button
+          :disabled="isActive"
+          :variant="getVariant"
+          @click="getPro"
+          style="height: 33px"
+          >검색</b-button
         >
-          <b-form-input
-            style="width: 180px"
-            class="editTask"
-            v-model="EventSelected.name"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-      <div style="width: 180px; margin-left: 20px; float: left">
-        <b-form-group
-          label="방송 시작일"
-          class="has-float-label"
-          style="margin-top: 20px"
+
+        <DxDataGrid
+          name="mcrDxDataGrid"
+          v-show="this.EventData.id != ''"
+          style="
+            margin-top: 40px;
+            height: 295px;
+            border: 1px solid silver;
+            font-family: 'MBC 새로움 M';
+          "
+          :data-source="EventData"
+          :selection="{ mode: 'single' }"
+          :show-borders="true"
+          :hover-state-enabled="true"
+          key-expr="id"
+          :allow-column-resizing="true"
+          :column-auto-width="true"
+          no-data-text="No Data"
+          @row-click="onRowClick"
         >
-          <b-form-input
-            style="width: 180px"
-            class="editTask"
-            v-model="fileSDate"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-      <div style="width: 120px; margin-left: 20px; float: left">
-        <b-form-group
-          label="편성 분량"
-          class="has-float-label"
-          style="margin-top: 20px"
+          <DxLoadPanel :enabled="true" />
+          <DxScrolling mode="virtual" />
+          <DxColumn data-field="name" caption="이벤트 명" />
+          <DxColumn data-field="id" caption="이벤트 ID" />
+          <DxColumn data-field="duration" caption="편성분량" />
+        </DxDataGrid>
+      </template>
+      <template v-slot:modal-footer>
+        <b-button
+          style="margin-left: 20px; height: 34px"
+          variant="outline-primary"
+          @click="modalOff"
         >
-          <b-form-input
-            style="width: 120px"
-            class="editTask"
-            v-model="EventSelected.duration"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            trim
-          />
-        </b-form-group>
-      </div>
-    </div>
+          확인
+        </b-button>
+        <b-button
+          variant="outline-danger default cutom-label-cancel"
+          size="sm"
+          class="float-right"
+          @click="modalReset"
+        >
+          닫기</b-button
+        >
+      </template>
+    </b-modal>
   </div>
+
+  <!-- <div>
+   
+   
+   
+    
+    프로그램
+    
+  </div> -->
 </template>
 
 <script>
@@ -292,18 +284,24 @@ export default {
   mixins: [CommonFileFunction, MixinBasicPage, mixinFillerPage],
   data() {
     return {
+      modal: false,
       mediaName: "AM",
       staticMedia: "A",
       sdate: "",
       edate: "",
+      eventDate: "",
     };
   },
   created() {
     this.reset();
-    this.getEditorForMd(); //제작자
     this.resetFileMediaOptions(); //매체 초기화
+
     //매체 생성
     axios.get("/api/categories/media").then((res) => {
+      this.resetMediaSelected();
+      this.staticMedia = res.data.resultObject.data[0].id;
+      this.setMediaSelected(this.staticMedia);
+
       res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
@@ -311,8 +309,6 @@ export default {
         });
       });
     });
-    this.staticMedia = "A"; //매체 초기 값 설정
-    this.setMediaSelected(this.staticMedia); //매체 초기값 store 설정
 
     //분류
     this.getTimetoneOptions();
@@ -337,6 +333,25 @@ export default {
     this.getPro();
   },
   methods: {
+    modalOn() {
+      setTimeout(() => {
+        this.eventDate = this.fileSDate;
+      }, 500);
+      this.modal = true;
+      this.setMediaSelected(this.staticMedia);
+      this.getPro();
+    },
+    modalOff() {
+      if (this.EventSelected.name == "") {
+        this.eventDate = "";
+      }
+      this.modal = false;
+    },
+    modalReset() {
+      this.eventDate = "";
+      this.resetEventSelected();
+      this.modal = false;
+    },
     mediaChange(v) {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
@@ -345,6 +360,7 @@ export default {
     },
     eventSInput(value) {
       this.sdate = value;
+      this.eventDate = value;
       this.setFileSDate(value);
       this.setTempFileSDate(value);
 
@@ -408,6 +424,7 @@ export default {
             convertDate == "undefined"
           ) {
             this.sdate = this.get7daysago();
+            this.eventDate = this.get7daysago();
             this.setFileSDate(this.get7daysago());
             this.setTempFileSDate(this.get7daysago());
 
@@ -427,6 +444,7 @@ export default {
             return;
           }
           this.sdate = convertDate;
+          this.eventDate = convertDate;
           this.setFileSDate(convertDate);
           this.setTempFileSDate(convertDate);
 

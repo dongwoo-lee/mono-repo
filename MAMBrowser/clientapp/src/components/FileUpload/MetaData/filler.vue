@@ -1,111 +1,8 @@
 <template>
   <div>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 350px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="소재명" class="has-float-label">
-          <b-form-input
-            class="editTask"
-            v-model="MetaData.title"
-            :state="titleState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="소재명"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="titleState"
-          style="
-            position: relative;
-            left: 310px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.title.length }}/30
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div
-        style="
-          position: absolute;
-          top: 415px;
-          left: -400px;
-          z-index: 9999;
-          font-size: 16px;
-        "
-      >
-        <b-form-group label="메모" class="has-float-label">
-          <b-form-input
-            style="width: 350px"
-            class="editTask"
-            v-model="MetaData.memo"
-            :state="memoState"
-            :maxLength="30"
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="메모"
-            trim
-          />
-        </b-form-group>
-        <p
-          v-show="memoState"
-          style="
-            position: relative;
-            left: 310px;
-            top: -15px;
-            z-index: 9999;
-            width: 30px;
-            margin-right: 0px;
-          "
-        >
-          {{ MetaData.memo.length }}/30
-        </p>
-      </div>
-    </transition>
-    <transition name="fade">
-      <div>
-        <b-form-group
-          label="제작자"
-          class="has-float-label"
-          style="
-            position: absolute;
-            top: 485px;
-            left: -400px;
-            z-index: 9999;
-            font-size: 16px;
-          "
-        >
-          <b-form-input
-            title="제작자"
-            style="width: 350px; font-size: 14px"
-            class="editTask"
-            :value="userID"
-            disabled
-            aria-describedby="input-live-help input-live-feedback"
-            placeholder="제작자"
-            trim
-          />
-        </b-form-group>
-      </div>
-    </transition>
-    <div style="position: absolute; top: 40px">
-      <b-form-group
-        label="방송일"
-        class="has-float-label"
-        style="position: absolute; z-index: 9989; font-color: black"
-      >
-        <b-input-group class="mb-3" style="width: 300px; float: left">
+    <div style="margin-top: 37px; font-size: 15px">
+      <b-form-group label="방송일" class="has-float-label">
+        <b-input-group class="mb-3" style="width: 425px; float: left">
           <input
             :disabled="isActive"
             id="dateinput"
@@ -132,45 +29,95 @@
       <b-form-group
         label="1차 분류"
         class="has-float-label"
-        style="
-          position: absolute;
-          margin-top: 60px;
-          margin-left: 0px;
-          z-index: 999;
-        "
+        style="margin-top: 13px"
       >
         <b-form-select
           :disabled="isActive"
           id="program-media"
           class="media-select"
-          style="width: 300px; height: 37px"
+          style="width: 425px; height: 37px"
           :value="fillerMedia"
           :options="fillerOptions"
-          @input="getSecondMedia"
+          @input="getSecondType"
         />
       </b-form-group>
       <b-form-group
         label="2차 분류"
         class="has-float-label"
-        style="position: absolute; top: 120px; z-index: 999"
+        style="margin-top: 32px"
       >
         <b-form-select
           id="program-media"
           class="media-select"
-          style="width: 300px; height: 37px"
-          :value="selectedFillerMedia"
-          :options="fileMediaOptions"
-          @input="mediaChange"
+          style="width: 425px; height: 37px"
+          :value="selectedFillerType"
+          :options="fillerTypeOptions"
+          @input="secondTypeChange"
         />
       </b-form-group>
     </div>
+    <div style="font-size: 16px; margin-top: 25px; height: 50px">
+      <b-form-group label="소재명" class="has-float-label">
+        <b-form-input
+          class="editTask"
+          v-model="MetaData.title"
+          :state="titleState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="소재명"
+          trim
+        />
+      </b-form-group>
+      <p
+        v-show="titleState"
+        style="
+          position: relative;
+          left: 390px;
+          top: -15px;
+          width: 30px;
+          margin-right: 0px;
+        "
+      >
+        {{ MetaData.title.length }}/30
+      </p>
+    </div>
+
+    <div style="font-size: 16px; margin-top: 15px; height: 50px">
+      <b-form-group label="메모" class="has-float-label">
+        <b-form-input
+          style="width: 425px"
+          class="editTask"
+          v-model="MetaData.memo"
+          :state="memoState"
+          :maxLength="30"
+          aria-describedby="input-live-help input-live-feedback"
+          placeholder="메모"
+          trim
+        />
+      </b-form-group>
+      <p
+        v-show="memoState"
+        style="
+          position: relative;
+          left: 390px;
+          top: -15px;
+          width: 30px;
+          margin-right: 0px;
+        "
+      >
+        {{ MetaData.memo.length }}/30
+      </p>
+    </div>
   </div>
+  <!-- <div>
+    
+  </div> -->
 </template>
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
 export default {
@@ -182,77 +129,84 @@ export default {
     return {
       fillerOptions: [
         { value: "pr", text: "Filler(PR)" },
-        { value: "general", text: "Filler(일반)" },
+        { value: "general", text: "Filler(소재)" },
         { value: "etc", text: "Filler(기타)" },
       ],
       fillerMedia: "pr",
       prMedia: "",
       generallMedia: "",
       etcMedia: "",
-      selectedFillerMedia: "",
-      selectedFillerMediaName: "",
+      selectedFillerType: "",
     };
   },
   created() {
     this.reset();
+    this.setTitle(this.sliceExt(30));
     this.getEditorForPd();
-    this.resetFileMediaOptions();
+    this.resetFillerTypeOptions();
+
     axios.get("/api/categories/filler/pro").then((res) => {
+      this.selectedFillerType = res.data.resultObject.data[0].id;
+      this.setFillerTypeSelected(this.selectedFillerType);
+
       res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
+        this.setFillerTypeOptions({
           value: e.id,
           text: e.name,
         });
       });
     });
-    this.selectedFillerMedia = "FC05";
-    this.selectedFillerMediaName = "공통PR-프로그램";
-
-    this.setMediaSelected(this.selectedFillerMedia);
-    this.setMediaName(this.selectedFillerMediaName);
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
     this.setTempDate(today);
   },
   methods: {
-    mediaChange(v) {
-      this.setMediaSelected(v);
-      var data = this.fileMediaOptions.find((dt) => dt.value == v);
-      this.setMediaName(data.text);
+    secondTypeChange(v) {
+      this.setFillerTypeSelected(v);
     },
-    getSecondMedia(v) {
-      this.resetFileMediaOptions();
-      if (v == "pr") {
+    getSecondType(v) {
+      this.resetFillerTypeOptions();
+      if (this.findValue(0, v)) {
         axios.get("/api/categories/filler/pro").then((res) => {
+          this.selectedFillerType = res.data.resultObject.data[0].id;
+          this.setFillerTypeSelected(this.selectedFillerType);
           res.data.resultObject.data.forEach((e) => {
-            this.setFileMediaOptions({
+            this.setFillerTypeOptions({
               value: e.id,
               text: e.name,
             });
           });
         });
-        this.selectedFillerMedia = "FC05";
-      } else if (v == "general") {
+      } else if (this.findValue(1, v)) {
         axios.get("/api/categories/filler/general").then((res) => {
+          this.selectedFillerType = res.data.resultObject.data[0].id;
+          this.setFillerTypeSelected(this.selectedFillerType);
           res.data.resultObject.data.forEach((e) => {
-            this.setFileMediaOptions({
+            this.setFillerTypeOptions({
               value: e.id,
               text: e.name,
             });
           });
         });
-        this.selectedFillerMedia = "FC01";
-      } else if (v == "etc") {
+      } else if (this.findValue(2, v)) {
         axios.get("/api/categories/filler/etc").then((res) => {
+          this.selectedFillerType = res.data.resultObject.data[0].id;
+          this.setFillerTypeSelected(this.selectedFillerType);
           res.data.resultObject.data.forEach((e) => {
-            this.setFileMediaOptions({
+            this.setFillerTypeOptions({
               value: e.id,
               text: e.name,
             });
           });
         });
-        this.selectedFillerMedia = "FC20";
+      }
+    },
+    findValue(num, v) {
+      if (this.fillerOptions[num].value == v) {
+        return true;
+      } else {
+        return false;
       }
     },
   },

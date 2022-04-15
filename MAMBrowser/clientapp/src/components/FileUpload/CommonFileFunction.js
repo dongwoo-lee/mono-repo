@@ -335,7 +335,6 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
-        console.log(this.MetaData.mediaSelected);
         axios
           .get(
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TT`

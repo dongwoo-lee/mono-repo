@@ -62,9 +62,10 @@ export default {
 
 .meta-modal-container {
   position: relative;
-  margin: auto;
+  margin: 0px auto;
+  margin-top: 0px;
   width: 1000px;
-  height: 700px;
+  height: 640px;
   background-color: white;
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
@@ -74,10 +75,10 @@ export default {
 
 .meta-modal-container2 {
   position: relative;
-  margin-top: -400px;
-  margin: auto;
-  width: 400px;
-  height: 700px;
+  margin: 0px auto;
+  margin-top: -240px;
+  width: 1000px;
+  height: 400px;
   background-color: white;
   border-radius: 2px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
@@ -93,8 +94,8 @@ export default {
 
 .meta-modal-body {
   font-family: "MBC 새로움 M";
-  width: 400px;
-  height: 585px;
+  width: 1000px;
+  height: 380px;
   background-color: white;
 }
 
@@ -123,13 +124,14 @@ export default {
   transform: scale(1.1);
 }
 .meta-modal-footer {
+  font-family: "MBC 새로움 M";
   width: 1000px;
   height: 83px;
   background-color: white;
 }
 .meta-modal-footer2 {
   font-family: "MBC 새로움 M";
-  width: 400px;
+  width: 1000px;
   height: 83px;
   background-color: white;
 }

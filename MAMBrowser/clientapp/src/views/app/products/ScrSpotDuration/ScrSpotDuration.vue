@@ -118,7 +118,6 @@ export default {
         axios
           .post(`/api/Mastering/scr-spot/duration`, this.requestScr)
           .then((res) => {
-            console.log(res);
             if (res.status == 200 && res.data.errorMsg == null) {
               this.$emit("setDurationSuccess");
             } else {
