@@ -207,7 +207,7 @@
                   @input="eventSInput"
                   button-variant="outline-dark"
                   button-only
-                  right
+                  left
                   aria-controls="example-input"
                   @context="onContext"
                 ></b-form-datepicker>
@@ -325,7 +325,7 @@ export default {
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
+    this.setTitle(this.sliceExt(30));
     this.getPgm();
     this.getEditorForPd();
     this.resetFileMediaOptions();

@@ -46,7 +46,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -77,7 +76,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -122,7 +120,7 @@ export default {
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
+    this.setTitle(this.sliceExt(30));
     this.getEditorForPd();
     this.resetFileMediaOptions();
     axios.get("/api/categories/pro").then((res) => {

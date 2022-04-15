@@ -43,7 +43,7 @@ const data = [
       },
       {
         icon: "iconsminds-blackboard",
-        label: "menu.pro-materials", // (구)프로소재
+        label: "menu.pro-materials", // 프로소재
         to: "/app/pro-materials",
         // newWindow: true
       }

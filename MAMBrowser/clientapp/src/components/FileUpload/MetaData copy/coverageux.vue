@@ -22,7 +22,7 @@
               button-only
               :disabled="isActive"
               :button-variant="getVariant"
-              right
+              left
               aria-controls="example-input"
               @context="onContext"
             ></b-form-datepicker>
@@ -40,9 +40,9 @@
           id="program-media"
           class="media-select"
           style="width: 120px; height: 37px"
-          :value="coverageMedia"
-          :options="fileMediaOptions"
-          @input="mediaChange"
+          :value="coverageType"
+          :options="coverageTypeOptions"
+          @input="typeChange"
         />
       </b-form-group>
       <b-button
@@ -63,7 +63,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.name"
+            v-model="EventSelected.eventName"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -79,7 +79,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.id"
+            v-model="EventSelected.productId"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -106,7 +106,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-bottom: -18px;
           margin-right: 0px;
@@ -134,7 +133,6 @@
           position: relative;
           left: 165px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -163,7 +161,6 @@
           position: relative;
           left: 165px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -185,6 +182,21 @@
       </template>
       <template slot="default">
         <div>
+          <b-form-group
+            label="매체"
+            class="has-float-label"
+            style="font-size: 15px"
+          >
+            <b-form-select
+              :disabled="isActive"
+              id="program-media"
+              class="media-select"
+              style="width: 95px; height: 37px"
+              :value="this.coverageMedia"
+              @input="mediaChange"
+              :options="fileMediaOptions"
+            />
+          </b-form-group>
           <DxDataGrid
             name="mcrDxDataGrid"
             style="
@@ -204,8 +216,9 @@
           >
             <DxLoadPanel :enabled="true" />
             <DxScrolling mode="virtual" />
-            <DxColumn data-field="name" caption="이벤트 명" />
-            <DxColumn data-field="id" caption="이벤트 ID" />
+            <DxColumn data-field="eventName" caption="이벤트 명" />
+            <DxColumn data-field="productId" caption="이벤트 ID" />
+            <DxColumn data-field="onairTime" caption="방송시작 시간" />
           </DxDataGrid>
         </div>
       </template>
@@ -252,16 +265,30 @@ export default {
   data() {
     return {
       modal: false,
+      coverageType: "",
       coverageMedia: "",
     };
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
-    this.getEditorForReporter();
+    this.setTitle(this.sliceExt(30));
+    this.resetCoverageTypeOptions();
     this.resetFileMediaOptions();
-
     axios.get("/api/categories/report").then((res) => {
+      this.setCoverageTypeSelected(res.data.resultObject.data[0].id);
+      this.coverageType = res.data.resultObject.data[0].id;
+
+      res.data.resultObject.data.forEach((e) => {
+        this.setCoverageTypeOptions({
+          value: e.id,
+          text: e.name,
+        });
+      });
+    });
+
+    axios.get("/api/categories/media").then((res) => {
+      this.coverageMedia = res.data.resultObject.data[0].id;
+      this.setMediaSelected(this.coverageMedia);
       res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
@@ -269,8 +296,6 @@ export default {
         });
       });
     });
-    this.coverageMedia = "RC07";
-    this.setMediaSelected(this.coverageMedia);
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
@@ -281,6 +306,7 @@ export default {
   methods: {
     onSearch() {
       this.modalOn();
+      this.setMediaSelected(this.coverageMedia);
       this.getPro();
     },
     modalOn() {
@@ -293,8 +319,12 @@ export default {
       this.resetEventSelected();
       this.modal = false;
     },
+    typeChange(v) {
+      this.setCoverageTypeSelected(v);
+    },
     mediaChange(v) {
       this.setMediaSelected(v);
+      this.getPro();
     },
   },
 };

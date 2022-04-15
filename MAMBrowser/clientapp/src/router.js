@@ -74,7 +74,7 @@ const routes = [
         component: () => import("./views/app/products/Coverage")
       },
       {
-        // 제작 - (구)프로소재
+        // 제작 - 프로소재
         name: "pro-mt",
         path: "products/pro-mt",
         component: () => import("./views/app/products/ProMaterials")

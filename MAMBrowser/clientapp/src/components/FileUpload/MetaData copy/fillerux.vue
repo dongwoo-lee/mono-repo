@@ -38,7 +38,7 @@
           style="width: 425px; height: 37px"
           :value="fillerMedia"
           :options="fillerOptions"
-          @input="getSecondMedia"
+          @input="getSecondType"
         />
       </b-form-group>
       <b-form-group
@@ -50,9 +50,9 @@
           id="program-media"
           class="media-select"
           style="width: 425px; height: 37px"
-          :value="selectedFillerMedia"
-          :options="fileMediaOptions"
-          @input="mediaChange"
+          :value="selectedFillerType"
+          :options="fillerTypeOptions"
+          @input="secondTypeChange"
         />
       </b-form-group>
     </div>
@@ -74,7 +74,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -102,7 +101,6 @@
           position: relative;
           left: 390px;
           top: -15px;
-          z-index: 9999;
           width: 30px;
           margin-right: 0px;
         "
@@ -131,78 +129,84 @@ export default {
     return {
       fillerOptions: [
         { value: "pr", text: "Filler(PR)" },
-        { value: "general", text: "Filler(일반)" },
+        { value: "general", text: "Filler(소재)" },
         { value: "etc", text: "Filler(기타)" },
       ],
       fillerMedia: "pr",
       prMedia: "",
       generallMedia: "",
       etcMedia: "",
-      selectedFillerMedia: "",
-      selectedFillerMediaName: "",
+      selectedFillerType: "",
     };
   },
   created() {
     this.reset();
-    this.setTitle(this.MetaModalTitle);
+    this.setTitle(this.sliceExt(30));
     this.getEditorForPd();
-    this.resetFileMediaOptions();
+    this.resetFillerTypeOptions();
+
     axios.get("/api/categories/filler/pro").then((res) => {
+      this.selectedFillerType = res.data.resultObject.data[0].id;
+      this.setFillerTypeSelected(this.selectedFillerType);
+
       res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
+        this.setFillerTypeOptions({
           value: e.id,
           text: e.name,
         });
       });
     });
-    this.selectedFillerMedia = "FC05";
-    this.selectedFillerMediaName = "공통PR-프로그램";
-
-    this.setMediaSelected(this.selectedFillerMedia);
-    this.setMediaName(this.selectedFillerMediaName);
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.setDate(today);
     this.setTempDate(today);
   },
   methods: {
-    mediaChange(v) {
-      this.setMediaSelected(v);
-      var data = this.fileMediaOptions.find((dt) => dt.value == v);
-      this.setMediaName(data.text);
+    secondTypeChange(v) {
+      this.setFillerTypeSelected(v);
     },
-    getSecondMedia(v) {
-      this.resetFileMediaOptions();
-      if (v == "pr") {
+    getSecondType(v) {
+      this.resetFillerTypeOptions();
+      if (this.findValue(0, v)) {
         axios.get("/api/categories/filler/pro").then((res) => {
+          this.selectedFillerType = res.data.resultObject.data[0].id;
+          this.setFillerTypeSelected(this.selectedFillerType);
           res.data.resultObject.data.forEach((e) => {
-            this.setFileMediaOptions({
+            this.setFillerTypeOptions({
               value: e.id,
               text: e.name,
             });
           });
         });
-        this.selectedFillerMedia = "FC05";
-      } else if (v == "general") {
+      } else if (this.findValue(1, v)) {
         axios.get("/api/categories/filler/general").then((res) => {
+          this.selectedFillerType = res.data.resultObject.data[0].id;
+          this.setFillerTypeSelected(this.selectedFillerType);
           res.data.resultObject.data.forEach((e) => {
-            this.setFileMediaOptions({
+            this.setFillerTypeOptions({
               value: e.id,
               text: e.name,
             });
           });
         });
-        this.selectedFillerMedia = "FC01";
-      } else if (v == "etc") {
+      } else if (this.findValue(2, v)) {
         axios.get("/api/categories/filler/etc").then((res) => {
+          this.selectedFillerType = res.data.resultObject.data[0].id;
+          this.setFillerTypeSelected(this.selectedFillerType);
           res.data.resultObject.data.forEach((e) => {
-            this.setFileMediaOptions({
+            this.setFillerTypeOptions({
               value: e.id,
               text: e.name,
             });
           });
         });
-        this.selectedFillerMedia = "FC20";
+      }
+    },
+    findValue(num, v) {
+      if (this.fillerOptions[num].value == v) {
+        return true;
+      } else {
+        return false;
       }
     },
   },

@@ -430,8 +430,8 @@ export default {
         } else if (this.MetaData.typeSelected == "report") {
           var data = {
             title: this.MetaData.title,
-            category: this.MetaData.mediaSelected,
-            ProductId: this.EventSelected.id,
+            category: this.MetaData.coverageTypeSelected,
+            ProductId: this.EventSelected.productId,
             brdDT: this.date,
             editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,
@@ -510,7 +510,7 @@ export default {
           });
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
           this.typeOptions.push({ value: "program", text: "프로그램" });
-          this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
+          this.typeOptions.push({ value: "pro", text: "프로소재" });
           this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
           this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
           this.typeOptions.push({ value: "static-spot", text: "고정소재" });
@@ -524,7 +524,7 @@ export default {
           });
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
           this.typeOptions.push({ value: "program", text: "프로그램" });
-          this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
+          this.typeOptions.push({ value: "pro", text: "프로소재" });
           this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
           this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
           this.typeOptions.push({ value: "static-spot", text: "고정소재" });
@@ -538,7 +538,7 @@ export default {
           });
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
           this.typeOptions.push({ value: "program", text: "프로그램" });
-          this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
+          this.typeOptions.push({ value: "pro", text: "프로소재" });
           this.typeOptions.push({ value: "filler", text: "필러" });
         } else if (role == "리포터") {
           this.typeOptions.push({
@@ -546,7 +546,7 @@ export default {
             text: "소재유형을 선택해주세요",
           });
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
+          this.typeOptions.push({ value: "pro", text: "프로소재" });
           this.typeOptions.push({ value: "report", text: "취재물" });
         } else if (role == "라디오뉴스") {
           this.typeOptions.push({
@@ -561,14 +561,14 @@ export default {
             text: "소재유형을 선택해주세요",
           });
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
+          this.typeOptions.push({ value: "pro", text: "프로소재" });
         } else if (role == "TD") {
           this.typeOptions.push({
             value: "null",
             text: "소재유형을 선택해주세요",
           });
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "pro", text: "(구)프로소재" });
+          this.typeOptions.push({ value: "pro", text: "프로소재" });
         }
       } else if (this.button == "private") {
         this.typeOptions.push({ value: "my-disk", text: "My디스크" });
@@ -656,18 +656,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.memo-ellipsis {
-  font-size: 16px;
-  width: 340px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.memo-ellipsis:hover {
-  text-overflow: clip;
-  white-space: normal;
-  word-break: break-word;
 }
 /* .title-ellipsis:hover {
   text-overflow: clip;

@@ -157,13 +157,7 @@
               slot="rowTemplate"
               slot-scope="{
                 data: {
-                  data: {
-                    eventName,
-                    eventType,
-                    productId,
-                    onairTime,
-                    durationSec,
-                  },
+                  data: { eventName, productId, onairTime, durationSec },
                 },
               }"
               class="dx-row"
@@ -177,7 +171,7 @@
                 :class="[getProductId(productId)] ? 'disabledRow' : ''"
               >
                 <td>{{ eventName }}</td>
-                <td>{{ eventType }}</td>
+                <!-- <td>{{ eventType }}</td> -->
                 <td>{{ productId }}</td>
                 <td>{{ onairTime }}</td>
                 <td>{{ durationSec }}</td>
@@ -190,14 +184,14 @@
               >
                 <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가</td> -->
                 <td>{{ eventName }}</td>
-                <td>{{ eventType }}</td>
+                <!-- <td>{{ eventType }}</td> -->
                 <td>{{ productId }}</td>
                 <td>{{ onairTime }}</td>
                 <td>{{ durationSec }}</td>
               </tr>
             </tbody>
             <DxColumn data-field="eventName" caption="이벤트 명" />
-            <DxColumn :width="50" data-field="eventType" caption="타입" />
+            <!-- <DxColumn :width="50" data-field="eventType" caption="타입" /> -->
             <DxColumn
               :width="95"
               data-field="productId"
@@ -210,8 +204,7 @@
               caption="편성 분량"
             />
             <DxSelection mode="single" />
-            <DxPager :visible="false" />
-            <DxScrolling mode="standard" />
+            <DxScrolling mode="virtual" />
           </DxDataGrid>
         </div>
       </template>
@@ -242,7 +235,7 @@ import CommonFileFunction from "../CommonFileFunction";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { DxScrolling, DxLoadPanel, DxPager } from "devextreme-vue/data-grid";
+import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
 import axios from "axios";
 const dxdg = "my-proDataGrid";
 export default {
@@ -250,7 +243,6 @@ export default {
     CommonVueSelect,
     DxScrolling,
     DxLoadPanel,
-    DxPager,
   },
   mixins: [CommonFileFunction, MixinBasicPage],
   data() {
@@ -267,6 +259,8 @@ export default {
     this.resetFileMediaOptions();
 
     axios.get("/api/categories/media").then((res) => {
+      this.programMedia = res.data.resultObject.data[0].id;
+      this.setMediaSelected(this.programMedia);
       res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
@@ -274,9 +268,6 @@ export default {
         });
       });
     });
-
-    this.programMedia = "A";
-    this.setMediaSelected(this.programMedia);
 
     var user_id = sessionStorage.getItem("user_id");
     axios

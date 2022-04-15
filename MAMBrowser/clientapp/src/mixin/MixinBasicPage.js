@@ -9,7 +9,7 @@ let mixinBasicPage = {
       pgmOptions: [], // 사용처 목록 조회
       publicCodesOptions: [], // 공유소재 분류 목록
       rePortOptions: [], // 취재물 분류 목록
-      mediaPrimaryOptions: [], // (구)프로소재, 공유소재 매체목록
+      mediaPrimaryOptions: [], // 프로소재, 공유소재 매체목록
       contextMenu: [
         { name: "edit", text: "편집" },
         { name: "throw", text: "휴지통으로 보내기" },
@@ -49,14 +49,14 @@ let mixinBasicPage = {
     onSelectedIds(ids) {
       this.selectedIds = ids;
     },
-    // (구)프로소재, 공유소재 매체 목록 조회
+    // 프로소재, 공유소재 매체 목록 조회
     getMediaPrimaryOptions() {
       this.requestCall(
         "/api/Categories/public-codes/primary",
         "mediaPrimaryOptions"
       );
     },
-    // (구)프로 목록 조회
+    // 프로 목록 조회
     getProOptions() {
       this.requestCall("/api/Categories/pro", "proOptions");
     },

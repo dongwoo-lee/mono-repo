@@ -201,7 +201,7 @@ export default {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center memo-ellipsis",
           sortField: "memo",
         },
         {
@@ -408,3 +408,16 @@ export default {
   },
 };
 </script>
+
+<style>
+.memo-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.memo-ellipsis:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
+</style>

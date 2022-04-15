@@ -294,10 +294,14 @@ export default {
   },
   created() {
     this.reset();
-    this.getEditorForMd(); //제작자
     this.resetFileMediaOptions(); //매체 초기화
+
     //매체 생성
     axios.get("/api/categories/media").then((res) => {
+      this.resetMediaSelected();
+      this.staticMedia = res.data.resultObject.data[0].id;
+      this.setMediaSelected(this.staticMedia);
+
       res.data.resultObject.data.forEach((e) => {
         this.setFileMediaOptions({
           value: e.id,
@@ -305,8 +309,6 @@ export default {
         });
       });
     });
-    this.staticMedia = "A"; //매체 초기 값 설정
-    this.setMediaSelected(this.staticMedia); //매체 초기값 store 설정
 
     //분류
     this.getTimetoneOptions();
@@ -336,6 +338,8 @@ export default {
         this.eventDate = this.fileSDate;
       }, 500);
       this.modal = true;
+      this.setMediaSelected(this.staticMedia);
+      this.getPro();
     },
     modalOff() {
       if (this.EventSelected.name == "") {

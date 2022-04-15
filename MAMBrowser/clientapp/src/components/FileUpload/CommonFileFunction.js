@@ -137,6 +137,8 @@ export default {
       MetaData: (state) => state.MetaData,
       MetaModalTitle: (state) => state.MetaModalTitle,
       fileMediaOptions: (state) => state.fileMediaOptions,
+      coverageTypeOptions: (state) => state.coverageTypeOptions,
+      fillerTypeOptions: (state) => state.fillerTypeOptions,
       masteringListData: (state) => state.masteringListData,
       masteringLogData: (state) => state.masteringLogData,
       ProgramData: (state) => state.ProgramData,
@@ -208,7 +210,11 @@ export default {
       "setFileSelected",
       "setFileUploading",
       "setFileMediaOptions",
+      "setCoverageTypeOptions",
+      "setFillerTypeOptions",
       "setMediaSelected",
+      "setCoverageTypeSelected",
+      "setFillerTypeSelected",
       "setMediaName",
       "setProType",
       "setProTypeName",
@@ -230,13 +236,20 @@ export default {
       "resetProTypeName",
       "resetAdvertiser",
       "resetFileMediaOptions",
+      "resetCoverageTypeOptions",
+      "resetFillerTypeOptions",
       "resetMediaSelected",
+      "resetCoverageTypeSelected",
       "resetMediaName",
       "resetProgramData",
       "resetProgramSelected",
       "resetEventData",
       "resetEventSelected",
     ]),
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
+    },
     fileStateFalse() {
       this.setProcessing(false);
       this.setFileUploading(false);
@@ -322,6 +335,7 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
+        console.log(this.MetaData.mediaSelected);
         axios
           .get(
             `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TT`
@@ -362,9 +376,13 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
         this.resetEventData();
-        axios.get(`/api/categories/pgmcodes?brd_dt=${date}`).then((res) => {
-          this.setEventData(res.data.resultObject.data);
-        });
+        axios
+          .get(
+            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
+          )
+          .then((res) => {
+            this.setEventData(res.data.resultObject.data);
+          });
         this.resetEventSelected();
       }
     },
@@ -466,6 +484,7 @@ export default {
       this.resetFileSDate();
       this.resetScrRange();
       this.fileStateFalse();
+      this.resetCoverageTypeSelected();
       this.resetProgramData();
       this.resetProgramSelected();
       this.resetEventData();
@@ -485,6 +504,7 @@ export default {
       this.resetType();
       this.resetDate();
       this.fileStateFalse();
+      this.resetCoverageTypeSelected();
       this.resetProgramData();
       this.resetProgramSelected();
       this.resetEventData();

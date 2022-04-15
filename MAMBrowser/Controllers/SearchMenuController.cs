@@ -99,7 +99,7 @@ namespace MAMBrowser.Controllers
                 //취재물
                 case "REPOTE":
                     return MAMWebFactory.Instance.GetMenus(PageType.REPOTE);
-                //(구)프로소재
+                //프로소재
                 case "OLD_PRO":
                     return MAMWebFactory.Instance.GetMenus(PageType.OLD_PRO);
                 //주조SB
@@ -282,7 +282,7 @@ namespace MAMBrowser.Controllers
 
             return MAMWebFactory.Instance.Search<ReportResultDTO>(a);
         }
-        //(구)프로소재
+        //프로소재
         [HttpGet("GetSearchTable/OLD_PRO")]
         public OldProResultDTO GetOldPro([FromQuery] Pram pram)
         {
