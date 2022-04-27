@@ -570,10 +570,19 @@ export default {
       var groupBool = false;
       //광고 그룹 제외
       obj = obj.filter((ele) => {
-        if (ele.onairdate != "" && ele.cartcode != null) {
-          groupBool = true;
+        //ab 소재
+        if (Object.keys(ele).includes("cartcode")) {
+          if (ele.onairdate != "" && ele.cartcode != null) {
+            groupBool = true;
+          }
+          return ele.onairdate == "" && ele.cartcode != null;
+        } else {
+          //소재검색 소재
+          if (Object.keys(ele).includes("capacity")) {
+            groupBool = true;
+          }
+          return !Object.keys(ele).includes("capacity");
         }
-        return ele.onairdate == "" && ele.cartcode != null;
       });
 
       //광고 그룹 있을 시
