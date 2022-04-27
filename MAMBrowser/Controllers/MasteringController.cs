@@ -48,7 +48,6 @@ namespace MAMBrowser.Controllers
             public string FileType { get; set; }
             public string FileGuid { get; set; }
         }
-        //fileHeader size = 1152
         [HttpPost("Validation")]
         public ActionResult<DTO_RESULT<AudioInfo>> Validation([FromForm] IFormFile file, [FromForm] string fileName, [FromForm] long fileSize)
         {
@@ -82,6 +81,7 @@ namespace MAMBrowser.Controllers
             metaData.FILE_SIZE = fileSize;
             return _privateBll.VerifyModel(userId, metaData, fileName);
         }
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("my-disk")]
         public ActionResult<DTO_RESULT> RegMyDisk([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string editor, [FromForm] string title, [FromForm] string memo)
         {
@@ -150,6 +150,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("program")]
         public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,[FromForm] string title,
              [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string SchDate, [FromForm] string editor)
@@ -224,6 +225,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("mcr-spot")]
         public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
            [FromForm] string title, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
@@ -299,6 +301,8 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("scr-spot")]
         public ActionResult<DTO_RESULT> RegScrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata, 
              [FromForm] string title, [FromForm] string memo, [FromForm] string advertiser, [FromForm] string editor, 
@@ -375,6 +379,12 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+       
+        /// <summary>
+        /// 부조SPOT 방송 의뢰(기간 할당)
+        /// </summary>
+        /// <param name="scpStpoDurationList"></param>
+        /// <returns></returns>
         [HttpPost("scr-spot/duration")]
         public ActionResult<DTO_RESULT> RegScrSpotOper([FromBody] List<ScpSpotDurationDTO> scpStpoDurationList)
         {
@@ -397,7 +407,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("static-spot")]
         public ActionResult<DTO_RESULT> RegStaticSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
             [FromForm] string title, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor, 
@@ -474,6 +484,8 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("var-spot")]
         public ActionResult<DTO_RESULT> RegVarSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
             [FromForm] string title, [FromForm] string memo, [FromForm] string productId, [FromForm] string EDate, [FromForm] string SDate, [FromForm] string editor,
@@ -550,6 +562,8 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("report")]
         public ActionResult<DTO_RESULT> RegReport([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string title,  [FromForm] string memo, 
             [FromForm] string productId, [FromForm] string brdDT, [FromForm] string reporter, [FromForm] string editor, [FromForm] string category)
@@ -624,6 +638,8 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("filler")]
         public ActionResult<DTO_RESULT> RegFiller([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string title,
             [FromForm] string memo, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string category)
@@ -695,7 +711,9 @@ namespace MAMBrowser.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             return result;
-        }      
+        }
+
+        [RequestSizeLimit(int.MaxValue)]
         [HttpPost("pro")]
         public ActionResult<DTO_RESULT> RegPro([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string editor,
            [FromForm] string title, [FromForm] string memo, [FromForm] string typeName, [FromForm] string type, [FromForm] string category)
@@ -769,6 +787,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
 
         [HttpPatch("mydisk")]
         public ActionResult<DTO_RESULT> UpdateMyDisk([FromBody] UpdateMyDiskMeta jsonObject)
