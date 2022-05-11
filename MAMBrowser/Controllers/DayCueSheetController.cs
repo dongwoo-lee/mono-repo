@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using M30.AudioFile.Common;
+using Oracle.ManagedDataAccess.Client;
 
 namespace MAMBrowser.Controllers
 {
@@ -121,24 +122,27 @@ namespace MAMBrowser.Controllers
         [HttpPost("SaveOldCue")]
         public int SaveOldCue([FromBody] CueSheetCollectionDTO pram)
         {
-            var deleteVal = 0;
-            var saveVal = -1;
             try
             {
-                deleteVal = _bll.DelOldCue(pram);
-                saveVal = _bll.SaveOldCue(pram);
-                return 1;
+                var saveResult = _bll.SaveOldCueSheet(pram);
+                if (saveResult)
+                    return 1;
+                else
+                    return -1;
+            }
+            catch(OracleException oe)
+            {
+
+                switch (oe.Number)
+                {
+                    case 20011:
+                        return 0;
+                    default:
+                        throw;
+                }
             }
             catch (Exception ex)
             {
-                if (deleteVal == 0)
-                {
-                    return 0;
-                }
-                if(saveVal == -1)
-                {
-                    return -1;
-                }
                 throw;
             }
 

@@ -95,46 +95,81 @@ namespace MAMBrowser.BLL
             var result = _dao.CreateDayCueSheet(param);
             return result;
         }
-        //구 DAP 삭제
-        public int DelOldCue(CueSheetCollectionDTO pram)
-        {
-            DeletePDPQS(pram.CueSheetDTO, 'I');
-            DeletePDPQS(pram.CueSheetDTO, 'N');
-            return 1;
-        }
-        //구 DAP 저장
-        public int SaveOldCue(CueSheetCollectionDTO pram)
-        {
-            // 구 DB
-            // 기존 구 DB 데이터 삭제
-            //DeletePDPQS(pram.CueSheetDTO, 'I');
-            //DeletePDPQS(pram.CueSheetDTO, 'N');
 
-            var instanceCon = pram.PDPQSToEntity('I');
+        /// <summary>
+        /// (구)DAP 저장
+        /// </summary>
+        /// <param name="pram"></param>
+        /// <returns> 유효성검사(MY,DL3 소재 불가능) 실패시 : False </returns>
+        public bool SaveOldCueSheet(CueSheetCollectionDTO pram)
+        {
+            // 1. 저장가능한지 유효성 검사
+            if (ValidateForOldSave(pram))
+            {
+                SaveOldCueSheetChannel(pram, 'I');
+                SaveOldCueSheetChannel(pram, 'N');
+                return true;
+            }
+            else
+                return false;
+        }
+        /// <summary>
+        /// 1. pdpqs 인서트
+        /// 2. pdpqscon 삭제
+        /// 3. pdpqscon 인서트
+        /// </summary>
+        /// <param name="cueSheetChannel">  I : C채널, N : A/B채널</param>
+        private void SaveOldCueSheetChannel(CueSheetCollectionDTO pram, char cueSheetChannel)
+        {
+            var pqsCon = pram.PDPQSToEntity(cueSheetChannel);
+            if (pqsCon.PDPQSConParam?.Any() == false)
+                return;
+            
+            _dao.CreatePDPQS(pqsCon);
+            DeletePDPQSCon(pram.CueSheetDTO, cueSheetChannel);
+            _dao.CreatePDPQSCon(pqsCon);
+        }
+
+        /// <summary>
+        /// (구)DAP 큐시트 저장에 대한 유효성 검사
+        /// </summary>
+        /// <remarks>
+        /// MY디스크와 DL3는 (구)DAP 에 저장 할 수 없다.
+        /// MY디스크와 DL3는 카트타입이 빈 문자열 또는 null 이다.
+        /// </remarks>
+        /// <param name="pram"></param>
+        /// <returns></returns>
+        private bool ValidateForOldSave(CueSheetCollectionDTO pram)
+        {
+            //A,B채널  유효성 검사
             var normalCon = pram.PDPQSToEntity('N');
-            if (instanceCon.PDPQSConParam?.Any() == true)
-                _dao.CreatePDPQS(instanceCon);
-            if (normalCon.PDPQSConParam?.Any() == true)
-                _dao.CreatePDPQS(normalCon);
-            return 0;
+            foreach(var pqsCon in normalCon.PDPQSConParam)
+            {
+                 if(string.IsNullOrEmpty(pqsCon.CartType_in))
+                    return false;
+            }
+
+            //C채널 유효성 검사
+            var instanceCon = pram.PDPQSToEntity('I');
+            foreach (var pqsCon in instanceCon.PDPQSConParam)
+            {
+                if (string.IsNullOrEmpty(pqsCon.CartType_in))
+                    return false;
+            }
+            return true;
         }
 
         // 구DB 삭제
-        private void DeletePDPQS(CueSheetDTO cueshset, char type)
+        private void DeletePDPQSCon(CueSheetDTO cueshset, char type)
         {
-            _dao.DeletePDPQS(new PDPQSDeleteCollectionParam()
+            _dao.DeletePDPQSCon(new PDPQSDeleteCollectionParam()
             {
-                DeleteParam = new PDPQSDeleteParam()
-                {
-                    ProductID_in = cueshset.PRODUCTID,
-                    PQSType_in = type,
-                    OnAirDate_in = cueshset.BRDDATE
-                },
                 DeleteConParam = new PDPQSConDeleteParam()
                 {
                     OnAirDate_in = cueshset.BRDDATE,
                     PqsType_in = type,
-                    ProductID_in = cueshset.PRODUCTID
+                    ProductID_in = cueshset.PRODUCTID,
+                    SeqNum_in = cueshset.SEQNUM
                 }
             });
         }

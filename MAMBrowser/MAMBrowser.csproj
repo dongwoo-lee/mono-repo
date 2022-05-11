@@ -33,10 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
     <PackageReference Include="DevExpress.Xpo" Version="20.2.3" />
     <PackageReference Include="FluentFTP" Version="33.0.2" />
+    <PackageReference Include="M30.AudioEngine" Version="1.0.0" />
+    <PackageReference Include="M30.AudioFile.Common" Version="1.0.0" />
+    <PackageReference Include="M30.AudioFile.DAL" Version="1.0.1" />
+    <PackageReference Include="M30_CueSheetDAO" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
@@ -84,15 +88,6 @@
     </None>
     <None Update="MAMBrowser.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="RefFiles\M30.AudioFile.Common.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="RefFiles\M30.AudioFile.DAL.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="RefFiles\M30_CueSheetDAO.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="song.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
