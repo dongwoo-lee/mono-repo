@@ -194,7 +194,7 @@ export default {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
+          dataClass: "center aligned text-center memo-ellipsis",
           sortField: "title",
         },
         {

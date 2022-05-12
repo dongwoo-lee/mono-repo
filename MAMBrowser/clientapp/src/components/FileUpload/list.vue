@@ -32,27 +32,28 @@
       :hover-state-enabled="true"
       key-expr="title"
       :allow-column-resizing="true"
-      :column-auto-width="true"
+      :column-auto-width="false"
+      :show-column-lines="false"
       no-data-text="No Data"
       data-row-template="dataRowTemplate"
     >
-      <DxColumn data-field="title" caption="제목" />
+      <DxColumn data-field="title" :width="500" caption="제목" />
       <DxColumn data-field="type" caption="소재유형" />
       <DxColumn data-field="user_id" caption="등록자" />
       <DxColumn data-field="date" caption="등록일시" />
       <DxColumn data-field="step" caption="상태" alignment="left" />
       <template #dataRowTemplate="{ data: rowInfo }">
         <tr>
-          <td style="border-right: 1px solid #dddddd">
+          <td style="width: 500px">
             {{ rowInfo.data.title }}
           </td>
-          <td style="border-right: 1px solid #dddddd">
+          <td>
             {{ rowInfo.data.type }}
           </td>
-          <td style="border-right: 1px solid #dddddd">
+          <td>
             {{ rowInfo.data.user_id }}
           </td>
-          <td style="border-right: 1px solid #dddddd">
+          <td>
             {{ rowInfo.data.date }}
           </td>
           <td v-if="rowInfo.data.step == 0">
@@ -196,23 +197,24 @@
       :hover-state-enabled="true"
       key-expr="title"
       :allow-column-resizing="true"
-      :column-auto-width="true"
+      :column-auto-width="false"
+      :show-column-lines="false"
       no-data-text="No Data"
       data-row-template="dataRowTemplate"
     >
-      <DxColumn data-field="title" caption="제목" />
+      <DxColumn data-field="title" :width="500" caption="제목" />
       <DxColumn data-field="type" caption="소재유형" />
       <DxColumn data-field="date" caption="등록일시" />
       <DxColumn data-field="step" caption="상태" alignment="left" />
       <template #dataRowTemplate="{ data: rowInfo }">
         <tr>
-          <td style="border-right: 1px solid #dddddd">
+          <td style="width: 500px">
             {{ rowInfo.data.title }}
           </td>
-          <td style="border-right: 1px solid #dddddd">
+          <td>
             {{ rowInfo.data.type }}
           </td>
-          <td style="border-right: 1px solid #dddddd">
+          <td>
             {{ rowInfo.data.date }}
           </td>
           <td v-if="rowInfo.data.step == 0">

@@ -256,7 +256,7 @@
                       :show-borders="false"
                       :hover-state-enabled="true"
                       key-expr="title"
-                      :allow-column-resizing="true"
+                      :allow-column-resizing="false"
                       :column-auto-width="true"
                       no-data-text="No Data"
                     >
@@ -307,7 +307,7 @@
                       :show-borders="false"
                       :hover-state-enabled="true"
                       key-expr="title"
-                      :allow-column-resizing="true"
+                      :allow-column-resizing="false"
                       :column-auto-width="true"
                       no-data-text="No Data"
                     >
@@ -778,24 +778,35 @@ export default {
             formData.append("fileName", event.value[0].name);
             formData.append("fileSize", event.value[0].size);
           }
-
-          axios.post("/api/Mastering/Validation", formData).then((res) => {
-            if (res.data.errorMsg != null && res.data.resultCode != 0) {
+          axios
+            .post("/api/Mastering/Validation", formData)
+            .then((res) => {
+              if (res.data.errorMsg != null && res.data.resultCode != 0) {
+                this.$fn.notify("error", {
+                  title: "잘못된 파일 형식입니다.",
+                });
+                this.reset();
+                return;
+              }
+              this.setDuration(res.data.resultObject.duration);
+              this.setAudioFormat(res.data.resultObject.audioFormatInfo);
+              this.openFileModal();
+              this.dropzone = false;
+              this.setFileSelected(false);
+              this.MetaModal = true;
+              this.setProcessing(false);
+              // this.setFileUploading(true);
+            })
+            .catch((err) => {
               this.$fn.notify("error", {
-                title: "잘못된 파일 형식입니다.",
+                title: `파일 유효성 검사 실패(${err.message})`,
               });
-              this.reset();
-              return;
-            }
-            this.setDuration(res.data.resultObject.duration);
-            this.setAudioFormat(res.data.resultObject.audioFormatInfo);
-            this.openFileModal();
-            this.dropzone = false;
-            this.setFileSelected(false);
-            this.MetaModal = true;
-            this.setProcessing(false);
-            // this.setFileUploading(true);
-          });
+              this.fileupload.abortUpload(0);
+              this.resetLocalFiles();
+              this.typeReset();
+              this.percent = 0;
+              this.MetaModal = false;
+            });
         } else {
           this.$fn.notify("error", {
             title: "오디오 파일만 업로드 가능합니다.",

@@ -52,7 +52,7 @@ namespace MAMBrowser.Controllers
         public ActionResult<DTO_RESULT<AudioInfo>> Validation([FromForm] IFormFile file, [FromForm] string fileName, [FromForm] long fileSize)
         {
             DTO_RESULT<AudioInfo> result = new DTO_RESULT<AudioInfo>();
-            
+
             using (MemoryStream ms = new MemoryStream())
             {
                 file.CopyTo(ms);
