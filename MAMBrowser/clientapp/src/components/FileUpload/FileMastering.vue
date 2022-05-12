@@ -229,7 +229,12 @@
                         background-color: white;
                         height: 34px;
                       "
-                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                      class="
+                        btn btn-outline-primary btn-sm
+                        default
+                        cutom-label
+                        mr-2
+                      "
                       @click="logSearch"
                     >
                       검색
@@ -385,7 +390,7 @@ export default {
   },
   data() {
     return {
-      chunkSize: 300000,
+      chunkSize: 1000000,
       accept: "audio/mpeg,audio/wav",
       tabIndex: 0,
       dxfu,
@@ -755,8 +760,8 @@ export default {
         }
         this.setMetaModalTitle(event.value[0].name);
         this.setTitle(this.sliceExt(200));
-        if (event.value[0].size / 50 <= 300000) {
-          this.chunkSize = 300000;
+        if (event.value[0].size / 50 <= 1000000) {
+          this.chunkSize = 1000000;
         } else {
           this.chunkSize = Math.ceil(event.value[0].size / 50);
         }
@@ -766,7 +771,7 @@ export default {
         ) {
           var formData = new FormData();
           if (event.value[0].type == "audio/mpeg") {
-            var blob = event.value[0].slice(0, 300000);
+            var blob = event.value[0].slice(0, 1000000);
             formData.append("file", blob);
             // formData.append("fileExt", event.value[0].name);
             formData.append("fileName", event.value[0].name);
