@@ -1002,8 +1002,8 @@ export default {
             }
             commit('SET_PRINTARR', payload.printDTO);
         },
-        setSponsorList({ commit }, payload) {
-            axios.get(`/api/DayCueSheet/GetAddSponsor`, {
+        async setSponsorList({ commit }, payload) {
+            await axios.get(`/api/DayCueSheet/GetAddSponsor`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);

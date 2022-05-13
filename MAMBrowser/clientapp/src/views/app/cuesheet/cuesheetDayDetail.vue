@@ -302,7 +302,7 @@ export default {
         })
         .then(async (res) => {
           await this.getProUserList(rowData.productid);
-          if (typeof res.data == "string") {
+          if (res.data.resultObject == null) {
             //작성된 기본큐시트 있는지 확인
             var defCueId = [];
             await this.getcuesheetListArrDef({
@@ -358,7 +358,7 @@ export default {
               this.settingInfo(cueDataObj);
               this.SET_CUEINFO(cueDataObj);
               this.setclearCon();
-              this.setSponsorList({
+              await this.setSponsorList({
                 pgmcode: rowData.pgmcode,
                 brd_dt: rowData.day,
               });

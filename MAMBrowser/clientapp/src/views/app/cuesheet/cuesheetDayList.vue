@@ -228,7 +228,9 @@ export default {
           media: this.searchItems.media,
         };
         var arrListResult = await this.getcuesheetListArr(params);
-        this.setResponseData(arrListResult);
+        if (arrListResult) {
+          this.setResponseData(arrListResult);
+        }
         this.addScrollClass();
         this.isTableLoading = false;
         this.isScrollLodaing = false;

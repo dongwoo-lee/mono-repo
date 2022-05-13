@@ -321,7 +321,7 @@ export default {
             });
           }
           if (res.data.normalCon.length == 0 && !dataVal) {
-            this.setSponsorList({
+            await this.setSponsorList({
               pgmcode: rowData.pgmcode,
             });
           }
