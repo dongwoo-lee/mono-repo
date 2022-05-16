@@ -1,22 +1,10 @@
 import axios from "axios";
+import $http from "../../http";
 const qs = require("qs");
 import "moment/locale/ko";
 const moment = require("moment");
-const date = new Date();
 const _ = require('lodash');
 
-function get_date_str(date) {
-    var sYear = date.getFullYear();
-    var sMonth = date.getMonth() + 1;
-    var sDate = date.getDate();
-
-    sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
-    sDate = sDate > 9 ? sDate : "0" + sDate;
-
-    return sYear + "" + sMonth + "" + sDate;
-}
-
-var toDay = get_date_str(date);
 export default {
     namespaced: true,
     state: {
@@ -412,24 +400,24 @@ export default {
             if (typeof payload.products == 'string') {
                 payload.products = [payload.products]
             }
-            return axios.post(`/api/daycuesheet/Getdaycuelist`, payload)
-                .then((res) => {
-                    res.data.resultObject.data.sort((a, b) => {
-                        return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
-                    })
-                    commit('SET_CUESHEETLISTARR', res.data.resultObject);
-                    return res;
-                })
-                .catch((err => {
-                    console.log("getcuesheetListArr" + err);
-                }));
+            return $http
+                .post(`/api/daycuesheet/Getdaycuelist`, payload)
+                .then(res => {
+                    if (res.data.resultObject) {
+                        res.data.resultObject.data.sort((a, b) => {
+                            return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
+                        })
+                        commit('SET_CUESHEETLISTARR', res.data.resultObject);
+                        return res;
+                    }
+                });
         },
         // 기본 큐시트 목록 전체 가져오기
         getcuesheetListArrDef({ commit, dispatch }, payload) {
             if (typeof payload.productids == 'string') {
                 payload.productids = [payload.productids]
             }
-            return axios.post(`/api/DefCueSheet/GetDefList`, payload)
+            return $http.post(`/api/DefCueSheet/GetDefList`, payload)
                 .then(async (res) => {
                     var productWeekList = await dispatch('disableList', res.data.resultObject.data);
                     var seqnum = 0;
@@ -460,12 +448,6 @@ export default {
         },
         // 템플릿 목록 전체 가져오기
         getcuesheetListArrTemp({ commit }, payload) {
-            // return axios.get(`/api/TempCueSheet/GetTempList`, {
-            //     params: payload,
-            //     paramsSerializer: (params) => {
-            //         return qs.stringify(params);
-            //     },
-            // })
             return axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.titie}&row_per_page=${payload.row_per_page}&select_page=${payload.select_page}`)
                 .then((res) => {
                     var seqnum = 0;
@@ -577,31 +559,27 @@ export default {
         async saveDayCue({ commit, state, dispatch }, payload) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            await axios
+            await $http
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
                     await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                     var newInfo = { ...state.cueInfo }
-                    //router 로직 이동 중 (주석 필요)
-                    //var params = { productid: newInfo.productid, cueid: res.data }
                     let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
                     var params = {
                         productid: rowData.productid,
                         pgmcode: rowData.pgmcode,
                         brd_dt: rowData.day,
                     };
-                    await axios.get(`/api/daycuesheet/GetdayCue`, {
+                    await $http.get(`/api/daycuesheet/GetDayCue`, {
                         params: params,
                         paramsSerializer: (params) => {
                             return qs.stringify(params);
                         },
                     }).then((cueRes) => {
-                        newInfo.detail[0].cueid = res.data
-                        newInfo.edittime = cueRes.data.cueSheetDTO.edittime
+                        newInfo.detail[0].cueid = res.data.resultObject
+                        newInfo.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                         delete newInfo.cueid
                         commit('SET_CUEINFO', newInfo)
-                        //router 로직 이동 중 (주석 필요)
-                        //sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                     })
                     window.$notify(
                         "info",
@@ -768,8 +746,8 @@ export default {
                         .then((cueRes) => {
                             // 새로 cueid채워주려면 우선 볼러올 cueid를 알아야함 불가능
                             // cue가 아닌 요일 정보로 가져오던가 하나의 cueid만 넘겨도 포함된 모든 cueid를 주도록 해야할듯?
-                            cueInfoData.detail = cueRes.data.cueSheetDTO.detail
-                            cueInfoData.edittime = cueRes.data.cueSheetDTO.edittime
+                            cueInfoData.detail = cueRes.data.resultObject.cueSheetDTO.detail
+                            cueInfoData.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                             commit('SET_CUEINFO', cueInfoData)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(cueInfoData));
                         });
@@ -982,7 +960,6 @@ export default {
         },
         //DTO 하는중
         setCueConData({ state, commit }, payload) {
-            // commit('SET_CUEINFO', payload.cue)
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)
             if (payload.printDTO.length > 0) {
@@ -1010,11 +987,10 @@ export default {
                 },
             })
                 .then((res) => {
-                    commit('SET_ABCARTARR', res.data);
+                    if (res.data.resultObject) {
+                        commit('SET_ABCARTARR', res.data.resultObject);
+                    }
                 })
-                .catch((err => {
-                    console.log("setSponsorList" + err);
-                }));
         },
         setCueConFav_save({ state }, fav) {
             var printData = state.printArr
@@ -1027,7 +1003,6 @@ export default {
                 printResult[index] = Object.assign({}, ele);
                 printResult[index].rownum = index + 1;
                 printResult[index].usedtime = ele.usedtime;
-                //delete printResult[index].rowNum;
                 if (ele.code == "") {
                     printResult[index].code = "CSGP10";
                 }
@@ -1041,7 +1016,6 @@ export default {
             });
 
             var pram = {
-                //CueSheetDTO: conParams,
                 PrintDTO: printResult,
                 NormalCon: abDataResult,
                 InstanceCon: cData
@@ -1061,7 +1035,6 @@ export default {
             }
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
-            // commit('SET_CUEINFO', payload)
             for (var c = 0; 4 > c; c++) {
                 var arr = [];
                 for (var i = 0; 16 > i; i++) {
@@ -1079,13 +1052,6 @@ export default {
                 favArr.push({ rownum: i + 1 })
             }
             commit('SET_CUEFAVORITES', favArr)
-        },
-        //시간 string > milliseconds
-        millisecondsFuc({ }, payload) {
-            var itemTime = moment(payload, "HH:mm:ss.SSS");
-            var defTime = moment("00:00:00.0", "HH:mm:ss.SSS");
-            var result = moment.duration(itemTime.diff(defTime)).asMilliseconds();
-            return result
         },
         getautosave({ commit }, payload) {
             return axios.get(`/api/users/summary/${payload}`)

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import LoginPopupRefElement from './components/Popup/Login/LoginPopupRefElement';
+import $fn from './utils/CommonFunctions';
 
 const $http = axios.create({
     baseURL: process.env.baseURL,
@@ -9,19 +10,19 @@ const $http = axios.create({
 });
 
 $http.interceptors.request.use(
-   async config => {
-    config.headers = { 
-        'Content-Type': 'application/json',
-        'X-Csrf-Token': sessionStorage.getItem('access_token'),
-    }
-    return config;
-  },
-  error => {
-    console.debug('interceptors.request.error', error);
-    Promise.reject(error);
-});
+    async config => {
+        config.headers = {
+            'Content-Type': 'application/json',
+            'X-Csrf-Token': sessionStorage.getItem('access_token'),
+        }
+        return config;
+    },
+    error => {
+        console.debug('interceptors.request.error', error);
+        Promise.reject(error);
+    });
 
-$http.interceptors.response.use(res =>{
+$http.interceptors.response.use(res => {
     const { config, status, data } = res;
     if (status === 200 && data.resultObject === null && data.errorMsg) {
         if (config && config['Content-Type'] === 'multipart/form-data') { return res; }
@@ -33,12 +34,13 @@ $http.interceptors.response.use(res =>{
     }
     return res;
 }, async err => {
+    $fn.notify('client_parameterError', {})
     console.debug('interceptors.response.error', err);
     if (!err.response) {
         return Promise.reject(err);
     }
 
-    const{
+    const {
         response: { config, status, data }
     } = err;
 
@@ -55,15 +57,15 @@ $http.interceptors.response.use(res =>{
     return err.response;
 })
 
-const errorNotify=(status, msg)=> {
+const errorNotify = (status, msg) => {
     window.$notify(
         "error",
         // `${msg}[ERROR:${status}]`,
         `${msg}`,
         '', {
-            duration: 10000,
-            permanent: false
-        }
+        duration: 10000,
+        permanent: false
+    }
     )
 }
 

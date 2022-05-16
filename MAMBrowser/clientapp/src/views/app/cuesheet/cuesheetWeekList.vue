@@ -409,12 +409,14 @@ export default {
         var pram = {
           DefCueSheetDTO: result,
         };
-        await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {
-          window.$notify("info", `기본 큐시트 추가완료.`, "", {
-            duration: 10000,
-            permanent: false,
+        await this.$http
+          .post(`/api/DefCueSheet/SaveDefCue`, pram)
+          .then((res) => {
+            window.$notify("info", `기본 큐시트 추가완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
           });
-        });
         this.getData();
         this.$refs["modal-add"].hide();
       }
@@ -463,7 +465,7 @@ export default {
           delcueidList.push(ele.cueid);
         });
       });
-      await axios
+      await this.$http
         .delete(`/api/DefCueSheet/DelDefCue`, {
           params: {
             delParams: delcueidList,

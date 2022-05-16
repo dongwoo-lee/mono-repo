@@ -293,8 +293,8 @@ export default {
         startdate: rowData.startdate,
         day: rowData.day,
       };
-      await axios
-        .get(`/api/daycuesheet/GetdayCue`, {
+      await this.$http
+        .get(`/api/daycuesheet/GetDayCue`, {
           params: params,
           paramsSerializer: (params) => {
             return qs.stringify(params);
@@ -302,7 +302,7 @@ export default {
         })
         .then(async (res) => {
           await this.getProUserList(rowData.productid);
-          if (typeof res.data == "string") {
+          if (!res.data.resultObject) {
             //작성된 기본큐시트 있는지 확인
             var defCueId = [];
             await this.getcuesheetListArrDef({
@@ -341,7 +341,7 @@ export default {
                   },
                 })
                 .then((res) => {
-                  var defcueData = res.data.cueSheetDTO;
+                  var defcueData = res.data.resultObject.cueSheetDTO;
                   cueDataObj.r_ONAIRTIME = defcueData.detail[0].onairtime;
                   cueDataObj.directorname = defcueData.directorname;
                   cueDataObj.djname = defcueData.djname;
@@ -351,7 +351,7 @@ export default {
                   cueDataObj.memo = defcueData.memo;
                   this.settingInfo(cueDataObj);
                   this.SET_CUEINFO(cueDataObj);
-                  this.setCueConData(res.data);
+                  this.setCueConData(res.data.resultObject);
                 });
             } else {
               //큐시트 작성
@@ -365,7 +365,7 @@ export default {
             }
           } else {
             //큐시트 수정 데이터 채움
-            var dayCueData = res.data.cueSheetDTO;
+            var dayCueData = res.data.resultObject.cueSheetDTO;
             dayCueData.liveflag = cueDataObj.liveflag;
             dayCueData.onairday = cueDataObj.onairday;
             dayCueData.seqnum = cueDataObj.seqnum;
@@ -373,7 +373,7 @@ export default {
             dayCueData.day = cueDataObj.day;
             this.settingInfo(dayCueData);
             this.SET_CUEINFO(dayCueData);
-            this.setCueConData(res.data);
+            this.setCueConData(res.data.resultObject);
           }
           //즐겨찾기 가져오기
           var params = {
