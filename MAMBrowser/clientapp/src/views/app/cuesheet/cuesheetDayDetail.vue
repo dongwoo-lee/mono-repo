@@ -302,7 +302,7 @@ export default {
         })
         .then(async (res) => {
           await this.getProUserList(rowData.productid);
-          if (res.data.resultObject == null) {
+          if (typeof res.data == "string") {
             //작성된 기본큐시트 있는지 확인
             var defCueId = [];
             await this.getcuesheetListArrDef({
