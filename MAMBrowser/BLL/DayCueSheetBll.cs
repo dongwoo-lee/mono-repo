@@ -122,9 +122,6 @@ namespace MAMBrowser.BLL
         private void SaveOldCueSheetChannel(CueSheetCollectionDTO pram, char cueSheetChannel)
         {
             var pqsCon = pram.PDPQSToEntity(cueSheetChannel);
-            if (pqsCon.PDPQSConParam?.Any() == false)
-                return;
-            
             _dao.CreatePDPQS(pqsCon);
             DeletePDPQSCon(pram.CueSheetDTO, cueSheetChannel);
             _dao.CreatePDPQSCon(pqsCon);
@@ -169,7 +166,6 @@ namespace MAMBrowser.BLL
                     OnAirDate_in = cueshset.BRDDATE,
                     PqsType_in = type,
                     ProductID_in = cueshset.PRODUCTID,
-                    SeqNum_in = cueshset.SEQNUM
                 }
             });
         }
