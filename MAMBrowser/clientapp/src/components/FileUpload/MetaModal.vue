@@ -439,7 +439,7 @@ export default {
           };
         } else if (this.MetaData.typeSelected == "filler") {
           var data = {
-            category: this.MetaData.mediaSelected,
+            category: this.MetaData.fillerTypeSelected,
             title: this.MetaData.title,
             memo: this.MetaData.memo,
             editor: sessionStorage.getItem("user_id"),

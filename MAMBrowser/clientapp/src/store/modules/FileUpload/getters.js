@@ -34,6 +34,9 @@ export default {
   eventState(state) {
     return state.EventSelected.id != "" ? true : false;
   },
+  scrRangeState(state) {
+    return state.scrRange.length >= 1 ? true : false;
+  },
   durationState(state) {
     var dh = state.MetaData.duration.slice(0, 2);
     var dm = state.MetaData.duration.slice(3, 5);
@@ -105,45 +108,35 @@ export default {
       if (getters.typeState && getters.titleState && getters.memoState)
         return true;
     } else if (state.MetaData.typeSelected == "program") {
-      if (getters.memoState && getters.programState) {
+      if (getters.programState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "pro") {
-      if (getters.memoState && getters.titleState && getters.proMediaState) {
+      if (getters.titleState && getters.proMediaState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "mcr-spot") {
-      if (getters.memoState && getters.eventState) {
+      if (getters.eventState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "scr-spot") {
-      if (getters.titleState && getters.memoState && getters.advertiserState) {
+      if (getters.titleState && getters.scrRangeState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "static-spot") {
-      if (
-        getters.memoState &&
-        getters.eventState &&
-        getters.advertiserState &&
-        getters.SEDateState
-      ) {
+      if (getters.eventState && getters.SEDateState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "var-spot") {
-      if (
-        getters.memoState &&
-        getters.eventState &&
-        getters.advertiserState &&
-        getters.SEDateState
-      ) {
+      if (getters.eventState && getters.SEDateState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "report") {
-      if (getters.memoState && getters.eventState) {
+      if (getters.reporterState && getters.eventState) {
         return true;
       }
     } else if (state.MetaData.typeSelected == "filler") {
-      if (getters.titleState && getters.memoState && getters.dateState) {
+      if (getters.titleState && getters.dateState) {
         return true;
       }
     }
