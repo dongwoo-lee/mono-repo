@@ -461,9 +461,15 @@ export default {
           this.$bvModal.show("durationOver");
           return;
         }
+
         if (!this.audioClipIdState) {
-          this.$bvModal.show("audioClipIDOver");
-          return;
+          if (
+            this.MetaData.typeSelected == "program" ||
+            this.MetaData.typeSelected == "mcr-spot"
+          ) {
+            this.$bvModal.show("audioClipIDOver");
+            return;
+          }
         }
 
         if (this.MetaData.typeSelected == "my-disk") {
