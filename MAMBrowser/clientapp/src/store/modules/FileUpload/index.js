@@ -64,6 +64,7 @@ export default {
       productId: "",
       onairTime: "",
       durationSec: "",
+      audioClipID: "",
     },
     programState: false,
     EventData: [
@@ -77,6 +78,7 @@ export default {
       id: "",
       name: "",
       duration: "",
+      audioClipID: "",
     },
     FileUploadProgress: {},
   },
