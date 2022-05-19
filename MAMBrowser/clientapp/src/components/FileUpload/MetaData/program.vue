@@ -157,7 +157,13 @@
               slot="rowTemplate"
               slot-scope="{
                 data: {
-                  data: { eventName, productId, onairTime, durationSec },
+                  data: {
+                    eventName,
+                    productId,
+                    onairTime,
+                    durationSec,
+                    audioClipID,
+                  },
                 },
               }"
               class="dx-row"
@@ -168,13 +174,14 @@
                   eventName != '' &&
                   role != 'ADMIN'
                 "
-                :class="[getProductId(productId)] ? 'disabledRow' : ''"
+                :class="[this.getProductId(productId)] ? 'disabledRow' : ''"
               >
                 <td>{{ eventName }}</td>
                 <!-- <td>{{ eventType }}</td> -->
                 <td>{{ productId }}</td>
                 <td>{{ onairTime }}</td>
                 <td>{{ durationSec }}</td>
+                <td>{{ audioClipID }}</td>
               </tr>
               <tr
                 v-if="
@@ -188,12 +195,20 @@
                 <td>{{ productId }}</td>
                 <td>{{ onairTime }}</td>
                 <td>{{ durationSec }}</td>
+                <td
+                  :class="
+                    [this.getAudioClipID(audioClipID)] ? 'disabledCell' : ''
+                  "
+                  style="text-align: center"
+                >
+                  {{ audioClipID == null ? "" : "O" }}
+                </td>
               </tr>
             </tbody>
             <DxColumn data-field="eventName" caption="이벤트 명" />
             <!-- <DxColumn :width="50" data-field="eventType" caption="타입" /> -->
             <DxColumn
-              :width="95"
+              :width="120"
               data-field="productId"
               caption="프로그램 ID"
             />
@@ -203,6 +218,7 @@
               data-field="durationSec"
               caption="편성 분량"
             />
+            <DxColumn :width="50" data-field="audioClipID" caption="중복" />
             <DxSelection mode="single" />
             <DxScrolling mode="virtual" />
           </DxDataGrid>
@@ -285,21 +301,25 @@ export default {
     this.getPro();
   },
   computed: {
-    getTitle() {
-      return `[${this.date}] [${this.mediaName}] [${this.ProgramSelected.eventName}]`;
+    proDataGrid: function () {
+      return this.$refs[dxdg].instance;
     },
-    getProgramId(productId) {
+  },
+  methods: {
+    getProductId(productId) {
       if (this.userProgramList.includes(productId)) {
         return true;
       } else {
         return false;
       }
     },
-    proDataGrid: function () {
-      return this.$refs[dxdg].instance;
+    getAudioClipID(audioClipID) {
+      if (audioClipID != "") {
+        return true;
+      } else {
+        return false;
+      }
     },
-  },
-  methods: {
     mediaChange(v) {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
@@ -327,6 +347,9 @@ export default {
 <style scoped>
 .disabledRow {
   color: silver !important;
+}
+.disabledCell {
+  color: red !important;
 }
 .dx-row :hover {
   background-color: #f5f5f5;

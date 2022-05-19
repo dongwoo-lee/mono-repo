@@ -229,6 +229,15 @@
       @ok="DurationOK()"
       @close="DurationCancel()"
     />
+    <common-confirm
+      id="audioClipIDOver"
+      title="파일 중복 확인"
+      :message="getAudioClipIDOverMsg()"
+      submitBtn="업로드"
+      :customClose="true"
+      @ok="audioClipOK()"
+      @close="audioClipCancel()"
+    />
   </div>
 </template>
 
@@ -492,14 +501,38 @@ export default {
     },
     DurationOK() {
       this.$bvModal.hide("durationOver");
-      this.setFileUploading(true);
-      this.$emit("upload");
+      if (this.ProgramSelected.audioClipID == null) {
+        this.setFileUploading(true);
+        this.$emit("upload");
+      } else {
+        this.$bvModal.show("audioClipIDOver");
+      }
     },
     DurationCancel() {
       this.$bvModal.hide("durationOver");
     },
     getDurationOverMsg() {
       return `<text style="color:red;">편성 분량을 확인하세요.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
+    },
+    audioClipOK() {
+      axios
+        .delete(`/api/mastering/program/${this.ProgramSelected.audioClipID}`)
+        .then((res) => {
+          console.log(res);
+          if (res.status == 200 && res.statusText == "OK") {
+            this.$bvModal.hide("audioClipIDOver");
+            this.setFileUploading(true);
+            this.$emit("upload");
+          } else {
+            this.$fn.notify("error", { title: res.data.errorMsg });
+          }
+        });
+    },
+    audioClipCancel() {
+      this.$bvModal.hide("audioClipIDOver");
+    },
+    getAudioClipIDOverMsg() {
+      return `<text style="color:red;">중복된 파일이 있습니다.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
     },
     typeOptionsByRole(role) {
       if (this.button == "nav") {
