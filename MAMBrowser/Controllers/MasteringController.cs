@@ -967,7 +967,11 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
+                if (string.IsNullOrEmpty(fileToken))
+                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id);
+                else
+                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
+
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -1059,7 +1063,11 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
+                if (string.IsNullOrEmpty(fileToken))
+                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id);
+                else
+                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
+
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -1205,7 +1213,46 @@ namespace MAMBrowser.Controllers
             repo.Delete(audioClipId, userId, movedFilePath);
             _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터 삭제", null);
         }
+        void DeleteAudioFile(string userId, string audioClipId)
+        {
+            AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
+            var audioFile = repo.Get(audioClipId);
+            var movedFilePath = MoveRecycleFromFilePath(audioFile.MASTERFILE, userId);
+            if (!string.IsNullOrEmpty(movedFilePath))
+            {
+                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId}", $"moved to {movedFilePath}").Wait();
+            }
+            repo.Delete(audioClipId, userId, movedFilePath);
+            _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터 삭제", null);
+        }
+        string MoveRecycleFromFilePath(string filePath, string userId)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로 필드가 비어있습니다.", null);
+                return string.Empty;
+            }
 
+            if (!System.IO.File.Exists(filePath))
+            {
+                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일을 찾을 수 없습니다.", $"{filePath}");
+                return string.Empty;
+            }
+
+            var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
+            var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
+            var pass = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
+            var host = CommonUtility.GetHost(recycleFoler);
+            NetworkShareAccessor.Access(host, id, pass);
+
+            if (!Directory.Exists(recycleFoler))
+                Directory.CreateDirectory(recycleFoler);
+
+            var newFileName = $@"{DateTime.Now.ToString(Define.DTM14)}_{Path.GetFileName(filePath)}";
+            var newFileFullPath = Path.Combine(recycleFoler, newFileName);
+            System.IO.File.Move(filePath, newFileFullPath);
+            return newFileFullPath;
+        }
         string MoveRecycle(string fileToken, string userId)
         {
             string filePath = "";
