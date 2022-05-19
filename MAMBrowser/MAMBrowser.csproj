@@ -39,7 +39,7 @@
     <PackageReference Include="FluentFTP" Version="33.0.2" />
     <PackageReference Include="M30.AudioEngine" Version="1.0.0" />
     <PackageReference Include="M30.AudioFile.Common" Version="1.0.3" />
-    <PackageReference Include="M30.AudioFile.DAL" Version="1.0.4" />
+    <PackageReference Include="M30.AudioFile.DAL" Version="1.0.5" />
     <PackageReference Include="M30_CueSheetDAO" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />

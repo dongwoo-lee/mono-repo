@@ -1217,7 +1217,7 @@ namespace MAMBrowser.Controllers
         {
             AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
             var audioFile = repo.Get(audioClipId);
-            var movedFilePath = MoveRecycleFromFilePath(audioFile.MasterFile_IN, userId);
+            var movedFilePath = MoveRecycleFromFilePath(audioFile.MASTERFILE, userId);
             if (!string.IsNullOrEmpty(movedFilePath))
             {
                 _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId}", $"moved to {movedFilePath}").Wait();
