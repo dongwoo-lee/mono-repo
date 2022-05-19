@@ -1233,7 +1233,7 @@ namespace MAMBrowser.Controllers
                 if (!Directory.Exists(recycleFoler))
                     Directory.CreateDirectory(recycleFoler);
 
-                var newFileName = Path.GetFileName(filePath);
+                var newFileName = $@"{DateTime.Now.ToString(Define.DTM14)}_{Path.GetFileName(filePath)}";
                 var newFileFullPath = Path.Combine(recycleFoler, newFileName);
                 System.IO.File.Move(filePath, newFileFullPath);
                 return newFileFullPath;

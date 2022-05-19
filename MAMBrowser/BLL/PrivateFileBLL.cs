@@ -147,12 +147,10 @@ namespace MAMBrowser.BLL
 
                 if (fileData == null)
                     continue;
+               
                 if (File.Exists(fileData.FilePath))
                 {
-                    if (File.Exists(fileData.FilePath))
-                    {
-                        _fileProtocol.Delete(fileData.FilePath);
-                    }
+                    _fileProtocol.Delete(fileData.FilePath);
                 }
             }
 

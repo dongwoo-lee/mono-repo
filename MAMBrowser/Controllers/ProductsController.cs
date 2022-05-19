@@ -765,6 +765,9 @@ namespace MAMBrowser.Controllers
             string userId = HttpContext.Items[Define.USER_ID] as string;
             try
             {
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception("로그인 정보를 찾을 수 없습니다.");
+
                 _fileHelper.TempDownload(token, userId, remoteIp, _fileSystem);
                 return Ok();
             }
