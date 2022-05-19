@@ -182,7 +182,7 @@
             "
             :data-source="EventData"
             :selection="{ mode: 'single' }"
-            :show-borders="true"
+            :show-borders="false"
             :hover-state-enabled="true"
             key-expr="id"
             :allow-column-resizing="true"
@@ -190,11 +190,36 @@
             no-data-text="No Data"
             @row-click="onRowClick"
           >
-            <DxLoadPanel :enabled="true" />
+            <tbody
+              slot="rowTemplate"
+              slot-scope="{
+                data: {
+                  data: { name, id, duration, audioClipID },
+                },
+              }"
+              class="dx-row"
+            >
+              <tr>
+                <td style="border-right: 1px solid #dddddd">{{ name }}</td>
+                <td style="border-right: 1px solid #dddddd">{{ id }}</td>
+                <td style="border-right: 1px solid #dddddd">{{ duration }}</td>
+                <td
+                  :class="
+                    [this.getAudioClipID(audioClipID)] ? 'disabledCell' : ''
+                  "
+                  style="text-align: center"
+                >
+                  {{ audioClipID == null ? "" : "O" }}
+                </td>
+              </tr>
+            </tbody>
+            <!-- <DxLoadPanel :enabled="true" /> -->
+            <DxSelection mode="single" />
             <DxScrolling mode="virtual" />
             <DxColumn data-field="name" caption="이벤트 명" />
             <DxColumn data-field="id" caption="이벤트 ID" />
             <DxColumn data-field="duration" caption="편성 분량" />
+            <DxColumn data-field="audioClipID" :width="50" caption="파일" />
           </DxDataGrid>
         </div>
       </template>
@@ -218,10 +243,6 @@
       </template>
     </b-modal>
   </div>
-  <!--     
-    
-    
-    -->
 </template>
 
 <script>
@@ -230,13 +251,13 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
+import { DxSelection, DxScrolling } from "devextreme-vue/data-grid";
 import axios from "axios";
 export default {
   components: {
     CommonVueSelect,
+    DxSelection,
     DxScrolling,
-    DxLoadPanel,
   },
   mixins: [CommonFileFunction, MixinBasicPage, MixinFillerPage],
   data() {
@@ -268,6 +289,13 @@ export default {
     this.getPro();
   },
   methods: {
+    getAudioClipID(audioClipID) {
+      if (audioClipID != "") {
+        return true;
+      } else {
+        return false;
+      }
+    },
     mediaChange(v) {
       this.setMediaSelected(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
@@ -292,4 +320,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.disabledCell {
+  color: red !important;
+}
+.dx-row :hover {
+  background-color: #f5f5f5;
+}
+</style>

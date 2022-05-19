@@ -177,11 +177,17 @@
                 :class="[this.getProductId(productId)] ? 'disabledRow' : ''"
               >
                 <td>{{ eventName }}</td>
-                <!-- <td>{{ eventType }}</td> -->
                 <td>{{ productId }}</td>
                 <td>{{ onairTime }}</td>
                 <td>{{ durationSec }}</td>
-                <td>{{ audioClipID }}</td>
+                <td
+                  :class="
+                    [this.getAudioClipID(audioClipID)] ? 'disabledCell' : ''
+                  "
+                  style="text-align: center"
+                >
+                  {{ audioClipID }}
+                </td>
               </tr>
               <tr
                 v-if="
@@ -189,9 +195,7 @@
                   role == 'ADMIN'
                 "
               >
-                <!-- <td><b-icon-alarm></b-icon-alarm> 아이콘 추가</td> -->
                 <td>{{ eventName }}</td>
-                <!-- <td>{{ eventType }}</td> -->
                 <td>{{ productId }}</td>
                 <td>{{ onairTime }}</td>
                 <td>{{ durationSec }}</td>
@@ -206,7 +210,6 @@
               </tr>
             </tbody>
             <DxColumn data-field="eventName" caption="이벤트 명" />
-            <!-- <DxColumn :width="50" data-field="eventType" caption="타입" /> -->
             <DxColumn
               :width="120"
               data-field="productId"
@@ -218,7 +221,7 @@
               data-field="durationSec"
               caption="편성 분량"
             />
-            <DxColumn :width="50" data-field="audioClipID" caption="중복" />
+            <DxColumn :width="50" data-field="audioClipID" caption="파일" />
             <DxSelection mode="single" />
             <DxScrolling mode="virtual" />
           </DxDataGrid>

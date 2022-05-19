@@ -161,6 +161,7 @@ export default {
       "SEDateState",
       "advertiserState",
       "durationState",
+      "audioClipIdState",
       "metaValid",
     ]),
     ...mapGetters("user", ["getMenuGrpName"]),

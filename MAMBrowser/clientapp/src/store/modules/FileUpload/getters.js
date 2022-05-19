@@ -37,6 +37,13 @@ export default {
   scrRangeState(state) {
     return state.scrRange.length >= 1 ? true : false;
   },
+  audioClipIdState(state) {
+    if (state.MetaData.typeSelected == "program") {
+      return state.ProgramSelected.audioClipID != null ? true : false;
+    } else if (state.MetaData.typeSelected == "mcr-spot") {
+      return state.ProgramSelected.audioClipID != null ? true : false;
+    }
+  },
   durationState(state) {
     var dh = state.MetaData.duration.slice(0, 2);
     var dm = state.MetaData.duration.slice(3, 5);

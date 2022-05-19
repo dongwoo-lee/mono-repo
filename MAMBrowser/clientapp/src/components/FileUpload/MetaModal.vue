@@ -231,7 +231,7 @@
     />
     <common-confirm
       id="audioClipIDOver"
-      title="파일 중복 확인"
+      title="확인"
       :message="getAudioClipIDOverMsg()"
       submitBtn="업로드"
       :customClose="true"
@@ -461,6 +461,11 @@ export default {
           this.$bvModal.show("durationOver");
           return;
         }
+        if (!this.audioClipIdState) {
+          this.$bvModal.show("audioClipIDOver");
+          return;
+        }
+
         if (this.MetaData.typeSelected == "my-disk") {
           if (!this.notDiskAvailable(this.localFiles[0].size)) {
             this.$fn.notify("error", { title: "용량 부족" });
@@ -501,11 +506,21 @@ export default {
     },
     DurationOK() {
       this.$bvModal.hide("durationOver");
-      if (this.ProgramSelected.audioClipID == null) {
-        this.setFileUploading(true);
-        this.$emit("upload");
-      } else {
-        this.$bvModal.show("audioClipIDOver");
+
+      if (this.MetaData.typeSelected == "program") {
+        if (this.ProgramSelected.audioClipID == null) {
+          this.setFileUploading(true);
+          this.$emit("upload");
+        } else {
+          this.$bvModal.show("audioClipIDOver");
+        }
+      } else if (this.MetaData.typeSelected == "mcr-spot") {
+        if (this.EventSelected.audioClipID == null) {
+          this.setFileUploading(true);
+          this.$emit("upload");
+        } else {
+          this.$bvModal.show("audioClipIDOver");
+        }
       }
     },
     DurationCancel() {
@@ -515,24 +530,46 @@ export default {
       return `<text style="color:red;">편성 분량을 확인하세요.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
     },
     audioClipOK() {
-      axios
-        .delete(`/api/mastering/program/${this.ProgramSelected.audioClipID}`)
-        .then((res) => {
-          console.log(res);
-          if (res.status == 200 && res.statusText == "OK") {
-            this.$bvModal.hide("audioClipIDOver");
-            this.setFileUploading(true);
-            this.$emit("upload");
-          } else {
-            this.$fn.notify("error", { title: res.data.errorMsg });
-          }
-        });
+      if (this.MetaData.typeSelected == "program") {
+        axios
+          .delete(
+            `/api/mastering/program/${this.ProgramSelected.audioClipID}`,
+            {
+              headers: {
+                Authorization: sessionStorage.getItem("access_token"),
+              },
+            }
+          )
+          .then((res) => {
+            if (res.status == 200 && res.statusText == "OK") {
+              this.$bvModal.hide("audioClipIDOver");
+              this.setFileUploading(true);
+              this.$emit("upload");
+            } else {
+              this.$fn.notify("error", { title: res.data.errorMsg });
+            }
+          });
+      } else if (this.MetaData.typeSelected == "mcr-spot") {
+        axios
+          .delete(`/api/mastering/mcr-spot/${this.EventSelected.audioClipID}`, {
+            headers: { Authorization: sessionStorage.getItem("access_token") },
+          })
+          .then((res) => {
+            if (res.status == 200 && res.statusText == "OK") {
+              this.$bvModal.hide("audioClipIDOver");
+              this.setFileUploading(true);
+              this.$emit("upload");
+            } else {
+              this.$fn.notify("error", { title: res.data.errorMsg });
+            }
+          });
+      }
     },
     audioClipCancel() {
       this.$bvModal.hide("audioClipIDOver");
     },
     getAudioClipIDOverMsg() {
-      return `<text style="color:red;">중복된 파일이 있습니다.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
+      return `<text style="color:red;">이미 등록되어 있습니다.</text><br><br><text style="color:red;">덮어 쓰시겠습니까?</text>`;
     },
     typeOptionsByRole(role) {
       if (this.button == "nav") {
