@@ -182,11 +182,11 @@
                 <td>{{ durationSec }}</td>
                 <td
                   :class="
-                    [this.getAudioClipID(audioClipID)] ? 'disabledCell' : ''
+                    [this.getAudioClipID(audioClipID)] ? 'disabledGrayCell' : ''
                   "
                   style="text-align: center"
                 >
-                  {{ audioClipID }}
+                  {{ audioClipID == null ? "" : "O" }}
                 </td>
               </tr>
               <tr
@@ -350,6 +350,9 @@ export default {
 <style scoped>
 .disabledRow {
   color: silver !important;
+}
+.disabledGrayCell {
+  color: silver;
 }
 .disabledCell {
   color: red !important;
