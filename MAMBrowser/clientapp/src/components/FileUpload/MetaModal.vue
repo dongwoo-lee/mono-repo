@@ -367,118 +367,96 @@ export default {
       }
       this.$emit("close");
     },
-    // log() {
-    //   if (this.metaValid) {
-    //     //NOTE: 커스텀 데이터 파라미터
-    //     if (this.MetaData.typeSelected == "my-disk") {
-    //       var data = {
-    //         editor: sessionStorage.getItem("user_id"),
-    //         title: this.MetaData.title,
-    //         memo: this.MetaData.memo,
-    //       };
-    //     } else if (this.MetaData.typeSelected == "program") {
-    //       var data = {
-    //         title: this.MetaData.title,
-    //         memo: this.MetaData.memo,
-    //         media: this.MetaData.mediaSelected,
-    //         productId: this.ProgramSelected.productId,
-    //         brdDTM: this.ProgramSelected.onairTime,
-    //         SchDate: this.date,
-    //         editor: sessionStorage.getItem("user_id"),
-    //       };
-    //     } else if (this.MetaData.typeSelected == "pro") {
-    //       var data = {
-    //         editor: sessionStorage.getItem("user_id"),
-    //         category: this.MetaData.mediaSelected,
-    //         type: this.MetaData.proType,
-    //         typeName: this.MetaData.proTypeName,
-    //         title: this.MetaData.title,
-    //         memo: this.MetaData.memo,
-    //       };
-    //     } else if (this.MetaData.typeSelected == "mcr-spot") {
-    //       var data = {
-    //         title: this.MetaData.title,
-    //         memo: this.MetaData.memo,
-    //         media: this.MetaData.mediaSelected,
-    //         productId: this.EventSelected.id,
-    //         brdDT: this.date,
-    //         advertiser: this.MetaData.advertiser,
-    //         editor: sessionStorage.getItem("user_id"),
-    //       };
-    //     } else if (this.MetaData.typeSelected == "scr-spot") {
-    //       var data = {
-    //         title: this.MetaData.title,
-    //         memo: this.MetaData.memo,
-    //         advertiser: this.MetaData.advertiser,
-    //         editor: sessionStorage.getItem("user_id"),
-    //         category: this.MetaData.mediaSelected,
-    //         scrRange: JSON.stringify(this.scrRange),
-    //       };
-    //     } else if (this.MetaData.typeSelected == "static-spot") {
-    //       var data = {
-    //         title: this.MetaData.title,
-    //         media: this.MetaData.mediaSelected,
-    //         productId: this.EventSelected.id,
-    //         SDate: this.fileSDate,
-    //         EDate: this.fileEDate,
-    //         editor: sessionStorage.getItem("user_id"),
-    //         memo: this.MetaData.memo,
-    //         advertiser: this.MetaData.advertiser,
-    //       };
-    //     } else if (this.MetaData.typeSelected == "var-spot") {
-    //       var data = {
-    //         title: this.MetaData.title,
-    //         media: this.MetaData.mediaSelected,
-    //         productId: this.EventSelected.id,
-    //         SDate: this.fileSDate,
-    //         EDate: this.fileEDate,
-    //         editor: sessionStorage.getItem("user_id"),
-    //         memo: this.MetaData.memo,
-    //         advertiser: this.MetaData.advertiser,
-    //       };
-    //     } else if (this.MetaData.typeSelected == "report") {
-    //       var data = {
-    //         title: this.MetaData.title,
-    //         category: this.MetaData.coverageTypeSelected,
-    //         ProductId: this.EventSelected.productId,
-    //         brdDT: this.date,
-    //         editor: sessionStorage.getItem("user_id"),
-    //         memo: this.MetaData.memo,
-    //         reporter: this.MetaData.reporter,
-    //       };
-    //     } else if (this.MetaData.typeSelected == "filler") {
-    //       var data = {
-    //         category: this.MetaData.fillerTypeSelected,
-    //         title: this.MetaData.title,
-    //         memo: this.MetaData.memo,
-    //         editor: sessionStorage.getItem("user_id"),
-    //         brdDT: this.date,
-    //       };
-    //     }
-    //     if (this.MetaData.typeSelected == "program") {
-    //       console.log(this.ProgramSelected.audioClipID);
-    //     } else if (this.MetaData.typeSelected == "mcr-spot") {
-    //       console.log(this.EventSelected.audioClipID);
-    //     }
-    //             await this.resetUploaderCustomData();
-    //             await this.setUploaderCustomData(data);
-    //             if (!this.durationState) {
-    //               this.$bvModal.show("durationOver");
-    //               return;
-    //             }
-    //
-    //             if (!this.audioClipIdState) {
-    //               if (
-    //                 this.MetaData.typeSelected == "program" ||
-    //                 this.MetaData.typeSelected == "mcr-spot"
-    //               ) {
-    //                 this.$bvModal.show("audioClipIDOver");
-    //                 return;
-    //               }
-    //             }
-    //   }
-    // },
-    async uploadfile() {
+    log() {
+      //NOTE: 커스텀 데이터 파라미터
+      if (this.MetaData.typeSelected == "my-disk") {
+        var data = {
+          editor: sessionStorage.getItem("user_id"),
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+        };
+      } else if (this.MetaData.typeSelected == "program") {
+        var data = {
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+          media: this.MetaData.mediaSelected,
+          productId: this.ProgramSelected.productId,
+          brdDTM: this.ProgramSelected.onairTime,
+          SchDate: this.date,
+          editor: sessionStorage.getItem("user_id"),
+        };
+      } else if (this.MetaData.typeSelected == "pro") {
+        var data = {
+          editor: sessionStorage.getItem("user_id"),
+          category: this.MetaData.mediaSelected,
+          type: this.MetaData.proType,
+          typeName: this.MetaData.proTypeName,
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+        };
+      } else if (this.MetaData.typeSelected == "mcr-spot") {
+        var data = {
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+          media: this.MetaData.mediaSelected,
+          productId: this.EventSelected.id,
+          brdDT: this.date,
+          advertiser: this.MetaData.advertiser,
+          editor: sessionStorage.getItem("user_id"),
+        };
+      } else if (this.MetaData.typeSelected == "scr-spot") {
+        var data = {
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+          advertiser: this.MetaData.advertiser,
+          editor: sessionStorage.getItem("user_id"),
+          category: this.MetaData.mediaSelected,
+          scrRange: JSON.stringify(this.scrRange),
+        };
+      } else if (this.MetaData.typeSelected == "static-spot") {
+        var data = {
+          title: this.MetaData.title,
+          media: this.MetaData.mediaSelected,
+          productId: this.EventSelected.id,
+          SDate: this.fileSDate,
+          EDate: this.fileEDate,
+          editor: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
+          advertiser: this.MetaData.advertiser,
+        };
+      } else if (this.MetaData.typeSelected == "var-spot") {
+        var data = {
+          title: this.MetaData.title,
+          media: this.MetaData.mediaSelected,
+          productId: this.EventSelected.id,
+          SDate: this.fileSDate,
+          EDate: this.fileEDate,
+          editor: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
+          advertiser: this.MetaData.advertiser,
+        };
+      } else if (this.MetaData.typeSelected == "report") {
+        var data = {
+          title: this.MetaData.title,
+          category: this.MetaData.coverageTypeSelected,
+          ProductId: this.EventSelected.productId,
+          brdDT: this.date,
+          editor: sessionStorage.getItem("user_id"),
+          memo: this.MetaData.memo,
+          reporter: this.MetaData.reporter,
+        };
+      } else if (this.MetaData.typeSelected == "filler") {
+        var data = {
+          category: this.MetaData.fillerTypeSelected,
+          title: this.MetaData.title,
+          memo: this.MetaData.memo,
+          editor: sessionStorage.getItem("user_id"),
+          brdDT: this.date,
+        };
+      }
+      console.log(data);
+    },
+    uploadfile() {
       if (this.metaValid) {
         //NOTE: 커스텀 데이터 파라미터
         if (this.MetaData.typeSelected == "my-disk") {
@@ -551,7 +529,7 @@ export default {
           var data = {
             title: this.MetaData.title,
             category: this.MetaData.coverageTypeSelected,
-            ProductId: this.EventSelected.productId,
+            productId: this.EventSelected.productId,
             brdDT: this.date,
             editor: sessionStorage.getItem("user_id"),
             memo: this.MetaData.memo,
@@ -566,8 +544,8 @@ export default {
             brdDT: this.date,
           };
         }
-        await this.resetUploaderCustomData();
-        await this.setUploaderCustomData(data);
+        this.resetUploaderCustomData();
+        this.setUploaderCustomData(data);
         if (!this.durationState) {
           this.$bvModal.show("durationOver");
           return;
