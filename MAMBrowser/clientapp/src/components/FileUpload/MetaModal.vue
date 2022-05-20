@@ -456,7 +456,7 @@ export default {
       }
       console.log(data);
     },
-    uploadfile() {
+    async uploadfile() {
       if (this.metaValid) {
         //NOTE: 커스텀 데이터 파라미터
         if (this.MetaData.typeSelected == "my-disk") {
@@ -544,8 +544,8 @@ export default {
             brdDT: this.date,
           };
         }
-        this.resetUploaderCustomData();
-        this.setUploaderCustomData(data);
+        await this.resetUploaderCustomData();
+        await this.setUploaderCustomData(data);
         if (!this.durationState) {
           this.$bvModal.show("durationOver");
           return;

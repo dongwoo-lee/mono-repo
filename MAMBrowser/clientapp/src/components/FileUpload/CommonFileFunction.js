@@ -135,7 +135,6 @@ export default {
       fileEDate: (state) => state.fileEDate,
       tempFileEDate: (state) => state.tempFileEDate,
       MetaData: (state) => state.MetaData,
-      MetaModalTitle: (state) => state.MetaModalTitle,
       fileMediaOptions: (state) => state.fileMediaOptions,
       coverageTypeOptions: (state) => state.coverageTypeOptions,
       fillerTypeOptions: (state) => state.fillerTypeOptions,
