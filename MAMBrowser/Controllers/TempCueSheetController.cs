@@ -78,16 +78,20 @@ namespace MAMBrowser.Controllers
 
         //템플릿 삭제
         [HttpDelete("DelTempCue")]
-        public bool DelTempCue([FromQuery] int[] tempids)
+        public DTO_RESULT<bool> DelTempCue([FromQuery] int[] tempids)
         {
+            var result = new DTO_RESULT<bool>();
             try
             {
-                return _bll.DeleteTemplate(tempids);
+                result.ResultObject = _bll.DeleteTemplate(tempids);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
 
     }

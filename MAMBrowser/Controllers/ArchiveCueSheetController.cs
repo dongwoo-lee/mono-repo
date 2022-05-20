@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using M30.AudioFile.Common;
+using M30.AudioFile.Common.DTO;
 
 namespace MAMBrowser.Controllers
 {
@@ -33,20 +34,20 @@ namespace MAMBrowser.Controllers
 
         //이전큐시트 목록 가져오기
         [HttpPost("GetArchiveCueList")]
-        public ArchiveCueList_Result GetArchiveCueList([FromBody] ArchPram pram)
+        public DTO_RESULT<ArchiveCueList_Page> GetArchiveCueList([FromBody] ArchPram pram)
         {
+            var result = new DTO_RESULT<ArchiveCueList_Page>();
             try
             {
-                ArchiveCueList_Result result = new ArchiveCueList_Result();
-                result.ResultObject = new ArchiveCueList_Page();
                 result.ResultObject = _bll.GetArchiveCueSheetList(pram.products, pram.start_dt, pram.end_dt, pram.row_per_page, pram.select_page);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
-                return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+                return result;
         }
 
         //이전큐시트 상세내용 가져오기
