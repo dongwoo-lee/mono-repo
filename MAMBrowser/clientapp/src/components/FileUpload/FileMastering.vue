@@ -522,7 +522,7 @@ export default {
             var data = {
               title: e.title,
               type: this.getCategory(e.category),
-              user_id: e.regUserId,
+              user_id: e.regUserName,
               date: e.regDtm,
               step: e.workStatus,
             };

@@ -691,10 +691,19 @@ export default {
           this.typeOptions.push({ value: "pro", text: "프로소재" });
           this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
           this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
-          this.typeOptions.push({ value: "static-spot", text: "고정소재" });
-          this.typeOptions.push({ value: "var-spot", text: "변동소재" });
+          this.typeOptions.push({
+            value: "static-spot",
+            text: "고정소재(필러/시간)",
+          });
+          this.typeOptions.push({
+            value: "var-spot",
+            text: "변동소재(필러/시간)",
+          });
           this.typeOptions.push({ value: "report", text: "취재물" });
-          this.typeOptions.push({ value: "filler", text: "필러" });
+          this.typeOptions.push({
+            value: "filler",
+            text: "필러(PR, 소재, 기타)",
+          });
         } else if (role == "편성PD") {
           this.typeOptions.push({
             value: "null",
@@ -705,10 +714,19 @@ export default {
           this.typeOptions.push({ value: "pro", text: "프로소재" });
           this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
           this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
-          this.typeOptions.push({ value: "static-spot", text: "고정소재" });
-          this.typeOptions.push({ value: "var-spot", text: "변동소재" });
+          this.typeOptions.push({
+            value: "static-spot",
+            text: "고정소재(필러/시간)",
+          });
+          this.typeOptions.push({
+            value: "var-spot",
+            text: "변동소재(필러/시간)",
+          });
           this.typeOptions.push({ value: "report", text: "취재물" });
-          this.typeOptions.push({ value: "filler", text: "필러" });
+          this.typeOptions.push({
+            value: "filler",
+            text: "필러(PR, 소재, 기타)",
+          });
         } else if (role == "제작PD") {
           this.typeOptions.push({
             value: "null",
@@ -717,7 +735,10 @@ export default {
           this.typeOptions.push({ value: "my-disk", text: "My디스크" });
           this.typeOptions.push({ value: "program", text: "프로그램" });
           this.typeOptions.push({ value: "pro", text: "프로소재" });
-          this.typeOptions.push({ value: "filler", text: "필러" });
+          this.typeOptions.push({
+            value: "filler",
+            text: "필러(PR, 소재, 기타)",
+          });
         } else if (role == "리포터") {
           this.typeOptions.push({
             value: "null",

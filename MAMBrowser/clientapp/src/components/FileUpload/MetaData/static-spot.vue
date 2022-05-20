@@ -2,10 +2,10 @@
   <div>
     <div style="font-size: 16px">
       <b-button
-        style="position: absolute; top: 117px; left: 875px"
+        style="position: absolute; top: 117px; left: 900px"
         class="btn btn-outline-primary btn-sm default cutom-label mr-2"
         @click="modalOn"
-        >방송의뢰</b-button
+        >검색</b-button
       >
 
       <div v-show="!isActive" style="font-family: 'MBC 새로움 M'">
