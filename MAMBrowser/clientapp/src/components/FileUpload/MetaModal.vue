@@ -646,6 +646,11 @@ export default {
             } else {
               this.$fn.notify("error", { title: res.data.errorMsg });
             }
+          })
+          .catch((err) => {
+            this.$bvModal.hide("audioClipIDOver");
+            this.setFileUploading(false);
+            this.$fn.notify("error", { title: err.message });
           });
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         axios
@@ -660,6 +665,11 @@ export default {
             } else {
               this.$fn.notify("error", { title: res.data.errorMsg });
             }
+          })
+          .catch((err) => {
+            this.$bvModal.hide("audioClipIDOver");
+            this.setFileUploading(false);
+            this.$fn.notify("error", { title: err.message });
           });
       }
     },

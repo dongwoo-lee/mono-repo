@@ -1217,6 +1217,14 @@ namespace MAMBrowser.Controllers
         {
             AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
             var audioFile = repo.Get(audioClipId);
+
+            if(audioFile == null)
+            {
+                _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터를 찾을 수 없습니다. {audioClipId}", null);
+
+                return; 
+            }
+
             var movedFilePath = MoveRecycleFromFilePath(audioFile.MASTERFILE, userId);
             if (!string.IsNullOrEmpty(movedFilePath))
             {
