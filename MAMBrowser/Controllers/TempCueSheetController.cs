@@ -42,30 +42,38 @@ namespace MAMBrowser.Controllers
 
         //템플릿 상세내용 가져오기
         [HttpGet("GetTempCue")]
-        public CueSheetCollectionDTO GetTempCue([FromQuery] int cueid, string pgmcode, string brd_dt)
+        public DTO_RESULT<CueSheetCollectionDTO> GetTempCue([FromQuery] int cueid, string pgmcode, string brd_dt)
         {
+            var result = new DTO_RESULT<CueSheetCollectionDTO>();
             try
             {
-                return _bll.GetTemplate(cueid, pgmcode, brd_dt);
+                result.ResultObject =  _bll.GetTemplate(cueid, pgmcode, brd_dt);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
 
-        //템플릿 생성 & 업데이트 (테스트필요)
+        //템플릿 생성 & 업데이트 
         [HttpPost("SaveTempCue")]
-        public int SaveTempCue([FromBody] CueSheetCollectionDTO pram)
+        public DTO_RESULT<int> SaveTempCue([FromBody] CueSheetCollectionDTO pram)
         {
+            var result = new DTO_RESULT<int>();
             try
             {
-                return _bll.SaveTemplate(pram);
+                result.ResultObject = _bll.SaveTemplate(pram);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
 
         //템플릿 삭제
