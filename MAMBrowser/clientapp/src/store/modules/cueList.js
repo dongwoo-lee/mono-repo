@@ -782,7 +782,7 @@ export default {
                     await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                     var newInfo = { ...state.cueInfo }
                     var params = {
-                        cueid: res.data
+                        cueid: res.data.resultObject
                     };
                     await axios.get(`/api/tempcuesheet/GettempCue`, {
                         params: params,
@@ -791,7 +791,7 @@ export default {
                         },
                     })
                         .then((cueRes) => {
-                            newInfo.edittime = cueRes.data.cueSheetDTO.edittime
+                            newInfo.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                             commit('SET_CUEINFO', newInfo)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                         });

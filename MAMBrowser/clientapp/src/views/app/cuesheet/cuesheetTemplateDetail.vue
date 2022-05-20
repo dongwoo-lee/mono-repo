@@ -244,9 +244,12 @@ export default {
     async getCueCon() {
       let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
       var userId = sessionStorage.getItem(USER_ID);
-      var params = {
-        cueid: rowData.cueid,
-      };
+      var params = {};
+      if (rowData.cueid) {
+        params.cueid = rowData.cueid;
+      } else {
+        params.cueid = rowData.detail[0].cueid;
+      }
       await axios
         .get(`/api/tempcuesheet/GettempCue`, {
           params: params,
@@ -255,10 +258,10 @@ export default {
           },
         })
         .then(async (res) => {
-          var cueData = res.data.cueSheetDTO;
+          var cueData = res.data.resultObject.cueSheetDTO;
           this.settingInfo(cueData);
           this.SET_CUEINFO(cueData);
-          this.setCueConData(res.data);
+          this.setCueConData(res.data.resultObject);
         });
       var params = {
         personid: userId,
