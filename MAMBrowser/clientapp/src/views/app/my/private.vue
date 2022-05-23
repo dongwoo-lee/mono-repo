@@ -257,14 +257,12 @@ export default {
   methods: {
     ...mapMutations("FileIndexStore", [
       "setFileModal",
-      "setFileSelected",
       "setButton",
       "setTypeSelected",
     ]),
     ...mapActions("file", ["open_popup"]),
     FileModal() {
       this.setFileModal(true);
-      this.setFileSelected(true);
       this.setButton("private");
       this.setTypeSelected("my-disk");
     },

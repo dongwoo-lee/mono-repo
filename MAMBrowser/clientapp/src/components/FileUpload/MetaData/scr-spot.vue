@@ -354,7 +354,6 @@ export default {
     this.scrMedia = "ST01";
     this.scrMediaName = "우리의 소리를 찾아서";
     this.setMediaSelected(this.scrMedia);
-    this.setMediaName(this.scrMediaName);
   },
   computed: {
     ...mapState("FileIndexStore", {
@@ -416,8 +415,6 @@ export default {
     },
     mediaChange(v) {
       this.setMediaSelected(v);
-      var data = this.fileMediaOptions.find((dt) => dt.value == v);
-      this.setMediaName(data.text);
     },
     pgmSelect(v) {
       this.selectedPgm = v;

@@ -1,6 +1,5 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid";
-import commonFunction from "../../utils/CommonFunctions";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
@@ -12,7 +11,6 @@ export default {
     DxDataGrid,
     DxColumn,
     DxSelection,
-    commonFunction,
     DxFileUploader,
     DxTextBox,
     DxValidator,
@@ -146,16 +144,13 @@ export default {
       EventData: (state) => state.EventData,
       EventSelected: (state) => state.EventSelected,
       isActive: (state) => state.isActive,
-      processing: (state) => state.processing,
       fileUploading: (state) => state.fileUploading,
-      fileSelected: (state) => state.fileSelected,
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
       "titleState",
       "memoState",
       "reporterState",
-      "programState",
       "eventState",
       "SEDateState",
       "advertiserState",
@@ -168,17 +163,11 @@ export default {
       return this.isActive ? "outline-dark" : "outline-dark";
     },
     ...mapGetters("menu", ["getMenuType"]),
-    programState() {
-      return this.ProgramSelected.productId != "" ? true : false;
-    },
   },
   created() {
     this.role = sessionStorage.getItem("authority");
   },
   watch: {
-    programState(v) {
-      this.setProgramState(v);
-    },
     MetaData: {
       deep: true,
       handler(v) {
@@ -206,8 +195,6 @@ export default {
       "setEventData",
       "setProgramState",
       "setIsActive",
-      "setProcessing",
-      "setFileSelected",
       "setFileUploading",
       "setFileMediaOptions",
       "setCoverageTypeOptions",
@@ -251,7 +238,6 @@ export default {
       return result.substring(0, maxLength);
     },
     fileStateFalse() {
-      this.setProcessing(false);
       this.setFileUploading(false);
     },
     onRowClick(v) {
@@ -493,9 +479,6 @@ export default {
       this.resetAdvertiser();
       this.resetReporter();
       this.watch = "";
-      if (this.processing) {
-        this.$fn.notify("error", { message: "파일 업로드 취소" });
-      }
     },
     typeReset() {
       this.resetTitle();
@@ -512,9 +495,6 @@ export default {
       this.resetProTypeName();
       this.resetAdvertiser();
       this.watch = "";
-      if (this.processing) {
-        this.$fn.notify("error", { message: "파일 업로드 취소" });
-      }
     },
   },
 };

@@ -30,7 +30,7 @@
       @dragleave="dragLeave"
       id="dropzone-external"
       class="dropzone"
-      v-show="dropzone && !fileSelected"
+      v-show="dropzone"
       style="
         position: fixed;
         z-index: 9800;
@@ -229,12 +229,7 @@
                         background-color: white;
                         height: 34px;
                       "
-                      class="
-                        btn btn-outline-primary btn-sm
-                        default
-                        cutom-label
-                        mr-2
-                      "
+                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                       @click="logSearch"
                     >
                       검색
@@ -395,6 +390,7 @@ export default {
       tabIndex: 0,
       dxfu,
       MetaModal: false,
+      processing: false,
       dropzone: false,
       isDropZoneActive: false,
       chunks: [],
@@ -746,13 +742,11 @@ export default {
       this.fileupload.upload(0);
     },
     valueChanged(event) {
-      this.setProcessing(true);
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
         if (2147483648 <= event.value[0].size) {
           this.resetLocalFiles();
-          this.setProcessing(false);
           this.$fn.notify("error", {
             title: "최대 업로드 크기는 2GB 입니다.",
           });
@@ -773,13 +767,11 @@ export default {
           if (event.value[0].type == "audio/mpeg") {
             var blob = event.value[0].slice(0, 1000000);
             formData.append("file", blob);
-            // formData.append("fileExt", event.value[0].name);
             formData.append("fileName", event.value[0].name);
             formData.append("fileSize", event.value[0].size);
           } else if (event.value[0].type == "audio/wav") {
             var blob = event.value[0].slice(0, 10000);
             formData.append("file", blob);
-            //formData.append("fileExt", event.value[0].name);
             formData.append("fileName", event.value[0].name);
             formData.append("fileSize", event.value[0].size);
           }
@@ -797,9 +789,8 @@ export default {
               this.setAudioFormat(res.data.resultObject.audioFormatInfo);
               this.openFileModal();
               this.dropzone = false;
-              this.setFileSelected(false);
+              this.processing = false;
               this.MetaModal = true;
-              this.setProcessing(false);
               // this.setFileUploading(true);
             })
             .catch((err) => {
@@ -817,10 +808,7 @@ export default {
             title: "오디오 파일만 업로드 가능합니다.",
           });
           this.fileupload.removeFile(0);
-          this.setProcessing(false);
         }
-      } else if (event.value.length == 0) {
-        this.setProcessing(false);
       }
     },
     notDiskAvailable(files) {
@@ -857,7 +845,6 @@ export default {
       this.fileRemove();
     },
     uploadError(e) {
-      this.setProcessing(false);
       this.setFileUploading(false);
       this.MetaModalClose();
       this.$fn.notify("error", {
@@ -872,6 +859,7 @@ export default {
     //#endregion
     //#region 모달 조작
     select() {
+      this.processing = true;
       this.fileupload._isCustomClickEvent = true;
       this.fileupload._$fileInput[0].click();
       this.setTypeSelected("my-disk");
@@ -885,7 +873,6 @@ export default {
     closeFileModal() {
       this.tabIndex = 1;
       this.setFileModal(false);
-      this.setFileSelected(false);
       this.isDropZoneActive = false;
       this.dropzone = false;
       this.$emit("dropZoneLeave");

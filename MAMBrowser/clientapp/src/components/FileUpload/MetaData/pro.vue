@@ -160,8 +160,6 @@ export default {
   methods: {
     mediaChange(v) {
       this.setMediaSelected(v.id);
-      var data = this.fileMediaOptions.find((dt) => dt.id == v.id);
-      this.setMediaName(data.name);
     },
     proTypeChange(v) {
       var data = this.proTypeOptions.find((dt) => dt.value == v);

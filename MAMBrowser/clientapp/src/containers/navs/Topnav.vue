@@ -36,12 +36,7 @@
               <td rowspan="2" v-if="isMasteringValid()">
                 <b-button
                   v-if="isMasteringValid()"
-                  class="
-                    btn btn-outline-primary btn-sm
-                    default
-                    cutom-label
-                    mr-2
-                  "
+                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                   id="fileuploadbutton"
                   @click="openFileModal"
                   style="
@@ -186,11 +181,7 @@ export default {
     ]),
     ...mapActions("user", ["setLang", "signOut", "renewal"]),
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
-    ...mapMutations("FileIndexStore", [
-      "setFileModal",
-      "setFileSelected",
-      "setButton",
-    ]),
+    ...mapMutations("FileIndexStore", ["setFileModal", "setButton"]),
     isMasteringValid() {
       var visible;
       this.behaviorList.forEach((e) => {
@@ -206,7 +197,6 @@ export default {
     },
     openFileModal() {
       this.setFileModal(true);
-      this.setFileSelected(true);
       this.setButton("nav");
     },
     logout() {

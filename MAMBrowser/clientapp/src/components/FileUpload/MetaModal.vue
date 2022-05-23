@@ -182,10 +182,7 @@
               <span class="label">확인</span>
             </b-button> -->
 
-            <b-button
-              variant="outline-primary"
-              v-show="!processing && fileUploading"
-            >
+            <b-button variant="outline-primary" v-show="fileUploading">
               <b-spinner small type="grow"></b-spinner>
               <span class="label">업로드 중...</span>
             </b-button>
@@ -194,7 +191,7 @@
                 variant="outline-primary"
                 @click="uploadfile()"
                 style="margin-left: 25px"
-                v-show="!processing && !fileUploading"
+                v-show="!fileUploading"
               >
                 <span class="label">업로드</span>
               </b-button>
@@ -204,7 +201,7 @@
                 variant="primary"
                 disabled
                 style="margin-left: 25px"
-                v-show="!processing && !fileUploading"
+                v-show="!fileUploading"
               >
                 <span class="label">업로드</span>
               </b-button>
@@ -307,7 +304,6 @@ export default {
       ProgramSelected: (state) => state.ProgramSelected,
       EventSelected: (state) => state.EventSelected,
       isActive: (state) => state.isActive,
-      processing: (state) => state.processing,
       fileUploading: (state) => state.fileUploading,
       typeOptions: (state) => state.typeOptions,
       uploaderCustomData: (state) => state.uploaderCustomData,
@@ -349,7 +345,6 @@ export default {
       "setTitle",
       "setUploaderCustomData",
       "setMasteringListData",
-      "setProcessing",
       "setFileUploading",
       "resetTitle",
       "resetMemo",
@@ -361,7 +356,7 @@ export default {
       this.$emit("reset");
     },
     MetaModalOff() {
-      if (this.processing || this.fileUploading) {
+      if (this.fileUploading) {
         this.cancel = true;
         this.$emit("cancel");
       }
