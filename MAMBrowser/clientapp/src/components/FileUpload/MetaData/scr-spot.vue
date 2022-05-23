@@ -249,10 +249,22 @@
             </b-input-group>
           </b-form-group>
         </div>
+        <p
+          v-show="!dateValid"
+          style="
+            position: absolute;
+            top: 135px;
+            left: 270px;
+            color: red;
+            font-size: 13px;
+          "
+        >
+          시작 날짜가 종료 날짜보다 큽니다.
+        </p>
       </template>
       <template v-slot:modal-footer>
         <b-button
-          v-show="validRange"
+          v-show="addValid"
           style="margin-left: 20px; height: 34px"
           variant="outline-primary"
           @click="addRange"
@@ -260,7 +272,7 @@
           추가
         </b-button>
         <b-button
-          v-show="!validRange"
+          v-show="!addValid"
           style="margin-left: 20px; height: 34px"
           variant="dark"
           disabled
@@ -320,6 +332,8 @@ export default {
       EndDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       tempSDate: "",
       tempEDate: "",
+      dateValid: true,
+      addValid: false,
       ProgramOptions: [],
     };
   },
@@ -346,12 +360,36 @@ export default {
     ...mapState("FileIndexStore", {
       scrRange: (state) => state.scrRange,
     }),
-    validRange() {
-      return this.selectedPgm == "" ? false : true;
+  },
+  watch: {
+    StartDate() {
+      this.validRange();
+    },
+    EndDate() {
+      this.validRange();
+    },
+    selectedPgm() {
+      this.validRange();
     },
   },
   methods: {
     ...mapMutations("FileIndexStore", ["setScrRange", "resetScrRange"]),
+    validRange() {
+      if (
+        this.selectedPgm == "" ||
+        this.selectedPgm == "undefined" ||
+        this.selectedPgm == null ||
+        this.selectedPgm == { id: null, name: null }
+      ) {
+        this.addValid = false;
+      } else {
+        if (!this.dateValid) {
+          this.addValid = false;
+          return;
+        }
+        this.addValid = true;
+      }
+    },
     onSearch() {
       this.modalOn();
     },
@@ -383,6 +421,7 @@ export default {
     },
     pgmSelect(v) {
       this.selectedPgm = v;
+      this.validRange();
     },
     eventSInput(value) {
       this.StartDate = value;
@@ -397,8 +436,10 @@ export default {
         this.$fn.notify("error", {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
+        this.dateValid = false;
         return;
       }
+      this.dateValid = true;
     },
     eventEInput(value) {
       this.EndDate = value;
@@ -410,8 +451,10 @@ export default {
         this.$fn.notify("error", {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
+        this.dateValid = false;
         return;
       }
+      this.dateValid = true;
     },
 
     onsInput(event) {
@@ -450,6 +493,7 @@ export default {
               this.$fn.notify("error", {
                 message: "시작 날짜가 종료 날짜보다 큽니다.",
               });
+              this.dateValid = false;
               return;
             }
             return;
@@ -465,8 +509,10 @@ export default {
             this.$fn.notify("error", {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
             });
+            this.dateValid = false;
             return;
           }
+          this.dateValid = true;
         }
       }
     },
@@ -502,6 +548,7 @@ export default {
               this.$fn.notify("error", {
                 message: "시작 날짜가 종료 날짜보다 큽니다.",
               });
+              this.dateValid = false;
               return;
             }
             return;
@@ -515,8 +562,10 @@ export default {
             this.$fn.notify("error", {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
             });
+            this.dateValid = false;
             return;
           }
+          this.dateValid = true;
         }
       }
     },
@@ -535,9 +584,7 @@ export default {
       const yyyy = replaceVal.substring(0, 4);
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
-      if (12 < mm) {
-      } else if (31 < dd) {
-      } else {
+      if (!(12 < mm && 31 < dd)) {
         return `${yyyy}-${mm}-${dd}`;
       }
     },
