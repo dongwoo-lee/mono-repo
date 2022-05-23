@@ -266,6 +266,7 @@ namespace MAMBrowser.Controllers
 
                 user.BehaviorList = _bll.GetBehavior(user.AuthorCD);
                 user.BehaviorList.AddRange(_bll.GetMasteringAuthority(user.MenuGrpID));
+                user.MasteringMenuList = new List<DTO_MENU>(_bll.GetMasteringCategories(user.MenuGrpID));
                 user.ConDBName = _appSesstings.DBName;
                 user.ConNetworkName = MAMUtility.NetworkName(_appSesstings.BroadcastStartNetwork, _appSesstings.BroadcastEndNetwork, clientIp);
                 result.ResultObject = user;

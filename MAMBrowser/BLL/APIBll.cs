@@ -113,6 +113,9 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetMasteringAuthority(menuGrpCd);
         }
-
+        public IList<DTO_MENU> GetMasteringCategories(string menuGrpCd)
+        {
+            return _dao.GetMasteringCategories(menuGrpCd);
+        }
     }
 }
