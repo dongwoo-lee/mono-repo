@@ -174,13 +174,13 @@
             ></b-progress>
           </div>
           <div :class="[isActive ? 'file-modal-button' : 'date-modal-button']">
-            <!-- <b-button
+            <b-button
               variant="outline-success"
               @click="log"
               style="margin-left: -80px"
             >
               <span class="label">확인</span>
-            </b-button> -->
+            </b-button>
 
             <b-button variant="outline-primary" v-show="fileUploading">
               <b-spinner small type="grow"></b-spinner>
@@ -291,6 +291,9 @@ export default {
   computed: {
     ...mapGetters("user", ["diskAvailable"]),
     ...mapState("FileIndexStore", {
+      myDiskMetaData: (state) => state.myDiskMetaData,
+      pgmMetaData: (state) => state.pgmMetaData,
+      pgmSelected: (state) => state.pgmSelected,
       MetaModalTitle: (state) => state.MetaModalTitle,
       date: (state) => state.date,
       button: (state) => state.button,
@@ -367,17 +370,17 @@ export default {
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {
           editor: sessionStorage.getItem("user_id"),
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
+          title: this.myDiskMetaData.title,
+          memo: this.myDiskMetaData.memo,
         };
       } else if (this.MetaData.typeSelected == "program") {
         var data = {
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
-          media: this.MetaData.mediaSelected,
-          productId: this.ProgramSelected.productId,
-          brdDTM: this.ProgramSelected.onairTime,
-          SchDate: this.date,
+          title: this.pgmMetaData.title,
+          memo: this.pgmMetaData.memo,
+          media: this.pgmMetaData.media,
+          productId: this.pgmSelected.productId,
+          brdDTM: this.pgmSelected.onairTime,
+          SchDate: this.pgmMetaData.date,
           editor: sessionStorage.getItem("user_id"),
         };
       } else if (this.MetaData.typeSelected == "pro") {
@@ -457,17 +460,17 @@ export default {
         if (this.MetaData.typeSelected == "my-disk") {
           var data = {
             editor: sessionStorage.getItem("user_id"),
-            title: this.MetaData.title,
-            memo: this.MetaData.memo,
+            title: this.myDiskMetaData.title,
+            memo: this.myDiskMetaData.memo,
           };
         } else if (this.MetaData.typeSelected == "program") {
           var data = {
-            title: this.MetaData.title,
-            memo: this.MetaData.memo,
-            media: this.MetaData.mediaSelected,
-            productId: this.ProgramSelected.productId,
-            brdDTM: this.ProgramSelected.onairTime,
-            SchDate: this.date,
+            title: this.pgmMetaData.title,
+            memo: this.pgmMetaData.memo,
+            media: this.pgmMetaData.media,
+            productId: this.pgmSelected.productId,
+            brdDTM: this.pgmSelected.onairTime,
+            SchDate: this.pgmMetaData.date,
             editor: sessionStorage.getItem("user_id"),
           };
         } else if (this.MetaData.typeSelected == "pro") {
@@ -566,7 +569,7 @@ export default {
           var formData = new FormData();
 
           formData.append("userId", sessionStorage.getItem("user_id"));
-          formData.append("title", this.MetaData.title);
+          formData.append("title", this.myDiskMetaData.title);
           formData.append("fileSize", this.localFiles[0].size);
           formData.append("fileName", this.localFiles[0].name);
           axios.post(`/api/mastering/TitleValidation`, formData).then((res) => {
@@ -598,7 +601,7 @@ export default {
       this.$bvModal.hide("durationOver");
 
       if (this.MetaData.typeSelected == "program") {
-        if (this.ProgramSelected.audioClipID == null) {
+        if (this.pgmSelected.audioClipID == null) {
           this.setFileUploading(true);
           this.$emit("upload");
         } else {
@@ -625,14 +628,11 @@ export default {
     audioClipOK() {
       if (this.MetaData.typeSelected == "program") {
         axios
-          .delete(
-            `/api/mastering/program/${this.ProgramSelected.audioClipID}`,
-            {
-              headers: {
-                Authorization: sessionStorage.getItem("access_token"),
-              },
-            }
-          )
+          .delete(`/api/mastering/program/${this.pgmSelected.audioClipID}`, {
+            headers: {
+              Authorization: sessionStorage.getItem("access_token"),
+            },
+          })
           .then((res) => {
             if (res.status == 200 && res.statusText == "OK") {
               this.$bvModal.hide("audioClipIDOver");

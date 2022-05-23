@@ -15,12 +15,12 @@
             id="dateinput"
             type="text"
             class="form-control input-picker"
-            :value="date"
+            :value="pgmMetaData.date"
             @input="onInput"
           />
           <b-input-group-append>
             <b-form-datepicker
-              :value="date"
+              :value="pgmMetaData.date"
               @input="eventInput"
               button-only
               :disabled="isActive"
@@ -43,9 +43,9 @@
           id="program-media"
           class="media-select"
           style="width: 95px; height: 37px"
-          :value="this.programMedia"
+          :value="this.pgmMetaData.media"
           @input="mediaChange"
-          :options="fileMediaOptions"
+          :options="pgmMediaOptions"
         />
       </b-form-group>
       <b-button
@@ -69,7 +69,7 @@
           <b-form-input
             class="editTask"
             style="width: 425px"
-            v-model="this.ProgramSelected.eventName"
+            v-model="this.pgmSelected.eventName"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -81,7 +81,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="this.ProgramSelected.onairTime"
+            v-model="this.pgmSelected.onairTime"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -93,7 +93,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="this.ProgramSelected.durationSec"
+            v-model="this.pgmSelected.durationSec"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -109,15 +109,15 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="pgmMetaData.memo"
+          :state="pgmMemoState"
           :maxLength="200"
           placeholder="메모"
           trim
         />
       </b-form-group>
-      <p style="margin-left: 392px; margin-top: -15px" v-show="memoState">
-        {{ MetaData.memo.length }}/30
+      <p style="margin-left: 392px; margin-top: -15px" v-show="pgmMemoState">
+        {{ pgmMetaData.memo.length }}/30
       </p>
     </div>
 
@@ -134,16 +134,16 @@
         <h5>프로그램 선택</h5>
       </template>
       <template slot="default">
-        <div v-show="this.MetaData.typeSelected == 'program'">
+        <div>
           <DxDataGrid
             ref="my-proDataGrid"
-            v-show="this.ProgramData.eventName != ''"
+            v-show="this.pgmDataOptions.eventName != ''"
             style="
               height: 280px;
               border: 1px solid silver;
               font-family: 'MBC 새로움 M';
             "
-            :data-source="ProgramData"
+            :data-source="pgmDataOptions"
             :selection="{ mode: 'single' }"
             :show-borders="false"
             :hover-state-enabled="true"
@@ -170,7 +170,7 @@
             >
               <tr
                 v-if="
-                  !userProgramList.includes(productId) &&
+                  !userPgmList.includes(productId) &&
                   eventName != '' &&
                   role != 'ADMIN'
                 "
@@ -191,7 +191,7 @@
               </tr>
               <tr
                 v-if="
-                  (userProgramList.includes(productId) && eventName != '') ||
+                  (userPgmList.includes(productId) && eventName != '') ||
                   role == 'ADMIN'
                 "
               >
@@ -252,7 +252,6 @@
 <script>
 import CommonFileFunction from "../CommonFileFunction";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
 import axios from "axios";
@@ -263,25 +262,23 @@ export default {
     DxScrolling,
     DxLoadPanel,
   },
-  mixins: [CommonFileFunction, MixinBasicPage],
+  mixins: [CommonFileFunction],
   data() {
     return {
       modal: false,
-      programMedia: "A",
-      mediaName: "AM",
+      mediaName: "",
       dxdg,
     };
   },
   created() {
-    this.reset();
-    this.getEditorForPd();
-    this.resetFileMediaOptions();
+    this.RESET_PGM_METADATA();
+    this.RESET_PGM_MEDIA_OPTIONS();
 
     axios.get("/api/categories/media").then((res) => {
-      this.programMedia = res.data.resultObject.data[0].id;
-      this.setMediaSelected(this.programMedia);
+      this.mediaName = res.data.resultObject.data[0].id;
+      this.SET_PGM_MEDIA_SELECTED(res.data.resultObject.data[0].id);
       res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
+        this.SET_PGM_MEDIA_OPTIONS({
           value: e.id,
           text: e.name,
         });
@@ -291,26 +288,49 @@ export default {
     var user_id = sessionStorage.getItem("user_id");
     axios
       .get(
-        `/api/categories/user-pgmcodes?userId=${user_id}&media=${this.MetaData.mediaSelected}`
+        `/api/categories/user-pgmcodes?userId=${user_id}&media=${this.pgmMetaData.media}`
       )
       .then((res) => {
-        this.setUserProgramList(res.data.resultObject.data);
+        this.SET_USER_PGM_LIST(res.data.resultObject.data);
       });
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    this.setDate(today);
-    this.setTempDate(today);
+    this.SET_PGM_DATE(today);
+    this.SET_PGM_TEMP_DATE(today);
 
     this.getPro();
   },
   computed: {
+    ...mapState("FileIndexStore", {
+      pgmMetaData: (state) => state.pgmMetaData,
+      pgmMediaOptions: (state) => state.pgmMediaOptions,
+      userPgmList: (state) => state.userPgmList,
+      pgmDataOptions: (state) => state.pgmDataOptions,
+      pgmSelected: (state) => state.pgmSelected,
+    }),
+    ...mapGetters("FileIndexStore", ["pgmMemoState"]),
     proDataGrid: function () {
       return this.$refs[dxdg].instance;
     },
   },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "SET_PGM_DATE",
+      "SET_PGM_TEMP_DATE",
+      "SET_PGM_TITLE",
+      "SET_PGM_MEDIA_SELECTED",
+      "SET_PGM_MEDIA_OPTIONS",
+      "SET_USER_PGM_LIST",
+      "SET_PGM_SELECTED",
+      "RESET_PGM_DATE",
+      "RESET_PGM_TEMP_DATE",
+      "RESET_PGM_MEDIA_OPTIONS",
+      "RESET_PGM_DATA_OPTIONS",
+      "RESET_PGM_SELECTED",
+      "RESET_PGM_METADATA",
+    ]),
     getProductId(productId) {
-      if (this.userProgramList.includes(productId)) {
+      if (this.userPgmList.includes(productId)) {
         return true;
       } else {
         return false;
@@ -324,14 +344,106 @@ export default {
       }
     },
     mediaChange(v) {
-      this.setMediaSelected(v);
-      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.SET_PGM_MEDIA_SELECTED(v);
+      var data = this.pgmMediaOptions.find((dt) => dt.value == v);
       this.mediaName = data.text;
       this.getPro();
     },
     onSearch() {
       this.modalOn();
       this.getPro();
+    },
+    getPro() {
+      const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+
+      this.RESET_PGM_DATA_OPTIONS();
+      axios
+        .get(
+          `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
+        )
+        .then((res) => {
+          var value = res.data.resultObject.data;
+          value.forEach((e) => {
+            e.durationSec = this.getDurationSec(e.durationSec);
+            e.onairTime = this.getOnAirTime(e.onairTime);
+          });
+          this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
+        });
+      this.RESET_PGM_SELECTED();
+    },
+    onRowClick(v) {
+      if (
+        !this.userPgmList.includes(v.data.productId) &&
+        this.role != "ADMIN"
+      ) {
+        this.proDataGrid.deselectRows(v.data.productId);
+        this.RESET_PGM_SELECTED();
+        return;
+      }
+      this.SET_PGM_SELECTED(v.data);
+      this.SET_PGM_TITLE(
+        `[${this.pgmMetaData.date}] [${this.mediaName}] [${this.pgmSelected.eventName}]`
+      );
+    },
+    eventInput(event) {
+      this.SET_PGM_DATE(event);
+      this.SET_PGM_TEMP_DATE(event);
+      this.getPro();
+    },
+    onInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.tempDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
+        event.target.value = this.tempDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.SET_PGM_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.SET_PGM_TEMP_DATE(
+              this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+            );
+            return;
+          }
+          this.SET_PGM_DATE(convertDate);
+          this.SET_PGM_TEMP_DATE(convertDate);
+          this.getPro();
+        }
+      }
+    },
+    convertDateSTH(value) {
+      const replaceVal = value.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      if (12 < mm) {
+        this.SET_PGM_DATE("");
+      } else if (31 < dd) {
+        this.SET_PGM_DATE("");
+      } else {
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    },
+    onContext(ctx) {
+      this.formatted = ctx.selectedFormatted;
+      this.dateSelected = ctx.selectedYMD;
     },
     modalOn() {
       this.modal = true;
@@ -340,7 +452,7 @@ export default {
       this.modal = false;
     },
     modalReset() {
-      this.resetProgramSelected();
+      this.RESET_PGM_SELECTED();
       this.modal = false;
     },
   },

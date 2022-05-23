@@ -21,6 +21,38 @@ export default {
     fileEDate: "",
     tempFileEDate: "",
     scrRange: [],
+    myDiskMetaData: {
+      title: "",
+      memo: "",
+      editor: sessionStorage.getItem("user_id"),
+    },
+    pgmMetaData: {
+      title: "",
+      memo: "",
+      media: "",
+      date: "",
+      tempDate: "",
+    },
+    pgmMediaOptions: [],
+    pgmDataOptions: [
+      {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: "",
+        audioClipID: "",
+      },
+    ],
+    userPgmList: [],
+    pgmSelected: {
+      eventName: "",
+      eventType: "",
+      productId: "",
+      onairTime: "",
+      durationSec: "",
+      audioClipID: "",
+    },
     MetaData: {
       title: "",
       memo: "",
@@ -88,6 +120,18 @@ export default {
         ? true
         : false;
     },
+    myDiskTitleState(state) {
+      return state.myDiskMetaData.title.length >= 1 ? true : false;
+    },
+    myDiskMemoState(state) {
+      return state.myDiskMetaData.memo.length >= 1 ? true : false;
+    },
+    pgmSelectedState(state) {
+      return state.pgmSelected.productId != "" ? true : false;
+    },
+    pgmMemoState(state) {
+      return state.pgmMetaData.memo.length >= 1 ? true : false;
+    },
     titleState(state) {
       return state.MetaData.title.length >= 1 ? true : false;
     },
@@ -111,7 +155,7 @@ export default {
     },
     audioClipIdState(state) {
       if (state.MetaData.typeSelected == "program") {
-        return state.ProgramSelected.audioClipID != null ? true : false;
+        return state.pgmSelected.audioClipID != null ? true : false;
       } else if (state.MetaData.typeSelected == "mcr-spot") {
         return state.ProgramSelected.audioClipID != null ? true : false;
       }
@@ -124,11 +168,11 @@ export default {
 
       if (
         state.MetaData.typeSelected == "program" &&
-        state.ProgramSelected.durationSec != ""
+        state.pgmSelected.durationSec != ""
       ) {
-        var ph = state.ProgramSelected.durationSec.slice(0, 2);
-        var pm = state.ProgramSelected.durationSec.slice(3, 5);
-        var ps = state.ProgramSelected.durationSec.slice(6, 8);
+        var ph = state.pgmSelected.durationSec.slice(0, 2);
+        var pm = state.pgmSelected.durationSec.slice(3, 5);
+        var ps = state.pgmSelected.durationSec.slice(6, 8);
         var calcP = ph * 60 * 60 + pm * 60 + ps * 1;
         var abs = Math.abs(calcD - calcP);
         if (5 < abs) {
@@ -184,10 +228,14 @@ export default {
     },
     metaValid(state, getters) {
       if (state.MetaData.typeSelected == "my-disk") {
-        if (getters.typeState && getters.titleState && getters.memoState)
+        if (
+          getters.typeState &&
+          getters.myDiskTitleState &&
+          getters.myDiskMemoState
+        )
           return true;
       } else if (state.MetaData.typeSelected == "program") {
-        if (getters.programState) {
+        if (getters.pgmSelectedState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "pro") {
@@ -226,6 +274,105 @@ export default {
     },
   },
   mutations: {
+    //#region MyDisk
+    SET_MYDISK_TITLE(state, payload) {
+      state.myDiskMetaData.title = payload;
+    },
+    RESET_MYDISK_METADATA(state) {
+      state.myDiskMetaData = {
+        title: "",
+        memo: "",
+        editor: sessionStorage.getItem("user_id"),
+      };
+    },
+    //#endregion
+    //#region PGM
+    SET_PGM_DATE(state, payload) {
+      state.pgmMetaData.date = payload;
+    },
+    SET_PGM_TEMP_DATE(state, payload) {
+      state.pgmMetaData.tempDate = payload;
+    },
+    SET_PGM_TITLE(state, payload) {
+      state.pgmMetaData.title = payload;
+    },
+    SET_PGM_MEDIA_SELECTED(state, payload) {
+      state.pgmMetaData.media = payload;
+    },
+    SET_PGM_MEDIA_OPTIONS(state, payload) {
+      state.pgmMediaOptions.push(payload);
+    },
+    SET_PGM_DATA_OPTIONS(state, payload) {
+      state.pgmDataOptions = payload;
+    },
+    SET_USER_PGM_LIST(state, payload) {
+      state.userPgmList = payload;
+    },
+    SET_PGM_SELECTED(state, payload) {
+      state.pgmSelected = payload;
+    },
+    RESET_PGM_DATE(state) {
+      state.pgmMetaData.date = "";
+    },
+    RESET_PGM_TEMP_DATE(state) {
+      state.pgmMetaData.tempDate = "";
+    },
+    RESET_PGM_MEDIA_OPTIONS(state) {
+      state.pgmMediaOptions = [];
+    },
+    RESET_PGM_DATA_OPTIONS(state) {
+      state.pgmDataOptions = [
+        {
+          eventName: "",
+          eventType: "",
+          productId: "",
+          onairTime: "",
+          durationSec: "",
+          audioClipID: "",
+        },
+      ];
+    },
+    RESET_PGM_SELECTED(state) {
+      state.pgmSelected = {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: "",
+        audioClipID: "",
+      };
+    },
+    RESET_PGM_METADATA(state) {
+      state.pgmMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+      };
+
+      state.pgmMediaOptions = [];
+
+      state.pgmDataOptions = [
+        {
+          eventName: "",
+          eventType: "",
+          productId: "",
+          onairTime: "",
+          durationSec: "",
+          audioClipID: "",
+        },
+      ];
+
+      state.pgmSelected = {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: "",
+        audioClipID: "",
+      };
+    },
+    //#endregion
+
     addLocalFiles(state, payload) {
       state.localFiles.push(payload);
     },

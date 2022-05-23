@@ -132,6 +132,8 @@ export default {
       tempFileSDate: (state) => state.tempFileSDate,
       fileEDate: (state) => state.fileEDate,
       tempFileEDate: (state) => state.tempFileEDate,
+      pgmMetaData: (state) => state.pgmMetaData,
+      pgmSelected: (state) => state.pgmSelected,
       MetaData: (state) => state.MetaData,
       fileMediaOptions: (state) => state.fileMediaOptions,
       coverageTypeOptions: (state) => state.coverageTypeOptions,
@@ -183,6 +185,11 @@ export default {
   methods: {
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
     ...mapMutations("FileIndexStore", [
+      "SET_PGM_TITLE",
+      "SET_PGM_SELECTED",
+      "RESET_PGM_SELECTED",
+      "SET_PGM_DATA_OPTIONS",
+      "RESET_PGM_DATA_OPTIONS",
       "setUploaderCustomData",
       "setDate",
       "setTitle",
@@ -250,9 +257,9 @@ export default {
           this.resetProgramSelected();
           return;
         }
-        this.setProgramSelected(v.data);
-        this.setTitle(
-          `[${this.date}] [${this.mediaName}] [${this.ProgramSelected.eventName}]`
+        this.SET_PGM_SELECTED(v.data);
+        this.SET_PGM_TITLE(
+          `[${this.date}] [${this.mediaName}] [${this.pgmSelected.eventName}]`
         );
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         this.setEventSelected(v.data);
@@ -281,10 +288,10 @@ export default {
         const dd = replaceVal.substring(6, 8);
         var date = yyyy + "" + mm + "" + dd;
 
-        this.resetProgramData();
+        this.RESET_PGM_DATA_OPTIONS();
         axios
           .get(
-            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
+            `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
           )
           .then((res) => {
             var value = res.data.resultObject.data;
@@ -292,9 +299,9 @@ export default {
               e.durationSec = this.getDurationSec(e.durationSec);
               e.onairTime = this.getOnAirTime(e.onairTime);
             });
-            this.setProgramData(res.data.resultObject.data);
+            this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
           });
-        this.resetProgramSelected();
+        this.RESET_PGM_SELECTED();
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         const replaceVal = this.date.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);

@@ -1,5 +1,5 @@
 <template>
-  <div v-show="this.MetaData.typeSelected == 'my-disk'">
+  <div>
     <div style="height: 50px; margin-top: 27px">
       <b-form-group
         label="제목"
@@ -8,15 +8,15 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.title"
-          :state="titleState"
+          v-model="myDiskMetaData.title"
+          :state="myDiskTitleState"
           :maxLength="200"
           placeholder="제목"
           trim
         />
       </b-form-group>
       <p
-        v-show="titleState"
+        v-show="myDiskTitleState"
         style="
           position: relative;
           left: 380px;
@@ -25,7 +25,7 @@
           width: 30px;
         "
       >
-        {{ MetaData.title.length }}/200
+        {{ myDiskMetaData.title.length }}/200
       </p>
     </div>
 
@@ -37,8 +37,8 @@
       >
         <b-form-textarea
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="myDiskMetaData.memo"
+          :state="myDiskMemoState"
           :maxLength="200"
           :rows="5"
           :max-rows="5"
@@ -48,7 +48,7 @@
         />
       </b-form-group>
       <p
-        v-show="memoState"
+        v-show="myDiskMemoState"
         style="
           position: relative;
           left: 380px;
@@ -58,7 +58,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.memo.length }}/200
+        {{ myDiskMetaData.memo.length }}/200
       </p>
     </div>
     <div style="height: 50px; margin-top: 85px">
@@ -71,7 +71,7 @@
           title="제작자"
           style="width: 430px; font-size: 14px"
           class="editTask"
-          :value="userID"
+          :value="myDiskMetaData.editor"
           disabled
           aria-describedby="input-live-help input-live-feedback"
           placeholder="제작자"
@@ -83,18 +83,29 @@
 </template>
 
 <script>
-import CommonFileFunction from "../CommonFileFunction";
+import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
-  components: {},
-  mixins: [CommonFileFunction],
-  data() {
-    return {};
-  },
   created() {
-    this.reset();
-    this.setTitle(this.sliceExt(200));
+    this.RESET_MYDISK_METADATA();
+    this.SET_MYDISK_TITLE(this.sliceExt(200));
   },
-  methods: {},
+  computed: {
+    ...mapState("FileIndexStore", {
+      myDiskMetaData: (state) => state.myDiskMetaData,
+      MetaModalTitle: (state) => state.MetaModalTitle,
+    }),
+    ...mapGetters("FileIndexStore", ["myDiskTitleState", "myDiskMemoState"]),
+  },
+  methods: {
+    ...mapMutations("FileIndexStore", [
+      "SET_MYDISK_TITLE",
+      "RESET_MYDISK_METADATA",
+    ]),
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
+    },
+  },
 };
 </script>
 
