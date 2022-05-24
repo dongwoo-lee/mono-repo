@@ -149,9 +149,6 @@ const notify = (type, options = { title, message, duration, permanent }) => {
         duration: options.duration ? options.duration : 10000,
         permanent: options.permanent ? options.permanent : false,
     }
-    if (type === 'client_parameterError') {
-        return window.$notify('error', '요청 오류', '데이터 요청 중 오류가 발생했습니다.', optionInOptions);
-    }
     if (type === 'server-error') {
         return window.$notify('error', 'Server Error', '서버 에러입니다.', optionInOptions);
     }

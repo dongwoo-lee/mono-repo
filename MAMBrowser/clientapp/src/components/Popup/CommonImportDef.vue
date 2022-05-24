@@ -111,7 +111,6 @@ import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
 const qs = require("qs");
-import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 
@@ -290,7 +289,7 @@ export default {
         if (typeof params.productids == "string") {
           params.productids = [params.productids];
         }
-        await axios
+        await this.$http
           .post(`/api/DefCueSheet/GetDefList`, params)
           .then(async (res) => {
             var productWeekList = await this.disableList(
@@ -379,7 +378,7 @@ export default {
               params.brd_dt = this.cueInfo.day;
             }
           }
-          await axios
+          await this.$http
             .get(`/api/defcuesheet/GetdefCue`, {
               params: params,
               paramsSerializer: (params) => {

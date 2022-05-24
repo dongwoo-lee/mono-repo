@@ -1,4 +1,3 @@
-import axios from "axios";
 import $http from "../../http";
 const qs = require("qs");
 import "moment/locale/ko";
@@ -295,11 +294,11 @@ export default {
             if (payload.gropId == "S01G04C004") {
                 pram.person = payload.person
             }
-            return await axios.get(`/api/CueUserInfo/GetProgramList`, {
+            return await $http.get(`/api/CueUserInfo/GetProgramList`, {
                 params: pram
             })
                 .then((res) => {
-                    var dataList = res.data
+                    var dataList = res.data.resultObject
                     var products = [];
                     var selectProductList = [];
                     if (dataList) {
@@ -324,11 +323,11 @@ export default {
             if (payload.gropId == "S01G04C004") {
                 pram.person = payload.person
             }
-            return await axios.get(`/api/CueUserInfo/GetProgramList`, {
+            return await $http.get(`/api/CueUserInfo/GetProgramList`, {
                 params: pram
             })
                 .then((res) => {
-                    var dataList = res.data
+                    var dataList = res.data.resultObject
                     var medias = [{
                         value: "",
                         text: "전체"
@@ -382,9 +381,9 @@ export default {
         },
         //프로그램 - 전체 유저 가져오기
         async getProUserList({ commit }, payload) {
-            await axios.get(`/api/CueUserInfo/GetDirectorList?productid=` + payload)
+            await $http.get(`/api/CueUserInfo/GetDirectorList?productid=` + payload)
                 .then((res) => {
-                    var setData = new Set(res.data.split(","));
+                    var setData = new Set(res.data.resultObject.split(","));
                     var result = ""
                     setData.forEach((ele) => {
                         result = result.concat(ele + ",")
@@ -448,7 +447,7 @@ export default {
         },
         // 템플릿 목록 전체 가져오기
         getcuesheetListArrTemp({ commit }, payload) {
-            return axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.titie}&row_per_page=${payload.row_per_page}&select_page=${payload.select_page}`)
+            return $http.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.titie}&row_per_page=${payload.row_per_page}&select_page=${payload.select_page}`)
                 .then((res) => {
                     var seqnum = 0;
                     res.data.resultObject.data.forEach((ele) => {
@@ -467,7 +466,7 @@ export default {
             if (typeof payload.products == 'string') {
                 payload.products = [payload.products]
             }
-            return axios.post(`/api/ArchiveCueSheet/GetArchiveCueList`, payload)
+            return $http.post(`/api/ArchiveCueSheet/GetArchiveCueList`, payload)
                 .then((res) => {
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;
@@ -516,7 +515,7 @@ export default {
         //템플릿 추가 + 템플릿으로 저장 (나중에 템플릿 저장이랑 합치기)
         async addTemplate({ }, payload) {
             var temLength = 0
-            await axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
+            await $http.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
                 .then((res) => {
                     temLength = res.data.resultObject.data.length
                 })
@@ -530,7 +529,7 @@ export default {
                 }
                 )
             } else {
-                await axios
+                await $http
                     .post(`/api/TempCueSheet/SaveTempCue`, payload)
                     .then((res) => {
                         window.$notify(
@@ -546,10 +545,10 @@ export default {
         },
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
-            await axios.get(
+            await $http.get(
                 `/api/Favorite/GetFavorites?personid=${payload.personid}&pgmcode=${payload.pgmcode}&brd_dt=${payload.brd_dt}`)
                 .then((res) => {
-                    commit('SET_CUEFAVORITES', res.data);
+                    commit('SET_CUEFAVORITES', res.data.resultObject);
                 })
                 .catch((err => {
                     console.log("getCueDayFav" + err);
@@ -562,7 +561,7 @@ export default {
             await $http
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    dispatch('saveFavorites', { personid: state.cueInfo.personid, favConParam: pram.favConParam })
                     var newInfo = { ...state.cueInfo }
                     let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
                     var params = {
@@ -603,10 +602,9 @@ export default {
                 }));
 
             if (payload == true) {
-                await axios
+                await $http
                     .post(`/api/DayCueSheet/SaveOldCue`, pram)
                     .then(async (res) => {
-                        await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                         if (res.data == 1) {
                             window.$notify(
                                 "info",
@@ -655,10 +653,9 @@ export default {
         async saveOldCue({ state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            await axios
+            await $http
                 .post(`/api/DayCueSheet/SaveOldCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                     if (res.data == 1) {
                         window.$notify(
                             "info",
@@ -729,15 +726,15 @@ export default {
             })
             pram.DefCueSheetDTO = daycue;
 
-            await axios
+            await $http
                 .post(`/api/defCueSheet/SavedefCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    dispatch('saveFavorites', { personid: state.cueInfo.personid, favConParam: pram.favConParam })
                     var params = {
                         productid: cueInfoData.productid,
                         week: cueInfoData.activeWeekList,
                     };
-                    await axios.get(`/api/defcuesheet/GetdefCue`, {
+                    await $http.get(`/api/defcuesheet/GetdefCue`, {
                         params: params,
                         paramsSerializer: (params) => {
                             return qs.stringify(params);
@@ -776,15 +773,15 @@ export default {
         async saveTempCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            await axios
+            await $http
                 .post(`/api/TempCueSheet/SaveTempCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    dispatch('saveFavorites', { personid: state.cueInfo.personid, favConParam: pram.favConParam })
                     var newInfo = { ...state.cueInfo }
                     var params = {
                         cueid: res.data.resultObject
                     };
-                    await axios.get(`/api/tempcuesheet/GettempCue`, {
+                    await $http.get(`/api/tempcuesheet/GettempCue`, {
                         params: params,
                         paramsSerializer: (params) => {
                             return qs.stringify(params);
@@ -816,6 +813,9 @@ export default {
                     )
 
                 }));
+        },
+        saveFavorites({ }, payload) {
+            $http.post(`/api/Favorite/SetFavorites?personid=${payload.personid}`, payload.favConParam);
         },
         //AB, C 필터
         cartCodeFilter({ }, payload) {
@@ -980,7 +980,7 @@ export default {
             commit('SET_PRINTARR', payload.printDTO);
         },
         async setSponsorList({ commit }, payload) {
-            await axios.get(`/api/DayCueSheet/GetAddSponsor`, {
+            await $http.get(`/api/DayCueSheet/GetAddSponsor`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);
@@ -1054,7 +1054,7 @@ export default {
             commit('SET_CUEFAVORITES', favArr)
         },
         getautosave({ commit }, payload) {
-            return axios.get(`/api/users/summary/${payload}`)
+            return $http.get(`/api/users/summary/${payload}`)
                 .then((res) => {
                     var autosave = null
                     if (res.data.resultObject.cueSheetAutoSave == "Y") {
@@ -1066,7 +1066,7 @@ export default {
                 })
         },
         setautosave({ }, payload) {
-            return axios.patch(`/api/user`, payload)
+            return $http.patch(`/api/user`, payload)
                 .then((res) => {
                 })
         },
@@ -1130,14 +1130,14 @@ export default {
                         case "S":
                             row = { ...formRowData };
                             if (cartcode == "S01G01C014") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetSongItem`, search_row)
                                     .then((res) => {
                                         return res.data;
                                     });
                             }
                             if (cartcode == "S01G01C015") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetEffectItem`, search_row)
                                     .then((res) => {
                                         return res.data;
@@ -1210,14 +1210,14 @@ export default {
                             row = { ...formRowData };
                             row.rownum = sortable_toIndex + sortable_index;
                             if (cartcode == "S01G01C014") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetSongItem`, search_row)
                                     .then((res) => {
                                         return res.data;
                                     });
                             }
                             if (cartcode == "S01G01C015") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetEffectItem`, search_row)
                                     .then((res) => {
                                         return res.data;

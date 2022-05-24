@@ -176,7 +176,6 @@ import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
@@ -333,7 +332,7 @@ export default {
                 pgmcode: rowData.pgmcode,
                 brd_dt: rowData.day,
               };
-              await axios
+              await this.$http
                 .get(`/api/defcuesheet/GetdefCue`, {
                   params: params,
                   paramsSerializer: (params) => {

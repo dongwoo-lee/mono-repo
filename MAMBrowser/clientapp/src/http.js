@@ -1,6 +1,5 @@
 import axios from 'axios'
 import LoginPopupRefElement from './components/Popup/Login/LoginPopupRefElement';
-import $fn from './utils/CommonFunctions';
 
 const $http = axios.create({
     baseURL: process.env.baseURL,
@@ -34,7 +33,6 @@ $http.interceptors.response.use(res => {
     }
     return res;
 }, async err => {
-    $fn.notify('client_parameterError', {})
     console.debug('interceptors.response.error', err);
     if (!err.response) {
         return Promise.reject(err);

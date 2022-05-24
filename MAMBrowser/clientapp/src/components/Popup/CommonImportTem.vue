@@ -90,7 +90,6 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
@@ -226,7 +225,7 @@ export default {
     async getData() {
       if (this.state) {
         this.isTableLoading = this.isScrollLodaing ? false : true;
-        await axios
+        await this.$http
           .get(`/api/TempCueSheet/GetTempList`, {
             params: {
               personid: this.id,
@@ -310,7 +309,7 @@ export default {
           } else if (this.cueInfo.cuetype == "B") {
             params.brd_dt = toDay;
           }
-          await axios
+          await this.$http
             .get(`/api/tempcuesheet/GettempCue`, {
               params: params,
               paramsSerializer: (params) => {

@@ -52,16 +52,20 @@ namespace MAMBrowser.Controllers
 
         //이전큐시트 상세내용 가져오기
         [HttpGet("GetArchiveCue")]
-        public CueSheetCollectionDTO GetArchiveCue([FromQuery] int cueid)
+        public DTO_RESULT<CueSheetCollectionDTO> GetArchiveCue([FromQuery] int cueid)
         {
+            var result = new DTO_RESULT<CueSheetCollectionDTO>();
             try
             {
-                return _bll.GetArchiveCueSheet(cueid);
+                result.ResultObject = _bll.GetArchiveCueSheet(cueid);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
     }
 }

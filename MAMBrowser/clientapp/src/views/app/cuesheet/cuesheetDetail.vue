@@ -135,7 +135,6 @@ import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 const qs = require("qs");
 
 export default {
@@ -187,7 +186,7 @@ export default {
       var params = {
         cueid: rowData.cueid,
       };
-      await axios
+      await this.$http
         .get(`/api/ArchiveCueSheet/GetArchiveCue`, {
           params: params,
           paramsSerializer: (params) => {
@@ -195,8 +194,8 @@ export default {
           },
         })
         .then((res) => {
-          this.SET_CUEINFO(res.data.cueSheetDTO);
-          this.setCueConData(res.data);
+          this.SET_CUEINFO(res.data.resultObject.cueSheetDTO);
+          this.setCueConData(res.data.resultObject);
           this.getProUserList(rowData.productid);
         });
       this.loadingVisible = false;

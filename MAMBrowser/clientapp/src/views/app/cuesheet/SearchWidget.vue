@@ -286,7 +286,6 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import { USER_ID } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
-import axios from "axios";
 import DataGrid from "devextreme/ui/data_grid";
 
 DataGrid.defaultOptions({
@@ -406,15 +405,6 @@ export default {
         },
       ],
     };
-  },
-  created() {},
-  updated() {
-    //console.log(this.dataGrid._$element[0].clientWidth);
-    // var test_size = document.getElementById("main_table").clientWidth;
-    // if (table_width > 0) {
-    //   this.table_width_size = table_width;
-    //   console.log(this.table_width_size);
-    // }
   },
   mounted() {
     this.searchDataList = this.searchData[0];
@@ -576,12 +566,6 @@ export default {
           this.gridHeight = this.width_size;
           break;
       }
-      // this.table_width_size = document
-      //   .getElementById("search_data_grid")
-      //   .clientWidth.toString();
-      //console.log(this.dataGrid._$element[0].clientWidth);
-      // this.test_size = document.getElementById("main_table").clientWidth;
-      // console.log(this.test_size);
       this.subtable_data = [];
       this.loadpanelVal = false;
     },
@@ -622,10 +606,10 @@ export default {
       }
     },
     getOptionsData(url, pram) {
-      axios(url, {
+      this.$http(url, {
         params: pram,
       }).then((res) => {
-        const resData = res.data;
+        const resData = res.data.resultObject;
         for (const [key, value] of Object.entries(resData)) {
           this.searchDataList.options.forEach((ele) => {
             if (key == ele.name && value != null) {
@@ -650,12 +634,14 @@ export default {
     },
     // 서브 데이터 조회
     getSubData(apiType, brdDT, id) {
-      axios(`/api/products/${apiType}/contents/${brdDT}/${id}`).then((res) => {
-        res.data.resultObject.data.forEach((ele, index) => {
-          ele.rowNO = index + 1;
-        });
-        this.subtable_data = res.data.resultObject.data;
-      });
+      this.$http(`/api/products/${apiType}/contents/${brdDT}/${id}`).then(
+        (res) => {
+          res.data.resultObject.data.forEach((ele, index) => {
+            ele.rowNO = index + 1;
+          });
+          this.subtable_data = res.data.resultObject.data;
+        }
+      );
     },
     async getData(Val) {
       var basedata = this.searchItems;
@@ -677,25 +663,26 @@ export default {
           loadOptions.requireGroupCount = false;
           if (loadOptions.skip >= 0 && loadOptions.skip % this.pageSize == 0) {
             result.selectPage = loadOptions.skip / this.pageSize + 1;
-            return axios(
+            return this.$http(
               `/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`,
               {
                 params: result,
               }
             ).then((res) => {
+              var resultData = res.data.resultObject.result;
               if (
                 this.searchDataList.id == "MCR_SB" ||
                 this.searchDataList.id == "SCR_SB" ||
                 this.searchDataList.id == "PGM_CM" ||
                 this.searchDataList.id == "CM"
               ) {
-                res.data.result.data.forEach((ele, index) => {
+                resultData.data.forEach((ele, index) => {
                   ele.rowNO = index + 1;
                 });
               }
               this.viewTableName = this.searchDataList.name;
-              this.searchItems.totalRowCount = res.data.result.totalRowCount;
-              return res.data.result.data;
+              this.searchItems.totalRowCount = resultData.totalRowCount;
+              return resultData.data;
             });
           }
         },

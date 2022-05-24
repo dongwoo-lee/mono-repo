@@ -185,7 +185,6 @@ import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 const qs = require("qs");
 
 const date = new Date();
@@ -291,7 +290,7 @@ export default {
         pgmcode: rowData.pgmcode,
         week: rowData.weeks,
       };
-      await axios
+      await this.$http
         .get(`/api/defcuesheet/GetdefCue`, {
           params: params,
           paramsSerializer: (params) => {

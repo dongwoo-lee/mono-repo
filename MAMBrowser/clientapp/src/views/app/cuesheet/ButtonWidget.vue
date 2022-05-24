@@ -894,7 +894,7 @@ export default {
 
         case "F":
           const userId = sessionStorage.getItem(USER_ID);
-          await axios
+          await this.$http
             .post(
               `/api/Favorite/SetFavorites?personid=${userId}`,
               this.cueFavorites
