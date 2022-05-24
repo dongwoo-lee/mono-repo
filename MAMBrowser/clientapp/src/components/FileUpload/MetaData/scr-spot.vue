@@ -54,9 +54,9 @@
             id="program-media"
             class="editTask"
             style="width: 200px"
-            :value="scrMedia"
-            :options="fileMediaOptions"
-            @input="mediaChange"
+            :value="scrMetaData.category"
+            :options="scrCategoryOptions"
+            @input="categoryChange"
           />
         </b-form-group>
       </div>
@@ -69,8 +69,8 @@
           <b-form-input
             class="editTask"
             style="width: 200px"
-            v-model="MetaData.title"
-            :state="titleState"
+            v-model="scrMetaData.title"
+            :state="scrTitleState"
             :maxlength="30"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="소재"
@@ -78,7 +78,7 @@
           />
         </b-form-group>
         <p
-          v-show="titleState"
+          v-show="scrTitleState"
           style="
             position: relative;
             left: 390px;
@@ -88,7 +88,7 @@
             margin-right: 0px;
           "
         >
-          {{ MetaData.title.length }}/30
+          {{ scrMetaData.title.length }}/30
         </p>
       </div>
       <div
@@ -102,8 +102,8 @@
           <b-form-input
             class="editTask"
             style="width: 200px"
-            v-model="MetaData.advertiser"
-            :state="advertiserState"
+            v-model="scrMetaData.advertiser"
+            :state="scrAdvertiserState"
             :maxLength="15"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="광고주"
@@ -111,7 +111,7 @@
           />
         </b-form-group>
         <p
-          v-show="advertiserState"
+          v-show="scrAdvertiserState"
           style="
             position: relative;
             left: 165px;
@@ -122,7 +122,7 @@
             margin-top: 7px;
           "
         >
-          {{ MetaData.advertiser.length }}/15
+          {{ scrMetaData.advertiser.length }}/15
         </p>
       </div>
       <div style="height: 50px; margin-top: 15px">
@@ -134,8 +134,8 @@
           <b-form-input
             class="editTask"
             style="width: 200px"
-            v-model="MetaData.memo"
-            :state="memoState"
+            v-model="scrMetaData.memo"
+            :state="scrMemoState"
             :maxLength="30"
             aria-describedby="input-live-help input-live-feedback"
             placeholder="메모"
@@ -143,7 +143,7 @@
           />
         </b-form-group>
         <p
-          v-show="memoState"
+          v-show="scrMemoState"
           style="
             position: relative;
             left: 390px;
@@ -153,7 +153,7 @@
             margin-right: 0px;
           "
         >
-          {{ MetaData.memo.length }}/30
+          {{ scrMetaData.memo.length }}/30
         </p>
       </div>
     </div>
@@ -295,7 +295,6 @@
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import {
@@ -319,14 +318,14 @@ export default {
     DxButton,
     DxEditing,
   },
-  mixins: [CommonFileFunction, MixinBasicPage],
+  mixins: [CommonFileFunction],
   data() {
     return {
       modal: false,
       vSelectProps: {},
       vSelectClass: "MasteringScrRangeMeta",
-      scrMedia: "",
-      scrMediaName: "",
+      scrCategory: "",
+      scrCategoryName: "",
       selectedPgm: "",
       StartDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
       EndDate: this.$fn.formatDate(new Date(), "yyyy-MM-dd"),
@@ -338,27 +337,33 @@ export default {
     };
   },
   created() {
-    this.reset();
-    this.setTitle(this.sliceExt(30));
+    this.RESET_SCR();
+    this.SET_SCR_TITLE(this.sliceExt(30));
     this.getPgm();
-    this.getEditorForPd();
-    this.resetFileMediaOptions();
+    this.RESET_SCR_CATEGORY_OPTIONS();
     axios.get("/api/categories/scr/spot").then((res) => {
       res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
+        this.SET_SCR_CATEGORY_OPTIONS({
           value: e.id,
           text: e.name,
         });
       });
     });
-    this.scrMedia = "ST01";
-    this.scrMediaName = "우리의 소리를 찾아서";
-    this.setMediaSelected(this.scrMedia);
+    this.scrCategory = "ST01";
+    this.scrCategoryName = "우리의 소리를 찾아서";
+    this.SET_SCR_CATEGORY(this.scrCategory);
   },
   computed: {
     ...mapState("FileIndexStore", {
+      scrMetaData: (state) => state.scrMetaData,
+      scrCategoryOptions: (state) => state.scrCategoryOptions,
       scrRange: (state) => state.scrRange,
     }),
+    ...mapGetters("FileIndexStore", [
+      "scrTitleState",
+      "scrMemoState",
+      "scrAdvertiserState",
+    ]),
   },
   watch: {
     StartDate() {
@@ -372,7 +377,15 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("FileIndexStore", ["setScrRange", "resetScrRange"]),
+    ...mapMutations("FileIndexStore", [
+      "SET_SCR_TITLE",
+      "SET_SCR_CATEGORY",
+      "SET_SCR_CATEGORY_OPTIONS",
+      "SET_SCR_RANGE",
+      "RESET_SCR_CATEGORY_OPTIONS",
+      "RESET_SCR_RANGE",
+      "RESET_SCR",
+    ]),
     validRange() {
       if (
         this.selectedPgm == "" ||
@@ -405,7 +418,7 @@ export default {
         SDate: this.StartDate,
         EDate: this.EndDate,
       };
-      this.setScrRange(data);
+      this.SET_SCR_RANGE(data);
       this.selectedPgm = "";
       this.vSelectProps = { id: null, name: null };
     },
@@ -413,8 +426,8 @@ export default {
       var res = await axios.get(`/api/categories/pgmcodes`);
       this.ProgramOptions = res.data.resultObject.data;
     },
-    mediaChange(v) {
-      this.setMediaSelected(v);
+    categoryChange(v) {
+      this.SET_SCR_CATEGORY(v);
     },
     pgmSelect(v) {
       this.selectedPgm = v;
@@ -570,12 +583,6 @@ export default {
       const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
       return !dateRegex.test(value);
     },
-    onContext(ctx) {
-      // The date formatted in the locale, or the `label-no-date-selected` string
-      this.formatted = ctx.selectedFormatted;
-      // The following will be an empty string until a valid date is entered
-      this.dateSelected = ctx.selectedYMD;
-    },
     convertDateSTH(value) {
       const replaceVal = value.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
@@ -584,6 +591,10 @@ export default {
       if (!(12 < mm && 31 < dd)) {
         return `${yyyy}-${mm}-${dd}`;
       }
+    },
+    onContext(ctx) {
+      this.formatted = ctx.selectedFormatted;
+      this.dateSelected = ctx.selectedYMD;
     },
   },
 };

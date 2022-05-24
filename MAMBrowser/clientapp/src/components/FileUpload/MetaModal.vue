@@ -298,12 +298,14 @@ export default {
       proMetaData: (state) => state.proMetaData,
       mcrMetaData: (state) => state.mcrMetaData,
       mcrSelected: (state) => state.mcrSelected,
+      scrMetaData: (state) => state.scrMetaData,
+      scrRange: (state) => state.scrRange,
+
       date: (state) => state.date,
       button: (state) => state.button,
       fileSDate: (state) => state.fileSDate,
       fileEDate: (state) => state.fileEDate,
       localFiles: (state) => state.localFiles,
-      scrRange: (state) => state.scrRange,
       MetaData: (state) => state.MetaData,
       masteringListData: (state) => state.masteringListData,
       ProgramData: (state) => state.ProgramData,
@@ -406,11 +408,11 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "scr-spot") {
         var data = {
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser,
+          title: this.scrMetaData.title,
+          memo: this.scrMetaData.memo,
+          advertiser: this.scrMetaData.advertiser,
           editor: sessionStorage.getItem("user_id"),
-          category: this.MetaData.mediaSelected,
+          category: this.scrMetaData.category,
           scrRange: JSON.stringify(this.scrRange),
         };
       } else if (this.MetaData.typeSelected == "static-spot") {

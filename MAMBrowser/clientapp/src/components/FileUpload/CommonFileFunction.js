@@ -474,7 +474,6 @@ export default {
       this.resetMemo();
       this.resetDate();
       this.resetFileSDate();
-      this.resetScrRange();
       this.fileStateFalse();
       this.resetCoverageTypeSelected();
       this.resetProgramData();

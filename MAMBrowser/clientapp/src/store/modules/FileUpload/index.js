@@ -12,7 +12,6 @@ export default {
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
-    scrRange: [],
 
     fileMediaOptions: [],
     coverageTypeOptions: [],
@@ -87,6 +86,14 @@ export default {
       duration: "",
       audioClipID: "",
     },
+    scrMetaData: {
+      title: "",
+      memo: "",
+      category: "",
+      advertiser: "",
+    },
+    scrCategoryOptions: [],
+    scrRange: [],
 
     MetaData: {
       title: "",
@@ -171,6 +178,18 @@ export default {
     mcrSelectedState(state) {
       return state.mcrSelected.id != "" ? true : false;
     },
+    scrTitleState(state) {
+      return state.scrMetaData.title.length >= 1 ? true : false;
+    },
+    scrMemoState(state) {
+      return state.scrMetaData.memo.length >= 1 ? true : false;
+    },
+    scrAdvertiserState(state) {
+      return state.scrMetaData.advertiser.length >= 1 ? true : false;
+    },
+    scrRangeState(state) {
+      return state.scrRange.length >= 1 ? true : false;
+    },
     //#endregion
 
     typeState(state) {
@@ -208,9 +227,7 @@ export default {
     eventState(state) {
       return state.EventSelected.id != "" ? true : false;
     },
-    scrRangeState(state) {
-      return state.scrRange.length >= 1 ? true : false;
-    },
+
     audioClipIdState(state) {
       if (state.MetaData.typeSelected == "program") {
         return state.pgmSelected.audioClipID != null ? true : false;
@@ -305,7 +322,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "scr-spot") {
-        if (getters.titleState && getters.scrRangeState) {
+        if (getters.scrTitleState && getters.scrRangeState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "static-spot") {
@@ -520,6 +537,37 @@ export default {
     },
     //#endregion
 
+    //#region scr
+    SET_SCR_TITLE(state, payload) {
+      state.scrMetaData.title = payload;
+    },
+    SET_SCR_CATEGORY(state, payload) {
+      state.scrMetaData.category = payload;
+    },
+    SET_SCR_CATEGORY_OPTIONS(state, payload) {
+      state.scrCategoryOptions.push(payload);
+    },
+    SET_SCR_RANGE(state, payload) {
+      state.scrRange.push(payload);
+    },
+    RESET_SCR_CATEGORY_OPTIONS(state) {
+      state.scrCategoryOptions = [];
+    },
+    RESET_SCR_RANGE(state) {
+      state.scrRange = [];
+    },
+    RESET_SCR(state) {
+      state.scrMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        advertiser: "",
+      };
+      state.scrCategoryOptions = [];
+      state.scrRange = [];
+    },
+    //#endregion
+
     addLocalFiles(state, payload) {
       state.localFiles.push(payload);
     },
@@ -615,9 +663,6 @@ export default {
     },
     setEventData(state, payload) {
       state.EventData = payload;
-    },
-    setScrRange(state, payload) {
-      state.scrRange.push(payload);
     },
     resetDate(state) {
       state.date = "";
@@ -717,9 +762,6 @@ export default {
     },
     resetUploaderCustomData(state) {
       state.uploaderCustomData = {};
-    },
-    resetScrRange(state) {
-      state.scrRange = [];
     },
     startDBConnection(state, payload) {
       clearInterval(db);
