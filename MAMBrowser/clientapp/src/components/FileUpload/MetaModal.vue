@@ -296,6 +296,8 @@ export default {
       pgmMetaData: (state) => state.pgmMetaData,
       pgmSelected: (state) => state.pgmSelected,
       proMetaData: (state) => state.proMetaData,
+      mcrMetaData: (state) => state.mcrMetaData,
+      mcrSelected: (state) => state.mcrSelected,
       date: (state) => state.date,
       button: (state) => state.button,
       fileSDate: (state) => state.fileSDate,
@@ -394,12 +396,12 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         var data = {
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
-          media: this.MetaData.mediaSelected,
-          productId: this.EventSelected.id,
-          brdDT: this.date,
-          advertiser: this.MetaData.advertiser,
+          title: this.mcrMetaData.title,
+          memo: this.mcrMetaData.memo,
+          media: this.mcrMetaData.media,
+          productId: this.mcrSelected.id,
+          brdDT: this.mcrMetaData.date,
+          advertiser: this.mcrMetaData.advertiser,
           editor: sessionStorage.getItem("user_id"),
         };
       } else if (this.MetaData.typeSelected == "scr-spot") {
@@ -524,7 +526,7 @@ export default {
           this.$bvModal.show("audioClipIDOver");
         }
       } else if (this.MetaData.typeSelected == "mcr-spot") {
-        if (this.EventSelected.audioClipID == null) {
+        if (this.mcrSelected.audioClipID == null) {
           this.setFileUploading(true);
           this.$emit("upload");
         } else {
@@ -565,7 +567,7 @@ export default {
           });
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         axios
-          .delete(`/api/mastering/mcr-spot/${this.EventSelected.audioClipID}`, {
+          .delete(`/api/mastering/mcr-spot/${this.mcrSelected.audioClipID}`, {
             headers: { Authorization: sessionStorage.getItem("access_token") },
           })
           .then((res) => {

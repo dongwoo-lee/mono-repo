@@ -9,19 +9,21 @@ export default {
     button: "",
     isActive: true,
     typeOptions: [],
-    fileMediaOptions: [],
-    coverageTypeOptions: [],
-    fillerTypeOptions: [],
     MetaModalTitle: "",
     localFiles: [],
     uploaderCustomData: {},
+    scrRange: [],
+
+    fileMediaOptions: [],
+    coverageTypeOptions: [],
+    fillerTypeOptions: [],
     date: "",
     tempDate: "",
     fileSDate: "",
     tempFileSDate: "",
     fileEDate: "",
     tempFileEDate: "",
-    scrRange: [],
+
     myDiskMetaData: {
       title: "",
       memo: "",
@@ -62,6 +64,30 @@ export default {
       typeName: "",
     },
     proCategoryOptions: [],
+    mcrMetaData: {
+      title: "",
+      memo: "",
+      media: "",
+      date: "",
+      tempDate: "",
+      advertiser: "",
+    },
+    mcrMediaOptions: [],
+    mcrDataOptions: [
+      {
+        name: "",
+        id: "",
+        duration: "",
+        audioClipID: "",
+      },
+    ],
+    mcrSelected: {
+      id: "",
+      name: "",
+      duration: "",
+      audioClipID: "",
+    },
+
     MetaData: {
       title: "",
       memo: "",
@@ -109,7 +135,6 @@ export default {
       duration: "",
       audioClipID: "",
     },
-    FileUploadProgress: {},
   },
   getters: {
     //#region
@@ -134,7 +159,20 @@ export default {
     proCategoryState(state) {
       return state.proMetaData.category != "" ? true : false;
     },
+    mcrTitleState(state) {
+      return state.mcrMetaData.title.length >= 1 ? true : false;
+    },
+    mcrMemoState(state) {
+      return state.mcrMetaData.memo.length >= 1 ? true : false;
+    },
+    mcrAdvertiserState(state) {
+      return state.mcrMetaData.advertiser.length >= 1 ? true : false;
+    },
+    mcrSelectedState(state) {
+      return state.mcrSelected.id != "" ? true : false;
+    },
     //#endregion
+
     typeState(state) {
       return state.MetaData.typeSelected != "null" ? true : false;
     },
@@ -177,7 +215,7 @@ export default {
       if (state.MetaData.typeSelected == "program") {
         return state.pgmSelected.audioClipID != null ? true : false;
       } else if (state.MetaData.typeSelected == "mcr-spot") {
-        return state.ProgramSelected.audioClipID != null ? true : false;
+        return state.mcrSelected.audioClipID != null ? true : false;
       }
     },
     durationState(state) {
@@ -200,14 +238,14 @@ export default {
         }
       } else if (
         state.MetaData.typeSelected == "mcr-spot" &&
-        state.EventSelected.id != ""
+        state.mcrSelected.id != ""
       ) {
-        if (state.EventSelected.duration == null) {
+        if (state.mcrSelected.duration == null) {
           return true;
         }
-        var eh = state.EventSelected.duration.slice(0, 2);
-        var em = state.EventSelected.duration.slice(3, 5);
-        var es = state.EventSelected.duration.slice(6, 8);
+        var eh = state.mcrSelected.duration.slice(0, 2);
+        var em = state.mcrSelected.duration.slice(3, 5);
+        var es = state.mcrSelected.duration.slice(6, 8);
         var calcE = eh * 60 * 60 + em * 60 + es * 1;
         var abs = Math.abs(calcD - calcE);
         if (5 < abs) {
@@ -263,7 +301,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "mcr-spot") {
-        if (getters.eventState) {
+        if (getters.mcrSelectedState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "scr-spot") {
@@ -423,6 +461,62 @@ export default {
         typeName: "",
       };
       state.proCategoryOptions = [];
+    },
+    //#endregion
+
+    //#region mcr
+    SET_MCR_TITLE(state, payload) {
+      state.mcrMetaData.title = payload;
+    },
+    SET_MCR_MEDIA(state, payload) {
+      state.mcrMetaData.media = payload;
+    },
+    SET_MCR_DATE(state, payload) {
+      state.mcrMetaData.date = payload;
+    },
+    SET_MCR_TEMP_DATE(state, payload) {
+      state.mcrMetaData.tempDate = payload;
+    },
+    SET_MCR_MEDIA_OPTIONS(state, payload) {
+      state.mcrMediaOptions.push(payload);
+    },
+    SET_MCR_DATA_OPTIONS(state, payload) {
+      state.mcrDataOptions = payload;
+    },
+    SET_MCR_SELECTED(state, payload) {
+      state.mcrSelected = payload;
+    },
+    RESET_MCR_MEDIA_OPTIONS(state) {
+      state.mcrMediaOptions = [];
+    },
+    RESET_MCR_DATA_OPTIONS(state) {
+      state.mcrDataOptions = [
+        {
+          name: "",
+          id: "",
+          duration: "",
+          audioClipID: "",
+        },
+      ];
+    },
+    RESET_MCR_SELECTED(state) {
+      state.mcrSelected = {
+        name: "",
+        id: "",
+        duration: "",
+        audioClipID: "",
+      };
+    },
+    RESET_MCR(state) {
+      state.mcrMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        date: "",
+        tempDate: "",
+        advertiser: "",
+      };
+      state.mcrMediaOptions = [];
     },
     //#endregion
 

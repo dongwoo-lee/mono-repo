@@ -442,6 +442,28 @@ export default {
         return `${yyyy}-${mm}-${dd}`;
       }
     },
+    async getPro() {
+      const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+
+      this.RESET_PGM_DATA_OPTIONS();
+
+      var res = await axios.get(
+        `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
+      );
+
+      var value = res.data.resultObject.data;
+      value.forEach((e) => {
+        e.durationSec = this.getDurationSec(e.durationSec);
+        e.onairTime = this.getOnAirTime(e.onairTime);
+      });
+
+      this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
+      this.RESET_PGM_SELECTED();
+    },
     onContext(ctx) {
       this.formatted = ctx.selectedFormatted;
       this.dateSelected = ctx.selectedYMD;

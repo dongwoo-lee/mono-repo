@@ -12,12 +12,12 @@
             id="dateinput"
             type="text"
             class="form-control input-picker"
-            :value="date"
+            :value="mcrMetaData.date"
             @input="onInput"
           />
           <b-input-group-append>
             <b-form-datepicker
-              :value="date"
+              :value="mcrMetaData.date"
               @input="eventInput"
               button-only
               :disabled="isActive"
@@ -40,8 +40,8 @@
           id="program-media"
           class="media-select"
           style="width: 95px; height: 36px"
-          :value="mcrMedia"
-          :options="fileMediaOptions"
+          :value="mcrMetaData.media"
+          :options="mcrMediaOptions"
           @input="mediaChange"
         />
       </b-form-group>
@@ -63,7 +63,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.name"
+            v-model="mcrSelected.name"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -79,7 +79,7 @@
           <b-form-input
             style="width: 250px"
             class="editTask"
-            v-model="EventSelected.id"
+            v-model="mcrSelected.id"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -95,7 +95,7 @@
           <b-form-input
             style="width: 155px"
             class="editTask"
-            v-model="EventSelected.duration"
+            v-model="mcrSelected.duration"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -111,8 +111,8 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="mcrMetaData.memo"
+          :state="mcrMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -120,7 +120,7 @@
         />
       </b-form-group>
       <span
-        v-show="memoState"
+        v-show="mcrMemoState"
         style="
           position: relative;
           left: 390px;
@@ -130,15 +130,15 @@
           font-size: 14px;
         "
       >
-        {{ MetaData.memo.length }}/30
+        {{ mcrMetaData.memo.length }}/30
       </span>
     </div>
     <div style="font-size: 15px; margin-top: 15px">
       <b-form-group label="광고주" class="has-float-label">
         <b-form-input
           class="editTask"
-          v-model="MetaData.advertiser"
-          :state="advertiserState"
+          v-model="mcrMetaData.advertiser"
+          :state="mcrAdvertiserState"
           :maxLength="15"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="광고주"
@@ -146,7 +146,7 @@
         />
       </b-form-group>
       <p
-        v-show="advertiserState"
+        v-show="mcrAdvertiserState"
         style="
           position: relative;
           left: 390px;
@@ -155,7 +155,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.advertiser.length }}/15
+        {{ mcrMetaData.advertiser.length }}/15
       </p>
     </div>
     <b-modal
@@ -171,16 +171,16 @@
         <h5>프로그램 선택</h5>
       </template>
       <template slot="default">
-        <div v-show="this.MetaData.typeSelected == 'mcr-spot'">
+        <div>
           <DxDataGrid
             name="mcrDxDataGrid"
-            v-show="this.EventData.id != ''"
+            v-show="this.mcrDataOptions.id != ''"
             style="
               height: 280px;
               border: 1px solid silver;
               font-family: 'MBC 새로움 M';
             "
-            :data-source="EventData"
+            :data-source="mcrDataOptions"
             :selection="{ mode: 'single' }"
             :show-borders="false"
             :hover-state-enabled="true"
@@ -247,8 +247,6 @@
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import MixinFillerPage from "../../../mixin/MixinFillerPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { DxSelection, DxScrolling } from "devextreme-vue/data-grid";
@@ -259,7 +257,7 @@ export default {
     DxSelection,
     DxScrolling,
   },
-  mixins: [CommonFileFunction, MixinBasicPage, MixinFillerPage],
+  mixins: [CommonFileFunction],
   data() {
     return {
       modal: false,
@@ -268,27 +266,52 @@ export default {
     };
   },
   created() {
-    this.reset();
-    this.getEditorForMd();
-    this.resetFileMediaOptions();
+    this.RESET_MCR();
+    this.RESET_MCR_MEDIA_OPTIONS();
 
     axios.get("/api/categories/media").then((res) => {
+      this.SET_MCR_MEDIA(res.data.resultObject.data[0].id);
+      this.mediaName = res.data.resultObject.data[0].name;
       res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
+        this.SET_MCR_MEDIA_OPTIONS({
           value: e.id,
           text: e.name,
         });
       });
     });
-    this.mcrMedia = "A";
-    this.setMediaSelected(this.mcrMedia);
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    this.setDate(today);
-    this.setTempDate(today);
+    this.SET_MCR_DATE(today);
+    this.SET_MCR_TEMP_DATE(today);
     this.getPro();
   },
+  computed: {
+    ...mapState("FileIndexStore", {
+      mcrMetaData: (state) => state.mcrMetaData,
+      mcrMediaOptions: (state) => state.mcrMediaOptions,
+      mcrDataOptions: (state) => state.mcrDataOptions,
+      mcrSelected: (state) => state.mcrSelected,
+    }),
+    ...mapGetters("FileIndexStore", [
+      "mcrTitleState",
+      "mcrMemoState",
+      "mcrAdvertiserState",
+    ]),
+  },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "SET_MCR_TITLE",
+      "SET_MCR_MEDIA",
+      "SET_MCR_DATE",
+      "SET_MCR_TEMP_DATE",
+      "SET_MCR_MEDIA_OPTIONS",
+      "SET_MCR_DATA_OPTIONS",
+      "SET_MCR_SELECTED",
+      "RESET_MCR_MEDIA_OPTIONS",
+      "RESET_MCR_DATA_OPTIONS",
+      "RESET_MCR_SELECTED",
+      "RESET_MCR",
+    ]),
     getAudioClipID(audioClipID) {
       if (audioClipID != "") {
         return true;
@@ -297,13 +320,97 @@ export default {
       }
     },
     mediaChange(v) {
-      this.setMediaSelected(v);
-      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.SET_MCR_MEDIA(v);
+      var data = this.mcrMediaOptions.find((dt) => dt.value == v);
       this.mediaName = data.text;
     },
     onSearch() {
       this.modalOn();
       this.getPro();
+    },
+    onRowClick(v) {
+      if (this.MetaData.typeSelected == "mcr-spot") {
+        this.SET_MCR_SELECTED(v.data);
+        this.SET_MCR_TITLE(
+          `[${this.mcrMetaData.date}] [${this.mediaName}] [${this.mcrSelected.name}]`
+        );
+      }
+    },
+    eventInput(event) {
+      this.SET_MCR_DATE(event);
+      this.SET_MCR_TEMP_DATE(event);
+      this.getPro();
+    },
+    onInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.mcrMetaData.tempDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
+        event.target.value = this.mcrMetaData.tempDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.SET_MCR_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.SET_MCR_TEMP_DATE(
+              this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+            );
+            return;
+          }
+          this.SET_MCR_DATE(convertDate);
+          this.SET_MCR_TEMP_DATE(convertDate);
+          this.getPro();
+        }
+      }
+    },
+    convertDateSTH(value) {
+      const replaceVal = value.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      if (12 < mm) {
+        this.SET_MCR_DATE("");
+      } else if (31 < dd) {
+        this.SET_MCR_DATE("");
+      } else {
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    },
+    onContext(ctx) {
+      this.formatted = ctx.selectedFormatted;
+      this.dateSelected = ctx.selectedYMD;
+    },
+    getPro() {
+      const replaceVal = this.mcrMetaData.date.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+      this.RESET_MCR_DATA_OPTIONS();
+      axios
+        .get(
+          `/api/categories/spot-sch?media=${this.mcrMetaData.media}&date=${date}&spotType=MS`
+        )
+        .then((res) => {
+          var value = res.data.resultObject.data;
+          value.forEach((e) => {
+            e.duration = this.getDurationSec(e.duration);
+          });
+          this.SET_MCR_DATA_OPTIONS(res.data.resultObject.data);
+        });
+      this.RESET_MCR_SELECTED();
     },
     modalOn() {
       this.modal = true;
@@ -312,7 +419,7 @@ export default {
       this.modal = false;
     },
     modalReset() {
-      this.resetEventSelected();
+      this.RESET_MCR_SELECTED();
       this.modal = false;
     },
     getData() {},
