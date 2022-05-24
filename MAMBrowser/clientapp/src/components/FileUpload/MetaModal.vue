@@ -176,7 +176,7 @@
           <div :class="[isActive ? 'file-modal-button' : 'date-modal-button']">
             <b-button
               variant="outline-success"
-              @click="log"
+              @click="initData"
               style="margin-left: -80px"
             >
               <span class="label">확인</span>
@@ -291,10 +291,11 @@ export default {
   computed: {
     ...mapGetters("user", ["diskAvailable"]),
     ...mapState("FileIndexStore", {
+      MetaModalTitle: (state) => state.MetaModalTitle,
       myDiskMetaData: (state) => state.myDiskMetaData,
       pgmMetaData: (state) => state.pgmMetaData,
       pgmSelected: (state) => state.pgmSelected,
-      MetaModalTitle: (state) => state.MetaModalTitle,
+      proMetaData: (state) => state.proMetaData,
       date: (state) => state.date,
       button: (state) => state.button,
       fileSDate: (state) => state.fileSDate,
@@ -365,8 +366,7 @@ export default {
       }
       this.$emit("close");
     },
-    log() {
-      //NOTE: 커스텀 데이터 파라미터
+    initData() {
       if (this.MetaData.typeSelected == "my-disk") {
         var data = {
           editor: sessionStorage.getItem("user_id"),
@@ -386,11 +386,11 @@ export default {
       } else if (this.MetaData.typeSelected == "pro") {
         var data = {
           editor: sessionStorage.getItem("user_id"),
-          category: this.MetaData.mediaSelected,
-          type: this.MetaData.proType,
-          typeName: this.MetaData.proTypeName,
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
+          category: this.proMetaData.category,
+          type: this.proMetaData.type,
+          typeName: this.proMetaData.typeName,
+          title: this.proMetaData.title,
+          memo: this.proMetaData.memo,
         };
       } else if (this.MetaData.typeSelected == "mcr-spot") {
         var data = {
@@ -453,95 +453,11 @@ export default {
         };
       }
       console.log(data);
+      return data;
     },
     async uploadfile() {
       if (this.metaValid) {
-        //NOTE: 커스텀 데이터 파라미터
-        if (this.MetaData.typeSelected == "my-disk") {
-          var data = {
-            editor: sessionStorage.getItem("user_id"),
-            title: this.myDiskMetaData.title,
-            memo: this.myDiskMetaData.memo,
-          };
-        } else if (this.MetaData.typeSelected == "program") {
-          var data = {
-            title: this.pgmMetaData.title,
-            memo: this.pgmMetaData.memo,
-            media: this.pgmMetaData.media,
-            productId: this.pgmSelected.productId,
-            brdDTM: this.pgmSelected.onairTime,
-            SchDate: this.pgmMetaData.date,
-            editor: sessionStorage.getItem("user_id"),
-          };
-        } else if (this.MetaData.typeSelected == "pro") {
-          var data = {
-            editor: sessionStorage.getItem("user_id"),
-            category: this.MetaData.mediaSelected,
-            type: this.MetaData.proType,
-            typeName: this.MetaData.proTypeName,
-            title: this.MetaData.title,
-            memo: this.MetaData.memo,
-          };
-        } else if (this.MetaData.typeSelected == "mcr-spot") {
-          var data = {
-            title: this.MetaData.title,
-            memo: this.MetaData.memo,
-            media: this.MetaData.mediaSelected,
-            productId: this.EventSelected.id,
-            brdDT: this.date,
-            advertiser: this.MetaData.advertiser,
-            editor: sessionStorage.getItem("user_id"),
-          };
-        } else if (this.MetaData.typeSelected == "scr-spot") {
-          var data = {
-            title: this.MetaData.title,
-            memo: this.MetaData.memo,
-            advertiser: this.MetaData.advertiser,
-            editor: sessionStorage.getItem("user_id"),
-            category: this.MetaData.mediaSelected,
-            scrRange: JSON.stringify(this.scrRange),
-          };
-        } else if (this.MetaData.typeSelected == "static-spot") {
-          var data = {
-            title: this.MetaData.title,
-            media: this.MetaData.mediaSelected,
-            productId: this.EventSelected.id,
-            SDate: this.fileSDate,
-            EDate: this.fileEDate,
-            editor: sessionStorage.getItem("user_id"),
-            memo: this.MetaData.memo,
-            advertiser: this.MetaData.advertiser,
-          };
-        } else if (this.MetaData.typeSelected == "var-spot") {
-          var data = {
-            title: this.MetaData.title,
-            media: this.MetaData.mediaSelected,
-            productId: this.EventSelected.id,
-            SDate: this.fileSDate,
-            EDate: this.fileEDate,
-            editor: sessionStorage.getItem("user_id"),
-            memo: this.MetaData.memo,
-            advertiser: this.MetaData.advertiser,
-          };
-        } else if (this.MetaData.typeSelected == "report") {
-          var data = {
-            title: this.MetaData.title,
-            category: this.MetaData.coverageTypeSelected,
-            productId: this.EventSelected.productId,
-            brdDT: this.date,
-            editor: sessionStorage.getItem("user_id"),
-            memo: this.MetaData.memo,
-            reporter: this.MetaData.reporter,
-          };
-        } else if (this.MetaData.typeSelected == "filler") {
-          var data = {
-            category: this.MetaData.fillerTypeSelected,
-            title: this.MetaData.title,
-            memo: this.MetaData.memo,
-            editor: sessionStorage.getItem("user_id"),
-            brdDT: this.date,
-          };
-        }
+        var data = this.initData();
         await this.resetUploaderCustomData();
         await this.setUploaderCustomData(data);
         if (!this.durationState) {

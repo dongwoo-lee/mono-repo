@@ -271,7 +271,7 @@ export default {
     };
   },
   async created() {
-    this.RESET_PGM_METADATA();
+    this.RESET_PGM();
     this.RESET_PGM_MEDIA_OPTIONS();
 
     var res = await axios.get("/api/categories/media");
@@ -326,7 +326,7 @@ export default {
       "RESET_PGM_MEDIA_OPTIONS",
       "RESET_PGM_DATA_OPTIONS",
       "RESET_PGM_SELECTED",
-      "RESET_PGM_METADATA",
+      "RESET_PGM",
     ]),
     getProductId(productId) {
       if (this.userPgmList.includes(productId)) {

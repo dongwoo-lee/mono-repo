@@ -1,5 +1,6 @@
 let db;
 import axios from "axios";
+import { BIconFileEarmarkSlides } from "bootstrap-vue";
 export default {
   namespaced: true,
   state: {
@@ -53,6 +54,14 @@ export default {
       durationSec: "",
       audioClipID: "",
     },
+    proMetaData: {
+      title: "",
+      memo: "",
+      category: "",
+      type: "",
+      typeName: "",
+    },
+    proCategoryOptions: [],
     MetaData: {
       title: "",
       memo: "",
@@ -103,6 +112,29 @@ export default {
     FileUploadProgress: {},
   },
   getters: {
+    //#region
+    myDiskTitleState(state) {
+      return state.myDiskMetaData.title.length >= 1 ? true : false;
+    },
+    myDiskMemoState(state) {
+      return state.myDiskMetaData.memo.length >= 1 ? true : false;
+    },
+    pgmSelectedState(state) {
+      return state.pgmSelected.productId != "" ? true : false;
+    },
+    pgmMemoState(state) {
+      return state.pgmMetaData.memo.length >= 1 ? true : false;
+    },
+    proTitleState(state) {
+      return state.proMetaData.title.length >= 1 ? true : false;
+    },
+    proMemoState(state) {
+      return state.proMetaData.memo.length >= 1 ? true : false;
+    },
+    proCategoryState(state) {
+      return state.proMetaData.category != "" ? true : false;
+    },
+    //#endregion
     typeState(state) {
       return state.MetaData.typeSelected != "null" ? true : false;
     },
@@ -119,18 +151,6 @@ export default {
         state.MetaData.mediaSelected != ""
         ? true
         : false;
-    },
-    myDiskTitleState(state) {
-      return state.myDiskMetaData.title.length >= 1 ? true : false;
-    },
-    myDiskMemoState(state) {
-      return state.myDiskMetaData.memo.length >= 1 ? true : false;
-    },
-    pgmSelectedState(state) {
-      return state.pgmSelected.productId != "" ? true : false;
-    },
-    pgmMemoState(state) {
-      return state.pgmMetaData.memo.length >= 1 ? true : false;
     },
     titleState(state) {
       return state.MetaData.title.length >= 1 ? true : false;
@@ -239,7 +259,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "pro") {
-        if (getters.titleState && getters.proMediaState) {
+        if (getters.proTitleState && getters.proCategoryState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "mcr-spot") {
@@ -286,6 +306,7 @@ export default {
       };
     },
     //#endregion
+
     //#region PGM
     SET_PGM_DATE(state, payload) {
       state.pgmMetaData.date = payload;
@@ -342,7 +363,7 @@ export default {
         audioClipID: "",
       };
     },
-    RESET_PGM_METADATA(state) {
+    RESET_PGM(state) {
       state.pgmMetaData = {
         title: "",
         memo: "",
@@ -371,6 +392,37 @@ export default {
         durationSec: "",
         audioClipID: "",
       };
+    },
+    //#endregion
+
+    //#region pro
+    SET_PRO_TITLE(state, payload) {
+      state.proMetaData.title = payload;
+    },
+    SET_PRO_CATEGORY(state, payload) {
+      state.proMetaData.category = payload;
+    },
+    SET_PRO_TYPE(state, payload) {
+      state.proMetaData.type = payload;
+    },
+    SET_PRO_TYPE_NAME(state, payload) {
+      state.proMetaData.typeName = payload;
+    },
+    SET_PRO_CATEGORY_OPTIONS(state, payload) {
+      state.proCategoryOptions.push(payload);
+    },
+    RESET_PRO_CATEGORY_OPTIONS(state) {
+      state.proCategoryOptions = [];
+    },
+    RESET_PRO(state) {
+      state.proMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        type: "",
+        typeName: "",
+      };
+      state.proCategoryOptions = [];
     },
     //#endregion
 

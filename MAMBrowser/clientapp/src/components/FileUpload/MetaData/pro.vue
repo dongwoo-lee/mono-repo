@@ -4,9 +4,9 @@
       <common-vue-select
         class="h270"
         style="width: 425px; height: 36px; font-size: 14px"
-        :value="proMedia"
-        :suggestions="fileMediaOptions"
-        @inputEvent="mediaChange"
+        :value="proMetaData.category"
+        :suggestions="proCategoryOptions"
+        @inputEvent="categoryChanged"
       ></common-vue-select>
     </b-form-group>
 
@@ -32,8 +32,8 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.title"
-          :state="titleState"
+          v-model="proMetaData.title"
+          :state="proTitleState"
           :maxlength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="소재"
@@ -41,7 +41,7 @@
         />
       </b-form-group>
       <p
-        v-show="titleState"
+        v-show="proTitleState"
         style="
           position: relative;
           left: 390px;
@@ -50,7 +50,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.title.length }}/30
+        {{ proMetaData.title.length }}/30
       </p>
     </div>
 
@@ -62,8 +62,8 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="proMetaData.memo"
+          :state="proMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -71,7 +71,7 @@
         />
       </b-form-group>
       <p
-        v-show="memoState"
+        v-show="proMemoState"
         style="
           position: relative;
           left: 390px;
@@ -80,15 +80,13 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.memo.length }}/30
+        {{ proMetaData.memo.length }}/30
       </p>
     </div>
   </div>
 </template>
 
 <script>
-import CommonFileFunction from "../CommonFileFunction";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
@@ -96,10 +94,9 @@ export default {
   components: {
     CommonVueSelect,
   },
-  mixins: [CommonFileFunction, MixinBasicPage],
   data() {
     return {
-      proMedia: "",
+      role: "",
       proType: "0",
       proTypeOptions: [
         { value: "0", text: "Title Music" },
@@ -118,53 +115,73 @@ export default {
       ],
     };
   },
-  created() {
-    this.reset();
-    this.setTitle(this.sliceExt(30));
-    this.getEditorForPd();
-    this.resetFileMediaOptions();
-    axios.get("/api/categories/pro").then((res) => {
-      if (this.role == "ADMIN") {
-        res.data.resultObject.data.forEach((e) => {
-          this.setFileMediaOptions({
-            id: e.id,
-            name: e.name,
-          });
+  async created() {
+    this.RESET_PRO();
+    this.role = sessionStorage.getItem("authority");
+    this.SET_PRO_TITLE(this.sliceExt(30));
+    this.RESET_PRO_CATEGORY_OPTIONS();
+
+    var res = await axios.get("/api/categories/pro");
+
+    if (this.role == "ADMIN") {
+      res.data.resultObject.data.forEach((e) => {
+        this.SET_PRO_CATEGORY_OPTIONS({
+          id: e.id,
+          name: e.name,
         });
-      } else {
-        axios
-          .get(
-            `/api/categories/user-audiocodes?userId=${sessionStorage.getItem(
-              "user_id"
-            )}`
-          )
-          .then((res2) => {
-            res.data.resultObject.data.forEach((e) => {
-              res2.data.resultObject.data.forEach((e2) => {
-                if (e.id == e2.id && this.role != "ADMIN") {
-                  this.setFileMediaOptions({
-                    id: e.id,
-                    name: e.name,
-                  });
-                }
-              });
+      });
+    } else {
+      var res2 = await axios.get(
+        `/api/categories/user-audiocodes?userId=${sessionStorage.getItem(
+          "user_id"
+        )}`
+      );
+
+      res.data.resultObject.data.forEach((e) => {
+        res2.data.resultObject.data.forEach((e2) => {
+          if (e.id == e2.id && this.role != "ADMIN") {
+            this.SET_PRO_CATEGORY_OPTIONS({
+              id: e.id,
+              name: e.name,
             });
-          });
-      }
-    });
-    this.proMedia = "";
-    this.setMediaSelected(this.proMedia);
-    this.setProType(0);
-    this.setProTypeName("Title Music");
+          }
+        });
+      });
+    }
+
+    this.SET_PRO_CATEGORY(this.proCategory);
+    this.SET_PRO_TYPE(0);
+    this.SET_PRO_TYPE_NAME("Title Music");
+  },
+  computed: {
+    ...mapState("FileIndexStore", {
+      MetaModalTitle: (state) => state.MetaModalTitle,
+      proMetaData: (state) => state.proMetaData,
+      proCategoryOptions: (state) => state.proCategoryOptions,
+    }),
+    ...mapGetters("FileIndexStore", ["proTitleState", "proMemoState"]),
   },
   methods: {
-    mediaChange(v) {
-      this.setMediaSelected(v.id);
+    ...mapMutations("FileIndexStore", [
+      "SET_PRO_TITLE",
+      "SET_PRO_CATEGORY",
+      "SET_PRO_TYPE",
+      "SET_PRO_TYPE_NAME",
+      "SET_PRO_CATEGORY_OPTIONS",
+      "RESET_PRO_CATEGORY_OPTIONS",
+      "RESET_PRO",
+    ]),
+    categoryChanged(v) {
+      this.SET_PRO_CATEGORY(v.id);
     },
     proTypeChange(v) {
       var data = this.proTypeOptions.find((dt) => dt.value == v);
-      this.setProType(data.value);
-      this.setProTypeName(data.text);
+      this.SET_PRO_TYPE(data.value);
+      this.SET_PRO_TYPE_NAME(data.text);
+    },
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
     },
   },
 };
