@@ -490,6 +490,7 @@ export default {
   },
   methods: {
     ...mapMutations("FileIndexStore", [
+      "SET_MYDISK_TITLE",
       "addLocalFiles",
       "resetLocalFiles",
       "setFileUploading",
@@ -753,7 +754,7 @@ export default {
           return;
         }
         this.setMetaModalTitle(event.value[0].name);
-        this.setTitle(this.sliceExt(200));
+        this.SET_MYDISK_TITLE(this.sliceExt(200));
         if (event.value[0].size / 50 <= 1000000) {
           this.chunkSize = 1000000;
         } else {

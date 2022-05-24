@@ -282,7 +282,7 @@ export default {
     },
     getPro() {
       if (this.MetaData.typeSelected == "program") {
-        const replaceVal = this.date.replace(/-/g, "");
+        const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
         const yyyy = replaceVal.substring(0, 4);
         const mm = replaceVal.substring(4, 6);
         const dd = replaceVal.substring(6, 8);

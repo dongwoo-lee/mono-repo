@@ -347,6 +347,7 @@ export default {
         title: "",
         memo: "",
         media: "",
+        date: "",
       };
 
       state.pgmMediaOptions = [];

@@ -270,33 +270,32 @@ export default {
       dxdg,
     };
   },
-  created() {
+  async created() {
     this.RESET_PGM_METADATA();
     this.RESET_PGM_MEDIA_OPTIONS();
 
-    axios.get("/api/categories/media").then((res) => {
-      this.mediaName = res.data.resultObject.data[0].id;
-      this.SET_PGM_MEDIA_SELECTED(res.data.resultObject.data[0].id);
-      res.data.resultObject.data.forEach((e) => {
-        this.SET_PGM_MEDIA_OPTIONS({
-          value: e.id,
-          text: e.name,
-        });
+    var res = await axios.get("/api/categories/media");
+
+    this.mediaName = res.data.resultObject.data[0].id;
+    this.SET_PGM_MEDIA_SELECTED(res.data.resultObject.data[0].id);
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_PGM_MEDIA_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
 
     var user_id = sessionStorage.getItem("user_id");
-    axios
-      .get(
-        `/api/categories/user-pgmcodes?userId=${user_id}&media=${this.pgmMetaData.media}`
-      )
-      .then((res) => {
-        this.SET_USER_PGM_LIST(res.data.resultObject.data);
-      });
+    var res = await axios.get(
+      `/api/categories/user-pgmcodes?userId=${user_id}&media=${this.pgmMetaData.media}`
+    );
+
+    this.SET_USER_PGM_LIST(res.data.resultObject.data);
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    this.SET_PGM_DATE(today);
-    this.SET_PGM_TEMP_DATE(today);
+    await this.SET_PGM_DATE(today);
+    await this.SET_PGM_TEMP_DATE(today);
 
     this.getPro();
   },
@@ -353,26 +352,28 @@ export default {
       this.modalOn();
       this.getPro();
     },
-    getPro() {
+    async getPro() {
+      if (this.pgmMetaData.date == "") {
+        return;
+      }
+      this.RESET_PGM_DATA_OPTIONS();
+
       const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       var date = yyyy + "" + mm + "" + dd;
 
-      this.RESET_PGM_DATA_OPTIONS();
-      axios
-        .get(
-          `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
-        )
-        .then((res) => {
-          var value = res.data.resultObject.data;
-          value.forEach((e) => {
-            e.durationSec = this.getDurationSec(e.durationSec);
-            e.onairTime = this.getOnAirTime(e.onairTime);
-          });
-          this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
-        });
+      var res = await axios.get(
+        `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
+      );
+
+      var value = res.data.resultObject.data;
+      value.forEach((e) => {
+        e.durationSec = this.getDurationSec(e.durationSec);
+        e.onairTime = this.getOnAirTime(e.onairTime);
+      });
+      this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
       this.RESET_PGM_SELECTED();
     },
     onRowClick(v) {
