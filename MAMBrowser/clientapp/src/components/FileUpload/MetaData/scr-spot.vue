@@ -336,19 +336,20 @@ export default {
       ProgramOptions: [],
     };
   },
-  created() {
+  async created() {
     this.RESET_SCR();
     this.SET_SCR_TITLE(this.sliceExt(30));
     this.getPgm();
     this.RESET_SCR_CATEGORY_OPTIONS();
-    axios.get("/api/categories/scr/spot").then((res) => {
-      res.data.resultObject.data.forEach((e) => {
-        this.SET_SCR_CATEGORY_OPTIONS({
-          value: e.id,
-          text: e.name,
-        });
+    var res = await axios.get("/api/categories/scr/spot");
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_SCR_CATEGORY_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
+
     this.scrCategory = "ST01";
     this.scrCategoryName = "우리의 소리를 찾아서";
     this.SET_SCR_CATEGORY(this.scrCategory);

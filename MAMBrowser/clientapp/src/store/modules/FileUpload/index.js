@@ -106,6 +106,19 @@ export default {
     staticMediaOptions: [],
     staticDataOptions: [],
     staticSelected: {},
+    varMetaData: {
+      title: "",
+      memo: "",
+      media: "",
+      sDate: "",
+      sTempDate: "",
+      eDate: "",
+      eTempDate: "",
+      advertiser: "",
+    },
+    varMediaOptions: [],
+    varDataOptions: [],
+    varSelected: {},
 
     MetaData: {
       title: "",
@@ -217,6 +230,21 @@ export default {
         ? true
         : false;
     },
+    varMemoState(state) {
+      return state.varMetaData.memo.length >= 1 ? true : false;
+    },
+    varAdvertiserState(state) {
+      return state.varMetaData.advertiser.length >= 1 ? true : false;
+    },
+    varSelectedState(state) {
+      return state.varSelected.id != "" ? true : false;
+    },
+    varSEDateState(state) {
+      return state.varMetaData.sDate.length == 10 &&
+        state.varMetaData.eDate.length == 10
+        ? true
+        : false;
+    },
     //#endregion
 
     typeState(state) {
@@ -312,14 +340,14 @@ export default {
         }
       } else if (
         state.MetaData.typeSelected == "var-spot" &&
-        state.EventSelected.id != ""
+        state.varSelected.id != ""
       ) {
-        if (state.EventSelected.duration == null) {
+        if (state.varSelected.duration == null) {
           return true;
         }
-        var eh = state.EventSelected.duration.slice(0, 2);
-        var em = state.EventSelected.duration.slice(3, 5);
-        var es = state.EventSelected.duration.slice(6, 8);
+        var eh = state.varSelected.duration.slice(0, 2);
+        var em = state.varSelected.duration.slice(3, 5);
+        var es = state.varSelected.duration.slice(6, 8);
         var calcE = eh * 60 * 60 + em * 60 + es * 1;
         var abs = Math.abs(calcD - calcE);
         if (5 < abs) {
@@ -357,7 +385,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "var-spot") {
-        if (getters.eventState && getters.SEDateState) {
+        if (getters.varSelectedState && getters.varSEDateState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "report") {
@@ -655,7 +683,68 @@ export default {
         duration: "",
       };
     },
+    //#endregion
 
+    //#region var
+    SET_VAR_TITLE(state, payload) {
+      state.varMetaData.title = payload;
+    },
+    SET_VAR_MEDIA(state, payload) {
+      state.varMetaData.media = payload;
+    },
+    SET_VAR_S_DATE(state, payload) {
+      state.varMetaData.sDate = payload;
+    },
+    SET_VAR_S_TEMP_DATE(state, payload) {
+      state.varMetaData.sTempDate = payload;
+    },
+    SET_VAR_E_DATE(state, payload) {
+      state.varMetaData.eDate = payload;
+    },
+    SET_VAR_E_TEMP_DATE(state, payload) {
+      state.varMetaData.eTempDate = payload;
+    },
+    SET_VAR_MEDIA_OPTIONS(state, payload) {
+      state.varMediaOptions.push(payload);
+    },
+    SET_VAR_DATA_OPTIONS(state, payload) {
+      state.varDataOptions = payload;
+    },
+    SET_VAR_SELECTED(state, payload) {
+      state.varSelected = payload;
+    },
+    RESET_VAR_MEDIA_OPTIONS(state) {
+      state.varMediaOptions = [];
+    },
+    RESET_VAR_DATA_OPTIONS(state) {
+      state.varDataOptions = [];
+    },
+    RESET_VAR_SELECTED(state) {
+      state.varSelected = {
+        name: "",
+        id: "",
+        duration: "",
+      };
+    },
+    RESET_VAR(state) {
+      state.varMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        sDate: "",
+        sTempDate: "",
+        eDate: "",
+        eTempDate: "",
+        advertiser: "",
+      };
+      state.varMediaOptions = [];
+      state.varDataOptions = [];
+      state.varSelected = {
+        name: "",
+        id: "",
+        duration: "",
+      };
+    },
     //#endregion
 
     addLocalFiles(state, payload) {

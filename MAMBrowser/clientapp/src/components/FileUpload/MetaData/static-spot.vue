@@ -278,19 +278,19 @@ export default {
       mediaName: "AM",
     };
   },
-  created() {
+  async created() {
     this.RESET_STATIC();
     this.RESET_STATIC_MEDIA_OPTIONS(); //매체 초기화
 
     //매체 생성
-    axios.get("/api/categories/media").then((res) => {
-      this.SET_STATIC_MEDIA(res.data.resultObject.data[0].id);
+    var res = await axios.get("/api/categories/media");
 
-      res.data.resultObject.data.forEach((e) => {
-        this.SET_STATIC_MEDIA_OPTIONS({
-          value: e.id,
-          text: e.name,
-        });
+    this.SET_STATIC_MEDIA(res.data.resultObject.data[0].id);
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_STATIC_MEDIA_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
   },
@@ -356,7 +356,7 @@ export default {
         `[${this.staticMetaData.sDate} ~ ${this.staticMetaData.eDate}] [${this.mediaName}] [${this.staticSelected.name}]`
       );
     },
-    getPro() {
+    async getPro() {
       if (this.staticMetaData.sDate == "") {
         setTimeout(() => {
           const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
@@ -373,18 +373,20 @@ export default {
       const dd = replaceVal.substring(6, 8);
       var date = yyyy + "" + mm + "" + dd;
       this.RESET_STATIC_DATA_OPTIONS();
-      axios
-        .get(
-          `/api/categories/spot-sch?media=${this.staticMetaData.media}&date=${date}&spotType=TT`
-        )
-        .then((res) => {
-          var value = res.data.resultObject.data;
-          value.forEach((e) => {
-            e.duration = this.getDurationSec(e.duration);
-            e.startDate = this.getStartDate(e.startDate);
-          });
-          this.SET_STATIC_DATA_OPTIONS(res.data.resultObject.data);
-        });
+
+      var res = await axios.get(
+        `/api/categories/spot-sch?media=${this.staticMetaData.media}&date=${date}&spotType=TT`
+      );
+
+      var value = res.data.resultObject.data;
+
+      value.forEach((e) => {
+        e.duration = this.getDurationSec(e.duration);
+        e.startDate = this.getStartDate(e.startDate);
+      });
+
+      this.SET_STATIC_DATA_OPTIONS(res.data.resultObject.data);
+
       this.RESET_STATIC_SELECTED();
     },
     eventSInput(value) {

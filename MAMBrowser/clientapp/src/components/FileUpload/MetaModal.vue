@@ -302,6 +302,8 @@ export default {
       scrRange: (state) => state.scrRange,
       staticMetaData: (state) => state.staticMetaData,
       staticSelected: (state) => state.staticSelected,
+      varMetaData: (state) => state.varMetaData,
+      varSelected: (state) => state.varSelected,
 
       date: (state) => state.date,
       button: (state) => state.button,
@@ -430,14 +432,14 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "var-spot") {
         var data = {
-          title: this.MetaData.title,
-          media: this.MetaData.mediaSelected,
-          productId: this.EventSelected.id,
-          SDate: this.fileSDate,
-          EDate: this.fileEDate,
+          title: this.varMetaData.title,
+          media: this.varMetaData.media,
+          productId: this.varSelected.id,
+          SDate: this.varMetaData.sDate,
+          EDate: this.varMetaData.eDate,
           editor: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
-          advertiser: this.MetaData.advertiser,
+          memo: this.varMetaData.memo,
+          advertiser: this.varMetaData.advertiser,
         };
       } else if (this.MetaData.typeSelected == "report") {
         var data = {

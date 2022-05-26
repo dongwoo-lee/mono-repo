@@ -265,18 +265,19 @@ export default {
       mediaName: "AM",
     };
   },
-  created() {
+  async created() {
     this.RESET_MCR();
     this.RESET_MCR_MEDIA_OPTIONS();
 
-    axios.get("/api/categories/media").then((res) => {
-      this.SET_MCR_MEDIA(res.data.resultObject.data[0].id);
-      this.mediaName = res.data.resultObject.data[0].name;
-      res.data.resultObject.data.forEach((e) => {
-        this.SET_MCR_MEDIA_OPTIONS({
-          value: e.id,
-          text: e.name,
-        });
+    var res = await axios.get("/api/categories/media");
+
+    this.SET_MCR_MEDIA(res.data.resultObject.data[0].id);
+    this.mediaName = res.data.resultObject.data[0].name;
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_MCR_MEDIA_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
 
@@ -392,24 +393,24 @@ export default {
       this.formatted = ctx.selectedFormatted;
       this.dateSelected = ctx.selectedYMD;
     },
-    getPro() {
+    async getPro() {
       const replaceVal = this.mcrMetaData.date.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       var date = yyyy + "" + mm + "" + dd;
       this.RESET_MCR_DATA_OPTIONS();
-      axios
-        .get(
-          `/api/categories/spot-sch?media=${this.mcrMetaData.media}&date=${date}&spotType=MS`
-        )
-        .then((res) => {
-          var value = res.data.resultObject.data;
-          value.forEach((e) => {
-            e.duration = this.getDurationSec(e.duration);
-          });
-          this.SET_MCR_DATA_OPTIONS(res.data.resultObject.data);
-        });
+
+      var res = axios.get(
+        `/api/categories/spot-sch?media=${this.mcrMetaData.media}&date=${date}&spotType=MS`
+      );
+
+      var value = res.data.resultObject.data;
+      value.forEach((e) => {
+        e.duration = this.getDurationSec(e.duration);
+      });
+
+      this.SET_MCR_DATA_OPTIONS(res.data.resultObject.data);
       this.RESET_MCR_SELECTED();
     },
     modalOn() {

@@ -18,7 +18,7 @@
             <b-form-input
               style="width: 425px"
               class="editTask"
-              v-model="EventSelected.name"
+              v-model="varSelected.name"
               disabled
               aria-describedby="input-live-help input-live-feedback"
               trim
@@ -34,7 +34,7 @@
             <b-form-input
               style="width: 425px"
               class="editTask"
-              v-model="eventDate"
+              v-model="varMetaData.sDate"
               disabled
               aria-describedby="input-live-help input-live-feedback"
               trim
@@ -50,7 +50,7 @@
             <b-form-input
               style="width: 425px"
               class="editTask"
-              v-model="EventSelected.duration"
+              v-model="varSelected.duration"
               disabled
               aria-describedby="input-live-help input-live-feedback"
               trim
@@ -67,15 +67,15 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="varMetaData.memo"
+          :state="varMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
           trim
       /></b-form-group>
       <p
-        v-show="memoState"
+        v-show="varMemoState"
         style="
           position: relative;
           left: 390px;
@@ -85,7 +85,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.memo.length }}/30
+        {{ varMetaData.memo.length }}/30
       </p>
     </div>
     <div style="height: 50px">
@@ -96,8 +96,8 @@
       >
         <b-form-input
           class="editTask"
-          v-model="MetaData.advertiser"
-          :state="advertiserState"
+          v-model="varMetaData.advertiser"
+          :state="varAdvertiserState"
           :maxLength="15"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="광고주"
@@ -105,7 +105,7 @@
         />
       </b-form-group>
       <p
-        v-show="advertiserState"
+        v-show="varAdvertiserState"
         style="
           position: relative;
           left: 390px;
@@ -115,7 +115,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.advertiser.length }}/15
+        {{ varMetaData.advertiser.length }}/15
       </p>
     </div>
     <b-modal
@@ -143,13 +143,13 @@
                 id="sdateinput"
                 type="text"
                 class="form-control input-picker"
-                :value="fileSDate"
+                :value="varMetaData.sDate"
                 @input="onsInput"
               />
               <b-input-group-append>
                 <b-form-datepicker
                   style="height: 33px"
-                  :value="fileSDate"
+                  :value="varMetaData.sDate"
                   @input="eventSInput"
                   button-only
                   button-variant="outline-dark"
@@ -171,13 +171,13 @@
                 id="edateinput"
                 type="text"
                 class="form-control input-picker"
-                :value="fileEDate"
+                :value="varMetaData.eDate"
                 @input="oneInput"
               />
               <b-input-group-append>
                 <b-form-datepicker
                   style="height: 33px"
-                  :value="fileEDate"
+                  :value="varMetaData.eDate"
                   @input="eventEInput"
                   button-only
                   button-variant="outline-dark"
@@ -199,8 +199,8 @@
               id="program-media"
               class="media-select"
               style="width: 115px; height: 33px"
-              :value="varMedia"
-              :options="fileMediaOptions"
+              :value="varMetaData.media"
+              :options="varMediaOptions"
               @input="mediaChange"
             />
           </b-form-group>
@@ -221,7 +221,7 @@
               border: 1px solid silver;
               font-family: 'MBC 새로움 M';
             "
-            :data-source="EventData"
+            :data-source="varDataOptions"
             :selection="{ mode: 'single' }"
             :show-borders="true"
             :hover-state-enabled="true"
@@ -253,22 +253,15 @@
           class="float-right"
           @click="modalReset"
         >
-          닫기</b-button
+          취소</b-button
         >
       </template>
     </b-modal>
   </div>
-  <!-- <div>
-   
-    
-    
-  </div> -->
 </template>
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import mixinFillerPage from "../../../mixin/MixinFillerPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
@@ -279,90 +272,124 @@ export default {
     DxScrolling,
     DxLoadPanel,
   },
-  mixins: [CommonFileFunction, MixinBasicPage, mixinFillerPage],
+  mixins: [CommonFileFunction],
   data() {
     return {
       modal: false,
-      varMedia: "A",
       mediaName: "AM",
-      sdate: "",
-      edate: "",
-      eventDate: "",
     };
   },
-  created() {
-    this.reset();
-    this.resetFileMediaOptions(); //매체 초기화
+  async created() {
+    this.RESET_VAR();
+    this.RESET_VAR_MEDIA_OPTIONS(); //매체 초기화
     //매체 생성
-    axios.get("/api/categories/media").then((res) => {
-      this.resetMediaSelected();
-      this.varMedia = res.data.resultObject.data[0].id;
-      this.setMediaSelected(this.varMedia);
+    var res = await axios.get("/api/categories/media");
 
-      res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
-          value: e.id,
-          text: e.name,
-        });
+    this.SET_VAR_MEDIA(res.data.resultObject.data[0].id);
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_VAR_MEDIA_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
-
-    //분류
-    this.getTimetoneOptions();
-    //상태
-    this.getReqStatusOptions();
-
-    // 시작/종료일 초기값 설정
-    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    this.sdate = today;
-    this.setFileSDate(today);
-    this.setTempFileSDate(today);
-
-    // var newDate = new Date();
-    // var dayOfMonth = newDate.getDate();
-    // newDate.setDate(dayOfMonth + 7);
-    // newDate = this.$fn.formatDate(newDate, "yyyy-MM-dd");
-
-    this.edate = today;
-    this.setFileEDate(today);
-    this.setTempFileEDate(today);
-
-    this.getPro();
+  },
+  computed: {
+    ...mapState("FileIndexStore", {
+      varMetaData: (state) => state.varMetaData,
+      varMediaOptions: (state) => state.varMediaOptions,
+      varDataOptions: (state) => state.varDataOptions,
+      varSelected: (state) => state.varSelected,
+    }),
+    ...mapGetters("FileIndexStore", ["varMemoState", "varAdvertiserState"]),
   },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "SET_VAR_TITLE",
+      "SET_VAR_MEDIA",
+      "SET_VAR_S_DATE",
+      "SET_VAR_S_TEMP_DATE",
+      "SET_VAR_E_DATE",
+      "SET_VAR_E_TEMP_DATE",
+      "SET_VAR_MEDIA_OPTIONS",
+      "SET_VAR_DATA_OPTIONS",
+      "SET_VAR_SELECTED",
+      "RESET_VAR_MEDIA_OPTIONS",
+      "RESET_VAR_DATA_OPTIONS",
+      "RESET_VAR_SELECTED",
+      "RESET_VAR",
+    ]),
     modalOn() {
-      setTimeout(() => {
-        this.eventDate = this.fileSDate;
-      }, 500);
       this.modal = true;
-      this.setMediaSelected(this.varMedia);
+
       this.getPro();
     },
     modalOff() {
-      if (this.EventSelected.name == "") {
-        this.eventDate = "";
+      if (this.varSelected.id == "") {
+        this.SET_VAR_S_DATE("");
+        this.SET_VAR_S_TEMP_DATE("");
       }
       this.modal = false;
     },
     modalReset() {
-      this.eventDate = "";
-      this.resetEventSelected();
+      this.RESET_VAR_SELECTED();
+
+      this.SET_VAR_S_DATE("");
+      this.SET_VAR_S_TEMP_DATE("");
+
+      this.SET_VAR_E_DATE("");
+      this.SET_VAR_E_TEMP_DATE("");
       this.modal = false;
     },
     mediaChange(v) {
-      this.setMediaSelected(v);
+      this.SET_VAR_MEDIA(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
       this.mediaName = data.text;
       this.getPro();
     },
-    eventSInput(value) {
-      this.sdate = value;
-      this.eventDate = value;
-      this.setFileSDate(value);
-      this.setTempFileSDate(value);
+    onRowClick(v) {
+      this.SET_VAR_SELECTED(v.data);
+      this.SET_VAR_TITLE(
+        `[${this.varMetaData.sDate} ~ ${this.varMetaData.eDate}] [${this.mediaName}] [${this.varSelected.name}]`
+      );
+    },
+    async getPro() {
+      if (this.varMetaData.sDate == "") {
+        setTimeout(() => {
+          const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.SET_VAR_S_DATE(today);
+          this.SET_VAR_S_TEMP_DATE(today);
 
-      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-      const replaceAllFileEDate = this.edate.replace(/-/g, "");
+          this.SET_VAR_E_DATE(today);
+          this.SET_VAR_E_TEMP_DATE(today);
+        }, 200);
+      }
+      const replaceVal = this.varMetaData.sDate.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+      this.RESET_VAR_DATA_OPTIONS();
+
+      var res = await axios.get(
+        `/api/categories/spot-sch?media=${this.varMetaData.media}&date=${date}&spotType=TS`
+      );
+
+      var value = res.data.resultObject.data;
+      value.forEach((e) => {
+        e.duration = this.getDurationSec(e.duration);
+        e.startDate = this.getStartDate(e.startDate);
+      });
+
+      this.SET_VAR_DATA_OPTIONS(res.data.resultObject.data);
+      this.RESET_VAR_SELECTED();
+    },
+    eventSInput(value) {
+      this.SET_VAR_S_DATE(value);
+      this.SET_VAR_S_TEMP_DATE(value);
+
+      const replaceAllFileSDate = this.varMetaData.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.varMetaData.eDate.replace(/-/g, "");
       if (
         replaceAllFileEDate < replaceAllFileSDate &&
         replaceAllFileEDate != ""
@@ -376,12 +403,11 @@ export default {
       }
     },
     eventEInput(value) {
-      this.edate = value;
-      this.setFileEDate(value);
-      this.setTempFileEDate(value);
+      this.SET_VAR_E_DATE(value);
+      this.SET_VAR_E_TEMP_DATE(value);
 
-      const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-      const replaceAllFileEDate = this.edate.replace(/-/g, "");
+      const replaceAllFileSDate = this.varMetaData.sDate.replace(/-/g, "");
+      const replaceAllFileEDate = this.varMetaData.eDate.replace(/-/g, "");
       if (replaceAllFileEDate < replaceAllFileSDate) {
         this.$fn.notify("error", {
           message: "시작 날짜가 종료 날짜보다 큽니다.",
@@ -404,11 +430,11 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        if (this.tempFileSDate == null) {
+        if (this.varMetaData.sTempDate == null) {
           event.target.value = this.get7daysago();
           return;
         }
-        event.target.value = this.tempFileSDate;
+        event.target.value = this.varMetaData.sTempDate;
         return;
       }
 
@@ -420,13 +446,17 @@ export default {
             convertDate == null ||
             convertDate == "undefined"
           ) {
-            this.sdate = this.get7daysago();
-            this.eventDate = this.get7daysago();
-            this.setFileSDate(this.get7daysago());
-            this.setTempFileSDate(this.get7daysago());
+            this.SET_VAR_S_DATE(this.get7daysago());
+            this.SET_VAR_S_TEMP_DATE(this.get7daysago());
 
-            const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-            const replaceAllFileEDate = this.edate.replace(/-/g, "");
+            const replaceAllFileSDate = this.varMetaData.sDate.replace(
+              /-/g,
+              ""
+            );
+            const replaceAllFileEDate = this.varMetaData.eDate.replace(
+              /-/g,
+              ""
+            );
             if (
               replaceAllFileEDate < replaceAllFileSDate &&
               replaceAllFileEDate != ""
@@ -440,13 +470,11 @@ export default {
             }
             return;
           }
-          this.sdate = convertDate;
-          this.eventDate = convertDate;
-          this.setFileSDate(convertDate);
-          this.setTempFileSDate(convertDate);
+          this.SET_VAR_S_DATE(convertDate);
+          this.SET_VAR_S_TEMP_DATE(convertDate);
 
-          const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-          const replaceAllFileEDate = this.edate.replace(/-/g, "");
+          const replaceAllFileSDate = this.varMetaData.sDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.varMetaData.eDate.replace(/-/g, "");
           if (
             replaceAllFileEDate < replaceAllFileSDate &&
             replaceAllFileEDate != ""
@@ -467,10 +495,10 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        if (this.tempFileEDate == null) {
+        if (this.varMetaData.eTempDate == null) {
           event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
         }
-        event.target.value = this.tempFileEDate;
+        event.target.value = this.varMetaData.eTempDate;
         return;
       }
 
@@ -482,14 +510,19 @@ export default {
             convertDate == null ||
             convertDate == "undefined"
           ) {
-            this.edate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-            this.setFileEDate(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
-            this.setTempFileEDate(
+            this.SET_VAR_E_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.SET_VAR_E_TEMP_DATE(
               this.$fn.formatDate(new Date(), "yyyy-MM-dd")
             );
 
-            const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-            const replaceAllFileEDate = this.edate.replace(/-/g, "");
+            const replaceAllFileSDate = this.varMetaData.sDate.replace(
+              /-/g,
+              ""
+            );
+            const replaceAllFileEDate = this.varMetaData.eDate.replace(
+              /-/g,
+              ""
+            );
             if (replaceAllFileEDate < replaceAllFileSDate) {
               this.$fn.notify("error", {
                 message: "시작 날짜가 종료 날짜보다 큽니다.",
@@ -500,11 +533,10 @@ export default {
             }
             return;
           }
-          this.edate = convertDate;
-          this.setFileEDate(convertDate);
-          this.setTempFileEDate(convertDate);
-          const replaceAllFileSDate = this.sdate.replace(/-/g, "");
-          const replaceAllFileEDate = this.edate.replace(/-/g, "");
+          this.SET_VAR_E_DATE(convertDate);
+          this.SET_VAR_E_TEMP_DATE(convertDate);
+          const replaceAllFileSDate = this.varMetaData.sDate.replace(/-/g, "");
+          const replaceAllFileEDate = this.varMetaData.eDate.replace(/-/g, "");
           if (replaceAllFileEDate < replaceAllFileSDate) {
             this.$fn.notify("error", {
               message: "시작 날짜가 종료 날짜보다 큽니다.",
