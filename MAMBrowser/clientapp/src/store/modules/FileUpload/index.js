@@ -1,6 +1,5 @@
 let db;
 import axios from "axios";
-import { BIconFileEarmarkSlides } from "bootstrap-vue";
 export default {
   namespaced: true,
   state: {
@@ -94,6 +93,19 @@ export default {
     },
     scrCategoryOptions: [],
     scrRange: [],
+    staticMetaData: {
+      title: "",
+      memo: "",
+      media: "",
+      sDate: "",
+      sTempDate: "",
+      eDate: "",
+      eTempDate: "",
+      advertiser: "",
+    },
+    staticMediaOptions: [],
+    staticDataOptions: [],
+    staticSelected: {},
 
     MetaData: {
       title: "",
@@ -190,6 +202,21 @@ export default {
     scrRangeState(state) {
       return state.scrRange.length >= 1 ? true : false;
     },
+    staticMemoState(state) {
+      return state.staticMetaData.memo.length >= 1 ? true : false;
+    },
+    staticAdvertiserState(state) {
+      return state.staticMetaData.advertiser.length >= 1 ? true : false;
+    },
+    staticSelectedState(state) {
+      return state.staticSelected.id != "" ? true : false;
+    },
+    staticSEDateState(state) {
+      return state.staticMetaData.sDate.length == 10 &&
+        state.staticMetaData.eDate.length == 10
+        ? true
+        : false;
+    },
     //#endregion
 
     typeState(state) {
@@ -270,14 +297,14 @@ export default {
         }
       } else if (
         state.MetaData.typeSelected == "static-spot" &&
-        state.EventSelected.id != ""
+        state.staticSelected.id != ""
       ) {
-        if (state.EventSelected.duration == null) {
+        if (state.staticSelected.duration == null) {
           return true;
         }
-        var eh = state.EventSelected.duration.slice(0, 2);
-        var em = state.EventSelected.duration.slice(3, 5);
-        var es = state.EventSelected.duration.slice(6, 8);
+        var eh = state.staticSelected.duration.slice(0, 2);
+        var em = state.staticSelected.duration.slice(3, 5);
+        var es = state.staticSelected.duration.slice(6, 8);
         var calcE = eh * 60 * 60 + em * 60 + es * 1;
         var abs = Math.abs(calcD - calcE);
         if (5 < abs) {
@@ -326,7 +353,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "static-spot") {
-        if (getters.eventState && getters.SEDateState) {
+        if (getters.staticSelectedState && getters.staticSEDateState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "var-spot") {
@@ -566,6 +593,69 @@ export default {
       state.scrCategoryOptions = [];
       state.scrRange = [];
     },
+    //#endregion
+
+    //#region static
+    SET_STATIC_TITLE(state, payload) {
+      state.staticMetaData.title = payload;
+    },
+    SET_STATIC_MEDIA(state, payload) {
+      state.staticMetaData.media = payload;
+    },
+    SET_STATIC_S_DATE(state, payload) {
+      state.staticMetaData.sDate = payload;
+    },
+    SET_STATIC_S_TEMP_DATE(state, payload) {
+      state.staticMetaData.sTempDate = payload;
+    },
+    SET_STATIC_E_DATE(state, payload) {
+      state.staticMetaData.eDate = payload;
+    },
+    SET_STATIC_E_TEMP_DATE(state, payload) {
+      state.staticMetaData.eTempDate = payload;
+    },
+    SET_STATIC_MEDIA_OPTIONS(state, payload) {
+      state.staticMediaOptions.push(payload);
+    },
+    SET_STATIC_DATA_OPTIONS(state, payload) {
+      state.staticDataOptions = payload;
+    },
+    SET_STATIC_SELECTED(state, payload) {
+      state.staticSelected = payload;
+    },
+    RESET_STATIC_MEDIA_OPTIONS(state) {
+      state.staticMediaOptions = [];
+    },
+    RESET_STATIC_DATA_OPTIONS(state) {
+      state.staticDataOptions = [];
+    },
+    RESET_STATIC_SELECTED(state) {
+      state.staticSelected = {
+        name: "",
+        id: "",
+        duration: "",
+      };
+    },
+    RESET_STATIC(state) {
+      state.staticMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        sDate: "",
+        sTempDate: "",
+        eDate: "",
+        eTempDate: "",
+        advertiser: "",
+      };
+      state.staticMediaOptions = [];
+      state.staticDataOptions = [];
+      state.staticSelected = {
+        name: "",
+        id: "",
+        duration: "",
+      };
+    },
+
     //#endregion
 
     addLocalFiles(state, payload) {

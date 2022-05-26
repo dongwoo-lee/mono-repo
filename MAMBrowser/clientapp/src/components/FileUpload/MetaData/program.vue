@@ -274,6 +274,10 @@ export default {
     this.RESET_PGM();
     this.RESET_PGM_MEDIA_OPTIONS();
 
+    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+    this.SET_PGM_DATE(today);
+    this.SET_PGM_TEMP_DATE(today);
+
     var res = await axios.get("/api/categories/media");
 
     this.mediaName = res.data.resultObject.data[0].id;
@@ -292,10 +296,6 @@ export default {
     );
 
     this.SET_USER_PGM_LIST(res.data.resultObject.data);
-
-    const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    await this.SET_PGM_DATE(today);
-    await this.SET_PGM_TEMP_DATE(today);
 
     this.getPro();
   },

@@ -5,26 +5,41 @@
       style="
         position: fixed;
         z-index: 9800;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
+        top: 1rem;
+        right: 1rem;
+        width: 220px;
+        height: 67px;
+        background-color: rgb(255, 255, 255, 1);
+        border: 1px solid #008ecc;
+        padding: 15px;
         display: table;
       "
     >
       <div
         style="
-          margin-top: 500px;
-          margin-left: 140px;
           text-align: center;
-          color: white;
-          font-size: 48px;
+          font-size: 13px;
+          position: absolute;
+          top: 23px;
+          left: 20px;
         "
       >
-        <b-spinner large type="grow"></b-spinner>
         <span class="label">파일 확인 중</span>
+        <b-spinner type="grow" style="width: 10px; height: 10px"></b-spinner>
       </div>
+      <b-button
+        variant="outline"
+        style="
+          background-color: rgba(0, 0, 0, 0);
+          color: red;
+          position: absolute;
+          top: 0px;
+          right: -3px;
+          font-size: 16px;
+        "
+        @click="fileCancel"
+        >x</b-button
+      >
     </div>
     <div
       @dragleave="dragLeave"
@@ -489,6 +504,9 @@ export default {
     },
   },
   methods: {
+    fileCancel() {
+      this.processing = false;
+    },
     ...mapMutations("FileIndexStore", [
       "SET_MYDISK_TITLE",
       "addLocalFiles",
@@ -864,6 +882,9 @@ export default {
       this.fileupload._isCustomClickEvent = true;
       this.fileupload._$fileInput[0].click();
       this.setTypeSelected("my-disk");
+      setTimeout(() => {
+        this.processing = false;
+      }, 15000);
     },
     openFileModal() {
       if (!this.FileModal) {
