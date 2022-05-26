@@ -138,7 +138,7 @@ export default {
           },
         },
         {
-          name: "day",
+          name: "r_ONAIRTIME",
           title: "방송예정일",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
@@ -146,7 +146,9 @@ export default {
           callback: (value) => {
             return value === null
               ? ""
-              : moment(value, "YYYYMMDD").format("YYYY-MM-DD (ddd)");
+              : moment(value, "YYYY-MM-DD'T'HH:mm:ss").format(
+                  "YYYY-MM-DD (ddd)"
+                );
           },
         },
         {
