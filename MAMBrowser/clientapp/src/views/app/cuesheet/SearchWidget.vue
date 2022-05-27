@@ -116,12 +116,11 @@
       v-bind:class="search_table_size"
       style="overflow: overlay"
     >
-      <div style="overflow: overlay">
+      <div id="main_product_grid" style="overflow: overlay">
         <DxDataGrid
           id="search_data_grid"
           :data-source="searchtable_data.columns"
           :remote-operations="true"
-          :ref="dataGridRef"
           :height="gridHeight"
           :focused-row-enabled="false"
           :showColumnLines="true"
@@ -184,19 +183,29 @@
             :on-drag-start="onDragStart"
             :on-drag-end="onDragEnd"
           />
-          <DxLoadPanel :enabled="true" />
+          <DxLoadPanel
+            :show-indicator="true"
+            :show-pane="true"
+            :shading="true"
+            :enabled="true"
+            :close-on-outside-click="false"
+          />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling mode="infinite" />
           <DxPaging :page-size="pageSize" />
         </DxDataGrid>
       </div>
-      <div v-if="subtableVal" style="overflow: overlay">
+      <div
+        class="sub_product_grid"
+        v-if="subtableVal"
+        style="overflow: overlay"
+      >
         <DxDataGrid
           id="search_data_grid"
           :data-source="subtable_data"
           :ref="dataGridRef"
           :height="gridHeight"
-          :focusedRowEnabled="false"
+          :focused-row-enabled="false"
           :showColumnLines="true"
           :show-borders="true"
           :row-alternation-enabled="true"
@@ -223,7 +232,13 @@
             group="tasksGroup"
             :on-drag-start="onDragStart"
           />
-          <DxLoadPanel :enabled="true" />
+          <DxLoadPanel
+            :show-indicator="true"
+            :show-pane="true"
+            :shading="true"
+            :enabled="true"
+            :close-on-outside-click="false"
+          />
           <DxSelection mode="multiple" showCheckBoxesMode="none" />
           <DxScrolling mode="infinite" />
         </DxDataGrid>
@@ -280,8 +295,8 @@ import {
   DxScrolling,
   DxSelection,
   DxRowDragging,
-  DxLoadPanel,
   DxPaging,
+  DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import { USER_ID } from "@/constants/config";
@@ -310,7 +325,6 @@ export default {
       waveformUrl_music: "/api/musicsystem/waveform",
       tempDownloadUrl_music: "/api/musicsystem/temp-download",
       refreshKey: 0,
-      loadpanelVal: false,
       pageSize: 30,
       gridHeight: 0,
       allSelected: false,
@@ -406,15 +420,6 @@ export default {
         },
       ],
     };
-  },
-  created() {},
-  updated() {
-    //console.log(this.dataGrid._$element[0].clientWidth);
-    // var test_size = document.getElementById("main_table").clientWidth;
-    // if (table_width > 0) {
-    //   this.table_width_size = table_width;
-    //   console.log(this.table_width_size);
-    // }
   },
   mounted() {
     this.searchDataList = this.searchData[0];
@@ -538,7 +543,6 @@ export default {
         result["startDate"] = selectOptionsStartEndDate[0].st_selectVal;
         result["endDate"] = selectOptionsStartEndDate[0].end_selectVal;
       }
-      var setDataList = await this.getData(result);
       switch (this.searchDataList.id) {
         case "MCR_SB":
           this.subtableVal = true;
@@ -576,39 +580,32 @@ export default {
           this.gridHeight = this.width_size;
           break;
       }
-      // this.table_width_size = document
-      //   .getElementById("search_data_grid")
-      //   .clientWidth.toString();
-      //console.log(this.dataGrid._$element[0].clientWidth);
-      // this.test_size = document.getElementById("main_table").clientWidth;
-      // console.log(this.test_size);
+      var setDataList = await this.getData(result);
       this.subtable_data = [];
-      this.loadpanelVal = false;
     },
-    onSelectionChanged(e) {
+    async onSelectionChanged(e) {
+      this.dataGrid.beginCustomLoading("Loading...");
       if (e.selectedRowsData.length > 0) {
         var selectRowData = e.selectedRowsData[0];
         switch (this.searchDataList.id) {
           case "MCR_SB":
-            this.getSubData("sb", selectRowData.brdDT, selectRowData.id);
+            await this.getSubData("sb", selectRowData.brdDT, selectRowData.id);
             break;
-
           case "SCR_SB":
-            this.getSubData("sb", selectRowData.brdDT, selectRowData.id);
+            await this.getSubData("sb", selectRowData.brdDT, selectRowData.id);
             break;
-
           case "PGM_CM":
-            this.getSubData("cm", selectRowData.brdDT, selectRowData.id);
+            await this.getSubData("cm", selectRowData.brdDT, selectRowData.id);
             break;
-
           case "CM":
-            this.getSubData("cm", selectRowData.brdDT, selectRowData.id);
+            await this.getSubData("cm", selectRowData.brdDT, selectRowData.id);
             break;
-
           default:
             break;
         }
       }
+      this.dataGrid.endUpdate();
+      this.dataGrid.endCustomLoading();
     },
     itemclick(e) {
       const url = `/api/SearchMenu/GetSearchOption/`;
@@ -649,13 +646,15 @@ export default {
       });
     },
     // 서브 데이터 조회
-    getSubData(apiType, brdDT, id) {
-      axios(`/api/products/${apiType}/contents/${brdDT}/${id}`).then((res) => {
-        res.data.resultObject.data.forEach((ele, index) => {
-          ele.rowNO = index + 1;
-        });
-        this.subtable_data = res.data.resultObject.data;
-      });
+    async getSubData(apiType, brdDT, id) {
+      await axios(`/api/products/${apiType}/contents/${brdDT}/${id}`).then(
+        (res) => {
+          res.data.resultObject.data.forEach((ele, index) => {
+            ele.rowNO = index + 1;
+          });
+          this.subtable_data = res.data.resultObject.data;
+        }
+      );
     },
     async getData(Val) {
       var basedata = this.searchItems;
