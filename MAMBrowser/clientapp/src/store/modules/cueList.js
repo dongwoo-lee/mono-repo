@@ -298,24 +298,23 @@ export default {
                 params: pram
             })
                 .then((res) => {
-                    var dataList = res.data.resultObject
-                    var products = [];
-                    var selectProductList = [];
-                    if (dataList) {
-                        dataList.forEach((ele) => {
-                            products.push({
-                                value: ele.productid,
-                                text: ele.eventname,
+                    if (res.data.resultObject) {
+                        var dataList = res.data.resultObject
+                        var products = [];
+                        var selectProductList = [];
+                        if (dataList) {
+                            dataList.forEach((ele) => {
+                                products.push({
+                                    value: ele.productid,
+                                    text: ele.eventname,
+                                });
+                                selectProductList.push(ele.productid)
                             });
-                            selectProductList.push(ele.productid)
-                        });
+                        }
+                        commit('SET_USERPROOPTION', products);
+                        commit('SET_USERPROLIST', selectProductList)
                     }
-                    commit('SET_USERPROOPTION', products);
-                    commit('SET_USERPROLIST', selectProductList)
                 })
-                .catch((err => {
-                    console.log("getuserProOption" + err);
-                }));
         },
         //유저 - 전체 프로그램 + 매체 가져오기
         async getMediasOption({ commit }, payload) {
@@ -327,72 +326,70 @@ export default {
                 params: pram
             })
                 .then((res) => {
-                    var dataList = res.data.resultObject
-                    var medias = [{
-                        value: "",
-                        text: "전체"
-                    }];
-                    var products = [];
-                    var media_a = dataList.filter(ele => ele.media.includes("A"));
-                    var media_f = dataList.filter(ele => ele.media.includes("F"));
-                    var media_d = dataList.filter(ele => ele.media.includes("D"));
-                    var media_c = dataList.filter(ele => ele.media.includes("C"));
-                    var media_z = dataList.filter(ele => ele.media.includes("Z"));
-                    if (media_a.length > 0) {
-                        medias.push({
-                            value: "A",
-                            text: "AM"
+                    if (res.data.resultObject) {
+                        var dataList = res.data.resultObject
+                        var medias = [{
+                            value: "",
+                            text: "전체"
+                        }];
+                        var products = [];
+                        var media_a = dataList.filter(ele => ele.media.includes("A"));
+                        var media_f = dataList.filter(ele => ele.media.includes("F"));
+                        var media_d = dataList.filter(ele => ele.media.includes("D"));
+                        var media_c = dataList.filter(ele => ele.media.includes("C"));
+                        var media_z = dataList.filter(ele => ele.media.includes("Z"));
+                        if (media_a.length > 0) {
+                            medias.push({
+                                value: "A",
+                                text: "AM"
+                            })
+                        }
+                        if (media_f.length > 0) {
+                            medias.push({
+                                value: "F",
+                                text: "FM"
+                            })
+                        }
+                        if (media_d.length > 0) {
+                            medias.push({
+                                value: "D",
+                                text: "DMB"
+                            })
+                        }
+                        if (media_c.length > 0) {
+                            medias.push({
+                                value: "C",
+                                text: "공통"
+                            })
+                        }
+                        if (media_z.length > 0) {
+                            medias.push({
+                                value: "Z",
+                                text: "기타"
+                            })
+                        }
+                        dataList.forEach((ele) => {
+                            products.push(ele.productid);
                         })
+                        commit('SET_MEDIASOPTION', medias)
+                        commit('SET_USERPROLIST', products)
                     }
-                    if (media_f.length > 0) {
-                        medias.push({
-                            value: "F",
-                            text: "FM"
-                        })
-                    }
-                    if (media_d.length > 0) {
-                        medias.push({
-                            value: "D",
-                            text: "DMB"
-                        })
-                    }
-                    if (media_c.length > 0) {
-                        medias.push({
-                            value: "C",
-                            text: "공통"
-                        })
-                    }
-                    if (media_z.length > 0) {
-                        medias.push({
-                            value: "Z",
-                            text: "기타"
-                        })
-                    }
-                    dataList.forEach((ele) => {
-                        products.push(ele.productid);
-                    })
-                    commit('SET_MEDIASOPTION', medias)
-                    commit('SET_USERPROLIST', products)
-
                 })
-                .catch((err => {
-                    console.log("getMediasOption" + err);
-                }));
+
         },
         //프로그램 - 전체 유저 가져오기
         async getProUserList({ commit }, payload) {
             await $http.get(`/api/CueUserInfo/GetDirectorList?productid=` + payload)
                 .then((res) => {
-                    var setData = new Set(res.data.resultObject.split(","));
-                    var result = ""
-                    setData.forEach((ele) => {
-                        result = result.concat(ele + ",")
-                    })
-                    commit('SET_PROUSERLIST', result.slice(0, -1))
+                    if (res.data.resultObject) {
+                        var setData = new Set(res.data.resultObject.split(","));
+                        var result = ""
+                        setData.forEach((ele) => {
+                            result = result.concat(ele + ",")
+                        })
+                        commit('SET_PROUSERLIST', result.slice(0, -1))
+                    }
                 })
-                .catch((err => {
-                    console.log("getProUserList" + err);
-                }));
         },
         // 일일 큐시트 목록 전체 가져오기
         getcuesheetListArr({ commit }, payload) {
@@ -471,10 +468,17 @@ export default {
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })
-                .catch((err => {
-                    console.log("getarchiveCuesheetListArr" + err);
-                }));
-
+        },
+        async getarchiveCuesheetCon({ }, payload) {
+            return await $http.get(`/api/ArchiveCueSheet/GetArchiveCue`, {
+                params: payload,
+                paramsSerializer: (params) => {
+                    return qs.stringify(params);
+                },
+            })
+                .then((res) => {
+                    return res.data.resultObject;
+                });
         },
         //프로그램별 요일 확인
         disableList({ commit }, payload) {

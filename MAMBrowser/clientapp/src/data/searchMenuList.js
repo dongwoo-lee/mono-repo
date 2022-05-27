@@ -1775,9 +1775,5 @@ let searchMenuList = {
       ],
     };
   },
-  watch: {},
-  computed: {},
-  mounted() { },
-  methods: {},
 };
 export default searchMenuList;
