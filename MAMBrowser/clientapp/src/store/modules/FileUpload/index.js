@@ -119,6 +119,23 @@ export default {
     varMediaOptions: [],
     varDataOptions: [],
     varSelected: {},
+    reportMetaData: {
+      title: "",
+      memo: "",
+      media: "",
+      category: "",
+      date: "",
+      tempDate: "",
+      reporter: "",
+    },
+    reportMediaOptions: [],
+    reportCategoryOptions: [],
+    reportDataOptions: [],
+    reportSelected: {
+      eventName: "",
+      productId: "",
+      onairTime: "",
+    },
 
     MetaData: {
       title: "",
@@ -244,6 +261,18 @@ export default {
         state.varMetaData.eDate.length == 10
         ? true
         : false;
+    },
+    reportTitleState(state) {
+      return state.reportMetaData.title.length >= 1 ? true : false;
+    },
+    reportMemoState(state) {
+      return state.reportMetaData.memo.length >= 1 ? true : false;
+    },
+    reportReporterState(state) {
+      return state.reportMetaData.reporter.length >= 1 ? true : false;
+    },
+    reportSelectedState(state) {
+      return state.reportSelected.id != "" ? true : false;
     },
     //#endregion
 
@@ -389,7 +418,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "report") {
-        if (getters.reporterState && getters.eventState) {
+        if (getters.reportReporterState && getters.reportSelectedState) {
           return true;
         }
       } else if (state.MetaData.typeSelected == "filler") {
@@ -744,6 +773,65 @@ export default {
         id: "",
         duration: "",
       };
+    },
+    //#endregion
+
+    //#region report
+    SET_REPORT_TITLE(state, payload) {
+      state.reportMetaData.title = payload;
+    },
+    SET_REPORT_MEDIA(state, payload) {
+      state.reportMetaData.media = payload;
+    },
+    SET_REPORT_CATEGORY(state, payload) {
+      state.reportMetaData.category = payload;
+    },
+    SET_REPORT_DATE(state, payload) {
+      state.reportMetaData.date = payload;
+    },
+    SET_REPORT_TEMP_DATE(state, payload) {
+      state.reportMetaData.tempDate = payload;
+    },
+    SET_REPORT_MEDIA_OPTIONS(state, payload) {
+      state.reportMediaOptions.push(payload);
+    },
+    SET_REPORT_CATEGORY_OPTIONS(state, payload) {
+      state.reportCategoryOptions.push(payload);
+    },
+    SET_REPORT_DATA_OPTIONS(state, payload) {
+      state.reportDataOptions = payload;
+    },
+    SET_REPORT_SELECTED(state, payload) {
+      state.reportSelected = payload;
+    },
+    RESET_REPORT_MEDIA_OPTIONS(state) {
+      state.reportMediaOptions = [];
+    },
+    RESET_REPORT_CATEGORY_OPTIONS(state) {
+      state.reportCategoryOptions = [];
+    },
+    RESET_REPORT_DATA_OPTIONS(state) {
+      state.reportDataOptions = [];
+    },
+    RESET_REPORT_SELECTED(state) {
+      state.reportSelected = {
+        eventName: "",
+        productId: "",
+        onairTime: "",
+      };
+    },
+    RESET_REPORT(state) {
+      state.reportMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        date: "",
+        reporter: "",
+      };
+      state.reportCategoryOptions = [];
+      state.reportMediaOptions = [];
+      state.reportDataOptions = [];
+      state.reportSelected = { eventName: "", productId: "", onairTime: "" };
     },
     //#endregion
 

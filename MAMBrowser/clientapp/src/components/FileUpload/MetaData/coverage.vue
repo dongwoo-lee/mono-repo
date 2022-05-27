@@ -12,12 +12,12 @@
             id="dateinput"
             type="text"
             class="form-control input-picker date-input"
-            :value="date"
+            :value="reportMetaData.date"
             @input="onInput"
           />
           <b-input-group-append>
             <b-form-datepicker
-              :value="date"
+              :value="reportMetaData.date"
               @input="eventInput"
               button-only
               :disabled="isActive"
@@ -40,9 +40,9 @@
           id="program-media"
           class="media-select"
           style="width: 120px; height: 37px"
-          :value="coverageType"
-          :options="coverageTypeOptions"
-          @input="typeChange"
+          :value="reportMetaData.category"
+          :options="reportCategoryOptions"
+          @input="categoryChanged"
         />
       </b-form-group>
       <b-button
@@ -63,7 +63,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.eventName"
+            v-model="reportSelected.eventName"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -79,7 +79,7 @@
           <b-form-input
             style="width: 425px"
             class="editTask"
-            v-model="EventSelected.productId"
+            v-model="reportSelected.productId"
             disabled
             aria-describedby="input-live-help input-live-feedback"
             trim
@@ -92,8 +92,8 @@
       <b-form-group label="소재명" class="has-float-label">
         <b-form-input
           class="editTask"
-          v-model="MetaData.title"
-          :state="titleState"
+          v-model="reportMetaData.title"
+          :state="reportTitleState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="소재명"
@@ -101,7 +101,7 @@
         />
       </b-form-group>
       <p
-        v-show="titleState"
+        v-show="reportTitleState"
         style="
           position: relative;
           left: 390px;
@@ -111,7 +111,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.title.length }}/30
+        {{ reportMetaData.title.length }}/30
       </p>
     </div>
     <div style="font-size: 15px; margin-top: 0px; float: left">
@@ -119,8 +119,8 @@
         <b-form-input
           style="width: 200px"
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="reportMetaData.memo"
+          :state="reportMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -128,7 +128,7 @@
         />
       </b-form-group>
       <p
-        v-show="memoState"
+        v-show="reportMemoState"
         style="
           position: relative;
           left: 165px;
@@ -137,7 +137,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.memo.length }}/30
+        {{ reportMetaData.memo.length }}/30
       </p>
     </div>
     <div
@@ -147,8 +147,8 @@
         <b-form-input
           style="width: 200px"
           class="editTask"
-          v-model="MetaData.reporter"
-          :state="reporterState"
+          v-model="reportMetaData.reporter"
+          :state="reportReporterState"
           :maxLength="10"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="취재인"
@@ -156,7 +156,7 @@
         />
       </b-form-group>
       <p
-        v-show="reporterState"
+        v-show="reportReporterState"
         style="
           position: relative;
           left: 165px;
@@ -165,7 +165,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.reporter.length }}/10
+        {{ reportMetaData.reporter.length }}/10
       </p>
     </div>
     <b-modal
@@ -192,9 +192,9 @@
               id="program-media"
               class="media-select"
               style="width: 95px; height: 37px"
-              :value="this.coverageMedia"
-              @input="mediaChange"
-              :options="fileMediaOptions"
+              :value="reportMetaData.media"
+              @input="mediaChanged"
+              :options="reportMediaOptions"
             />
           </b-form-group>
           <DxDataGrid
@@ -204,7 +204,7 @@
               border: 1px solid silver;
               font-family: 'MBC 새로움 M';
             "
-            :data-source="EventData"
+            :data-source="reportDataOptions"
             :selection="{ mode: 'single' }"
             :show-borders="true"
             :hover-state-enabled="true"
@@ -260,49 +260,169 @@ export default {
   data() {
     return {
       modal: false,
-      coverageType: "",
-      coverageMedia: "",
     };
   },
-  created() {
-    this.reset();
-    this.setTitle(this.sliceExt(30));
-    this.resetCoverageTypeOptions();
-    this.resetFileMediaOptions();
-    axios.get("/api/categories/report").then((res) => {
-      this.setCoverageTypeSelected(res.data.resultObject.data[0].id);
-      this.coverageType = res.data.resultObject.data[0].id;
+  async created() {
+    this.RESET_REPORT();
+    this.SET_REPORT_TITLE(this.sliceExt(30));
 
-      res.data.resultObject.data.forEach((e) => {
-        this.setCoverageTypeOptions({
-          value: e.id,
-          text: e.name,
-        });
+    this.RESET_REPORT_CATEGORY_OPTIONS();
+
+    var res = await axios.get("/api/categories/report");
+
+    this.SET_REPORT_CATEGORY(res.data.resultObject.data[0].id);
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_REPORT_CATEGORY_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
 
-    axios.get("/api/categories/media").then((res) => {
-      this.coverageMedia = res.data.resultObject.data[0].id;
-      this.setMediaSelected(this.coverageMedia);
-      res.data.resultObject.data.forEach((e) => {
-        this.setFileMediaOptions({
-          value: e.id,
-          text: e.name,
-        });
+    this.RESET_REPORT_MEDIA_OPTIONS();
+    var res = await axios.get("/api/categories/media");
+
+    this.SET_REPORT_MEDIA(res.data.resultObject.data[0].id);
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_REPORT_MEDIA_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    this.setDate(today);
-    this.setTempDate(today);
-
-    this.getPro();
+    this.SET_REPORT_DATE(today);
+    this.SET_REPORT_TEMP_DATE(today);
+  },
+  computed: {
+    ...mapState("FileIndexStore", {
+      MetaModalTitle: (state) => state.MetaModalTitle,
+      reportMetaData: (state) => state.reportMetaData,
+      reportMediaOptions: (state) => state.reportMediaOptions,
+      reportCategoryOptions: (state) => state.reportCategoryOptions,
+      reportDataOptions: (state) => state.reportDataOptions,
+      reportSelected: (state) => state.reportSelected,
+    }),
+    ...mapGetters("FileIndexStore", [
+      "reportTitleState",
+      "reportMemoState",
+      "reportReporterState",
+    ]),
   },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "SET_REPORT_TITLE",
+      "SET_REPORT_MEDIA",
+      "SET_REPORT_CATEGORY",
+      "SET_REPORT_DATE",
+      "SET_REPORT_TEMP_DATE",
+      "SET_REPORT_MEDIA_OPTIONS",
+      "SET_REPORT_CATEGORY_OPTIONS",
+      "SET_REPORT_DATA_OPTIONS",
+      "SET_REPORT_SELECTED",
+      "RESET_REPORT_MEDIA_OPTIONS",
+      "RESET_REPORT_CATEGORY_OPTIONS",
+      "RESET_REPORT_DATA_OPTIONS",
+      "RESET_REPORT_SELECTED",
+      "RESET_REPORT",
+    ]),
     onSearch() {
       this.modalOn();
-      this.setMediaSelected(this.coverageMedia);
       this.getPro();
+    },
+    categoryChanged(v) {
+      this.SET_REPORT_CATEGORY(v);
+    },
+    mediaChanged(v) {
+      this.SET_REPORT_MEDIA(v);
+      this.getPro();
+    },
+    onRowClick(v) {
+      this.SET_REPORT_SELECTED(v.data);
+    },
+    async getPro() {
+      if (this.reportMetaData.date == "") {
+        const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        this.SET_REPORT_DATE(today);
+        this.SET_REPORT_TEMP_DATE(today);
+      }
+
+      const replaceVal = this.reportMetaData.date.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+
+      this.RESET_REPORT_DATA_OPTIONS();
+
+      var res = await axios.get(
+        `/api/categories/pgm-sch?media=${this.reportMetaData.media}&date=${date}`
+      );
+
+      this.SET_REPORT_DATA_OPTIONS(res.data.resultObject.data);
+
+      this.RESET_REPORT_SELECTED();
+    },
+    eventInput(event) {
+      this.SET_REPORT_DATE(event);
+      this.SET_REPORT_TEMP_DATE(event);
+      this.getPro();
+    },
+    onInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.reportMetaData.tempDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
+        event.target.value = this.reportMetaData.tempDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.SET_REPORT_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.SET_REPORT_TEMP_DATE(
+              this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+            );
+            return;
+          }
+          this.SET_REPORT_DATE(convertDate);
+          this.SET_REPORT_TEMP_DATE(convertDate);
+          this.getPro();
+        }
+      }
+    },
+    convertDateSTH(value) {
+      const replaceVal = value.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      if (12 < mm) {
+        this.SET_REPORT_DATE("");
+      } else if (31 < dd) {
+        this.SET_REPORT_DATE("");
+      } else {
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    },
+    onContext(ctx) {
+      this.formatted = ctx.selectedFormatted;
+      this.dateSelected = ctx.selectedYMD;
+    },
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
     },
     modalOn() {
       this.modal = true;
@@ -311,15 +431,8 @@ export default {
       this.modal = false;
     },
     modalReset() {
-      this.resetEventSelected();
+      this.RESET_REPORT_SELECTED();
       this.modal = false;
-    },
-    typeChange(v) {
-      this.setCoverageTypeSelected(v);
-    },
-    mediaChange(v) {
-      this.setMediaSelected(v);
-      this.getPro();
     },
   },
 };

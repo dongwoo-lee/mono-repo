@@ -304,6 +304,8 @@ export default {
       staticSelected: (state) => state.staticSelected,
       varMetaData: (state) => state.varMetaData,
       varSelected: (state) => state.varSelected,
+      reportMetaData: (state) => state.reportMetaData,
+      reportSelected: (state) => state.reportSelected,
 
       date: (state) => state.date,
       button: (state) => state.button,
@@ -443,13 +445,13 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "report") {
         var data = {
-          title: this.MetaData.title,
-          category: this.MetaData.coverageTypeSelected,
-          ProductId: this.EventSelected.productId,
-          brdDT: this.date,
+          title: this.reportMetaData.title,
+          category: this.reportMetaData.category,
+          ProductId: this.reportSelected.productId,
+          brdDT: this.reportMetaData.date,
           editor: sessionStorage.getItem("user_id"),
-          memo: this.MetaData.memo,
-          reporter: this.MetaData.reporter,
+          memo: this.reportMetaData.memo,
+          reporter: this.reportMetaData.reporter,
         };
       } else if (this.MetaData.typeSelected == "filler") {
         var data = {

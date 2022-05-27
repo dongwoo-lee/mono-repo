@@ -463,9 +463,7 @@ export default {
       }
     },
     onContext(ctx) {
-      // The date formatted in the locale, or the `label-no-date-selected` string
       this.formatted = ctx.selectedFormatted;
-      // The following will be an empty string until a valid date is entered
       this.dateSelected = ctx.selectedYMD;
     },
     //#endregion
