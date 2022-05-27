@@ -245,7 +245,6 @@
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
@@ -256,7 +255,7 @@ export default {
     DxScrolling,
     DxLoadPanel,
   },
-  mixins: [CommonFileFunction, MixinBasicPage],
+  mixins: [CommonFileFunction],
   data() {
     return {
       modal: false,

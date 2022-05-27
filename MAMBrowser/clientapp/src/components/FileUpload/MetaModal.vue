@@ -306,6 +306,7 @@ export default {
       varSelected: (state) => state.varSelected,
       reportMetaData: (state) => state.reportMetaData,
       reportSelected: (state) => state.reportSelected,
+      fillerMetaData: (state) => state.fillerMetaData,
 
       date: (state) => state.date,
       button: (state) => state.button,
@@ -455,11 +456,11 @@ export default {
         };
       } else if (this.MetaData.typeSelected == "filler") {
         var data = {
-          category: this.MetaData.fillerTypeSelected,
-          title: this.MetaData.title,
-          memo: this.MetaData.memo,
+          category: this.fillerMetaData.category,
+          title: this.fillerMetaData.title,
+          memo: this.fillerMetaData.memo,
           editor: sessionStorage.getItem("user_id"),
-          brdDT: this.date,
+          brdDT: this.fillerMetaData.date,
         };
       }
       console.log(data);

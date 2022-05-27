@@ -136,6 +136,14 @@ export default {
       productId: "",
       onairTime: "",
     },
+    fillerMetaData: {
+      title: "",
+      memo: "",
+      category: "",
+      date: "",
+      tempDate: "",
+    },
+    fillerCategoryOptions: [],
 
     MetaData: {
       title: "",
@@ -273,6 +281,15 @@ export default {
     },
     reportSelectedState(state) {
       return state.reportSelected.id != "" ? true : false;
+    },
+    fillerTitleState(state) {
+      return state.fillerMetaData.title.length >= 1 ? true : false;
+    },
+    fillerMemoState(state) {
+      return state.fillerMetaData.memo.length >= 1 ? true : false;
+    },
+    fillerDateState(state) {
+      return state.fillerMetaData.date.length >= 1 ? true : false;
     },
     //#endregion
 
@@ -422,7 +439,7 @@ export default {
           return true;
         }
       } else if (state.MetaData.typeSelected == "filler") {
-        if (getters.titleState && getters.dateState) {
+        if (getters.fillerTitleState && getters.fillerDateState) {
           return true;
         }
       }
@@ -832,6 +849,43 @@ export default {
       state.reportMediaOptions = [];
       state.reportDataOptions = [];
       state.reportSelected = { eventName: "", productId: "", onairTime: "" };
+    },
+    //#endregion
+
+    //#region filler
+    SET_FILLER_TITLE(state, payload) {
+      state.fillerMetaData.title = payload;
+    },
+    SET_FILLER_DATE(state, payload) {
+      state.fillerMetaData.date = payload;
+    },
+    SET_FILLER_TEMP_DATE(state, payload) {
+      state.fillerMetaData.tempDate = payload;
+    },
+    SET_FILLER_CATEGORY(state, payload) {
+      state.fillerMetaData.category = payload;
+    },
+    SET_FILLER_CATEGORY_OPTIONS(state, payload) {
+      state.fillerCategoryOptions.push(payload);
+    },
+    RESET_FILLER_DATE(state) {
+      state.fillerMetaData.date = "";
+    },
+    RESET_FILLER_TEMP_DATE(state) {
+      state.fillerMetaData.tempDate = "";
+    },
+    RESET_FILLER_CATEGORY_OPTIONS(state) {
+      state.fillerCategoryOptions = [];
+    },
+    RESET_FILLER(state) {
+      state.fillerMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        date: "",
+        tempDate: "",
+      };
+      state.fillerCategoryOptions = [];
     },
     //#endregion
 

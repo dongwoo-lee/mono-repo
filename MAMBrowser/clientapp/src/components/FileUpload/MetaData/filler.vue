@@ -8,12 +8,12 @@
             id="dateinput"
             type="text"
             class="form-control input-picker date-input"
-            :value="date"
+            :value="fillerMetaData.date"
             @input="onInput"
           />
           <b-input-group-append>
             <b-form-datepicker
-              :value="date"
+              :value="fillerMetaData.date"
               @input="eventInput"
               button-only
               :disabled="isActive"
@@ -36,9 +36,9 @@
           id="program-media"
           class="media-select"
           style="width: 425px; height: 37px"
-          :value="fillerMedia"
-          :options="fillerOptions"
-          @input="getSecondType"
+          :value="this.firstCategory"
+          :options="firstCategoryOptions"
+          @input="getFillerCategory"
         />
       </b-form-group>
       <b-form-group
@@ -50,18 +50,18 @@
           id="program-media"
           class="media-select"
           style="width: 425px; height: 37px"
-          :value="selectedFillerType"
-          :options="fillerTypeOptions"
-          @input="secondTypeChange"
+          :value="fillerMetaData.category"
+          :options="fillerCategoryOptions"
+          @input="fillerCategoryChanged"
         />
       </b-form-group>
     </div>
-    <div style="font-size: 16px; margin-top: 25px; height: 50px">
+    <div style="font-size: 16px; margin-top: 20px; height: 50px">
       <b-form-group label="소재명" class="has-float-label">
         <b-form-input
           class="editTask"
-          v-model="MetaData.title"
-          :state="titleState"
+          v-model="fillerMetaData.title"
+          :state="fillerTitleState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="소재명"
@@ -69,7 +69,7 @@
         />
       </b-form-group>
       <p
-        v-show="titleState"
+        v-show="fillerTitleState"
         style="
           position: relative;
           left: 390px;
@@ -78,7 +78,7 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.title.length }}/30
+        {{ fillerMetaData.title.length }}/30
       </p>
     </div>
 
@@ -87,8 +87,7 @@
         <b-form-input
           style="width: 425px"
           class="editTask"
-          v-model="MetaData.memo"
-          :state="memoState"
+          v-model="fillerMetaData.memo"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -96,7 +95,7 @@
         />
       </b-form-group>
       <p
-        v-show="memoState"
+        v-show="fillerMemoState"
         style="
           position: relative;
           left: 390px;
@@ -105,18 +104,14 @@
           margin-right: 0px;
         "
       >
-        {{ MetaData.memo.length }}/30
+        {{ fillerMetaData.memo.length }}/30
       </p>
     </div>
   </div>
-  <!-- <div>
-    
-  </div> -->
 </template>
 
 <script>
 import CommonFileFunction from "../CommonFileFunction";
-import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonVueSelect from "../../Form/CommonVueSelect.vue";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import axios from "axios";
@@ -124,90 +119,162 @@ export default {
   components: {
     CommonVueSelect,
   },
-  mixins: [CommonFileFunction, MixinBasicPage],
+  mixins: [CommonFileFunction],
   data() {
     return {
-      fillerOptions: [
+      firstCategoryOptions: [
         { value: "pr", text: "Filler(PR)" },
         { value: "general", text: "Filler(소재)" },
         { value: "etc", text: "Filler(기타)" },
       ],
-      fillerMedia: "pr",
-      prMedia: "",
-      generallMedia: "",
-      etcMedia: "",
-      selectedFillerType: "",
+      firstCategory: "pr",
     };
   },
-  created() {
-    this.reset();
-    this.setTitle(this.sliceExt(30));
-    this.getEditorForPd();
-    this.resetFillerTypeOptions();
+  async created() {
+    this.RESET_FILLER();
+    this.SET_FILLER_TITLE(this.sliceExt(30));
+    this.RESET_FILLER_CATEGORY_OPTIONS();
 
-    axios.get("/api/categories/filler/pro").then((res) => {
-      this.selectedFillerType = res.data.resultObject.data[0].id;
-      this.setFillerTypeSelected(this.selectedFillerType);
+    var res = await axios.get("/api/categories/filler/pro");
 
-      res.data.resultObject.data.forEach((e) => {
-        this.setFillerTypeOptions({
-          value: e.id,
-          text: e.name,
-        });
+    this.SET_FILLER_CATEGORY(res.data.resultObject.data[0].id);
+
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_FILLER_CATEGORY_OPTIONS({
+        value: e.id,
+        text: e.name,
       });
     });
 
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-    this.setDate(today);
-    this.setTempDate(today);
+    this.SET_FILLER_DATE(today);
+    this.SET_FILLER_TEMP_DATE(today);
+  },
+  computed: {
+    ...mapState("FileIndexStore", {
+      fillerMetaData: (state) => state.fillerMetaData,
+      fillerCategoryOptions: (state) => state.fillerCategoryOptions,
+    }),
+    ...mapGetters("FileIndexStore", ["fillerTitleState", "fillerMemoState"]),
   },
   methods: {
-    secondTypeChange(v) {
-      this.setFillerTypeSelected(v);
+    ...mapMutations("FileIndexStore", [
+      "SET_FILLER_TITLE",
+      "SET_FILLER_DATE",
+      "SET_FILLER_TEMP_DATE",
+      "SET_FILLER_CATEGORY",
+      "SET_FILLER_CATEGORY_OPTIONS",
+      "RESET_FILLER_DATE",
+      "RESET_FILLER_TEMP_DATE",
+      "RESET_FILLER_CATEGORY_OPTIONS",
+      "RESET_FILLER",
+    ]),
+    fillerCategoryChanged(v) {
+      this.SET_FILLER_CATEGORY(v);
     },
-    getSecondType(v) {
-      this.resetFillerTypeOptions();
+    async getFillerCategory(v) {
+      this.RESET_FILLER_CATEGORY_OPTIONS();
       if (this.findValue(0, v)) {
-        axios.get("/api/categories/filler/pro").then((res) => {
-          this.selectedFillerType = res.data.resultObject.data[0].id;
-          this.setFillerTypeSelected(this.selectedFillerType);
-          res.data.resultObject.data.forEach((e) => {
-            this.setFillerTypeOptions({
-              value: e.id,
-              text: e.name,
-            });
+        var res = await axios.get("/api/categories/filler/pro");
+
+        this.SET_FILLER_CATEGORY(res.data.resultObject.data[0].id);
+
+        res.data.resultObject.data.forEach((e) => {
+          this.SET_FILLER_CATEGORY_OPTIONS({
+            value: e.id,
+            text: e.name,
           });
         });
       } else if (this.findValue(1, v)) {
-        axios.get("/api/categories/filler/general").then((res) => {
-          this.selectedFillerType = res.data.resultObject.data[0].id;
-          this.setFillerTypeSelected(this.selectedFillerType);
-          res.data.resultObject.data.forEach((e) => {
-            this.setFillerTypeOptions({
-              value: e.id,
-              text: e.name,
-            });
+        var res = await axios.get("/api/categories/filler/general");
+
+        this.SET_FILLER_CATEGORY(res.data.resultObject.data[0].id);
+
+        res.data.resultObject.data.forEach((e) => {
+          this.SET_FILLER_CATEGORY_OPTIONS({
+            value: e.id,
+            text: e.name,
           });
         });
       } else if (this.findValue(2, v)) {
-        axios.get("/api/categories/filler/etc").then((res) => {
-          this.selectedFillerType = res.data.resultObject.data[0].id;
-          this.setFillerTypeSelected(this.selectedFillerType);
-          res.data.resultObject.data.forEach((e) => {
-            this.setFillerTypeOptions({
-              value: e.id,
-              text: e.name,
-            });
+        var res = await axios.get("/api/categories/filler/etc");
+
+        this.SET_FILLER_CATEGORY(res.data.resultObject.data[0].id);
+
+        res.data.resultObject.data.forEach((e) => {
+          this.SET_FILLER_CATEGORY_OPTIONS({
+            value: e.id,
+            text: e.name,
           });
         });
       }
     },
     findValue(num, v) {
-      if (this.fillerOptions[num].value == v) {
+      if (this.firstCategoryOptions[num].value == v) {
         return true;
       } else {
         return false;
       }
+    },
+    eventInput(event) {
+      this.SET_FILLER_DATE(event);
+      this.SET_FILLER_TEMP_DATE(event);
+      this.getPro();
+    },
+    onInput(event) {
+      const targetValue = event.target.value;
+
+      const replaceAllTargetValue = targetValue.replace(/-/g, "");
+
+      if (this.validDateType(targetValue)) {
+        if (this.fillerMetaData.tempDate == null) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
+        event.target.value = this.fillerMetaData.tempDate;
+        return;
+      }
+
+      if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 8) {
+          const convertDate = this.convertDateSTH(replaceAllTargetValue);
+          if (
+            convertDate == "" ||
+            convertDate == null ||
+            convertDate == "undefined"
+          ) {
+            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+            this.SET_FILLER_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+            this.SET_FILLER_TEMP_DATE(
+              this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+            );
+            return;
+          }
+          this.SET_FILLER_DATE(convertDate);
+          this.SET_FILLER_TEMP_DATE(convertDate);
+          this.getPro();
+        }
+      }
+    },
+    convertDateSTH(value) {
+      const replaceVal = value.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      if (12 < mm) {
+        this.SET_FILLER_DATE("");
+      } else if (31 < dd) {
+        this.SET_FILLER_DATE("");
+      } else {
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    },
+    onContext(ctx) {
+      this.formatted = ctx.selectedFormatted;
+      this.dateSelected = ctx.selectedYMD;
+    },
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
     },
   },
 };
