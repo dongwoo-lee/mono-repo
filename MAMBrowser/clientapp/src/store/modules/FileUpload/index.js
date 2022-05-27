@@ -7,25 +7,17 @@ export default {
     fileUploading: false,
     button: "",
     isActive: true,
+    type: "",
     typeOptions: [],
     MetaModalTitle: "",
+    duration: "",
+    audioFormat: "",
     localFiles: [],
     uploaderCustomData: {},
-
-    fileMediaOptions: [],
-    coverageTypeOptions: [],
-    fillerTypeOptions: [],
-    date: "",
-    tempDate: "",
-    fileSDate: "",
-    tempFileSDate: "",
-    fileEDate: "",
-    tempFileEDate: "",
-
+    //#region 소재 유형
     myDiskMetaData: {
       title: "",
       memo: "",
-      editor: sessionStorage.getItem("user_id"),
     },
     pgmMetaData: {
       title: "",
@@ -144,54 +136,9 @@ export default {
       tempDate: "",
     },
     fillerCategoryOptions: [],
-
-    MetaData: {
-      title: "",
-      memo: "",
-      reporter: "",
-      proType: "",
-      proTypeName: "",
-      advertiser: "",
-      typeSelected: "null",
-      mediaSelected: "A",
-      coverageTypeSelected: "RC07",
-      fillerTypeSelected: "",
-      duration: "",
-      audioFormat: "",
-    },
-    userProgramList: [],
+    //#endregion
     masteringListData: [],
     masteringLogData: [],
-    ProgramData: [
-      {
-        eventName: "",
-        eventType: "",
-        productId: "",
-        onairTime: "",
-        durationSec: "",
-      },
-    ],
-    ProgramSelected: {
-      eventName: "",
-      eventType: "",
-      productId: "",
-      onairTime: "",
-      durationSec: "",
-      audioClipID: "",
-    },
-    EventData: [
-      {
-        name: "",
-        id: "",
-        duration: "",
-      },
-    ],
-    EventSelected: {
-      id: "",
-      name: "",
-      duration: "",
-      audioClipID: "",
-    },
   },
   getters: {
     //#region
@@ -294,58 +241,22 @@ export default {
     //#endregion
 
     typeState(state) {
-      return state.MetaData.typeSelected != "null" ? true : false;
+      return state.type != "null" ? true : false;
     },
-    dateState(state) {
-      return state.date.length == 10 ? true : false;
-    },
-    SEDateState(state) {
-      return state.fileSDate.length == 10 && state.fileEDate.length == 10
-        ? true
-        : false;
-    },
-    proMediaState(state) {
-      return state.MetaData.mediaSelected != null &&
-        state.MetaData.mediaSelected != ""
-        ? true
-        : false;
-    },
-    titleState(state) {
-      return state.MetaData.title.length >= 1 ? true : false;
-    },
-    memoState(state) {
-      return state.MetaData.memo.length >= 1 ? true : false;
-    },
-    reporterState(state) {
-      return state.MetaData.reporter.length >= 1 ? true : false;
-    },
-    advertiserState(state) {
-      return state.MetaData.advertiser.length >= 1 ? true : false;
-    },
-    programState(state) {
-      return state.ProgramSelected.productId != "" ? true : false;
-    },
-    eventState(state) {
-      return state.EventSelected.id != "" ? true : false;
-    },
-
     audioClipIdState(state) {
-      if (state.MetaData.typeSelected == "program") {
+      if (state.type == "program") {
         return state.pgmSelected.audioClipID != null ? true : false;
-      } else if (state.MetaData.typeSelected == "mcr-spot") {
+      } else if (state.type == "mcr-spot") {
         return state.mcrSelected.audioClipID != null ? true : false;
       }
     },
     durationState(state) {
-      var dh = state.MetaData.duration.slice(0, 2);
-      var dm = state.MetaData.duration.slice(3, 5);
-      var ds = state.MetaData.duration.slice(6, 8);
+      var dh = state.duration.slice(0, 2);
+      var dm = state.duration.slice(3, 5);
+      var ds = state.duration.slice(6, 8);
       var calcD = dh * 60 * 60 + dm * 60 + ds * 1;
 
-      if (
-        state.MetaData.typeSelected == "program" &&
-        state.pgmSelected.durationSec != ""
-      ) {
+      if (state.type == "program" && state.pgmSelected.durationSec != "") {
         var ph = state.pgmSelected.durationSec.slice(0, 2);
         var pm = state.pgmSelected.durationSec.slice(3, 5);
         var ps = state.pgmSelected.durationSec.slice(6, 8);
@@ -354,10 +265,7 @@ export default {
         if (5 < abs) {
           return false;
         }
-      } else if (
-        state.MetaData.typeSelected == "mcr-spot" &&
-        state.mcrSelected.id != ""
-      ) {
+      } else if (state.type == "mcr-spot" && state.mcrSelected.id != "") {
         if (state.mcrSelected.duration == null) {
           return true;
         }
@@ -369,10 +277,7 @@ export default {
         if (5 < abs) {
           return false;
         }
-      } else if (
-        state.MetaData.typeSelected == "static-spot" &&
-        state.staticSelected.id != ""
-      ) {
+      } else if (state.type == "static-spot" && state.staticSelected.id != "") {
         if (state.staticSelected.duration == null) {
           return true;
         }
@@ -384,10 +289,7 @@ export default {
         if (5 < abs) {
           return false;
         }
-      } else if (
-        state.MetaData.typeSelected == "var-spot" &&
-        state.varSelected.id != ""
-      ) {
+      } else if (state.type == "var-spot" && state.varSelected.id != "") {
         if (state.varSelected.duration == null) {
           return true;
         }
@@ -403,42 +305,42 @@ export default {
       return true;
     },
     metaValid(state, getters) {
-      if (state.MetaData.typeSelected == "my-disk") {
+      if (state.type == "my-disk") {
         if (
           getters.typeState &&
           getters.myDiskTitleState &&
           getters.myDiskMemoState
         )
           return true;
-      } else if (state.MetaData.typeSelected == "program") {
+      } else if (state.type == "program") {
         if (getters.pgmSelectedState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "pro") {
+      } else if (state.type == "pro") {
         if (getters.proTitleState && getters.proCategoryState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "mcr-spot") {
+      } else if (state.type == "mcr-spot") {
         if (getters.mcrSelectedState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "scr-spot") {
+      } else if (state.type == "scr-spot") {
         if (getters.scrTitleState && getters.scrRangeState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "static-spot") {
+      } else if (state.type == "static-spot") {
         if (getters.staticSelectedState && getters.staticSEDateState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "var-spot") {
+      } else if (state.type == "var-spot") {
         if (getters.varSelectedState && getters.varSEDateState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "report") {
+      } else if (state.type == "report") {
         if (getters.reportReporterState && getters.reportSelectedState) {
           return true;
         }
-      } else if (state.MetaData.typeSelected == "filler") {
+      } else if (state.type == "filler") {
         if (getters.fillerTitleState && getters.fillerDateState) {
           return true;
         }
@@ -458,7 +360,6 @@ export default {
       state.myDiskMetaData = {
         title: "",
         memo: "",
-        editor: sessionStorage.getItem("user_id"),
       };
     },
     //#endregion
@@ -898,32 +799,11 @@ export default {
     setButton(state, payload) {
       state.button = payload;
     },
-    setTitle(state, payload) {
-      state.MetaData.title = payload;
-    },
-    setDate(state, payload) {
-      state.date = payload;
-    },
-    setTempDate(state, payload) {
-      state.tempDate = payload;
-    },
-    setFileSDate(state, payload) {
-      state.fileSDate = payload;
-    },
-    setFileEDate(state, payload) {
-      state.fileEDate = payload;
-    },
-    setTempFileSDate(state, payload) {
-      state.tempFileSDate = payload;
-    },
-    setTempFileEDate(state, payload) {
-      state.tempFileEDate = payload;
-    },
     setIsActive(state, payload) {
       state.isActive = payload;
     },
     setTypeSelected(state, payload) {
-      state.MetaData.typeSelected = payload;
+      state.type = payload;
     },
     setFileUploading(state, payload) {
       state.fileUploading = payload;
@@ -940,146 +820,20 @@ export default {
     setMasteringLogData(state, payload) {
       state.masteringLogData = payload;
     },
-    setFileMediaOptions(state, payload) {
-      state.fileMediaOptions.push(payload);
-    },
-    setCoverageTypeOptions(state, payload) {
-      state.coverageTypeOptions.push(payload);
-    },
-    setFillerTypeOptions(state, payload) {
-      state.fillerTypeOptions.push(payload);
-    },
-    setMediaSelected(state, payload) {
-      state.MetaData.mediaSelected = payload;
-    },
-    setCoverageTypeSelected(state, payload) {
-      state.MetaData.coverageTypeSelected = payload;
-    },
-    setFillerTypeSelected(state, payload) {
-      state.MetaData.fillerTypeSelected = payload;
-    },
-    setProType(state, payload) {
-      state.MetaData.proType = payload;
-    },
-    setProTypeName(state, payload) {
-      state.MetaData.proTypeName = payload;
-    },
     setDuration(state, payload) {
-      state.MetaData.duration = payload;
+      state.duration = payload;
     },
     setAudioFormat(state, payload) {
-      state.MetaData.audioFormat = payload;
-    },
-    setProgramData(state, payload) {
-      state.ProgramData = payload;
-    },
-    setProgramSelected(state, payload) {
-      state.ProgramSelected = payload;
-    },
-    setUserProgramList(state, payload) {
-      state.userProgramList = payload;
-    },
-    setEventSelected(state, payload) {
-      state.EventSelected = payload;
-    },
-    setEventData(state, payload) {
-      state.EventData = payload;
-    },
-    resetDate(state) {
-      state.date = "";
-    },
-    resetTempDate(state) {
-      state.tempDate = "";
-    },
-    resetFileSDate(state) {
-      state.fileSDate = "";
-    },
-    resetFileEDate(state) {
-      state.fileEDate = "";
-    },
-    resetTempFileSDate(state) {
-      state.tempFileSDate = "";
-    },
-    resetTempFileEDate(state) {
-      state.tempFileEDate = "";
+      state.audioFormat = payload;
     },
     resetLocalFiles(state) {
       state.localFiles = [];
     },
-    resetTitle(state) {
-      state.MetaData.title = "";
-    },
-    resetMemo(state) {
-      state.MetaData.memo = "";
-    },
-    resetMediaSelected(state) {
-      state.MetaData.mediaSelected = "";
-    },
-    resetCoverageTypeSelected(state) {
-      state.MetaData.coverageTypeSelected = "";
-    },
-    resetProType(state) {
-      state.MetaData.proType = "";
-    },
-    resetProTypeName(state) {
-      state.MetaData.proTypeName = "";
-    },
-    resetReporter(state) {
-      state.MetaData.reporter = "";
-    },
-    resetAdvertiser(state) {
-      state.MetaData.advertiser = "";
-    },
     resetType(state) {
-      state.MetaData.typeSelected = "null";
+      state.type = "null";
     },
     resetTypeOptions(state) {
       state.typeOptions = [];
-    },
-    resetFileMediaOptions(state) {
-      state.fileMediaOptions = [];
-    },
-    resetCoverageTypeOptions(state) {
-      state.coverageTypeOptions = [];
-    },
-    resetFillerTypeOptions(state) {
-      state.fillerTypeOptions = [];
-    },
-    resetProgramData(state) {
-      state.ProgramData = [
-        {
-          eventName: "",
-          eventType: "",
-          productId: "",
-          onairTime: "",
-          durationSec: "",
-        },
-      ];
-    },
-    resetProgramSelected(state) {
-      state.ProgramSelected = {
-        eventName: "",
-        eventType: "",
-        productId: "",
-        onairTime: "",
-        durationSec: "",
-      };
-    },
-    resetEventSelected(state) {
-      state.EventSelected = {
-        id: "",
-        name: "",
-        duration: "",
-      };
-    },
-    resetEventData(state) {
-      state.EventData = [
-        {
-          name: "",
-          id: "",
-          duration: "",
-        },
-      ];
     },
     resetUploaderCustomData(state) {
       state.uploaderCustomData = {};

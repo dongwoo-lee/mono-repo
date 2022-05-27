@@ -1,30 +1,11 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid";
-import DxFileUploader from "devextreme-vue/file-uploader";
-import DxValidator from "devextreme-vue/validator";
-import DxTextBox from "devextreme-vue/text-box";
-import Vuetable from "vuetable-2/src/components/Vuetable";
-import axios from "axios";
-
 export default {
-  components: {
-    DxDataGrid,
-    DxColumn,
-    DxSelection,
-    DxFileUploader,
-    DxTextBox,
-    DxValidator,
-    Vuetable,
-  },
   data() {
     return {
-      watch: "null",
       role: "",
       formatted: "",
       dateSelected: "",
-      userID: sessionStorage.getItem("user_name"),
       logTableHeight: "360px",
-
       adminLogFields: [
         {
           name: "__slot:title",
@@ -124,38 +105,16 @@ export default {
   },
   computed: {
     ...mapState("FileIndexStore", {
+      type: (state) => state.type,
       MetaModalTitle: (state) => state.MetaModalTitle,
       localFiles: (state) => state.localFiles,
-      date: (state) => state.date,
-      tempDate: (state) => state.tempDate,
-      fileSDate: (state) => state.fileSDate,
-      tempFileSDate: (state) => state.tempFileSDate,
-      fileEDate: (state) => state.fileEDate,
-      tempFileEDate: (state) => state.tempFileEDate,
-      pgmMetaData: (state) => state.pgmMetaData,
-      pgmSelected: (state) => state.pgmSelected,
-      MetaData: (state) => state.MetaData,
-      fileMediaOptions: (state) => state.fileMediaOptions,
-      coverageTypeOptions: (state) => state.coverageTypeOptions,
-      fillerTypeOptions: (state) => state.fillerTypeOptions,
       masteringListData: (state) => state.masteringListData,
       masteringLogData: (state) => state.masteringLogData,
-      ProgramData: (state) => state.ProgramData,
-      ProgramSelected: (state) => state.ProgramSelected,
-      userProgramList: (state) => state.userProgramList,
-      EventData: (state) => state.EventData,
-      EventSelected: (state) => state.EventSelected,
       isActive: (state) => state.isActive,
       fileUploading: (state) => state.fileUploading,
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
-      "titleState",
-      "memoState",
-      "reporterState",
-      "eventState",
-      "SEDateState",
-      "advertiserState",
       "durationState",
       "audioClipIdState",
       "metaValid",
@@ -170,10 +129,9 @@ export default {
     this.role = sessionStorage.getItem("authority");
   },
   watch: {
-    MetaData: {
-      deep: true,
+    type: {
       handler(v) {
-        if (v.typeSelected == "null" || v.typeSelected == "my-disk") {
+        if (v == "null" || v == "my-disk") {
           this.setIsActive(true);
         } else {
           this.setIsActive(false);
@@ -181,202 +139,11 @@ export default {
       },
     },
   },
-
   methods: {
     ...mapActions("file", ["verifyMeta", "uploadRefresh"]),
-    ...mapMutations("FileIndexStore", [
-      "SET_PGM_TITLE",
-      "SET_PGM_SELECTED",
-      "RESET_PGM_SELECTED",
-      "SET_PGM_DATA_OPTIONS",
-      "RESET_PGM_DATA_OPTIONS",
-      "setUploaderCustomData",
-      "setDate",
-      "setTitle",
-      "setTempDate",
-      "setFileSDate",
-      "setTempFileSDate",
-      "setFileEDate",
-      "setTempFileEDate",
-      "setProgramData",
-      "setEventData",
-      "setProgramState",
-      "setIsActive",
-      "setFileUploading",
-      "setFileMediaOptions",
-      "setCoverageTypeOptions",
-      "setFillerTypeOptions",
-      "setMediaSelected",
-      "setCoverageTypeSelected",
-      "setFillerTypeSelected",
-      "setMediaName",
-      "setProType",
-      "setProTypeName",
-      "setProgramSelected",
-      "setUserProgramList",
-      "setEventSelected",
-      "resetDate",
-      "resetTempDate",
-      "resetFileSDate",
-      "resetTempFileSDate",
-      "resetFileEDate",
-      "resetTempFileEDate",
-      "resetScrRange",
-      "resetTitle",
-      "resetMemo",
-      "resetReporter",
-      "resetType",
-      "resetProType",
-      "resetProTypeName",
-      "resetAdvertiser",
-      "resetFileMediaOptions",
-      "resetCoverageTypeOptions",
-      "resetFillerTypeOptions",
-      "resetMediaSelected",
-      "resetCoverageTypeSelected",
-      "resetMediaName",
-      "resetProgramData",
-      "resetProgramSelected",
-      "resetEventData",
-      "resetEventSelected",
-    ]),
-    sliceExt(maxLength) {
-      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
-      return result.substring(0, maxLength);
-    },
+    ...mapMutations("FileIndexStore", ["setFileUploading", "setIsActive"]),
     fileStateFalse() {
       this.setFileUploading(false);
-    },
-    onRowClick(v) {
-      if (this.MetaData.typeSelected == "program") {
-        if (
-          !this.userProgramList.includes(v.data.productId) &&
-          this.role != "ADMIN"
-        ) {
-          this.proDataGrid.deselectRows(v.data.productId);
-          this.resetProgramSelected();
-          return;
-        }
-        this.SET_PGM_SELECTED(v.data);
-        this.SET_PGM_TITLE(
-          `[${this.date}] [${this.mediaName}] [${this.pgmSelected.eventName}]`
-        );
-      } else if (this.MetaData.typeSelected == "mcr-spot") {
-        this.setEventSelected(v.data);
-        this.setTitle(
-          `[${this.date}] [${this.mediaName}] [${this.EventSelected.name}]`
-        );
-      } else if (this.MetaData.typeSelected == "static-spot") {
-        this.setEventSelected(v.data);
-        this.setTitle(
-          `[${this.fileSDate} ~ ${this.fileEDate}] [${this.mediaName}] [${this.EventSelected.name}]`
-        );
-      } else if (this.MetaData.typeSelected == "var-spot") {
-        this.setEventSelected(v.data);
-        this.setTitle(
-          `[${this.fileSDate} ~ ${this.fileEDate}] [${this.mediaName}] [${this.EventSelected.name}]`
-        );
-      } else if (this.MetaData.typeSelected == "report") {
-        this.setEventSelected(v.data);
-      }
-    },
-    getPro() {
-      if (this.MetaData.typeSelected == "program") {
-        const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
-        const yyyy = replaceVal.substring(0, 4);
-        const mm = replaceVal.substring(4, 6);
-        const dd = replaceVal.substring(6, 8);
-        var date = yyyy + "" + mm + "" + dd;
-
-        this.RESET_PGM_DATA_OPTIONS();
-        axios
-          .get(
-            `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
-          )
-          .then((res) => {
-            var value = res.data.resultObject.data;
-            value.forEach((e) => {
-              e.durationSec = this.getDurationSec(e.durationSec);
-              e.onairTime = this.getOnAirTime(e.onairTime);
-            });
-            this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
-          });
-        this.RESET_PGM_SELECTED();
-      } else if (this.MetaData.typeSelected == "mcr-spot") {
-        const replaceVal = this.date.replace(/-/g, "");
-        const yyyy = replaceVal.substring(0, 4);
-        const mm = replaceVal.substring(4, 6);
-        const dd = replaceVal.substring(6, 8);
-        var date = yyyy + "" + mm + "" + dd;
-        this.resetEventData();
-        axios
-          .get(
-            `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=MS`
-          )
-          .then((res) => {
-            var value = res.data.resultObject.data;
-            value.forEach((e) => {
-              e.duration = this.getDurationSec(e.duration);
-            });
-            this.setEventData(res.data.resultObject.data);
-          });
-        this.resetEventSelected();
-      } else if (this.MetaData.typeSelected == "static-spot") {
-        const replaceVal = this.fileSDate.replace(/-/g, "");
-        const yyyy = replaceVal.substring(0, 4);
-        const mm = replaceVal.substring(4, 6);
-        const dd = replaceVal.substring(6, 8);
-        var date = yyyy + "" + mm + "" + dd;
-        this.resetEventData();
-        axios
-          .get(
-            `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TT`
-          )
-          .then((res) => {
-            var value = res.data.resultObject.data;
-            value.forEach((e) => {
-              e.duration = this.getDurationSec(e.duration);
-              e.startDate = this.getStartDate(e.startDate);
-            });
-            this.setEventData(res.data.resultObject.data);
-          });
-        this.resetEventSelected();
-      } else if (this.MetaData.typeSelected == "var-spot") {
-        const replaceVal = this.fileSDate.replace(/-/g, "");
-        const yyyy = replaceVal.substring(0, 4);
-        const mm = replaceVal.substring(4, 6);
-        const dd = replaceVal.substring(6, 8);
-        var date = yyyy + "" + mm + "" + dd;
-        this.resetEventData();
-        axios
-          .get(
-            `/api/categories/spot-sch?media=${this.MetaData.mediaSelected}&date=${date}&spotType=TS`
-          )
-          .then((res) => {
-            var value = res.data.resultObject.data;
-            value.forEach((e) => {
-              e.duration = this.getDurationSec(e.duration);
-              e.startDate = this.getStartDate(e.startDate);
-            });
-            this.setEventData(res.data.resultObject.data);
-          });
-        this.resetEventSelected();
-      } else if (this.MetaData.typeSelected == "report") {
-        const replaceVal = this.date.replace(/-/g, "");
-        const yyyy = replaceVal.substring(0, 4);
-        const mm = replaceVal.substring(4, 6);
-        const dd = replaceVal.substring(6, 8);
-        var date = yyyy + "" + mm + "" + dd;
-        this.resetEventData();
-        axios
-          .get(
-            `/api/categories/pgm-sch?media=${this.MetaData.mediaSelected}&date=${date}`
-          )
-          .then((res) => {
-            this.setEventData(res.data.resultObject.data);
-          });
-        this.resetEventSelected();
-      }
     },
     validDateType(value) {
       const dateRegex = /^(\d{0,4})[-]?\d{0,2}[-]?\d{0,2}$/;
@@ -388,7 +155,6 @@ export default {
       var m = date.substring(6, 8);
       return y + "-" + d + "- " + m;
     },
-
     getOnAirTime(date) {
       var d = date.substring(0, 10);
       var t = date.substring(11, 19);
@@ -411,94 +177,9 @@ export default {
       }
       return hours + ":" + minutes + ":" + seconds;
     },
-    //#region 파일 업로드 모달 캘린더
-    eventInput(event) {
-      this.setDate(event);
-      this.setTempDate(event);
-      this.getPro();
-    },
-    onInput(event) {
-      const targetValue = event.target.value;
-
-      const replaceAllTargetValue = targetValue.replace(/-/g, "");
-
-      if (this.validDateType(targetValue)) {
-        if (this.tempDate == null) {
-          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-        }
-        event.target.value = this.tempDate;
-        return;
-      }
-
-      if (!isNaN(replaceAllTargetValue)) {
-        if (replaceAllTargetValue.length === 8) {
-          const convertDate = this.convertDateSTH(replaceAllTargetValue);
-          if (
-            convertDate == "" ||
-            convertDate == null ||
-            convertDate == "undefined"
-          ) {
-            event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-            this.setDate(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
-            this.setTempDate(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
-            return;
-          }
-          this.setDate(convertDate);
-          this.setTempDate(convertDate);
-          this.getPro();
-        }
-      }
-    },
-    convertDateSTH(value) {
-      const replaceVal = value.replace(/-/g, "");
-      const yyyy = replaceVal.substring(0, 4);
-      const mm = replaceVal.substring(4, 6);
-      const dd = replaceVal.substring(6, 8);
-      if (12 < mm) {
-        this.setDate("");
-      } else if (31 < dd) {
-        this.setDate("");
-      } else {
-        return `${yyyy}-${mm}-${dd}`;
-      }
-    },
     onContext(ctx) {
       this.formatted = ctx.selectedFormatted;
       this.dateSelected = ctx.selectedYMD;
-    },
-    //#endregion
-    reset() {
-      this.resetTitle();
-      this.resetMemo();
-      this.resetDate();
-      this.resetFileSDate();
-      this.fileStateFalse();
-      this.resetCoverageTypeSelected();
-      this.resetProgramData();
-      this.resetProgramSelected();
-      this.resetEventData();
-      this.resetEventSelected();
-      this.resetProType();
-      this.resetProTypeName();
-      this.resetAdvertiser();
-      this.resetReporter();
-      this.watch = "";
-    },
-    typeReset() {
-      this.resetTitle();
-      this.resetMemo();
-      this.resetType();
-      this.resetDate();
-      this.fileStateFalse();
-      this.resetCoverageTypeSelected();
-      this.resetProgramData();
-      this.resetProgramSelected();
-      this.resetEventData();
-      this.resetEventSelected();
-      this.resetProType();
-      this.resetProTypeName();
-      this.resetAdvertiser();
-      this.watch = "";
     },
   },
 };

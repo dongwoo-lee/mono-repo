@@ -330,12 +330,10 @@ export default {
       this.getPro();
     },
     onRowClick(v) {
-      if (this.MetaData.typeSelected == "mcr-spot") {
-        this.SET_MCR_SELECTED(v.data);
-        this.SET_MCR_TITLE(
-          `[${this.mcrMetaData.date}] [${this.mediaName}] [${this.mcrSelected.name}]`
-        );
-      }
+      this.SET_MCR_SELECTED(v.data);
+      this.SET_MCR_TITLE(
+        `[${this.mcrMetaData.date}] [${this.mediaName}] [${this.mcrSelected.name}]`
+      );
     },
     eventInput(event) {
       this.SET_MCR_DATE(event);
@@ -401,7 +399,7 @@ export default {
       var date = yyyy + "" + mm + "" + dd;
       this.RESET_MCR_DATA_OPTIONS();
 
-      var res = axios.get(
+      var res = await axios.get(
         `/api/categories/spot-sch?media=${this.mcrMetaData.media}&date=${date}&spotType=MS`
       );
 

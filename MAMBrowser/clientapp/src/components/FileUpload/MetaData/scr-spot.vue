@@ -24,7 +24,6 @@
           :allow-column-resizing="true"
           :column-auto-width="true"
           no-data-text="No Data"
-          @row-click="onRowClick"
         >
           <DxLoadPanel :enabled="true" />
           <DxScrolling mode="virtual" />
@@ -433,6 +432,10 @@ export default {
     pgmSelect(v) {
       this.selectedPgm = v;
       this.validRange();
+    },
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
     },
     eventSInput(value) {
       this.StartDate = value;

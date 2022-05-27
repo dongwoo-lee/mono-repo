@@ -320,6 +320,7 @@ export default {
       "SET_PGM_MEDIA_SELECTED",
       "SET_PGM_MEDIA_OPTIONS",
       "SET_USER_PGM_LIST",
+      "SET_PGM_DATA_OPTIONS",
       "SET_PGM_SELECTED",
       "RESET_PGM_DATE",
       "RESET_PGM_TEMP_DATE",

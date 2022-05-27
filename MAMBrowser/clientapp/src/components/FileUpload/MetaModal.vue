@@ -39,7 +39,7 @@
                       v-if="this.durationState"
                       style="width: 430px"
                       class="editTask"
-                      v-model="MetaData.duration"
+                      v-model="duration"
                       disabled
                       aria-describedby="input-live-help input-live-feedback"
                       placeholder="duration"
@@ -50,17 +50,13 @@
                       v-if="!this.durationState"
                       style="width: 430px; background-color: #ffb600"
                       class="editTask"
-                      v-model="MetaData.duration"
+                      v-model="duration"
                       disabled
                       aria-describedby="input-live-help input-live-feedback"
                       placeholder="duration"
                       trim
                     >
                     </b-form-input>
-                    <!-- <b-icon-alarm
-                      v-if="!this.durationState"
-                      style="position: relative; top: -28px; left: 300px"
-                    ></b-icon-alarm> -->
                   </b-form-group>
                 </div>
                 <div style="height: 50px; margin-top: 20px">
@@ -70,10 +66,10 @@
                     style="font-size: 15px"
                   >
                     <b-form-input
-                      :title="MetaData.audioFormat"
+                      :title="audioFormat"
                       style="width: 430px"
                       class="editTask"
-                      v-model="MetaData.audioFormat"
+                      v-model="audioFormat"
                       disabled
                       aria-describedby="input-live-help input-live-feedback"
                       placeholder="audioFormat"
@@ -111,9 +107,9 @@
                     <b-form-select
                       style="width: 430px"
                       id="filetype"
-                      v-model="MetaData.typeSelected"
+                      :value="type"
                       :options="typeOptions"
-                      @change="resetMemo"
+                      @change="typeChanged"
                     ></b-form-select>
                   </b-form-group>
                 </div>
@@ -122,34 +118,20 @@
             <div :class="[isActive ? 'fold2' : 'expand2']">
               <h3>메타 데이터</h3>
               <div>
-                <my-disk
-                  v-if="this.MetaData.typeSelected == 'my-disk'"
-                ></my-disk>
-                <pro v-if="this.MetaData.typeSelected == 'pro'"></pro>
+                <my-disk v-if="type == 'my-disk'"></my-disk>
+                <pro v-if="type == 'pro'"></pro>
               </div>
 
               <transition name="slide-fade">
                 <div>
                   <div v-show="!isActive" class="date-div">
-                    <program
-                      v-if="this.MetaData.typeSelected == 'program'"
-                    ></program>
-                    <mcr-spot
-                      v-if="this.MetaData.typeSelected == 'mcr-spot'"
-                    ></mcr-spot>
-                    <scr-spot
-                      v-if="this.MetaData.typeSelected == 'scr-spot'"
-                    ></scr-spot>
-                    <static-spot
-                      v-if="this.MetaData.typeSelected == 'static-spot'"
-                    ></static-spot>
-                    <var-spot v-if="this.MetaData.typeSelected == 'var-spot'">
-                    </var-spot>
-                    <report v-if="this.MetaData.typeSelected == 'report'">
-                    </report>
-                    <filler
-                      v-if="this.MetaData.typeSelected == 'filler'"
-                    ></filler>
+                    <program v-if="type == 'program'"></program>
+                    <mcr-spot v-if="type == 'mcr-spot'"></mcr-spot>
+                    <scr-spot v-if="type == 'scr-spot'"></scr-spot>
+                    <static-spot v-if="type == 'static-spot'"></static-spot>
+                    <var-spot v-if="type == 'var-spot'"> </var-spot>
+                    <report v-if="type == 'report'"> </report>
+                    <filler v-if="type == 'filler'"></filler>
                   </div>
                 </div>
               </transition>
@@ -252,7 +234,7 @@ import varSpot from "./MetaData/var-spot.vue";
 import report from "./MetaData/coverage.vue";
 import filler from "./MetaData/filler.vue";
 import axios from "axios";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
   props: {
     fileState: {
@@ -307,26 +289,19 @@ export default {
       reportMetaData: (state) => state.reportMetaData,
       reportSelected: (state) => state.reportSelected,
       fillerMetaData: (state) => state.fillerMetaData,
-
-      date: (state) => state.date,
       button: (state) => state.button,
-      fileSDate: (state) => state.fileSDate,
-      fileEDate: (state) => state.fileEDate,
       localFiles: (state) => state.localFiles,
-      MetaData: (state) => state.MetaData,
+      type: (state) => state.type,
+      typeOptions: (state) => state.typeOptions,
+      duration: (state) => state.duration,
+      audioFormat: (state) => state.audioFormat,
       masteringListData: (state) => state.masteringListData,
-      ProgramData: (state) => state.ProgramData,
-      ProgramSelected: (state) => state.ProgramSelected,
-      EventSelected: (state) => state.EventSelected,
       isActive: (state) => state.isActive,
       fileUploading: (state) => state.fileUploading,
-      typeOptions: (state) => state.typeOptions,
       uploaderCustomData: (state) => state.uploaderCustomData,
     }),
     ...mapGetters("FileIndexStore", [
       "typeState",
-      "titleState",
-      "memoState",
       "durationState",
       "metaValid",
     ]),
@@ -340,16 +315,12 @@ export default {
       if (v == "업로드 성공") {
         this.setFileUploading(false);
         this.MetaModalOff();
-        this.resetEvent();
       } else if (v == "리셋") {
         this.MetaModalOff();
-        this.resetEvent();
       }
     },
     MetaModal(v) {
-      if (!v) {
-        this.resetEvent();
-      } else {
+      if (v) {
         this.resetTypeOptions();
         this.typeOptionsByRole(this.getMenuGrpName);
       }
@@ -357,19 +328,13 @@ export default {
   },
   methods: {
     ...mapMutations("FileIndexStore", [
-      "setTitle",
+      "setTypeSelected",
       "setUploaderCustomData",
       "setMasteringListData",
       "setFileUploading",
-      "resetTitle",
-      "resetMemo",
-      "resetType",
       "resetTypeOptions",
       "resetUploaderCustomData",
     ]),
-    resetEvent() {
-      this.$emit("reset");
-    },
     MetaModalOff() {
       if (this.fileUploading) {
         this.cancel = true;
@@ -378,13 +343,13 @@ export default {
       this.$emit("close");
     },
     initData() {
-      if (this.MetaData.typeSelected == "my-disk") {
+      if (this.type == "my-disk") {
         var data = {
           editor: sessionStorage.getItem("user_id"),
           title: this.myDiskMetaData.title,
           memo: this.myDiskMetaData.memo,
         };
-      } else if (this.MetaData.typeSelected == "program") {
+      } else if (this.type == "program") {
         var data = {
           title: this.pgmMetaData.title,
           memo: this.pgmMetaData.memo,
@@ -394,7 +359,7 @@ export default {
           SchDate: this.pgmMetaData.date,
           editor: sessionStorage.getItem("user_id"),
         };
-      } else if (this.MetaData.typeSelected == "pro") {
+      } else if (this.type == "pro") {
         var data = {
           editor: sessionStorage.getItem("user_id"),
           category: this.proMetaData.category,
@@ -403,7 +368,7 @@ export default {
           title: this.proMetaData.title,
           memo: this.proMetaData.memo,
         };
-      } else if (this.MetaData.typeSelected == "mcr-spot") {
+      } else if (this.type == "mcr-spot") {
         var data = {
           title: this.mcrMetaData.title,
           memo: this.mcrMetaData.memo,
@@ -413,7 +378,7 @@ export default {
           advertiser: this.mcrMetaData.advertiser,
           editor: sessionStorage.getItem("user_id"),
         };
-      } else if (this.MetaData.typeSelected == "scr-spot") {
+      } else if (this.type == "scr-spot") {
         var data = {
           title: this.scrMetaData.title,
           memo: this.scrMetaData.memo,
@@ -422,7 +387,7 @@ export default {
           category: this.scrMetaData.category,
           scrRange: JSON.stringify(this.scrRange),
         };
-      } else if (this.MetaData.typeSelected == "static-spot") {
+      } else if (this.type == "static-spot") {
         var data = {
           title: this.staticMetaData.title,
           media: this.staticMetaData.media,
@@ -433,7 +398,7 @@ export default {
           memo: this.staticMetaData.memo,
           advertiser: this.staticMetaData.advertiser,
         };
-      } else if (this.MetaData.typeSelected == "var-spot") {
+      } else if (this.type == "var-spot") {
         var data = {
           title: this.varMetaData.title,
           media: this.varMetaData.media,
@@ -444,7 +409,7 @@ export default {
           memo: this.varMetaData.memo,
           advertiser: this.varMetaData.advertiser,
         };
-      } else if (this.MetaData.typeSelected == "report") {
+      } else if (this.type == "report") {
         var data = {
           title: this.reportMetaData.title,
           category: this.reportMetaData.category,
@@ -454,7 +419,7 @@ export default {
           memo: this.reportMetaData.memo,
           reporter: this.reportMetaData.reporter,
         };
-      } else if (this.MetaData.typeSelected == "filler") {
+      } else if (this.type == "filler") {
         var data = {
           category: this.fillerMetaData.category,
           title: this.fillerMetaData.title,
@@ -477,16 +442,13 @@ export default {
         }
 
         if (!this.audioClipIdState) {
-          if (
-            this.MetaData.typeSelected == "program" ||
-            this.MetaData.typeSelected == "mcr-spot"
-          ) {
+          if (this.type == "program" || this.type == "mcr-spot") {
             this.$bvModal.show("audioClipIDOver");
             return;
           }
         }
 
-        if (this.MetaData.typeSelected == "my-disk") {
+        if (this.type == "my-disk") {
           if (!this.notDiskAvailable(this.localFiles[0].size)) {
             this.$fn.notify("error", { title: "용량 부족" });
             return;
@@ -499,6 +461,7 @@ export default {
           formData.append("title", this.myDiskMetaData.title);
           formData.append("fileSize", this.localFiles[0].size);
           formData.append("fileName", this.localFiles[0].name);
+
           axios.post(`/api/mastering/TitleValidation`, formData).then((res) => {
             if (res.status == 200 && res.data.resultCode == 0) {
               this.setFileUploading(true);
@@ -527,14 +490,14 @@ export default {
     DurationOK() {
       this.$bvModal.hide("durationOver");
 
-      if (this.MetaData.typeSelected == "program") {
+      if (this.type == "program") {
         if (this.pgmSelected.audioClipID == null) {
           this.setFileUploading(true);
           this.$emit("upload");
         } else {
           this.$bvModal.show("audioClipIDOver");
         }
-      } else if (this.MetaData.typeSelected == "mcr-spot") {
+      } else if (this.type == "mcr-spot") {
         if (this.mcrSelected.audioClipID == null) {
           this.setFileUploading(true);
           this.$emit("upload");
@@ -553,7 +516,7 @@ export default {
       return `<text style="color:red;">편성 분량을 확인하세요.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
     },
     audioClipOK() {
-      if (this.MetaData.typeSelected == "program") {
+      if (this.type == "program") {
         axios
           .delete(`/api/mastering/program/${this.pgmSelected.audioClipID}`, {
             headers: {
@@ -574,7 +537,7 @@ export default {
             this.setFileUploading(false);
             this.$fn.notify("error", { title: err.message });
           });
-      } else if (this.MetaData.typeSelected == "mcr-spot") {
+      } else if (this.type == "mcr-spot") {
         axios
           .delete(`/api/mastering/mcr-spot/${this.mcrSelected.audioClipID}`, {
             headers: { Authorization: sessionStorage.getItem("access_token") },
@@ -600,6 +563,9 @@ export default {
     },
     getAudioClipIDOverMsg() {
       return `<text style="color:red;">이미 등록되어 있습니다.</text><br><br><text style="color:red;">덮어 쓰시겠습니까?</text>`;
+    },
+    typeChanged(v) {
+      this.setTypeSelected(v);
     },
     typeOptionsByRole(role) {
       if (this.button == "nav") {

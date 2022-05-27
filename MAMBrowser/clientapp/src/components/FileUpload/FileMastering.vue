@@ -361,7 +361,6 @@
     </transition>
     <MetaModal
       @upload="upload"
-      @reset="reset"
       @cancel="fileUploadCancel"
       @close="MetaModalClose"
       :MetaModal="MetaModal"
@@ -379,9 +378,14 @@ import MetaModal from "./MetaModal";
 import list from "./list.vue";
 import axios from "axios";
 const dxfu = "my-fileupload";
+import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid";
+import DxFileUploader from "devextreme-vue/file-uploader";
+import DxValidator from "devextreme-vue/validator";
+import DxTextBox from "devextreme-vue/text-box";
+import Vuetable from "vuetable-2/src/components/Vuetable";
 import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
 var DB;
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
   mixins: [CommonFileFunction],
   props: {
@@ -391,6 +395,13 @@ export default {
     },
   },
   components: {
+    DxDataGrid,
+    DxColumn,
+    DxSelection,
+    DxFileUploader,
+    DxTextBox,
+    DxValidator,
+    Vuetable,
     DxScrolling,
     DxLoadPanel,
     CommonFileModal,
@@ -489,17 +500,18 @@ export default {
     },
     ...mapGetters("user", ["diskAvailable"]),
     ...mapState("FileIndexStore", {
+      MetaModalTitle: (state) => state.MetaModalTitle,
       uploaderCustomData: (state) => state.uploaderCustomData,
       localFiles: (state) => state.localFiles,
       masteringListData: (state) => state.masteringListData,
-      MetaData: (state) => state.MetaData,
+      type: (state) => state.type,
       FileModal: (state) => state.FileModal,
     }),
     getUrl() {
-      if (this.MetaData.typeSelected == null) {
+      if (this.type == null) {
         return `/api/Mastering/`;
       } else {
-        return `/api/Mastering/${this.MetaData.typeSelected}`;
+        return `/api/Mastering/${this.type}`;
       }
     },
   },
@@ -783,17 +795,16 @@ export default {
           event.value[0].type == "audio/wav"
         ) {
           var formData = new FormData();
+
           if (event.value[0].type == "audio/mpeg") {
             var blob = event.value[0].slice(0, 1000000);
-            formData.append("file", blob);
-            formData.append("fileName", event.value[0].name);
-            formData.append("fileSize", event.value[0].size);
           } else if (event.value[0].type == "audio/wav") {
             var blob = event.value[0].slice(0, 10000);
-            formData.append("file", blob);
-            formData.append("fileName", event.value[0].name);
-            formData.append("fileSize", event.value[0].size);
           }
+
+          formData.append("file", blob);
+          formData.append("fileName", event.value[0].name);
+          formData.append("fileSize", event.value[0].size);
           axios
             .post("/api/Mastering/Validation", formData)
             .then((res) => {
@@ -801,7 +812,6 @@ export default {
                 this.$fn.notify("error", {
                   title: "잘못된 파일 형식입니다.",
                 });
-                this.reset();
                 return;
               }
               this.setDuration(res.data.resultObject.duration);
@@ -830,6 +840,10 @@ export default {
         }
       }
     },
+    sliceExt(maxLength) {
+      var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
+      return result.substring(0, maxLength);
+    },
     notDiskAvailable(files) {
       const result = this.diskAvailable - files;
       if (result < 0) {
@@ -840,7 +854,6 @@ export default {
     },
     MetaModalClose() {
       this.fileRemove();
-      this.typeReset();
       this.percent = 0;
       this.MetaModal = false;
     },
@@ -848,7 +861,6 @@ export default {
       this.$fn.notify("error", { title: "파일 업로드 취소" });
       this.fileupload.abortUpload(0);
       this.resetLocalFiles();
-      this.typeReset();
       this.percent = 0;
       this.MetaModal = false;
     },
