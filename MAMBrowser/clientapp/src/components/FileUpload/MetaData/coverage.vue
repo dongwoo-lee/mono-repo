@@ -120,7 +120,6 @@
           style="width: 200px"
           class="editTask"
           v-model="reportMetaData.memo"
-          :state="reportMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"

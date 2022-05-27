@@ -233,6 +233,7 @@ import staticSpot from "./MetaData/static-spot.vue";
 import varSpot from "./MetaData/var-spot.vue";
 import report from "./MetaData/coverage.vue";
 import filler from "./MetaData/filler.vue";
+import masteringMenuData from "@/data/masteringMenuData.js";
 import axios from "axios";
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
@@ -263,7 +264,7 @@ export default {
     report,
     filler,
   },
-  mixins: [MixinBasicPage],
+  mixins: [MixinBasicPage, masteringMenuData],
   data() {
     return {
       cancel: false,
@@ -271,7 +272,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("user", ["diskAvailable"]),
+    ...mapState("user", {
+      masteringMenuList: (state) => state.masteringMenuList,
+    }),
+    ...mapGetters("user", ["getMenuGrpName", "diskAvailable"]),
     ...mapState("FileIndexStore", {
       MetaModalTitle: (state) => state.MetaModalTitle,
       myDiskMetaData: (state) => state.myDiskMetaData,
@@ -305,7 +309,6 @@ export default {
       "durationState",
       "metaValid",
     ]),
-    ...mapGetters("user", ["getMenuGrpName"]),
     getVariant() {
       return this.isActive ? "outline-dark" : "outline-primary";
     },
@@ -322,7 +325,9 @@ export default {
     MetaModal(v) {
       if (v) {
         this.resetTypeOptions();
-        this.typeOptionsByRole(this.getMenuGrpName);
+        this.setTypeOptions();
+      } else {
+        this.RESET_ALL_METADATA();
       }
     },
   },
@@ -334,6 +339,7 @@ export default {
       "setFileUploading",
       "resetTypeOptions",
       "resetUploaderCustomData",
+      "RESET_ALL_METADATA",
     ]),
     MetaModalOff() {
       if (this.fileUploading) {
@@ -462,15 +468,18 @@ export default {
           formData.append("fileSize", this.localFiles[0].size);
           formData.append("fileName", this.localFiles[0].name);
 
-          axios.post(`/api/mastering/TitleValidation`, formData).then((res) => {
-            if (res.status == 200 && res.data.resultCode == 0) {
-              this.setFileUploading(true);
-              this.$emit("upload");
-            } else {
-              this.$fn.notify("error", { title: res.data.errorMsg });
-              return;
-            }
-          });
+          var res = await axios.post(
+            `/api/mastering/TitleValidation`,
+            formData
+          );
+
+          if (res.status == 200 && res.data.resultCode == 0) {
+            this.setFileUploading(true);
+            this.$emit("upload");
+          } else {
+            this.$fn.notify("error", { title: res.data.errorMsg });
+            return;
+          }
         } else {
           this.setFileUploading(true);
           this.$emit("upload");
@@ -515,47 +524,52 @@ export default {
     getDurationOverMsg() {
       return `<text style="color:red;">편성 분량을 확인하세요.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
     },
-    audioClipOK() {
+    async audioClipOK() {
       if (this.type == "program") {
-        axios
-          .delete(`/api/mastering/program/${this.pgmSelected.audioClipID}`, {
-            headers: {
-              Authorization: sessionStorage.getItem("access_token"),
-            },
-          })
-          .then((res) => {
-            if (res.status == 200 && res.statusText == "OK") {
-              this.$bvModal.hide("audioClipIDOver");
-              this.setFileUploading(true);
-              this.$emit("upload");
-            } else {
-              this.$fn.notify("error", { title: res.data.errorMsg });
+        try {
+          var res = await axios.delete(
+            `/api/mastering/program/${this.pgmSelected.audioClipID}`,
+            {
+              headers: {
+                Authorization: sessionStorage.getItem("access_token"),
+              },
             }
-          })
-          .catch((err) => {
+          );
+          if (res.status == 200 && res.statusText == "OK") {
             this.$bvModal.hide("audioClipIDOver");
-            this.setFileUploading(false);
-            this.$fn.notify("error", { title: err.message });
-          });
+            this.setFileUploading(true);
+            this.$emit("upload");
+          } else {
+            this.$fn.notify("error", { title: res.data.errorMsg });
+          }
+        } catch (error) {
+          this.$bvModal.hide("audioClipIDOver");
+          this.setFileUploading(false);
+          this.$fn.notify("error", { title: error.message });
+        }
       } else if (this.type == "mcr-spot") {
-        axios
-          .delete(`/api/mastering/mcr-spot/${this.mcrSelected.audioClipID}`, {
-            headers: { Authorization: sessionStorage.getItem("access_token") },
-          })
-          .then((res) => {
-            if (res.status == 200 && res.statusText == "OK") {
-              this.$bvModal.hide("audioClipIDOver");
-              this.setFileUploading(true);
-              this.$emit("upload");
-            } else {
-              this.$fn.notify("error", { title: res.data.errorMsg });
+        try {
+          var res = await axios.delete(
+            `/api/mastering/mcr-spot/${this.mcrSelected.audioClipID}`,
+            {
+              headers: {
+                Authorization: sessionStorage.getItem("access_token"),
+              },
             }
-          })
-          .catch((err) => {
+          );
+
+          if (res.status == 200 && res.statusText == "OK") {
             this.$bvModal.hide("audioClipIDOver");
-            this.setFileUploading(false);
-            this.$fn.notify("error", { title: err.message });
-          });
+            this.setFileUploading(true);
+            this.$emit("upload");
+          } else {
+            this.$fn.notify("error", { title: res.data.errorMsg });
+          }
+        } catch (error) {
+          this.$bvModal.hide("audioClipIDOver");
+          this.setFileUploading(false);
+          this.$fn.notify("error", { title: error.message });
+        }
       }
     },
     audioClipCancel() {
@@ -567,100 +581,25 @@ export default {
     typeChanged(v) {
       this.setTypeSelected(v);
     },
-    typeOptionsByRole(role) {
+    setTypeOptions() {
       if (this.button == "nav") {
-        if (role == "관리자") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "program", text: "프로그램" });
-          this.typeOptions.push({ value: "pro", text: "프로소재" });
-          this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
-          this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
-          this.typeOptions.push({
-            value: "static-spot",
-            text: "고정소재(필러/시간)",
-          });
-          this.typeOptions.push({
-            value: "var-spot",
-            text: "변동소재(필러/시간)",
-          });
-          this.typeOptions.push({ value: "report", text: "취재물" });
-          this.typeOptions.push({
-            value: "filler",
-            text: "필러(PR, 소재, 기타)",
-          });
-        } else if (role == "편성PD") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "program", text: "프로그램" });
-          this.typeOptions.push({ value: "pro", text: "프로소재" });
-          this.typeOptions.push({ value: "mcr-spot", text: "주조SPOT" });
-          this.typeOptions.push({ value: "scr-spot", text: "부조SPOT" });
-          this.typeOptions.push({
-            value: "static-spot",
-            text: "고정소재(필러/시간)",
-          });
-          this.typeOptions.push({
-            value: "var-spot",
-            text: "변동소재(필러/시간)",
-          });
-          this.typeOptions.push({ value: "report", text: "취재물" });
-          this.typeOptions.push({
-            value: "filler",
-            text: "필러(PR, 소재, 기타)",
-          });
-        } else if (role == "제작PD") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "program", text: "프로그램" });
-          this.typeOptions.push({ value: "pro", text: "프로소재" });
-          this.typeOptions.push({
-            value: "filler",
-            text: "필러(PR, 소재, 기타)",
-          });
-        } else if (role == "리포터") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "pro", text: "프로소재" });
-          this.typeOptions.push({ value: "report", text: "취재물" });
-        } else if (role == "라디오뉴스") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "report", text: "취재물" });
-        } else if (role == "제작 Staff") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "pro", text: "프로소재" });
-        } else if (role == "TD") {
-          this.typeOptions.push({
-            value: "null",
-            text: "소재유형을 선택해주세요",
-          });
-          this.typeOptions.push({ value: "my-disk", text: "My디스크" });
-          this.typeOptions.push({ value: "pro", text: "프로소재" });
-        }
-      } else if (this.button == "private") {
-        this.typeOptions.push({ value: "my-disk", text: "My디스크" });
+        this.masteringMenuList.forEach((item) => {
+          if (item.visible == "Y") {
+            var id;
+            masteringMenuData.forEach((data) => {
+              if (data.id == item.id) {
+                id = data.value;
+              }
+            });
+            this.typeOptions.push({ value: id, text: item.name });
+          }
+        });
       } else {
-        this.typeOptions.push({ value: "my-disk", text: "My디스크" });
+        this.masteringMenuList.forEach((item) => {
+          if (item.name == "MY디스크") {
+            this.typeOptions.push({ value: item.id, text: item.name });
+          }
+        });
       }
     },
   },

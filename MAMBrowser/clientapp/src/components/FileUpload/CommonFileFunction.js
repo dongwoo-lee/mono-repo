@@ -1,5 +1,12 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid";
+
 export default {
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxSelection,
+  },
   data() {
     return {
       role: "",

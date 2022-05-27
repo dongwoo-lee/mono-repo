@@ -40,7 +40,7 @@
           v-model="myDiskMetaData.memo"
           :state="myDiskMemoState"
           :maxLength="200"
-          :rows="5"
+          rows="5"
           :max-rows="5"
           placeholder="메모"
           no-resize
@@ -71,7 +71,7 @@
           title="제작자"
           style="width: 430px; font-size: 14px"
           class="editTask"
-          :value="myDiskMetaData.editor"
+          :value="this.userName"
           disabled
           aria-describedby="input-live-help input-live-feedback"
           placeholder="제작자"
@@ -85,8 +85,13 @@
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
+  data() {
+    return {
+      userName: sessionStorage.getItem("user_name"),
+    };
+  },
   created() {
-    this.RESET_MYDISK_METADATA();
+    this.RESET_MYDISK();
     this.SET_MYDISK_TITLE(this.sliceExt(200));
   },
   computed: {
@@ -97,10 +102,7 @@ export default {
     ...mapGetters("FileIndexStore", ["myDiskTitleState", "myDiskMemoState"]),
   },
   methods: {
-    ...mapMutations("FileIndexStore", [
-      "SET_MYDISK_TITLE",
-      "RESET_MYDISK_METADATA",
-    ]),
+    ...mapMutations("FileIndexStore", ["SET_MYDISK_TITLE", "RESET_MYDISK"]),
     sliceExt(maxLength) {
       var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
       return result.substring(0, maxLength);

@@ -82,7 +82,8 @@ export default {
     tokenExpires: 0,
     timerProccessing: false,
     authority: AUTHORITY_MANAGER,
-    timer: 0
+    timer: 0,
+    masteringMenuList: [],
   },
   getters: {
     getMenuGrpName: (state) => state.currentUser.menuGrpName,
@@ -102,7 +103,7 @@ export default {
     conNetworkName: (state) => state.currentUser.conNetworkName,
     isSystemTopAdmin: (state) =>
       state.currentUser.authorCD === SYSTEM_TOP_ADMIN_CODE,
-    timer: (state) => state.timer
+    timer: (state) => state.timer,
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -115,7 +116,8 @@ export default {
       sessionStorage.setItem(ACCESS_TOKEN, token);
     },
     SET_AUTH(state, resultObject) {
-      const { menuList, behaviorList, id, name, menuGrpID } = resultObject;
+      const { menuList, behaviorList, id, name, menuGrpID, masteringMenuList } =
+        resultObject;
       state.isAuth = true;
       state.processing = false;
       state.roleList = [];
@@ -125,7 +127,7 @@ export default {
       delete resultObject.behaviorList;
       state.currentUser = resultObject;
       state.authority = getAuthority(state.behaviorList);
-
+      state.masteringMenuList = masteringMenuList;
       sessionStorage.setItem(USER_ID, id);
       sessionStorage.setItem(USER_NAME, name);
       sessionStorage.setItem(ROLE, JSON.stringify(state.roleList));
@@ -171,8 +173,8 @@ export default {
       state.tokenExpires = 0;
     },
     SET_TIMER(state, payload) {
-      state.timer = payload
-    }
+      state.timer = payload;
+    },
   },
   actions: {
     async login({ commit }, payload) {

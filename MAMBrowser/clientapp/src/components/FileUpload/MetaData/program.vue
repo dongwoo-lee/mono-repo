@@ -110,7 +110,6 @@
         <b-form-input
           class="editTask"
           v-model="pgmMetaData.memo"
-          :state="pgmMemoState"
           :maxLength="200"
           placeholder="메모"
           trim
@@ -296,8 +295,6 @@ export default {
     );
 
     this.SET_USER_PGM_LIST(res.data.resultObject.data);
-
-    this.getPro();
   },
   computed: {
     ...mapState("FileIndexStore", {
@@ -346,7 +343,9 @@ export default {
     mediaChange(v) {
       this.SET_PGM_MEDIA_SELECTED(v);
       var data = this.pgmMediaOptions.find((dt) => dt.value == v);
-      this.mediaName = data.text;
+      if (data) {
+        this.mediaName = data.text;
+      }
       this.getPro();
     },
     onSearch() {

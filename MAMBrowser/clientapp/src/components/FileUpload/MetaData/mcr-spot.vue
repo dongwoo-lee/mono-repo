@@ -112,7 +112,6 @@
         <b-form-input
           class="editTask"
           v-model="mcrMetaData.memo"
-          :state="mcrMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -323,7 +322,9 @@ export default {
     mediaChange(v) {
       this.SET_MCR_MEDIA(v);
       var data = this.mcrMediaOptions.find((dt) => dt.value == v);
-      this.mediaName = data.text;
+      if (data) {
+        this.mediaName = data.text;
+      }
     },
     onSearch() {
       this.modalOn();

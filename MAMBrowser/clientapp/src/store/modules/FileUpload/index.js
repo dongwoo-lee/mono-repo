@@ -356,7 +356,7 @@ export default {
     SET_MYDISK_TITLE(state, payload) {
       state.myDiskMetaData.title = payload;
     },
-    RESET_MYDISK_METADATA(state) {
+    RESET_MYDISK(state) {
       state.myDiskMetaData = {
         title: "",
         memo: "",
@@ -789,6 +789,127 @@ export default {
       state.fillerCategoryOptions = [];
     },
     //#endregion
+
+    RESET_ALL_METADATA(state) {
+      state.myDiskMetaData = {
+        title: "",
+        memo: "",
+      };
+
+      state.pgmMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        date: "",
+      };
+
+      state.pgmMediaOptions = [];
+
+      state.pgmDataOptions = [
+        {
+          eventName: "",
+          eventType: "",
+          productId: "",
+          onairTime: "",
+          durationSec: "",
+          audioClipID: "",
+        },
+      ];
+
+      state.pgmSelected = {
+        eventName: "",
+        eventType: "",
+        productId: "",
+        onairTime: "",
+        durationSec: "",
+        audioClipID: "",
+      };
+
+      state.proMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        type: "",
+        typeName: "",
+      };
+      state.proCategoryOptions = [];
+
+      state.mcrMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        date: "",
+        tempDate: "",
+        advertiser: "",
+      };
+      state.mcrMediaOptions = [];
+
+      state.scrMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        advertiser: "",
+      };
+      state.scrCategoryOptions = [];
+      state.scrRange = [];
+
+      state.staticMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        sDate: "",
+        sTempDate: "",
+        eDate: "",
+        eTempDate: "",
+        advertiser: "",
+      };
+      state.staticMediaOptions = [];
+      state.staticDataOptions = [];
+      state.staticSelected = {
+        name: "",
+        id: "",
+        duration: "",
+      };
+
+      state.varMetaData = {
+        title: "",
+        memo: "",
+        media: "",
+        sDate: "",
+        sTempDate: "",
+        eDate: "",
+        eTempDate: "",
+        advertiser: "",
+      };
+      state.varMediaOptions = [];
+      state.varDataOptions = [];
+      state.varSelected = {
+        name: "",
+        id: "",
+        duration: "",
+      };
+
+      state.reportMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        date: "",
+        reporter: "",
+      };
+      state.reportCategoryOptions = [];
+      state.reportMediaOptions = [];
+      state.reportDataOptions = [];
+      state.reportSelected = { eventName: "", productId: "", onairTime: "" };
+
+      state.fillerMetaData = {
+        title: "",
+        memo: "",
+        category: "",
+        date: "",
+        tempDate: "",
+      };
+      state.fillerCategoryOptions = [];
+    },
 
     addLocalFiles(state, payload) {
       state.localFiles.push(payload);

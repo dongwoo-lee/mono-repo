@@ -68,7 +68,6 @@
         <b-form-input
           class="editTask"
           v-model="staticMetaData.memo"
-          :state="staticMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -96,7 +95,6 @@
         <b-form-input
           class="editTask"
           v-model="staticMetaData.advertiser"
-          :state="staticAdvertiserState"
           :maxLength="15"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="광고주"
@@ -347,7 +345,9 @@ export default {
     mediaChange(v) {
       this.SET_STATIC_MEDIA(v);
       var data = this.fileMediaOptions.find((dt) => dt.value == v);
-      this.mediaName = data.text;
+      if (data) {
+        this.mediaName = data.text;
+      }
       this.getPro();
     },
     onRowClick(v) {

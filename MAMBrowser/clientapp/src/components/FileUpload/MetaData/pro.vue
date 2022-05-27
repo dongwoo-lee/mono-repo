@@ -63,7 +63,6 @@
         <b-form-input
           class="editTask"
           v-model="proMetaData.memo"
-          :state="proMemoState"
           :maxLength="30"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="메모"
@@ -176,8 +175,10 @@ export default {
     },
     proTypeChange(v) {
       var data = this.proTypeOptions.find((dt) => dt.value == v);
-      this.SET_PRO_TYPE(data.value);
-      this.SET_PRO_TYPE_NAME(data.text);
+      if (data) {
+        this.SET_PRO_TYPE(data.value);
+        this.SET_PRO_TYPE_NAME(data.text);
+      }
     },
     sliceExt(maxLength) {
       var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");

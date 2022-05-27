@@ -448,7 +448,7 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
     const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
     this.logEDate = today;
     this.tempEDate = today;
@@ -463,36 +463,35 @@ export default {
 
     this.masteringStatus();
 
-    axios.get("/api/Categories/users/pd").then((res) => {
-      this.editorOptions = res.data.resultObject.data;
-      this.editorOptions.unshift({ id: "", name: "전체 선택" });
-    });
+    var res = await axios.get("/api/Categories/users/pd");
+
+    this.editorOptions = res.data.resultObject.data;
+    this.editorOptions.unshift({ id: "", name: "전체 선택" });
 
     var sdt = this.logSDate.replace(/-/g, "");
     var edt = this.logEDate.replace(/-/g, "");
 
-    axios
-      .get(
-        `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${sessionStorage.getItem(
-          "user_id"
-        )}`
-      )
-      .then((res) => {
-        var masteringLogData = [];
-        res.data.resultObject.data.forEach((e) => {
-          var data = {
-            title: e.title,
-            type: this.getCategory(e.category),
-            user: e.regUserName,
-            date: e.regDtm,
-            status: this.getStatus(e.workStatus),
-            silence: e.silenceCount,
-            worker: e.workerName,
-          };
-          masteringLogData.push(data);
-        });
-        this.setMasteringLogData(masteringLogData);
-      });
+    var res = await axios.get(
+      `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${sessionStorage.getItem(
+        "user_id"
+      )}`
+    );
+
+    var masteringLogData = [];
+
+    res.data.resultObject.data.forEach((e) => {
+      var data = {
+        title: e.title,
+        type: this.getCategory(e.category),
+        user: e.regUserName,
+        date: e.regDtm,
+        status: this.getStatus(e.workStatus),
+        silence: e.silenceCount,
+        worker: e.workerName,
+      };
+      masteringLogData.push(data);
+    });
+    this.setMasteringLogData(masteringLogData);
   },
   computed: {
     fileupload: function () {
@@ -536,29 +535,26 @@ export default {
     onEditorSelected(data) {
       this.logEditor = data.id;
     },
-    masteringStatus() {
-      axios
-        .get(
-          `/api/Mastering/mastering-status?user_id=${sessionStorage.getItem(
-            "user_id"
-          )}`
-        )
-        .then((res) => {
-          var masteringListData = [];
-          res.data.resultObject.data.forEach((e) => {
-            var data = {
-              title: e.title,
-              type: this.getCategory(e.category),
-              user_id: e.regUserName,
-              date: e.regDtm,
-              step: e.workStatus,
-            };
-            masteringListData.push(data);
-          });
-          this.setMasteringListData(masteringListData);
-        });
+    async masteringStatus() {
+      var res = await axios.get(
+        `/api/Mastering/mastering-status?user_id=${sessionStorage.getItem(
+          "user_id"
+        )}`
+      );
+      var masteringListData = [];
+      res.data.resultObject.data.forEach((e) => {
+        var data = {
+          title: e.title,
+          type: this.getCategory(e.category),
+          user_id: e.regUserName,
+          date: e.regDtm,
+          step: e.workStatus,
+        };
+        masteringListData.push(data);
+      });
+      this.setMasteringListData(masteringListData);
     },
-    logSearch() {
+    async logSearch() {
       var user_id;
 
       this.editorOptions.forEach((e) => {
@@ -584,27 +580,27 @@ export default {
         });
         return;
       }
-      axios
-        .get(
-          `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
-        )
-        .then((res) => {
-          var masteringLogData = [];
-          res.data.resultObject.data.forEach((e) => {
-            var data = {
-              title: e.title,
-              type: this.getCategory(e.category),
-              user: e.regUserName,
-              date: e.regDtm,
-              status: this.getStatus(e.workStatus),
-              silence: e.silenceCount,
-              worker: e.workerName,
-              note: e.note,
-            };
-            masteringLogData.push(data);
-          });
-          this.setMasteringLogData(masteringLogData);
-        });
+      var res = await axios.get(
+        `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
+      );
+
+      var masteringLogData = [];
+
+      res.data.resultObject.data.forEach((e) => {
+        var data = {
+          title: e.title,
+          type: this.getCategory(e.category),
+          user: e.regUserName,
+          date: e.regDtm,
+          status: this.getStatus(e.workStatus),
+          silence: e.silenceCount,
+          worker: e.workerName,
+          note: e.note,
+        };
+        masteringLogData.push(data);
+      });
+
+      this.setMasteringLogData(masteringLogData);
     },
     getStatus(v) {
       if (v == 5) {
@@ -772,7 +768,7 @@ export default {
       this.fileState = "업로드 시작";
       this.fileupload.upload(0);
     },
-    valueChanged(event) {
+    async valueChanged(event) {
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
@@ -805,33 +801,31 @@ export default {
           formData.append("file", blob);
           formData.append("fileName", event.value[0].name);
           formData.append("fileSize", event.value[0].size);
-          axios
-            .post("/api/Mastering/Validation", formData)
-            .then((res) => {
-              if (res.data.errorMsg != null && res.data.resultCode != 0) {
-                this.$fn.notify("error", {
-                  title: "잘못된 파일 형식입니다.",
-                });
-                return;
-              }
-              this.setDuration(res.data.resultObject.duration);
-              this.setAudioFormat(res.data.resultObject.audioFormatInfo);
-              this.openFileModal();
-              this.dropzone = false;
-              this.processing = false;
-              this.MetaModal = true;
-              // this.setFileUploading(true);
-            })
-            .catch((err) => {
+
+          try {
+            var res = await axios.post("/api/Mastering/Validation", formData);
+            if (res.data.errorMsg != null && res.data.resultCode != 0) {
               this.$fn.notify("error", {
-                title: `파일 유효성 검사 실패(${err.message})`,
+                title: "잘못된 파일 형식입니다.",
               });
-              this.fileupload.abortUpload(0);
-              this.resetLocalFiles();
-              this.typeReset();
-              this.percent = 0;
-              this.MetaModal = false;
+              return;
+            }
+            this.setDuration(res.data.resultObject.duration);
+            this.setAudioFormat(res.data.resultObject.audioFormatInfo);
+            this.openFileModal();
+            this.dropzone = false;
+            this.processing = false;
+            this.MetaModal = true;
+          } catch (error) {
+            this.$fn.notify("error", {
+              title: `파일 유효성 검사 실패(${error.message})`,
             });
+            this.fileupload.abortUpload(0);
+            this.resetLocalFiles();
+            this.typeReset();
+            this.percent = 0;
+            this.MetaModal = false;
+          }
         } else {
           this.$fn.notify("error", {
             title: "오디오 파일만 업로드 가능합니다.",
