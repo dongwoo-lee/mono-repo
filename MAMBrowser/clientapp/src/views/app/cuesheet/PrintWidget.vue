@@ -106,7 +106,7 @@
           css-class="durationTime"
           data-field="usedtime"
           :allowSorting="false"
-          caption="사용시간"
+          caption="길이"
           alignment="center"
           :width="105"
           edit-cell-template="etc_usedtime_Template"
@@ -583,8 +583,6 @@ export default {
         cellInfo.data.usedtime = moment
           .duration(time2.diff(time1))
           .asMilliseconds();
-      } else {
-        cellInfo.data.usedtime = 0;
       }
       this.setStartTime();
     },
@@ -691,7 +689,7 @@ export default {
               },
               children: [
                 new Paragraph({
-                  text: this.nullChecker("사용시간"),
+                  text: this.nullChecker("길이"),
                   alignment: AlignmentType.CENTER,
                 }),
               ],
@@ -869,9 +867,9 @@ export default {
                 text:
                   "진행 : " +
                   djname +
-                  " / 연출 : " +
-                  membername +
                   " / 구성 : " +
+                  membername +
+                  " / 연출 : " +
                   directorname,
                 alignment: AlignmentType.RIGHT,
               }),
@@ -1045,9 +1043,9 @@ export default {
           doc.text(
             "진행 : " +
               djname +
-              " / 연출 : " +
-              membername +
               " / 구성 : " +
+              membername +
+              " / 연출 : " +
               directorname,
             pageWidth - 15,
             25,
