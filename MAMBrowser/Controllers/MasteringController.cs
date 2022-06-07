@@ -1259,6 +1259,10 @@ namespace MAMBrowser.Controllers
             var newFileName = $@"{DateTime.Now.ToString(Define.DTM14)}_{Path.GetFileName(filePath)}";
             var newFileFullPath = Path.Combine(recycleFoler, newFileName);
             System.IO.File.Move(filePath, newFileFullPath);
+            var egyFilePath = Path.ChangeExtension(filePath, ".egy");
+            if (System.IO.File.Exists(egyFilePath))
+                System.IO.File.Delete(egyFilePath);
+
             return newFileFullPath;
         }
         string MoveRecycle(string fileToken, string userId)

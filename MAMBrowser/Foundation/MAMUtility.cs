@@ -37,6 +37,8 @@ namespace MAMBrowser.Foundation
                     }
                 }
             }
+            else
+                throw new Exception("등록된 파일을 찾을 수 없습니다.");
         }
         
         public static List<float> GetWaveformCore(string soundFilePath)
