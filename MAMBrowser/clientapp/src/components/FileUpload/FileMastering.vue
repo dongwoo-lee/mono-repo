@@ -5,41 +5,26 @@
       style="
         position: fixed;
         z-index: 9800;
-        top: 1rem;
-        right: 1rem;
-        width: 220px;
-        height: 67px;
-        background-color: rgb(255, 255, 255, 1);
-        border: 1px solid #008ecc;
-        padding: 15px;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
         display: table;
       "
     >
       <div
         style="
+          margin-top: 23%;
+          margin-left: 140px;
           text-align: center;
-          font-size: 13px;
-          position: absolute;
-          top: 23px;
-          left: 20px;
+          color: white;
+          font-size: 48px;
         "
       >
+        <b-spinner large type="grow"></b-spinner>
         <span class="label">파일 확인 중</span>
-        <b-spinner type="grow" style="width: 10px; height: 10px"></b-spinner>
       </div>
-      <b-button
-        variant="outline"
-        style="
-          background-color: rgba(0, 0, 0, 0);
-          color: red;
-          position: absolute;
-          top: 0px;
-          right: -3px;
-          font-size: 16px;
-        "
-        @click="fileCancel"
-        >x</b-button
-      >
     </div>
     <div
       @dragleave="dragLeave"
@@ -515,9 +500,6 @@ export default {
     },
   },
   methods: {
-    fileCancel() {
-      this.processing = false;
-    },
     ...mapMutations("FileIndexStore", [
       "SET_MYDISK_TITLE",
       "addLocalFiles",
@@ -769,11 +751,13 @@ export default {
       this.fileupload.upload(0);
     },
     async valueChanged(event) {
+      this.processing = true;
       this.resetLocalFiles();
       this.addLocalFiles(event.value[0]);
       if (event.value.length != 0) {
         if (2147483648 <= event.value[0].size) {
           this.resetLocalFiles();
+          this.processing = false;
           this.$fn.notify("error", {
             title: "최대 업로드 크기는 2GB 입니다.",
           });
@@ -831,7 +815,10 @@ export default {
             title: "오디오 파일만 업로드 가능합니다.",
           });
           this.fileupload.removeFile(0);
+          this.processing = false;
         }
+      } else if (event.value.length == 0) {
+        this.processing = false;
       }
     },
     sliceExt(maxLength) {
@@ -855,6 +842,7 @@ export default {
       this.$fn.notify("error", { title: "파일 업로드 취소" });
       this.fileupload.abortUpload(0);
       this.resetLocalFiles();
+      this.processing = false;
       this.percent = 0;
       this.MetaModal = false;
     },
@@ -866,10 +854,12 @@ export default {
       this.$fn.notify("primary", { message: "파일 업로드 성공" });
       this.fileState = "업로드 성공";
       this.percent = 0;
+      this.processing = false;
       this.setFileUploading(false);
       this.fileRemove();
     },
     uploadError(e) {
+      this.processing = false;
       this.setFileUploading(false);
       this.MetaModalClose();
       this.$fn.notify("error", {
@@ -884,13 +874,9 @@ export default {
     //#endregion
     //#region 모달 조작
     select() {
-      this.processing = true;
       this.fileupload._isCustomClickEvent = true;
       this.fileupload._$fileInput[0].click();
       this.setTypeSelected("my-disk");
-      setTimeout(() => {
-        this.processing = false;
-      }, 15000);
     },
     openFileModal() {
       if (!this.FileModal) {
@@ -900,6 +886,7 @@ export default {
     },
     closeFileModal() {
       this.tabIndex = 1;
+      this.processing = false;
       this.setFileModal(false);
       this.isDropZoneActive = false;
       this.dropzone = false;

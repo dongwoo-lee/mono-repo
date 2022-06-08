@@ -156,13 +156,13 @@
             ></b-progress>
           </div>
           <div :class="[isActive ? 'file-modal-button' : 'date-modal-button']">
-            <b-button
+            <!-- <b-button
               variant="outline-success"
               @click="initData"
               style="margin-left: -80px"
             >
               <span class="label">확인</span>
-            </b-button>
+            </b-button> -->
 
             <b-button variant="outline-primary" v-show="fileUploading">
               <b-spinner small type="grow"></b-spinner>
