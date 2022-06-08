@@ -122,31 +122,12 @@ export default {
 
     var res = await axios.get("/api/categories/pro");
 
-    if (this.role == "ADMIN") {
-      res.data.resultObject.data.forEach((e) => {
-        this.SET_PRO_CATEGORY_OPTIONS({
-          id: e.id,
-          name: e.name,
-        });
+    res.data.resultObject.data.forEach((e) => {
+      this.SET_PRO_CATEGORY_OPTIONS({
+        id: e.id,
+        name: e.name,
       });
-    } else {
-      var res2 = await axios.get(
-        `/api/categories/user-audiocodes?userId=${sessionStorage.getItem(
-          "user_id"
-        )}`
-      );
-
-      res.data.resultObject.data.forEach((e) => {
-        res2.data.resultObject.data.forEach((e2) => {
-          if (e.id == e2.id && this.role != "ADMIN") {
-            this.SET_PRO_CATEGORY_OPTIONS({
-              id: e.id,
-              name: e.name,
-            });
-          }
-        });
-      });
-    }
+    });
 
     this.SET_PRO_CATEGORY(this.proCategory);
     this.SET_PRO_TYPE(0);

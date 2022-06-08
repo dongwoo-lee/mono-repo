@@ -282,14 +282,9 @@ export default {
   methods: {
     authorityCheck(e) {
       if (sessionStorage.getItem("authority") != "ADMIN") {
-        if (this.userAudioList.includes(e.categoryID)) {
+        if (sessionStorage.getItem("user_id") == e.editorID) {
           return true;
         } else {
-          if (sessionStorage.getItem("user_id") == e.editorID) {
-            return true;
-          } else {
-            false;
-          }
           return false;
         }
       } else {

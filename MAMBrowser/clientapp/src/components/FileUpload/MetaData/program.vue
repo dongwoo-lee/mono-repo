@@ -21,6 +21,7 @@
           <b-input-group-append>
             <b-form-datepicker
               :value="pgmMetaData.date"
+              :min="dateDisabled()"
               @input="eventInput"
               button-only
               :disabled="isActive"
@@ -376,6 +377,28 @@ export default {
       this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
       this.RESET_PGM_SELECTED();
     },
+    async getPro() {
+      const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      var date = yyyy + "" + mm + "" + dd;
+
+      this.RESET_PGM_DATA_OPTIONS();
+
+      var res = await axios.get(
+        `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
+      );
+
+      var value = res.data.resultObject.data;
+      value.forEach((e) => {
+        e.durationSec = this.getDurationSec(e.durationSec);
+        e.onairTime = this.getOnAirTime(e.onairTime);
+      });
+
+      this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
+      this.RESET_PGM_SELECTED();
+    },
     onRowClick(v) {
       if (
         !this.userPgmList.includes(v.data.productId) &&
@@ -401,10 +424,10 @@ export default {
       const replaceAllTargetValue = targetValue.replace(/-/g, "");
 
       if (this.validDateType(targetValue)) {
-        if (this.tempDate == null) {
+        if (this.pgmMetaData.tempDate == null) {
           event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
         }
-        event.target.value = this.tempDate;
+        event.target.value = this.pgmMetaData.tempDate;
         return;
       }
 
@@ -421,6 +444,17 @@ export default {
             this.SET_PGM_TEMP_DATE(
               this.$fn.formatDate(new Date(), "yyyy-MM-dd")
             );
+            return;
+          }
+          if (!this.programDateValid(replaceAllTargetValue)) {
+            if (this.pgmMetaData.tempDate == null) {
+              event.target.value = this.$fn.formatDate(
+                new Date(),
+                "yyyy-MM-dd"
+              );
+            }
+            event.target.value = this.pgmMetaData.tempDate;
+            this.$fn.notify("error", { message: "선택 불가능한 날짜입니다." });
             return;
           }
           this.SET_PGM_DATE(convertDate);
@@ -442,27 +476,26 @@ export default {
         return `${yyyy}-${mm}-${dd}`;
       }
     },
-    async getPro() {
-      const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
+    programDateValid(date) {
+      const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+      const replaceVal = today.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
-      var date = yyyy + "" + mm + "" + dd;
-
-      this.RESET_PGM_DATA_OPTIONS();
-
-      var res = await axios.get(
-        `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
-      );
-
-      var value = res.data.resultObject.data;
-      value.forEach((e) => {
-        e.durationSec = this.getDurationSec(e.durationSec);
-        e.onairTime = this.getOnAirTime(e.onairTime);
-      });
-
-      this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
-      this.RESET_PGM_SELECTED();
+      const targetDate = `${yyyy}${mm}${dd}`;
+      if (date <= targetDate - 2) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    dateDisabled() {
+      const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+      const replaceVal = today.replace(/-/g, "");
+      const yyyy = replaceVal.substring(0, 4);
+      const mm = replaceVal.substring(4, 6);
+      const dd = replaceVal.substring(6, 8);
+      return `${yyyy}-${mm}-${dd - 1}`;
     },
     onContext(ctx) {
       this.formatted = ctx.selectedFormatted;
