@@ -37,8 +37,11 @@ namespace MAMBrowser.Foundation
                     }
                 }
             }
-            else
-                throw new Exception("등록된 파일을 찾을 수 없습니다.");
+            //else
+            //{
+            //    if(ext != Define.EGY)   //음원파일 다운로드 실패시.. 파형파일은 없어도 다시만드므로 상관없음.
+            //        throw new Exception("등록된 파일을 찾을 수 없습니다.");
+            //}
         }
         
         public static List<float> GetWaveformCore(string soundFilePath)
