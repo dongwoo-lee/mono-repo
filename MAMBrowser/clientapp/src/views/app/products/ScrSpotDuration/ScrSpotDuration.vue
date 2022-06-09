@@ -41,15 +41,15 @@
           style="margin-right: 5px"
           @click="showAdd"
         >
-          추가</b-button
+          사용처 등록</b-button
         ><b-button
           variant="outline-danger default cutom-label-cancel"
           size="sm"
           class="float-left"
-          style="margin-right: 480px"
+          style="margin-right: 405px"
           @click="deleteRequest"
         >
-          삭제</b-button
+          사용처 삭제</b-button
         >
         <b-button
           variant="outline-primary default cutom-label"
@@ -116,7 +116,11 @@ export default {
     request() {
       if (this.requestScr.length != 0) {
         axios
-          .post(`/api/Mastering/scr-spot/duration`, this.requestScr)
+          .post(`/api/Mastering/scr-spot/duration`, this.requestScr, {
+            headers: {
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
+          })
           .then((res) => {
             if (res.status == 200 && res.data.errorMsg == null) {
               this.$emit("setDurationSuccess");

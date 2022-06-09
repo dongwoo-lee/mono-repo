@@ -136,7 +136,7 @@ namespace MAMBrowser.Controllers
 
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(MyDisk, (byte)userPriority);
-                        RequestMastering(MyDisk, (byte)userPriority);   //이동우
+                        RequestMastering(MyDisk, editor,(byte)userPriority);   //이동우
                     }
                 }
             //4. 작업결과 리턴하기
@@ -211,7 +211,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(Program, (byte)userPriority);
-                        RequestMastering(Program, (byte)userPriority);   //이동우
+                        RequestMastering(Program, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -288,7 +288,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(mcr, (byte)userPriority);
-                        RequestMastering(mcr, (byte)userPriority);   //이동우
+                        RequestMastering(mcr, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -365,7 +365,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(scr, (byte)userPriority);
-                        RequestMastering(scr, (byte)userPriority);   //이동우
+                        RequestMastering(scr, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -391,14 +391,20 @@ namespace MAMBrowser.Controllers
             DTO_RESULT result = new DTO_RESULT();
             try
             {
+                if (scpStpoDurationList == null)
+                    throw new Exception("parameter is empty");
+                    //return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
+
                 ScrSpotOperRepository repo = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
                 foreach (var data in scpStpoDurationList)
                 {
                     repo.Add(new I_ScrSpotOperParam { SpotID_in = data.SpotID, ProductID_in = data.ProductID, StartDate_in = data.StartDate.Replace("-", ""), EndDate_in = data.EndDate.Replace("-", "") });
                 }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
+                string userId = HttpContext.Items[Define.USER_ID] as string;
+                _dbLogger.InfoAsync(HttpContext, userId, $"부조SPOT 방송의뢰 - {scpStpoDurationList.Count}건", UTF8JsonSerializer.Serialize(scpStpoDurationList)).Wait();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message; 
@@ -471,7 +477,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(staticSpot, (byte)userPriority);
-                        RequestMastering(staticSpot, (byte)userPriority);   //이동우
+                        RequestMastering(staticSpot, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -549,7 +555,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(varSpot, (byte)userPriority);
-                        RequestMastering(varSpot, (byte)userPriority);   //이동우
+                        RequestMastering(varSpot, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -625,7 +631,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(report, (byte)userPriority);
-                        RequestMastering(report, (byte)userPriority);   //이동우
+                        RequestMastering(report, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -699,7 +705,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(Filler, (byte)userPriority);
-                        RequestMastering(Filler, (byte)userPriority);   //이동우
+                        RequestMastering(Filler, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -774,7 +780,7 @@ namespace MAMBrowser.Controllers
                         //(임시파일 삭제는 다른 백그라운드 워커에서 처리)
                         //RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
                         //rb.Enqueue(pro, (byte)userPriority);
-                        RequestMastering(pro, (byte)userPriority);   //이동우
+                        RequestMastering(pro, editor, (byte)userPriority);   //이동우
                     }
                 }
                 //4. 작업결과 리턴하기
@@ -995,6 +1001,7 @@ namespace MAMBrowser.Controllers
                 var count = repo.Count(spotID);
                 if (count <= 1)
                 {
+                    _dbLogger.InfoAsync(HttpContext, HttpContext.Items[Define.USER_ID] as string, $"부조SPOT 최종 삭제 요청 - {spotID}, {productID}, {brdDT}", null).Wait();
                     //부조SPOT 기간할당 항목이 1개일경우 실제파일까지 삭제처리.
                     DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, spotID, fileToken);
                 }
@@ -1002,7 +1009,7 @@ namespace MAMBrowser.Controllers
                 {
                     ScrSpotOperRepository repoScrSpotDuration = new ScrSpotOperRepository(Startup.AppSetting.ConnectionString);
                     repoScrSpotDuration.Delete(new D_ScrSpotOperParam { SpotID_in = spotID, ProductID_in = productID, OnAirDate_in = brdDT });
-                    _dbLogger.WarnAsync(HttpContext, HttpContext.Items[Define.USER_ID] as string, $"부조SPOT 편성제거 - {spotID}, {productID}, {brdDT}", null);
+                    _dbLogger.InfoAsync(HttpContext, HttpContext.Items[Define.USER_ID] as string, $"부조SPOT DB 데이터 삭제 - {spotID}, {productID}, {brdDT}", null).Wait();
                 }
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -1141,11 +1148,18 @@ namespace MAMBrowser.Controllers
         [HttpGet("mastering-logs")]
         public ActionResult<DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>> GetMasteringStatus2([FromQuery] string startDt, [FromQuery] string endDt, [FromQuery] string user_id, [FromServices] APIBll bll)
         {
-            DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
-            result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
-            result.ResultObject.Data = bll.GetMasteringLogs(startDt, endDt, user_id);
-            result.ResultCode = RESUlT_CODES.SUCCESS;
-            return result;
+            try
+            {
+                DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_MASTERING_INFO>>();
+                result.ResultObject = new DTO_RESULT_LIST<DTO_MASTERING_INFO>();
+                result.ResultObject.Data = bll.GetMasteringLogs(startDt, endDt, user_id);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                return result;
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
 
@@ -1189,7 +1203,7 @@ namespace MAMBrowser.Controllers
             dictionary.Add("pass", option.ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString());
             return dictionary;
         }
-        void RequestMastering(MasteringMetaBase meta, byte priority)
+        void RequestMastering(MasteringMetaBase meta, string userId, byte priority)
         {
             var mstParam = new I_MSTHistoryParam(meta);
             var connectionString = Startup.AppSetting.ConnectionString;
@@ -1199,51 +1213,49 @@ namespace MAMBrowser.Controllers
             meta.MstSeq = mstSeq;
             RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
             rb.Enqueue(meta, (byte)priority);
+
+            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 요청 - {meta.SoundType}", UTF8JsonSerializer.Serialize(meta)).Wait();
         }
 
 
         void DeleteAudioFile(string userId, string audioClipId, string fileToken)
         {
-            var movedFilePath = MoveRecycle(fileToken, userId);
-            if (!string.IsNullOrEmpty(movedFilePath))
-            {
-                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId}", $"moved to {movedFilePath}").Wait();
-            }
+            var movedFilePath = MoveRecycle(audioClipId, fileToken, userId);
             AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
             repo.Delete(audioClipId, userId, movedFilePath);
-            _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터 삭제", null);
+            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 DB데이터 삭제 - {audioClipId} ", null).Wait();
         }
+        /// <summary>
+        /// 마스터링 파일 덮어씌우기간 삭제 프로세스. 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="audioClipId"></param>
         void DeleteAudioFile(string userId, string audioClipId)
         {
             AudioFileRepository repo = new AudioFileRepository(Startup.AppSetting.ConnectionString);
             var audioFile = repo.Get(audioClipId);
-
             if(audioFile == null)
             {
-                _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터를 찾을 수 없습니다. {audioClipId}", null);
-
+                //실패해도 로그만 찍고 넘어가도록 하여 프론트단에서는 마스터링이 정상진행 될 수 있도록 한다.
+                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : DB 데이터를 찾을 수 없습니다. {audioClipId}", null).Wait();
                 return; 
             }
 
-            var movedFilePath = MoveRecycleFromFilePath(audioFile.MASTERFILE, userId);
-            if (!string.IsNullOrEmpty(movedFilePath))
-            {
-                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId}", $"moved to {movedFilePath}").Wait();
-            }
+            var movedFilePath = MoveRecycleFromFilePath(audioClipId, audioFile.MASTERFILE, userId);
             repo.Delete(audioClipId, userId, movedFilePath);
-            _dbLogger.DebugAsync(HttpContext, userId, $"마스터링 파일삭제 - DB 데이터 삭제", null);
+            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 DB데이터 삭제(자동) - {audioClipId}", null).Wait();
         }
-        string MoveRecycleFromFilePath(string filePath, string userId)
+        string MoveRecycleFromFilePath(string audioClipId, string filePath, string userId)
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로 필드가 비어있습니다.", null);
+                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일경로가 비어있습니다.", null).Wait();
                 return string.Empty;
             }
 
             if (!System.IO.File.Exists(filePath))
             {
-                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일을 찾을 수 없습니다.", $"{filePath}");
+                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
                 return string.Empty;
             }
 
@@ -1259,13 +1271,20 @@ namespace MAMBrowser.Controllers
             var newFileName = $@"{DateTime.Now.ToString(Define.DTM14)}_{Path.GetFileName(filePath)}";
             var newFileFullPath = Path.Combine(recycleFoler, newFileName);
             System.IO.File.Move(filePath, newFileFullPath);
+            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId}", $"moved to {newFileFullPath}").Wait();
+
             var egyFilePath = Path.ChangeExtension(filePath, ".egy");
             if (System.IO.File.Exists(egyFilePath))
+            {
                 System.IO.File.Delete(egyFilePath);
+                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
+            }
+            else
+                _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", null).Wait();
 
             return newFileFullPath;
         }
-        string MoveRecycle(string fileToken, string userId)
+        string MoveRecycle(string audioClipId, string fileToken, string userId)
         {
             string filePath = "";
             
@@ -1273,13 +1292,13 @@ namespace MAMBrowser.Controllers
             {
                 if (string.IsNullOrEmpty(filePath))
                 {
-                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일경로 필드가 비어있습니다.", null);
+                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId} : 파일경로가 비어있습니다.", null).Wait();
                     return string.Empty;
                 }
 
                 if (!System.IO.File.Exists(filePath))
                 {
-                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - 파일을 찾을 수 없습니다.", $"{filePath}");
+                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
                     return string.Empty;
                 }
 
@@ -1295,6 +1314,17 @@ namespace MAMBrowser.Controllers
                 var newFileName = $@"{DateTime.Now.ToString(Define.DTM14)}_{Path.GetFileName(filePath)}";
                 var newFileFullPath = Path.Combine(recycleFoler, newFileName);
                 System.IO.File.Move(filePath, newFileFullPath);
+                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 파일삭제 - {audioClipId}", $"moved to {newFileFullPath}").Wait();
+
+                var egyFilePath = Path.ChangeExtension(filePath, ".egy");
+                if (System.IO.File.Exists(egyFilePath))
+                {
+                    System.IO.File.Delete(egyFilePath);
+                    _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제 - {audioClipId}", null).Wait();
+                }
+                else
+                    _dbLogger.WarnAsync(HttpContext, userId, $"마스터링 EGY파일 삭제 - {audioClipId} : 파일을 찾을 수 없습니다.", null).Wait();
+
                 return newFileFullPath;
             }
             return String.Empty;

@@ -304,12 +304,12 @@ export default {
   methods: {
     ...mapMutations("ScrSpotDuration", ["showDuration", "hideDuration"]),
     requestValid() {
-      this.$fn.notify("info", { title: "기간 설정 데이터를 입력하세요." });
+      this.$fn.notify("info", { title: "사용처를 등록해 주세요." });
     },
     setDurationSuccess() {
       this.hideDuration();
       this.$fn.notify("primary", {
-        title: "부조SPOT 기간설정 성공",
+        title: "부조SPOT 방송의뢰 완료",
       });
       this.onSearch();
     },

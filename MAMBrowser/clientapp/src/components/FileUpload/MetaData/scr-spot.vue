@@ -5,7 +5,7 @@
         style="position: absolute; top: 117px; left: 872px"
         class="btn btn-outline-primary btn-sm default cutom-label mr-2"
         @click="modalOn"
-        >방송의뢰</b-button
+        >사용처 선택</b-button
       >
       <div>
         <DxDataGrid
@@ -165,7 +165,7 @@
       footer-class="scr-modal-footer"
     >
       <template slot="modal-title">
-        <h5>부조SPOT 방송의뢰</h5>
+        <h5>부조SPOT 사용처 선택</h5>
       </template>
       <template slot="default">
         <div>

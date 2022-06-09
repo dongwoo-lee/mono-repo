@@ -531,7 +531,7 @@ export default {
             `/api/mastering/program/${this.pgmSelected.audioClipID}`,
             {
               headers: {
-                Authorization: sessionStorage.getItem("access_token"),
+                "X-Csrf-Token": sessionStorage.getItem("access_token"),
               },
             }
           );
@@ -553,7 +553,7 @@ export default {
             `/api/mastering/mcr-spot/${this.mcrSelected.audioClipID}`,
             {
               headers: {
-                Authorization: sessionStorage.getItem("access_token"),
+                "X-Csrf-Token": sessionStorage.getItem("access_token"),
               },
             }
           );

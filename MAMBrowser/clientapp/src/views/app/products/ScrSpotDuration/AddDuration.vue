@@ -10,7 +10,7 @@
     footer-class="scr-modal-footer"
   >
     <template slot="modal-title">
-      <h5>기간 설정</h5>
+      <h5>부조SPOT 사용처 등록</h5>
     </template>
     <template slot="default">
       <b-form-group

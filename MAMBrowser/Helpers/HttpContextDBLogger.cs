@@ -22,8 +22,16 @@ namespace MAMBrowser.Helpers
 
         private void Log(HttpContext httpContext, string logLevel, string userId, string description, string note)
         {
-            string remoteIp = httpContext.Connection.RemoteIpAddress.ToString();
-            _dao.AddLog(logLevel, remoteIp, userId, description, note);
+            try
+            {
+                string remoteIp = httpContext.Connection.RemoteIpAddress.ToString();
+                _dao.AddLog(logLevel, remoteIp, userId, description, note);
+            }
+            catch(Exception ex)
+            {
+                // 파일로그 처리
+                // DB로그는 누락될 수 있음.
+            }
         }
         public async Task DebugAsync(HttpContext httpContext, string userId, string description, string note)
         {

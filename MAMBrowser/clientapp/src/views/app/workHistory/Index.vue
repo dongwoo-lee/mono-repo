@@ -134,7 +134,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "regDtm",
-          width: "10%",
+          width: "12%",
         },
         {
           name: "userName",
@@ -231,8 +231,8 @@ export default {
 }
 
 .note-ellipsis:hover {
-    text-overflow: clip;
-    white-space: normal;
-    word-break: break-all;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-all;
 }
 </style>

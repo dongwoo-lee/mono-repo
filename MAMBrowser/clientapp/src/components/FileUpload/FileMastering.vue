@@ -226,10 +226,14 @@
                         margin-left: 20px;
                         border-color: silver;
                         color: black;
-                        background-color: white;
                         height: 34px;
                       "
-                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
+                      class="
+                        btn btn-outline-primary btn-sm
+                        default
+                        cutom-label
+                        mr-2
+                      "
                       @click="logSearch"
                     >
                       검색
@@ -246,6 +250,7 @@
                     "
                   >
                     <DxDataGrid
+                      ref="logTable"
                       v-show="this.role == 'ADMIN'"
                       style="
                         height: 380px;
@@ -363,12 +368,17 @@ import MetaModal from "./MetaModal";
 import list from "./list.vue";
 import axios from "axios";
 const dxfu = "my-fileupload";
-import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxSelection,
+  DxLoadPanel,
+} from "devextreme-vue/data-grid";
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxValidator from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 import Vuetable from "vuetable-2/src/components/Vuetable";
-import { DxScrolling, DxLoadPanel } from "devextreme-vue/data-grid";
+import { DxScrolling } from "devextreme-vue/data-grid";
 var DB;
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
@@ -498,6 +508,9 @@ export default {
         return `/api/Mastering/${this.type}`;
       }
     },
+    logTable() {
+      return this.$refs["logTable"].instance;
+    },
   },
   methods: {
     ...mapMutations("FileIndexStore", [
@@ -537,8 +550,8 @@ export default {
       this.setMasteringListData(masteringListData);
     },
     async logSearch() {
+      this.logTable.beginCustomLoading();
       var user_id;
-
       this.editorOptions.forEach((e) => {
         this.editorIdList.push(e.id);
       });
@@ -562,9 +575,15 @@ export default {
         });
         return;
       }
-      var res = await axios.get(
-        `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
-      );
+      var res = await axios
+        .get(
+          `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
+        )
+        .catch((error) => {
+          this.logTable.endCustomLoading();
+          this.$fn.notify("error", { title: error });
+        });
+      console.info("res", res);
 
       var masteringLogData = [];
 
@@ -583,6 +602,7 @@ export default {
       });
 
       this.setMasteringLogData(masteringLogData);
+      this.logTable.endCustomLoading();
     },
     getStatus(v) {
       if (v == 5) {
