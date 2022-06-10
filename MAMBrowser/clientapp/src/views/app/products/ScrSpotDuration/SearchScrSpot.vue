@@ -147,11 +147,10 @@
       >
         <DxScrolling mode="virtual" />
         <DxSelection mode="single" />
-        <DxColumn data-field="spotID" caption="spotID" />
-        <DxColumn data-field="spotName" caption="spotName" />
-        <DxColumn data-field="codeId" caption="codeId" />
-        <DxColumn data-field="codeName" caption="codeName" />
-        <DxColumn data-field="cmOwner" caption="cmOwner" />
+        <DxColumn data-field="spotName" caption="SPOT ID" />
+        <DxColumn data-field="codeId" caption="부조 SPOT 명" />
+        <DxColumn data-field="codeName" caption="분류" />
+        <DxColumn data-field="cmOwner" caption="광고주" />
       </DxDataGrid>
     </template>
     <template v-slot:modal-footer>

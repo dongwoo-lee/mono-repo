@@ -1,5 +1,5 @@
 <template>
-  <common-update-modal @close="MetaModalOff">
+  <common-update-modal :show="show" @close="MetaModalOff">
     <h3 slot="header">파일 삭제</h3>
     <h4 slot="body" style="margin-left: 20px; margin-top: 20px">
       <h6>파일 명 : {{ rowData.name }}</h6>
@@ -40,7 +40,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      show: false,
+    };
   },
   components: {
     CommonUpdateModal,
@@ -50,6 +52,7 @@ export default {
       this.$emit("DeleteModalClose");
     },
     deleteFile() {
+      this.show = true;
       var deleteInfo = {
         deleteId: this.rowData.id,
         fileToken: this.rowData.fileToken,

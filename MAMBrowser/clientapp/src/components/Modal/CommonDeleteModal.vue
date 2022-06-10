@@ -5,11 +5,6 @@
         <div class="delete-modal-container">
           <div class="modal-header">
             <slot name="header"> default header </slot>
-            <button class="delete-modal-default-button" @click="$emit('close')">
-              <p class="h4 mb-2">
-                <b-icon icon="x" class="icon" variant="danger"></b-icon>
-              </p>
-            </button>
           </div>
 
           <div class="delete-modal-body">
@@ -19,6 +14,8 @@
           <div class="delete-modal-footer">
             <slot name="footer"> default footer </slot>
           </div>
+
+          <b-overlay :show="show" no-wrap />
         </div>
       </div>
     </div>
@@ -26,7 +23,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
 </script>
 
 <style>
@@ -59,7 +63,6 @@ export default {};
 }
 
 .delete-modal-header h2 {
-  margin-top: 10px;
   color: #008ecc;
   font-family: "MBC 새로움 M";
 }
