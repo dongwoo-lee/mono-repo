@@ -55,6 +55,9 @@ export default {
       this.resetTimer();
     });
   },
+  beforeDestroy() {
+    this.clearTimer();
+  },
   methods: {
     ...mapMutations("user", ["SET_TIMER"]),
     getExpireTime() {

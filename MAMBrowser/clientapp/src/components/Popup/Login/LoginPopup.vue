@@ -79,6 +79,7 @@ export default {
       isShow: false,
       password: "",
       errorMsg: "",
+      userId: sessionStorage.getItem("user_id"),
     };
   },
   watch: {
@@ -92,7 +93,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("user", ["processing", "userId"]),
+    ...mapGetters("user", ["processing"]),
   },
   beforeDestroy() {
     this.isShow = false;
