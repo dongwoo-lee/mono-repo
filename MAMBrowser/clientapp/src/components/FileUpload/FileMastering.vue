@@ -228,12 +228,7 @@
                         color: black;
                         height: 34px;
                       "
-                      class="
-                        btn btn-outline-primary btn-sm
-                        default
-                        cutom-label
-                        mr-2
-                      "
+                      class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                       @click="logSearch"
                     >
                       검색
@@ -778,6 +773,7 @@ export default {
         if (2147483648 <= event.value[0].size) {
           this.resetLocalFiles();
           this.processing = false;
+          this.setFileUploading(false);
           this.$fn.notify("error", {
             title: "최대 업로드 크기는 2GB 입니다.",
           });
@@ -819,6 +815,7 @@ export default {
             this.openFileModal();
             this.dropzone = false;
             this.processing = false;
+            this.setFileUploading(false);
             this.MetaModal = true;
           } catch (error) {
             this.$fn.notify("error", {
@@ -836,9 +833,11 @@ export default {
           });
           this.fileupload.removeFile(0);
           this.processing = false;
+          this.setFileUploading(false);
         }
       } else if (event.value.length == 0) {
         this.processing = false;
+        this.setFileUploading(false);
       }
     },
     sliceExt(maxLength) {
@@ -863,6 +862,7 @@ export default {
       this.fileupload.abortUpload(0);
       this.resetLocalFiles();
       this.processing = false;
+      this.setFileUploading(false);
       this.percent = 0;
       this.MetaModal = false;
     },
@@ -907,6 +907,7 @@ export default {
     closeFileModal() {
       this.tabIndex = 1;
       this.processing = false;
+      this.setFileUploading(false);
       this.setFileModal(false);
       this.isDropZoneActive = false;
       this.dropzone = false;
