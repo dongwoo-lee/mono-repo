@@ -161,7 +161,10 @@ export default {
       return state.proMetaData.memo.length >= 1 ? true : false;
     },
     proCategoryState(state) {
-      return state.proMetaData.category != "" ? true : false;
+      return state.proMetaData.category != null &&
+        state.proMetaData.category != "undefined"
+        ? true
+        : false;
     },
     mcrTitleState(state) {
       return state.mcrMetaData.title.length >= 1 ? true : false;

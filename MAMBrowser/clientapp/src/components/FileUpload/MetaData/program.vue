@@ -149,7 +149,6 @@
             :hover-state-enabled="true"
             key-expr="productId"
             :allow-column-resizing="true"
-            :column-auto-width="true"
             no-data-text="No Data"
             @row-click="onRowClick"
           >
