@@ -597,7 +597,13 @@ export default {
       } else {
         this.masteringMenuList.forEach((item) => {
           if (item.name == "MY디스크") {
-            this.typeOptions.push({ value: item.id, text: item.name });
+            var id;
+            masteringMenuData.forEach((data) => {
+              if (data.id == item.id) {
+                id = data.value;
+              }
+            });
+            this.typeOptions.push({ value: id, text: item.name });
           }
         });
       }
