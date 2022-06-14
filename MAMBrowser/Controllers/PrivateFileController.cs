@@ -396,6 +396,30 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        [HttpGet("GetMultipleFileInfo")]
+        public DTO_RESULT<IList<DTO_PRIVATE_FILE>> GetMultipleFileInfo([FromQuery] string ids)
+        {
+            DTO_RESULT<IList<DTO_PRIVATE_FILE>> result = new DTO_RESULT<IList<DTO_PRIVATE_FILE>>();
+            try
+            {
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                List<long> list = new List<long>();
+                long[] array = JsonSerializer.Deserialize<long[]>(ids);
+                foreach(var id in array)
+                {
+                    list.Add(id);
+                }
+                result.ResultObject = _bll.Get(list);
+            }
+            catch(Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
     }
 }
  

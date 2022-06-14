@@ -305,14 +305,43 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    onDownloadSingle(item) {
+    async onDownloadSingle(item) {
       let ids = [];
       ids.push(item.seq);
-      this.downloadWorkspace({ ids: ids, type: "private" });
+      var res = await axios.post(`/api/FileValidation?token=${item.fileToken}`);
+      if (res.status == 200 && res.data.resultCode == 0) {
+        this.downloadWorkspace({ ids: ids, type: "private" });
+      } else {
+        this.$fn.notify("error", { title: res.data.errorMsg });
+      }
     },
-    onDownloadMultiple() {
+    async onDownloadMultiple() {
       let ids = this.selectedIds;
-      this.downloadWorkspace({ ids: ids, type: "private" });
+      const sum = [];
+
+      var res = await axios.get(
+        `/api/products/workspace/private/GetMultipleFileInfo?ids=${JSON.stringify(
+          ids
+        )}`
+      );
+
+      for (const e of res.data.resultObject) {
+        var res = await axios.post(`/api/FileValidation?token=${e.fileToken}`);
+        if (res.status == 200 && res.data.resultCode == 0) {
+          sum.push(res.data.resultObject);
+        } else {
+          this.$fn.notify("error", {
+            title: res.data.errorMsg,
+            message: `${e.id} 파일이 존재하지 않습니다.`,
+          });
+          return;
+        }
+      }
+
+      const result = sum.reduce((a, b) => a + b);
+      if (result == 0) {
+        this.downloadWorkspace({ ids: ids, type: "private" });
+      }
     },
     // 단일 휴지통 보내기 확인창
     onDeleteConfirm(rowData) {

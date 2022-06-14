@@ -1,6 +1,7 @@
 import mixinValidate from "./MixinValidate";
 import { mapGetters, mapActions } from "vuex";
 import { eventBus } from "../eventBus";
+import axios from "axios";
 
 let mixinCommon = {
   mixins: [mixinValidate],
@@ -213,14 +214,29 @@ let mixinCommon = {
       this.soundItem = {};
       this.showPlayerPopup = false;
     },
-    onDownloadProduct(item, downloadName) {
-      this.downloadProduct({ item: item, downloadName: downloadName });
+    async onDownloadProduct(item, downloadName) {
+      var res = await axios.post(`/api/FileValidation?token=${item.fileToken}`);
+      if (res.status == 200 && res.data.resultCode == 0) {
+        this.downloadProduct({ item: item, downloadName: downloadName });
+      } else {
+        this.$fn.notify("error", { title: res.data.errorMsg });
+      }
     },
-    onDownloadMusic(item, downloadName) {
-      this.downloadMusic({ item: item, downloadName: downloadName });
+    async onDownloadMusic(item, downloadName) {
+      var res = await axios.post(`/api/SongValidation?token=${item.fileToken}`);
+      if (res.status == 200 && res.data.resultCode == 0) {
+        this.downloadMusic({ item: item, downloadName: downloadName });
+      } else {
+        this.$fn.notify("error", { title: res.data.errorMsg });
+      }
     },
-    onDownloadDl30(item) {
-      this.downloadDl30(item);
+    async onDownloadDl30(item) {
+      var res = await axios.post(`/api/FileValidation?token=${item.fileToken}`);
+      if (res.status == 200 && res.data.resultCode == 0) {
+        this.downloadDl30(item);
+      } else {
+        this.$fn.notify("error", { title: res.data.errorMsg });
+      }
     },
     onDownloadConcatenate(item) {
       this.downloadConcatenate(item);

@@ -16,6 +16,7 @@ using M30.AudioFile.Common.Models;
 using Microsoft.AspNetCore.Http;
 using MAMBrowser.MAMDto;
 using M30.AudioFile.DAL.Dto;
+using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser.Controllers
 {
@@ -562,6 +563,91 @@ namespace MAMBrowser.Controllers
                 FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
+        }
+
+        /// <summary>
+        /// 마이디스크, 일반소재, DL3
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost("FileValidation")]
+        public DTO_RESULT FileValidation([FromQuery] string token)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                string filePath = "";
+                if (TokenGenerator.ValidateFileToken(token, ref filePath))
+                {
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                        result.ErrorMsg = "등록된 파일이 없습니다.";
+                    }
+
+                    var option = _bll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var userInfo = GetStorageUserInfo(option);
+                    var hostName = CommonUtility.GetHost(filePath);
+                    NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
+                    if (!System.IO.File.Exists(filePath))
+                    {
+                        result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                        result.ErrorMsg = "스토리지에 파일이 없습니다.";
+                    }
+                }
+                else
+                {
+                    throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "등록된 파일이 없습니다.");
+                }
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 음반기록실
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost("SongValidation")]
+        public DTO_RESULT SongValidation([FromQuery] string token)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    result.ErrorMsg = "등록된 파일이 없습니다.";
+                    result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                }
+                else
+                {
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+            return result;
+        }
+        Dictionary<string, string> GetStorageUserInfo(IList<Dto_MasteringOptions> option)
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("id", option.ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString());
+            dictionary.Add("pass", option.ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString());
+            return dictionary;
         }
     }
 }
