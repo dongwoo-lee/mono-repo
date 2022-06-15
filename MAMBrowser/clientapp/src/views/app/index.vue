@@ -39,7 +39,7 @@ import LoginPopup from "@/components/Popup/Login/LoginPopup";
 import LoginPopupRefElement from "@/components/Popup/Login/LoginPopupRefElement";
 import MyDiskCopyLooadingOverlay from "@/components/MyDiskCopyLooadingOverlay";
 import { ROUTE_NAMES } from "@/constants/config";
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   components: {
@@ -82,6 +82,9 @@ export default {
       this.SET_DOWNLOAD_IFRAME();
     });
   },
+  computed: {
+    ...mapGetters("FileIndexStore", ["localFilesState"]),
+  },
   methods: {
     ...mapMutations("file", ["SET_DOWNLOAD_IFRAME"]),
     FileDragStart() {
@@ -91,7 +94,7 @@ export default {
       this.FileDragState = false;
     },
     FileDragEnter() {
-      if (!this.FileDragState) {
+      if (!this.FileDragState && !this.localFilesState) {
         this.DragFileModalState = true;
       }
     },

@@ -142,6 +142,9 @@ export default {
   },
   getters: {
     //#region
+    localFilesState(state) {
+      return state.localFiles.length != 0 ? true : false;
+    },
     myDiskTitleState(state) {
       return state.myDiskMetaData.title.length >= 1 ? true : false;
     },

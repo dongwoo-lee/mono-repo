@@ -26,49 +26,51 @@
         <span class="label">파일 확인 중</span>
       </div>
     </div>
-    <div
-      @dragleave="dragLeave"
-      id="dropzone-external"
-      class="dropzone"
-      v-show="dropzone"
-      style="
-        position: fixed;
-        z-index: 9800;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: table;
-      "
-      :class="[
-        isDropZoneActive
-          ? 'dx-theme-accent-as-border-color dropzone-active'
-          : 'dx-theme-border-color',
-      ]"
-    >
-      <p
+    <div v-if="!localFilesState">
+      <div
+        @dragleave="dragLeave"
+        id="dropzone-external"
+        class="dropzone"
+        v-show="dropzone"
         style="
-          margin: auto;
-          margin-top: 450px;
-          text-align: center;
-          color: white;
-          font-size: 48px;
+          position: fixed;
+          z-index: 9800;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: table;
         "
+        :class="[
+          isDropZoneActive
+            ? 'dx-theme-accent-as-border-color dropzone-active'
+            : 'dx-theme-border-color',
+        ]"
       >
-        음원 파일 업로드
-      </p>
-      <div id="dropzone-text" class="flex-box" style="margin-top: 80px">
-        <span
+        <p
           style="
-            position: absolute;
-            z-index: 1;
+            margin: auto;
+            margin-top: 450px;
+            text-align: center;
             color: white;
-            margin-top: 700px;
             font-size: 48px;
           "
         >
-        </span>
+          음원 파일 업로드
+        </p>
+        <div id="dropzone-text" class="flex-box" style="margin-top: 80px">
+          <span
+            style="
+              position: absolute;
+              z-index: 1;
+              color: white;
+              margin-top: 700px;
+              font-size: 48px;
+            "
+          >
+          </span>
+        </div>
       </div>
     </div>
     <transition name="slide-fade">
@@ -496,6 +498,7 @@ export default {
       type: (state) => state.type,
       FileModal: (state) => state.FileModal,
     }),
+    ...mapGetters("FileIndexStore", ["localFilesState"]),
     getUrl() {
       if (this.type == null) {
         return `/api/Mastering/`;
@@ -823,8 +826,8 @@ export default {
             });
             this.fileupload.abortUpload(0);
             this.resetLocalFiles();
-            this.typeReset();
             this.percent = 0;
+            this.processing = false;
             this.MetaModal = false;
           }
         } else {
