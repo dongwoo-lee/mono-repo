@@ -2,7 +2,7 @@
   <div>
     <div style="margin-top: 35px">
       <b-button
-        style="position: absolute; top: 117px; left: 872px"
+        style="position: absolute; top: 117px; left: 862px"
         class="btn btn-outline-primary btn-sm default cutom-label mr-2"
         @click="modalOn"
         >사용처 선택</b-button
@@ -407,6 +407,7 @@ export default {
       this.modal = true;
     },
     modalOff() {
+      this.selectedPgm = "";
       this.modal = false;
     },
     addRange() {
@@ -484,9 +485,14 @@ export default {
       }
 
       if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 0) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.StartDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.tempSDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
+
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
-
           if (
             convertDate == "" ||
             convertDate == null ||
@@ -543,6 +549,12 @@ export default {
       }
 
       if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 0) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.EndDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.tempEDate = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        }
+
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           if (
@@ -590,7 +602,11 @@ export default {
       const yyyy = replaceVal.substring(0, 4);
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
-      if (!(12 < mm && 31 < dd)) {
+      if (12 < mm) {
+        return this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+      } else if (31 < dd) {
+        return this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+      } else {
         return `${yyyy}-${mm}-${dd}`;
       }
     },

@@ -137,7 +137,6 @@
         <b-form-input
           class="editTask"
           v-model="mcrMetaData.advertiser"
-          :state="mcrAdvertiserState"
           :maxLength="15"
           aria-describedby="input-live-help input-live-feedback"
           placeholder="광고주"
@@ -321,6 +320,7 @@ export default {
     },
     mediaChange(v) {
       this.SET_MCR_MEDIA(v);
+      this.RESET_MCR_SELECTED();
       var data = this.mcrMediaOptions.find((dt) => dt.value == v);
       if (data) {
         this.mediaName = data.text;

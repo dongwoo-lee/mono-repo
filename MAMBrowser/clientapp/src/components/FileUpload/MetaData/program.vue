@@ -111,7 +111,7 @@
         <b-form-input
           class="editTask"
           v-model="pgmMetaData.memo"
-          :maxLength="200"
+          :maxLength="30"
           placeholder="메모"
           trim
         />
