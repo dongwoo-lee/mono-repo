@@ -152,8 +152,9 @@ namespace MAMBrowser.Controllers
 
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("program")]
-        public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,[FromForm] string title,
-             [FromForm] string memo, [FromForm] string media, [FromForm] string productId ,[FromForm] string brdDTM, [FromForm] string SchDate, [FromForm] string editor)
+        public ActionResult<DTO_RESULT> RegProgram([FromForm] IFormFile file, [FromForm] string chunkMetadata,
+            [FromForm] string title, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, 
+            [FromForm] string audioClipId, [FromForm] string brdDTM, [FromForm] string SchDate, [FromForm] string editor)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -186,7 +187,10 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        
+                        if(!string.IsNullOrEmpty(audioClipId))
+                        {
+                            DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, audioClipId);
+                        }
 
                         ProgramMeta Program = new ProgramMeta();
 
@@ -228,7 +232,8 @@ namespace MAMBrowser.Controllers
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("mcr-spot")]
         public ActionResult<DTO_RESULT> RegMcrSpot([FromForm] IFormFile file, [FromForm] string chunkMetadata,
-           [FromForm] string title, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
+           [FromForm] string title, [FromForm] string memo, [FromForm] string media, [FromForm] string productId, 
+           [FromForm] string audioClipId, [FromForm] string brdDT, [FromForm] string editor, [FromForm] string advertiser)
         {
             DTO_RESULT result = new DTO_RESULT();
 
@@ -262,7 +267,10 @@ namespace MAMBrowser.Controllers
                     //파일 업로드
                     if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                     {
-                        
+                        if (!string.IsNullOrEmpty(audioClipId))
+                        {
+                            DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, audioClipId);
+                        }
 
                         McrMeta mcr = new McrMeta();
 
@@ -973,10 +981,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                if (string.IsNullOrEmpty(fileToken))
-                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id);
-                else
-                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
 
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -1070,11 +1075,7 @@ namespace MAMBrowser.Controllers
                 if (id == null)
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "parameter is empty");
 
-                if (string.IsNullOrEmpty(fileToken))
-                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id);
-                else
-                    DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
-
+                DeleteAudioFile(HttpContext.Items[Define.USER_ID] as string, id, fileToken);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -362,6 +362,7 @@ export default {
           media: this.pgmMetaData.media,
           productId: this.pgmSelected.productId,
           brdDTM: this.pgmSelected.onairTime,
+          audioClipId: this.pgmSelected.audioClipID,
           SchDate: this.pgmMetaData.date,
           editor: sessionStorage.getItem("user_id"),
         };
@@ -380,6 +381,7 @@ export default {
           memo: this.mcrMetaData.memo,
           media: this.mcrMetaData.media,
           productId: this.mcrSelected.id,
+          audioClipId: this.mcrSelected.audioClipID,
           brdDT: this.mcrMetaData.date,
           advertiser: this.mcrMetaData.advertiser,
           editor: sessionStorage.getItem("user_id"),
@@ -439,9 +441,6 @@ export default {
     },
     async uploadfile() {
       if (this.metaValid) {
-        var data = this.initData();
-        await this.resetUploaderCustomData();
-        await this.setUploaderCustomData(data);
         if (!this.durationState) {
           this.$bvModal.show("durationOver");
           return;
@@ -453,6 +452,10 @@ export default {
             return;
           }
         }
+
+        var data = this.initData();
+        await this.resetUploaderCustomData();
+        await this.setUploaderCustomData(data);
 
         if (this.type == "my-disk") {
           if (!this.notDiskAvailable(this.localFiles[0].size)) {
@@ -496,11 +499,14 @@ export default {
         return true;
       }
     },
-    DurationOK() {
+    async DurationOK() {
       this.$bvModal.hide("durationOver");
 
       if (this.type == "program") {
         if (this.pgmSelected.audioClipID == null) {
+          var data = this.initData();
+          await this.resetUploaderCustomData();
+          await this.setUploaderCustomData(data);
           this.setFileUploading(true);
           this.$emit("upload");
         } else {
@@ -508,12 +514,18 @@ export default {
         }
       } else if (this.type == "mcr-spot") {
         if (this.mcrSelected.audioClipID == null) {
+          var data = this.initData();
+          await this.resetUploaderCustomData();
+          await this.setUploaderCustomData(data);
           this.setFileUploading(true);
           this.$emit("upload");
         } else {
           this.$bvModal.show("audioClipIDOver");
         }
       } else {
+        var data = this.initData();
+        await this.resetUploaderCustomData();
+        await this.setUploaderCustomData(data);
         this.setFileUploading(true);
         this.$emit("upload");
       }
@@ -525,52 +537,13 @@ export default {
       return `<text style="color:red;">편성 분량을 확인하세요.</text><br><br><text style="color:red;">정말 업로드 하시겠습니까?</text>`;
     },
     async audioClipOK() {
-      if (this.type == "program") {
-        try {
-          var res = await axios.delete(
-            `/api/mastering/program/${this.pgmSelected.audioClipID}`,
-            {
-              headers: {
-                "X-Csrf-Token": sessionStorage.getItem("access_token"),
-              },
-            }
-          );
-          if (res.status == 200 && res.statusText == "OK") {
-            this.$bvModal.hide("audioClipIDOver");
-            this.setFileUploading(true);
-            this.$emit("upload");
-          } else {
-            this.$fn.notify("error", { title: res.data.errorMsg });
-          }
-        } catch (error) {
-          this.$bvModal.hide("audioClipIDOver");
-          this.setFileUploading(false);
-          this.$fn.notify("error", { title: error.message });
-        }
-      } else if (this.type == "mcr-spot") {
-        try {
-          var res = await axios.delete(
-            `/api/mastering/mcr-spot/${this.mcrSelected.audioClipID}`,
-            {
-              headers: {
-                "X-Csrf-Token": sessionStorage.getItem("access_token"),
-              },
-            }
-          );
+      var data = this.initData();
+      await this.resetUploaderCustomData();
+      await this.setUploaderCustomData(data);
 
-          if (res.status == 200 && res.statusText == "OK") {
-            this.$bvModal.hide("audioClipIDOver");
-            this.setFileUploading(true);
-            this.$emit("upload");
-          } else {
-            this.$fn.notify("error", { title: res.data.errorMsg });
-          }
-        } catch (error) {
-          this.$bvModal.hide("audioClipIDOver");
-          this.setFileUploading(false);
-          this.$fn.notify("error", { title: error.message });
-        }
-      }
+      this.$bvModal.hide("audioClipIDOver");
+      this.setFileUploading(true);
+      this.$emit("upload");
     },
     audioClipCancel() {
       this.$bvModal.hide("audioClipIDOver");
