@@ -442,6 +442,13 @@ export default {
       }
 
       if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 0) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.SET_STATIC_S_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+          this.SET_STATIC_S_TEMP_DATE(
+            this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+          );
+        }
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           if (
@@ -512,6 +519,13 @@ export default {
       }
 
       if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 0) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.SET_STATIC_E_DATE(this.$fn.formatDate(new Date(), "yyyy-MM-dd"));
+          this.SET_STATIC_E_TEMP_DATE(
+            this.$fn.formatDate(new Date(), "yyyy-MM-dd")
+          );
+        }
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           if (

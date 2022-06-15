@@ -355,6 +355,17 @@ export default {
       }
 
       if (!isNaN(replaceAllTargetValue)) {
+        if (replaceAllTargetValue.length === 0) {
+          event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+          this.SET_MCR_DATE = this.$fn.formatDate(
+            new Date(),
+            "yyyy-MM-dd"
+          );
+          this.SET_MCR_TEMP_DATE = this.$fn.formatDate(
+            new Date(),
+            "yyyy-MM-dd"
+          );
+        }
         if (replaceAllTargetValue.length === 8) {
           const convertDate = this.convertDateSTH(replaceAllTargetValue);
           if (
