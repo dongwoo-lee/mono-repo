@@ -582,8 +582,9 @@ namespace MAMBrowser.Controllers
                 {
                     if (string.IsNullOrEmpty(filePath))
                     {
-                        result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                        result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
                         result.ErrorMsg = "등록된 파일이 없습니다.";
+                        return result;
                     }
 
                     var option = _bll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
@@ -592,13 +593,16 @@ namespace MAMBrowser.Controllers
                     NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
                     if (!System.IO.File.Exists(filePath))
                     {
-                        result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                        result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
                         result.ErrorMsg = "스토리지에 파일이 없습니다.";
+                        return result;
                     }
                 }
                 else
                 {
-                    throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "등록된 파일이 없습니다.");
+                    result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
+                    result.ErrorMsg = "등록된 파일이 없습니다.";
+                    return result;
                 }
 
                 result.ResultCode = RESUlT_CODES.SUCCESS;

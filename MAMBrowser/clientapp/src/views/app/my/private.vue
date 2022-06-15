@@ -326,15 +326,30 @@ export default {
       );
 
       for (const e of res.data.resultObject) {
-        var res = await axios.post(`/api/FileValidation?token=${e.fileToken}`);
-        if (res.status == 200 && res.data.resultCode == 0) {
-          sum.push(res.data.resultObject);
-        } else {
+        try {
+          var res = await axios.post(
+            `/api/FileValidation?token=${e.fileToken}`
+          );
+          if (res.status == 200) {
+            if (res.data.resultCode == 0) {
+              sum.push(res.data.resultObject);
+            } else if (res.data.resultCode == 8) {
+              this.$fn.notify("error", {
+                title: "파일 처리 에러",
+                message: `${res.data.errorMsg} (${e.fileName})`,
+              });
+            } else if (res.data.resultCode == 6) {
+              this.$fn.notify("error", {
+                title: "파일 처리 에러",
+                message: "서버에 문제가 발생했습니다.",
+              });
+            }
+          }
+        } catch {
           this.$fn.notify("error", {
-            title: res.data.errorMsg,
-            message: `${e.id} 파일이 존재하지 않습니다.`,
+            title: "서버 처리 에러",
+            message: "서버에 문제가 발생했습니다.",
           });
-          return;
         }
       }
 

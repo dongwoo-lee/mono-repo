@@ -215,27 +215,65 @@ let mixinCommon = {
       this.showPlayerPopup = false;
     },
     async onDownloadProduct(item, downloadName) {
-      var res = await axios.post(`/api/FileValidation?token=${item.fileToken}`);
-      if (res.status == 200 && res.data.resultCode == 0) {
-        this.downloadProduct({ item: item, downloadName: downloadName });
-      } else {
-        this.$fn.notify("error", { title: res.data.errorMsg });
+      try {
+        var res = await axios.post(
+          `/api/FileValidation?token=${item.fileToken}`
+        );
+        if (res.status == 200) {
+          if (res.data.resultCode == 0) {
+            this.downloadProduct({ item: item, downloadName: downloadName });
+          } else if (res.data.resultCode == 8) {
+            this.$fn.notify("error", {
+              title: "파일 처리 에러",
+              message: `${res.data.errorMsg} (${item.fileName})`,
+            });
+          } else if (res.data.resultCode == 6) {
+            this.$fn.notify("error", {
+              title: "파일 처리 에러",
+              message: "서버에 문제가 발생했습니다.",
+            });
+          }
+        }
+      } catch {
+        this.$fn.notify("error", {
+          title: "서버 처리 에러",
+          message: "서버에 문제가 발생했습니다.",
+        });
       }
     },
     async onDownloadMusic(item, downloadName) {
-      var res = await axios.post(`/api/SongValidation?token=${item.fileToken}`);
-      if (res.status == 200 && res.data.resultCode == 0) {
-        this.downloadMusic({ item: item, downloadName: downloadName });
-      } else {
-        this.$fn.notify("error", { title: res.data.errorMsg });
-      }
+      this.downloadMusic({ item: item, downloadName: downloadName });
+      // var res = await axios.post(`/api/SongValidation?token=${item.fileToken}`);
+      // if (res.status == 200 && res.data.resultCode == 0) {
+      //   this.downloadMusic({ item: item, downloadName: downloadName });
+      // } else {
+      //   this.$fn.notify("error", { title: res.data.errorMsg });
+      // }
     },
     async onDownloadDl30(item) {
-      var res = await axios.post(`/api/FileValidation?token=${item.fileToken}`);
-      if (res.status == 200 && res.data.resultCode == 0) {
-        this.downloadDl30(item);
-      } else {
-        this.$fn.notify("error", { title: res.data.errorMsg });
+      console.log(item);
+      try {
+        var res = await axios.post(
+          `/api/FileValidation?token=${item.fileToken}`
+        );
+        if (res.data.resultCode == 0) {
+          this.downloadDl30(item);
+        } else if (res.data.resultCode == 8) {
+          this.$fn.notify("error", {
+            title: "파일 처리 에러",
+            message: `${res.data.errorMsg} (${item})`,
+          });
+        } else if (res.data.resultCode == 6) {
+          this.$fn.notify("error", {
+            title: "파일 처리 에러",
+            message: "서버에 문제가 발생했습니다.",
+          });
+        }
+      } catch {
+        this.$fn.notify("error", {
+          title: "서버 처리 에러",
+          message: "서버에 문제가 발생했습니다.",
+        });
       }
     },
     onDownloadConcatenate(item) {
