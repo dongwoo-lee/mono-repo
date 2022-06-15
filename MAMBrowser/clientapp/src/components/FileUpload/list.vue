@@ -499,7 +499,11 @@ export default {
   created() {
     this.role = sessionStorage.getItem("authority");
     var user_id = sessionStorage.getItem("user_id");
-    this.startDBConnection(user_id);
+    if (this.role == "ADMIN") {
+      this.startDBConnection("");
+    } else {
+      this.startDBConnection(user_id);
+    }
   },
   beforeDestroy() {
     this.stopDBConnection();
