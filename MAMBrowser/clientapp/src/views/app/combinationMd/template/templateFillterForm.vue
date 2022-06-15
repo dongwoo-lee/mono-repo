@@ -369,7 +369,7 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/filler/${e.deleteId}?filetoken=${e.fileToken}`,
+          `/api/Mastering/filler/${e.deleteId}?fileToken=${e.fileToken}`,
           {
             headers: {
               "Content-Type": "application/json",

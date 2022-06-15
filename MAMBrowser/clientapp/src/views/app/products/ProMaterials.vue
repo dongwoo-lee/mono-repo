@@ -362,7 +362,7 @@ export default {
     },
     masteringDelete(e) {
       axios
-        .delete(`/api/Mastering/pro/${e.deleteId}?filetoken=${e.fileToken}`, {
+        .delete(`/api/Mastering/pro/${e.deleteId}?fileToken=${e.fileToken}`, {
           headers: {
             "Content-Type": "application/json",
             "X-Csrf-Token": sessionStorage.getItem("access_token"),

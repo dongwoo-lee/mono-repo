@@ -401,7 +401,7 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/filler-time/${e.deleteId}?filetoken=${e.fileToken}`,
+          `/api/Mastering/filler-time/${e.deleteId}?fileToken=${e.fileToken}`,
           {
             headers: {
               "Content-Type": "application/json",

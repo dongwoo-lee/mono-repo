@@ -401,7 +401,7 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&filetoken=${e.fileToken}`,
+          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&fileToken=${e.fileToken}`,
           {
             headers: {
               "Content-Type": "application/json",

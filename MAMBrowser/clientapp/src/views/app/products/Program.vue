@@ -381,7 +381,7 @@ export default {
     masteringDelete(e) {
       axios
         .delete(
-          `/api/Mastering/program/${e.deleteId}?filetoken=${e.fileToken}`,
+          `/api/Mastering/program/${e.deleteId}?fileToken=${e.fileToken}`,
           {
             headers: {
               "Content-Type": "application/json",
