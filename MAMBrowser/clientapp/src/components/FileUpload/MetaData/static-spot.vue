@@ -344,11 +344,11 @@ export default {
     },
     mediaChange(v) {
       this.SET_STATIC_MEDIA(v);
-      var data = this.fileMediaOptions.find((dt) => dt.value == v);
+      this.getPro();
+      var data = this.staticMediaOptions.find((dt) => dt.value == v);
       if (data) {
         this.mediaName = data.text;
       }
-      this.getPro();
     },
     onRowClick(v) {
       this.SET_STATIC_SELECTED(v.data);
@@ -358,14 +358,12 @@ export default {
     },
     async getPro() {
       if (this.staticMetaData.sDate == "") {
-        setTimeout(() => {
-          const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-          this.SET_STATIC_S_DATE(today);
-          this.SET_STATIC_S_TEMP_DATE(today);
+        const today = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
+        this.SET_STATIC_S_DATE(today);
+        this.SET_STATIC_S_TEMP_DATE(today);
 
-          this.SET_STATIC_E_DATE(today);
-          this.SET_STATIC_E_TEMP_DATE(today);
-        }, 200);
+        this.SET_STATIC_E_DATE(today);
+        this.SET_STATIC_E_TEMP_DATE(today);
       }
       const replaceVal = this.staticMetaData.sDate.replace(/-/g, "");
       const yyyy = replaceVal.substring(0, 4);
