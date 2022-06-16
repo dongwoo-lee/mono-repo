@@ -385,19 +385,15 @@ export default {
       "RESET_SCR",
     ]),
     validRange() {
-      if (
-        this.selectedPgm == "" ||
-        this.selectedPgm == "undefined" ||
-        this.selectedPgm == null ||
-        this.selectedPgm == { id: null, name: null }
-      ) {
+      if (this.selectedPgm?.id == null || this.selectedPgm?.id == "undefined") {
         this.addValid = false;
       } else {
         if (!this.dateValid) {
           this.addValid = false;
           return;
+        } else {
+          this.addValid = true;
         }
-        this.addValid = true;
       }
     },
     onSearch() {
@@ -429,6 +425,9 @@ export default {
       this.SET_SCR_CATEGORY(v);
     },
     pgmSelect(v) {
+      if (v.id == null) {
+      }
+      console.log(v.id == null);
       this.selectedPgm = v;
       this.validRange();
     },
