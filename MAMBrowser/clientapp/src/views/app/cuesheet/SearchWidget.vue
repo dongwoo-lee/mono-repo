@@ -579,10 +579,6 @@ export default {
           this.gridHeight = this.width_size;
           break;
       }
-<<<<<<< HEAD
-      var setDataList = await this.getData(result);
-=======
->>>>>>> branch_daycuesheetRefrsh
       this.subtable_data = [];
     },
     async onSelectionChanged(e) {
