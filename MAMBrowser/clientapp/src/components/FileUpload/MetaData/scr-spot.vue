@@ -385,7 +385,7 @@ export default {
       "RESET_SCR",
     ]),
     validRange() {
-      if (this.selectedPgm?.id == null || this.selectedPgm?.id == "undefined") {
+      if (this.selectedPgm?.id == null || this.selectedPgm?.id == undefined) {
         this.addValid = false;
       } else {
         if (!this.dateValid) {
@@ -425,9 +425,6 @@ export default {
       this.SET_SCR_CATEGORY(v);
     },
     pgmSelect(v) {
-      if (v.id == null) {
-      }
-      console.log(v.id == null);
       this.selectedPgm = v;
       this.validRange();
     },
