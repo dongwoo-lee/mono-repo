@@ -1,7 +1,11 @@
 <template>
   <!-- 미리듣기 팝업 -->
   <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
-    <template slot="modal-title">
+    <template
+      slot="modal-title"
+      class="editPlayer-overflow"
+      :title="parentName"
+    >
       <div style="display: inline-flex">
         <h6 v-if="parentName != ''">
           <b-badge class="mr-2" variant="dark">{{ parentName }}</b-badge>
@@ -229,3 +233,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+.editPlayer-overflow {
+  width: 700px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+</style>

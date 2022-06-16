@@ -2,7 +2,9 @@
   <!-- 미리듣기 팝업 -->
   <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
     <template slot="modal-title">
-      <h5>{{ title }}</h5>
+      <h5 class="player-overflow" :title="title">
+        {{ title }}
+      </h5>
     </template>
     <template slot="default">
       <Player
@@ -83,3 +85,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+.player-overflow {
+  width: 700px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+</style>

@@ -1,7 +1,11 @@
 <template>
   <!-- 미리듣기 팝업 -->
   <b-modal id="music-player" size="lg" v-model="show" no-close-on-backdrop>
-    <template slot="modal-title">
+    <template
+      slot="modal-title"
+      class="musicPlayer-overflow"
+      :title="this.music.name"
+    >
       <h5>{{ this.music.name }}</h5>
     </template>
     <template slot="default">
@@ -181,4 +185,10 @@ export default {
 };
 </script>
 <style scoped>
+.musicPlayer-overflow {
+  width: 700px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 </style>
