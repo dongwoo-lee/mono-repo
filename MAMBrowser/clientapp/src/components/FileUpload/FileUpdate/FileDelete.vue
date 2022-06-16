@@ -1,0 +1,74 @@
+<template>
+  <common-update-modal :show="show" @close="MetaModalOff">
+    <h3 slot="header">파일 삭제</h3>
+    <h4 slot="body" style="margin-left: 20px; margin-top: 20px">
+      <h6>파일 명 : {{ rowData.name }}</h6>
+      <br />
+      <h6>삭제하시겠습니까?</h6>
+    </h4>
+    <h3 slot="footer">
+      <b-button
+        variant="outline-danger"
+        @click="deleteFile"
+        style="margin-left: 45px"
+      >
+        <span class="label">삭제</span>
+      </b-button>
+
+      <b-button
+        variant="danger"
+        @click="MetaModalOff"
+        style="margin-right: 10px"
+      >
+        <span class="label">닫기</span>
+      </b-button>
+    </h3>
+  </common-update-modal>
+</template>
+
+<script>
+import CommonUpdateModal from "../../Modal/CommonDeleteModal.vue";
+export default {
+  props: {
+    rowData: {
+      type: [],
+      default: "",
+    },
+    isScrSpot: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      show: false,
+    };
+  },
+  components: {
+    CommonUpdateModal,
+  },
+  methods: {
+    MetaModalOff() {
+      this.$emit("DeleteModalClose");
+    },
+    deleteFile() {
+      this.show = true;
+      var deleteInfo = {
+        deleteId: this.rowData.id,
+        fileToken: this.rowData.fileToken,
+      };
+      if (this.isScrSpot) {
+        deleteInfo = {
+          spotID: this.rowData.id,
+          productID: this.rowData.productID,
+          brdDT: this.rowData.brdDT,
+          fileToken: this.rowData.fileToken,
+        };
+      }
+      this.$emit("deleteFile", deleteInfo);
+    },
+  },
+};
+</script>
+
+<style></style>

@@ -171,7 +171,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// (구)프로목록 조회
+        /// 프로목록 조회
         /// </summary>
         /// <returns></returns>
         [HttpGet("pro")]
@@ -222,6 +222,26 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = _bll.GetMcrSpot(media);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 부조 SPOT 분류 조회
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("scr/spot")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetScrSpot()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                result.ResultObject = _bll.GetScrSpot();
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -317,6 +337,7 @@ namespace MAMBrowser.Controllers
         /// 사용처 목록 조회
         /// </summary>
         /// <param name="brd_dt">방송 종료일</param>
+        /// <param name="media">매체코드</param>
         /// <returns></returns>
         [HttpGet("pgmcodes")]
         public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPgmCodes([FromQuery] string brd_dt, [FromQuery] string media)
@@ -338,7 +359,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
-        /// (구)프로소재, 공유소재 매체목록 조회
+        /// 프로소재, 공유소재 매체목록 조회
         /// </summary>
         /// <returns></returns>
         [HttpGet("public-codes/primary")]
@@ -411,6 +432,131 @@ namespace MAMBrowser.Controllers
             try
             {
                 result.ResultObject = _bll.GetReqStatus();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// 프로그램 송출표 목록 반환(송출표가 작성되지 않은 경우 기본+특별편성)
+        /// </summary>
+        /// <param name="media">매체코드 - ex) A, F, M</param>
+        /// <param name="date">시작일자 - ex) 20210101</param>
+        /// <returns></returns>
+        [HttpGet("pgm-sch")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_BrdSch>> GetPgmSch(string media, string date)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_BrdSch>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_BrdSch>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<DTO_BrdSch>();
+                result.ResultObject.Data = _bll.GetPgmSch(media, date);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 프로그램 목록 반환(주조SPOT, 변동소재, 고정소재)
+        /// </summary>
+        /// <param name="media">매체코드 - ex) A, F, M</param>
+        /// <param name="date">시작일자 - ex) 20210101</param>
+        /// <param name="spotType">MS : 주조SPOT , TS : 변동소재, TT : 고정소재</param>
+        /// <returns></returns>
+        [HttpGet("spot-sch")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_BrdSpot>> GetSpotSch(string media, string date, string spotType)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_BrdSpot>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_BrdSpot>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<DTO_BrdSpot>();
+                result.ResultObject.Data = _bll.GetSpotSch(media, date, spotType);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 특정 사용자가 담당하는 프로그램 목록 반환
+        /// </summary>
+        /// <param name="media"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("user-pgmcodes")]
+        public DTO_RESULT<DTO_RESULT_LIST<string>> GetPgmCodeByUser([FromQuery] string media, [FromQuery] string userId)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<string>> result = new DTO_RESULT<DTO_RESULT_LIST<string>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<string>();
+                result.ResultObject.Data = _bll.GetPgmCodeByUser(media, userId);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 특정 사용자가 담당하는 오디오코드 목록 반환(프로소재 목록)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("user-audiocodes")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetAudioCodeByUser([FromQuery] string userId)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<DTO_CATEGORY>();
+                result.ResultObject.Data = _bll.GetAudioCodeByUser(userId);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 부조SPOT 소재파일 목록 조회
+        /// </summary>
+        /// <param name="spotName"></param>
+        /// <param name="codeId"></param>
+        /// <param name="cmOwner"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        [HttpGet("scr-spot")]
+        public DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> GetScrSpotList([FromQuery] string spotName, [FromQuery] string codeId, [FromQuery] string cmOwner, [FromQuery] string startDate, [FromQuery]  string endDate)
+        {
+            DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>> result = new DTO_RESULT<DTO_RESULT_LIST<Dto_ScrSpot>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<Dto_ScrSpot>();
+                result.ResultObject.Data = _bll.GetScrSpotList(spotName, codeId, cmOwner, startDate, endDate);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

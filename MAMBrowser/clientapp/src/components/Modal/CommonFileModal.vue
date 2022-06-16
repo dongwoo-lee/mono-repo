@@ -1,0 +1,119 @@
+<template>
+  <transition name="modal" appear>
+    <div id="file-modal-mask">
+      <div class="file-modal-wrapper">
+        <div class="file-modal-container">
+          <div class="modal-header">
+            <slot name="header"> default header </slot>
+            <button class="modal-default-button" @click="$emit('close')">
+              <p class="h4 mb-2">
+                <b-icon icon="x" class="icon" variant="danger"></b-icon>
+              </p>
+            </button>
+          </div>
+
+          <div class="file-modal-body">
+            <slot name="body"> default body </slot>
+          </div>
+
+          <div class="file-modal-footer">
+            <slot name="footer">
+              <b-button
+                variant="outline-danger"
+                style="margin-top: 40px; margin-right: 15px"
+                @click="$emit('close')"
+                >닫기</b-button
+              >
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style>
+#file-modal-mask {
+  position: fixed;
+  z-index: 9600;
+  top: -4%;
+  left: 0%;
+  width: 100%;
+  height: 110%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+}
+
+.file-modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.file-modal-container {
+  position: relative;
+  margin: auto;
+  width: 1400px;
+  height: 800px;
+  background-color: white;
+  border-radius: 2px;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33); */
+  transition: all 0.3s ease;
+}
+
+.modal-header h2 {
+  margin-top: 10px;
+  color: black;
+  font-family: "MBC 새로움 M";
+}
+
+.file-modal-body {
+  height: 600px;
+  font-family: "MBC 새로움 M";
+}
+
+.modal-default-button {
+  float: right;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  border: 0;
+  outline: 0;
+  background-color: white;
+}
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+.file-modal-footer {
+  margin-top: 30px;
+  height: 40px;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+}
+</style>

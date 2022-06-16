@@ -1,6 +1,17 @@
 <template>
-  <app-layout>
+  <app-layout
+    @FileDragStart="FileDragStart"
+    @FileDragEnd="FileDragEnd"
+    @FileDragEnter="FileDragEnter"
+    @FileDrop="FileDrop"
+  >
     <router-view />
+    <!-- 파일 업로드 -->
+    <file-mastering
+      :DragFileModalState="DragFileModalState"
+      @dropZoneLeave="FileDrop"
+      @dragLeave="FileDrop"
+    ></file-mastering>
     <!-- 업로딩 토스트 -->
     <file-uploading-toast ref="refFileUploadingToast"></file-uploading-toast>
     <!-- 업로드 팝업 -->
@@ -18,39 +29,51 @@
 
 <script>
 import AppLayout from "@/layouts/AppLayout";
-import FileDragUploadForm from '@/components/File/FileDragUploadForm';
-import FileUploadingToast from '@/components/File/FileUploadingToast';
-import FileUploadPopup from '@/components/File/FileUploadPopup';
-import FileMetaDataPopup from '@/components/File/FileMetaDataPopup';
-import FileUploadRefElement from '@/components/File/FileUploadRefElement';
-import LoginPopup from '@/components/Popup/Login/LoginPopup';
-import LoginPopupRefElement from '@/components/Popup/Login/LoginPopupRefElement';
-import MyDiskCopyLooadingOverlay from '@/components/MyDiskCopyLooadingOverlay';
-import { ROUTE_NAMES } from '@/constants/config';
-import { mapMutations } from 'vuex';
+import FileMastering from "@/components/FileUpload/FileMastering";
+import FileDragUploadForm from "@/components/File/FileDragUploadForm";
+import FileUploadingToast from "@/components/File/FileUploadingToast";
+import FileUploadPopup from "@/components/File/FileUploadPopup";
+import FileMetaDataPopup from "@/components/File/FileMetaDataPopup";
+import FileUploadRefElement from "@/components/File/FileUploadRefElement";
+import LoginPopup from "@/components/Popup/Login/LoginPopup";
+import LoginPopupRefElement from "@/components/Popup/Login/LoginPopupRefElement";
+import MyDiskCopyLooadingOverlay from "@/components/MyDiskCopyLooadingOverlay";
+import { ROUTE_NAMES } from "@/constants/config";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   components: {
     "app-layout": AppLayout,
+    FileMastering,
     FileDragUploadForm,
     FileUploadingToast,
     FileUploadPopup,
     FileMetaDataPopup,
     LoginPopup,
-    MyDiskCopyLooadingOverlay
+    MyDiskCopyLooadingOverlay,
+  },
+  data() {
+    return {
+      DragFileModalState: false,
+      FileDragState: false,
+    };
   },
   watch: {
-    '$route': {
+    $route: {
       handler(to, from) {
         const routeName = this.$route.name;
-        if (routeName && (routeName === ROUTE_NAMES.PRIVATE || routeName === ROUTE_NAMES.SHARED)) {
+        if (
+          routeName &&
+          (routeName === ROUTE_NAMES.PRIVATE ||
+            routeName === ROUTE_NAMES.SHARED)
+        ) {
           this.isActive = true;
         } else {
           this.isActive = false;
         }
       },
       immediate: true,
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -59,8 +82,25 @@ export default {
       this.SET_DOWNLOAD_IFRAME();
     });
   },
+  computed: {
+    ...mapGetters("FileIndexStore", ["localFilesState"]),
+  },
   methods: {
-    ...mapMutations('file', ['SET_DOWNLOAD_IFRAME'])
-  }
+    ...mapMutations("file", ["SET_DOWNLOAD_IFRAME"]),
+    FileDragStart() {
+      this.FileDragState = true;
+    },
+    FileDragEnd() {
+      this.FileDragState = false;
+    },
+    FileDragEnter() {
+      if (!this.FileDragState && !this.localFilesState) {
+        this.DragFileModalState = true;
+      }
+    },
+    FileDrop() {
+      this.DragFileModalState = false;
+    },
+  },
 };
 </script>

@@ -4,6 +4,7 @@ using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL;
 using M30.AudioFile.DAL.Dao;
 using System;
+using System.Collections.Generic;
 
 namespace MAMBrowser.BLL
 {
@@ -55,6 +56,10 @@ namespace MAMBrowser.BLL
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpot(string media)
         {
             return _dao.GetMcrSpot(media);
+        }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetScrSpot()
+        {
+            return _dao.GetScrSpot();
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetFillerPr()
         {
@@ -108,8 +113,59 @@ namespace MAMBrowser.BLL
         }
         public void InsertUserToPublicCategory()
         {
-            _dao.InsertUserToPublicCategory();
+            //_dao.InsertUserToPublicCategory();
         }
 
+        /// <summary>
+        /// 프로그램 송출표 목록 반환(송출표가 작성되지 않은 경우 기본+특별편성)
+        /// </summary>
+        /// <param name="media">매체ID</param>
+        /// <param name="date">시작일자</param>
+        /// <returns></returns>
+        public IList<DTO_BrdSch> GetPgmSch(string media, string date)
+        {
+            return _dao.GetPgmSch(media, date);
+        }
+        /// <summary>
+        /// 프로그램 목록 반환(주조SPOT, 변동소재, 고정소재)
+        /// </summary>
+        /// <param name="media">매체ID</param>
+        /// <param name="date">시작일자</param>
+        /// <param name="spotType">MS : 주조SPOT , TS : 변동소재, TT : 고정소재</param>
+        /// <returns></returns>
+        public IList<DTO_BrdSpot> GetSpotSch(string media, string date, string spotType)
+        {
+            return _dao.GetSpotSch(media, date, spotType);
+        }
+
+        /// <summary>
+        /// 특정 사용자가 담당하는 프로그램 목록 반환
+        /// </summary>
+        /// <param name="media">매체ID</param>
+        /// <param name="userId">유저ID</param>
+        /// <returns></returns>
+        public IList<string> GetPgmCodeByUser(string media, string userId)
+        {
+            return _dao.GetPgmCodeByUser(media, userId);
+        }
+
+        /// <summary>
+        /// 특정 사용자가 담당하는 오디오코드 목록 반환(프로소재 목록)
+        /// </summary>
+        /// <param name="userId">유저ID</param>
+        /// <returns></returns>
+        public IList<DTO_CATEGORY> GetAudioCodeByUser(string userId)
+        {
+            return _dao.GetAudioCodeByUser(userId);
+        }
+
+        /// <summary>
+        /// 부조SPOT 소재 목록 조회
+        /// </summary>
+        /// <returns></returns>
+        public IList<Dto_ScrSpot> GetScrSpotList(string spotName, string codeId, string cmOwner, string startDate, string endDate)
+        {
+            return _dao.GetScrSpotList(spotName, codeId, cmOwner, startDate, endDate);
+        }
     }
 }

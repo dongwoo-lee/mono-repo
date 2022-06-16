@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="부조 SPOT" />
+        <piaf-breadcrumb
+          heading="부조 SPOT"
+          tooltip="부조의 프로그램용 SPOT 소재"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -60,6 +63,17 @@
           >
         </b-form-group>
       </template>
+      <template slot="form-btn-area">
+        <b-input-group>
+          <b-button
+            variant="outline-primary default"
+            size="sm"
+            @click="showDuration"
+            >방송 의뢰</b-button
+          >
+        </b-input-group>
+      </template>
+
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
         {{ getPageInfo() }}
@@ -85,9 +99,14 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaUpdatePopup"
+              @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
           </template>
@@ -96,12 +115,35 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
         </CopyToMySpacePopup>
       </template>
     </common-form>
+
+    <!-- 방송의뢰 메타 데이터 수정 -->
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
+
+    <!-- 방송의뢰 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        :isScrSpot="true"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
 
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
@@ -114,6 +156,16 @@
       @closePlayer="onClosePlayer"
     >
     </PlayerPopup>
+
+    <scr-spot-duration
+      @setDurationSuccess="setDurationSuccess"
+      @setDurationFail="setDurationFail"
+      @requestValid="requestValid"
+    ></scr-spot-duration>
+
+    <add-duration></add-duration>
+
+    <search-duration></search-duration>
   </div>
 </template>
 
@@ -121,11 +173,32 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
+import axios from "axios";
+import ScrSpotDuration from "./ScrSpotDuration/ScrSpotDuration.vue";
+import AddDuration from "./ScrSpotDuration/AddDuration";
+import SearchDuration from "./ScrSpotDuration/SearchScrSpot.vue";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect },
+  components: {
+    CopyToMySpacePopup,
+    CommonVueSelect,
+    FileUpdate,
+    FileDelete,
+    ScrSpotDuration,
+    AddDuration,
+    SearchDuration,
+  },
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteId: "",
+      metaUpdate: false,
+      updateScreenName: "",
+      rowData: "",
+      MySpaceScreenName: "[부조SPOT]",
+      metaDelete: false,
       searchItems: {
         start_dt: "", // 시작일
         end_dt: "", // 종료일
@@ -137,7 +210,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: "DESC"
+        sortValue: "DESC",
       },
       isTableLoading: false,
       fields: [
@@ -146,14 +219,14 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name"
+          sortField: "name",
         },
         {
           name: "categoryName",
@@ -161,7 +234,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "13%",
-          sortField: "categoryName"
+          sortField: "categoryName",
         },
         {
           name: "duration",
@@ -170,9 +243,9 @@ export default {
           dataClass: "center aligned text-center",
           width: "6%",
           sortField: "duration",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.splitFirst(v);
-          }
+          },
         },
         {
           name: "brdDT",
@@ -181,9 +254,9 @@ export default {
           dataClass: "center aligned text-center bold",
           width: "10%",
           sortField: "brdDT",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
-          }
+          },
         },
         {
           name: "editorName",
@@ -191,31 +264,31 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "5%",
-          sortField: "editorName"
+          sortField: "editorName",
         },
         {
           name: "pgmName",
           title: "사용처명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "pgmName"
+          sortField: "pgmName",
         },
         {
           name: "masteringDtm",
-          title: "마스터링 일시",
+          title: "방송의뢰 일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "masteringDtm"
+          sortField: "masteringDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "7%"
-        }
-      ]
+          width: "10%",
+        },
+      ],
     };
   },
   created() {
@@ -229,11 +302,37 @@ export default {
     });
   },
   methods: {
+    ...mapMutations("ScrSpotDuration", ["showDuration", "hideDuration"]),
+    requestValid() {
+      this.$fn.notify("info", { title: "사용처를 등록해 주세요." });
+    },
+    setDurationSuccess() {
+      this.hideDuration();
+      this.$fn.notify("primary", {
+        title: "부조SPOT 방송의뢰 완료",
+      });
+      this.onSearch();
+    },
+    setDurationFail(v) {
+      this.$fn.notify("error", {
+        title: v,
+      });
+    },
     SDateErrorLog() {
       this.$fn.notify("error", {
-        message: "시작 날짜가 종료 날짜보다 큽니다."
+        message: "시작 날짜가 종료 날짜보다 큽니다.",
       });
       this.hasErrorClass = true;
+    },
+    authorityCheck(e) {
+      if (
+        e.editorID == sessionStorage.getItem("user_id") ||
+        sessionStorage.getItem("authority") == "ADMIN"
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
     getData() {
       if (
@@ -243,7 +342,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
         return;
@@ -252,9 +351,9 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       this.$http
         .get(`/api/products/spot/scr/${this.searchItems.media}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -264,7 +363,73 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}`;
       return tmpName;
-    }
-  }
+    },
+
+    onMetaUpdatePopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "scr-spot";
+      this.rowData = rowData;
+    },
+
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/scr-spot", e).then((res) => {
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.UpdateModalOff();
+          this.$fn.notify("primary", {
+            title: "메타 데이터 수정 성공",
+          });
+          this.onSearch();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "파일 업로드 실패: " + res.data.errorMsg,
+          });
+          this.onSearch();
+        }
+      });
+    },
+    DeleteModalOff() {
+      this.metaDelete = false;
+    },
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.rowData = rowData;
+    },
+    masteringDelete(e) {
+      axios
+        .delete(
+          `/api/Mastering/scr-spot?spotID=${e.spotID}&productID=${e.productID}&brdDT=${e.brdDT}&fileToken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res && res.status === 200 && !res.data.errorMsg) {
+            this.DeleteModalOff();
+            this.$fn.notify("primary", {
+              title: "파일 삭제 성공",
+            });
+            this.onSearch();
+          } else {
+            this.UpdateModalOff();
+            $fn.notify("error", {
+              message: "파일 삭제 실패: " + res.data.errorMsg,
+            });
+            this.onSearch();
+          }
+        });
+    },
+  },
 };
 </script>
+<style>
+.scr-modal-footer {
+  padding-left: 1.5rem !important;
+}
+</style>

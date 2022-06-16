@@ -1,4 +1,5 @@
-﻿using MAMBrowser.Helpers;
+﻿using M30.AudioFile.Common;
+using MAMBrowser.Helpers;
 using System;
 using System.IO;
 
@@ -23,14 +24,14 @@ namespace MAMBrowser.Foundation
         }
         public Stream GetFileStream(string sourcePath, long offSet)
         {
-            string sourceHost = MAMUtility.GetHost(sourcePath);
+            string sourceHost = CommonUtility.GetHost(sourcePath);
             NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
             FileStream fs = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return fs;
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
-            string sourceHost = MAMUtility.GetHost(fromPath);
+            string sourceHost = CommonUtility.GetHost(fromPath);
 
             NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
             //확인필요
@@ -70,19 +71,19 @@ namespace MAMBrowser.Foundation
         }
         public bool ExistFile(string fromPath)
         {
-            string sourceHost = MAMUtility.GetHost(fromPath);
+            string sourceHost = CommonUtility.GetHost(fromPath);
             NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
             return File.Exists(fromPath);
         }
         public void Delete(string filePath)
         {
-            string sourceHost = MAMUtility.GetHost(filePath);
+            string sourceHost = CommonUtility.GetHost(filePath);
             NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
             File.Delete(filePath);
         }
         public long GetFileSize(string sourcePath)
         {
-            string sourceHost = MAMUtility.GetHost(sourcePath);
+            string sourceHost = CommonUtility.GetHost(sourcePath);
             NetworkShareAccessor.Access(sourceHost, UserId, UserPass);
             return new FileInfo(sourcePath).Length;
         }

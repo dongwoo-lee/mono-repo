@@ -31,13 +31,13 @@ module.exports = {
   },
 
   chainWebpack: config => {
-    config.plugins.delete("prefetch-index"),
+    config.plugins.delete('prefetch-index'),
       config.module
-        .rule("vue")
-        .use("vue-loader")
+        .rule('vue')
+        .use('vue-loader')
         .tap(args => {
-          args.compilerOptions.whitespace = "preserve";
-        });
+          args.compilerOptions.whitespace = 'preserve'
+        })
   },
   productionSourceMap: false,
   assetsDir: "./assets/",

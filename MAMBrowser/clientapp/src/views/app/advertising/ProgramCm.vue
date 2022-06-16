@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="프로그램CM" />
+        <piaf-breadcrumb heading="프로그램CM" tooltip="프로그램용 전/후 CM" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -57,7 +57,7 @@
               </div>
             </div>
             <b-table
-              style="height:580px"
+              style="height: 580px"
               class="custom-table"
               ref="custom-table"
               thead-class="custom-table-color"
@@ -89,7 +89,7 @@
                 <b-button
                   v-if="
                     data.item.id == selectedItem.id &&
-                      data.item.length !== '00:00'
+                    data.item.length !== '00:00'
                   "
                   :id="`download-${data.index}`"
                   class="icon-buton"
@@ -99,7 +99,7 @@
                       grpType: 'cm',
                       brd_Dt: searchItems.brd_dt,
                       grpId: data.item.id,
-                      downloadName: `${data.item.name}_${data.item.brdDT}_${data.item.mediaName}_${data.item.id}`
+                      downloadName: `${data.item.name}_${data.item.brdDT}_${data.item.mediaName}_${data.item.id}`,
                     })
                   "
                 >
@@ -152,7 +152,7 @@
                   class="icon-buton"
                   v-b-tooltip.hover.top="{
                     title: IS_ADMIN ? data.item.filePath : '미리듣기',
-                    customClass: rowCustomClass(data)
+                    customClass: rowCustomClass(data),
                   }"
                   @click.stop="onPreview(data.item)"
                 >
@@ -164,7 +164,6 @@
         </b-row>
       </template>
     </common-form>
-
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -194,13 +193,13 @@ export default {
         brd_dt: "",
         cate: "P",
         pgm: "",
-        pgmName: ""
+        pgmName: "",
       },
       localType: null,
       localTypeOptions: [
         { value: null, text: "선택해주세요." },
         { value: "mcr", text: "주조SB" },
-        { value: "scr", text: "부조SB" }
+        { value: "scr", text: "부조SB" },
       ],
       fields: [
         { key: "index", label: "순서", tdClass: "list-item-heading" },
@@ -208,28 +207,28 @@ export default {
           key: "name",
           label: "CM명",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         {
           key: "length",
           label: "길이(초)",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         {
           key: "capacity",
           label: "용량(초)",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         { key: "status", label: "상태", sortable: true, tdClass: "text-muted" },
         {
           key: "editorName",
           label: "담당자",
           sortable: true,
-          tdClass: "text-muted"
+          tdClass: "text-muted",
         },
-        { key: "actions", label: "추가작업", tdClass: "text-muted" }
+        { key: "actions", label: "추가작업", tdClass: "text-muted" },
       ],
       fieldsContents: [
         { key: "rowNO", label: "순서", tdClass: "list-item-heading" },
@@ -237,14 +236,15 @@ export default {
           key: "advertiser",
           label: "광고주",
           tdClass: "text-muted",
-          thStyle: { width: "20%" }
+          thStyle: { width: "20%" },
         },
         { key: "name", label: "소재명", tdClass: "text-muted" },
         { key: "length", label: "길이(초)", tdClass: "text-muted" },
         { key: "codingUserName", label: "제작자", tdClass: "text-muted" },
         { key: "codingDT", label: "제작일", tdClass: "text-muted" },
-        { key: "actions", label: "추가작업", tdClass: "text-muted" }
-      ]
+        { key: "actions", label: "추가작업", tdClass: "text-muted" },
+      ],
+      grpParam: {}, //쓰는지 안쓰는지 모르겠음
     };
   },
   methods: {
@@ -271,7 +271,7 @@ export default {
         return `${this.selectName} 상세 내역`;
       }
       return "상세 내역";
-    }
-  }
+    },
+  },
 };
 </script>

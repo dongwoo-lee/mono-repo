@@ -1,6 +1,6 @@
 <template>
-  <div style="margin-left:20px">
-    <div class="row" style="margin-right:0;">
+  <div style="margin-left: 20px">
+    <div class="row" style="margin-right: 0">
       <b-form-group :label="startDateLabel" class="has-float-label">
         <!-- 등록일: 시작일 -->
         <common-date-picker
@@ -10,6 +10,7 @@
           :yearAgo="startYearAgo"
           :isCurrentDate="isCurrentDate"
           :required="required"
+          :disabVal="disabVal"
           @input="onSInput"
           @commonDateEvent="commonDateEvent"
         />
@@ -26,7 +27,11 @@
         />
       </b-form-group>
     </div>
-    <div v-if="isPeriodDate()" style="position: relative; margin: 5px 0 0 5px;">
+    <div
+      v-if="isPeriodDate()"
+      style="position: relative; margin: 5px 0 0 5px"
+      class="periodDateText"
+    >
       {{ getPeriodDescription() }}
     </div>
   </div>
@@ -36,62 +41,66 @@ import { MAXIMUM_SEARCH_DATE } from "@/constants/config";
 export default {
   props: {
     pageProps: {
-      type: String
+      type: String,
     },
     startDate: {
       type: String,
-      default: ""
+      default: "",
     },
     endDate: {
       type: String,
-      default: ""
+      default: "",
     },
     startDateLabel: {
       type: String,
-      default: "시작일"
+      default: "시작일",
     },
     endDateLabel: {
       type: String,
-      default: "종료일"
+      default: "종료일",
     },
     startDayAgo: {
       type: Number,
-      defaut: 0
+      defaut: 0,
     },
     startMonthAgo: {
       type: Number,
-      defaut: 0
+      defaut: 0,
     },
     startYearAgo: {
       type: Number,
-      defaut: 0
+      defaut: 0,
     },
     maxPeriodDay: {
       type: Number,
-      default: 0
+      default: 0,
     },
     maxPeriodMonth: {
       type: Number,
-      default: 0
+      default: 0,
     },
     maxPeriodYear: {
       type: Number,
-      default: 0
+      default: 0,
     },
     isCurrentDate: {
       type: Boolean,
-      default: true
+      default: true,
     },
     required: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
+    disabVal: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       sDate: "",
       eDate: "",
-      maxDate: ""
+      maxDate: "",
     };
   },
   watch: {
@@ -100,14 +109,14 @@ export default {
         this.sDate = date;
         this.checkMaxPeriodDate(date);
       },
-      immediate: true
+      immediate: true,
     },
     endDate: {
       handler(date) {
         this.eDate = date;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     commonDateEvent() {
@@ -187,8 +196,8 @@ export default {
         dateString = `${this.maxPeriodDay}일`;
       }
       return `※시작일로부터 최대 ${dateString}이내 선택 가능합니다.`;
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

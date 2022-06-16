@@ -20,6 +20,9 @@ namespace MAMBrowser.Helpers
         public string BroadcastStartNetwork { get; set; }
         public string BroadcastEndNetwork { get; set; }
         public int ExpireMusicTokenHour { get; set; }
-        
+        public Dictionary<string, Dictionary<string, int>> MasteringPriorities { get; set; } = new Dictionary<string, Dictionary<string, int>>();
+        public Dictionary<string, string> RabbitMQInfo { get; set; } = new Dictionary<string, string>();
+
+        public string TempExportPath { get; set; }
     }
 }

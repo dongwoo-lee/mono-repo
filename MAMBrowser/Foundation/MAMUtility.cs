@@ -13,68 +13,37 @@ namespace MAMBrowser.Foundation
     {
         public static void TempDownloadToLocal(string userId, string remoteIp, IFileDownloadProtocol fileProtocol, string filePath)
         {
-            ClearTempFolder(userId, remoteIp);
-            var targetFolder = GetTempFolder(userId, remoteIp);
+            CommonUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+            var targetFolder = CommonUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
 
             var soundFileName = Path.GetFileName(filePath);
             var ext = Path.GetExtension(filePath).ToUpper();
-            var targetSoundPath = GetTempFilePath(userId, remoteIp, soundFileName);
+            var targetSoundPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName);
             if (fileProtocol.ExistFile(filePath))
             {
                 fileProtocol.DownloadFile(filePath, targetSoundPath);
                 //다운로드된 mp2는 wav로 변환함.(mp3는 상관없음)
                 if (ext == Define.MP2)
                 {
-                    var convertFilePath = GetTempFilePath(userId, remoteIp, soundFileName.ToUpper().Replace(ext, Define.WAV));
+                    var convertFilePath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName.ToUpper().Replace(ext, Define.WAV));
                     using (FileStream inStream = new FileStream(targetSoundPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         using (FileStream outStream = new FileStream(convertFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                         {
-                            AudioEngine.ConvertMp2ToWav(inStream, outStream);
+                            MAMAudioEngine.ConvertMp2ToWav(inStream, outStream);
                         }
                     }
                 }
             }
+            //else
+            //{
+            //    if(ext != Define.EGY)   //음원파일 다운로드 실패시.. 파형파일은 없어도 다시만드므로 상관없음.
+            //        throw new Exception("등록된 파일을 찾을 수 없습니다.");
+            //}
         }
-        public static string GetTempFolder(string userId, string remoteIp)
-        {
-            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1" || remoteIp == "127.0.0.1")
-            {
-                remoteIp = "localhost";
-            }
-            return @$"{Startup.AppSetting.TempDownloadPath}\{userId}_{remoteIp}";
-        }
-        public static string GetTempFilePath(string userId, string remoteIp, string fileName)
-        {
-            return @$"{GetTempFolder(userId, remoteIp)}\{fileName}";
-        }
-        public static void ClearTempFolder(string userId, string remoteIp)
-        {
-            var targetFolder = GetTempFolder(userId, remoteIp);
-            if (Directory.Exists(targetFolder))
-            {
-                DateTime now = DateTime.Now;
-                var fileFullPathList = Directory.GetFiles(targetFolder);
-                foreach (var filePath in fileFullPathList)
-                {
-                    try
-                    {
-                        var createdDtm = File.GetLastAccessTime(filePath);
-
-                        if (now.Subtract(createdDtm).TotalSeconds > 300)
-                            File.Delete(filePath);
-                    }
-                    catch (IOException ex)
-                    {
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-            }
-        }
+        
         public static List<float> GetWaveformCore(string soundFilePath)
         {
             var soundfileName = Path.GetFileName(soundFilePath);
@@ -84,7 +53,7 @@ namespace MAMBrowser.Foundation
             {
                 using (var stream = new FileStream(egyFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
-                    return AudioEngine.GetDecibelFromEgy(stream);
+                    return MAMAudioEngine.GetDecibelFromEgy(stream);
                 }
             }
             else
@@ -95,66 +64,22 @@ namespace MAMBrowser.Foundation
                     switch (ext)
                     {
                         case Define.WAV:
-                            return AudioEngine.GetDecibelFromWav(stream, 2);
+                            return MAMAudioEngine.GetDecibelFromWav(stream, 2);
                         //case MP2:       파형검색시 mp2파일은 wav로 치환됨.
                         //    break;
                         case Define.MP3:
-                            return AudioEngine.GetDecibelFromMp3(stream, 2);
+                            return MAMAudioEngine.GetDecibelFromMp3(stream, 2);
                         default:
                             return new List<float>();
                     }
                 }
             }
         }
-        public static string GetRelativePath(string filePath)
-        {
-            string domainFullPath = "";
-            var domainPath = GetHost(filePath);
-            var relativePath = filePath.Remove(0, filePath.IndexOf(domainPath) + domainPath.Length);
-
-            if (relativePath[0] == '/' || relativePath[0] == '\\')
-                relativePath = relativePath.Remove(0, 1);
-
-            return relativePath;
-        }
-        public static string GetHost(string filePath)
-        {
-            string domainPath = "";
-            if (filePath.IndexOf("\\\\") == 0)
-            {
-                domainPath = filePath.Replace("\\\\", "");
-            }
-            else
-                domainPath = filePath;
-
-            return domainPath.Split("\\").First();
-        }
-        public static string ParseToJsonRequestContent(string musicToken)
-        {
-            string strMusicToken = "";
-            if (TokenGenerator.ValidateFileToken(musicToken, ref strMusicToken))
-            {
-                return strMusicToken;
-            }
-            else
-                throw new Exception("invalid token");
-
-        }
-        public static Dictionary<string, string> ParseToRequestContent(string musicToken)
-        {
-            var strToken = ParseToJsonRequestContent(musicToken);
-            return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(strToken);
-        }
-        public static string GetFilePathFromMusicToken(string musicToken)
-        {
-            var requestContent = ParseToRequestContent(musicToken);
-            var decodedFilePath = MusicSeedWrapper.SeedDecrypt(requestContent[Define.MUSIC_FILEPATH]);
-            return decodedFilePath;
-        }
+       
         public static void InitTempFoler(string userId, string remoteIp)
         {
-            ClearTempFolder(userId, remoteIp);
-            var targetFolder = GetTempFolder(userId, remoteIp);
+            CommonUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+            var targetFolder = CommonUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
         }

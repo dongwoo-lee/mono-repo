@@ -109,7 +109,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       isTableLoading: false,
       fields: [
@@ -118,7 +118,7 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "5%",
         },
         {
           name: "logLevel",
@@ -126,7 +126,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "logLevel",
-          width: "7%"
+          width: "7%",
         },
         {
           name: "regDtm",
@@ -134,14 +134,14 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "regDtm",
-          width: "10%"
+          width: "12%",
         },
         {
           name: "userName",
           title: "작업자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "10%",
         },
         {
           name: "category",
@@ -149,34 +149,34 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "category",
-          width: "10%"
+          width: "10%",
         },
         {
           name: "description",
           title: "내용",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-left word-break-all"
+          dataClass: "center aligned text-left word-break-all",
         },
         {
           name: "note",
           title: "비고",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "20%"
-        }
+          titleClass: "center aligned text-center note-ellipsis",
+          dataClass: "center aligned text-center note-ellipsis",
+          width: "20%",
+        },
       ],
       logLevelOptions: [
         { id: "DEBUG", name: "DEBUG" },
         { id: "INFO", name: "INFO" },
         { id: "WARN", name: "WARN" },
-        { id: "ERROR", name: "ERROR" }
+        { id: "ERROR", name: "ERROR" },
       ],
       responseData: {
         data: null,
         rowPerPage: 16,
         selectPage: 1,
-        totalRowCount: 0
-      }
+        totalRowCount: 0,
+      },
     };
   },
   created() {
@@ -191,7 +191,7 @@ export default {
         this.searchItems.end_dt != ""
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         return;
       } else {
@@ -206,19 +206,33 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
       }
 
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      this.$http.get("/api/Logs", { params: this.searchItems }).then(res => {
+      this.$http.get("/api/Logs", { params: this.searchItems }).then((res) => {
         this.setResponseData(res);
         this.addScrollClass();
         this.isTableLoading = false;
         this.isScrollLodaing = false;
       });
-    }
-  }
+    },
+  },
 };
 </script>
+<style>
+.note-ellipsis {
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 말줄임 적용 */
+}
+
+.note-ellipsis:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-all;
+}
+</style>

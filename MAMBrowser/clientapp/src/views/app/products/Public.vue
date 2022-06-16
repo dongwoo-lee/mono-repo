@@ -194,7 +194,7 @@ export default {
   components: {
     MetaDataSharedModifyPopup,
     CopyToMySpacePopup,
-    CommonVueSelect
+    CommonVueSelect,
   },
   data() {
     return {
@@ -215,7 +215,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
@@ -226,21 +226,21 @@ export default {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "3%"
+          width: "3%",
         },
         {
           name: "rowNO",
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "categoryName",
           title: "분류",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "12%"
+          width: "12%",
           // sortField: 'categoryName'
         },
         {
@@ -248,21 +248,21 @@ export default {
           title: "제목",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "title"
+          sortField: "title",
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "memo"
+          sortField: "memo",
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "5%",
         },
         {
           name: "fileSize",
@@ -271,9 +271,9 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "fileSize",
           width: "8%",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.formatBytes(v);
-          }
+          },
         },
         {
           name: "audioFormat",
@@ -281,7 +281,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "audioFormat"
+          sortField: "audioFormat",
         },
         {
           name: "userName",
@@ -289,7 +289,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%",
-          sortField: "userName"
+          sortField: "userName",
         },
         {
           name: "editedDtm",
@@ -297,26 +297,26 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "14%",
-          sortField: "editedDtm"
+          sortField: "editedDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
-        }
+          width: "10%",
+        },
       ],
-      USER_ID
+      USER_ID,
     };
   },
   watch: {
     ["searchItems.media"](v) {
       this.getPublicCodesOptions(v);
-    }
+    },
   },
   created() {
-    // (구)프로소재, 공유소재 매체 목록 조회
+    // 프로소재, 공유소재 매체 목록 조회
     this.getMediaPrimaryOptions();
     // 사용자 목록 조회
     this.getEditorOptions();
@@ -333,7 +333,7 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
         return;
@@ -344,9 +344,9 @@ export default {
       const { media, cate } = this.searchItems;
       this.$http
         .get(`/api/products/workspace/public/meta/${media}/${cate}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -376,10 +376,11 @@ export default {
     // 선택항목 영구 삭제 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
-        this.selectedIds,
-        this.responseData.data
-      );
+      this.innerHtmlSelectedFileNames =
+        this.getInnerHtmlSelectdFileNamesFromMulti(
+          this.selectedIds,
+          this.responseData.data
+        );
       this.$bvModal.show("modalRemove");
     },
     // 영구 삭제
@@ -392,13 +393,13 @@ export default {
         this.singleSelectedId = null;
       }
 
-      ids.forEach(seq => {
+      ids.forEach((seq) => {
         this.$http
           .delete(`/api/products/workspace/public/meta/${seq}`)
-          .then(res => {
+          .then((res) => {
             if (res.status === 200 && !res.data.errorMsg) {
               this.$fn.notify("primary", {
-                message: "파일을 삭제 하였습니다."
+                message: "파일을 삭제 하였습니다.",
               });
               this.$bvModal.hide("modalRemove");
               setTimeout(() => {
@@ -429,7 +430,7 @@ export default {
     },
     isPossibleDelete(userId) {
       return sessionStorage.getItem(USER_ID) === userId;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -4,11 +4,23 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>MAMBrowser</RootNamespace>
     <UserSecretsId>e3e68b19-222d-49f7-bc96-d2329e75f809</UserSecretsId>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DocumentationFile>D:\Repository\Site\MBC\mam-browser\MAMBrowser\MAMBrowser.xml</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\2CueSheetController.cs" />
+    <Compile Remove="Entiies\CueData.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="log4net.config" />
@@ -21,29 +33,54 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
+    <PackageReference Include="DevExpress.Xpo" Version="20.2.3" />
     <PackageReference Include="FluentFTP" Version="33.0.2" />
+    <PackageReference Include="M30.AudioEngine" Version="1.0.0" />
+    <PackageReference Include="M30.AudioFile.Common" Version="1.0.4" />
+    <PackageReference Include="M30.AudioFile.DAL" Version="1.0.9" />
+    <PackageReference Include="M30_CueSheetDAO" Version="1.0.3" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.11.1" />
-    <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="NAudio.Lame" Version="1.1.6" />
+    <PackageReference Include="NLayer" Version="1.13.0" />
     <PackageReference Include="NLayer.NAudioSupport" Version="1.1.0" />
     <PackageReference Include="ODP.NetCore" Version="2.0.12" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.110" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.130" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+    <PackageReference Include="SqlBatis.DataMapper" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.5.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="M30.AudioEngine">
+      <HintPath>RefFiles\M30.AudioEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="M30.AudioFile.Common">
+      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="M30.AudioFile.DAL">
+      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
+    </Reference>
+    <Reference Include="M30_CueSheetDAO">
+      <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
   <ItemGroup>
-    <None Update="effect.xml">
+    <None Update="Mockup\song.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mockup\effect.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="lyrics.xml">
@@ -57,20 +94,7 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="RefFiles\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="M30.AudioFile.Common">
-      <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="M30.AudioFile.DAL">
-      <HintPath>RefFiles\M30.AudioFile.DAL.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 
 </Project>

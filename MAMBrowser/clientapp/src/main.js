@@ -1,10 +1,13 @@
-import "core-js/modules/es.array.iterator";
-import Vue from "vue";
-import App from "./App";
+import 'devextreme/dist/css/dx.light.css';
+import 'core-js/modules/es.array.iterator';
+import Vue from 'vue'
+import App from './App'
+
 
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import router from "./router";
 import store from "./store";
+import FileIndexStore from "./store/modules/FileUpload";
 import messages from "./locales/index";
 import VueI18n from "vue-i18n";
 import Notifications from "./components/Common/Notification";
@@ -15,7 +18,7 @@ import commonFunctions from "./utils/CommonFunctions";
 import commonFilters from "./utils/CommonFilters";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-
+import "devextreme/dist/css/dx.light.css";
 import "./components/index";
 
 Vue.component("v-select", vSelect);
@@ -32,13 +35,11 @@ Vue.use({
 });
 
 Vue.prototype.$fn = commonFunctions;
-Object.keys(commonFilters).forEach(key => {
-  Vue.filter(key, commonFilters[key]);
-});
-const i18n = new VueI18n({ locale: "ko", fallbackLocale: "en", messages });
+Object.keys(commonFilters).forEach((key) => { Vue.filter(key, commonFilters[key]); });
+const i18n = new VueI18n({ locale: 'ko', fallbackLocale: 'en', messages });
 
-Vue.config.productionTip = false;
-Vue.config.errorHandler = function(err, vm, info) {
+Vue.config.productionTip = false
+Vue.config.errorHandler = function (err, vm, info) {
   console.log(`Error: ${err.toString()}\nInfo: ${info}`);
 };
 
@@ -46,5 +47,6 @@ export default new Vue({
   i18n,
   router,
   store,
+  FileIndexStore,
   render: h => h(App)
 }).$mount("#app");

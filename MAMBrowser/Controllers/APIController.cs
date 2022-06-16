@@ -13,6 +13,10 @@ using System.Linq;
 using System.Net;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
+using Microsoft.AspNetCore.Http;
+using MAMBrowser.MAMDto;
+using M30.AudioFile.DAL.Dto;
+using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser.Controllers
 {
@@ -50,7 +54,7 @@ namespace MAMBrowser.Controllers
                 }
                 else
                 {
-                    
+
                     if (!_bll.Authenticate(account))
                     {
                         result.ErrorMsg = "비밀번호가 틀립니다.";
@@ -132,7 +136,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-        
+
         /// <summary>
         /// 사용자 목록 조회
         /// </summary>
@@ -178,6 +182,30 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        /// <summary>
+        /// 사용자 옵션 업데이트
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPatch("user")]
+        public DTO_RESULT UpdateUserOption([FromBody] M30_COMM_USER_EXT dto)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                var updateCount = _bll.UpdateUserOption(dto);
+                if (updateCount > 0)
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                else
+                    result.ResultCode = RESUlT_CODES.APPLIED_NONE_WARN;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
 
         /// <summary>
         /// 특정 사용자 조회(개요)
@@ -190,7 +218,11 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DTO_USER_DETAIL> result = new DTO_RESULT<DTO_USER_DETAIL>();
             try
             {
-                result.ResultObject = _bll.GetUserSummary(id);
+                var clientIp = HttpContext.Connection.RemoteIpAddress;
+                var userSummary = _bll.GetUserSummary(id);
+                userSummary.ConDBName = _appSesstings.DBName;
+                userSummary.ConNetworkName = MAMUtility.NetworkName(_appSesstings.BroadcastStartNetwork, _appSesstings.BroadcastEndNetwork, clientIp);
+                result.ResultObject = userSummary;
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -234,6 +266,8 @@ namespace MAMBrowser.Controllers
                 });
 
                 user.BehaviorList = _bll.GetBehavior(user.AuthorCD);
+                user.BehaviorList.AddRange(_bll.GetMasteringAuthority(user.MenuGrpID));
+                user.MasteringMenuList = new List<DTO_MENU>(_bll.GetMasteringCategories(user.MenuGrpID));
                 user.ConDBName = _appSesstings.DBName;
                 user.ConNetworkName = MAMUtility.NetworkName(_appSesstings.BroadcastStartNetwork, _appSesstings.BroadcastEndNetwork, clientIp);
                 result.ResultObject = user;
@@ -434,7 +468,7 @@ namespace MAMBrowser.Controllers
         /// <param name="description">내용</param>
         /// <returns></returns>
         [HttpGet("Logs")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices]LogBll logBll )
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> FindLogs([FromQuery] string start_dt, [FromQuery] string end_dt, [FromQuery] string logLevel, [FromQuery] string userName, [FromQuery] string description, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue, [FromServices] LogBll logBll)
         {
             DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>>();
             try
@@ -471,6 +505,153 @@ namespace MAMBrowser.Controllers
                 FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
             }
             return result;
+        }
+
+
+        ///// <summary>
+        ///// 마스터링 옵션 목록 반환
+        ///// </summary>
+        ///// <param name="optionGrpCd">옵션그룹코드</param>
+        ///// <returns></returns>
+        [HttpGet("options/{optionGrpCd}")]
+        public ActionResult<DTO_RESULT<DTO_RESULT_LIST<Dto_MasteringOptions>>> GetOptions(string optionGrpCd)
+        {
+            if (string.IsNullOrEmpty(optionGrpCd))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
+            string systemCode = optionGrpCd.ToUpper();
+            DTO_RESULT<DTO_RESULT_LIST<Dto_MasteringOptions>> result = new DTO_RESULT<DTO_RESULT_LIST<Dto_MasteringOptions>>();
+            try
+            {
+                result.ResultObject = new DTO_RESULT_LIST<Dto_MasteringOptions>();
+                result.ResultObject.Data = _bll.GetOptions(optionGrpCd);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        ///// <summary>
+        ///// 마스터링 옵션 목록 저장
+        ///// </summary>
+        ///// <param name="optionGrpCd">옵션그룹코드</param>
+        ///// <param name="options">옵션 데이터 목록</param>
+        ///// <returns></returns>
+        [HttpPost("options/{optionGrpCd}")]
+        public ActionResult<DTO_RESULT> SetOptions(string optionGrpCd, [FromBody] List<Dto_MasteringOptions> options)
+        {
+            if (string.IsNullOrEmpty(optionGrpCd))
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 1 is empty");
+            if (options == null)
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 2 is empty");
+            if (options.Count <=0)
+                return StatusCode(StatusCodes.Status400BadRequest, "parameter 2 count : 0");
+
+            string systemCode = optionGrpCd.ToUpper();
+            DTO_RESULT result = new DTO_RESULT();
+            try
+            {
+                _bll.SetOptions(optionGrpCd, options);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 마이디스크, 일반소재, DL3
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost("FileValidation")]
+        public DTO_RESULT FileValidation([FromQuery] string token)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                string filePath = "";
+                if (TokenGenerator.ValidateFileToken(token, ref filePath))
+                {
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
+                        result.ErrorMsg = "등록된 파일이 없습니다.";
+                        return result;
+                    }
+
+                    var option = _bll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+                    var userInfo = GetStorageUserInfo(option);
+                    var hostName = CommonUtility.GetHost(filePath);
+                    NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
+                    if (!System.IO.File.Exists(filePath))
+                    {
+                        result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
+                        result.ErrorMsg = "스토리지에 파일이 없습니다.";
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
+                    result.ErrorMsg = "등록된 파일이 없습니다.";
+                    return result;
+                }
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 음반기록실
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost("SongValidation")]
+        public DTO_RESULT SongValidation([FromQuery] string token)
+        {
+            DTO_RESULT result = new DTO_RESULT();
+
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    result.ErrorMsg = "등록된 파일이 없습니다.";
+                    result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                }
+                else
+                {
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+            return result;
+        }
+        Dictionary<string, string> GetStorageUserInfo(IList<Dto_MasteringOptions> option)
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("id", option.ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString());
+            dictionary.Add("pass", option.ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString());
+            return dictionary;
         }
     }
 }

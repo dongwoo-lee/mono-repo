@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="효과음" />
+        <piaf-breadcrumb heading="효과음" tooltip="정보컨텐츠부 효과음 검색" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -37,13 +37,14 @@
           :fields="fields"
           :rows="responseData.data"
           :isTableLoading="isTableLoading"
-          is-actions-slot
+          :is-actions-slot="slot"
         >
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :isActionsSlot="slot"
               @preview="onPreview"
               @download="onDownloadMusic"
               @mydiskCopy="onCopyToMySpacePopup"
@@ -55,6 +56,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromMusic"
           @close="copyToMySpacePopup = false"
         >
@@ -87,13 +89,14 @@ export default {
       streamingUrl: "/api/musicsystem/streaming",
       waveformUrl: "/api/musicsystem/waveform",
       tempDownloadUrl: "/api/musicsystem/temp-download",
-
+      MySpaceScreenName: "[효과음]",
+      slot: true,
       searchItems: {
         searchText: "",
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: "DESC"
+        sortValue: "DESC",
       },
       isTableLoading: false,
       fields: [
@@ -102,40 +105,40 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "name",
           title: "효과음명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold"
+          dataClass: "center aligned text-center bold",
         },
         {
           name: "description",
           title: "설명",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center"
+          dataClass: "center aligned text-center",
         },
         {
           name: "duration",
           title: "길이(초)",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold"
+          dataClass: "center aligned text-center bold",
         },
         {
           name: "audioFormat",
           title: "오디오 포맷",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center"
+          dataClass: "center aligned text-center",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
-        }
-      ]
+          width: "6%",
+        },
+      ],
     };
   },
   methods: {
@@ -143,7 +146,7 @@ export default {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       this.$http
         .get(`/api/musicsystem/effect`, { params: this.searchItems })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res, "normal");
           this.isTableLoading = false;
         });
@@ -151,7 +154,7 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}`;
       return tmpName;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -3,6 +3,8 @@ using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL;
 using M30.AudioFile.DAL.Dao;
+using M30.AudioFile.DAL.Dto;
+using MAMBrowser.MAMDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,10 @@ namespace MAMBrowser.BLL
         public int UpdateUserDetail(List<M30_COMM_USER_EXT> updateDtoList)
         {
             return _dao.UpdateUserDetail(updateDtoList);
+        }
+        public int UpdateUserOption(M30_COMM_USER_EXT dto)
+        {
+            return _dao.UpdateUserOption(dto);
         }
 
         public DTO_USER_DETAIL GetUserSummary(string id)
@@ -72,6 +78,44 @@ namespace MAMBrowser.BLL
         public int UpdateRole(List<M30_COMM_ROLE_EXT> updateDtoList)
         {
             return _dao.UpdateRole(updateDtoList);
+        }
+
+        public void SetOptions(string optionGrpCd, List<Dto_MasteringOptions> options)
+        {
+            var selectOptions = _dao.GetOptions(optionGrpCd);
+            if (selectOptions == null || selectOptions.Count == 0)
+                _dao.InsertOptions(optionGrpCd, options);
+            else
+                _dao.UpdateOptions(optionGrpCd, options);
+        }
+        public IList<Dto_MasteringOptions> GetOptions(string optionGrpCd)
+        {
+            return _dao.GetOptions(optionGrpCd);
+        }
+        public IList<DTO_MASTERING_INFO> GetMasteringStatus(string userId)
+        {
+            List<string> workStatus = new List<string>();
+            workStatus.Add("0");
+            workStatus.Add("1");
+            workStatus.Add("2");
+            workStatus.Add("3");
+            workStatus.Add("4");
+            return _dao.GetMasteringStatus(null, null, userId, workStatus);
+        }
+        public IList<DTO_MASTERING_INFO> GetMasteringLogs(string startDt, string endDt, string userId)
+        {
+            List<string> workStatus = new List<string>();
+            workStatus.Add("5");
+            workStatus.Add("6");
+            return _dao.GetMasteringStatus(startDt, endDt, userId, workStatus);
+        }
+        public IList<DTO_MENU> GetMasteringAuthority(string menuGrpCd)
+        {
+            return _dao.GetMasteringAuthority(menuGrpCd);
+        }
+        public IList<DTO_MENU> GetMasteringCategories(string menuGrpCd)
+        {
+            return _dao.GetMasteringCategories(menuGrpCd);
         }
     }
 }

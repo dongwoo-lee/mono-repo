@@ -1,13 +1,13 @@
 <template>
   <div class="common-form">
-    <b-row style="marin-top:-10px;">
+    <b-row style="marin-top: -10px">
       <b-card class="w-100">
         <!-- 검색 영역 -->
         <b-container fluid>
           <div class="search-form-area">
             <b-form class="search-form" @submit.stop>
               <b-row>
-                  <slot name="form-search-area"></slot>
+                <slot name="form-search-area"></slot>
               </b-row>
             </b-form>
           </div>
@@ -18,21 +18,31 @@
           <!-- 버튼 모음 -->
           <b-row align-v="center">
             <b-col cols="auto" class="mr-auto pt-3 form-btn">
-                <b-form class="mb-1" inline :isDisplayBtnArea="isDisplayBtnArea" @submit.stop>
-                    <slot name="form-btn-area"></slot>
-                </b-form>
+              <b-form
+                class="mb-1"
+                inline
+                :isDisplayBtnArea="isDisplayBtnArea"
+                @submit.stop
+              >
+                <slot name="form-btn-area"></slot>
+              </b-form>
             </b-col>
             <!-- 페이지 정보 -->
             <b-col v-if="isDisplayPageArea" cols="auto" class="pt-3">
               <div class="page-info-group">
                 <div class="page-info">
-                    <slot name="form-table-page-area"></slot>
+                  <slot name="form-table-page-area"></slot>
                 </div>
                 <div v-if="isDisplayPageSize" class="page-size">
-                  <b-form-select :value="searchItems.rowPerPage" @change="onChagne">
+                  <b-form-select
+                    :value="searchItems.rowPerPage"
+                    @change="onChagne"
+                  >
                     <b-form-select-option value="30">30개</b-form-select-option>
                     <b-form-select-option value="50">50개</b-form-select-option>
-                    <b-form-select-option value="100">100개</b-form-select-option>
+                    <b-form-select-option value="100" v-if="templateVal"
+                      >100개</b-form-select-option
+                    >
                   </b-form-select>
                 </div>
               </div>
@@ -49,31 +59,35 @@
 </template>
 <script>
 export default {
-    props: ['searchItems', 'isDisplayBtnArea'],
-    props: {
-      searchItems: {
-        type: Object,
-        default: () => ({
-          rowPerPage: 0
-        })
-      },
-      isDisplayBtnArea: {
-        type: Boolean,
-        default: false,
-      },
-      isDisplayPageArea: {
-        type: Boolean,
-        default: true,
-      },
-      isDisplayPageSize: {
-        type: Boolean,
-        default: true,
-      }
+  props: ["searchItems", "isDisplayBtnArea"],
+  props: {
+    searchItems: {
+      type: Object,
+      default: () => ({
+        rowPerPage: 0,
+      }),
     },
-    methods: {
-        onChagne(rowPerpage) {
-            this.$emit('changeRowPerpage', rowPerpage);
-        }
-    }
-}
+    isDisplayBtnArea: {
+      type: Boolean,
+      default: false,
+    },
+    isDisplayPageArea: {
+      type: Boolean,
+      default: true,
+    },
+    isDisplayPageSize: {
+      type: Boolean,
+      default: true,
+    },
+    templateVal: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  methods: {
+    onChagne(rowPerpage) {
+      this.$emit("changeRowPerpage", rowPerpage);
+    },
+  },
+};
 </script>

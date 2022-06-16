@@ -43,7 +43,7 @@ const data = [
       },
       {
         icon: "iconsminds-blackboard",
-        label: "menu.pro-materials", // (구)프로소재
+        label: "menu.pro-materials", // 프로소재
         to: "/app/pro-materials",
         // newWindow: true
       }
@@ -125,6 +125,68 @@ const data = [
     icon: "iconsminds-three-arrow-fork",
     label: "menu.dl3", // DL3.0
     to: "/app/dl3"
+  },
+  {
+    id: "cuesheet", // 큐시트
+    icon: "iconsminds-testimonal",
+    label: "menu.cuesheet",
+    subs: [
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-old-list", // (구)DAP 목록
+        to: "/app/cuesheet/old/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-old-detail", // (구)DAP 작성
+        to: "/app/cuesheet/old/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-day-list", // 일큐시트 목록
+        to: "/app/cuesheet/day/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-day-detail", // 일큐시트 작성
+        to: "/app/cuesheet/day/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-week-list", // 기본큐시트 목록
+        to: "/app/cuesheet/week/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-week-detail", // 기본큐시트 목록
+        to: "/app/cuesheet/week/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-template-list", //템플릿 목록
+        to: "/app/cuesheet/template/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-template-detail", //템플릿
+        to: "/app/cuesheet/template/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-list", // 이전 큐시트 목록
+        to: "/app/cuesheet/previous/list",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-list", // 이전 큐시트 목록
+        to: "/app/cuesheet/previous/detail",
+      },
+      {
+        icon: "iconsminds-notepad",
+        label: "menu.cuesheet-favorite", // 즐겨찾기
+        to: "/app/cuesheet/favorite",
+      }
+    ]
   },
 ];
 export default data;

@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="음반 기록실" />
+        <piaf-breadcrumb
+          heading="음반 기록실"
+          tooltip="정보컨텐츠부 음반 기록실 검색"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -20,7 +23,7 @@
 
             <b-form-checkbox
               class="custom-checkbox-group"
-              style="margin-right:10px"
+              style="margin-right: 10px"
               v-model="allSelected"
               :indeterminate="indeterminate"
               aria-describedby="selectedSearchType1"
@@ -112,6 +115,7 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromMusic"
           @close="copyToMySpacePopup = false"
         >
@@ -151,6 +155,7 @@ export default {
       streamingUrl: "/api/musicsystem/streaming",
       waveformUrl: "/api/musicsystem/waveform",
       tempDownloadUrl: "/api/musicsystem/temp-download",
+      MySpaceScreenName: "[음원]",
       allSelected: false,
       indeterminate: false,
 
@@ -162,7 +167,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       selectedSearchType1: [],
       selectedGradeType: [],
@@ -171,7 +176,7 @@ export default {
       searchTypes1: [
         { label: "국내", code: 1 },
         { label: "국외", code: 2 },
-        { label: "클래식", code: 4 }
+        { label: "클래식", code: 4 },
       ],
       searchTypes2: [
         { label: "전체", code: "song_idx" },
@@ -179,13 +184,13 @@ export default {
         { label: "곡명/아티스트", code: "songname_artist_idx" },
         { label: "아티스트", code: "song_artist_idx" },
         { label: "배열번호", code: "song_disc_arr_num_idx" },
-        { label: "국가명", code: "song_country_name_idx" }
+        { label: "국가명", code: "song_country_name_idx" },
       ],
       gradeTypes: [
         { label: "히트", code: 1 },
         { label: "금지", code: 2 },
         { label: "주의", code: 4 },
-        { label: "청소년 유해", code: 8 }
+        { label: "청소년 유해", code: 8 },
       ],
       isTableLoading: false,
       fields: [
@@ -194,72 +199,72 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "5%",
         },
         {
           name: "name",
           title: "곡명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "10%"
+          width: "10%",
         },
         {
           name: "artistName",
           title: "아티스트",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "8%"
+          width: "8%",
         },
         {
           name: "duration",
           title: "재생시간",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "8%",
         },
         {
           name: "albumName",
           title: "음반명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          width: "15%"
+          width: "15%",
         },
         {
           name: "releaseDate",
           title: "발매년도",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "10%",
         },
         {
           name: "composer",
           title: "작곡가",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "8%",
         },
         {
           name: "writer",
           title: "작사가",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
+          width: "8%",
         },
         {
           name: "sequenceNO",
           title: "배열번호",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%"
+          width: "10%",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
-        }
-      ]
+          width: "6%",
+        },
+      ],
     };
   },
 
@@ -270,17 +275,16 @@ export default {
       var params = this.searchItems;
       params.searchType1 = 0;
       params.gradeType = 0;
-      this.selectedSearchType1.forEach(element => {
+      this.selectedSearchType1.forEach((element) => {
         params.searchType1 += element;
       });
 
-      this.selectedGradeType.forEach(element => {
+      this.selectedGradeType.forEach((element) => {
         params.gradeType += element;
       });
-
       this.$http
         .get(`/api/MusicSystem/music`, { params: this.searchItems })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -297,15 +301,15 @@ export default {
     onAgree() {
       this.downloadMusic({
         item: this.copyrightItem,
-        downloadName: this.downloadName(this.copyrightItem)
+        downloadName: this.downloadName(this.copyrightItem),
       });
       this.soundCopyrightPopup = false;
     },
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.artistName}_${rowData.sequenceNO}`;
       return tmpName;
-    }
-  }
+    },
+  },
   // watch: {
   //   selectedSearchType1(newVal, oldVal) {
   //     // Handle changes in individual flavour checkboxes

@@ -11,6 +11,9 @@ const state = {
 }
 
 const getters = {
+  getMenus(state) {
+    return state.menu
+  },
   getMenuType(state) {
     return state.menuType
   },
@@ -85,7 +88,7 @@ const mutations = {
     }
     state.menuType = nextClasses
     state.clickCount = clickIndex
-    state.selectedMenuHasSubItems=selectedMenuHasSubItems
+    state.selectedMenuHasSubItems = selectedMenuHasSubItems
   },
 
   changeSelectedMenuHasSubItems(state, payload) {
@@ -109,7 +112,7 @@ const mutations = {
     } else {
       nextClasses = currentClasses.join(' ') + ' main-show-temporary';
     }
-    
+
     state.menuType = nextClasses
     state.clickCount = 0
   },
@@ -120,19 +123,19 @@ const mutations = {
 }
 
 const actions = {
-  getMenus({commit}) {
+  getMenus({ commit }) {
     const userId = sessionStorage.getItem(USER_ID);
     $http.get(`/api/users/${userId}/menu`).then(response => {
-      const {status, data } = response;
+      const { status, data } = response;
       if (status === 200 && data.resultCode === 0) {
         commit('SET_MENUS', response.data.resultObject.data);
       } else {
         $fn.notify('error', { title: '메뉴 조회 실패', message: data.errorMsg });
       }
     })
-    .catch(error=> {
-      console.error(error);
-    })
+      .catch(error => {
+        console.error(error);
+      })
   },
 }
 

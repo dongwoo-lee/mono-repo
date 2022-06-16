@@ -46,7 +46,7 @@ const url = [
         icon: "iconsminds-blackboard",
     },
     {
-        // (구)프로소재
+        // 프로소재
         id: "S01G01C013",
         to: "/app/products/pro-mt",
         icon: "iconsminds-blackboard",
@@ -109,7 +109,7 @@ const url = [
         icon: "iconsminds-notepad",
     },
     {
-       // Filler(PR)
+        // Filler(PR)
         id: "S01G01C021",
         to: "/app/combinationmd/filler",
         icon: "iconsminds-notepad",
@@ -137,6 +137,77 @@ const url = [
         id: "S01G01C006",
         to: "/app/dl30",
         icon: "iconsminds-big-data",
+    },
+    {
+        // 큐시트
+        id: "S01G01C025",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // (구)DAP
+        id: "S01G01C031",
+        to: "/app/cuesheet/old/list",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // (구)DAP 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/old/detail",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 일일 큐시트
+        id: "S01G01C026",
+        to: "/app/cuesheet/day/list",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 일일 큐시트 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/day/detail",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 기본 큐시트
+        id: "S01G01C027",
+        to: "/app/cuesheet/week/list",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 기본 큐시트 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/week/detail",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 템플릿
+        id: "S01G01C028",
+        to: "/app/cuesheet/template/list",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 템플릿 작성
+        id: "S01G01C025",
+        to: "/app/cuesheet/template/detail",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 이전 큐시트 조회
+        id: "S01G01C029",
+        to: "/app/cuesheet/previous/list",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 이전 큐시트
+        id: "S01G01C025",
+        to: "/app/cuesheet/previous/detail",
+        icon: "iconsminds-testimonal",
+    },
+    {
+        // 즐겨찾기
+        id: "S01G01C030",
+        to: "/app/cuesheet/favorite",
+        icon: "iconsminds-testimonal",
     },
 ]
 

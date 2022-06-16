@@ -1,4 +1,5 @@
 ﻿using FluentFTP;
+using M30.AudioFile.Common;
 using MAMBrowser.Helpers;
 using System;
 using System.IO;
@@ -63,9 +64,9 @@ namespace MAMBrowser.Foundation
         }
         public bool DownloadFile(string fromPath, string toPath)
         {
-            string relativePath = MAMUtility.GetRelativePath(fromPath);
+            string relativePath = CommonUtility.GetRelativePath(fromPath);
             relativePath = relativePath.Replace(@"\", @"/");
-            var sourceHost = MAMUtility.GetHost(fromPath);
+            var sourceHost = CommonUtility.GetHost(fromPath);
             using (Stream toStream = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite))
             {
                 bool result = false;
@@ -85,8 +86,8 @@ namespace MAMBrowser.Foundation
         {
             //using ()
             //{
-            string relativePath = MAMUtility.GetRelativePath(path);
-            var sourceHost = MAMUtility.GetHost(path);
+            string relativePath = CommonUtility.GetRelativePath(path);
+            var sourceHost = CommonUtility.GetHost(path);
             relativePath = relativePath.Replace(@"\", @"/");
 
             FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass);
@@ -101,12 +102,12 @@ namespace MAMBrowser.Foundation
         public bool ExistFile(string fromPath)
         {
             bool result = false;
-            var sourceHost = MAMUtility.GetHost(fromPath);
+            var sourceHost = CommonUtility.GetHost(fromPath);
             using (FtpClient ftpClient = new FtpClient(FTP + sourceHost, UserId, UserPass))
             {
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
 
-                string relativePath = MAMUtility.GetRelativePath(fromPath);
+                string relativePath = CommonUtility.GetRelativePath(fromPath);
                 relativePath = relativePath.Replace(@"\", @"/");
 
                 if (!ftpClient.FileExists(relativePath))
@@ -121,7 +122,7 @@ namespace MAMBrowser.Foundation
             using (FtpClient ftpClient = new FtpClient(FTP + UploadHost, UserId, UserPass))
             {
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
-                string relativePath = MAMUtility.GetRelativePath(filePath);
+                string relativePath = CommonUtility.GetRelativePath(filePath);
                 relativePath = relativePath.Replace(@"\", @"/");
 
                 if (ftpClient.FileExists(relativePath))

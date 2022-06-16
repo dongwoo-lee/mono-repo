@@ -51,6 +51,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("files/{userId}")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] M30_MAM_PRIVATE_SPACE metaData)
         {
+            
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
@@ -388,6 +389,30 @@ namespace MAMBrowser.Controllers
                 _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 복원 : {UTF8JsonSerializer.Serialize(titles)}", null);
             }
             catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+
+        [HttpGet("GetMultipleFileInfo")]
+        public DTO_RESULT<IList<DTO_PRIVATE_FILE>> GetMultipleFileInfo([FromQuery] string ids)
+        {
+            DTO_RESULT<IList<DTO_PRIVATE_FILE>> result = new DTO_RESULT<IList<DTO_PRIVATE_FILE>>();
+            try
+            {
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                List<long> list = new List<long>();
+                long[] array = JsonSerializer.Deserialize<long[]>(ids);
+                foreach(var id in array)
+                {
+                    list.Add(id);
+                }
+                result.ResultObject = _bll.Get(list);
+            }
+            catch(Exception ex)
             {
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
                 result.ErrorMsg = ex.Message;

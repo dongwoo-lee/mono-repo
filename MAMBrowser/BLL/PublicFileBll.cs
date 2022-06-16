@@ -22,42 +22,43 @@ namespace MAMBrowser.BLL
     
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PUBLIC_SPACE metaData)
         { //유효성검사
-            var validateResult = VerifyModel(userId, metaData, fileName);
+            //var validateResult = VerifyModel(userId, metaData, fileName);
 
-            if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
-            {
-                return validateResult;
-            }
-            else
-            {
-                long ID = _dao.GetID();
-                string date = DateTime.Now.ToString(Define.DTM8);
-                string newFileName = $"{ID.ToString() }_{fileName}";
-                var relativeSourceFolder = $"{_fileSystem.TmpUploadFolder}";
-                var relativeTargetFolder = @$"{_fileSystem.UploadFolder}\{userId}\{userId}-{date}";      //공유소재도 유저확장ID 사용?, 분류코드별로...필요해보임.
-                var relativeSourcePath = @$"{relativeSourceFolder}\{newFileName}";
-                var relativeTargetPath = @$"{relativeTargetFolder}\{newFileName}";
+            //if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
+            //{
+            //    return validateResult;
+            //}
+            //else
+            //{
+            //    long ID = _dao.GetID();
+            //    string date = DateTime.Now.ToString(Define.DTM8);
+            //    string newFileName = $"{ID.ToString() }_{fileName}";
+            //    var relativeSourceFolder = $"{_fileSystem.TmpUploadFolder}";
+            //    var relativeTargetFolder = @$"{_fileSystem.UploadFolder}\{userId}\{userId}-{date}";      //공유소재도 유저확장ID 사용?, 분류코드별로...필요해보임.
+            //    var relativeSourcePath = @$"{relativeSourceFolder}\{newFileName}";
+            //    var relativeTargetPath = @$"{relativeTargetFolder}\{newFileName}";
 
-                var headerStream = AudioEngine.GetHeaderStream(stream);
-                headerStream.Position = 0;
-                var audioFormat = AudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
-                headerStream.Position = 0;
+            //    var headerStream = MAMAudioEngine.GetHeaderStream(stream);
+            //    headerStream.Position = 0;
+            //    var audioFormat = MAMAudioEngine.GetAudioFormat(headerStream, relativeTargetPath);
+            //    headerStream.Position = 0;
 
-                _fileSystem.MakeDirectory(relativeSourceFolder);
-                _fileSystem.Upload(headerStream, stream, relativeSourcePath);
-                _fileSystem.MakeDirectory(relativeTargetFolder);
-                _fileSystem.Move(relativeSourcePath, relativeTargetPath);
-                stream.Dispose();
-                headerStream.Dispose();
+            //    _fileSystem.MakeDirectory(relativeSourceFolder);
+            //    _fileSystem.Upload(headerStream, stream, relativeSourcePath);
+            //    _fileSystem.MakeDirectory(relativeTargetFolder);
+            //    _fileSystem.Move(relativeSourcePath, relativeTargetPath);
+            //    stream.Dispose();
+            //    headerStream.Dispose();
 
-                metaData.SEQ = ID;
-                metaData.USER_ID = userId;
-                metaData.AUDIO_FORMAT = audioFormat;
-                metaData.FILE_PATH = @$"\\{_fileSystem.UploadHost}\{relativeTargetPath}";
-                _dao.Insert(metaData);
+            //    metaData.SEQ = ID;
+            //    metaData.USER_ID = userId;
+            //    metaData.AUDIO_FORMAT = audioFormat;
+            //    metaData.FILE_PATH = @$"\\{_fileSystem.UploadHost}\{relativeTargetPath}";
+            //    _dao.Insert(metaData);
 
-                return validateResult;
-            }
+            //    return validateResult;
+                return null;
+            //}
         }
         public bool Delete(long seq)
         {

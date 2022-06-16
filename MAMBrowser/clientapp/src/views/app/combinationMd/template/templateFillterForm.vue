@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb :heading="heading" />
+        <piaf-breadcrumb :heading="heading" :tooltip="tooltip" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -48,7 +48,7 @@
         <!-- 제작자 -->
         <b-form-group label="제작자" class="has-float-label">
           <common-vue-select
-            style="width:220px;"
+            style="width: 220px"
             :suggestions="editorOptions"
             @inputEvent="onEditorSelected"
           ></common-vue-select>
@@ -100,9 +100,14 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
           </template>
@@ -111,13 +116,32 @@
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
         </CopyToMySpacePopup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        :fillerType="fillerType"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
+    <!-- 방송의뢰 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -136,12 +160,21 @@
 import MixinFillerPage from "../../../../mixin/MixinFillerPage";
 import CopyToMySpacePopup from "../../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import FileDelete from "../../../../components/FileUpload/FileUpdate/FileDelete.vue";
+import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinFillerPage],
-  props: ["heading", "screenName"],
+  props: ["heading", "screenName", "tooltip"],
   data() {
     return {
+      deleteId: "",
+      metaUpdate: false,
+      metaDelete: false,
+      fillerType: "",
+      rowData: "",
+      updateScreenName: "",
       searchItems: {
         brd_dt: "", // 방송일
         cate: "", // 분류
@@ -152,7 +185,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       isTableLoading: false,
       fields: [
@@ -161,7 +194,7 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "categoryName",
@@ -169,14 +202,14 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "10%",
-          sortField: "categoryName"
+          sortField: "categoryName",
         },
         {
           name: "name",
           title: "소재명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name"
+          sortField: "name",
         },
         {
           name: "brdDT",
@@ -185,9 +218,9 @@ export default {
           dataClass: "center aligned text-center bold",
           width: "10%",
           sortField: "brdDT",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
-          }
+          },
         },
         {
           name: "duration",
@@ -195,7 +228,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "duration"
+          sortField: "duration",
         },
         {
           name: "editorName",
@@ -203,7 +236,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "editorName"
+          sortField: "editorName",
         },
         {
           name: "editDtm",
@@ -211,31 +244,42 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "editDtm"
+          sortField: "editDtm",
         },
         {
           name: "masteringDtm",
-          title: "마스터링일자",
+          title: "방송의뢰일자",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "masteringDtm",
           width: "12%",
-          sortField: "masteringDtm"
+          sortField: "masteringDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "7%"
-        }
-      ]
+          width: "10%",
+        },
+      ],
     };
   },
   created() {
     this.getOptions();
+    this.getScreenName();
   },
   methods: {
+    authorityCheck(e) {
+      if (
+        e.editorID == sessionStorage.getItem("user_id") ||
+        sessionStorage.getItem("authority") == "ADMIN"
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     getData() {
       if (!this.$v.searchItems.brd_dt.$invalid) {
         this.$fn.notify("inputError", {});
@@ -247,9 +291,9 @@ export default {
 
       this.$http
         .get(`/api/products/filler/${this.screenName}/${brd_dt}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -273,7 +317,82 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}_${rowData.categoryName}_${rowData.id}`;
       return tmpName;
-    }
-  }
+    },
+    getScreenName() {
+      if (this.screenName == "pr") {
+        this.MySpaceScreenName = "[Filler PR]";
+      } else if (this.screenName == "general") {
+        this.MySpaceScreenName = "[Filler 소재]";
+      } else if (this.screenName == "etc") {
+        this.MySpaceScreenName = "[Filler 기타]";
+      }
+    },
+    onMetaModifyPopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "filler";
+      if (this.screenName == "pr") {
+        this.fillerType = "pro";
+      } else if (this.screenName == "general") {
+        this.fillerType = "general";
+      } else if (this.screenName == "etc") {
+        this.fillerType = "etc";
+      }
+      this.rowData = rowData;
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/filler", e).then((res) => {
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.UpdateModalOff();
+          this.$fn.notify("primary", {
+            title: "메타 데이터 수정 성공",
+          });
+          this.onSearch();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "파일 업로드 실패: " + res.data.errorMsg,
+          });
+          this.onSearch();
+        }
+      });
+    },
+    DeleteModalOff() {
+      this.metaDelete = false;
+    },
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.rowData = rowData;
+    },
+    masteringDelete(e) {
+      axios
+        .delete(
+          `/api/Mastering/filler/${e.deleteId}?fileToken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res && res.status === 200 && !res.data.errorMsg) {
+            this.DeleteModalOff();
+            this.$fn.notify("primary", {
+              title: "파일 삭제 성공",
+            });
+            this.onSearch();
+          } else {
+            this.UpdateModalOff();
+            $fn.notify("error", {
+              message: "파일 삭제 실패: " + res.data.errorMsg,
+            });
+            this.onSearch();
+          }
+        });
+    },
+  },
 };
 </script>

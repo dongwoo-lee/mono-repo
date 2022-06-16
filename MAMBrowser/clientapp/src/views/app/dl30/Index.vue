@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="아카이브(DL)" />
+        <piaf-breadcrumb
+          heading="아카이브(DL 3.0)"
+          tooltip="라디오 송출 내역 저장 및 열람"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -74,7 +77,7 @@
         <b-row>
           <b-colxx xs="12" md="12" class="no-r-p">
             <b-table
-              style="height:580px"
+              style="height: 580px"
               class="custom-table non-h"
               ref="custom-table"
               thead-class="custom-table-color"
@@ -119,6 +122,7 @@
     <CopyToMySpacePopup
       ref="refCopyToMySpacePopup"
       :show="copyToMySpacePopup"
+      :MySpaceScreenName="MySpaceScreenName"
       @ok="onMyDiskCopyFromDl30"
       @close="copyToMySpacePopup = false"
     >
@@ -146,6 +150,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      MySpaceScreenName: "[DL3]",
       streamingUrl: "/api/Products/dl30-streaming",
       waveformUrl: "/api/Products/dl30-waveform",
       tempDownloadUrl: "/api/Products/dl30-temp-download",
@@ -157,7 +162,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       isTableLoading: false,
       fields: [
@@ -167,7 +172,7 @@ export default {
           tdClass: "list-item-heading",
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "4%" }
+          thStyle: { width: "4%" },
         },
         {
           key: "brdDate",
@@ -175,14 +180,14 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center bold",
-          thStyle: { width: "15%" }
+          thStyle: { width: "15%" },
         },
         {
           key: "recName",
           label: "녹음소재명",
           sortable: true,
           thClass: "text-center",
-          tdClass: "text-center bold"
+          tdClass: "text-center bold",
         },
         {
           key: "sourceID",
@@ -190,7 +195,7 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "7%" }
+          thStyle: { width: "7%" },
         },
         {
           key: "duration",
@@ -198,7 +203,7 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "10%" }
+          thStyle: { width: "10%" },
         },
         {
           key: "fileSize",
@@ -207,9 +212,9 @@ export default {
           thClass: "text-center",
           tdClass: "text-center",
           thStyle: { width: "10%" },
-          formatter: v => {
+          formatter: (v) => {
             return this.$fn.formatBytes(v);
-          }
+          },
         },
         {
           key: "regDtm",
@@ -217,17 +222,17 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "15%" }
+          thStyle: { width: "15%" },
         },
         {
           key: "actions",
           label: "추가작업",
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "6%" }
-        }
+          thStyle: { width: "6%" },
+        },
       ],
-      dlDeviceOptions: []
+      dlDeviceOptions: [],
     };
   },
   created() {
@@ -252,9 +257,9 @@ export default {
 
       this.$http
         .get(`/api/products/dl30/${media}/${regDtm}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res, "normal");
           this.isTableLoading = false;
         });
@@ -269,8 +274,8 @@ export default {
         this.searchItems.dlDeviceSeq = this.dlDeviceOptions[0].id;
         this.getData();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style scope>

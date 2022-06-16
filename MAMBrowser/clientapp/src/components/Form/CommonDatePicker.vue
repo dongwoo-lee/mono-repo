@@ -14,6 +14,7 @@
       <b-input-group-append>
         <b-form-datepicker
           v-model="date"
+          :initial-date="date | yyyyMMdd"
           button-only
           left
           aria-controls="example-input"
@@ -21,6 +22,7 @@
           :label-next-month="labelNextMonth"
           today-variant
           :hide-header="hideHeader"
+          :disabled="disabVal"
           :size="size"
           :max="maxDate"
           @input="binput"
@@ -37,53 +39,57 @@ export default {
   props: {
     value: {
       type: String,
-      default: ""
+      default: "",
     },
     groupClass: {
       type: String,
-      default: ""
+      default: "",
     },
     hideHeader: {
       type: Boolean,
-      default: true
+      default: true,
     },
     placeHolder: {
       type: String,
-      default: "YYYY-MM-DD"
+      default: "YYYY-MM-DD",
     },
     labelNextMonth: {
       type: String,
-      default: "다음달"
+      default: "다음달",
     },
     size: {
       type: String,
-      default: "sm"
+      default: "sm",
     },
     isCurrentDate: {
       type: Boolean,
-      default: true
+      default: true,
     },
     yearAgo: {
       type: Number,
-      defaut: 0
+      defaut: 0,
     },
     monthAgo: {
       type: Number,
-      defaut: 0
+      defaut: 0,
     },
     dayAgo: {
       type: Number,
-      defaut: 0
+      defaut: 0,
     },
     required: {
       type: Boolean,
-      default: false
+      default: false,
     },
     checkMinValue: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    maxDate: null
+    maxDate: null,
+    disabVal: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -93,7 +99,7 @@ export default {
       tempDate: "",
       date: "",
       inputValue: "",
-      validBeforeDate: this.getValidBeforeDate()
+      validBeforeDate: this.getValidBeforeDate(),
       // minDate: MINIMUM_DATE,
       // maxDate: this.$fn.getMaxDate()
     };
@@ -134,7 +140,7 @@ export default {
     },
     maxDate(v) {
       if (v) this.maxDateChanged = true;
-    }
+    },
   },
   methods: {
     binput() {
@@ -243,7 +249,7 @@ export default {
       );
       event.target.value = convertBeforeDate;
       this.date = convertBeforeDate;
-    }
-  }
+    },
+  },
 };
 </script>

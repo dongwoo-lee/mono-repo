@@ -232,7 +232,7 @@ export default {
   methods: {
     ...mapActions("user", ["getSummaryUser"]),
     getData() {
-      this.selectedIds = [];
+      //this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false : true;
       const userId = sessionStorage.getItem(USER_ID);
       this.$http

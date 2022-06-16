@@ -87,7 +87,14 @@ export default {
     }
   },
   actions: {
-    async verifyMeta({}, { type, title, files, categoryCD }) {
+    uploadRefresh({ dispatch }) {
+      // TopNav 디스크 갱신
+      dispatch("user/getSummaryUser", null, { root: true });
+      // 테이블 새로고침
+      const refScrollPaging = FileUploadRefElement.getScrollPaging();
+      refScrollPaging.tableRefresh();
+    },
+    async verifyMeta({ }, { type, title, files, categoryCD }) {
       let url = "";
       let params = {
         title: title,
@@ -95,14 +102,15 @@ export default {
         fileSize: files[0].size
       };
       const userId = sessionStorage.getItem(USER_ID);
-      if (type === ROUTE_NAMES.PRIVATE) {
-        url = `/api/products/workspace/private/verify/${userId}`;
-      }
 
-      if (type === ROUTE_NAMES.SHARED) {
-        url = `/api/products/workspace/public/verify/${userId}`;
-        params.categoryCD = categoryCD;
-      }
+      // if (type === ROUTE_NAMES.PRIVATE) {
+      url = `/api/products/workspace/private/verify/${userId}`;
+      // }
+
+      // if (type === ROUTE_NAMES.SHARED) {
+      //   url = `/api/products/workspace/public/verify/${userId}`;
+      //   params.categoryCD = categoryCD;
+      // }
 
       try {
         const res = await $http.post(url, params);
@@ -221,15 +229,15 @@ export default {
       };
 
       $http
-        .get(`/api/Products/request-concatenate-files`, {
+        .get(`/api/Products/concatenate-files-request`, {
           params: params,
           timeout: 120000
         })
         .then(res => {
           if (res.data && res.data.resultCode === 0) {
             const userId = encodeURIComponent(sessionStorage.getItem(USER_ID));
-            const fileName = encodeURIComponent(res.data.resultObject.data);
-            const src = `/api/products/concatenate-files?userId=${userId}&downloadName=${fileName}`;
+            const fileName = encodeURIComponent(res.data.resultObject.data.fileName);
+            const src = `/api/products/concatenate-files?userId=${userId}&filename=${fileName}&downloadname=${item.downloadName}`;
             state.downloadIframe.setAttribute("src", src);
           }
         });
@@ -267,7 +275,7 @@ export default {
       dispatch("cancel_upload");
     },
     // 파일 업로드 하단 창 호출
-    open_toast: ({}) => {
+    open_toast: ({ }) => {
       FileUploadRefElement.uploadPopup.hide(true);
       FileUploadRefElement.uploadToast.show();
     },
@@ -277,7 +285,7 @@ export default {
       FileUploadRefElement.uploadPopup.show();
     },
     // 메타 데이터 입력 팝업 호출
-    open_meta_data_popup: ({}, files) => {
+    open_meta_data_popup: ({ }, files) => {
       FileUploadRefElement.fileMetaPopup.show(files);
     },
     // 메타 데이터 입력 팝업 닫기

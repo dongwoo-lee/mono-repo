@@ -2,7 +2,10 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="프로그램" />
+        <piaf-breadcrumb
+          heading="프로그램"
+          tooltip="녹음 제작, 방송의뢰 프로그램"
+        />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -31,7 +34,7 @@
         <!-- 프로그램 -->
         <b-form-group label="프로그램" class="has-float-label">
           <common-vue-select
-            style="width:220px;"
+            style="width: 220px"
             :suggestions="pgmOptions"
             :vSelectProps="vSelectProps"
             @inputEvent="onPgmSelected"
@@ -75,17 +78,22 @@
               :rowData="props.props.rowData"
               :downloadName="downloadName(props.props.rowData)"
               :behaviorData="behaviorList"
+              :etcData="['delete', 'modify']"
+              :isPossibleUpdate="authorityCheck(props.props.rowData)"
+              :isPossibleDelete="authorityCheck(props.props.rowData)"
               @preview="onPreview"
               @download="onDownloadProduct"
               @mydiskCopy="onCopyToMySpacePopup"
+              @modify="onMetaModifyPopup"
+              @MasteringDelete="onMetaDeletePopup"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
-
         <CopyToMySpacePopup
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
+          :MySpaceScreenName="MySpaceScreenName"
           @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
@@ -93,6 +101,26 @@
       </template>
     </common-form>
 
+    <!-- 방송의뢰 메타 데이터 수정 -->
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
+
+    <!-- 방송의뢰 파일 삭제 -->
+    <transition name="slide-fade">
+      <file-delete
+        v-if="metaDelete"
+        :rowData="rowData"
+        @deleteFile="masteringDelete"
+        @DeleteModalClose="DeleteModalOff"
+      ></file-delete>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.name"
@@ -111,12 +139,23 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
 import CommonVueSelect from "../../../components/Form/CommonVueSelect.vue";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import FileDelete from "../../../components/FileUpload/FileUpdate/FileDelete.vue";
+import axios from "axios";
 export default {
-  components: { CopyToMySpacePopup, CommonVueSelect },
+  components: { CopyToMySpacePopup, CommonVueSelect, FileUpdate, FileDelete },
   mixins: [MixinBasicPage],
   data() {
     return {
+      deleteId: "",
+      userPgmList: [],
       vSelectProps: {},
+      today: this.$fn.formatDate(new Date(), "yyyyMMdd"),
+      metaUpdate: false,
+      updateScreenName: "",
+      rowData: "",
+      metaDelete: false,
+      MySpaceScreenName: "[프로그램]",
       searchItems: {
         media: "A",
         brd_dt: "",
@@ -124,7 +163,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       isTableLoading: false,
       fields: [
@@ -133,7 +172,7 @@ export default {
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "mediaName",
@@ -141,14 +180,14 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "5%",
-          sortField: "mediaName"
+          sortField: "mediaName",
         },
         {
           name: "name",
           title: "프로그램명",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
-          sortField: "name"
+          sortField: "name",
         },
         {
           name: "brdDT",
@@ -157,9 +196,9 @@ export default {
           dataClass: "center aligned text-center",
           width: "8%",
           sortField: "brdDT",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.dateStringTohaipun(v);
-          }
+          },
         },
         {
           name: "brdTime",
@@ -167,7 +206,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "7%",
-          sortField: "brdTime"
+          sortField: "brdTime",
         },
         {
           name: "status",
@@ -176,12 +215,12 @@ export default {
           dataClass: "center aligned text-center",
           width: "8%",
           sortField: "status",
-          callback: v => {
+          callback: (v) => {
             if (v === "제작중") {
               return `<span style="color:red; font-weight:600;">${v}</span>`;
             }
             return v;
-          }
+          },
         },
         {
           name: "duration",
@@ -189,7 +228,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",
-          sortField: "duration"
+          sortField: "duration",
         },
         {
           name: "editorName",
@@ -197,7 +236,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
           width: "8%",
-          sortField: "editorName"
+          sortField: "editorName",
         },
         {
           name: "editDtm",
@@ -205,7 +244,7 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "editDtm"
+          sortField: "editDtm",
         },
         {
           name: "reqCompleteDtm",
@@ -213,20 +252,20 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "12%",
-          sortField: "reqCompleteDtm"
+          sortField: "reqCompleteDtm",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%"
-        }
+          width: "10%",
+        },
       ],
       contextMenu: [
+        { name: "storage", text: "내 저장공간으로 복사" },
         { name: "download", text: "다운로드" },
-        { name: "storage", text: "내 저장공간으로 복사" }
-      ]
+      ],
     };
   },
   watch: {
@@ -249,7 +288,7 @@ export default {
         //   this.onSearch();
         // }, 500);
       }
-    }
+    },
   },
   created() {
     // 매체목록 조회
@@ -258,9 +297,33 @@ export default {
     this.getEditorForPd();
     this.$nextTick(() => {
       this.getData();
+      var userId = sessionStorage.getItem("user_id");
+
+      axios
+        .get(
+          `/api/Categories/user-pgmcodes?media=${this.searchItems.media}&userId=${userId}`
+        )
+        .then((res) => {
+          this.userPgmList = res.data.resultObject.data;
+        });
     });
   },
   methods: {
+    authorityCheck(e) {
+      if (sessionStorage.getItem("authority") != "ADMIN") {
+        if (this.userPgmList.includes(e.productID)) {
+          if (this.today <= e.brdDT) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        return true;
+      }
+    },
     mediaReset() {
       this.searchItems.pgm = null;
       this.searchItems.pgmName = null;
@@ -273,7 +336,7 @@ export default {
 
       this.$http
         .get(`/api/products/pgm/${media}`, { params: this.searchItems })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.isTableLoading = false;
           this.isScrollLodaing = false;
@@ -282,7 +345,66 @@ export default {
     downloadName(rowData) {
       var tmpName = `${rowData.name}_${rowData.brdDT}`;
       return tmpName;
-    }
-  }
+    },
+    onMetaModifyPopup(rowData) {
+      this.metaUpdate = true;
+      this.updateScreenName = "program";
+      this.rowData = rowData;
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
+    },
+    masteringUpdate(e) {
+      axios.patch("/api/Mastering/program", e).then((res) => {
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.UpdateModalOff();
+          this.$fn.notify("primary", {
+            title: "메타 데이터 수정 성공",
+          });
+          this.onSearch();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "메타 데이터 수정 실패: " + res.data.errorMsg,
+          });
+          this.onSearch();
+        }
+      });
+    },
+    onMetaDeletePopup(rowData) {
+      this.metaDelete = true;
+      this.rowData = rowData;
+    },
+    DeleteModalOff() {
+      this.metaDelete = false;
+    },
+    masteringDelete(e) {
+      axios
+        .delete(
+          `/api/Mastering/program/${e.deleteId}?fileToken=${e.fileToken}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Csrf-Token": sessionStorage.getItem("access_token"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res && res.status === 200 && !res.data.errorMsg) {
+            this.DeleteModalOff();
+            this.$fn.notify("primary", {
+              title: "파일 삭제 성공",
+            });
+            this.onSearch();
+          } else {
+            this.UpdateModalOff();
+            $fn.notify("error", {
+              message: "파일 삭제 실패: " + res.data.errorMsg,
+            });
+            this.onSearch();
+          }
+        });
+    },
+  },
 };
 </script>

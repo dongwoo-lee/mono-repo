@@ -25,6 +25,11 @@ using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using M30.AudioFile.DAL.Dao;
 using M30.AudioFile.Common.Foundation;
+using M30_CueSheetDAO.DAO;
+using M30_CueSheetDAO.Interfaces;
+using M30_CueSheetDAO;
+using M30.AudioFile.DAL.Expand.Factories.Web;
+using M30.AudioFile.DAL.WebService;
 
 namespace MAMBrowser
 {
@@ -36,7 +41,7 @@ namespace MAMBrowser
             Configuration = configuration;
         }
 
-        public  IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
         public static AppSettings AppSetting { get; set; }
 
 
@@ -125,9 +130,9 @@ namespace MAMBrowser
 
             });
         }
-       
+
         private void DISetting(IServiceCollection services)
-        { 
+        {
             //옵션 DI
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
@@ -139,12 +144,20 @@ namespace MAMBrowser
             TokenGenerator.ExpireHour = AppSetting.ExpireMusicTokenHour;
             TokenGenerator.TokenIssuer = AppSetting.TokenIssuer;
             TokenGenerator.TokenSignature = AppSetting.TokenSignature;
-            //
+
+            //큐시트 관련 DI 등록
+            services.AddTransient<ICueSheetDAO, CueSheetDAO>();
+            services.AddTransient<ICommonDAO, CommonDAO>();
+            services.AddTransient<ITemplateDAO, TemplateDAO>();
+            services.AddTransient<IFavoritesDAO, FavoritesDAO>();
+            services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
+            MAMWebFactory.Instance.Setting(AppSetting.ConnectionString);
+
             services.AddTransient<WebServerFileHelper>();
             //services.AddTransient<TransactionRepository>();
             services.AddTransient<QueryHelper>();
             services.AddTransient<HttpContextDBLogger>();
-            
+
 
             //DAL 등록
             services.AddTransient<APIDao>();
@@ -160,6 +173,12 @@ namespace MAMBrowser
             services.AddTransient<ProductsBll>();
             services.AddTransient<PublicFileBll>();
             services.AddTransient<LogBll>();
+            services.AddTransient<CueUserInfoBll>();
+            services.AddTransient<DayCueSheetBll>();
+            services.AddTransient<DefCueSheetBll>();
+            services.AddTransient<TemplateBll>();
+            services.AddTransient<FavoriteBll>();
+            services.AddTransient<ArchiveCueSheetBll>();
 
             //서비스 등록
             services.AddScoped<IUserService, UserService>();
@@ -167,14 +186,13 @@ namespace MAMBrowser
         private void StorageFactorySetting(IServiceCollection services)
         {
             //스토리지 연결정보 팩토리구성
-            //services.AddTransient(serviceProvider =>
-            //{
-            //    var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
-            //    var musicService = storagesSection.Get<MusicService>();
-            //    return musicService;
-            //});
-
-            services.AddTransient<MusicService>();
+            services.AddTransient<MusicWebService>(serviceProvider =>
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
+                var storage = storagesSection.Get<ExternalStorage>();
+                var logger = serviceProvider.GetRequiredService<ILogger<MusicWebService>>();
+                return new MusicWebService(storage, logger, Startup.AppSetting.TempDownloadPath, Startup.AppSetting.ExpireMusicTokenHour);
+            });
             services.AddTransient(serviceProvider =>
             {
                 var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
@@ -182,7 +200,14 @@ namespace MAMBrowser
                 storage.FileSystem = GetProtocol(storage);
                 return storage;
             });
-            
+            services.AddTransient(serviceProvider =>
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
+                var storage = storagesSection.Get<StorageManager>();
+                storage.FileSystem = GetProtocol(storage);
+                return storage;
+            });
+
             services.AddTransient(serviceProvider =>
             {
                 var storagesSection = Configuration.GetSection("StorageConnections:Internal:PublicWorkConnection");

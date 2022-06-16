@@ -1,6 +1,6 @@
 <template>
   <v-select
-    class="v-select"
+    :class="setClass"
     :options="suggestions"
     label="name"
     @input="inputEvent"
@@ -13,30 +13,33 @@
 <script>
 export default {
   props: {
+    setClass: {
+      type: String,
+    },
     suggestions: {
       type: Array,
       default() {
         return [];
-      }
+      },
     },
     vSelectProps: {
-      type: Object
+      type: Object,
     },
     vChangedProps: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
       selected: false,
       deselected: false,
-      vSelectValue: { id: null, name: null }
+      vSelectValue: { id: null, name: null },
     };
   },
   watch: {
     vSelectProps(value) {
       this.vSelectValue = value;
-    }
+    },
   },
   computed: {
     getChangedProps() {
@@ -45,7 +48,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
   methods: {
     blurEvent() {
@@ -78,7 +81,7 @@ export default {
         this.$emit("inputEvent", { id: e.id, name: e.name });
         this.selected = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>

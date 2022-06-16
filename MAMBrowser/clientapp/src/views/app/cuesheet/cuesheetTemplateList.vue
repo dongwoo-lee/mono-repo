@@ -1,0 +1,320 @@
+<template>
+  <div>
+    <b-row>
+      <b-colxx xxs="12">
+        <piaf-breadcrumb heading="템플릿" />
+        <div class="separator mb-3"></div>
+      </b-colxx>
+    </b-row>
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      :templateVal="false"
+      @changeRowPerpage="onChangeRowPerpage"
+    >
+      <!-- 검색 -->
+      <template slot="form-search-area">
+        <!-- 템플릿 이름 -->
+        <b-form-group label="템플릿 이름" class="has-float-label">
+          <common-input-text v-model="searchTemptitle" />
+        </b-form-group>
+        <!-- 검색 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >검색</b-button
+          >
+        </b-form-group>
+      </template>
+
+      <!-- 버튼 -->
+      <template slot="form-btn-area">
+        <b-input-group>
+          <b-button
+            variant="outline-primary default"
+            size="sm"
+            v-b-modal.modal-add
+            >템플릿 추가</b-button
+          >
+        </b-input-group>
+        <b-input-group>
+          <b-button
+            variant="outline-secondary default"
+            size="sm"
+            @click="selectDelDefCue"
+            >선택 항목 삭제</b-button
+          >
+        </b-input-group>
+      </template>
+
+      <!-- 테이블 페이지 -->
+      <template slot="form-table-page-area">
+        {{ getPageInfo() }}
+      </template>
+      <template slot="form-table-area">
+        <!-- 테이블 -->
+        <common-data-table-scroll-paging
+          ref="scrollPaging"
+          :fields="fields"
+          :rows="responseData.data"
+          :per-page="responseData.rowPerPage"
+          :totalCount="responseData.totalRowCount"
+          is-actions-slot
+          isWeekSlot="true"
+          :num-rows-to-bottom="5"
+          :isTableLoading="isTableLoading"
+          @scrollPerPage="onScrollPerPage"
+          @selectedIds="onSelectedIds"
+          @sortableclick="onSortable"
+          @refresh="onRefresh"
+        >
+          <template slot="actions" scope="props">
+            <common-actions :rowData="props.props.rowData" :widgetIndex="16">
+            </common-actions>
+          </template>
+        </common-data-table-scroll-paging>
+      </template>
+    </common-form>
+
+    <!-- 템플릿 추가 modal -->
+    <b-modal
+      id="modal-add"
+      size="lg"
+      centered
+      title="템플릿 추가"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="addTemCue"
+    >
+      <div id="modelDiv" class="d-block text-center">
+        <div class="mb-3 mt-3" style="font-size: 20px">
+          추가할 템플릿 이름을 입력해 주세요.
+        </div>
+        <div>
+          <div
+            class="dx-field-label mt-3 mb-5 pl-5 pr-0"
+            style="font-size: 15px"
+          >
+            템플릿 명 :
+          </div>
+          <div class="dx-field-value mt-3 mb-5 pr-5">
+            <DxTextBox
+              placeholder="이름없는 템플릿"
+              :maxLength="40"
+              width="320px"
+              v-model="tmpTitleTextBoxValue"
+            />
+          </div>
+        </div>
+      </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :width="100"
+          @click="addTemCue()"
+        >
+        </DxButton>
+      </template>
+    </b-modal>
+    <!-- 템플릿 삭제 modal -->
+    <b-modal
+      id="modal-del"
+      size="lg"
+      centered
+      title="템플릿 삭제"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="delTemCue"
+    >
+      <div id="modelDiv" class="d-block text-center">
+        <div class="m-3" style="font-size: 20px">
+          <div>선택된 템플릿을 삭제하시겠습니까?</div>
+        </div>
+      </div>
+      <template #modal-footer="{ cancel }">
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          text="확인"
+          styling-mode="outlined"
+          :width="100"
+          @click="delTemCue()"
+        >
+        </DxButton>
+      </template>
+    </b-modal>
+  </div>
+</template>
+
+<script>
+import { mapActions, mapGetters } from "vuex";
+import { USER_ID } from "@/constants/config";
+import MixinBasicPage from "../../../mixin/MixinBasicPage";
+import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
+import DxTextBox from "devextreme-vue/text-box";
+import DxButton from "devextreme-vue/button";
+import axios from "axios";
+import "moment/locale/ko";
+const moment = require("moment");
+const qs = require("qs");
+
+export default {
+  mixins: [MixinBasicPage],
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxTextBox,
+    DxButton,
+  },
+  data() {
+    return {
+      searchTemptitle: "",
+      searchItems: {
+        rowPerPage: 30,
+        selectPage: 1,
+      },
+      tmpTitleTextBoxValue: "이름없는 템플릿",
+      fields: [
+        {
+          name: "__checkbox",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "3%",
+        },
+        {
+          name: "tmptitle",
+          title: "템플릿 이름",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+        },
+        {
+          name: "createtime",
+          title: "최초 생성 일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+          },
+        },
+
+        {
+          name: "edittime",
+          title: "최종 편집 일시",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center bold",
+          width: "20%",
+          callback: (value) => {
+            return value === null
+              ? ""
+              : moment(value, "YYYYMMDDHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+          },
+        },
+        {
+          name: "__slot:actions",
+          title: "작업",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "13%",
+        },
+      ],
+    };
+  },
+
+  computed: {
+    ...mapGetters("cueList", ["tempCuesheetListArr"]),
+  },
+
+  mounted() {
+    this.selectedIds = [];
+    this.getData();
+  },
+  methods: {
+    ...mapActions("cueList", ["getcuesheetListArrTemp"]),
+    ...mapActions("cueList", ["addTemplate"]),
+    async getData() {
+      const userId = sessionStorage.getItem(USER_ID);
+      this.isTableLoading = this.isScrollLodaing ? false : true;
+      var params = {
+        personid: userId,
+        titie: this.searchTemptitle,
+        row_per_page: this.searchItems.rowPerPage,
+        select_page: this.searchItems.selectPage,
+      };
+      var arrListResult = await this.getcuesheetListArrTemp(params);
+      this.setResponseData(arrListResult);
+      this.addScrollClass();
+      this.isTableLoading = false;
+      this.isScrollLodaing = false;
+    },
+    // 템플릿 추가 (modal)
+    async addTemCue() {
+      const userId = sessionStorage.getItem(USER_ID);
+      var tempItem = {
+        personid: userId,
+        detail: [{ cueid: -1 }],
+        title: this.tmpTitleTextBoxValue,
+        djname: "",
+        directorname: "",
+        membername: "",
+        headertitle: "",
+        footertitle: "",
+        memo: "",
+      };
+      var pram = {
+        CueSheetDTO: tempItem,
+      };
+      await this.addTemplate(pram);
+      this.getData();
+      this.$bvModal.hide("modal-add");
+    },
+    selectDelDefCue() {
+      if (this.selectedIds.length > 0) {
+        this.$bvModal.show("modal-del");
+      } else {
+        window.$notify("error", `삭제할 템플릿을 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      }
+    },
+    //템플릿 삭제
+    async delTemCue() {
+      if (this.selectedIds.length > 0) {
+        var delcueidList = [];
+        this.selectedIds.forEach((ids) => {
+          delcueidList.push(this.tempCuesheetListArr.data[ids].cueid);
+        });
+        await axios
+          .delete(`/api/TempCueSheet/DelTempCue`, {
+            params: {
+              tempids: delcueidList,
+            },
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+          .then((res) => {
+            window.$notify("info", `템플릿 삭제완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          })
+          .catch((err) => {
+            window.$notify("error", `템플릿 삭제실패.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          });
+        this.getData();
+        this.initSelectedIds();
+        this.$bvModal.hide("modal-del");
+      }
+    },
+  },
+};
+</script>

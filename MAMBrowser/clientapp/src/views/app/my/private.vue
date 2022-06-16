@@ -50,7 +50,7 @@
           <b-button
             variant="outline-primary default"
             size="sm"
-            @click="onShowModalFileUpload"
+            @click="FileModal"
             >파일 업로드</b-button
           >
         </b-input-group>
@@ -116,17 +116,17 @@
           submitBtn="이동"
           @ok="onDelete()"
         />
-        <!-- My공간 메타데이터 수정 팝업 -->
-        <meta-data-private-modify-popup
-          ref="refMetaDataModifyPopup"
-          :show="metaDataModifyPopup"
-          @editSuccess="onEditSuccess"
-          @close="metaDataModifyPopup = false"
-        >
-        </meta-data-private-modify-popup>
       </template>
     </common-form>
-
+    <transition name="slide-fade">
+      <file-update
+        v-if="metaUpdate"
+        :rowData="rowData"
+        :updateScreenName="updateScreenName"
+        @updateFile="masteringUpdate"
+        @UpdateModalClose="UpdateModalOff"
+      ></file-update>
+    </transition>
     <PlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :title="soundItem.title"
@@ -145,14 +145,19 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import MetaDataPrivateModifyPopup from "../../../components/Popup/MetaDataPrivateModifyPopup";
-import { mapActions } from "vuex";
+import FileUpdate from "../../../components/FileUpload/FileUpdate/FileUpdate.vue";
+import { mapMutations, mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
+import axios from "axios";
 
 export default {
   mixins: [MixinBasicPage],
-  components: { MetaDataPrivateModifyPopup },
+  components: { MetaDataPrivateModifyPopup, FileUpdate },
   data() {
     return {
+      metaUpdate: false,
+      rowData: "",
+      updateScreenName: "",
       streamingUrl: "/api/products/workspace/private/streaming",
       waveformUrl: "/api/products/workspace/private/waveform",
       tempDownloadUrl: "/api/products/workspace/private/temp-download",
@@ -165,7 +170,7 @@ export default {
         rowPerPage: 30,
         selectPage: 1,
         sortKey: "",
-        sortValue: ""
+        sortValue: "",
       },
       metaDataModifyPopup: false,
       singleSelectedId: null,
@@ -176,35 +181,35 @@ export default {
           name: "__checkbox",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "3%"
+          width: "3%",
         },
         {
           name: "rowNO",
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "4%"
+          width: "4%",
         },
         {
           name: "title",
           title: "제목",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          sortField: "title"
+          dataClass: "center aligned text-center memo-ellipsis",
+          sortField: "title",
         },
         {
           name: "memo",
           title: "메모",
           titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          sortField: "memo"
+          dataClass: "center aligned text-center memo-ellipsis",
+          sortField: "memo",
         },
         {
           name: "fileExt",
           title: "파일형식",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "5%"
+          width: "5%",
         },
         {
           name: "fileSize",
@@ -213,9 +218,9 @@ export default {
           dataClass: "center aligned text-center",
           sortField: "fileSize",
           width: "8%",
-          callback: v => {
+          callback: (v) => {
             return this.$fn.formatBytes(v);
-          }
+          },
         },
         {
           name: "audioFormat",
@@ -223,25 +228,25 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           sortField: "audioFormat",
-          width: "10%"
+          width: "10%",
         },
         {
-          name: "editedDtm",
+          name: "regDtm",
           title: "등록일시",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          sortField: "editedDtm",
-          width: "12%"
+          sortField: "regDtm",
+          width: "12%",
         },
         {
           name: "__slot:actions",
           title: "추가작업",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "8%"
-        }
+          width: "8%",
+        },
       ],
-      USER_ID
+      USER_ID,
     };
   },
   created() {
@@ -250,10 +255,20 @@ export default {
     });
   },
   methods: {
+    ...mapMutations("FileIndexStore", [
+      "setFileModal",
+      "setButton",
+      "setTypeSelected",
+    ]),
     ...mapActions("file", ["open_popup"]),
+    FileModal() {
+      this.setFileModal(true);
+      this.setButton("private");
+      this.setTypeSelected("my-disk");
+    },
     SDateErrorLog() {
       this.$fn.notify("error", {
-        message: "시작 날짜가 종료 날짜보다 큽니다."
+        message: "시작 날짜가 종료 날짜보다 큽니다.",
       });
       this.hasErrorClass = true;
     },
@@ -265,21 +280,21 @@ export default {
         )
       ) {
         this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다."
+          message: "시작 날짜가 종료 날짜보다 큽니다.",
         });
         this.hasErrorClass = true;
         return;
       }
 
-      this.selectedIds = [];
+      //this.selectedIds = [];
       this.isTableLoading = this.isScrollLodaing ? false : true;
       const userId = sessionStorage.getItem(USER_ID);
 
       this.$http
         .get(`/api/products/workspace/private/meta/${userId}`, {
-          params: this.searchItems
+          params: this.searchItems,
         })
-        .then(res => {
+        .then((res) => {
           this.setResponseData(res);
           this.addScrollClass();
           this.isTableLoading = false;
@@ -290,14 +305,58 @@ export default {
     onShowModalFileUpload() {
       this.open_popup();
     },
-    onDownloadSingle(item) {
+    async onDownloadSingle(item) {
       let ids = [];
       ids.push(item.seq);
-      this.downloadWorkspace({ ids: ids, type: "private" });
+      var res = await axios.post(`/api/FileValidation?token=${item.fileToken}`);
+      if (res.status == 200 && res.data.resultCode == 0) {
+        this.downloadWorkspace({ ids: ids, type: "private" });
+      } else {
+        this.$fn.notify("error", { title: res.data.errorMsg });
+      }
     },
-    onDownloadMultiple() {
+    async onDownloadMultiple() {
       let ids = this.selectedIds;
-      this.downloadWorkspace({ ids: ids, type: "private" });
+      const sum = [];
+
+      var res = await axios.get(
+        `/api/products/workspace/private/GetMultipleFileInfo?ids=${JSON.stringify(
+          ids
+        )}`
+      );
+
+      for (const e of res.data.resultObject) {
+        try {
+          var res = await axios.post(
+            `/api/FileValidation?token=${e.fileToken}`
+          );
+          if (res.status == 200) {
+            if (res.data.resultCode == 0) {
+              sum.push(res.data.resultObject);
+            } else if (res.data.resultCode == 8) {
+              this.$fn.notify("error", {
+                title: "파일 처리 에러",
+                message: `${res.data.errorMsg} (${e.fileName})`,
+              });
+            } else if (res.data.resultCode == 6) {
+              this.$fn.notify("error", {
+                title: "파일 처리 에러",
+                message: "서버에 문제가 발생했습니다.",
+              });
+            }
+          }
+        } catch {
+          this.$fn.notify("error", {
+            title: "서버 처리 에러",
+            message: "서버에 문제가 발생했습니다.",
+          });
+        }
+      }
+
+      const result = sum.reduce((a, b) => a + b);
+      if (result == 0) {
+        this.downloadWorkspace({ ids: ids, type: "private" });
+      }
     },
     // 단일 휴지통 보내기 확인창
     onDeleteConfirm(rowData) {
@@ -310,10 +369,11 @@ export default {
     // 선택항목 휴지통 보내기 확인창
     onMultiDeleteConfirm() {
       if (this.isNoSelected()) return;
-      this.innerHtmlSelectedFileNames = this.getInnerHtmlSelectdFileNamesFromMulti(
-        this.selectedIds,
-        this.responseData.data
-      );
+      this.innerHtmlSelectedFileNames =
+        this.getInnerHtmlSelectdFileNamesFromMulti(
+          this.selectedIds,
+          this.responseData.data
+        );
       this.$bvModal.show("modalRemove");
     },
     // 휴지통 보내기
@@ -330,10 +390,10 @@ export default {
 
       this.$http
         .delete(`/api/products/workspace/private/meta/${userId}/${ids}`)
-        .then(res => {
+        .then((res) => {
           if (res.status === 200 && !res.data.errorMsg) {
             this.$fn.notify("primary", {
-              message: "휴지통으로 이동되었습니다."
+              message: "휴지통으로 이동되었습니다.",
             });
             this.$bvModal.hide("modalRemove");
             setTimeout(() => {
@@ -342,14 +402,40 @@ export default {
             }, 0);
           } else {
             this.$fn.notify("error", {
-              message: "휴지통 이동 실패: " + res.data.errorMsg
+              message: "휴지통 이동 실패: " + res.data.errorMsg,
             });
           }
         });
     },
     onMetaModifyPopup(rowData) {
-      this.$refs.refMetaDataModifyPopup.setData(rowData);
-      this.metaDataModifyPopup = true;
+      this.metaUpdate = true;
+      this.updateScreenName = "private";
+      this.rowData = rowData;
+    },
+    masteringUpdate(e) {
+      var mydisk = {
+        ID: parseInt(e.ID),
+        title: e.title,
+        memo: e.memo,
+      };
+      axios.patch("/api/Mastering/mydisk", mydisk).then((res) => {
+        if (res && res.status === 200 && !res.data.errorMsg) {
+          this.UpdateModalOff();
+          this.$fn.notify("primary", {
+            title: "메타 데이터 수정 성공",
+          });
+          this.onSearch();
+        } else {
+          this.UpdateModalOff();
+          $fn.notify("error", {
+            message: "메타 데이터 수정 실패: " + res.data.errorMsg,
+          });
+          this.onSearch();
+        }
+      });
+    },
+    UpdateModalOff() {
+      this.metaUpdate = false;
     },
     onEditSuccess() {
       this.initSelectedIds();
@@ -360,7 +446,20 @@ export default {
     },
     getMoveRecyclebinMsg() {
       return this.innerHtmlSelectedFileNames + "휴지통으로 이동하시겠습니까?";
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style>
+.memo-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.memo-ellipsis:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
+</style>
