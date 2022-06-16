@@ -124,6 +124,7 @@ export default {
     reportCategoryOptions: [],
     reportDataOptions: [],
     reportSelected: {
+      id: "",
       eventName: "",
       productId: "",
       onairTime: "",
@@ -739,6 +740,7 @@ export default {
     },
     RESET_REPORT_SELECTED(state) {
       state.reportSelected = {
+        id: "",
         eventName: "",
         productId: "",
         onairTime: "",
@@ -755,7 +757,12 @@ export default {
       state.reportCategoryOptions = [];
       state.reportMediaOptions = [];
       state.reportDataOptions = [];
-      state.reportSelected = { eventName: "", productId: "", onairTime: "" };
+      state.reportSelected = {
+        id: "",
+        eventName: "",
+        productId: "",
+        onairTime: "",
+      };
     },
     //#endregion
 
@@ -905,7 +912,12 @@ export default {
       state.reportCategoryOptions = [];
       state.reportMediaOptions = [];
       state.reportDataOptions = [];
-      state.reportSelected = { eventName: "", productId: "", onairTime: "" };
+      state.reportSelected = {
+        id: "",
+        eventName: "",
+        productId: "",
+        onairTime: "",
+      };
 
       state.fillerMetaData = {
         title: "",
