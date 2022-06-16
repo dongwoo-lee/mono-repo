@@ -10,7 +10,7 @@ const formatDate = (d, p = 'yyyyMMdd', haipunToString = true) => {
 
     let date = null;
     if (d instanceof Date) {
-        date = d;        
+        date = d;
     } else {
         let convertDate = d;
         if (d.length === 8) {
@@ -22,7 +22,7 @@ const formatDate = (d, p = 'yyyyMMdd', haipunToString = true) => {
         date = new Date(convertDate);
         if (date.toString() === 'Invalid Date') { return d; }
     }
-    
+
     const sepDate = {
         y: date.getFullYear(),
         M: ('0' + (date.getMonth() + 1)).slice(-2),
@@ -33,7 +33,7 @@ const formatDate = (d, p = 'yyyyMMdd', haipunToString = true) => {
     };
 
     const format = p.replace(/(y+|M+|d+|h+|m+|s+)/g, $v => {
-        switch($v) {
+        switch ($v) {
             case 'yyyy': return sepDate.y;
             case 'MM': return sepDate.M;
             case 'dd': return sepDate.d;
@@ -59,7 +59,7 @@ const dateStringTohaipun = (d) => {
         const sY = d.substring(0, 4);
         const sM = d.substring(4, 6);
         const sD = d.substring(6, 8);
-        
+
         return parseDate = `${sY}-${sM}-${sD}`;
     }
     return parseDate;
@@ -71,7 +71,7 @@ const dateStringTohaipun = (d) => {
  * @param {*} sDate
  * @param {*} eDate
  */
-const checkGreaterStartDate = function(sDate, eDate, emptyAllow = true) {
+const checkGreaterStartDate = function (sDate, eDate, emptyAllow = true) {
     if (!sDate || !eDate) return !emptyAllow;
     const parseStartDate = Date.parse(formatDate(sDate, 'yyyy-MM-dd'));
     const parseEndDate = Date.parse(formatDate(eDate, 'yyyy-MM-dd'));
@@ -103,13 +103,13 @@ const checkMaximumSearchDate = (date, maximumType) => {
     if (maximumType === 's') {
         maxSearchDate.setDate(maxSearchDate.getDate() + MAXIMUM_SEARCH_DATE);
         return currentDate >= maxSearchDate;
-    } 
-    
+    }
+
     if (maximumType === 'e') {
         maxSearchDate.setDate(maxSearchDate.getDate() - MAXIMUM_SEARCH_DATE);
         return currentDate <= maxSearchDate;
     }
-    
+
     return true;
 }
 
@@ -122,7 +122,7 @@ const checkBetweenDate = (date) => {
     const currentDate = Date.parse(formatDate(date, 'yyyy-MM-dd'));
     const parseStartDate = Date.parse(formatDate(MINIMUM_DATE, 'yyyy-MM-dd'));
     const parseEndDate = Date.parse(formatDate(getMaxDate(), 'yyyy-MM-dd'));
-    return currentDate >= parseStartDate  && currentDate <= parseEndDate;
+    return currentDate >= parseStartDate && currentDate <= parseEndDate;
 }
 
 /**
@@ -160,7 +160,7 @@ const notify = (type, options = { title, message, duration, permanent }) => {
     }
     if (type === 'dateError') {
         return window.$notify('error', '날짜 입력 에러', '날짜 항목을 확인해주세요.', optionInOptions);
-    }   
+    }
 
     window.$notify(type, options.title, options.message, optionInOptions);
 }
@@ -185,7 +185,7 @@ const fileDownload = (res, fileNm = '') => {
         return;
     }
 
-    const blob = new Blob([res.data], {type: res.headers['content-type'] });
+    const blob = new Blob([res.data], { type: res.headers['content-type'] });
     if (!fileName) {
         const disposition = res.headers['content-disposition'];
         if (disposition && disposition.indexOf('attachment') != -1) {
@@ -224,7 +224,7 @@ const formatMBBytes = (bytes, unit = 1048576, decimals = 1) => {
     let i = 0;
     let k = Math.floor(bytes / baseBytes);
 
-    while(k >= 1024) {
+    while (k >= 1024) {
         i = i + 1;
         k = Math.floor(k / 1024);
     }
@@ -261,30 +261,30 @@ const getFirstAccessiblePage = () => {
     return '/user/Login';
 }
 
-const isBrowserCheck = () => { 
-	const agt = navigator.userAgent.toLowerCase(); 
-	if (agt.indexOf("chrome") != -1) return 'Chrome'; 
-	if (agt.indexOf("opera") != -1) return 'Opera'; 
-	if (agt.indexOf("staroffice") != -1) return 'Star Office'; 
-	if (agt.indexOf("webtv") != -1) return 'WebTV'; 
-	if (agt.indexOf("beonex") != -1) return 'Beonex'; 
-	if (agt.indexOf("chimera") != -1) return 'Chimera'; 
-	if (agt.indexOf("netpositive") != -1) return 'NetPositive'; 
-	if (agt.indexOf("phoenix") != -1) return 'Phoenix'; 
-	if (agt.indexOf("firefox") != -1) return 'Firefox'; 
-	if (agt.indexOf("safari") != -1) return 'Safari'; 
-	if (agt.indexOf("skipstone") != -1) return 'SkipStone'; 
-	if (agt.indexOf("netscape") != -1) return 'Netscape'; 
-	if (agt.indexOf("mozilla/5.0") != -1) return 'Mozilla'; 
-	if (agt.indexOf("msie") != -1) { 
-    	let rv = -1; 
-		if (navigator.appName == 'Microsoft Internet Explorer') { 
-			let ua = navigator.userAgent; var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})"); 
-		if (re.exec(ua) != null) 
-			rv = parseFloat(RegExp.$1); 
-		} 
-		return 'Internet Explorer '+rv; 
-	} 
+const isBrowserCheck = () => {
+    const agt = navigator.userAgent.toLowerCase();
+    if (agt.indexOf("chrome") != -1) return 'Chrome';
+    if (agt.indexOf("opera") != -1) return 'Opera';
+    if (agt.indexOf("staroffice") != -1) return 'Star Office';
+    if (agt.indexOf("webtv") != -1) return 'WebTV';
+    if (agt.indexOf("beonex") != -1) return 'Beonex';
+    if (agt.indexOf("chimera") != -1) return 'Chimera';
+    if (agt.indexOf("netpositive") != -1) return 'NetPositive';
+    if (agt.indexOf("phoenix") != -1) return 'Phoenix';
+    if (agt.indexOf("firefox") != -1) return 'Firefox';
+    if (agt.indexOf("safari") != -1) return 'Safari';
+    if (agt.indexOf("skipstone") != -1) return 'SkipStone';
+    if (agt.indexOf("netscape") != -1) return 'Netscape';
+    if (agt.indexOf("mozilla/5.0") != -1) return 'Mozilla';
+    if (agt.indexOf("msie") != -1) {
+        let rv = -1;
+        if (navigator.appName == 'Microsoft Internet Explorer') {
+            let ua = navigator.userAgent; var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+            if (re.exec(ua) != null)
+                rv = parseFloat(RegExp.$1);
+        }
+        return 'Internet Explorer ' + rv;
+    }
 }
 
 const commonFunctions = {

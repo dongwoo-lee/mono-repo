@@ -113,7 +113,6 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
@@ -313,7 +312,7 @@ export default {
         if (typeof params.products == "string") {
           params.products = [params.products];
         }
-        await axios
+        await this.$http
           .post(`/api/ArchiveCueSheet/GetArchiveCueList`, params)
           .then((res) => {
             var seqnum = 0;
@@ -374,7 +373,7 @@ export default {
         } else {
           var seqnum = this.selectedIds[0];
           var cueid = this.archiveCuesheetListArr.data[seqnum].cueid;
-          await axios
+          await this.$http
             .get(`/api/ArchiveCueSheet/GetArchiveCue`, {
               params: {
                 cueid: cueid,
@@ -384,22 +383,29 @@ export default {
               },
             })
             .then((res) => {
-              //const cueSheetCons = res.data.cueSheetCons;
+              var responseCuesheetCollection = res.data.resultObject;
               if (this.MenuSelected.includes("print")) {
                 if (beforePrintData.length > 0) {
-                  res.data.printDTO.forEach((ele) => {
+                  responseCuesheetCollection.printDTO.forEach((ele) => {
                     ele.rownum = ele.rownum + beforePrintData.length;
                   });
                 }
                 var oldCueInfo = { ...this.cueInfo };
-                oldCueInfo.directorname = res.data.cueSheetDTO.directorname;
-                oldCueInfo.djname = res.data.cueSheetDTO.djname;
-                oldCueInfo.footertitle = res.data.cueSheetDTO.footertitle;
-                oldCueInfo.headertitle = res.data.cueSheetDTO.headertitle;
-                oldCueInfo.membername = res.data.cueSheetDTO.membername;
-                oldCueInfo.memo = res.data.cueSheetDTO.memo;
+                oldCueInfo.directorname =
+                  responseCuesheetCollection.cueSheetDTO.directorname;
+                oldCueInfo.djname =
+                  responseCuesheetCollection.cueSheetDTO.djname;
+                oldCueInfo.footertitle =
+                  responseCuesheetCollection.cueSheetDTO.footertitle;
+                oldCueInfo.headertitle =
+                  responseCuesheetCollection.cueSheetDTO.headertitle;
+                oldCueInfo.membername =
+                  responseCuesheetCollection.cueSheetDTO.membername;
+                oldCueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
 
-                var resultPrintData = beforePrintData.concat(res.data.printDTO);
+                var resultPrintData = beforePrintData.concat(
+                  responseCuesheetCollection.printDTO
+                );
                 if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
@@ -415,11 +421,13 @@ export default {
               }
               if (this.MenuSelected.includes("ab")) {
                 if (beforeAbData.length > 0) {
-                  res.data.normalCon.forEach((ele) => {
+                  responseCuesheetCollection.normalCon.forEach((ele) => {
                     ele.rownum = ele.rownum + beforeAbData.length;
                   });
                 }
-                var resultABData = beforeAbData.concat(res.data.normalCon);
+                var resultABData = beforeAbData.concat(
+                  responseCuesheetCollection.normalCon
+                );
                 if (resultABData.length > 500) {
                   resultABData.splice(500);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
@@ -431,7 +439,7 @@ export default {
                 eventBus.$emit("abDataSet");
               }
               var pram = {
-                data: res.data.instanceCon,
+                data: responseCuesheetCollection.instanceCon,
                 items: this.MenuSelected,
               };
               eventBus.$emit("updateCData", pram);
@@ -442,13 +450,6 @@ export default {
         }
       }
     },
-    //매체 선택시 프로그램 목록 가져오기
-    // async eventClick(e) {
-    //   var pram = { person: null, gropId: null, media: e };
-    //   var proOption = await this.getuserProOption(pram);
-    //   this.programList = this.userProOption;
-    //   this.searchItems.productid = this.userProList;
-    // },
     //매체 선택시 프로그램 목록 가져오기
     eventClick(e) {
       this.getProductName(e);

@@ -11,16 +11,11 @@ using M30.AudioFile.DAL.Dao;
 using M30.AudioFile.DAL.Dto;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
-using MAMBrowser.DTO;
-using MAMBrowser.Foundation;
-using MAMBrowser.Mockup;
-using MAMBrowser.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
 namespace MAMBrowser.Controllers
 {
@@ -30,7 +25,7 @@ namespace MAMBrowser.Controllers
     {
         private readonly IMusicService _fileService;
         private readonly APIDao _apiDao;
-        
+
         public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
             _fileService = fileService;
@@ -57,7 +52,7 @@ namespace MAMBrowser.Controllers
             public string spotid { get; set; }
             public string status { get; set; }
             public string userid { get; set; }
-            public long? deviceSeq {get; set;}
+            public long? deviceSeq { get; set; }
             public int rowperpage { get; set; }
             public int selectpage { get; set; }
             public string sortKey { get; set; }
@@ -80,270 +75,419 @@ namespace MAMBrowser.Controllers
 
         #region 소재검색 옵션
         [HttpGet("GetSearchOption")]
-        public MenuDTO GetSearchOption([FromQuery] string type)
+        public DTO_RESULT<object> GetSearchOption([FromQuery] string type)
         {
-            switch (type)
+            var result = new DTO_RESULT<object>();
+            try
             {
-                //프로그램
-                case "PGM":
-                    return MAMWebFactory.Instance.GetMenus(PageType.PGM);
-                //DL30
-                case "DL30":
-                    return MAMWebFactory.Instance.GetMenus(PageType.DL30);
-                //부조 SPOT
-                case "SCR_SPOT":
-                    return MAMWebFactory.Instance.GetMenus(PageType.SCR_SPOT);
-                //공유소재
-                case "PUBLIC_FILE":
-                    return MAMWebFactory.Instance.GetMenus(PageType.PUBLIC_FILE);
-                //취재물
-                case "REPOTE":
-                    return MAMWebFactory.Instance.GetMenus(PageType.REPOTE);
-                //프로소재
-                case "OLD_PRO":
-                    return MAMWebFactory.Instance.GetMenus(PageType.OLD_PRO);
-                //주조SB
-                case "MCR_SB":
-                    return MAMWebFactory.Instance.GetMenus(PageType.MCR_SB);
-                //부조SB
-                case "SCR_SB":
-                    return MAMWebFactory.Instance.GetMenus(PageType.SCR_SB);
-                //프로그램CM
-                case "PGM_CM":
-                    return MAMWebFactory.Instance.GetMenus(PageType.PGM_CM);
-                //CM
-                case "CM":
-                    return MAMWebFactory.Instance.GetMenus(PageType.CM);
-                //주조SPOT
-                case "MCR_SPOT":
-                    return MAMWebFactory.Instance.GetMenus(PageType.MCR_SPOT);
-                //Filler(PR)
-                case "FILLER_PR":
-                    return MAMWebFactory.Instance.GetMenus(PageType.FILLER_PR);
-                //Filler(소재)
-                case "FILLER_MT":
-                    return MAMWebFactory.Instance.GetMenus(PageType.FILLER_MT);
-                //Filler(시간)
-                case "FILLER_TIME":
-                    return MAMWebFactory.Instance.GetMenus(PageType.FILLER_TIME);
-                //Filler(기타)
-                case "FILLER_ETC":
-                    return MAMWebFactory.Instance.GetMenus(PageType.FILLER_ETC);
+                switch (type)
+                {
+                    //프로그램();
+                    case "PGM":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.PGM);
+                        break;
+                    //DL30();
+                    case "DL30":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.DL30);
+                        break;
+                    //부조 SPOT();
+                    case "SCR_SPOT":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.SCR_SPOT);
+                        break;
+                    //공유소재();
+                    case "PUBLIC_FILE":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.PUBLIC_FILE);
+                        break;
+                    //취재물();
+                    case "REPOTE":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.REPOTE);
+                        break;
+                    //프로소재();
+                    case "OLD_PRO":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.OLD_PRO);
+                        break;
+                    //주조SB();
+                    case "MCR_SB":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.MCR_SB);
+                        break;
+                    //부조SB();
+                    case "SCR_SB":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.SCR_SB);
+                        break;
+                    //프로그램CM();
+                    case "PGM_CM":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.PGM_CM);
+                        break;
+                    //CM();
+                    case "CM":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.CM);
+                        break;
+                    //주조SPOT();
+                    case "MCR_SPOT":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.MCR_SPOT);
+                        break;
+                    //Filler(PR)();
+                    case "FILLER_PR":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.FILLER_PR);
+                        break;
+                    //Filler(소재)();
+                    case "FILLER_MT":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.FILLER_MT);
+                        break;
+                    //Filler(시간)
+                    case "FILLER_TIME":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.FILLER_TIME);
+                        break;
+                    //Filler(기타)
+                    case "FILLER_ETC":
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.FILLER_ETC);
+                        break;
 
-                default:
-                    return null;
+                    default:
+                        break;
+                }
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
         #endregion
 
         #region 소재검색 테이블
         //MY 공간
         [HttpGet("GetSearchTable/MyDisk")]
-        public MyDiskResultDTO GetMyDisk([FromQuery] Pram pram)
+        public DTO_RESULT<MyDiskResultDTO> GetMyDisk([FromQuery] Pram pram)
         {
-            var dto = new MyDiskSearchOptionDTO() 
+            var result = new DTO_RESULT<MyDiskResultDTO>();
+            try
             {
-                UserID = pram.userid,
-                StartDate = pram.startDate,
-                EndDate = pram.endDate,
-                Title = pram.title,
-                Memo = pram.memo,
-                RowPerPage = pram.rowperpage,
-                SelectPage = pram.selectpage,
+                var dto = new MyDiskSearchOptionDTO()
+                {
+                    UserID = pram.userid,
+                    StartDate = pram.startDate,
+                    EndDate = pram.endDate,
+                    Title = pram.title,
+                    Memo = pram.memo,
+                    RowPerPage = pram.rowperpage,
+                    SelectPage = pram.selectpage,
+                };
+                result.ResultObject = MAMWebFactory.Instance.Search<MyDiskResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
 
-            }; 
-
-            return MAMWebFactory.Instance.Search<MyDiskResultDTO>(dto);
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
+
         //DL 3.0
         [HttpGet("GetSearchTable/DL30")]
-        public DL30ResultDTO GetDL30([FromQuery] Pram pram)
+        public DTO_RESULT<DL30ResultDTO> GetDL30([FromQuery] Pram pram)
         {
-            var dto = new DL30SearchOptionDTO()
+            var result = new DTO_RESULT<DL30ResultDTO>();
+            try
             {
-                brd_dt = pram.brddate,
-                deviceSeq = pram.deviceSeq,
-                media = pram.media,
-                name = pram.name,
-                RowPerPage = pram.rowperpage,
-                SelectPage = pram.selectpage,
+                var dto = new DL30SearchOptionDTO()
+                {
+                    brd_dt = pram.brddate,
+                    deviceSeq = pram.deviceSeq,
+                    media = pram.media,
+                    name = pram.name,
+                    RowPerPage = pram.rowperpage,
+                    SelectPage = pram.selectpage,
 
-            };
+                };
 
-            return MAMWebFactory.Instance.Search<DL30ResultDTO>(dto);
+                result.ResultObject = MAMWebFactory.Instance.Search<DL30ResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+
+            return result;
         }
 
         //MUSIC
         [HttpGet("GetSearchTable/MUSIC")]
-        public MusicResultDTO GetMUSIC([FromQuery] Pram pram)
+        public DTO_RESULT<MusicResultDTO> GetMUSIC([FromQuery] Pram pram)
         {
-            var result = new MusicResultDTO();
-            result.Result = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
-            long totalCount = 0;
+            var result = new DTO_RESULT<MusicResultDTO>();
+            try
+            {
+                result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                long totalCount = 0;
                 if (string.IsNullOrEmpty(pram.searchText))
-                    result.Result.Data = new List<DTO_SONG>();
+                    result.ResultObject.Result.Data = new List<DTO_SONG>();
                 else
-                    result.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+                    result.ResultObject.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
 
-            result.Result.TotalRowCount = totalCount;
+                result.ResultObject.Result.TotalRowCount = totalCount;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
             return result;
         }
 
         //EFFECT
         [HttpGet("GetSearchTable/EFFECT")]
-        public EFFECTResultDTO GetEFFECT([FromQuery] Pram pram)
+        public DTO_RESULT<EFFECTResultDTO> GetEFFECT([FromQuery] Pram pram)
         {
-            var result = new EFFECTResultDTO();
-            result.Result = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
-            long totalCount = 0;
+            var result = new DTO_RESULT<EFFECTResultDTO>();
+            try
+            {
+                result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
+                long totalCount = 0;
                 if (string.IsNullOrEmpty(pram.searchText))
-                    result.Result.Data = new List<DTO_EFFECT>();
+                    result.ResultObject.Result.Data = new List<DTO_EFFECT>();
                 else
-                    result.Result.Data = _fileService.SearchEffect(pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
-            result.Result.TotalRowCount = totalCount;
+                    result.ResultObject.Result.Data = _fileService.SearchEffect(pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+                result.ResultObject.Result.TotalRowCount = totalCount;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
             return result;
         }
 
         //프로그램
         [HttpGet("GetSearchTable/PGM")]
-        public PgmResultDTO GetProgram([FromQuery] Pram pram)
+        public DTO_RESULT<PgmResultDTO> GetProgram([FromQuery] Pram pram)
         {
-            var a = new PgmSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetMedia(pram.media)
-                .SetPgmName(pram.pgmname)
-                .SetEditorName(pram.editorname)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
-            
-            return MAMWebFactory.Instance.Search<PgmResultDTO>(a);
+            var result = new DTO_RESULT<PgmResultDTO>();
+            try
+            {
+                var dto = new PgmSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetMedia(pram.media)
+                    .SetPgmName(pram.pgmname)
+                    .SetEditorName(pram.editorname)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
+                result.ResultObject = MAMWebFactory.Instance.Search<PgmResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
 
         //부조 SPOT
         [HttpGet("GetSearchTable/SCR_SPOT")]
-        public ScrSpotResultDTO GetScrSpot([FromQuery] Pram pram)
+        public DTO_RESULT<ScrSpotResultDTO> GetScrSpot([FromQuery] Pram pram)
         {
-            var a = new ScrSpotSearchOptionBuilder()
-                .SetStartDate(pram.startDate)
-                .SetEndDate(pram.endDate)
-                .SetMedia(pram.media)
-                .SetPgmName(pram.pgmname)
-                .SetEditor(pram.editor)
-                .SetName(pram.name)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<ScrSpotResultDTO>();
+            try
+            {
+                var dto = new ScrSpotSearchOptionBuilder()
+                    .SetStartDate(pram.startDate)
+                    .SetEndDate(pram.endDate)
+                    .SetMedia(pram.media)
+                    .SetPgmName(pram.pgmname)
+                    .SetEditor(pram.editor)
+                    .SetName(pram.name)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<ScrSpotResultDTO>(a);
-        }
-        //공유소재
-        [HttpGet("GetSearchTable/PUBLIC_FILE")]
-        public PublicFileResultDTO GetPublic([FromQuery] Pram pram)
-        {
-            var a = new PublicSearchOptionBuilder()
-                .SetStartDate(pram.startDate)
-                .SetEndDate(pram.endDate)
-                .SetMedia(pram.media)
-                .SetCate(pram.cate)
-                .SetEditor(pram.editor)
-                .SetTitle(pram.title)
-                .SetMemo(pram.memo)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+                result.ResultObject = MAMWebFactory.Instance.Search<ScrSpotResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
 
-            return MAMWebFactory.Instance.Search<PublicFileResultDTO>(a);
-        }
-        //취재물
-        [HttpGet("GetSearchTable/REPOTE")]
-        public ReportResultDTO GetRepoter([FromQuery] Pram pram)
-        {
-            var a = new ReportSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetCate(pram.cate)
-                .SetPgmName(pram.pgmname)
-                .SetReporterName(pram.reporterName)
-                .SetEditor(pram.editor)
-                .SetName(pram.name)
-                .SetIsMastering(pram.ismastering)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
-
-            return MAMWebFactory.Instance.Search<ReportResultDTO>(a);
-        }
-        //프로소재
-        [HttpGet("GetSearchTable/OLD_PRO")]
-        public OldProResultDTO GetOldPro([FromQuery] Pram pram)
-        {
-            var a = new OldProSearchOptionBuilder()
-                .SetStartDate(pram.startDate)
-                .SetEndDate(pram.endDate)
-                .SetType(pram.type)
-                .SetCate(pram.cate)
-                .SetEditor(pram.editor)
-                .SetName(pram.name)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
-
-            var result =  MAMWebFactory.Instance.Search<OldProResultDTO>(a);
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
             return result;
         }
+
+        //공유소재
+        [HttpGet("GetSearchTable/PUBLIC_FILE")]
+        public DTO_RESULT<PublicFileResultDTO> GetPublic([FromQuery] Pram pram)
+        {
+            var result = new DTO_RESULT<PublicFileResultDTO>();
+            try
+            {
+                var dto = new PublicSearchOptionBuilder()
+                    .SetStartDate(pram.startDate)
+                    .SetEndDate(pram.endDate)
+                    .SetMedia(pram.media)
+                    .SetCate(pram.cate)
+                    .SetEditor(pram.editor)
+                    .SetTitle(pram.title)
+                    .SetMemo(pram.memo)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
+
+                result.ResultObject = MAMWebFactory.Instance.Search<PublicFileResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        //취재물
+        [HttpGet("GetSearchTable/REPOTE")]
+        public DTO_RESULT<ReportResultDTO> GetRepoter([FromQuery] Pram pram)
+        {
+            var result = new DTO_RESULT<ReportResultDTO>();
+            try
+            {
+                var dto = new ReportSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetCate(pram.cate)
+                    .SetPgmName(pram.pgmname)
+                    .SetReporterName(pram.reporterName)
+                    .SetEditor(pram.editor)
+                    .SetName(pram.name)
+                    .SetIsMastering(pram.ismastering)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
+
+                result.ResultObject = MAMWebFactory.Instance.Search<ReportResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        //프로소재
+        [HttpGet("GetSearchTable/OLD_PRO")]
+        public DTO_RESULT<OldProResultDTO> GetOldPro([FromQuery] Pram pram)
+        {
+            var result = new DTO_RESULT<OldProResultDTO>();
+            try
+            {
+                var dto = new OldProSearchOptionBuilder()
+                    .SetStartDate(pram.startDate)
+                    .SetEndDate(pram.endDate)
+                    .SetType(pram.type)
+                    .SetCate(pram.cate)
+                    .SetEditor(pram.editor)
+                    .SetName(pram.name)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
+
+                result.ResultObject = MAMWebFactory.Instance.Search<OldProResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
         //주조SB
         [HttpGet("GetSearchTable/MCR_SB")]
-        public McrSBResultDTO GetMcrSb([FromQuery] Pram pram)
+        public DTO_RESULT<McrSBResultDTO> GetMcrSb([FromQuery] Pram pram)
         {
-            var a = new McrSBearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetMedia(pram.media)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-            .Build();
-
-
-            var result = MAMWebFactory.Instance.Search<McrSBResultDTO>(a);
+            var result = new DTO_RESULT<McrSBResultDTO>();
+            try
+            {
+                var dto = new McrSBearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetMedia(pram.media)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                .Build();
+                result.ResultObject = MAMWebFactory.Instance.Search<McrSBResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
             return result;
         }
 
         //부조SB
         [HttpGet("GetSearchTable/SCR_SB")]
-        public ScrSBResultDTO GetScrSb([FromQuery] Pram pram)
+        public DTO_RESULT<ScrSBResultDTO> GetScrSb([FromQuery] Pram pram)
         {
-            var a = new ScrSBSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetMedia(pram.media)
-                .SetPgm(pram.pgm)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
-
-            var result =  MAMWebFactory.Instance.Search<ScrSBResultDTO>(a);
-            return result;
-        }
-        //프로그램CM
-        [HttpGet("GetSearchTable/PGM_CM")]
-        public PgmCMResultDTO GetPgmCm([FromQuery] Pram pram)
-        {
+            var result = new DTO_RESULT<ScrSBResultDTO>();
             try
             {
-                var a = new PgmCMSearchOptionBuilder()
+                var dto = new ScrSBSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetMedia(pram.media)
+                    .SetPgm(pram.pgm)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
+
+                result.ResultObject = MAMWebFactory.Instance.Search<ScrSBResultDTO>(dto);
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        //프로그램CM
+        [HttpGet("GetSearchTable/PGM_CM")]
+        public DTO_RESULT<PgmCMResultDTO> GetPgmCm([FromQuery] Pram pram)
+        {
+            var result = new DTO_RESULT<PgmCMResultDTO>();
+            try
+            {
+                var dto = new PgmCMSearchOptionBuilder()
               .SetBrdDate(pram.brddate)
               .SetMedia(pram.media)
               .SetPgmName(pram.pgmname)
@@ -353,151 +497,242 @@ namespace MAMBrowser.Controllers
               .SetSortValue(pram.sortValue)
               .Build();
 
-                var result = MAMWebFactory.Instance.Search<PgmCMResultDTO>(a);
-                return result;
+                result.ResultObject = MAMWebFactory.Instance.Search<PgmCMResultDTO>(dto);
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
+
         //CM
         [HttpGet("GetSearchTable/CM")]
-        public CMResultDTO GetCm([FromQuery] Pram pram)
+        public DTO_RESULT<CMResultDTO> GetCm([FromQuery] Pram pram)
         {
-            var a = new CMSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetMedia(pram.media)
-                .SetCate(pram.cate)
-                .SetPgmName(pram.pgmname)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<CMResultDTO>();
+            try
+            {
+                var dto = new CMSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetMedia(pram.media)
+                    .SetCate(pram.cate)
+                    .SetPgmName(pram.pgmname)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<CMResultDTO>(a);
+                result.ResultObject = MAMWebFactory.Instance.Search<CMResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
+
         //주조SPOT
         [HttpGet("GetSearchTable/MCR_SPOT")]
-        public McrSpotResultDTO GetMcrSpot([FromQuery] Pram pram)
+        public DTO_RESULT<McrSpotResultDTO> GetMcrSpot([FromQuery] Pram pram)
         {
-            var a = new McrSpotSearchOptionBuilder()
-                .SetStartDate(pram.startDate)
-                .SetEndDate(pram.endDate)
-                .SetMedia(pram.media)
-                .SetSpotID(pram.spotid)
-                .SetEditor(pram.editor)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<McrSpotResultDTO>();
+            try
+            {
+                var dto = new McrSpotSearchOptionBuilder()
+                    .SetStartDate(pram.startDate)
+                    .SetEndDate(pram.endDate)
+                    .SetMedia(pram.media)
+                    .SetSpotID(pram.spotid)
+                    .SetEditor(pram.editor)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<McrSpotResultDTO>(a);
+                result.ResultObject = MAMWebFactory.Instance.Search<McrSpotResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
+
         //Filler(PR)
         [HttpGet("GetSearchTable/FILLER_PR")]
-        public FillerResultDTO GetFiller([FromQuery] Pram pram)
+        public DTO_RESULT<FillerResultDTO> GetFiller([FromQuery] Pram pram)
         {
-            var a = new FillerSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetCate(pram.cate)
-                .SetEditor(pram.editor)
-                .SetName(pram.name)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<FillerResultDTO>();
+            try
+            {
+                var dto = new FillerSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetCate(pram.cate)
+                    .SetEditor(pram.editor)
+                    .SetName(pram.name)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<FillerResultDTO>(a);
+                result.ResultObject = MAMWebFactory.Instance.Search<FillerResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
+
         //Filler(소재)
         [HttpGet("GetSearchTable/FILLER_MT")]
-        public FillerMtResultDTO GetFillerMt([FromQuery] Pram pram)
+        public DTO_RESULT<FillerMtResultDTO> GetFillerMt([FromQuery] Pram pram)
         {
-            var a = new FillerMtSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetCate(pram.cate)
-                .SetEditor(pram.editor)
-                .SetName(pram.name)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<FillerMtResultDTO>();
+            try
+            {
+                var dto = new FillerMtSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetCate(pram.cate)
+                    .SetEditor(pram.editor)
+                    .SetName(pram.name)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<FillerMtResultDTO>(a);
+                result.ResultObject = MAMWebFactory.Instance.Search<FillerMtResultDTO>(dto);
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
+
         //Filler(시간)
         [HttpGet("GetSearchTable/FILLER_TIME")]
-        public FillerTimeResultDTO GetFillerTime([FromQuery] Pram pram)
+        public DTO_RESULT<FillerTimeResultDTO> GetFillerTime([FromQuery] Pram pram)
         {
-            var a = new FillerTimeSearchOptionBuilder()
-                .SetStartDate(pram.startDate)
-                .SetEndDate(pram.endDate)
-                .SetMedia(pram.media)
-                .SetCate(pram.cate)
-                .SetStatus(pram.status)
-                .SetEditor(pram.editor)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<FillerTimeResultDTO>();
+            try
+            {
+                var dto = new FillerTimeSearchOptionBuilder()
+                    .SetStartDate(pram.startDate)
+                    .SetEndDate(pram.endDate)
+                    .SetMedia(pram.media)
+                    .SetCate(pram.cate)
+                    .SetStatus(pram.status)
+                    .SetEditor(pram.editor)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<FillerTimeResultDTO>(a);
+                result.ResultObject = MAMWebFactory.Instance.Search<FillerTimeResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
+
         //Filler(기타)
         [HttpGet("GetSearchTable/FILLER_ETC")]
-        public FillerEtcResultDTO GetFillerEtc([FromQuery] Pram pram)
+        public DTO_RESULT<FillerEtcResultDTO> GetFillerEtc([FromQuery] Pram pram)
         {
-            var a = new FillerEtcSearchOptionBuilder()
-                .SetBrdDate(pram.brddate)
-                .SetCate(pram.cate)
-                .SetEditor(pram.editor)
-                .SetName(pram.name)
-                .SetRowPerPage(pram.rowperpage)
-                .SetSelectPage(pram.selectpage)
-                .SetSortKey(pram.sortKey)
-                .SetSortValue(pram.sortValue)
-                .Build();
+            var result = new DTO_RESULT<FillerEtcResultDTO>();
+            try
+            {
+                var dto = new FillerEtcSearchOptionBuilder()
+                    .SetBrdDate(pram.brddate)
+                    .SetCate(pram.cate)
+                    .SetEditor(pram.editor)
+                    .SetName(pram.name)
+                    .SetRowPerPage(pram.rowperpage)
+                    .SetSelectPage(pram.selectpage)
+                    .SetSortKey(pram.sortKey)
+                    .SetSortValue(pram.sortValue)
+                    .Build();
 
-            return MAMWebFactory.Instance.Search<FillerEtcResultDTO>(a);
+                result.ResultObject = MAMWebFactory.Instance.Search<FillerEtcResultDTO>(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
         }
         #endregion
 
-        //공유소재 > 분류 옵션
+        //공유소재 > 분류 옵션 (웹 큐시트에서 제외 됨, 추후 추가될 시 테스트 필요)
         [HttpGet("GetPublicSecond")]
-        public MenuDTO GetPublicSecond([FromQuery] string media)
+        public DTO_RESULT<object> GetPublicSecond([FromQuery] string media)
         {
-            return MAMWebFactory.Instance.GetSubMenu(PageType.PUBLIC_FILE, new MenuParamDTO() { Media = media });
-        }
-        //부조SB > pgmcode
-        [HttpGet("GetPgmcodes")]
-        public MenuDTO GetPgmcodes([FromQuery] string media, string brd_dt)
-        {
-            return MAMWebFactory.Instance.GetSubMenu(PageType.SCR_SB, new MenuParamDTO() { Media = media, BrdDate= brd_dt});
-        }
-        //음반기록실, 효과음 Drag > Loading Test
-        [HttpPost("test")]
-        public ActionResult<bool> GetTest()
-        {
-            int mydelay = 3000;
-            Thread.Sleep(mydelay);
-            return true;
-        }
-        //음반 기록실 rowData 가져오기
-        [HttpPost("GetSongItem")]
-        public ActionResult<DTO_SONG_CACHE>GetSongMastering([FromBody] DTO_SONG pram)
-        {
+            var result = new DTO_RESULT<object>();
             try
             {
-                //목업데이터
-                //MasteringMockup mockup = new MasteringMockup();
-                //return mockup.SongMastering(pram);
+                result.ResultObject = MAMWebFactory.Instance.GetSubMenu(PageType.PUBLIC_FILE, new MenuParamDTO() { Media = media });
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
 
+        //부조SB > pgmcode (웹 큐시트에서 제외 됨, 추후 추가될 시 테스트 필요)
+        [HttpGet("GetPgmcodes")]
+        public DTO_RESULT<object> GetPgmcodes([FromQuery] string media, string brd_dt)
+        {
+            var result = new DTO_RESULT<object>();
+            try
+            {
+                result.ResultObject = MAMWebFactory.Instance.GetSubMenu(PageType.SCR_SB, new MenuParamDTO() { Media = media, BrdDate = brd_dt });
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        //음반 기록실 rowData 가져오기
+        [HttpPost("GetSongItem")]
+        public DTO_RESULT<ActionResult<DTO_SONG_CACHE>> GetSongMastering([FromBody] DTO_SONG pram)
+        {
+            var result = new DTO_RESULT<ActionResult<DTO_SONG_CACHE>>();
+            try
+            {
                 var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
                 var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
                 var requestInfo = _fileService.GetRequestInfo(musicInfo);
@@ -516,43 +751,51 @@ namespace MAMBrowser.Controllers
 
                 string fileExt = Path.GetExtension(pram.FilePath);
                 SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
-                var result = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
-
-                return result;
+                result.ResultObject = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                //StatusCode(500, ex.Message);
             }
+            return result;
         }
 
         //효과음 rowData 가져오기
         [HttpPost("GetEffectItem")]
-        public DTO_SONG_CACHE GetEffectMastering([FromBody] DTO_EFFECT pram)
+        public DTO_RESULT<DTO_SONG_CACHE> GetEffectMastering([FromBody] DTO_EFFECT pram)
         {
-            //목업데이터
-            //MasteringMockup mockup = new MasteringMockup();
-            //return mockup.EffectMastering(pram);
+            var result = new DTO_RESULT<DTO_SONG_CACHE>();
+            try
+            {
+                var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
+                var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
+                var requestInfo = _fileService.GetRequestInfo(musicInfo);
+                long fileSize;
+                var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
 
-            var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
-            var musicInfo = CommonUtility.ParseToRequestContent(pram.FileToken);
-            var requestInfo = _fileService.GetRequestInfo(musicInfo);
-            long fileSize;
-            var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize);
+                var options = GetMasteringOptions(Startup.AppSetting.ConnectionString);
+                string storageId = options.Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
+                string storagePass = options.Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
+                int sampleRate = Convert.ToInt32(options.Find(dt => dt.Name == "SAMPLE_RATE").Value);
+                int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
+                int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
 
-            var options = GetMasteringOptions(Startup.AppSetting.ConnectionString);
-            string storageId = options.Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
-            string storagePass = options.Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
-            int sampleRate = Convert.ToInt32(options.Find(dt => dt.Name == "SAMPLE_RATE").Value);
-            int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
-            int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
+                string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString(); ;
+                string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString(); ;
 
-            string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString(); ;
-            string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString(); ;
-
-            string fileExt = Path.GetExtension(pram.FilePath);
-            SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
-            var result = sm.MasteringEffect(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+                string fileExt = Path.GetExtension(pram.FilePath);
+                SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
+                result.ResultObject = sm.MasteringEffect(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
             return result;
         }
 

@@ -185,7 +185,6 @@ import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 const qs = require("qs");
 
 const date = new Date();
@@ -291,7 +290,7 @@ export default {
         pgmcode: rowData.pgmcode,
         week: rowData.weeks,
       };
-      await axios
+      await this.$http
         .get(`/api/defcuesheet/GetdefCue`, {
           params: params,
           paramsSerializer: (params) => {
@@ -299,8 +298,9 @@ export default {
           },
         })
         .then(async (res) => {
+          var responseCuesheetCollection = res.data.resultObject;
           await this.getProUserList(rowData.productid);
-          var cueData = res.data.cueSheetDTO;
+          var cueData = responseCuesheetCollection.cueSheetDTO;
           cueData.r_ONAIRTIME = cueData.detail[0].onairtime;
           cueData.activeWeekList = rowData.activeWeekList;
           cueData.cueid = rowData.cueid;
@@ -310,17 +310,19 @@ export default {
           //cueDataObj = cueData
           this.settingInfo(cueData);
           this.SET_CUEINFO(cueData);
-          this.setCueConData(res.data);
+          this.setCueConData(res.data.resultObject);
           var dataVal = false;
           for (var i = 1; i < 5; i++) {
-            res.data.instanceCon["channel_" + i].forEach((ele) => {
-              if (ele.cartcode != null) {
-                dataVal = true;
-                return;
+            responseCuesheetCollection.instanceCon["channel_" + i].forEach(
+              (ele) => {
+                if (ele.cartcode != null) {
+                  dataVal = true;
+                  return;
+                }
               }
-            });
+            );
           }
-          if (res.data.normalCon.length == 0 && !dataVal) {
+          if (responseCuesheetCollection.normalCon.length == 0 && !dataVal) {
             await this.setSponsorList({
               pgmcode: rowData.pgmcode,
             });

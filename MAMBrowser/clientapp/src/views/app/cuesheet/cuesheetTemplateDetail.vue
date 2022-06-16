@@ -162,7 +162,6 @@ import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 const qs = require("qs");
 
 export default {
@@ -250,7 +249,7 @@ export default {
       } else {
         params.cueid = rowData.detail[0].cueid;
       }
-      await axios
+      await this.$http
         .get(`/api/tempcuesheet/GettempCue`, {
           params: params,
           paramsSerializer: (params) => {
@@ -258,10 +257,10 @@ export default {
           },
         })
         .then(async (res) => {
-          var cueData = res.data.cueSheetDTO;
+          var cueData = res.data.resultObject.cueSheetDTO;
           this.settingInfo(cueData);
           this.SET_CUEINFO(cueData);
-          this.setCueConData(res.data);
+          this.setCueConData(res.data.resultObject);
         });
       var params = {
         personid: userId,

@@ -155,7 +155,6 @@ import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import DxTextBox from "devextreme-vue/text-box";
 import DxButton from "devextreme-vue/button";
-import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 const qs = require("qs");
@@ -289,7 +288,7 @@ export default {
         this.selectedIds.forEach((ids) => {
           delcueidList.push(this.tempCuesheetListArr.data[ids].cueid);
         });
-        await axios
+        await this.$http
           .delete(`/api/TempCueSheet/DelTempCue`, {
             params: {
               tempids: delcueidList,

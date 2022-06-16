@@ -135,7 +135,6 @@ import SortableWidget from "./C_SortableWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 const qs = require("qs");
 
 export default {
@@ -181,25 +180,34 @@ export default {
   methods: {
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["getProUserList"]),
+    ...mapActions("cueList", ["getarchiveCuesheetCon"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     async getCueCon() {
       let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
       var params = {
         cueid: rowData.cueid,
       };
-      await axios
-        .get(`/api/ArchiveCueSheet/GetArchiveCue`, {
-          params: params,
-          paramsSerializer: (params) => {
-            return qs.stringify(params);
-          },
-        })
-        .then((res) => {
-          this.SET_CUEINFO(res.data.cueSheetDTO);
-          this.setCueConData(res.data);
-          this.getProUserList(rowData.productid);
-        });
-      this.loadingVisible = false;
+      var archiveConData = await this.getarchiveCuesheetCon(params);
+      if (archiveConData) {
+        console.log(archiveConData);
+        this.SET_CUEINFO(archiveConData.cueSheetDTO);
+        this.setCueConData(archiveConData);
+        this.getProUserList(rowData.productid);
+        this.loadingVisible = false;
+      } else {
+        console.log("데이터를 가져올 수 없습니다."); //여기에 팝업창 뜨도록 확인해야함
+      }
+      // await this.$http
+      //   .get(`/api/ArchiveCueSheet/GetArchiveCue`, {
+      //     params: params,
+      //     paramsSerializer: (params) => {
+      //       return qs.stringify(params);
+      //     },
+      //   })
+      //   .then((res) => {
+      //     if (res.data.resultObject) {
+      //     }
+      //   });
     },
     nextOk() {
       this.nextgo = true;

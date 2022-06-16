@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using M30.AudioFile.Common;
 using Oracle.ManagedDataAccess.Client;
+using M30.AudioFile.Common.DTO;
 
 namespace MAMBrowser.Controllers
 {
@@ -52,70 +53,80 @@ namespace MAMBrowser.Controllers
 
         //일일큐시트 목록 가져오기
         [HttpPost("GetDayCueList")]
-        public DayCueList_Result GetDayCueList([FromBody] DayPram pram)
+        public DTO_RESULT<DayCueList_Page> GetDayCueList([FromBody] DayPram pram)
         {
+            DTO_RESULT<DayCueList_Page> result = new DTO_RESULT<DayCueList_Page>();
             try
             {
-                DayCueList_Result result = new DayCueList_Result();
-                result.ResultObject = new DayCueList_Page();
-                List<string> dates = setDateList(pram.start_dt, pram.end_dt);            
-                //media 추가
-                result.ResultObject = _bll.GetDayCueSheetList(pram.products, dates, pram.row_per_page, pram.select_page,pram.media);
+                List<string> dates = setDateList(pram.start_dt, pram.end_dt);
+                result.ResultObject = _bll.GetDayCueSheetList(pram.products, dates, pram.row_per_page, pram.select_page, pram.media);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
-                return result;
             }
             catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
 
         //일일큐시트 상세내용 가져오기
         [HttpGet("GetDayCue")]
-        public CueSheetCollectionDTO GetDayCue([FromQuery] string productid, string pgmcode, string brd_dt)
+        public DTO_RESULT<CueSheetCollectionDTO> GetDayCue([FromQuery] string productid, string pgmcode, string brd_dt)
         {
+            DTO_RESULT<CueSheetCollectionDTO> result = new DTO_RESULT<CueSheetCollectionDTO>();
             try
             {
-                return _bll.GetDayCueSheet(productid, pgmcode, brd_dt);
-            }
-            catch(Exception ex)
-            {
-                throw;
-            }
-        }
-        
-        [HttpGet("GetAddSponsor")]
-        public List<CueSheetConDTO> GetAddSponsor(string pgmcode, string brd_dt)
-        {
-            var toDate = DateTime.Today;
-            if (brd_dt == null)
-            {
-                brd_dt = toDate.ToString("yyyyMMdd");
-            }
-            try
-            {
-                return _bll.GetAddSponsorList(pgmcode, brd_dt);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        
-        //일일큐시트 생성 & 업데이트
-        [HttpPost("SaveDayCue")]
-        public int SaveDayCue([FromBody] CueSheetCollectionDTO pram)
-        {
-            try
-            {
-                var result = _bll.SaveDayCue(pram);
-                return result;
+                result.ResultObject = _bll.GetDayCueSheet(productid, pgmcode, brd_dt);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
+        }
 
+        //광고 가져오기
+        [HttpGet("GetAddSponsor")]
+        public DTO_RESULT<List<CueSheetConDTO>> GetAddSponsor(string pgmcode, string brd_dt)
+        {
+            DTO_RESULT<List<CueSheetConDTO>> result = new DTO_RESULT<List<CueSheetConDTO>>();
+            var toDate = DateTime.Today;
+            try
+            {
+                if (brd_dt == null)
+                {
+                    brd_dt = toDate.ToString("yyyyMMdd");
+                }
+                result.ResultObject = _bll.GetAddSponsorList(pgmcode, brd_dt);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        //일일큐시트 생성 & 업데이트
+        [HttpPost("SaveDayCue")]
+        public DTO_RESULT<int> SaveDayCue([FromBody] CueSheetCollectionDTO pram)
+        {
+            var result = new DTO_RESULT<int>();
+            try
+            {
+                result.ResultObject = _bll.SaveDayCue(pram);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+                return result;
         }
 
         //구 DAP 저장
