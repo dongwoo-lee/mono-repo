@@ -1,16 +1,18 @@
 <template>
   <!-- 미리듣기 팝업 -->
   <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
-    <template
-      slot="modal-title"
-      class="editPlayer-overflow"
-      :title="parentName"
-    >
-      <div style="display: inline-flex">
+    <template slot="modal-title">
+      <div
+        style="display: inline-flex"
+        class="editPlayer-overflow"
+        :title="title"
+      >
         <h6 v-if="parentName != ''">
           <b-badge class="mr-2" variant="dark">{{ parentName }}</b-badge>
         </h6>
-        <h5 style="line-height: 1.4">{{ title }}</h5>
+        <h5 style="line-height: 1.4" class="editPlayer-overflow">
+          {{ title }}
+        </h5>
       </div>
     </template>
     <template slot="default">
