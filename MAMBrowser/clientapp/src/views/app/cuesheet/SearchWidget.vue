@@ -121,6 +121,7 @@
           id="search_data_grid"
           :data-source="searchtable_data.columns"
           :remote-operations="true"
+          :cellHintEnabled="true"
           :height="gridHeight"
           :focused-row-enabled="false"
           :showColumnLines="true"
@@ -156,6 +157,25 @@
               }}
             </div>
           </template>
+
+          <template #maxWidth_ellipsis_title="{ data }">
+            <div
+              :title="data.data.title"
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ data.data.title }}
+            </div>
+          </template>
+
+          <template #maxWidth_ellipsis_memo="{ data }">
+            <div
+              :title="data.data.memo"
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ data.data.memo }}
+            </div>
+          </template>
+
           <template #calculate_KB_Template="{ data }">
             <div>
               {{

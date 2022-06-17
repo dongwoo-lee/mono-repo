@@ -1361,20 +1361,21 @@ let searchMenuList = {
           columns: [
             {
               dataField: "rowNO",
-              minWidth: "50",
               caption: "순서",
               alignment: "center",
               allowSorting: false,
             },
             {
-              dataField: "title",
+              cellTemplate: "maxWidth_ellipsis_title",
               caption: "제목",
               alignment: "center",
+              width: "600",
               allowSorting: false,
             },
             {
-              dataField: "memo",
+              cellTemplate: "maxWidth_ellipsis_memo",
               caption: "메모",
+              width: "600",
               alignment: "center",
               allowSorting: false,
             },
