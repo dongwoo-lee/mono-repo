@@ -15,7 +15,7 @@
     "babel-plugin-dynamic-import-polyfill": "^1.0.0",
     "bootstrap-vue": "^2.8.0",
     "core-js": "^3.20.0",
-    "devextreme": "21.2.4",
+    "devextreme": "21.2.8",
     "devextreme-aspnet-data-nojquery": "^2.8.2",
     "devextreme-vue": "21.2.4",
     "docx": "^6.0.3",
