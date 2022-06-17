@@ -579,6 +579,7 @@ export default {
           this.gridHeight = this.width_size;
           break;
       }
+      var setDataList = await this.getData(result);
       this.subtable_data = [];
     },
     async onSelectionChanged(e) {
