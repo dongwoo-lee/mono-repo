@@ -251,7 +251,6 @@ let mixinCommon = {
       // }
     },
     async onDownloadDl30(item) {
-      console.log(item);
       try {
         var res = await axios.post(
           `/api/FileValidation?token=${item.fileToken}`

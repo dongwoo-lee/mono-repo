@@ -143,71 +143,17 @@
               border: 1px solid silver;
               font-family: 'MBC 새로움 M';
             "
+            key-expr="productId"
             :data-source="pgmDataOptions"
             :selection="{ mode: 'single' }"
             :show-borders="false"
             :hover-state-enabled="true"
-            key-expr="productId"
-            :allow-column-resizing="true"
+            :allow-column-resizing="false"
+            :show-column-lines="false"
             no-data-text="No Data"
+            @row-prepared="onRowPrepared"
             @row-click="onRowClick"
           >
-            <tbody
-              slot="rowTemplate"
-              slot-scope="{
-                data: {
-                  data: {
-                    eventName,
-                    productId,
-                    onairTime,
-                    durationSec,
-                    audioClipID,
-                  },
-                },
-              }"
-              class="dx-row"
-            >
-              <tr
-                v-if="
-                  !userPgmList.includes(productId) &&
-                  eventName != '' &&
-                  role != 'ADMIN'
-                "
-                :class="[this.getProductId(productId)] ? 'disabledRow' : ''"
-              >
-                <td>{{ eventName }}</td>
-                <td>{{ productId }}</td>
-                <td>{{ onairTime }}</td>
-                <td>{{ durationSec }}</td>
-                <td
-                  :class="
-                    [this.getAudioClipID(audioClipID)] ? 'disabledGrayCell' : ''
-                  "
-                  style="text-align: center"
-                >
-                  {{ audioClipID == null ? "" : "O" }}
-                </td>
-              </tr>
-              <tr
-                v-if="
-                  (userPgmList.includes(productId) && eventName != '') ||
-                  role == 'ADMIN'
-                "
-              >
-                <td>{{ eventName }}</td>
-                <td>{{ productId }}</td>
-                <td>{{ onairTime }}</td>
-                <td>{{ durationSec }}</td>
-                <td
-                  :class="
-                    [this.getAudioClipID(audioClipID)] ? 'disabledCell' : ''
-                  "
-                  style="text-align: center"
-                >
-                  {{ audioClipID == null ? "" : "O" }}
-                </td>
-              </tr>
-            </tbody>
             <DxColumn data-field="eventName" caption="이벤트 명" />
             <DxColumn
               :width="120"
@@ -220,7 +166,16 @@
               data-field="durationSec"
               caption="편성 분량"
             />
-            <DxColumn :width="50" data-field="audioClipID" caption="파일" />
+            <DxColumn
+              :width="50"
+              caption="파일"
+              cell-template="cell-template"
+            />
+            <template #cell-template="{ data }">
+              <td style="color: red">
+                {{ data.data.audioClipID != null ? "O" : "" }}
+              </td>
+            </template>
             <DxSelection mode="single" />
             <DxScrolling mode="virtual" />
           </DxDataGrid>
@@ -346,7 +301,6 @@ export default {
       if (data) {
         this.mediaName = data.text;
       }
-      this.getPro();
     },
     onSearch() {
       this.modalOn();
@@ -363,40 +317,28 @@ export default {
       const mm = replaceVal.substring(4, 6);
       const dd = replaceVal.substring(6, 8);
       var date = yyyy + "" + mm + "" + dd;
-
       var res = await axios.get(
         `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
       );
 
       var value = res.data.resultObject.data;
+
       value.forEach((e) => {
         e.durationSec = this.getDurationSec(e.durationSec);
         e.onairTime = this.getOnAirTime(e.onairTime);
       });
-      this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
+      this.SET_PGM_DATA_OPTIONS(value);
       this.RESET_PGM_SELECTED();
     },
-    async getPro() {
-      const replaceVal = this.pgmMetaData.date.replace(/-/g, "");
-      const yyyy = replaceVal.substring(0, 4);
-      const mm = replaceVal.substring(4, 6);
-      const dd = replaceVal.substring(6, 8);
-      var date = yyyy + "" + mm + "" + dd;
-
-      this.RESET_PGM_DATA_OPTIONS();
-
-      var res = await axios.get(
-        `/api/categories/pgm-sch?media=${this.pgmMetaData.media}&date=${date}`
-      );
-
-      var value = res.data.resultObject.data;
-      value.forEach((e) => {
-        e.durationSec = this.getDurationSec(e.durationSec);
-        e.onairTime = this.getOnAirTime(e.onairTime);
-      });
-
-      this.SET_PGM_DATA_OPTIONS(res.data.resultObject.data);
-      this.RESET_PGM_SELECTED();
+    onRowPrepared(e) {
+      var role = sessionStorage.getItem("authority");
+      if (role != "ADMIN") {
+        if (e.data?.productId != null) {
+          if (!this.getProductId(e.data?.productId)) {
+            e.rowElement.style.backgroundColor = "silver";
+          }
+        }
+      }
     },
     onRowClick(v) {
       if (
