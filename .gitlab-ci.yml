@@ -4,9 +4,22 @@ Server-Build:
   - CHCP 65001
 
   script:
-    - npm -version
-
+    - dotnet build
   only:
     - schedules
 
+deploy-prod:
+  stage: deploy
+  before_script:
+  - CHCP 65001
+  script:
+    - dotnet publish -c Release -p:UseAppHost=false
+  after_script:
+    - CHCP 65001
+    - cd MAMBrowser
+    - cd clientapp
+    - npm install
+    - npm run build
 
+  only:
+    - schedules
