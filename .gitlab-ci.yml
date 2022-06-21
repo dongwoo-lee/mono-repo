@@ -1,11 +1,10 @@
 Server-Build:
   stage: build
+  before_script:
+  - CHCP 65001
+
   script:
-    - CHCP 65001
-    - cd MAMBrowser
-    - cd clientapp
-    - npm install
-    - npm run build
+    - npm -version
 
   only:
     - schedules
