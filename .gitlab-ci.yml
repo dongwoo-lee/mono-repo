@@ -4,10 +4,7 @@ Server-Build:
   - CHCP 65001
 
   script:
-    - cd MAMBrowser
-    - cd clientapp
-    - npm install
-    - npm run build
+    - Get-Location
   only:
     - schedules
 
