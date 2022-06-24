@@ -581,7 +581,6 @@ export default {
           this.logTable.endCustomLoading();
           this.$fn.notify("error", { title: error });
         });
-      console.info("res", res);
 
       var masteringLogData = [];
 
