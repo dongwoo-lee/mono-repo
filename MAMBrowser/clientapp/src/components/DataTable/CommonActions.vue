@@ -163,6 +163,9 @@ export default {
   computed: {
     ...mapGetters("user", ["roleList", "isSystemTopAdmin"]),
   },
+  mounted() {
+    console.log(this.props);
+  },
   watch: {
     $route: {
       handler(to, from) {

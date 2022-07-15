@@ -23,24 +23,10 @@ namespace MAMBrowser.BLL
             _dao = dao;
             _common_dao = common_dao;
         }
-        // 즐겨찾기 가져오기 
+        // 즐겨찾기 가져오기
         public IEnumerable<CueSheetConDTO> GetUserFavorites(string personid, string pgmcode, string brd_dt)
         {
             var result =  _dao.GetUserFavorites(personid);
-            var toDate = DateTime.Today;
-            if (brd_dt == null|| brd_dt == "undefined")
-            {
-                brd_dt = toDate.ToString("yyyyMMdd");
-            }
-            if (pgmcode != null && brd_dt != null&& pgmcode != "undefined" && brd_dt != "undefined")
-            {
-                SponsorParam spon_param = new SponsorParam();
-                spon_param.BrdDate = brd_dt;
-                spon_param.PgmCode = pgmcode;
-                var result2 = _common_dao.GetSponsor(spon_param);
-                result = _common_dao.GetSponsor(spon_param).SetSponsorToEntity(result);
-            }
-
             return result?.Converting();
         }
 

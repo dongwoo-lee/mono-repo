@@ -1088,10 +1088,11 @@ export default {
                     ).valueOf();
                 }
                 state.printArr.forEach((ele, index) => {
-                    if (index != 0)
+                    if (index != 0) {
                         ele.starttime =
                             state.printArr[index - 1].usedtime +
                             state.printArr[index - 1].starttime;
+                    }
                 });
             }
         },

@@ -20,17 +20,15 @@ namespace MAMBrowser.Controllers
 
         public class Pram
         {
-            public List<string> productids {get;set; }
+            public List<string> productids { get; set; }
             public int row_per_page { get; set; }
             public int select_page { get; set; }
 
         }
 
-        public DefCueSheetController(DefCueSheetBll bll, ILogger<ProductsController> logger)
+        public DefCueSheetController(DefCueSheetBll bll)
         {
-            _logger = logger;
             _bll = bll;
-            
         }
 
         //기본 큐시트 목록 가져오기

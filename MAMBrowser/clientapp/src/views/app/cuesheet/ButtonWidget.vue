@@ -446,7 +446,9 @@
     >
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
-          <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
+          <div class="mb-3">
+            작성된 내용을 {{ zipWaveText }} 파일로 내보냅니다.
+          </div>
           <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
         </div>
       </div>
@@ -564,6 +566,7 @@ export default {
   },
   data() {
     return {
+      zipWaveText: "Zip",
       goBackPoint: "",
       accrssCheck: true,
       loadingIconVal: false,
@@ -601,6 +604,7 @@ export default {
       ],
       downloaditem: [
         { id: "zip", name: "큐시트 로컬 저장" },
+        { id: "wav", name: "Wav로 저장(AB)" },
         { id: "pdf", name: "PDF로 저장" },
         { id: "docx", name: "Word로 저장" },
         { id: "excel", name: "엑셀로 저장" },
@@ -846,7 +850,12 @@ export default {
     },
     onDownloadItemClick(e) {
       //wav도 추가해야함
-      if (e.itemData.id == "zip" || e.itemData.id == "wav") {
+      if (e.itemData.id == "zip") {
+        this.zipWaveText = "Zip";
+        this.$refs["modal-export-zip-wave"].show();
+      }
+      if (e.itemData.id == "wav") {
+        this.zipWaveText = "Wave";
         this.$refs["modal-export-zip-wave"].show();
       } else {
         eventBus.$emit("exportGo", e.itemData.id);
@@ -920,13 +929,21 @@ export default {
       this.loadingIconVal = false;
       this.$bvModal.hide("modal-save");
     },
-    // zip 파일 다운로드
+    // zip, wave 파일 다운로드
+    // wave는 AB만 들어가야 함 나중에 method 분리하기
     async exportZipWave() {
+      var apiName;
+      switch (this.zipWaveText) {
+        case "Zip":
+          apiName = "exportZipFile";
+          break;
+
+        case "Wave":
+          apiName = "exportWavFile";
+        default:
+          break;
+      }
       this.loadingIconVal = true;
-      // var pramQuery = {
-      //   name: sessionStorage.getItem(USER_ID),
-      //   title: this.cueInfo.title,
-      // };
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
       for (var i = 1; i < 5; i++) {
@@ -962,14 +979,15 @@ export default {
         }
         await axios
           .post(
-            `/api/CueAttachments/exportZipFile?userid=${sessionStorage.getItem(
+            // `/api/CueAttachments/exportZipFile?userid=${sessionStorage.getItem(
+            `/api/CueAttachments/${apiName}?userid=${sessionStorage.getItem(
               USER_ID
             )}`,
             pramList
           )
           .then((response) => {
             const link = document.createElement("a");
-            link.href = `/api/CueAttachments/exportZipFileDownload?guid=${
+            link.href = `/api/CueAttachments/exportFileDownload?guid=${
               response.data
             }&userid=${sessionStorage.getItem(
               USER_ID

@@ -1,11 +1,14 @@
 ﻿using M30.AudioFile.Common;
 using M30.AudioFile.Common.Foundation;
+using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
+using NAudioFadeInOutTest;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -175,6 +178,107 @@ namespace MAMBrowser.Helper
             result.EnableRangeProcessing = true;
             return result;
         }
+
+        public void CheckFileExtensionValid(string[] extensionsRuls, string fileName)
+        {
+            fileName = fileName.ToLower();
+
+            var isValidExtenstion = extensionsRuls.Any(ext => {
+                return fileName.LastIndexOf(ext) > -1;
+            });
+            if (!isValidExtenstion)
+                throw new Exception("Not allowed file extension");
+        }
+
+        public void CheckMaxFileSize(FileStream stream, long maxSize)
+        {
+            if (stream.Length > maxSize)
+                throw new Exception("File is too large");
+        }
+
+        public void AppendContentToFile(string path, IFormFile content, long maxSize)
+        {
+            using (var stream = new FileStream(path, FileMode.Append, FileAccess.Write))
+            {
+                content.CopyTo(stream);
+                CheckMaxFileSize(stream,maxSize);
+            }
+        }
+
+        public string GetTempFileName(ChunkMetadata meta)
+        {
+            string date = DateTime.Now.ToString(Define.DTM8);
+            return $"{date}_{meta.FileGuid}_{Path.GetFileNameWithoutExtension(meta.FileName)}.tmp";
+        }
+
+        public void TrimWavFile(string inPath, string outPath, TimeSpan cutFromStart, TimeSpan cutFromEnd)
+        {
+            using (WaveFileReader reader = new WaveFileReader(inPath))
+            {
+                using (WaveFileWriter writer = new WaveFileWriter(outPath, reader.WaveFormat))
+                {
+                    int bytesPerMillisecond = reader.WaveFormat.AverageBytesPerSecond / 1000;
+
+                    int startPos = (int)cutFromStart.TotalMilliseconds * bytesPerMillisecond;
+                    startPos = startPos - startPos % reader.WaveFormat.BlockAlign;
+
+                    int endBytes = (int)cutFromEnd.TotalMilliseconds * bytesPerMillisecond;
+                    int endPos = endBytes - endBytes % reader.WaveFormat.BlockAlign;
+
+                    //int endBytes = (int)cutFromEnd.TotalMilliseconds * bytesPerMillisecond;
+                    //endBytes = endBytes - endBytes % reader.WaveFormat.BlockAlign;
+                    //int endPos = (int)reader.Length - endBytes;
+
+                    TrimWavFile(reader, writer, startPos, endPos);
+                }
+            }
+        }
+
+        private void TrimWavFile(WaveFileReader reader, WaveFileWriter writer, int startPos, int endPos)
+        {
+            reader.Position = startPos;
+            byte[] buffer = new byte[1024];
+            while (reader.Position < endPos)
+            {
+                int bytesRequired = (int)(endPos - reader.Position);
+                if (bytesRequired > 0)
+                {
+                    int bytesToRead = Math.Min(bytesRequired, buffer.Length);
+                    int bytesRead = reader.Read(buffer, 0, bytesToRead);
+                    if (bytesRead > 0)
+                    {
+                        writer.WriteData(buffer, 0, bytesRead);
+                    }
+                }
+            }
+
+        }
+
+        //public AudioFileReader FadeInOutWavFile(string filePath, bool fadeIn, bool fadeOut)
+        //{
+        //    var audio = new AudioFileReader(filePath);
+        //    var fade = new DelayFadeOutSampleProvider(audio);
+        //        //fadeOut.BeginFadeOut(ele.ENDPOSITION - ele.STARTPOSITION - 2000, 2000);
+        //        //WaveFileWriter.CreateWaveFile16(fadeOutFilePath, fadeOut);
+        //    if (fadeIn)
+        //    {
+        //        var fadeInPath = Path.Combine(Path.GetDirectoryName(filePath), "_fadeIn_" + Path.GetFileName(filePath));
+        //        fade.BeginFadeIn(2000);
+        //        audio = new AudioFileReader(fadeInPath);
+        //        WaveFileWriter.CreateWaveFile16(fadeInPath, audio);
+
+        //    }
+        //    if (fadeOut)
+        //    {
+        //        var fadeOutPath = Path.Combine(Path.GetDirectoryName(filePath), "_fadeOut_" + Path.GetFileName(filePath));
+        //        fade.BeginFadeOut()
+
+        //    }
+        //    return null;
+        //}
+
+
+
 
     }
 }

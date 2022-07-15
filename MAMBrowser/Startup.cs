@@ -158,7 +158,6 @@ namespace MAMBrowser
             services.AddTransient<QueryHelper>();
             services.AddTransient<HttpContextDBLogger>();
 
-
             //DAL 등록
             services.AddTransient<APIDao>();
             services.AddTransient<CategoriesDao>();
@@ -179,6 +178,7 @@ namespace MAMBrowser
             services.AddTransient<TemplateBll>();
             services.AddTransient<FavoriteBll>();
             services.AddTransient<ArchiveCueSheetBll>();
+            services.AddTransient<CueAttachmentsBll>();
 
             //서비스 등록
             services.AddScoped<IUserService, UserService>();

@@ -18,12 +18,12 @@ namespace MAMBrowser.BLL
         private readonly ICueSheetDAO _dao;
         private readonly ICommonDAO _common_dao;
 
-
         public DefCueSheetBll(ICueSheetDAO dao, ICommonDAO common_dao)
         {
             _dao = dao;
             _common_dao = common_dao;
         }
+
         // 기본큐시트 목록 가져오기
         public DefCueList_Page GetDefCueList(List<string> productids, int row_per_page, int select_page)
         {
@@ -98,7 +98,8 @@ namespace MAMBrowser.BLL
                 delParam.p_del_cueid = delParams[i];
                 param.Add(delParam);
             }
-            return _dao.DeleteDefCueSheet(param);
+            var result = _dao.DeleteDefCueSheet(param);
+            return result; 
         }
 
     }
