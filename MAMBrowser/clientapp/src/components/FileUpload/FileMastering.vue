@@ -260,6 +260,7 @@
                       key-expr="title"
                       :allow-column-resizing="false"
                       :column-auto-width="true"
+                      :show-column-lines="false"
                       no-data-text="No Data"
                     >
                       <DxScrolling mode="virtual" />
@@ -312,6 +313,7 @@
                       :allow-column-resizing="false"
                       :column-auto-width="true"
                       no-data-text="No Data"
+                      :show-column-lines="false"
                     >
                       <DxScrolling mode="virtual" />
                       <DxColumn
@@ -465,8 +467,8 @@ export default {
 
     var res = await axios.get(
       `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${sessionStorage.getItem(
-        "user_id"
-      )}`
+        "user_id",
+      )}`,
     );
 
     var masteringLogData = [];
@@ -531,8 +533,8 @@ export default {
     async masteringStatus() {
       var res = await axios.get(
         `/api/Mastering/mastering-status?user_id=${sessionStorage.getItem(
-          "user_id"
-        )}`
+          "user_id",
+        )}`,
       );
       var masteringListData = [];
       res.data.resultObject.data.forEach((e) => {
@@ -575,7 +577,7 @@ export default {
       }
       var res = await axios
         .get(
-          `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`
+          `/api/Mastering/mastering-logs?startDt=${sdt}&endDt=${edt}&user_id=${user_id}`,
         )
         .catch((error) => {
           this.logTable.endCustomLoading();
@@ -791,13 +793,16 @@ export default {
         }
         if (
           event.value[0].type == "audio/mpeg" ||
-          event.value[0].type == "audio/wav"
+          event.value[0].type == "audio/wav" ||
+          event.value[0].type == "audio/x-wav"
         ) {
           var formData = new FormData();
 
           if (event.value[0].type == "audio/mpeg") {
             var blob = event.value[0].slice(0, 1000000);
           } else if (event.value[0].type == "audio/wav") {
+            var blob = event.value[0].slice(0, 10000);
+          } else if (event.value[0].type == "audio/x-wav") {
             var blob = event.value[0].slice(0, 10000);
           }
 
@@ -834,6 +839,7 @@ export default {
           this.$fn.notify("error", {
             title: "오디오 파일만 업로드 가능합니다.",
           });
+
           this.fileupload.removeFile(0);
           this.processing = false;
           this.setFileUploading(false);
