@@ -1,22 +1,9 @@
-import axios from "axios";
+import $http from "../../http";
 const qs = require("qs");
 import "moment/locale/ko";
 const moment = require("moment");
-const date = new Date();
 const _ = require('lodash');
 
-function get_date_str(date) {
-    var sYear = date.getFullYear();
-    var sMonth = date.getMonth() + 1;
-    var sDate = date.getDate();
-
-    sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
-    sDate = sDate > 9 ? sDate : "0" + sDate;
-
-    return sYear + "" + sMonth + "" + sDate;
-}
-
-var toDay = get_date_str(date);
 export default {
     namespaced: true,
     state: {
@@ -37,7 +24,6 @@ export default {
         abCartArr: [], //ab 카트
         cChannelData: [], //c 카트
         cueFavorites: [], //즐겨찾기
-        cueSheetAutoSave: true,
         printTem: [{
             code: "",
             contents: "---------- 1부  ----------",
@@ -248,7 +234,6 @@ export default {
         cChannelData: state => state.cChannelData,
         cueFavorites: state => state.cueFavorites,
         printTem: state => state.printTem,
-        cueSheetAutoSave: state => state.cueSheetAutoSave,
     },
     mutations: {
         SET_CUESHEETLISTARR(state, payload) {
@@ -293,9 +278,6 @@ export default {
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
         },
-        SET_CUESHEETAUTOSAVE(state, payload) {
-            state.cueSheetAutoSave = payload;
-        },
     },
     actions: {
         //리스트 옵션 - 프로그램명 가져오기
@@ -307,28 +289,27 @@ export default {
             if (payload.gropId == "S01G04C004") {
                 pram.person = payload.person
             }
-            return await axios.get(`/api/CueUserInfo/GetProgramList`, {
+            return await $http.get(`/api/CueUserInfo/GetProgramList`, {
                 params: pram
             })
                 .then((res) => {
-                    var dataList = res.data
-                    var products = [];
-                    var selectProductList = [];
-                    if (dataList) {
-                        dataList.forEach((ele) => {
-                            products.push({
-                                value: ele.productid,
-                                text: ele.eventname,
+                    if (res.data.resultObject) {
+                        var dataList = res.data.resultObject
+                        var products = [];
+                        var selectProductList = [];
+                        if (dataList) {
+                            dataList.forEach((ele) => {
+                                products.push({
+                                    value: ele.productid,
+                                    text: ele.eventname,
+                                });
+                                selectProductList.push(ele.productid)
                             });
-                            selectProductList.push(ele.productid)
-                        });
+                        }
+                        commit('SET_USERPROOPTION', products);
+                        commit('SET_USERPROLIST', selectProductList)
                     }
-                    commit('SET_USERPROOPTION', products);
-                    commit('SET_USERPROLIST', selectProductList)
                 })
-                .catch((err => {
-                    console.log("getuserProOption" + err);
-                }));
         },
         //유저 - 전체 프로그램 + 매체 가져오기
         async getMediasOption({ commit }, payload) {
@@ -336,100 +317,98 @@ export default {
             if (payload.gropId == "S01G04C004") {
                 pram.person = payload.person
             }
-            return await axios.get(`/api/CueUserInfo/GetProgramList`, {
+            return await $http.get(`/api/CueUserInfo/GetProgramList`, {
                 params: pram
             })
                 .then((res) => {
-                    var dataList = res.data
-                    var medias = [{
-                        value: "",
-                        text: "전체"
-                    }];
-                    var products = [];
-                    var media_a = dataList.filter(ele => ele.media.includes("A"));
-                    var media_f = dataList.filter(ele => ele.media.includes("F"));
-                    var media_d = dataList.filter(ele => ele.media.includes("D"));
-                    var media_c = dataList.filter(ele => ele.media.includes("C"));
-                    var media_z = dataList.filter(ele => ele.media.includes("Z"));
-                    if (media_a.length > 0) {
-                        medias.push({
-                            value: "A",
-                            text: "AM"
+                    if (res.data.resultObject) {
+                        var dataList = res.data.resultObject
+                        var medias = [{
+                            value: "",
+                            text: "전체"
+                        }];
+                        var products = [];
+                        var media_a = dataList.filter(ele => ele.media.includes("A"));
+                        var media_f = dataList.filter(ele => ele.media.includes("F"));
+                        var media_d = dataList.filter(ele => ele.media.includes("D"));
+                        var media_c = dataList.filter(ele => ele.media.includes("C"));
+                        var media_z = dataList.filter(ele => ele.media.includes("Z"));
+                        if (media_a.length > 0) {
+                            medias.push({
+                                value: "A",
+                                text: "AM"
+                            })
+                        }
+                        if (media_f.length > 0) {
+                            medias.push({
+                                value: "F",
+                                text: "FM"
+                            })
+                        }
+                        if (media_d.length > 0) {
+                            medias.push({
+                                value: "D",
+                                text: "DMB"
+                            })
+                        }
+                        if (media_c.length > 0) {
+                            medias.push({
+                                value: "C",
+                                text: "공통"
+                            })
+                        }
+                        if (media_z.length > 0) {
+                            medias.push({
+                                value: "Z",
+                                text: "기타"
+                            })
+                        }
+                        dataList.forEach((ele) => {
+                            products.push(ele.productid);
                         })
+                        commit('SET_MEDIASOPTION', medias)
+                        commit('SET_USERPROLIST', products)
                     }
-                    if (media_f.length > 0) {
-                        medias.push({
-                            value: "F",
-                            text: "FM"
-                        })
-                    }
-                    if (media_d.length > 0) {
-                        medias.push({
-                            value: "D",
-                            text: "DMB"
-                        })
-                    }
-                    if (media_c.length > 0) {
-                        medias.push({
-                            value: "C",
-                            text: "공통"
-                        })
-                    }
-                    if (media_z.length > 0) {
-                        medias.push({
-                            value: "Z",
-                            text: "기타"
-                        })
-                    }
-                    dataList.forEach((ele) => {
-                        products.push(ele.productid);
-                    })
-                    commit('SET_MEDIASOPTION', medias)
-                    commit('SET_USERPROLIST', products)
-
                 })
-                .catch((err => {
-                    console.log("getMediasOption" + err);
-                }));
+
         },
         //프로그램 - 전체 유저 가져오기
         async getProUserList({ commit }, payload) {
-            await axios.get(`/api/CueUserInfo/GetDirectorList?productid=` + payload)
+            await $http.get(`/api/CueUserInfo/GetDirectorList?productid=` + payload)
                 .then((res) => {
-                    var setData = new Set(res.data.split(","));
-                    var result = ""
-                    setData.forEach((ele) => {
-                        result = result.concat(ele + ",")
-                    })
-                    commit('SET_PROUSERLIST', result.slice(0, -1))
+                    if (res.data.resultObject) {
+                        var setData = new Set(res.data.resultObject.split(","));
+                        var result = ""
+                        setData.forEach((ele) => {
+                            result = result.concat(ele + ",")
+                        })
+                        commit('SET_PROUSERLIST', result.slice(0, -1))
+                    }
                 })
-                .catch((err => {
-                    console.log("getProUserList" + err);
-                }));
         },
         // 일일 큐시트 목록 전체 가져오기
         getcuesheetListArr({ commit }, payload) {
             if (typeof payload.products == 'string') {
                 payload.products = [payload.products]
             }
-            return axios.post(`/api/daycuesheet/Getdaycuelist`, payload)
-                .then((res) => {
-                    res.data.resultObject.data.sort((a, b) => {
-                        return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
-                    })
-                    commit('SET_CUESHEETLISTARR', res.data.resultObject);
-                    return res;
-                })
-                .catch((err => {
-                    console.log("getcuesheetListArr" + err);
-                }));
+            return $http
+                .post(`/api/daycuesheet/Getdaycuelist`, payload)
+                .then(res => {
+                    if (res.data.resultObject) {
+                        res.data.resultObject.data.sort((a, b) => {
+                            return new Date(a.r_ONAIRTIME) - new Date(b.r_ONAIRTIME)
+                        })
+                        commit('SET_CUESHEETLISTARR', res.data.resultObject);
+                        return res;
+                    }
+                });
         },
         // 기본 큐시트 목록 전체 가져오기
         getcuesheetListArrDef({ commit, dispatch }, payload) {
             if (typeof payload.productids == 'string') {
                 payload.productids = [payload.productids]
             }
-            return axios.post(`/api/DefCueSheet/GetDefList`, payload)
+            return $http.post(`/api/DefCueSheet/GetDefList`, payload)
                 .then(async (res) => {
                     var productWeekList = await dispatch('disableList', res.data.resultObject.data);
                     var seqnum = 0;
@@ -460,13 +439,7 @@ export default {
         },
         // 템플릿 목록 전체 가져오기
         getcuesheetListArrTemp({ commit }, payload) {
-            // return axios.get(`/api/TempCueSheet/GetTempList`, {
-            //     params: payload,
-            //     paramsSerializer: (params) => {
-            //         return qs.stringify(params);
-            //     },
-            // })
-            return axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.titie}&row_per_page=${payload.row_per_page}&select_page=${payload.select_page}`)
+            return $http.get(`/api/TempCueSheet/GetTempList?personid=${payload.personid}&title=${payload.titie}&row_per_page=${payload.row_per_page}&select_page=${payload.select_page}`)
                 .then((res) => {
                     var seqnum = 0;
                     res.data.resultObject.data.forEach((ele) => {
@@ -485,15 +458,22 @@ export default {
             if (typeof payload.products == 'string') {
                 payload.products = [payload.products]
             }
-            return axios.post(`/api/ArchiveCueSheet/GetArchiveCueList`, payload)
+            return $http.post(`/api/ArchiveCueSheet/GetArchiveCueList`, payload)
                 .then((res) => {
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
                     return res;
                 })
-                .catch((err => {
-                    console.log("getarchiveCuesheetListArr" + err);
-                }));
-
+        },
+        async getarchiveCuesheetCon({ }, payload) {
+            return await $http.get(`/api/ArchiveCueSheet/GetArchiveCue`, {
+                params: payload,
+                paramsSerializer: (params) => {
+                    return qs.stringify(params);
+                },
+            })
+                .then((res) => {
+                    return res.data.resultObject;
+                });
         },
         //프로그램별 요일 확인
         disableList({ commit }, payload) {
@@ -534,7 +514,7 @@ export default {
         //템플릿 추가 + 템플릿으로 저장 (나중에 템플릿 저장이랑 합치기)
         async addTemplate({ }, payload) {
             var temLength = 0
-            await axios.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
+            await $http.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
                 .then((res) => {
                     temLength = res.data.resultObject.data.length
                 })
@@ -548,7 +528,7 @@ export default {
                 }
                 )
             } else {
-                await axios
+                await $http
                     .post(`/api/TempCueSheet/SaveTempCue`, payload)
                     .then((res) => {
                         window.$notify(
@@ -564,10 +544,10 @@ export default {
         },
         //상세내용 -즐겨찾기
         async getCueDayFav({ state, commit, dispatch }, payload) {
-            await axios.get(
+            await $http.get(
                 `/api/Favorite/GetFavorites?personid=${payload.personid}&pgmcode=${payload.pgmcode}&brd_dt=${payload.brd_dt}`)
                 .then((res) => {
-                    commit('SET_CUEFAVORITES', res.data);
+                    commit('SET_CUEFAVORITES', res.data.resultObject);
                 })
                 .catch((err => {
                     console.log("getCueDayFav" + err);
@@ -577,31 +557,27 @@ export default {
         async saveDayCue({ commit, state, dispatch }, payload) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            await axios
+            await $http
                 .post(`/api/DayCueSheet/SaveDayCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    dispatch('saveFavorites', { personid: state.cueInfo.personid, favConParam: pram.favConParam })
                     var newInfo = { ...state.cueInfo }
-                    //router 로직 이동 중 (주석 필요)
-                    //var params = { productid: newInfo.productid, cueid: res.data }
                     let rowData = JSON.parse(sessionStorage.getItem("USER_INFO"));
                     var params = {
                         productid: rowData.productid,
                         pgmcode: rowData.pgmcode,
                         brd_dt: rowData.day,
                     };
-                    await axios.get(`/api/daycuesheet/GetdayCue`, {
+                    await $http.get(`/api/daycuesheet/GetDayCue`, {
                         params: params,
                         paramsSerializer: (params) => {
                             return qs.stringify(params);
                         },
                     }).then((cueRes) => {
-                        newInfo.detail[0].cueid = res.data
-                        newInfo.edittime = cueRes.data.cueSheetDTO.edittime
+                        newInfo.detail[0].cueid = res.data.resultObject
+                        newInfo.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                         delete newInfo.cueid
                         commit('SET_CUEINFO', newInfo)
-                        //router 로직 이동 중 (주석 필요)
-                        //sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                     })
                     window.$notify(
                         "info",
@@ -625,10 +601,9 @@ export default {
                 }));
 
             if (payload == true) {
-                await axios
+                await $http
                     .post(`/api/DayCueSheet/SaveOldCue`, pram)
                     .then(async (res) => {
-                        await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                         if (res.data == 1) {
                             window.$notify(
                                 "info",
@@ -677,10 +652,9 @@ export default {
         async saveOldCue({ state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            await axios
+            await $http
                 .post(`/api/DayCueSheet/SaveOldCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
                     if (res.data == 1) {
                         window.$notify(
                             "info",
@@ -751,15 +725,15 @@ export default {
             })
             pram.DefCueSheetDTO = daycue;
 
-            await axios
+            await $http
                 .post(`/api/defCueSheet/SavedefCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    dispatch('saveFavorites', { personid: state.cueInfo.personid, favConParam: pram.favConParam })
                     var params = {
                         productid: cueInfoData.productid,
                         week: cueInfoData.activeWeekList,
                     };
-                    await axios.get(`/api/defcuesheet/GetdefCue`, {
+                    await $http.get(`/api/defcuesheet/GetdefCue`, {
                         params: params,
                         paramsSerializer: (params) => {
                             return qs.stringify(params);
@@ -768,8 +742,8 @@ export default {
                         .then((cueRes) => {
                             // 새로 cueid채워주려면 우선 볼러올 cueid를 알아야함 불가능
                             // cue가 아닌 요일 정보로 가져오던가 하나의 cueid만 넘겨도 포함된 모든 cueid를 주도록 해야할듯?
-                            cueInfoData.detail = cueRes.data.cueSheetDTO.detail
-                            cueInfoData.edittime = cueRes.data.cueSheetDTO.edittime
+                            cueInfoData.detail = cueRes.data.resultObject.cueSheetDTO.detail
+                            cueInfoData.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                             commit('SET_CUEINFO', cueInfoData)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(cueInfoData));
                         });
@@ -798,22 +772,22 @@ export default {
         async saveTempCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)
             pram.CueSheetDTO = state.cueInfo;
-            await axios
+            await $http
                 .post(`/api/TempCueSheet/SaveTempCue`, pram)
                 .then(async (res) => {
-                    await axios.post(`/api/Favorite/SetFavorites?personid=${state.cueInfo.personid}`, pram.favConParam);
+                    dispatch('saveFavorites', { personid: state.cueInfo.personid, favConParam: pram.favConParam })
                     var newInfo = { ...state.cueInfo }
                     var params = {
-                        cueid: res.data
+                        cueid: res.data.resultObject
                     };
-                    await axios.get(`/api/tempcuesheet/GettempCue`, {
+                    await $http.get(`/api/tempcuesheet/GettempCue`, {
                         params: params,
                         paramsSerializer: (params) => {
                             return qs.stringify(params);
                         },
                     })
                         .then((cueRes) => {
-                            newInfo.edittime = cueRes.data.cueSheetDTO.edittime
+                            newInfo.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                             commit('SET_CUEINFO', newInfo)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                         });
@@ -838,6 +812,9 @@ export default {
                     )
 
                 }));
+        },
+        saveFavorites({ }, payload) {
+            $http.post(`/api/Favorite/SetFavorites?personid=${payload.personid}`, payload.favConParam);
         },
         //AB, C 필터
         cartCodeFilter({ }, payload) {
@@ -982,7 +959,6 @@ export default {
         },
         //DTO 하는중
         setCueConData({ state, commit }, payload) {
-            // commit('SET_CUEINFO', payload.cue)
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)
             if (payload.printDTO.length > 0) {
@@ -1003,18 +979,17 @@ export default {
             commit('SET_PRINTARR', payload.printDTO);
         },
         async setSponsorList({ commit }, payload) {
-            await axios.get(`/api/DayCueSheet/GetAddSponsor`, {
+            await $http.get(`/api/DayCueSheet/GetAddSponsor`, {
                 params: payload,
                 paramsSerializer: (params) => {
                     return qs.stringify(params);
                 },
             })
                 .then((res) => {
-                    commit('SET_ABCARTARR', res.data);
+                    if (res.data.resultObject) {
+                        commit('SET_ABCARTARR', res.data.resultObject);
+                    }
                 })
-                .catch((err => {
-                    console.log("setSponsorList" + err);
-                }));
         },
         setCueConFav_save({ state }, fav) {
             var printData = state.printArr
@@ -1027,7 +1002,6 @@ export default {
                 printResult[index] = Object.assign({}, ele);
                 printResult[index].rownum = index + 1;
                 printResult[index].usedtime = ele.usedtime;
-                //delete printResult[index].rowNum;
                 if (ele.code == "") {
                     printResult[index].code = "CSGP10";
                 }
@@ -1041,7 +1015,6 @@ export default {
             });
 
             var pram = {
-                //CueSheetDTO: conParams,
                 PrintDTO: printResult,
                 NormalCon: abDataResult,
                 InstanceCon: cData
@@ -1061,7 +1034,6 @@ export default {
             }
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
-            // commit('SET_CUEINFO', payload)
             for (var c = 0; 4 > c; c++) {
                 var arr = [];
                 for (var i = 0; 16 > i; i++) {
@@ -1079,30 +1051,6 @@ export default {
                 favArr.push({ rownum: i + 1 })
             }
             commit('SET_CUEFAVORITES', favArr)
-        },
-        //시간 string > milliseconds
-        millisecondsFuc({ }, payload) {
-            var itemTime = moment(payload, "HH:mm:ss.SSS");
-            var defTime = moment("00:00:00.0", "HH:mm:ss.SSS");
-            var result = moment.duration(itemTime.diff(defTime)).asMilliseconds();
-            return result
-        },
-        getautosave({ commit }, payload) {
-            return axios.get(`/api/users/summary/${payload}`)
-                .then((res) => {
-                    var autosave = null
-                    if (res.data.resultObject.cueSheetAutoSave == "Y") {
-                        autosave = true
-                    } else {
-                        autosave = false
-                    }
-                    commit('SET_CUESHEETAUTOSAVE', autosave);
-                })
-        },
-        setautosave({ }, payload) {
-            return axios.patch(`/api/user`, payload)
-                .then((res) => {
-                })
         },
         setStartTime({ state }) {
             if (state.printArr.length > 0) {
@@ -1164,14 +1112,14 @@ export default {
                         case "S":
                             row = { ...formRowData };
                             if (cartcode == "S01G01C014") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetSongItem`, search_row)
                                     .then((res) => {
                                         return res.data;
                                     });
                             }
                             if (cartcode == "S01G01C015") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetEffectItem`, search_row)
                                     .then((res) => {
                                         return res.data;
@@ -1244,14 +1192,14 @@ export default {
                             row = { ...formRowData };
                             row.rownum = sortable_toIndex + sortable_index;
                             if (cartcode == "S01G01C014") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetSongItem`, search_row)
                                     .then((res) => {
                                         return res.data;
                                     });
                             }
                             if (cartcode == "S01G01C015") {
-                                search_row = await axios
+                                search_row = await $http
                                     .post(`/api/SearchMenu/GetEffectItem`, search_row)
                                     .then((res) => {
                                         return res.data;

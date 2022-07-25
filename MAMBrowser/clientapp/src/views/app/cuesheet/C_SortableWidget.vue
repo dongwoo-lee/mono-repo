@@ -271,7 +271,6 @@ import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { eventBus } from "@/eventBus";
 import MixinCommon from "../../../mixin/MixinCommon";
-import axios from "axios";
 
 import "moment/locale/ko";
 const moment = require("moment");

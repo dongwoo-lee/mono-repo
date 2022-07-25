@@ -121,6 +121,7 @@
           id="search_data_grid"
           :data-source="searchtable_data.columns"
           :remote-operations="true"
+          :cellHintEnabled="true"
           :height="gridHeight"
           :focused-row-enabled="false"
           :showColumnLines="true"
@@ -156,6 +157,25 @@
               }}
             </div>
           </template>
+
+          <template #maxWidth_ellipsis_title="{ data }">
+            <div
+              :title="data.data.title"
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ data.data.title }}
+            </div>
+          </template>
+
+          <template #maxWidth_ellipsis_memo="{ data }">
+            <div
+              :title="data.data.memo"
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ data.data.memo }}
+            </div>
+          </template>
+
           <template #calculate_KB_Template="{ data }">
             <div>
               {{
@@ -301,7 +321,6 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import { USER_ID } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
-import axios from "axios";
 import DataGrid from "devextreme/ui/data_grid";
 
 DataGrid.defaultOptions({
@@ -619,10 +638,10 @@ export default {
       }
     },
     getOptionsData(url, pram) {
-      axios(url, {
+      this.$http(url, {
         params: pram,
       }).then((res) => {
-        const resData = res.data;
+        const resData = res.data.resultObject;
         for (const [key, value] of Object.entries(resData)) {
           this.searchDataList.options.forEach((ele) => {
             if (key == ele.name && value != null) {
@@ -646,8 +665,8 @@ export default {
       });
     },
     // 서브 데이터 조회
-    async getSubData(apiType, brdDT, id) {
-      await axios(`/api/products/${apiType}/contents/${brdDT}/${id}`).then(
+    getSubData(apiType, brdDT, id) {
+      this.$http(`/api/products/${apiType}/contents/${brdDT}/${id}`).then(
         (res) => {
           res.data.resultObject.data.forEach((ele, index) => {
             ele.rowNO = index + 1;
@@ -676,25 +695,26 @@ export default {
           loadOptions.requireGroupCount = false;
           if (loadOptions.skip >= 0 && loadOptions.skip % this.pageSize == 0) {
             result.selectPage = loadOptions.skip / this.pageSize + 1;
-            return axios(
+            return this.$http(
               `/api/SearchMenu/GetSearchTable/${this.searchDataList.id}`,
               {
                 params: result,
               }
             ).then((res) => {
+              var resultData = res.data.resultObject.result;
               if (
                 this.searchDataList.id == "MCR_SB" ||
                 this.searchDataList.id == "SCR_SB" ||
                 this.searchDataList.id == "PGM_CM" ||
                 this.searchDataList.id == "CM"
               ) {
-                res.data.result.data.forEach((ele, index) => {
+                resultData.data.forEach((ele, index) => {
                   ele.rowNO = index + 1;
                 });
               }
               this.viewTableName = this.searchDataList.name;
-              this.searchItems.totalRowCount = res.data.result.totalRowCount;
-              return res.data.result.data;
+              this.searchItems.totalRowCount = resultData.totalRowCount;
+              return resultData.data;
             });
           }
         },

@@ -188,36 +188,21 @@
             no-data-text="No Data"
             @row-click="onRowClick"
           >
-            <tbody
-              slot="rowTemplate"
-              slot-scope="{
-                data: {
-                  data: { name, id, duration, audioClipID },
-                },
-              }"
-              class="dx-row"
-            >
-              <tr>
-                <td style="border-right: 1px solid #dddddd">{{ name }}</td>
-                <td style="border-right: 1px solid #dddddd">{{ id }}</td>
-                <td style="border-right: 1px solid #dddddd">{{ duration }}</td>
-                <td
-                  :class="
-                    [this.getAudioClipID(audioClipID)] ? 'disabledCell' : ''
-                  "
-                  style="text-align: center"
-                >
-                  {{ audioClipID == null ? "" : "O" }}
-                </td>
-              </tr>
-            </tbody>
-            <!-- <DxLoadPanel :enabled="true" /> -->
             <DxSelection mode="single" />
             <DxScrolling mode="virtual" />
             <DxColumn data-field="name" caption="이벤트 명" />
             <DxColumn data-field="id" caption="이벤트 ID" />
             <DxColumn data-field="duration" caption="편성 분량" />
-            <DxColumn data-field="audioClipID" :width="50" caption="파일" />
+            <DxColumn
+              :width="50"
+              caption="파일"
+              cell-template="cell-template"
+            />
+            <template #cell-template="{ data }">
+              <td style="color: red">
+                {{ data.data.audioClipID != null ? "O" : "" }}
+              </td>
+            </template>
           </DxDataGrid>
         </div>
       </template>
@@ -357,10 +342,7 @@ export default {
       if (!isNaN(replaceAllTargetValue)) {
         if (replaceAllTargetValue.length === 0) {
           event.target.value = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
-          this.SET_MCR_DATE = this.$fn.formatDate(
-            new Date(),
-            "yyyy-MM-dd"
-          );
+          this.SET_MCR_DATE = this.$fn.formatDate(new Date(), "yyyy-MM-dd");
           this.SET_MCR_TEMP_DATE = this.$fn.formatDate(
             new Date(),
             "yyyy-MM-dd"

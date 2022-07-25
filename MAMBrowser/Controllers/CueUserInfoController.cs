@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MAMBrowser.DTO;
+using M30.AudioFile.Common;
 
 namespace MAMBrowser.Controllers
 {
@@ -22,43 +23,38 @@ namespace MAMBrowser.Controllers
 
         //유저별 프로그램 리스트 가져오기
         [HttpGet("GetProgramList")]
-        public IEnumerable<PgmListDTO> GetUserProgramList(string person, char media)
+        public DTO_RESULT<IEnumerable<PgmListDTO>> GetUserProgramList(string person, char media)
         {
+            var result = new DTO_RESULT<IEnumerable<PgmListDTO>>();
             try
             {
-                return _bll.GetUserPgmList(person, media);
+                result.ResultObject = _bll.GetUserPgmList(person, media);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
-        }
-        //프로그램 전체 담당자 가져오기
-        [HttpGet("GetDirectorList")]
-        public string GetDirectorList([FromQuery] string productid)
-        {
-            try
-            {
-                return _bll.GetDirectorList(productid);
-            }
-            catch (Exception exp)
-            {
-                throw;
-            }
+            return result;
         }
 
-        //광고 목록 가져오기
-        [HttpGet("GetSponsorList")]
-        public IEnumerable<CueSheetConDTO> GetSponsorList([FromQuery] string pgmcode, [FromQuery] string brd_dt)
+        //프로그램 전체 담당자 가져오기
+        [HttpGet("GetDirectorList")]
+        public DTO_RESULT<string> GetDirectorList([FromQuery] string productid)
         {
+            var result = new DTO_RESULT<string>();
             try
             {
-                return _bll.GetSponsorList(pgmcode, brd_dt);
+                result.ResultObject =  _bll.GetDirectorList(productid);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch (Exception exp)
+            catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
 
     }

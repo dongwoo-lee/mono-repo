@@ -9,6 +9,7 @@
         <b-form-input
           class="editTask"
           v-model="myDiskMetaData.title"
+          :formatter="formatter"
           :state="myDiskTitleState"
           :maxLength="200"
           placeholder="제목"
@@ -38,10 +39,11 @@
         <b-form-textarea
           class="editTask"
           v-model="myDiskMetaData.memo"
+          :formatter="formatter"
           :state="myDiskMemoState"
           :maxLength="200"
-          rows="5"
           :max-rows="5"
+          rows="5"
           placeholder="메모"
           no-resize
           trim
@@ -106,6 +108,19 @@ export default {
     sliceExt(maxLength) {
       var result = this.MetaModalTitle.replace(/(.wav|.mp3)$/, "");
       return result.substring(0, maxLength);
+    },
+    formatter(v) {
+      var special_pattern = /[\\\/:*?\"<>|]/gi;
+
+      if (special_pattern.test(v) == true) {
+        this.$fn.notify("error", {
+          title: "마이디스크에서는 다음 특수 문자를 사용할 수 없습니다.",
+          message: '\\ \/ : * ? " < > |',
+        });
+        return v.replace(/[\\\/:*?\"<>|]/gi, "");
+      } else {
+        return v;
+      }
     },
   },
 };

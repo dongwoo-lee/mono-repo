@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MAMBrowser.DTO;
+using M30.AudioFile.Common;
 
 namespace MAMBrowser.Controllers
 {
@@ -19,32 +20,41 @@ namespace MAMBrowser.Controllers
         {
             _bll = bll;
         }
+
         //즐겨찾기 가져오기
         [HttpGet("GetFavorites")]
-        public IEnumerable<CueSheetConDTO> GetFavorites([FromQuery] string personid, string pgmcode, string brd_dt)
+        public DTO_RESULT<IEnumerable<CueSheetConDTO>> GetFavorites([FromQuery] string personid, string pgmcode, string brd_dt)
         {
+            var result = new DTO_RESULT<IEnumerable<CueSheetConDTO>>();
             try
             {
-                return _bll.GetUserFavorites(personid, pgmcode, brd_dt);
+                result.ResultObject =  _bll.GetUserFavorites(personid, pgmcode, brd_dt);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch(Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
+
         //즐겨찾기 저장
         [HttpPost("SetFavorites")]
-        public int SetFavorites([FromQuery] string personid, [FromBody] List<CueSheetConDTO> pram)
+        public DTO_RESULT<int> SetFavorites([FromQuery] string personid, [FromBody] List<CueSheetConDTO> pram)
         {
+            var result = new DTO_RESULT<int>();
             try
             {
-                var result = _bll.SaveUserFavorites(personid, pram);
-                return result;
+                result.ResultObject = _bll.SaveUserFavorites(personid, pram);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
-                throw;
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
+            return result;
         }
 
     }

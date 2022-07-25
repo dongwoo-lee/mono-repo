@@ -111,7 +111,6 @@ import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
 import { eventBus } from "@/eventBus";
 const qs = require("qs");
-import axios from "axios";
 import "moment/locale/ko";
 const moment = require("moment");
 
@@ -290,7 +289,7 @@ export default {
         if (typeof params.productids == "string") {
           params.productids = [params.productids];
         }
-        await axios
+        await this.$http
           .post(`/api/DefCueSheet/GetDefList`, params)
           .then(async (res) => {
             var productWeekList = await this.disableList(
@@ -379,7 +378,7 @@ export default {
               params.brd_dt = this.cueInfo.day;
             }
           }
-          await axios
+          await this.$http
             .get(`/api/defcuesheet/GetdefCue`, {
               params: params,
               paramsSerializer: (params) => {
@@ -387,22 +386,30 @@ export default {
               },
             })
             .then((res) => {
+              var responseCuesheetCollection = res.data.resultObject;
               if (this.MenuSelected.includes("print")) {
                 if (beforePrintData.length > 0) {
-                  res.data.printDTO.forEach((ele) => {
+                  responseCuesheetCollection.printDTO.forEach((ele) => {
                     ele.rownum = ele.rownum + beforePrintData.length;
                   });
                 }
                 var oldCueInfo = { ...this.cueInfo };
                 oldCueInfo.r_ONAIRTIME = oldCueInfo.detail[0].onairtime;
-                oldCueInfo.directorname = res.data.cueSheetDTO.directorname;
-                oldCueInfo.djname = res.data.cueSheetDTO.djname;
-                oldCueInfo.footertitle = res.data.cueSheetDTO.footertitle;
-                oldCueInfo.headertitle = res.data.cueSheetDTO.headertitle;
-                oldCueInfo.membername = res.data.cueSheetDTO.membername;
-                oldCueInfo.memo = res.data.cueSheetDTO.memo;
+                oldCueInfo.directorname =
+                  responseCuesheetCollection.cueSheetDTO.directorname;
+                oldCueInfo.djname =
+                  responseCuesheetCollection.cueSheetDTO.djname;
+                oldCueInfo.footertitle =
+                  responseCuesheetCollection.cueSheetDTO.footertitle;
+                oldCueInfo.headertitle =
+                  responseCuesheetCollection.cueSheetDTO.headertitle;
+                oldCueInfo.membername =
+                  responseCuesheetCollection.cueSheetDTO.membername;
+                oldCueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
 
-                var resultPrintData = beforePrintData.concat(res.data.printDTO);
+                var resultPrintData = beforePrintData.concat(
+                  responseCuesheetCollection.printDTO
+                );
                 if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
@@ -418,11 +425,13 @@ export default {
               }
               if (this.MenuSelected.includes("ab")) {
                 if (beforeAbData.length > 0) {
-                  res.data.normalCon.forEach((ele) => {
+                  responseCuesheetCollection.normalCon.forEach((ele) => {
                     ele.rownum = ele.rownum + beforeAbData.length;
                   });
                 }
-                var resultABData = beforeAbData.concat(res.data.normalCon);
+                var resultABData = beforeAbData.concat(
+                  responseCuesheetCollection.normalCon
+                );
                 if (resultABData.length > 500) {
                   resultABData.splice(500);
                   window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
@@ -434,7 +443,7 @@ export default {
                 eventBus.$emit("abDataSet");
               }
               var pram = {
-                data: res.data.instanceCon,
+                data: responseCuesheetCollection.instanceCon,
                 items: this.MenuSelected,
               };
               eventBus.$emit("updateCData", pram);

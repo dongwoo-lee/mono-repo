@@ -436,7 +436,6 @@ export default {
           brdDT: this.fillerMetaData.date,
         };
       }
-      console.log(data);
       return data;
     },
     async uploadfile() {

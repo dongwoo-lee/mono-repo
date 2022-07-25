@@ -184,7 +184,6 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
-import axios from "axios";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
@@ -409,12 +408,14 @@ export default {
         var pram = {
           DefCueSheetDTO: result,
         };
-        await axios.post(`/api/DefCueSheet/SaveDefCue`, pram).then((res) => {
-          window.$notify("info", `기본 큐시트 추가완료.`, "", {
-            duration: 10000,
-            permanent: false,
+        await this.$http
+          .post(`/api/DefCueSheet/SaveDefCue`, pram)
+          .then((res) => {
+            window.$notify("info", `기본 큐시트 추가완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
           });
-        });
         this.getData();
         this.$refs["modal-add"].hide();
       }
@@ -435,24 +436,26 @@ export default {
           row_per_page: this.searchItems.rowPerPage,
           select_page: this.searchItems.selectPage,
         };
-        await axios.post(`/api/DefCueSheet/GetDefList`, params).then((res) => {
-          var weekArr = [];
-          res.data.resultObject.data.forEach((ele) => {
-            ele.detail.forEach((week) => {
-              weekArr.push(week.week);
+        await this.$http
+          .post(`/api/DefCueSheet/GetDefList`, params)
+          .then((res) => {
+            var weekArr = [];
+            res.data.resultObject.data.forEach((ele) => {
+              ele.detail.forEach((week) => {
+                weekArr.push(week.week);
+              });
             });
-          });
-          this.weekButtons.forEach((week) => {
-            if (weekArr.includes(week.value)) {
-              week.disable = true;
-            } else {
-              week.disable = false;
+            this.weekButtons.forEach((week) => {
+              if (weekArr.includes(week.value)) {
+                week.disable = true;
+              } else {
+                week.disable = false;
+              }
+            });
+            if (weekArr.length == 7) {
+              //이미 모든요일이 설정되어 있을때 해야함
             }
           });
-          if (weekArr.length == 7) {
-            //이미 모든요일이 설정되어 있을때 해야함
-          }
-        });
       }
     },
     //기본큐시트 삭제
@@ -463,7 +466,7 @@ export default {
           delcueidList.push(ele.cueid);
         });
       });
-      await axios
+      await this.$http
         .delete(`/api/DefCueSheet/DelDefCue`, {
           params: {
             delParams: delcueidList,

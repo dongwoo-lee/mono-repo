@@ -1090,10 +1090,11 @@ namespace MAMBrowser.Utils
                 con.PGMCODE = item.PGMCODE ?? "";
                 con.CHANNELTYPE = item.CHANNELTYPE ?? "";
                 con.ONAIRDATE = item.ONAIRDATE ?? "";
-                if (!string.IsNullOrEmpty(item.CARTID) && string.IsNullOrEmpty(item.MEMO))
+                if (!string.IsNullOrEmpty(item.CARTID))
                 {
                     con.DURATION = item.AUDIOS[0].P_DURATION; //나중에 그룹소재 적용되면 바꿔야함
                 }
+
                 con.CARTID = item.CARTID ?? "";
                 con.MEMO = item.MEMO ?? "";
                 con.STARTPOSITION = item.STARTPOSITION;

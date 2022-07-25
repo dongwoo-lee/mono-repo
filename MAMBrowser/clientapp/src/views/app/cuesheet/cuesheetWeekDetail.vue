@@ -50,15 +50,6 @@
                     $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
-                <span class="autosave">
-                  <b-form-checkbox-group
-                    :options="options"
-                    v-model="autosaveValue"
-                    @change="toggleChange"
-                    switches
-                    style="float: right"
-                  ></b-form-checkbox-group>
-                </span>
               </div>
               <div
                 id="button_view"
@@ -185,7 +176,6 @@ import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import CommonWeeks from "../../../components/DataTable/CommonWeeks.vue";
 import { eventBus } from "@/eventBus";
-import axios from "axios";
 const qs = require("qs");
 
 const date = new Date();
@@ -210,12 +200,10 @@ export default {
         "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
       );
       if (answer) {
-        clearInterval(this.autoSaveFun);
         eventBus.$off();
         next();
       }
     } else {
-      clearInterval(this.autoSaveFun);
       eventBus.$off();
       next();
     }
@@ -241,10 +229,6 @@ export default {
       shading: true,
       showPane: true,
       closeOnOutsideClick: false,
-
-      options: [{ text: "자동저장(5분 마다)", value: true }],
-      autosaveValue: [true],
-      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
@@ -254,32 +238,18 @@ export default {
     this.loadingVisible = true;
     //큐시트 상세내용 가져오기
     await this.getCueCon();
-    //자동저장
-    this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave && this.timer > 1) {
-        this.saveDefCue();
-      }
-    }, 300000); //15분마다 저장
-    await this.getautosave(this.cueInfo.personid);
-    if (!this.cueSheetAutoSave) {
-      this.autosaveValue = [];
-    }
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
-    ...mapGetters("cueList", ["cueSheetAutoSave"]),
     ...mapGetters("user", ["timer"]),
   },
   methods: {
-    ...mapActions("cueList", ["getautosave"]),
-    ...mapActions("cueList", ["setautosave"]),
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["setclearCon"]),
     ...mapActions("cueList", ["setSponsorList"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["getCueDayFav"]),
     //상세내용 가져오기
@@ -291,7 +261,7 @@ export default {
         pgmcode: rowData.pgmcode,
         week: rowData.weeks,
       };
-      await axios
+      await this.$http
         .get(`/api/defcuesheet/GetdefCue`, {
           params: params,
           paramsSerializer: (params) => {
@@ -299,8 +269,9 @@ export default {
           },
         })
         .then(async (res) => {
+          var responseCuesheetCollection = res.data.resultObject;
           await this.getProUserList(rowData.productid);
-          var cueData = res.data.cueSheetDTO;
+          var cueData = responseCuesheetCollection.cueSheetDTO;
           cueData.r_ONAIRTIME = cueData.detail[0].onairtime;
           cueData.activeWeekList = rowData.activeWeekList;
           cueData.cueid = rowData.cueid;
@@ -310,17 +281,19 @@ export default {
           //cueDataObj = cueData
           this.settingInfo(cueData);
           this.SET_CUEINFO(cueData);
-          this.setCueConData(res.data);
+          this.setCueConData(res.data.resultObject);
           var dataVal = false;
           for (var i = 1; i < 5; i++) {
-            res.data.instanceCon["channel_" + i].forEach((ele) => {
-              if (ele.cartcode != null) {
-                dataVal = true;
-                return;
+            responseCuesheetCollection.instanceCon["channel_" + i].forEach(
+              (ele) => {
+                if (ele.cartcode != null) {
+                  dataVal = true;
+                  return;
+                }
               }
-            });
+            );
           }
-          if (res.data.normalCon.length == 0 && !dataVal) {
+          if (responseCuesheetCollection.normalCon.length == 0 && !dataVal) {
             await this.setSponsorList({
               pgmcode: rowData.pgmcode,
             });
@@ -333,15 +306,6 @@ export default {
       };
       await this.getCueDayFav(params);
       this.loadingVisible = false;
-    },
-    toggleChange(value) {
-      if (value.length == 0) {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
-        this.SET_CUESHEETAUTOSAVE(false);
-      } else {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
-        this.SET_CUESHEETAUTOSAVE(true);
-      }
     },
     onTextEdit() {
       this.$refs.inputText.focus();
