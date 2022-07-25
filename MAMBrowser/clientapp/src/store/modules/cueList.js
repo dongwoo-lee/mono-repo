@@ -24,7 +24,6 @@ export default {
         abCartArr: [], //ab 카트
         cChannelData: [], //c 카트
         cueFavorites: [], //즐겨찾기
-        cueSheetAutoSave: true,
         printTem: [{
             code: "",
             contents: "---------- 1부  ----------",
@@ -235,7 +234,6 @@ export default {
         cChannelData: state => state.cChannelData,
         cueFavorites: state => state.cueFavorites,
         printTem: state => state.printTem,
-        cueSheetAutoSave: state => state.cueSheetAutoSave,
     },
     mutations: {
         SET_CUESHEETLISTARR(state, payload) {
@@ -279,9 +277,6 @@ export default {
         },
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
-        },
-        SET_CUESHEETAUTOSAVE(state, payload) {
-            state.cueSheetAutoSave = payload;
         },
     },
     actions: {
@@ -1056,23 +1051,6 @@ export default {
                 favArr.push({ rownum: i + 1 })
             }
             commit('SET_CUEFAVORITES', favArr)
-        },
-        getautosave({ commit }, payload) {
-            return $http.get(`/api/users/summary/${payload}`)
-                .then((res) => {
-                    var autosave = null
-                    if (res.data.resultObject.cueSheetAutoSave == "Y") {
-                        autosave = true
-                    } else {
-                        autosave = false
-                    }
-                    commit('SET_CUESHEETAUTOSAVE', autosave);
-                })
-        },
-        setautosave({ }, payload) {
-            return $http.patch(`/api/user`, payload)
-                .then((res) => {
-                })
         },
         setStartTime({ state }) {
             if (state.printArr.length > 0) {

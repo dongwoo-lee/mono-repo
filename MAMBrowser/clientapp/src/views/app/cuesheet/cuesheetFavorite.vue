@@ -92,7 +92,6 @@ export default {
 
       type: "F",
       classText: "",
-      options: [{ text: "자동저장", value: false }],
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,

@@ -42,15 +42,6 @@
                       : $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
-                <span class="autosave">
-                  <b-form-checkbox-group
-                    :options="options"
-                    v-model="autosaveValue"
-                    @change="toggleChange"
-                    switches
-                    style="float: right"
-                  ></b-form-checkbox-group>
-                </span>
               </div>
               <div
                 id="button_view"
@@ -187,12 +178,10 @@ export default {
         "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
       );
       if (answer) {
-        clearInterval(this.autoSaveFun);
         eventBus.$off();
         next();
       }
     } else {
-      clearInterval(this.autoSaveFun);
       eventBus.$off();
       next();
     }
@@ -218,11 +207,7 @@ export default {
       shading: true,
       showPane: true,
       closeOnOutsideClick: false,
-
       onload: null,
-      options: [{ text: "자동저장(5분 마다)", value: true }],
-      autosaveValue: [true],
-      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
@@ -233,34 +218,20 @@ export default {
     this.loadingVisible = true;
     //큐시트 상세내용 가져오기
     await this.getCueCon();
-    //자동저장
-    this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave && this.timer > 1) {
-        this.saveDayCue();
-      }
-    }, 300000); //15분마다 저장
-    await this.getautosave(this.cueInfo.personid);
-    if (!this.cueSheetAutoSave) {
-      this.autosaveValue = [];
-    }
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
-    ...mapGetters("cueList", ["cueSheetAutoSave"]),
     ...mapGetters("cueList", ["defCuesheetListArr"]),
     ...mapGetters("user", ["timer"]),
   },
   methods: {
-    ...mapActions("cueList", ["getautosave"]),
-    ...mapActions("cueList", ["setautosave"]),
     ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["setclearCon"]),
     ...mapActions("cueList", ["setSponsorList"]),
     ...mapActions("cueList", ["getcuesheetListArrDef"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["getCueDayFav"]),
     //상세내용 가져오기
@@ -399,15 +370,6 @@ export default {
           "참여방법 : #8001번 단문 50원, 장문&포토문자 100원 / 미니 무료 / (03925)서울시 마포구 성암로 267";
       }
       return cueDataObj;
-    },
-    toggleChange(value) {
-      if (value.length == 0) {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
-        this.SET_CUESHEETAUTOSAVE(false);
-      } else {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
-        this.SET_CUESHEETAUTOSAVE(true);
-      }
     },
     nextOk() {
       this.nextgo = true;
