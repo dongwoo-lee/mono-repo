@@ -416,6 +416,7 @@ export default {
               permanent: false,
             });
           });
+        await this.getProductName();
         this.getData();
         this.$refs["modal-add"].hide();
       }

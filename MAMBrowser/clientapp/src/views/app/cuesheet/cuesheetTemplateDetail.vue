@@ -28,15 +28,6 @@
                     $moment(cueInfo.edittime).format("YYYY-MM-DD")
                   }}</span>
                 </span>
-                <span class="autosave">
-                  <b-form-checkbox-group
-                    :options="options"
-                    v-model="autosaveValue"
-                    @change="toggleChange"
-                    switches
-                    style="float: right"
-                  ></b-form-checkbox-group>
-                </span>
               </div>
               <div
                 id="button_view"
@@ -171,12 +162,10 @@ export default {
         "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
       );
       if (answer) {
-        clearInterval(this.autoSaveFun);
         eventBus.$off();
         next();
       }
     } else {
-      clearInterval(this.autoSaveFun);
       eventBus.$off();
       next();
     }
@@ -201,10 +190,6 @@ export default {
       shading: true,
       showPane: true,
       closeOnOutsideClick: false,
-
-      options: [{ text: "자동저장(5분 마다)", value: true }],
-      autosaveValue: [true],
-      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
@@ -214,29 +199,15 @@ export default {
     this.loadingVisible = true;
     //큐시트 상세내용 가져오기
     await this.getCueCon();
-    //자동저장
-    this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave && this.timer > 1) {
-        this.saveTempCue();
-      }
-    }, 300000); //15분마다 저장
-    await this.getautosave(this.cueInfo.personid);
-    if (!this.cueSheetAutoSave) {
-      this.autosaveValue = [];
-    }
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
-    ...mapGetters("cueList", ["cueSheetAutoSave"]),
     ...mapGetters("user", ["timer"]),
   },
   methods: {
-    ...mapActions("cueList", ["getautosave"]),
-    ...mapActions("cueList", ["setautosave"]),
     ...mapActions("cueList", ["saveTempCue"]),
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["setclearFav"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["getCueDayFav"]),
     //상세내용 가져오기
@@ -270,15 +241,6 @@ export default {
       await this.getCueDayFav(params);
       this.loadingVisible = false;
       //this.setclearFav();
-    },
-    toggleChange(value) {
-      if (value.length == 0) {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
-        this.SET_CUESHEETAUTOSAVE(false);
-      } else {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
-        this.SET_CUESHEETAUTOSAVE(true);
-      }
     },
     onTextEdit() {
       this.$refs.inputText.focus();

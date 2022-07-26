@@ -44,15 +44,6 @@
                   }}</span>
                   <!-- <span>{{ cueInfo.edittime }}</span> -->
                 </span>
-                <span class="autosave">
-                  <b-form-checkbox-group
-                    :options="options"
-                    v-model="autosaveValue"
-                    @change="toggleChange"
-                    switches
-                    style="float: right"
-                  ></b-form-checkbox-group>
-                </span>
               </div>
               <div class="button_view">
                 <ButtonWidget type="O" />
@@ -163,7 +154,6 @@ export default {
       "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
     );
     if (answer) {
-      clearInterval(this.autoSaveFun);
       eventBus.$off();
       next();
     }
@@ -182,45 +172,19 @@ export default {
   data() {
     return {
       onload: null,
-      options: [{ text: "자동저장", value: true }],
-      autosaveValue: [true],
-      autoSaveFun: null,
       searchToggleSwitch: true,
       printHeight: 560,
       abChannelHeight: 734,
       widgetIndex: 16,
     };
   },
-  async mounted() {
-    this.autoSaveFun = setInterval(() => {
-      if (this.cueSheetAutoSave) {
-        this.saveOldCue();
-      }
-    }, 900000); //15분마다 저장
-    await this.getautosave(this.cueInfo.personid);
-    if (!this.cueSheetAutoSave) {
-      this.autosaveValue = [];
-    }
-  },
+  async mounted() {},
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
-    ...mapGetters("cueList", ["cueSheetAutoSave"]),
   },
   methods: {
-    ...mapActions("cueList", ["getautosave"]),
-    ...mapActions("cueList", ["setautosave"]),
-    ...mapMutations("cueList", ["SET_CUESHEETAUTOSAVE"]),
     ...mapActions("cueList", ["saveOldCue"]),
-    toggleChange(value) {
-      if (value.length == 0) {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "N" });
-        this.SET_CUESHEETAUTOSAVE(false);
-      } else {
-        this.setautosave({ ID: this.cueInfo.personid, CueSheetAutoSave: "Y" });
-        this.SET_CUESHEETAUTOSAVE(true);
-      }
-    },
     nextOk() {
       this.nextgo = true;
     },
@@ -256,7 +220,6 @@ export default {
         "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
       );
       if (answer) {
-        clearInterval(this.autoSaveFun);
         eventBus.$off();
         this.onload = true;
       } else {
