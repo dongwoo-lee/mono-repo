@@ -197,15 +197,6 @@
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
 	opacity: 0;
 }
-
-.chunk-panel {
-	width: 505px;
-	height: 165px;
-	overflow-y: auto;
-	padding: 18px;
-	margin-top: 40px;
-	background-color: rgba(191, 191, 191, 0.15);
-}
 .segment-size,
 .loaded-size {
 	margin-left: 3px;
