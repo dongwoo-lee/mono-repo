@@ -163,9 +163,7 @@ export default {
   computed: {
     ...mapGetters("user", ["roleList", "isSystemTopAdmin"]),
   },
-  mounted() {
-    console.log(this.props);
-  },
+  mounted() {},
   watch: {
     $route: {
       handler(to, from) {
@@ -265,7 +263,6 @@ export default {
     //큐시트 USER_INFO set
     getCueData(V) {
       sessionStorage.setItem("USER_INFO", JSON.stringify(this.rowData));
-      //this.SET_CUEINFO(this.rowData);
       this.$router.push({ path: "/app/cuesheet/" + V + "/detail" });
     },
   },
