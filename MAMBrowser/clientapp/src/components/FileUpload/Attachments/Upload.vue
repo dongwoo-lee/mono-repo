@@ -79,10 +79,11 @@ export default {
 
 <style>
 #webcuesheet_fileupload .dx-fileuploader-wrapper {
-  padding: 10px 10px 0px 10px;
+  padding: 15px 10px 0px 10px;
 }
 #webcuesheet_fileupload .dx-fileuploader-input-wrapper {
   border: 1px solid #d7d7d7;
+  border-radius: 2px 2px 0px 0px;
 }
 #webcuesheet_fileupload .chunk-panel {
   overflow: auto;
@@ -92,6 +93,7 @@ export default {
   border-bottom: 1px solid #d7d7d7;
   border-right: 1px solid #d7d7d7;
   border-left: 1px solid #d7d7d7;
+  border-radius: 0px 0px 2px 2px;
 }
 #webcuesheet_fileupload .dx-fileuploader-files-container {
   padding: 0px;
