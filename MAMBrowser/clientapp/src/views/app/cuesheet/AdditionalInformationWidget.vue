@@ -4,20 +4,20 @@
       <Attachments />
     </div>
     <div class="itme">
-      <div class="title">태그</div>
+      <div class="title_text">태그</div>
       <div class="component">
-        <Tag :dataList="tagDataList" :value="cueInfo.tagList" />
+        <Tag :tag_data_list="tagDataList" :value_items="valueItems" />
       </div>
+      <!-- <button @click="testClick">확인</button> -->
     </div>
     <div class="itme">
-      <div class="title">메모</div>
+      <div class="title_text">메모</div>
       <div class="component">
         <DxTextArea
           :height="35"
           :maxLength="25"
           placeholder="메모를 입력하세요."
         />
-        <button @click="test">확인</button>
       </div>
     </div>
   </div>
@@ -32,11 +32,14 @@ import ButtonWidget from "./ButtonWidget.vue";
 export default {
   data() {
     return {
-      tagDataList: ["데이터"],
+      tagDataList: ["dd"],
+      valueItems: [],
     };
   },
-  mounted() {
-    this.cueInfo.tagList = [];
+  created() {
+    if (this.cueInfo.tagList != undefined) {
+      this.valueItems = this.cueInfo.tagList;
+    }
   },
   components: {
     Attachments,
@@ -48,7 +51,7 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
-    test() {
+    testClick() {
       console.log(this.cueInfo.tagList);
     },
   },
@@ -63,7 +66,7 @@ export default {
   border: 1px solid #d7d7d7;
   border-radius: 2px;
 }
-#additional_information .title {
+#additional_information .title_text {
   padding: 10px;
   border-bottom: 1px solid #d7d7d7;
 }

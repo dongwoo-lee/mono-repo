@@ -68,9 +68,11 @@ export default {
     onOptionChanged(e) {},
     onValueChanged(e) {},
     onUploaded(e) {
-      var file = {};
-      file.token = JSON.parse(e.request.response).token;
-      //JSON.parse(e.request.response).token //token 가져오면 넣어주기
+      // var file = {};
+      var file = e.file;
+      // file.token = JSON.parse(e.request.response).token;
+      // file.name = JSON.parse(e.request.response).name;
+      // JSON.parse(e.request.response).token; //token 가져오면 넣어주기
       this.files.push(file);
     },
   },
