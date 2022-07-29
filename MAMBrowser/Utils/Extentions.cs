@@ -5,6 +5,7 @@ using MAMBrowser.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MAMBrowser.Utils
@@ -430,7 +431,7 @@ namespace MAMBrowser.Utils
                 PrintParam obj = new PrintParam();
                 obj.p_code = item.CODE;
                 obj.p_seqnum = item.ROWNUM;
-                obj.p_contents = item.CONTENTS;
+                obj.p_contents = CheckByteLength(item.CONTENTS, 100) ? item.CONTENTS : ByteSubstring(item.CONTENTS, 0, 100);
                 obj.p_usedtime = item.USEDTIME;
                 obj.p_etc = item.ETC;
                 result.PrintParams.Add(obj);
@@ -453,8 +454,8 @@ namespace MAMBrowser.Utils
                 obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
                 obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                 obj.p_transtype = char.Parse(item.TRANSTYPE);
-                obj.p_maintitle = item.MAINTITLE;
-                obj.p_subtitle = item.SUBTITLE;
+                obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE,0,100);
+                obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);
                 obj.p_memo = item.MEMO;
                 result.CueSheetConParams.Add(obj);
             }
@@ -478,8 +479,8 @@ namespace MAMBrowser.Utils
                         obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
                         obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
                         obj.p_transtype = char.Parse(item.TRANSTYPE);
-                        obj.p_maintitle = item.MAINTITLE;
-                        obj.p_subtitle = item.SUBTITLE;
+                        obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE, 0, 100);
+                        obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);
                         obj.p_memo = item.MEMO;
                         result.CueSheetConParams.Add(obj);
                     }
@@ -1200,6 +1201,21 @@ namespace MAMBrowser.Utils
             collectionDTO.PrintDTO = collectionDTO.PrintDTO.OrderBy(print => print.ROWNUM).ToList();
             collectionDTO.NormalCon = collectionDTO.NormalCon.OrderBy(nomal => nomal.ROWNUM).ToList();
             return collectionDTO;
+        }
+
+        public static bool CheckByteLength(String Data, int maxLength)
+        {
+            byte[] byteTEMP = Encoding.Default.GetBytes(Data);
+            return (byteTEMP.Length > maxLength) ? false : true;
+        }
+
+        public static String ByteSubstring(String Data, int StartIdx, int byteLength)
+        {
+            String retVal = "";
+            byte[] byteTEMP = Encoding.Default.GetBytes(Data);
+            retVal = Encoding.Default.GetString(byteTEMP, StartIdx, byteLength);
+
+            return retVal;
         }
     }
 }
