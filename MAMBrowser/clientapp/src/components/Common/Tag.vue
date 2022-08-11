@@ -2,10 +2,10 @@
   <div>
     <div>
       <DxTagBox
-        :items="tag_data_list"
+        :acceptCustomValue="true"
         :search-enabled="true"
         :value="value_items"
-        :hide-selected-items="true"
+        :noDataText="tagDataText"
         @value-changed="onValueChanged"
       />
     </div>
@@ -17,11 +17,12 @@ import DxTagBox from "devextreme-vue/tag-box";
 import { mapGetters } from "vuex";
 export default {
   props: {
-    tag_data_list: Array,
     value_items: Array,
   },
   data() {
-    return {};
+    return {
+      tagDataText: "추가할 태그를 입력하세요",
+    };
   },
   components: {
     DxTagBox,

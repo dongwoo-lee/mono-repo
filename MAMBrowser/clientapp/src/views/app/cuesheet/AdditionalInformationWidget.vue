@@ -6,7 +6,7 @@
     <div class="itme">
       <div class="title_text">태그</div>
       <div class="component">
-        <Tag :tag_data_list="tagDataList" :value_items="valueItems" />
+        <Tag :value_items="valueItems" />
       </div>
       <!-- <button @click="testClick">확인</button> -->
     </div>
@@ -32,8 +32,7 @@ import ButtonWidget from "./ButtonWidget.vue";
 export default {
   data() {
     return {
-      tagDataList: ["dd"],
-      valueItems: [],
+      valueItems: ["신혜림", "저스트팝", "JustPop"],
     };
   },
   created() {

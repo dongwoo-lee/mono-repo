@@ -400,7 +400,7 @@
               />
             </div>
           </div>
-          <div class="dx-field">
+          <!-- <div class="dx-field">
             <div class="dx-field-label" style="font-size: 15px">메모 :</div>
             <div class="dx-field-value">
               <DxTextArea
@@ -411,7 +411,7 @@
                 :disabled="cueInfo.cuetype == 'A'"
               />
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <template #modal-footer="{ cancel }">
