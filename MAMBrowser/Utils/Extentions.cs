@@ -257,6 +257,7 @@ namespace MAMBrowser.Utils
             {
                 var dtoItem = new PgmListDTO();
                 dtoItem.PRODUCTID = item.PRODUCTID;
+                dtoItem.PGMCODE = item.PGMCODE;
                 dtoItem.EVENTNAME = item.EVENTNAME;
                 dtoItem.SERVICENAME = item.SERVICENAME;
                 dtoItem.MEDIA = item.MEDIA;

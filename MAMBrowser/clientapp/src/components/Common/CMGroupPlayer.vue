@@ -191,7 +191,7 @@ export default {
           vm.LoadAudioInfo();
         }
       });
-      wavesurfer.on("interaction", function () {
+      wavesurfer.on("seek", (e) => {
         vm.LoadAudioInfo();
       });
       wavesurfer.on("finish", function () {
