@@ -343,10 +343,10 @@ export default {
           vm.LoadAudioInfo();
         }
       });
-      wavesurfer.on("interaction", function () {
+      wavesurfer.on("finish", function () {
         vm.LoadAudioInfo();
       });
-      wavesurfer.on("finish", function () {
+      wavesurfer.on("seek", (e) => {
         vm.LoadAudioInfo();
       });
       //영역 중간 click 시 정지 여부 > 정지 시 오류 발생됨
