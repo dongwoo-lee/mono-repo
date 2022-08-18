@@ -1153,5 +1153,19 @@ namespace MAMBrowser.Utils
             return collectionDTO;
         }
 
+        public static bool CheckByteLength(String Data, int maxLength)
+        {
+            byte[] byteTEMP = Encoding.Default.GetBytes(Data);
+            return (byteTEMP.Length > maxLength) ? false : true;
+        }
+
+        public static String ByteSubstring(String Data, int StartIdx, int byteLength)
+        {
+            String retVal = "";
+            byte[] byteTEMP = Encoding.Default.GetBytes(Data);
+            retVal = Encoding.Default.GetString(byteTEMP, StartIdx, byteLength);
+
+            return retVal;
+        }
     }
 }
