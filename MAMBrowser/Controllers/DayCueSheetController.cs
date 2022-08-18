@@ -29,28 +29,11 @@ namespace MAMBrowser.Controllers
             public List<string> products { get; set; }
             public int row_per_page { get; set; }
             public int select_page { get; set; }
-            public string start_dt { get; set; }
-            public string end_dt { get; set; }
+            public string brd_dt { get; set; }
             public string media { get; set; }
 
         }
         
-        //시작일, 종료일 날짜
-        [HttpGet("setDateList")] //Swagger 오류 수정
-        public List<string> setDateList(string start_dt, string end_dt)
-        {
-            List<string> dateList = new List<string>();
-            DateTime startDate = DateTime.ParseExact(start_dt, "yyyyMMdd", null);
-            DateTime endDate = DateTime.ParseExact(end_dt, "yyyyMMdd", null);
-            int dateSum = (endDate - startDate).Days;
-            for (int i = 0; i <= dateSum; i++)
-            {
-                string result = startDate.AddDays(i).ToString("yyyyMMdd");
-                dateList.Add(result);
-            }
-            return dateList;
-        }
-
         //일일큐시트 목록 가져오기
         [HttpPost("GetDayCueList")]
         public DTO_RESULT<DayCueList_Page> GetDayCueList([FromBody] DayPram pram)
@@ -58,7 +41,8 @@ namespace MAMBrowser.Controllers
             DTO_RESULT<DayCueList_Page> result = new DTO_RESULT<DayCueList_Page>();
             try
             {
-                List<string> dates = setDateList(pram.start_dt, pram.end_dt);
+                List<string> dates = new List<string>();
+                dates.Add(pram.brd_dt);
                 result.ResultObject = _bll.GetDayCueSheetList(pram.products, dates, pram.row_per_page, pram.select_page, pram.media);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }

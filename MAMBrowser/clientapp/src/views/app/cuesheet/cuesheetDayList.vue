@@ -13,16 +13,10 @@
     >
       <!-- 검색 -->
       <template slot="form-search-area">
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker
-          startDateLabel="방송 예정일(~부터)"
-          endDateLabel="방송 예정일(~까지)"
-          :startDate.sync="searchItems.start_dt"
-          :endDate.sync="searchItems.end_dt"
-          :maxPeriodMonth="3"
-          :required="false"
-          :isCurrentDate="false"
-        />
+        <!-- 방송일 -->
+        <b-form-group label="방송일" class="has-float-label">
+          <common-date-picker v-model="$v.searchItems.brd_dt.$model" required />
+        </b-form-group>
         <!-- 매체 -->
         <b-form-group label="매체" class="has-float-label">
           <b-form-select
@@ -96,9 +90,6 @@ function get_date_str(date) {
 
 var toDay = get_date_str(date);
 
-date.setDate(date.getDate() + 7);
-var endDay = get_date_str(date);
-
 export default {
   mixins: [MixinBasicPage],
   data() {
@@ -106,8 +97,7 @@ export default {
       date,
       programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
-        start_dt: toDay, // 시작일
-        end_dt: endDay, // 종료일
+        brd_dt: toDay, // 방송일
         media: "", // 매체
         productid: "", // 프로그램명
         rowPerPage: 30,
@@ -199,44 +189,28 @@ export default {
       const userName = sessionStorage.getItem(USER_NAME);
       const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      if (
-        this.$fn.checkGreaterStartDate(
-          this.searchItems.start_dt,
-          this.searchItems.end_dt
-        )
-      ) {
-        this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
-        });
-        this.hasErrorClass = true;
-        this.isTableLoading = false;
-        this.isScrollLodaing = false;
-        return;
-      } else {
-        if (this.searchItems.productid == "") {
-          var pram = { person: userName, gropId: gropId };
-          await this.getMediasOption(pram);
-          this.searchItems.productid = this.userProList;
-        }
-        if (this.searchItems.productid == undefined) {
-          this.searchItems.productid = this.userProList;
-        }
-        var params = {
-          start_dt: this.searchItems.start_dt,
-          end_dt: this.searchItems.end_dt,
-          products: this.searchItems.productid,
-          row_per_page: this.searchItems.rowPerPage,
-          select_page: this.searchItems.selectPage,
-          media: this.searchItems.media,
-        };
-        var arrListResult = await this.getcuesheetListArr(params);
-        if (arrListResult) {
-          this.setResponseData(arrListResult);
-        }
-        this.addScrollClass();
-        this.isTableLoading = false;
-        this.isScrollLodaing = false;
+      if (this.searchItems.productid == "") {
+        var pram = { person: userName, gropId: gropId };
+        await this.getMediasOption(pram);
+        this.searchItems.productid = this.userProList;
       }
+      if (this.searchItems.productid == undefined) {
+        this.searchItems.productid = this.userProList;
+      }
+      var params = {
+        brd_dt: this.searchItems.brd_dt,
+        products: this.searchItems.productid,
+        row_per_page: this.searchItems.rowPerPage,
+        select_page: this.searchItems.selectPage,
+        media: this.searchItems.media,
+      };
+      var arrListResult = await this.getcuesheetListArr(params);
+      if (arrListResult) {
+        this.setResponseData(arrListResult);
+      }
+      this.addScrollClass();
+      this.isTableLoading = false;
+      this.isScrollLodaing = false;
     },
     //매체 선택시 프로그램 목록 가져오기
     eventClick(e) {
