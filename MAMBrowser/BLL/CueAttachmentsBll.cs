@@ -2,10 +2,13 @@
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.Dto;
+using M30_CueSheetDAO.Entity;
+using M30_CueSheetDAO.Interfaces;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
+using MAMBrowser.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NAudio.Wave;
@@ -27,13 +30,15 @@ namespace MAMBrowser.BLL
         private readonly IFileProtocol _fileService;
         private readonly WebServerFileHelper _fileHelper;
         private readonly APIBll _apiBll;
+        private readonly ICueSheetDAO _dao;
 
-        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper)
+        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao)
         {
             _fileService = sr(MAMDefine.MirosConnection).FileSystem;
             _bll = bll;
             _apiBll = apiBll;
             _fileHelper = fileHelper;
+            _dao = dao;
         }
 
         //CueCon > ZipFile 내려받기
@@ -304,8 +309,20 @@ namespace MAMBrowser.BLL
             return result;
         }
 
-        //첨부파일 temp 업로드
-        public string UploadToTemp(IFormFile file, string chunkMetadata, string serviceName, string brd_date)
+        //attachments 목록 가져오기
+        public List<AttachmentDTO> GetAttachmentDTOs(int cueid)
+        {
+            return _dao.GetAttachmentEntities(cueid)?.Converting();
+        }
+
+        //fileid 가져오기
+        public long GetAttachmentsFileId()
+        {
+            return _dao.GetAttachmentsFileid();
+        }
+
+        //attachments -> Temp 업로드
+        public string UploadToTemp(IFormFile file, string chunkMetadata, string folder_date)
         {
             var result = "";
 
@@ -320,7 +337,7 @@ namespace MAMBrowser.BLL
                 //var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                 //var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
                 var tempPath = @"\\ad2022-nas\AUDIO-FILE\mbcdata\CUESHEET_TEMP_UPLOAD"; //임시 경로
-                var path = Path.Combine(tempPath, serviceName, brd_date);
+                var path = Path.Combine(tempPath, folder_date);
                 var filePath = Path.Combine(path, _fileHelper.GetTempFileName(metaDataObject));
                 var host = CommonUtility.GetHost(path);
                 var userinfo = GetStorageUserInfo(option);
@@ -337,14 +354,48 @@ namespace MAMBrowser.BLL
                 if (metaDataObject.index == (metaDataObject.TotalCount - 1))
                 {
                     //token 생성
-                    result = TokenGenerator.GenerateFileToken(filePath);
+                    //result = TokenGenerator.GenerateFileToken(filePath);
+                    result = filePath;
                 }
             }
-
             return result;
         }
 
-        // attachments 다운로드
+        //Temp -> Storage Move
+        public AttachmentDTO MoveToStorage(AttachmentDTO file, bool copyVal)
+        {
+            var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
+            var path = @"\\ad2022-nas\AUDIO-FILE\mbcdata\CUESHEET_ATTACHMENTS"; //임시 경로
+            var storagePath = Path.Combine(path, file.FILEID + "_" + Path.GetFileName(file.FILENAME));
+            //var filePath = Path.Combine(path, _fileHelper.GetTempFileName(metaDataObject));
+            var host = CommonUtility.GetHost(storagePath);
+            var userinfo = GetStorageUserInfo(option);
+            NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            if (copyVal)
+            {
+                File.Copy(file.FILEPATH, storagePath);
+            }
+            else
+            {
+                File.Move(file.FILEPATH, storagePath);
+                var folder = new DirectoryInfo(Path.GetDirectoryName(file.FILEPATH));
+                if (folder.GetFileSystemInfos().Length == 0)
+                {
+                    Directory.Delete(Path.GetDirectoryName(file.FILEPATH));
+                }
+            }
+
+            file.FILEPATH = storagePath;
+            return file;
+        }
+
+        //attachments 다운로드
         public DTO_RESULT AttachmentsFileValidation(string token)
         {
             //api controller 부분 긁어온 것 맞게 바꿔야 함
@@ -391,16 +442,12 @@ namespace MAMBrowser.BLL
             return result;
         }
 
-        //테스트 안 해봤음
-        public void DeleteTempAttachmentsFile(string fileToken)
+        //attachments 삭제 
+        public void DeleteAttachmentsFile(AttachmentDTO file)
         {
-            string filePath = "";
-            if (TokenGenerator.ValidateFileToken(fileToken, ref filePath))
+            if (File.Exists(file.FILEPATH))
             {
-                if (!File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                File.Delete(file.FILEPATH);
             }
         }
 

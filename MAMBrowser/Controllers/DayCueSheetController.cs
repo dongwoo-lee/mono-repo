@@ -1,12 +1,8 @@
 ﻿using MAMBrowser.BLL;
 using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using M30.AudioFile.Common;
 using Oracle.ManagedDataAccess.Client;
 using M30.AudioFile.Common.DTO;
@@ -18,12 +14,14 @@ namespace MAMBrowser.Controllers
     public class DayCueSheetController : ControllerBase
     {
         private readonly DayCueSheetBll _bll;
+        private readonly CueAttachmentsBll _attachmentsBll;
 
-        public DayCueSheetController(DayCueSheetBll bll)
+        public DayCueSheetController(DayCueSheetBll bll, CueAttachmentsBll attachmentsBll)
         {
             _bll = bll;
+            _attachmentsBll = attachmentsBll;
         }
-        
+
         public class DayPram
         {
             public List<string> products { get; set; }
@@ -31,9 +29,8 @@ namespace MAMBrowser.Controllers
             public int select_page { get; set; }
             public string brd_dt { get; set; }
             public string media { get; set; }
-
         }
-        
+
         //일일큐시트 목록 가져오기
         [HttpPost("GetDayCueList")]
         public DTO_RESULT<DayCueList_Page> GetDayCueList([FromBody] DayPram pram)
@@ -100,8 +97,31 @@ namespace MAMBrowser.Controllers
         public DTO_RESULT<int> SaveDayCue([FromBody] CueSheetCollectionDTO pram)
         {
             var result = new DTO_RESULT<int>();
+            var files = new List<AttachmentDTO>();
             try
             {
+                foreach (var item in pram.Attachments)
+                {
+                    if (item.FILEID != 0)
+                    {
+                        //기존 데이터 삭제
+                        if (item.DELSTATE)
+                        {
+                            _attachmentsBll.DeleteAttachmentsFile(item);
+                        }
+                        else
+                        {
+                            files.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        item.FILEID = _attachmentsBll.GetAttachmentsFileId();
+                        _attachmentsBll.MoveToStorage(item,false);
+                        files.Add(item);
+                    }
+                }
+                pram.Attachments = files;
                 result.ResultObject = _bll.SaveDayCue(pram);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -110,7 +130,7 @@ namespace MAMBrowser.Controllers
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
-                return result;
+            return result;
         }
 
         //구 DAP 저장
@@ -125,7 +145,7 @@ namespace MAMBrowser.Controllers
                 else
                     return -1;
             }
-            catch(OracleException oe)
+            catch (OracleException oe)
             {
 
                 switch (oe.Number)

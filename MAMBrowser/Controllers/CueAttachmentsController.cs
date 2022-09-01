@@ -45,6 +45,7 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        //wav파일 내보내기
         [HttpPost("exportWavFile")]
         public ActionResult<string> ExportWavFile([FromQuery]string userid,[FromBody]List<CueSheetConDTO> pram)
         {
@@ -60,6 +61,7 @@ namespace MAMBrowser.Controllers
             return result;
 
         }
+
         // 다운로드 링크
         [HttpGet("exportFileDownload")]
         public FileResult ExportFileDownload([FromQuery] Pram queryPram)
@@ -67,7 +69,7 @@ namespace MAMBrowser.Controllers
             FileResult result;
             var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
             var FilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
-            var extension = Path.GetExtension(queryPram.guid);
+            //var extension = Path.GetExtension(queryPram.guid);
             var provider = new FileExtensionContentTypeProvider();
 
             string contentType;
@@ -77,18 +79,19 @@ namespace MAMBrowser.Controllers
             }
 
             //zip file & attach(txt,pdf,docx,hwp)따라 다르게 해줘야할듯
-            result = PhysicalFile(FilePath, contentType, $"{queryPram.downloadName + extension}");
+            result = PhysicalFile(FilePath, contentType, $"{queryPram.downloadName}");
             return result;
         }
 
+        //첨부파일 ChunkFileUpload - Temp
         [RequestSizeLimit(int.MaxValue)]
-        [HttpPost("chunkFileUpload")]
-        public ActionResult<DTO_RESULT> ChunkFileUpload([FromForm] IFormFile file,[FromForm]string chunkMetadata, [FromForm] string serviceName,[FromForm] string brd_date)
+        [HttpPost("chunkFileTempUpload")]
+        public ActionResult<DTO_RESULT> ChunkFileTempUpload([FromForm] IFormFile file,[FromForm]string chunkMetadata, [FromForm]string folder_date)
         {
             var result = new DTO_RESULT();
             try
             {
-                result.Token =_bll.UploadToTemp(file, chunkMetadata, serviceName, brd_date);
+                result.ResultObject =_bll.UploadToTemp(file, chunkMetadata, folder_date);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
 
@@ -101,13 +104,20 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        [HttpDelete("tempFileDelete")]
-        public ActionResult<DTO_RESULT> TempAttachmentsFileDelete([FromQuery]string fileToken)
+        [HttpDelete("attachmentsDelete")]
+        public ActionResult<DTO_RESULT> AttachmentsFileDelete([FromQuery]AttachmentDTO file)
         {
             var result = new DTO_RESULT();
             try
             {
-                _bll.DeleteTempAttachmentsFile(fileToken);
+                _bll.DeleteAttachmentsFile(file);
+                var folder = new DirectoryInfo(Path.GetDirectoryName(file.FILEPATH));
+                if (folder.GetFileSystemInfos().Length == 0)
+                {
+                    Directory.Delete(Path.GetDirectoryName(file.FILEPATH));
+                }
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
             {
@@ -115,7 +125,6 @@ namespace MAMBrowser.Controllers
                 result.ErrorMsg = ex.Message;
             }
             return result;
-
         }
     }
   

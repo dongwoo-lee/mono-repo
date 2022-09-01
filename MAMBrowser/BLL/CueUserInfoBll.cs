@@ -22,6 +22,7 @@ namespace MAMBrowser.BLL
             _dao = dao;
         }
 
+        //프로그램 목록 가져오기
         public IEnumerable<PgmListDTO> GetUserPgmList(string person, char media)
         {
             ProgramListParam param = new ProgramListParamBuilder()
@@ -31,6 +32,8 @@ namespace MAMBrowser.BLL
 
             return _dao.GetProgramList(param)?.Converting();
         }
+
+        //담당자 목록 가져오기
         public string GetDirectorList(string productid)
         {
             return _dao.GetCueSheetDirectorName(productid);

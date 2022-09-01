@@ -234,7 +234,7 @@ export default {
   },
   methods: {
     ...mapActions("cueList", ["getcuesheetListArrTemp"]),
-    ...mapActions("cueList", ["addTemplate"]),
+    ...mapActions("cueList", ["addByTemplate"]),
     async getData() {
       const userId = sessionStorage.getItem(USER_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
@@ -267,7 +267,7 @@ export default {
       var pram = {
         CueSheetDTO: tempItem,
       };
-      await this.addTemplate(pram);
+      await this.addByTemplate(pram);
       this.getData();
       this.$bvModal.hide("modal-add");
     },

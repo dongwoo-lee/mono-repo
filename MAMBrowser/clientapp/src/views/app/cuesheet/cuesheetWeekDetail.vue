@@ -126,6 +126,13 @@
                       </div>
                     </template>
                   </DxItem>
+                  <DxItem title="부가정보">
+                    <template #default>
+                      <div>
+                        <AdditionalWidget />
+                      </div>
+                    </template>
+                  </DxItem>
                 </DxTabPanel>
               </div>
             </div>
@@ -171,6 +178,7 @@ import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
 import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
+import AdditionalWidget from "./AdditionalInformationWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
@@ -219,6 +227,7 @@ export default {
     SortableWidget,
     DxSpeedDialAction,
     CommonWeeks,
+    AdditionalWidget,
   },
   data() {
     return {

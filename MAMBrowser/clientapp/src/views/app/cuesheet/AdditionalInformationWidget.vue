@@ -1,6 +1,6 @@
 <template>
   <div id="additional_information">
-    <div>
+    <div v-if="cueInfo.cuetype=='D'||cueInfo.cuetype=='A'">
       <Attachments />
     </div>
     <div class="itme">

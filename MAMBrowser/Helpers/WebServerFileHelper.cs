@@ -208,7 +208,8 @@ namespace MAMBrowser.Helper
         public string GetTempFileName(ChunkMetadata meta)
         {
             string date = DateTime.Now.ToString(Define.DTM8);
-            return $"{date}_{meta.FileGuid}_{Path.GetFileNameWithoutExtension(meta.FileName)}.tmp";
+            //return $"{date}_{meta.FileGuid}_{Path.GetFileNameWithoutExtension(meta.FileName)}.tmp";
+            return $"{date}_{meta.FileGuid}_{meta.FileName}";
         }
 
         public void TrimWavFile(string inPath, string outPath, TimeSpan cutFromStart, TimeSpan cutFromEnd)

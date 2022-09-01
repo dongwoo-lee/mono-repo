@@ -121,11 +121,11 @@ namespace MAMBrowser.DTO
 
     public class AttachmentDTO
     {
-        public string filepath { get; set; }
-        public string filetoken { get; set; } //다운로드 시 필요
-        public string filename { get; set; }
-        public long filesize { get; set; }
-        public List<DelFilePath> del_file_paths { get; set; }
+        public long FILEID { get; set; }
+        public string FILEPATH { get; set; }
+        public string FILENAME { get; set; }
+        public int FILESIZE { get; set; }
+        public bool DELSTATE { get; set; }
     }
 
     public class DelFilePath

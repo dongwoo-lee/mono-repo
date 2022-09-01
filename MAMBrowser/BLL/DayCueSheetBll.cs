@@ -53,6 +53,7 @@ namespace MAMBrowser.BLL
                 .SetProductID(productid)
                 .SetRequestType(RequestType.Web)
                 .Build();
+
             param.BrdDate = brd_dt;
             var result = _dao.GetDayCueSheet(param);
             if (result.CueSheetEntity == null)
@@ -73,6 +74,7 @@ namespace MAMBrowser.BLL
 
             }
         }
+
         public List<CueSheetConDTO> GetAddSponsorList(string pgmcode, string brd_dt)
         {
             SponsorParam param = new SponsorParam();
@@ -90,6 +92,7 @@ namespace MAMBrowser.BLL
                 .SetCueSheetConParams(paramData.CueSheetConParams)
                 .SetDayCueSheetParam(paramData.DayCueSheetParam)
                 .SetPrintParams(paramData.PrintParams)
+                .SetAttachmentsParams(paramData.AttachmentsParams)
                 .Build();
 
             var result = _dao.CreateDayCueSheet(param);

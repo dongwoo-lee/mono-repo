@@ -62,7 +62,7 @@ namespace MAMBrowser.BLL
             }
             return result?.TemConverting();
         }
-        //템플릿 생성 & 업데이트 (해야함)
+        //템플릿 생성 & 업데이트 
         public int SaveTemplate(CueSheetCollectionDTO pram)
         {
             var paramData = pram.TempToEntity();
@@ -73,7 +73,6 @@ namespace MAMBrowser.BLL
 
             return _dao.CreateTemplate(param);
         }
-
         //템플릿 삭제
         public bool DeleteTemplate(int[] tempids)
         {

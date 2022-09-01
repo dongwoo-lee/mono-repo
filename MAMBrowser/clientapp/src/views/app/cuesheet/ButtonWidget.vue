@@ -765,7 +765,7 @@ export default {
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["saveTempCue"]),
     ...mapActions("cueList", ["saveOldCue"]),
-    ...mapActions("cueList", ["addTemplate"]),
+    ...mapActions("cueList", ["addByTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
     ...mapActions("cueList", ["getuserProOption"]),
@@ -798,7 +798,7 @@ export default {
       // };
       cueCon.CueSheetDTO = tempItem;
 
-      await this.addTemplate(cueCon);
+      await this.addByTemplate(cueCon);
       this.loadingIconVal = false;
       this.$bvModal.hide("modal-template");
     },
@@ -933,13 +933,16 @@ export default {
     // wave는 AB만 들어가야 함 나중에 method 분리하기
     async exportZipWave() {
       var apiName;
+      var extension;
       switch (this.zipWaveText) {
         case "Zip":
           apiName = "exportZipFile";
+          extension = ".zip";
           break;
 
         case "Wave":
           apiName = "exportWavFile";
+          extension = ".wav";
         default:
           break;
       }
@@ -979,7 +982,6 @@ export default {
         }
         await axios
           .post(
-            // `/api/CueAttachments/exportZipFile?userid=${sessionStorage.getItem(
             `/api/CueAttachments/${apiName}?userid=${sessionStorage.getItem(
               USER_ID
             )}`,
@@ -991,7 +993,7 @@ export default {
               response.data
             }&userid=${sessionStorage.getItem(
               USER_ID
-            )}&downloadname=${downloadName}`;
+            )}&downloadname=${downloadName}${extension}`;
             document.body.appendChild(link);
             link.click();
           })

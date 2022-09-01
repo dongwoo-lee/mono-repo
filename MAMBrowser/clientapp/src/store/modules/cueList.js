@@ -24,6 +24,7 @@ export default {
         abCartArr: [], //ab 카트
         cChannelData: [], //c 카트
         cueFavorites: [], //즐겨찾기
+        attachments: [], //첨부파일
         printTem: [{
             code: "",
             contents: "---------- 1부  ----------",
@@ -233,6 +234,7 @@ export default {
         abCartArr: state => state.abCartArr,
         cChannelData: state => state.cChannelData,
         cueFavorites: state => state.cueFavorites,
+        attachments: state => state.attachments,
         printTem: state => state.printTem,
     },
     mutations: {
@@ -274,6 +276,9 @@ export default {
         },
         SET_CCHANNELDATA(state, payload) {
             state.cChannelData = payload;
+        },
+        SET_ATTACHMENTS(state, payload) {
+            state.attachments = payload;
         },
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
@@ -511,8 +516,7 @@ export default {
             });
             return productWeekList;
         },
-        //템플릿 추가 + 템플릿으로 저장 (나중에 템플릿 저장이랑 합치기)
-        async addTemplate({ }, payload) {
+        async addByTemplate({ }, payload) {
             var temLength = 0
             await $http.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
                 .then((res) => {
@@ -529,7 +533,7 @@ export default {
                 )
             } else {
                 await $http
-                    .post(`/api/TempCueSheet/SaveTempCue`, payload)
+                    .post(`/api/TempCueSheet/SaveByTemp`, payload)
                     .then((res) => {
                         window.$notify(
                             "info",
@@ -574,6 +578,9 @@ export default {
                             return qs.stringify(params);
                         },
                     }).then((cueRes) => {
+                        if (cueRes.data.resultObject.attachments.length > 0) {
+                            commit('SET_ATTACHMENTS', cueRes.data.resultObject.attachments)
+                        }
                         newInfo.detail[0].cueid = res.data.resultObject
                         newInfo.edittime = cueRes.data.resultObject.cueSheetDTO.edittime
                         delete newInfo.cueid
@@ -961,6 +968,7 @@ export default {
         setCueConData({ state, commit }, payload) {
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)
+            commit('SET_ATTACHMENTS', payload.attachments)
             if (payload.printDTO.length > 0) {
                 var cueDataObj = { ...state.cueInfo }
                 if (Object.keys(cueDataObj).length === 0) {
@@ -995,6 +1003,7 @@ export default {
             var printData = state.printArr
             var abData = state.abCartArr
             var cData = state.cChannelData
+            var files = state.attachments
             var favData = state.cueFavorites
             //출력용
             var printResult = [];
@@ -1017,7 +1026,8 @@ export default {
             var pram = {
                 PrintDTO: printResult,
                 NormalCon: abDataResult,
-                InstanceCon: cData
+                InstanceCon: cData,
+                Attachments: files
             };
             if (fav) {
                 pram.favConParam = favData
@@ -1034,6 +1044,7 @@ export default {
             }
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
+            commit('SET_ATTACHMENTS', [])
             for (var c = 0; 4 > c; c++) {
                 var arr = [];
                 for (var i = 0; 16 > i; i++) {
@@ -1230,6 +1241,6 @@ export default {
                 default:
                     break;
             }
-        }
+        },
     }
 }

@@ -1,40 +1,44 @@
 <template>
   <div id="webcuesheet_fileupload">
-    <div>
+    <div v-if="cueInfo.cuetype != 'A'">
       <DxFileUploader
+        :ref="fileUploadRef"
         :chunk-size="chunkSize"
-        labelText="첨부파일"
+        :labelText="title_name"
         select-button-text="파일 업로드"
         name="file"
         :accept="accept"
         :upload-url="getUrl"
         :upload-custom-data="uploaderCustomData"
-        @upload-started="onUploadedStarted"
-        @value-changed="onValueChanged"
-        @option-changed="onOptionChanged"
         @uploaded="onUploaded"
-      />
+      >
+      </DxFileUploader>
     </div>
+    <div v-else class="uploader_title">{{ title_name }}</div>
     <div class="chunk-panel">
-      <div v-for="(file, index) in files" :key="index">
-        <span class="segment-size dx-theme-accent-as-text-color">{{
-          file
-        }}</span>
-        <span id="file_manager_btn">
-          <DxButton
-            :width="120"
-            icon="download"
-            styling-mode="outlined"
-            text="다운로드"
-          />
-          <DxButton
-            :width="100"
-            icon="remove"
-            styling-mode="outlined"
-            text="삭제"
-            @click="onFileDelete(file)"
-          />
-        </span>
+      <div v-for="(file, index) in attachments" :key="index">
+        <div v-if="!file.delstate">
+          <span class="segment-size dx-theme-accent-as-text-color">{{
+            file.filename
+          }}</span>
+          <span id="file_manager_btn">
+            <DxButton
+              :width="120"
+              icon="download"
+              styling-mode="outlined"
+              text="다운로드"
+              @click="onFileDownload(file)"
+            />
+            <DxButton
+              :width="100"
+              v-if="cueInfo.cuetype != 'A'"
+              icon="remove"
+              styling-mode="outlined"
+              text="삭제"
+              @click="onFileDelete(file)"
+            />
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -43,37 +47,123 @@
 <script>
 import DxFileUploader from "devextreme-vue/file-uploader";
 import DxButton from "devextreme-vue/button";
+import { mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
+const fileUploadRef = "fileUploader";
+const qs = require("qs");
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
+  var milliseconds = date.getMilliseconds();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+  hours = hours > 9 ? hours : "0" + hours;
+  minutes = minutes > 9 ? minutes : "0" + minutes;
+  seconds = seconds > 9 ? seconds : "0" + seconds;
+
+  var result =
+    sYear +
+    "" +
+    sMonth +
+    "" +
+    sDate +
+    "" +
+    hours +
+    "" +
+    minutes +
+    "" +
+    seconds +
+    "" +
+    milliseconds;
+  return result;
+}
+
 export default {
   data() {
     return {
+      fileUploadRef,
+      title_name: "첨부파일",
       files: [],
       uploaderCustomData: {
-        serviceName: "테스트 프로그램",
-        brd_date: "20220707",
+        folder_date: "",
       }, //이후에 props로 바꾸기
       chunkSize: 1,
       accept:
         "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,.pdf,.docx,.hwp",
-      getUrl: "/api/CueAttachments/chunkFileUpload",
+      getUrl: "/api/CueAttachments/chunkFileTempUpload",
     };
   },
   components: {
     DxFileUploader,
     DxButton,
   },
-  mounted() {},
+  created() {
+    const date = new Date();
+    this.uploaderCustomData.folder_date = get_date_str(date);
+  },
+  computed: {
+    ...mapGetters("cueList", ["attachments"]),
+    ...mapGetters("cueList", ["cueInfo"]),
+    fileUploader: function () {
+      return this.$refs[fileUploadRef].instance;
+    },
+  },
   methods: {
-    onFileDelete(file) {},
-    onUploadedStarted(e) {},
-    onOptionChanged(e) {},
-    onValueChanged(e) {},
+    ...mapMutations("cueList", ["SET_ATTACHMENTS"]),
+    async onFileDelete(file) {
+      if (!file.fileid) {
+        await this.$http
+          .delete(`/api/CueAttachments/attachmentsDelete`, {
+            params: file,
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+          .then((res) => {
+            var resultArray = this.attachments.filter((item) => {
+              return item.filepath != file.filepath;
+            });
+            this.SET_ATTACHMENTS(resultArray);
+            window.$notify("info", `삭제완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          })
+          .catch((err) => {
+            window.$notify("error", `삭제실패.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          });
+      } else {
+        file.delstate = true;
+      }
+    },
+    onFileDownload(file) {
+      const link = document.createElement("a");
+      link.href = `/api/CueAttachments/exportFileDownload?guid=${
+        file.filepath
+      }&userid=${sessionStorage.getItem(USER_ID)}&downloadname=${
+        file.filename
+      }`;
+      document.body.appendChild(link);
+      link.click();
+    },
     onUploaded(e) {
-      // var file = {};
-      var file = e.file;
-      // file.token = JSON.parse(e.request.response).token;
-      // file.name = JSON.parse(e.request.response).name;
-      // JSON.parse(e.request.response).token; //token 가져오면 넣어주기
-      this.files.push(file);
+      const arrData = _.cloneDeep(this.attachments);
+      var file = {};
+      file.filepath = JSON.parse(e.request.response).resultObject;
+      file.filename = e.file.name;
+      file.filesize = e.file.size;
+      file.delstate = false;
+      arrData.push(file);
+      this.SET_ATTACHMENTS(arrData);
     },
   },
 };
@@ -84,6 +174,7 @@ export default {
   padding: 15px 10px 0px 10px;
 }
 #webcuesheet_fileupload .dx-fileuploader-input-wrapper {
+  position: relative;
   border: 1px solid #d7d7d7;
   border-radius: 2px 2px 0px 0px;
 }
@@ -113,5 +204,13 @@ export default {
 }
 #webcuesheet_fileupload .dx-fileuploader-input-label {
   padding: 8px 15px;
+}
+#webcuesheet_fileupload .uploader_title {
+  margin: 10px 10px 0px 10px;
+  padding: 10px;
+  border: 1px solid #d7d7d7;
+}
+#webcuesheet_fileupload .dx-fileuploader-file {
+  line-height: 18px;
 }
 </style>
