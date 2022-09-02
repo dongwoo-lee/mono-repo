@@ -5,36 +5,38 @@
         :ref="fileUploadRef"
         :chunk-size="chunkSize"
         :labelText="title_name"
+        :uploadAbortedMessage="uploadAbortedMessage"
+        :max-file-size="104857600"
         select-button-text="파일 업로드"
         name="file"
         :accept="accept"
         :upload-url="getUrl"
         :upload-custom-data="uploaderCustomData"
         @uploaded="onUploaded"
+        @upload-started="OnUploadStarted"
       >
       </DxFileUploader>
     </div>
     <div v-else class="uploader_title">{{ title_name }}</div>
     <div class="chunk-panel">
-      <div v-for="(file, index) in attachments" :key="index">
+      <div class="chunk-item" v-for="(file, index) in attachments" :key="index">
         <div v-if="!file.delstate">
-          <span class="segment-size dx-theme-accent-as-text-color">{{
+          <span class="segment-size dx-theme-accent-as-text-color mr-2"
+            >{{ index + 1 }}.</span
+          >
+          <span class="segment-size dx-theme-accent-as-text-color mr-2">{{
             file.filename
           }}</span>
           <span id="file_manager_btn">
             <DxButton
-              :width="120"
               icon="download"
-              styling-mode="outlined"
-              text="다운로드"
+              hint="다운로드"
               @click="onFileDownload(file)"
             />
             <DxButton
-              :width="100"
               v-if="cueInfo.cuetype != 'A'"
               icon="remove"
-              styling-mode="outlined"
-              text="삭제"
+              hint="삭제"
               @click="onFileDelete(file)"
             />
           </span>
@@ -49,6 +51,7 @@ import DxFileUploader from "devextreme-vue/file-uploader";
 import DxButton from "devextreme-vue/button";
 import { mapGetters, mapMutations } from "vuex";
 import { USER_ID } from "@/constants/config";
+import { eventBus } from "@/eventBus";
 const fileUploadRef = "fileUploader";
 const qs = require("qs");
 
@@ -93,7 +96,9 @@ export default {
       uploaderCustomData: {
         folder_date: "",
       }, //이후에 props로 바꾸기
-      chunkSize: 1,
+      chunkSize: 1000000,
+      maxFileLength: 10,
+      uploadAbortedMessage: "파일을 추가할 수 없습니다.",
       accept:
         "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,.pdf,.docx,.hwp",
       getUrl: "/api/CueAttachments/chunkFileTempUpload",
@@ -106,6 +111,12 @@ export default {
   created() {
     const date = new Date();
     this.uploaderCustomData.folder_date = get_date_str(date);
+    eventBus.$on("attachments-delete", () => {
+      this.attachments.forEach((file) => {
+        this.onFileDelete(file);
+      });
+      this.SET_ATTACHMENTS([]);
+    });
   },
   computed: {
     ...mapGetters("cueList", ["attachments"]),
@@ -165,10 +176,20 @@ export default {
       arrData.push(file);
       this.SET_ATTACHMENTS(arrData);
     },
+    OnUploadStarted(e) {
+      const regexImoji =
+        /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])|[~!@#$%^&*()+|<>?:{}]/gi;
+      const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
+      if (this.attachments.length >= this.maxFileLength) {
+        e.component.abortUpload();
+      }
+      if (regexImoji.test(e.file.name) || regex.test(e.file.name)) {
+        e.component.abortUpload();
+      }
+    },
   },
 };
 </script>
-
 <style>
 #webcuesheet_fileupload .dx-fileuploader-wrapper {
   padding: 15px 10px 0px 10px;
@@ -181,7 +202,7 @@ export default {
 #webcuesheet_fileupload .chunk-panel {
   overflow: auto;
   height: 140px;
-  padding: 10px;
+  padding: 15px 15px 15px 5px;
   margin: 0px 10px 10px 10px;
   border-bottom: 1px solid #d7d7d7;
   border-right: 1px solid #d7d7d7;
@@ -212,5 +233,15 @@ export default {
 }
 #webcuesheet_fileupload .dx-fileuploader-file {
   line-height: 18px;
+}
+#webcuesheet_fileupload .chunk-item {
+  padding: 5px;
+}
+#file_manager_btn .dx-button-content {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  /* background: #ddd;
+    border-radius: 2px; */
 }
 </style>

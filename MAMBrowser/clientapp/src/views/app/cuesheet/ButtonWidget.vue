@@ -559,6 +559,17 @@ export default {
   props: {
     type: String,
     saveText: String,
+    cueClearItems: {
+      type: Array,
+      default: () => ["print", "ab"],
+    },
+    cueClearOptions: {
+      type: Array,
+      default: () => [
+        { name: "출력용", value: "print", notEnabled: true },
+        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+      ],
+    },
     fav: {
       type: Boolean,
       default: false,
@@ -576,7 +587,7 @@ export default {
       cuetype: "",
       allCheck: true,
       templateTitle: "",
-      selected: ["print", "ab"],
+      selected: [],
       cartSelected: ["c1", "c2", "c3", "c4"],
       oldCueOptions: [
         {
@@ -585,10 +596,7 @@ export default {
         },
       ],
       oldCueSelected: [true],
-      options: [
-        { name: "출력용", value: "print", notEnabled: true },
-        { name: "DAP(A, B)", value: "ab", notEnabled: true },
-      ],
+      options: [],
       cartOptions: [
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
@@ -692,20 +700,6 @@ export default {
           moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
       }
     }
-    // if (this.cueInfo.cuetype == "D" || this.cueInfo.cuetype == "A") {
-    //   this.templateTitle =
-    //     "[" +
-    //     this.cueInfo.media +
-    //     "]" +
-    //     this.cueInfo.title +
-    //     "_" +
-    //     moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
-    // }
-    // if (this.cueInfo.cuetype == "B") {
-    //   this.templateTitle =
-    //     "[" + this.cueInfo.media + "]" + this.cueInfo.title + "_" + toDay;
-    // }
-    // this.tmpTitleTextBoxValue = this.templateTitle;
   },
   components: {
     CommonImportDef,
@@ -753,10 +747,13 @@ export default {
         }
       });
     }
+    this.selected = this.cueClearItems.concat();
+    this.options = this.cueClearOptions.concat();
   },
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapMutations("cueList", ["SET_ATTACHMENTS"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -814,6 +811,9 @@ export default {
         if (this.selected.includes("ab")) {
           this.SET_ABCARTARR([]);
         }
+
+        this.selected.includes("attachments") &&
+          eventBus.$emit("attachments-delete");
       }
       if (this.cartSelected.length > 0) {
         eventBus.$emit("clearCData", this.cartSelected);
@@ -830,7 +830,8 @@ export default {
     clickCheckTilte() {
       if (this.allCheck) {
         //아이템 전체 비활성화
-        this.selected = ["print", "ab"];
+        // this.selected = ["print", "ab"];
+        this.selected = this.cueClearItems.concat();
         this.cartSelected = ["c1", "c2", "c3", "c4"];
         this.options.forEach((ele) => {
           ele.notEnabled = true;
