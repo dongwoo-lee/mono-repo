@@ -25,6 +25,7 @@ export default {
         cChannelData: [], //c 카트
         cueFavorites: [], //즐겨찾기
         attachments: [], //첨부파일
+        tags: [],
         printTem: [{
             code: "",
             contents: "---------- 1부  ----------",
@@ -236,6 +237,7 @@ export default {
         cueFavorites: state => state.cueFavorites,
         attachments: state => state.attachments,
         printTem: state => state.printTem,
+        tags: state => state.tags,
     },
     mutations: {
         SET_CUESHEETLISTARR(state, payload) {
@@ -279,6 +281,9 @@ export default {
         },
         SET_ATTACHMENTS(state, payload) {
             state.attachments = payload;
+        },
+        SET_TAGS(state, payload) {
+            state.tags = payload
         },
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
@@ -969,6 +974,7 @@ export default {
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)
             commit('SET_ATTACHMENTS', payload.attachments)
+            commit('SET_TAGS', payload.tags)
             if (payload.printDTO.length > 0) {
                 var cueDataObj = { ...state.cueInfo }
                 if (Object.keys(cueDataObj).length === 0) {
@@ -1004,7 +1010,9 @@ export default {
             var abData = state.abCartArr
             var cData = state.cChannelData
             var files = state.attachments
+            let tags = state.tags
             var favData = state.cueFavorites
+
             //출력용
             var printResult = [];
             printData.forEach((ele, index) => {
@@ -1027,7 +1035,8 @@ export default {
                 PrintDTO: printResult,
                 NormalCon: abDataResult,
                 InstanceCon: cData,
-                Attachments: files
+                Attachments: files,
+                Tags: tags
             };
             if (fav) {
                 pram.favConParam = favData
@@ -1035,13 +1044,14 @@ export default {
             return pram
         },
         //con 모두 지우기
-        setclearCon({ state, commit }) {
+        setclearCon({ state, commit, dispatch }) {
             const printTemplate = _.cloneDeep(state.printTem);
             var insData = {}
             var cueDataObj = { ...state.cueInfo }
             if (Object.keys(cueDataObj).length === 0) {
                 cueDataObj = JSON.parse(sessionStorage.getItem("USER_INFO"));
             }
+            dispatch(`getPgmCodeKeywordsList`, cueDataObj.pgmcode);
             commit('SET_PRINTARR', printTemplate)
             commit('SET_ABCARTARR', [])
             commit('SET_ATTACHMENTS', [])
@@ -1053,7 +1063,16 @@ export default {
                 insData["channel_" + (c + 1)] = arr
             }
             commit('SET_CCHANNELDATA', insData)
-
+        },
+        async getPgmCodeKeywordsList({ commit }, payload) {
+            await $http.get(`/api/CueUserInfo/GetKeyword?pgmcode=` + payload)
+                .then((res) => {
+                    const obj = res.data.resultObject;
+                    if (obj) {
+                        let keywords = obj.replace(/[^\w\s|ㄱ-ㅎ|가-힣|,]/gi, "").replace(/ /g, "")
+                        commit(`SET_TAGS`, keywords.split(","))
+                    }
+                })
         },
         //즐겨찾기 모두 지우기
         setclearFav({ commit }) {

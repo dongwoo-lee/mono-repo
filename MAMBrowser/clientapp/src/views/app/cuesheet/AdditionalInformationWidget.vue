@@ -1,6 +1,6 @@
 <template>
   <div id="additional_information">
-    <div v-if="cueInfo.cuetype=='D'||cueInfo.cuetype=='A'">
+    <div v-if="cueInfo.cuetype == 'D' || cueInfo.cuetype == 'A'">
       <Attachments />
     </div>
     <div class="itme">
@@ -8,7 +8,6 @@
       <div class="component">
         <Tag :value_items="valueItems" />
       </div>
-      <!-- <button @click="testClick">확인</button> -->
     </div>
     <div class="itme">
       <div class="title_text">메모</div>
@@ -30,16 +29,13 @@ import Tag from "../../../components/Common/Tag.vue";
 import DxTextArea from "devextreme-vue/text-area";
 import ButtonWidget from "./ButtonWidget.vue";
 export default {
+  props: {
+    valueItems: Array,
+  },
   data() {
-    return {
-      valueItems: ["신혜림", "저스트팝", "JustPop"],
-    };
+    return {};
   },
-  created() {
-    if (this.cueInfo.tagList != undefined) {
-      this.valueItems = this.cueInfo.tagList;
-    }
-  },
+  created() {},
   components: {
     Attachments,
     Tag,
@@ -49,11 +45,7 @@ export default {
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
   },
-  methods: {
-    testClick() {
-      console.log(this.cueInfo.tagList);
-    },
-  },
+  methods: {},
 };
 </script>
 <style>

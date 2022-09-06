@@ -169,7 +169,7 @@ namespace MAMBrowser.Utils
 
         public static CueSheetCollectionDTO DayConverting(this CueSheetCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, entity.AttachmentEntities);
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, entity.AttachmentEntities, entity.TagEntities);
 
             collectionDTO.CueSheetDTO = new CueSheetDTO();
 
@@ -201,7 +201,7 @@ namespace MAMBrowser.Utils
         }
         public static CueSheetCollectionDTO DefConverting(this CueSheetCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, null);
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, null, entity.TagEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
             var detailArr = new List<ViewDetail>();
 
@@ -235,7 +235,7 @@ namespace MAMBrowser.Utils
         }
         public static CueSheetCollectionDTO TemConverting(this TemplateCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities,null);
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities,null,entity.TagEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
             var detailArr = new List<ViewDetail>();
 
@@ -267,7 +267,7 @@ namespace MAMBrowser.Utils
         }
         public static CueSheetCollectionDTO ArchiveConverting(this ArchiveCueSheetCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, entity.AttachmentEntities);
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, entity.AttachmentEntities, entity.TagEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
 
             collectionDTO.CueSheetDTO.CUETYPE = "A";
@@ -524,6 +524,7 @@ namespace MAMBrowser.Utils
             result.CueSheetConParams = dto?.Converting();
             result.PrintParams = dto.PrintDTO?.Converting()?? new List<PrintParam>();
             result.AttachmentsParams = dto.Attachments?.Converting()?? new List<AttachmentsParam>();
+            result.TagParams = dto.Tags?.Converting() ?? new List<TagParam>();
 
             result.DayCueSheetParam = new DayCueSheetParam();
             result.DayCueSheetParam.p_cueid = dto.CueSheetDTO.DETAIL[0].CUEID;
@@ -810,13 +811,27 @@ namespace MAMBrowser.Utils
             return result;
         }
 
-        public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> prints, List<AttachmentEntity> attachments)
+        public static List<TagParam> Converting(this List<string> tags)
+        {
+            var result = new List<TagParam>();
+            foreach (var item in tags)
+            {
+                var tag = new TagParam();
+                tag.p_tag = item;
+                result.Add(tag);
+            }
+
+            return result;
+        }
+
+        public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> prints, List<AttachmentEntity> attachments ,List<string> tags)
         {
             var collectionDTO = new CueSheetCollectionDTO();
             collectionDTO.NormalCon = new List<CueSheetConDTO>();
             collectionDTO.InstanceCon = new Dictionary<string, List<CueSheetConDTO>>();
             collectionDTO.PrintDTO = prints?.Converting();
-            collectionDTO.Attachments = attachments?.Converting(); 
+            collectionDTO.Attachments = attachments?.Converting();
+            collectionDTO.Tags = tags;
             var InstanceConList = new List<CueSheetConDTO>();
 
             // AB, C 가공

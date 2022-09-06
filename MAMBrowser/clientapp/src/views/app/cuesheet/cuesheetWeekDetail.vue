@@ -129,7 +129,7 @@
                   <DxItem title="부가정보">
                     <template #default>
                       <div>
-                        <AdditionalWidget />
+                        <AdditionalWidget :valueItems="tags" />
                       </div>
                     </template>
                   </DxItem>
@@ -252,12 +252,12 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("user", ["timer"]),
+    ...mapGetters("cueList", ["tags"]),
   },
   methods: {
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
-    ...mapActions("cueList", ["setclearCon"]),
     ...mapActions("cueList", ["setSponsorList"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["getCueDayFav"]),

@@ -123,7 +123,7 @@
                   <DxItem title="부가정보">
                     <template #default>
                       <div>
-                        <AdditionalWidget />
+                        <AdditionalWidget :valueItems="tags" />
                       </div>
                     </template>
                   </DxItem>
@@ -238,6 +238,7 @@ export default {
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("cueList", ["tags"]),
     ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("cueList", ["defCuesheetListArr"]),
     ...mapGetters("user", ["timer"]),

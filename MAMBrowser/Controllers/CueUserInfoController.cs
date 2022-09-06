@@ -57,5 +57,25 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        //프로그램 키워드 가져오기
+        [HttpGet("GetKeyword")]
+        public DTO_RESULT<string> GetKeyword([FromQuery] string pgmcode)
+        {
+            var result = new DTO_RESULT<string>(); 
+            try
+            {
+                result.ResultObject = _bll.GetPgmcodeKeyword(pgmcode);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+
+            }
+            return result;
+        }
+
     }
 }

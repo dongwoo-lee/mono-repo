@@ -22,7 +22,7 @@ namespace MAMBrowser.DTO
         //첨부파일 정보
         public List<AttachmentDTO> Attachments { get; set; }
         //태그 정보
-        //public List<string> TagDTO { get; set; }
+        public List<string> Tags { get; set; }
     }
 
     public class CueSheetDTO

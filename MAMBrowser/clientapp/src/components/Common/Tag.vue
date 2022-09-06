@@ -14,7 +14,7 @@
 
 <script>
 import DxTagBox from "devextreme-vue/tag-box";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   props: {
     value_items: Array,
@@ -31,8 +31,9 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
+    ...mapMutations("cueList", ["SET_TAGS"]),
     onValueChanged(e) {
-      this.cueInfo.tagList = e.value;
+      this.SET_TAGS(e.value);
     },
   },
 };

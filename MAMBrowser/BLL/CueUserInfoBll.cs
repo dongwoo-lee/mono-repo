@@ -39,5 +39,11 @@ namespace MAMBrowser.BLL
             return _dao.GetCueSheetDirectorName(productid);
         }
 
+        //프로그램 키워드 가져오기
+        public string GetPgmcodeKeyword(string pgmcode)
+        {
+            return  _dao.GetPgmcodeKeyword(pgmcode);
+        }
+
     }
 }

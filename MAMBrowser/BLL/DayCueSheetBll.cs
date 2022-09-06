@@ -93,6 +93,7 @@ namespace MAMBrowser.BLL
                 .SetDayCueSheetParam(paramData.DayCueSheetParam)
                 .SetPrintParams(paramData.PrintParams)
                 .SetAttachmentsParams(paramData.AttachmentsParams)
+                .SetTagParams(paramData.TagParams)
                 .Build();
 
             var result = _dao.CreateDayCueSheet(param);
