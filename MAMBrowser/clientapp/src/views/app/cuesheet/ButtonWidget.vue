@@ -815,9 +815,16 @@ export default {
         if (this.selected.includes("ab")) {
           this.SET_ABCARTARR([]);
         }
+        //첨부파일
         this.selected.includes("attachments") &&
           eventBus.$emit("attachments-delete");
+        //태그
         this.selected.includes("tags") && this.SET_TAGS([]);
+        //메모
+        if (this.selected.includes("memo")) {
+          this.cueInfo.memo = "";
+          this.SET_CUEINFO(this.cueInfo);
+        }
       }
       if (this.cartSelected.length > 0) {
         eventBus.$emit("clearCData", this.cartSelected);

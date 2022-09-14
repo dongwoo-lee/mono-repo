@@ -414,7 +414,6 @@ export default {
                   responseCuesheetCollection.cueSheetDTO.headertitle;
                 oldCueInfo.membername =
                   responseCuesheetCollection.cueSheetDTO.membername;
-                oldCueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(
                   responseCuesheetCollection.printDTO
@@ -451,8 +450,14 @@ export default {
                 this.SET_ABCARTARR(resultABData);
                 eventBus.$emit("abDataSet");
               }
+              //태그
               this.MenuSelected.includes("tags") &&
                 this.SET_TAGS(responseCuesheetCollection.tags);
+              //메모
+              if (this.MenuSelected.includes("memo")) {
+                this.cueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
+                this.SET_CUEINFO(this.cueInfo);
+              }
               var pram = {
                 data: responseCuesheetCollection.instanceCon,
                 items: this.MenuSelected,

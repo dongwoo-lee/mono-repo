@@ -12,10 +12,11 @@
     <div class="itme">
       <div class="title_text">메모</div>
       <div class="component">
-        <DxTextArea
-          :height="35"
+        <DxTextBox
           :maxLength="25"
           placeholder="메모를 입력하세요."
+          v-model="cueInfo.memo"
+          :disabled="cueInfo.cuetype === 'A'"
         />
       </div>
     </div>
@@ -26,7 +27,7 @@
 import { mapGetters } from "vuex";
 import Attachments from "../../../../src/components/FileUpload/Attachments/Upload.vue";
 import Tag from "../../../components/Common/Tag.vue";
-import DxTextArea from "devextreme-vue/text-area";
+import DxTextBox from "devextreme-vue/text-box";
 import ButtonWidget from "./ButtonWidget.vue";
 export default {
   props: {
@@ -39,7 +40,7 @@ export default {
   components: {
     Attachments,
     Tag,
-    DxTextArea,
+    DxTextBox,
     ButtonWidget,
   },
   computed: {
