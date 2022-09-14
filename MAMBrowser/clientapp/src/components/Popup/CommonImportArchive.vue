@@ -211,11 +211,14 @@ export default {
         },
       ],
       allCheck: true,
-      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4"],
+      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4", "tags", "memo"],
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "태그", value: "tags", notEnabled: true },
+        { name: "메모", value: "memo", notEnabled: true },
+        { name: "C1", value: "c1", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
         { name: "C3", value: "c3", notEnabled: true },
@@ -223,7 +226,7 @@ export default {
       ],
       importOptions: [
         { text: "덮어쓰기", value: "add" },
-        { text: "붙여넣기 (C채널 제외)", value: "update" },
+        { text: "붙여넣기", value: "update" },
       ],
     };
   },
@@ -231,7 +234,16 @@ export default {
     state: function (val) {
       this.getData();
       if (!val) {
-        (this.MenuSelected = ["print", "ab", "c1", "c2", "c3", "c4"]),
+        (this.MenuSelected = [
+          "print",
+          "ab",
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "tags",
+          "memo",
+        ]),
           this.MenuOptions.forEach((item) => {
             item.notEnabled = true;
           });
@@ -271,6 +283,7 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_PRINTARR"]),
+    ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_ARCHIVECUESHEETLISTARR"]),
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
     ...mapActions("cueList", ["getMediasOption"]),
@@ -438,6 +451,8 @@ export default {
                 this.SET_ABCARTARR(resultABData);
                 eventBus.$emit("abDataSet");
               }
+              this.MenuSelected.includes("tags") &&
+                this.SET_TAGS(responseCuesheetCollection.tags);
               var pram = {
                 data: responseCuesheetCollection.instanceCon,
                 items: this.MenuSelected,

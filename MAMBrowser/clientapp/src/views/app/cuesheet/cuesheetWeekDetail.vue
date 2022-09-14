@@ -259,6 +259,7 @@ export default {
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["setSponsorList"]),
+    ...mapActions("cueList", ["getPgmCodeKeywordsList"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapActions("cueList", ["getCueDayFav"]),
     //상세내용 가져오기
@@ -288,6 +289,7 @@ export default {
           cueData.productWeekList = rowData.productWeekList;
           cueData.brddate = toDay;
           //cueDataObj = cueData
+          this.setDefaultTag(responseCuesheetCollection);
           this.settingInfo(cueData);
           this.SET_CUEINFO(cueData);
           this.setCueConData(res.data.resultObject);
@@ -348,6 +350,10 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
+    },
+    setDefaultTag(res) {
+      res.tags.length === 0 &&
+        this.getPgmCodeKeywordsList(res.cueSheetDTO.pgmcode);
     },
     settingInfo(cueDataObj) {
       if (!cueDataObj.directorname || cueDataObj.directorname == "") {

@@ -21,8 +21,9 @@ namespace MAMBrowser.BLL
         {
             _dao = dao;
         }
+
         // 이전큐시트 목록 가져오기
-        public ArchiveCueList_Page GetArchiveCueSheetList(List<string> products, string start_dt, string end_dt, int row_per_page, int select_page)
+        public ArchiveCueList_Page GetArchiveCueSheetList(List<string> products, string start_dt, string end_dt, int row_per_page, int select_page, List<string> tag)
         {
             var result = new ArchiveCueList_Page();
             ArchiveCueSheetListParam param = new ArchiveCueSheetListParamBuilder()
@@ -31,6 +32,7 @@ namespace MAMBrowser.BLL
                 .SetEndDate(end_dt)
                 .SetRowPage(row_per_page)
                 .SetSelectPage(select_page)
+                .SetTags(tag)
                 .Build();
 
             var data = _dao.GetArchiveCueSheetList(param);

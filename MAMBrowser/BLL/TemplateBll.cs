@@ -70,6 +70,7 @@ namespace MAMBrowser.BLL
             param.TemplateParam = paramData.TemplateParam;
             param.CueSheetConParams = paramData.CueSheetConParams;
             param.PrintParams = paramData.PrintParams;
+            param.TagParams = paramData.TagParams;
 
             return _dao.CreateTemplate(param);
         }

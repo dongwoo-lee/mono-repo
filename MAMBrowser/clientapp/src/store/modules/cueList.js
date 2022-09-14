@@ -973,7 +973,7 @@ export default {
         setCueConData({ state, commit }, payload) {
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)
-            commit('SET_ATTACHMENTS', payload.attachments)
+            payload.attachments ? commit('SET_ATTACHMENTS', payload.attachments) : commit('SET_ATTACHMENTS', [])
             commit('SET_TAGS', payload.tags)
             if (payload.printDTO.length > 0) {
                 var cueDataObj = { ...state.cueInfo }

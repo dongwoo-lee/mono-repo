@@ -561,13 +561,15 @@ export default {
     saveText: String,
     cueClearItems: {
       type: Array,
-      default: () => ["print", "ab"],
+      default: () => ["print", "ab", "tags", "memo"],
     },
     cueClearOptions: {
       type: Array,
       default: () => [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "태그", value: "tags", notEnabled: true },
+        { name: "메모", value: "memo", notEnabled: true },
       ],
     },
     fav: {
@@ -715,6 +717,7 @@ export default {
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["cChannelData"]),
+    ...mapGetters("cueList", ["attachments"]),
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["cueFavorites"]),
     ...mapGetters("cueList", ["cueInfo"]),
@@ -754,6 +757,7 @@ export default {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_ATTACHMENTS"]),
+    ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -811,9 +815,9 @@ export default {
         if (this.selected.includes("ab")) {
           this.SET_ABCARTARR([]);
         }
-
         this.selected.includes("attachments") &&
           eventBus.$emit("attachments-delete");
+        this.selected.includes("tags") && this.SET_TAGS([]);
       }
       if (this.cartSelected.length > 0) {
         eventBus.$emit("clearCData", this.cartSelected);
@@ -1097,7 +1101,7 @@ export default {
   font-size: 14px;
   padding-top: 20px;
   padding-bottom: 10px;
-  margin: 0px 150px 0px 150px;
+  margin: 0px 130px 0px 130px;
 }
 /* 모달 CSS */
 #modal-setting .dx-field-label {

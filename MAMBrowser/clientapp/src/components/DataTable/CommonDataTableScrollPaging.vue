@@ -31,6 +31,11 @@
           <slot name="weeks" :props="props"></slot>
         </div>
       </template>
+      <template v-if="isTagSlot" slot="tag" scope="props">
+        <div class="table-button-container">
+          <slot name="tag" :props="props"></slot>
+        </div>
+      </template>
     </vuetable>
     <!-- 우클릭 컨텍스트 메뉴 -->
     <v-contextmenu ref="contextmenu">
@@ -93,6 +98,10 @@ export default {
     },
     isWeeksSlot: {
       // actions: button 등 slot 사용 유무
+      type: Boolean,
+      default: false,
+    },
+    isTagSlot: {
       type: Boolean,
       default: false,
     },

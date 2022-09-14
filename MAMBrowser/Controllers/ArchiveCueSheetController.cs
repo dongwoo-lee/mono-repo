@@ -29,7 +29,7 @@ namespace MAMBrowser.Controllers
             public int select_page { get; set; }
             public string start_dt { get; set; }
             public string end_dt { get; set; }
-
+            public string tag { get; set; }
         }
 
         //이전큐시트 목록 가져오기
@@ -39,7 +39,10 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<ArchiveCueList_Page>();
             try
             {
-                result.ResultObject = _bll.GetArchiveCueSheetList(pram.products, pram.start_dt, pram.end_dt, pram.row_per_page, pram.select_page);
+                var tags = new List<string>();
+                if (pram.tag != ""&&pram.tag!=null)
+                    tags.Add(pram.tag);
+                result.ResultObject = _bll.GetArchiveCueSheetList(pram.products, pram.start_dt, pram.end_dt, pram.row_per_page, pram.select_page, tags);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

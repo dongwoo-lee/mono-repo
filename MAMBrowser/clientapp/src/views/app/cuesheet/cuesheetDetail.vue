@@ -199,7 +199,6 @@ export default {
       };
       var archiveConData = await this.getarchiveCuesheetCon(params);
       if (archiveConData) {
-        console.log(archiveConData);
         this.SET_CUEINFO(archiveConData.cueSheetDTO);
         this.setCueConData(archiveConData);
         this.getProUserList(rowData.productid);

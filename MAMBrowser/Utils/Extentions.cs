@@ -100,7 +100,7 @@ namespace MAMBrowser.Utils
                     BRDDATE = item.BRDDATE,
                     BRDTIME = item.BRDTIME,
                     CUETYPE = "A",
-
+                    TAG = item.TAG
                 });
             }
 
@@ -235,7 +235,7 @@ namespace MAMBrowser.Utils
         }
         public static CueSheetCollectionDTO TemConverting(this TemplateCollectionEntity entity)
         {
-            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities,null,entity.TagEntities);
+            CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, null, entity.TagEntities);
             collectionDTO.CueSheetDTO = new CueSheetDTO();
             var detailArr = new List<ViewDetail>();
 
@@ -522,8 +522,8 @@ namespace MAMBrowser.Utils
             //cue
             DayCueSheetCreateParam result = new DayCueSheetCreateParam();
             result.CueSheetConParams = dto?.Converting();
-            result.PrintParams = dto.PrintDTO?.Converting()?? new List<PrintParam>();
-            result.AttachmentsParams = dto.Attachments?.Converting()?? new List<AttachmentsParam>();
+            result.PrintParams = dto.PrintDTO?.Converting() ?? new List<PrintParam>();
+            result.AttachmentsParams = dto.Attachments?.Converting() ?? new List<AttachmentsParam>();
             result.TagParams = dto.Tags?.Converting() ?? new List<TagParam>();
 
             result.DayCueSheetParam = new DayCueSheetParam();
@@ -578,8 +578,9 @@ namespace MAMBrowser.Utils
                 }
             }
 
-            result.CueSheetConParams = dto?.Converting(); 
+            result.CueSheetConParams = dto?.Converting();
             result.PrintParams = dto.PrintDTO?.Converting() ?? new List<PrintParam>();
+            result.TagParams = dto.Tags?.Converting() ?? new List<TagParam>();
 
             return result;
 
@@ -588,7 +589,8 @@ namespace MAMBrowser.Utils
         {
             TemplateCreateParam result = new TemplateCreateParam();
             result.CueSheetConParams = dto?.Converting();
-            result.PrintParams = dto.PrintDTO?.Converting()?? new List<PrintParam>();
+            result.PrintParams = dto.PrintDTO?.Converting() ?? new List<PrintParam>();
+            result.TagParams = dto.Tags?.Converting() ?? new List<TagParam>();
 
             result.TemplateParam = new TemplateParam();
             result.TemplateParam.p_tempid = dto.CueSheetDTO.DETAIL[0].CUEID;
@@ -824,7 +826,7 @@ namespace MAMBrowser.Utils
             return result;
         }
 
-        public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> prints, List<AttachmentEntity> attachments ,List<string> tags)
+        public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> prints, List<AttachmentEntity> attachments, List<string> tags)
         {
             var collectionDTO = new CueSheetCollectionDTO();
             collectionDTO.NormalCon = new List<CueSheetConDTO>();

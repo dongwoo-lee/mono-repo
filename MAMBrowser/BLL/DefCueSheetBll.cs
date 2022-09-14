@@ -79,6 +79,7 @@ namespace MAMBrowser.BLL
                 .SetCueSheetConParams(paramData.CueSheetConParams)
                 .SetDefCueSheetParam(paramData.DefCueSheetParam)
                 .SetPrintParams(paramData.PrintParams)
+                .SetTagParams(paramData.TagParams)
                 .Build();
 
             param.DelDefCueParams = new List<DefDeleteParam>();

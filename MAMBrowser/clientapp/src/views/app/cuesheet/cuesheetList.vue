@@ -40,6 +40,10 @@
             :options="programList"
           />
         </b-form-group>
+        <!-- 태그 -->
+        <b-form-group label="태그" class="has-float-label">
+          <common-input-text v-model="searchItems.tag" />
+        </b-form-group>
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch"
@@ -61,6 +65,7 @@
           :per-page="responseData.rowPerPage"
           :totalCount="responseData.totalRowCount"
           is-actions-slot
+          :isTagSlot="true"
           :num-rows-to-bottom="5"
           :isTableLoading="isTableLoading"
           @scrollPerPage="onScrollPerPage"
@@ -70,6 +75,13 @@
           <template slot="actions" scope="props">
             <common-actions :rowData="props.props.rowData"> </common-actions>
           </template>
+          <template slot="tag" scope="props">
+            <common-tag
+              :rowData="props.props.rowData"
+              @tagItemFromCommonTag="OnClickCommonTagItem"
+            >
+            </common-tag>
+          </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
@@ -77,6 +89,7 @@
 </template>
 
 <script>
+import CommonTag from "../../../components/DataTable/CommonTag.vue";
 import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
@@ -100,6 +113,12 @@ date.setDate(date.getDate() - 7);
 var startDay = get_date_str(date);
 
 export default {
+  props: {
+    tagItem: {
+      type: String,
+      default: "",
+    },
+  },
   mixins: [MixinBasicPage],
   data() {
     return {
@@ -110,6 +129,7 @@ export default {
         end_dt: endDay, // 종료일
         media: "", // 매체
         productid: "", // 프로그램명
+        tag: "", //태그
         rowPerPage: 30,
         selectPage: 1,
       },
@@ -119,7 +139,7 @@ export default {
           title: "매체",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "10%",
+          width: "7%",
           callback: (value) => {
             switch (value) {
               case "A":
@@ -154,7 +174,7 @@ export default {
           title: "방송시간",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "15%",
+          width: "7%",
           callback: (value) => {
             return value === null
               ? ""
@@ -167,7 +187,13 @@ export default {
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
         },
-
+        {
+          name: "__slot:tag",
+          title: "태그",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          // width: "18%",
+        },
         {
           name: "__slot:actions",
           title: "작업",
@@ -178,7 +204,7 @@ export default {
       ],
     };
   },
-
+  components: { CommonTag },
   computed: {
     ...mapGetters("cueList", ["archiveCuesheetListArr"]),
     ...mapGetters("cueList", ["userProOption"]),
@@ -186,6 +212,9 @@ export default {
     ...mapGetters("cueList", ["userProList"]),
   },
   mounted() {
+    if (this.tagItem) {
+      this.searchItems.tag = this.tagItem;
+    }
     this.getData();
     this.getProductName();
   },
@@ -221,6 +250,7 @@ export default {
         start_dt: this.searchItems.start_dt,
         end_dt: this.searchItems.end_dt,
         products: this.searchItems.productid,
+        tag: this.searchItems.tag,
         row_per_page: this.searchItems.rowPerPage,
         select_page: this.searchItems.selectPage,
       };
@@ -239,6 +269,10 @@ export default {
       var proOption = await this.getuserProOption(pram);
       this.programList = this.userProOption;
       this.searchItems.productid = this.userProList;
+    },
+    OnClickCommonTagItem(tag) {
+      this.searchItems.tag = tag;
+      this.getData();
     },
   },
 };

@@ -341,6 +341,7 @@ const routes = [
         name: 'cuesheet-previous-list',
         path: "cuesheet/previous/list",
         component: () => import("./views/app/cuesheet/cuesheetList"),
+        props: true
       },
       {
         // 큐시트 조회
