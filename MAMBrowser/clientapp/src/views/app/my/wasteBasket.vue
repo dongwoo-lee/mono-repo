@@ -59,14 +59,6 @@
             >휴지통 비우기</b-button
           >
         </b-input-group>
-        <b-input-group>
-          <b-button
-            variant="outline-danger default"
-            size="sm"
-            @click="getSummaryUser"
-            >유저</b-button
-          >
-        </b-input-group>
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
