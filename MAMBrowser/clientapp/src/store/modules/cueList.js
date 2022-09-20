@@ -834,7 +834,7 @@ export default {
                 //MY 디스크
                 case "S01G01C007":
                     payload.row.maintitle = payload.search_row.title;
-                    payload.row.subtitle = payload.search_row.memo;
+                    payload.search_row.memo != null ? payload.row.subtitle = payload.search_row.memo : payload.row.subtitle = '';
                     break;
                 //DL30
                 case "S01G01C006":
@@ -1182,7 +1182,7 @@ export default {
                     switch (search_row.contentType) {
                         case "AB":
                             row = { ...formRowData };
-                            if (search_row.subtitle == "") {
+                            if (search_row.cartcode == "") {
                                 //빈칸
                                 row.contents = search_row.memo;
                             } else {

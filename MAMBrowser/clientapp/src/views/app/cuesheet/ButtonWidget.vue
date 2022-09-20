@@ -225,57 +225,6 @@
     />
     <common-import-archive @settings="(val) => (editOptions = val)" />
 
-    <!-- 내보내기 -->
-    <b-modal
-      ref="modal-wav"
-      size="lg"
-      centered
-      title="내보내기"
-      ok-title="확인"
-      cancel-title="취소"
-    >
-      <div class="d-block text-center">
-        <div class="mb-3 mt-3" style="font-size: 20px">
-          <div>
-            현재 DAP (A,B) 탭에 추가된 소재를 하나의 WAV 파일로 병합합니다.
-          </div>
-        </div>
-        <div class="wavemodalDiv">
-          <div class="dx-fieldset">
-            <div class="dx-field">
-              <div class="dx-field-label wavemodalabel">병합될 소재 개수 :</div>
-              <div class="dx-field-value">10 개</div>
-            </div>
-            <div class="dx-field">
-              <div class="dx-field-label wavemodalabel">
-                완료 후 소재 길이 :
-              </div>
-              <div class="dx-field-value">00:45:54</div>
-            </div>
-          </div>
-        </div>
-        <div v-if="buttonText !== '확인'">
-          <DxProgressBar
-            id="progress-bar-status"
-            :class="{ complete: seconds == 0 }"
-            :min="0"
-            :max="maxValue"
-            :status-format="statusFormat"
-            :value="progressValue"
-            width="90%"
-          />
-        </div>
-      </div>
-      <template #modal-footer="{ cancel }">
-        <b-button variant="secondary" @click="cancelClick(cancel)"
-          >취소
-        </b-button>
-        <b-button variant="primary" @click="onButtonClick">
-          {{ buttonText }}
-        </b-button>
-      </template>
-    </b-modal>
-
     <!-- 큐시트 저장 -->
     <b-modal
       id="modal-save"
@@ -436,19 +385,17 @@
 
     <!-- ExportZip -->
     <b-modal
-      ref="modal-export-zip-wave"
+      ref="modal-export-zip"
       size="lg"
       centered
       title="내보내기"
       ok-title="확인"
       cancel-title="취소"
-      @ok="exportZipWave"
+      @ok="exportZip"
     >
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
-          <div class="mb-3">
-            작성된 내용을 {{ zipWaveText }} 파일로 내보냅니다.
-          </div>
+          <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
           <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
         </div>
       </div>
@@ -466,7 +413,38 @@
           :width="100"
           :height="30"
           :disabled="loadingIconVal"
-          @click="exportZipWave()"
+          @click="exportZip()"
+        >
+        </DxButton>
+      </template>
+    </b-modal>
+
+    <!-- ExportWav -->
+    <b-modal
+      ref="modal-export-wav"
+      size="xl"
+      centered
+      title="Wav 내보내기"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="OnExportWav"
+    >
+      <div>
+        <WavExportAbCart @isTotalDuration="isTotalDuration" />
+      </div>
+      <template #modal-footer="{ cancel }">
+        <div class="mydisc-check-box">
+          <DxCheckBox :value="true" :text="labelText" />
+        </div>
+        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton
+          type="default"
+          styling-mode="outlined"
+          text="확인"
+          :width="100"
+          :height="30"
+          :disabled="!isTotalValue"
+          @click="OnExportWav()"
         >
         </DxButton>
       </template>
@@ -539,6 +517,7 @@
 </template>
 
 <script>
+import { DxCheckBox } from "devextreme-vue/check-box";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
@@ -547,6 +526,7 @@ import { DxLoadIndicator } from "devextreme-vue/load-indicator";
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
+import WavExportAbCart from "../../../components/Popup/WavExportABCart.vue";
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
@@ -579,7 +559,8 @@ export default {
   },
   data() {
     return {
-      zipWaveText: "Zip",
+      labelText: "병합 후 My 디스크에 해당 소재 추가",
+      isTotalValue: true,
       goBackPoint: "",
       accrssCheck: true,
       loadingIconVal: false,
@@ -704,6 +685,7 @@ export default {
     }
   },
   components: {
+    DxCheckBox,
     CommonImportDef,
     CommonImportTem,
     CommonImportArchive,
@@ -713,6 +695,7 @@ export default {
     DxTextArea,
     DxLoadIndicator,
     DxLoadPanel,
+    WavExportAbCart,
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
@@ -771,9 +754,6 @@ export default {
     ...mapActions("cueList", ["setclearFav"]),
     ...mapActions("cueList", ["getuserProOption"]),
     ...mapActions("user", ["renewal"]),
-
-    //테스트중
-    ...mapActions("cueList", ["exportZip"]),
 
     //템플릿으로 저장
     async addtemClick() {
@@ -863,12 +843,10 @@ export default {
     onDownloadItemClick(e) {
       //wav도 추가해야함
       if (e.itemData.id == "zip") {
-        this.zipWaveText = "Zip";
-        this.$refs["modal-export-zip-wave"].show();
+        this.$refs["modal-export-zip"].show();
       }
       if (e.itemData.id == "wav") {
-        this.zipWaveText = "Wave";
-        this.$refs["modal-export-zip-wave"].show();
+        this.$refs["modal-export-wav"].show();
       } else {
         eventBus.$emit("exportGo", e.itemData.id);
       }
@@ -943,21 +921,7 @@ export default {
     },
     // zip, wave 파일 다운로드
     // wave는 AB만 들어가야 함 나중에 method 분리하기
-    async exportZipWave() {
-      var apiName;
-      var extension;
-      switch (this.zipWaveText) {
-        case "Zip":
-          apiName = "exportZipFile";
-          extension = ".zip";
-          break;
-
-        case "Wave":
-          apiName = "exportWavFile";
-          extension = ".wav";
-        default:
-          break;
-      }
+    async exportZip() {
       this.loadingIconVal = true;
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
@@ -994,7 +958,7 @@ export default {
         }
         await axios
           .post(
-            `/api/CueAttachments/${apiName}?userid=${sessionStorage.getItem(
+            `/api/CueAttachments/exportZipFile?userid=${sessionStorage.getItem(
               USER_ID
             )}`,
             pramList
@@ -1005,7 +969,7 @@ export default {
               response.data
             }&userid=${sessionStorage.getItem(
               USER_ID
-            )}&downloadname=${downloadName}${extension}`;
+            )}&downloadname=${downloadName}.zip`;
             document.body.appendChild(link);
             link.click();
           })
@@ -1015,7 +979,60 @@ export default {
       }
       this.loadingIconVal = false;
 
-      this.$refs["modal-export-zip-wave"].hide();
+      this.$refs["modal-export-zip"].hide();
+    },
+    async OnExportWav() {
+      this.loadingIconVal = true;
+      var cuesheetData = await this.setCueConFav_save(false);
+      var pramList = [];
+      cuesheetData.NormalCon.forEach((ele) => {
+        if (ele.cartcode != "") pramList.push(ele);
+      });
+      if (pramList.length == 0) {
+        window.$notify("error", `내려받을 소재가 없습니다.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      } else {
+        var downloadName = "";
+        switch (this.cueInfo.cuetype) {
+          case "D":
+            downloadName = `${this.cueInfo.day}_${this.cueInfo.title}`;
+            break;
+          case "B":
+            downloadName = `[기본]_${this.cueInfo.title}`;
+            break;
+          case "T":
+            downloadName = `${this.cueInfo.title}`;
+            break;
+          case "A":
+            downloadName = `${this.cueInfo.brddate}_${this.cueInfo.title}`;
+            break;
+        }
+        await axios
+          .post(
+            `/api/CueAttachments/exportWavFile?userid=${sessionStorage.getItem(
+              USER_ID
+            )}`,
+            pramList
+          )
+          .then((response) => {
+            const link = document.createElement("a");
+            link.href = `/api/CueAttachments/exportFileDownload?guid=${
+              response.data
+            }&userid=${sessionStorage.getItem(
+              USER_ID
+            )}&downloadname=${downloadName}.wav`;
+            document.body.appendChild(link);
+            link.click();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+      this.loadingIconVal = false;
+
+      this.$refs["modal-export-wav"].hide();
     },
     async editWeekListClick() {
       const userName = sessionStorage.getItem(USER_NAME);
@@ -1092,6 +1109,9 @@ export default {
     resetModal() {
       this.editOptions = { ...this.cueInfo };
     },
+    isTotalDuration(value) {
+      this.isTotalValue = value;
+    },
   },
 };
 </script>
@@ -1120,5 +1140,9 @@ export default {
   .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
   font-family: "MBC 새로움 M" !important;
   width: 65%;
+}
+.mydisc-check-box {
+  position: absolute;
+  left: 40px;
 }
 </style>

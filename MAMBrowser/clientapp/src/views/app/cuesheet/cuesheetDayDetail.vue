@@ -246,7 +246,6 @@ export default {
     ...mapGetters("user", ["timer"]),
   },
   methods: {
-    ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["setclearCon"]),
