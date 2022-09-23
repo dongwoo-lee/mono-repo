@@ -51,10 +51,15 @@ export default {
 </script>
 <style>
 #additional_information {
+  overflow: auto;
   height: 580px;
 }
+.additional_information_search_toggle_on {
+  height: 330px !important;
+  padding-bottom: 10px;
+}
 #additional_information .itme {
-  margin: 15px 10px 0px 10px;
+  margin: 10px 10px 0px 10px;
   border: 1px solid #d7d7d7;
   border-radius: 2px;
 }

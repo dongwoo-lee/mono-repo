@@ -330,8 +330,7 @@ namespace MAMBrowser.BLL
             {
                 var metaDataObject = JsonConvert.DeserializeObject<ChunkMetadata>(chunkMetadata);
                 string[] extensionRuls = { ".txt", ".docx", "xlsx", "pdf", "hwp" };
-                long chunkMaxSize = 40000;
-
+                long chunkMaxSize = 1000000;
                 _fileHelper.CheckFileExtensionValid(extensionRuls, metaDataObject.FileName);
                 var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                 //var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();

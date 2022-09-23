@@ -403,6 +403,9 @@ export default {
         this.printHeight = 310;
         this.abChannelHeight = 354;
         document
+          .querySelector("#additional_information")
+          .classList.add("additional_information_search_toggle_on");
+        document
           .querySelector(".detail_view")
           .insertBefore(document.getElementById("button_view"), null);
         document
@@ -415,6 +418,9 @@ export default {
       } else {
         this.printHeight = 560;
         this.abChannelHeight = 734;
+        document
+          .querySelector("#additional_information")
+          .classList.remove("additional_information_search_toggle_on");
         document
           .getElementById("left_top")
           .insertBefore(document.getElementById("button_view"), null);

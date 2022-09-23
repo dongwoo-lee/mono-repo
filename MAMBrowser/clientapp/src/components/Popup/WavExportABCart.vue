@@ -4,7 +4,7 @@
       현재 DAP(A, B)에 추가된 소재들을 하나의 Wav 파일로 병합하여 내보냅니다.
     </h3>
     <h3 v-else class="m-3" style="color: red">
-      소재 취합 후 길이는 3시간을 넘을 수 없습니다.
+      소재 취합 후 길이는 {{ maxDuration / 3600000 }}시간을 넘을 수 없습니다.
     </h3>
     <div
       class="wav-ab-grid p-4 mt-3 mb-3"
@@ -116,7 +116,7 @@ export default {
     return {
       dataSource: [],
       isTotalValue: true,
-      maxDuration: 10800000,
+      maxDuration: 7200000, // 2시간
     };
   },
   mounted() {

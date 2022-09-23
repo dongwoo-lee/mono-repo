@@ -99,11 +99,14 @@ export default {
   },
   async created() {
     this.loadingVisible = true;
+    this.cueInfo.cuetype = "D";
     await this.getCueCon();
     var ele = document.getElementById("app-container");
     this.classText = ele.classList.item(1);
   },
-  computed: {},
+  computed: {
+    ...mapGetters("cueList", ["cueInfo"]),
+  },
   methods: {
     ...mapActions("cueList", ["getCueDayFav"]),
     async getCueCon() {

@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div>
+    <div id="cuesheet_tag_container">
       <DxTagBox
         v-if="cueInfo.cuetype != 'A'"
         :acceptCustomValue="true"
         :value="value_items"
         :noDataText="tagDataText"
         :placeholder="placeholderText"
+        :element-attr="accordionAttributes"
         tag-template="tagTemplate"
         @value-changed="onValueChanged"
       >
@@ -39,6 +40,7 @@ export default {
       placeholderText: "추가된 태그가 없습니다.",
       maxTagCount: 15,
       maxTagTextLength: 20,
+      accordionAttributes: { class: "cue_tag " },
     };
   },
   components: {
@@ -96,3 +98,9 @@ export default {
   },
 };
 </script>
+<style>
+#cuesheet_tag_container > .cue_tag {
+  overflow: auto !important;
+  max-height: 120px !important;
+}
+</style>
