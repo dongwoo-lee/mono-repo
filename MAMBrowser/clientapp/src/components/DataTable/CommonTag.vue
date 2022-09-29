@@ -7,7 +7,7 @@
       class="tag_badge mr-1 mb-1"
       variant="dark"
       @click.native="OnBadgeClick(item)"
-      ># {{ item }}</b-badge
+      ># {{ item.text ? item.text : item }}</b-badge
     >
   </div>
 </template>

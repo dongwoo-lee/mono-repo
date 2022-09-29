@@ -1,14 +1,15 @@
 <template>
   <div id="webcuesheet_fileupload">
-    <div v-if="cueInfo.cuetype != 'A'">
+    <div>
       <DxFileUploader
         :ref="fileUploadRef"
         :chunk-size="chunkSize"
-        :labelText="title_name"
+        labelText=""
         :uploadAbortedMessage="uploadAbortedMessage"
         :max-file-size="104857600"
         select-button-text="파일 업로드"
         name="file"
+        :disabled="disableValue || cueInfo.cuetype === 'A'"
         :accept="accept"
         :upload-url="getUrl"
         :upload-custom-data="uploaderCustomData"
@@ -17,7 +18,6 @@
       >
       </DxFileUploader>
     </div>
-    <div v-else class="uploader_title">{{ title_name }}</div>
     <div class="chunk-container">
       <div
         class="chunk-panel"
@@ -130,16 +130,18 @@ function get_date_str(date) {
 }
 
 export default {
+  props: {
+    maxAttachmentsCount: Number,
+    disableValue: { type: Boolean, default: false },
+  },
   data() {
     return {
       fileUploadRef,
-      title_name: "첨부파일",
       files: [],
       uploaderCustomData: {
         folder_date: "",
       }, //이후에 props로 바꾸기
       chunkSize: 1000000,
-      maxFileLength: 10,
       uploadAbortedMessage: "파일을 추가할 수 없습니다.",
       accept:
         "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,.pdf,.docx,.hwp",
@@ -224,7 +226,7 @@ export default {
       const regexImoji =
         /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])|[~!@#$%^&*+|<>?:{}]/gi;
       const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
-      if (this.attachments.length >= this.maxFileLength) {
+      if (this.attachments.length >= this.maxAttachmentsCount) {
         e.component.abortUpload();
       }
       if (regexImoji.test(e.file.name) || regex.test(e.file.name)) {
@@ -235,11 +237,17 @@ export default {
 };
 </script>
 <style>
+#webcuesheet_fileupload {
+  position: relative;
+}
+#webcuesheet_fileupload .title {
+  position: absolute;
+  top: 0px;
+}
 #webcuesheet_fileupload .dx-fileuploader-wrapper {
   padding: 15px 10px 0px 10px;
 }
 #webcuesheet_fileupload .dx-fileuploader-input-wrapper {
-  position: relative;
   border: 1px solid #d7d7d7;
   border-radius: 2px 2px 0px 0px;
 }
@@ -251,7 +259,6 @@ export default {
   border-right: 1px solid #d7d7d7;
   border-left: 1px solid #d7d7d7;
   border-radius: 0px 0px 2px 2px;
-  /* padding: 10px; */
   margin: 0px 10px 10px 10px;
 }
 #webcuesheet_fileupload .chunk-panel {
@@ -273,11 +280,6 @@ export default {
 }
 #webcuesheet_fileupload .dx-fileuploader-input-label {
   padding: 8px 15px;
-}
-#webcuesheet_fileupload .uploader_title {
-  margin: 10px 10px 0px 10px;
-  padding: 10px;
-  border: 1px solid #d7d7d7;
 }
 #webcuesheet_fileupload .dx-fileuploader-file {
   line-height: 18px;

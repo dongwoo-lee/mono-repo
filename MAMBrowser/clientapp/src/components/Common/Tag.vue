@@ -3,16 +3,23 @@
     <div id="cuesheet_tag_container">
       <DxTagBox
         v-if="cueInfo.cuetype != 'A'"
-        :acceptCustomValue="true"
+        :acceptCustomValue="isAccept"
+        :openOnFieldClick="false"
         :value="value_items"
-        :noDataText="tagDataText"
         :placeholder="placeholderText"
         :element-attr="accordionAttributes"
         tag-template="tagTemplate"
+        field-template="field"
         @value-changed="onValueChanged"
+        @customItemCreating="onCustomItemCreating"
       >
+        <template #field>
+          <div class="dx-tag">
+            <DxTextBox :maxLength="maxTagTextLength" />
+          </div>
+        </template>
         <div slot="tagTemplate" slot-scope="tagData" class="dx-tag-content">
-          {{ tagData.data }}
+          {{ tagData.data.text }}
           <div class="dx-tag-remove-button"></div>
         </div>
       </DxTagBox>
@@ -28,24 +35,26 @@
 <script>
 import TagBadge from "../DataTable/CommonTag.vue";
 import DxTagBox from "devextreme-vue/tag-box";
+import DxTextBox from "devextreme-vue/text-box";
 import { mapGetters, mapMutations } from "vuex";
 export default {
   props: {
     value_items: Array,
+    maxTagCount: Number,
   },
   data() {
     return {
-      tagDataText: "태그를 입력하세요",
       tagItemMessage: "해당 태그로 이전 큐시트 목록을 검색 하시겠습니까?",
       placeholderText: "추가된 태그가 없습니다.",
-      maxTagCount: 15,
       maxTagTextLength: 20,
       accordionAttributes: { class: "cue_tag " },
+      isAccept: true,
     };
   },
   components: {
     DxTagBox,
     TagBadge,
+    DxTextBox,
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
@@ -55,18 +64,17 @@ export default {
     ...mapMutations("cueList", ["SET_TAGS"]),
     onValueChanged(e) {
       if (this.tags !== e.value) {
-        const result = [];
+        const result = new Set();
         e.value.filter((tag) => {
-          const item = tag
+          const item = tag.text
             .replace(/[^\w\s|ㄱ-ㅎ|가-힣|,]/gi, "")
             .replace(/ /g, "");
           if (!!item) {
-            !this.MaxTagTextLengthChecker(item) &&
-              !this.MaxTagCounter(result) &&
-              result.push(item);
+            result.add(item);
           }
         });
-        this.SET_TAGS(result);
+        this.SET_TAGS(Array.from(result));
+        this.isAccept = result.size >= this.maxTagCount ? false : true;
       }
     },
     OnClickCommonTagItem(item) {
@@ -77,23 +85,12 @@ export default {
         });
       }
     },
-    MaxTagCounter(tags) {
-      let isResult = false;
-      const maxCountMessage = `태그는 ${this.maxTagCount}개 이상 추가할 수 없습니다.`;
-      if (tags.length >= this.maxTagCount) {
-        isResult = true;
-        alert(maxCountMessage);
-      }
-      return isResult;
-    },
-    MaxTagTextLengthChecker(tag) {
-      let isResult = false;
-      const maxTextLengthMessage = `태그 글자 수는 ${this.maxTagTextLength}을 초과할 수 없습니다.`;
-      if (tag.length > this.maxTagTextLength) {
-        isResult = true;
-        alert(maxTextLengthMessage);
-      }
-      return isResult;
+    onCustomItemCreating(args) {
+      const newProduct = {
+        num: this.tags.length + 1,
+        text: args.text,
+      };
+      args.customItem = newProduct;
     },
   },
 };

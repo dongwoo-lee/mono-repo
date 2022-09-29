@@ -89,6 +89,7 @@
           </div>
         </template>
         <DxSummary>
+          <DxTotalItem show-in-column="FadeOut" display-format="예상시간" />
           <DxTotalItem
             :customize-text="customizeDuration"
             show-in-column="소재 길이"

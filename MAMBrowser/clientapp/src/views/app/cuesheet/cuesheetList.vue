@@ -11,39 +11,50 @@
       :isDisplayBtnArea="true"
       @changeRowPerpage="onChangeRowPerpage"
     >
-      <!-- 검색 -->
       <template slot="form-search-area">
-        <!-- 시작일 ~ 종료일 -->
-        <common-start-end-date-picker
-          startDateLabel="방송 시작일"
-          endDateLabel="방송 종료일"
-          :startDate.sync="searchItems.start_dt"
-          :endDate.sync="searchItems.end_dt"
-          :maxPeriodMonth="6"
-          :required="false"
-          :isCurrentDate="false"
-        />
-        <!-- 매체 -->
-        <b-form-group label="매체" class="has-float-label">
-          <b-form-select
-            style="width: 100px"
-            v-model="searchItems.media"
-            :options="mediasOption"
-            @change="eventClick($event)"
+        <span class="row" v-if="status == 'not_accepted'">
+          <!-- 시작일 ~ 종료일 -->
+          <common-start-end-date-picker
+            startDateLabel="방송 시작일"
+            endDateLabel="방송 종료일"
+            :startDate.sync="searchItems.start_dt"
+            :endDate.sync="searchItems.end_dt"
+            :maxPeriodMonth="6"
+            :required="false"
+            :isCurrentDate="false"
           />
-        </b-form-group>
-        <!-- 프로그램명 -->
-        <b-form-group label="프로그램명" class="has-float-label">
-          <b-form-select
-            style="width: 400px"
-            v-model="searchItems.productid"
-            :options="programList"
-          />
-        </b-form-group>
-        <!-- 태그 -->
-        <b-form-group label="태그" class="has-float-label">
-          <common-input-text v-model="searchItems.tag" />
-        </b-form-group>
+          <!-- 매체 -->
+          <b-form-group label="매체" class="has-float-label">
+            <b-form-select
+              style="width: 100px"
+              v-model="searchItems.media"
+              :options="mediasOption"
+              @change="eventClick($event)"
+            />
+          </b-form-group>
+          <!-- 프로그램명 -->
+          <b-form-group label="프로그램명" class="has-float-label">
+            <b-form-select
+              style="width: 400px"
+              v-model="searchItems.productid"
+              :options="programList"
+            />
+          </b-form-group>
+        </span>
+        <b-form-checkbox
+          class="mr-3 ml-3 custom-checkbox-group-non-align"
+          v-model="status"
+          name="checkbox-1"
+          value="accepted"
+          unchecked-value="not_accepted"
+        >
+          태그로 검색
+        </b-form-checkbox>
+        <span class="row" v-if="status == 'accepted'">
+          <b-form-group label="태그" class="has-float-label mr-3">
+            <common-input-text v-model="searchItems.tag" />
+          </b-form-group>
+        </span>
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch"
@@ -122,6 +133,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      status: "not_accepted",
       date,
       programList: [{ value: "", text: "매체를 선택하세요" }],
       searchItems: {
@@ -213,6 +225,7 @@ export default {
   },
   mounted() {
     if (this.tagItem) {
+      this.status = "accepted";
       this.searchItems.tag = this.tagItem;
     }
     this.getData();
@@ -226,34 +239,55 @@ export default {
     async getData() {
       this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      if (
-        this.$fn.checkGreaterStartDate(
-          this.searchItems.start_dt,
-          this.searchItems.end_dt
-        )
-      ) {
-        this.$fn.notify("error", {
-          message: "시작 날짜가 종료 날짜보다 큽니다.",
-        });
-        this.hasErrorClass = true;
-        return;
-      }
-      if (this.searchItems.productid == "") {
+      const params = {};
+      if (this.status === "accepted") {
+        if (this.searchItems.tag === "") {
+          this.$fn.notify("error", {
+            message: "태그를 입력하세요.",
+          });
+          this.isTableLoading = false;
+          this.isScrollLodaing = false;
+          return;
+        }
         var pram = { person: null, gropId: null };
         await this.getMediasOption(pram);
         this.searchItems.productid = this.userProList;
+        this.searchItems.media = "";
+        params.start_dt = "19990101";
+        params.end_dt = endDay;
+        params.tag = this.searchItems.tag;
+        params.products = this.searchItems.productid;
+        params.row_per_page = this.searchItems.rowPerPage;
+        params.select_page = this.searchItems.selectPage;
+      } else {
+        if (
+          this.$fn.checkGreaterStartDate(
+            this.searchItems.start_dt,
+            this.searchItems.end_dt
+          )
+        ) {
+          this.$fn.notify("error", {
+            message: "시작 날짜가 종료 날짜보다 큽니다.",
+          });
+          this.hasErrorClass = true;
+          this.isTableLoading = false;
+          this.isScrollLodaing = false;
+          return;
+        }
+        if (this.searchItems.productid == "") {
+          var pram = { person: null, gropId: null };
+          await this.getMediasOption(pram);
+          this.searchItems.productid = this.userProList;
+        }
+        if (this.searchItems.productid == undefined) {
+          this.searchItems.productid = this.userProList;
+        }
+        params.start_dt = this.searchItems.start_dt;
+        params.end_dt = this.searchItems.end_dt;
+        params.products = this.searchItems.productid;
+        params.row_per_page = this.searchItems.rowPerPage;
+        params.select_page = this.searchItems.selectPage;
       }
-      if (this.searchItems.productid == undefined) {
-        this.searchItems.productid = this.userProList;
-      }
-      var params = {
-        start_dt: this.searchItems.start_dt,
-        end_dt: this.searchItems.end_dt,
-        products: this.searchItems.productid,
-        tag: this.searchItems.tag,
-        row_per_page: this.searchItems.rowPerPage,
-        select_page: this.searchItems.selectPage,
-      };
       var arrListResult = await this.getarchiveCuesheetListArr(params);
       this.setResponseData(arrListResult);
       this.addScrollClass();
@@ -271,6 +305,7 @@ export default {
       this.searchItems.productid = this.userProList;
     },
     OnClickCommonTagItem(tag) {
+      this.status = "accepted";
       this.searchItems.tag = tag;
       this.getData();
     },

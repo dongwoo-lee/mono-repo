@@ -283,7 +283,7 @@ export default {
             state.attachments = payload;
         },
         SET_TAGS(state, payload) {
-            state.tags = payload
+            state.tags = payload.map(item => ({ ['text']: item }))
         },
         SET_CUEFAVORITES(state, payload) {
             state.cueFavorites = payload;
@@ -1010,7 +1010,8 @@ export default {
             var abData = state.abCartArr
             var cData = state.cChannelData
             var files = state.attachments
-            let tags = state.tags
+            const tags = [];
+            state.tags.forEach(item => tags.push(item.text))
             var favData = state.cueFavorites
 
             //출력용
