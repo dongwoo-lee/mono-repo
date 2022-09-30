@@ -69,6 +69,12 @@ const url = [
         icon: "iconsminds-clef",
     },
     {
+        // SONG
+        id: "S01G01C032",
+        to: "/app/music/songcache",
+        icon: "iconsminds-clef",
+    },
+    {
         // 광고
         id: "S01G01C004",
         icon: "iconsminds-coins",

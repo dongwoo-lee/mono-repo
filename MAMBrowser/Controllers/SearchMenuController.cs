@@ -66,7 +66,7 @@ namespace MAMBrowser.Controllers
         }
         public class MusicResultDTO
         {
-            public DTO_RESULT_PAGE_LIST<DTO_SONG> Result { get; set; }
+            public DTO_RESULT_PAGE_LIST<DTO_MUSIC> Result { get; set; }
         }
         public class EFFECTResultDTO
         {
@@ -224,10 +224,10 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<MusicResultDTO>();
             try
             {
-                result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_MUSIC>();
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(pram.searchText))
-                    result.ResultObject.Result.Data = new List<DTO_SONG>();
+                    result.ResultObject.Result.Data = new List<DTO_MUSIC>();
                 else
                     result.ResultObject.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
 
@@ -728,9 +728,9 @@ namespace MAMBrowser.Controllers
 
         //음반 기록실 rowData 가져오기
         [HttpPost("GetSongItem")]
-        public DTO_RESULT<ActionResult<DTO_SONG_CACHE>> GetSongMastering([FromBody] DTO_SONG pram)
+        public DTO_RESULT<ActionResult<DTO_SONG>> GetSongMastering([FromBody] DTO_MUSIC pram)
         {
-            var result = new DTO_RESULT<ActionResult<DTO_SONG_CACHE>>();
+            var result = new DTO_RESULT<ActionResult<DTO_SONG>>();
             try
             {
                 var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);
@@ -765,9 +765,9 @@ namespace MAMBrowser.Controllers
 
         //효과음 rowData 가져오기
         [HttpPost("GetEffectItem")]
-        public DTO_RESULT<DTO_SONG_CACHE> GetEffectMastering([FromBody] DTO_EFFECT pram)
+        public DTO_RESULT<DTO_PRO> GetEffectMastering([FromBody] DTO_EFFECT pram)
         {
-            var result = new DTO_RESULT<DTO_SONG_CACHE>();
+            var result = new DTO_RESULT<DTO_PRO>();
             try
             {
                 var jsonMusicInfo = CommonUtility.ParseToJsonRequestContent(pram.FileToken);

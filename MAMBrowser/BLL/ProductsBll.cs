@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common.DTO.Products;
 using M30.AudioFile.DAL;
 using M30.AudioFile.DAL.Dao;
 using System;
@@ -65,6 +66,11 @@ namespace MAMBrowser.BLL
         public DTO_DL30 GetDLArchive(long seq)
         {
             return _dao.GetDLArchive(seq);
+        }
+        public DTO_RESULT_PAGE_LIST<DTO_SONG> FindSong(string title, string albumName, string artistName, int rowPerPage, int selectPage, string sortKey, string sortValue)
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MCR_SPOT>>();
+            return _dao.FindSong(title, artistName, albumName, rowPerPage, selectPage, sortKey, sortValue);
         }
     }
 }

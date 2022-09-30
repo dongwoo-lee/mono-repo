@@ -47,6 +47,7 @@ namespace MAMBrowser.BLL
                 totalRead += read;
             }
             ms.Flush();
+            ms.Position = 0;
             return ms;
         }
 
@@ -78,7 +79,7 @@ namespace MAMBrowser.BLL
                 var relativeTargetPath = @$"{relativeTargetFolder}\{newFileName}";
 
                 var audioHeaderStream = GetHeaderStream(stream);
-                audioHeaderStream.Position = 0;
+                //audioHeaderStream.Position = 0;
                 var soundInfo = AudioEngine.GetAudioInfo(audioHeaderStream, fileExt, metaData.FILE_SIZE);
                 audioHeaderStream.Position = 0;
                 _fileProtocol.MakeDirectory(relativeSourceFolder);
@@ -199,5 +200,96 @@ namespace MAMBrowser.BLL
             var dto = _dao.Get(title);
             return dto != null ? true : false;
         }
+
+
+
+        /// <summary>
+        /// MY디스크 등록전 유효성 검사
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="fileSize"></param>
+        /// <param name="title"></param>
+        /// <param name="fileName">확장자 포함 파일 이름</param>
+        /// <returns></returns>
+        public WorkResult VerifyModel(string title, string userId, long fileSize)
+        {
+            WorkResult result = new WorkResult();
+            var user = _apiDao.GetUserSummary(userId);
+
+            if (user.DiskAvailable < fileSize)
+            {
+                result.Success = false;
+                result.ErrorMessage = "디스크 여유 공간이 부족합니다.";
+                return result;
+            }
+            if (int.MaxValue < fileSize)
+            {
+                result.Success = false;
+                result.ErrorMessage = "파일 용량이 2GB를 초과하였습니다.";
+                return result;
+            }
+            if (IsExistTitle(title))
+            {
+                result.Success = false;
+                result.ErrorMessage = "동일한 제목이 이미 있습니다. 제목을 수정해주세요.";
+                return result;
+            }
+
+            result.Success = true;
+            return result;
+        }
+
+        public void ResistryMyDisk(string title, string memo, string userId, string uncSourceFilePath)
+        {
+            M30_MAM_PRIVATE_SPACE myDiskData = new M30_MAM_PRIVATE_SPACE();
+            long fileSize = 0;
+            int intDuration = 0;
+            string fileName = Path.GetFileName(uncSourceFilePath);
+            string fileExt = Path.GetExtension(uncSourceFilePath);
+            string audioFormat = "";
+
+
+            //1. 파일의 헤더를 읽어서 wav형식, 음원길이, 파일크기 가져오기.
+            using (FileStream sourceStream = new FileStream(uncSourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                fileSize = sourceStream.Length;
+                using (var audioHeaderStream = GetHeaderStream(sourceStream))
+                {
+                    var soundInfo = AudioEngine.GetAudioInfo(audioHeaderStream, fileExt, fileSize);
+                    audioFormat = soundInfo.AudioFormat;
+                    intDuration = (int)soundInfo.TotalTime.TotalMilliseconds;
+                }
+            }
+
+            //2. MY-DISK 저장 공간 옵션 값 가져오기
+            var options =_apiDao.GetOptions("S01G06C001").ToList();
+            var myDiskDirectory =options.Find(op => op.Name == "MYDISK_PATH");
+
+            //3. MY-DISK ID 채번 (파일명
+            var myDiskID = _dao.GetID();
+
+            //4. MY-DISK 저장 공간 디렉토리 만들기
+            string date = DateTime.Now.ToString(Define.DTM8);
+            string newFileName = $"{myDiskID}_{fileName}";
+            var targetDirectory = @$"{myDiskDirectory}\{userId}\{userId}-{date}";
+            var targetFilePath = @$"{targetDirectory}\{newFileName}";
+            if (!Directory.Exists(targetDirectory))
+                Directory.CreateDirectory(targetDirectory);
+
+            //5. 파일을 목적지로 옮기기.
+            _fileProtocol.Move(uncSourceFilePath, targetFilePath);
+              
+            //6. DB에 등록하기.
+            myDiskData.SEQ = myDiskID;
+            myDiskData.TITLE = title;
+            myDiskData.MEMO = memo;
+            myDiskData.USER_ID = userId;
+            myDiskData.AUDIO_FORMAT = audioFormat;
+            myDiskData.FILE_SIZE = fileSize;
+            myDiskData.FILE_PATH = targetFilePath;
+            _dao.Insert(myDiskData, intDuration);
+
+        }
+
     }
 }

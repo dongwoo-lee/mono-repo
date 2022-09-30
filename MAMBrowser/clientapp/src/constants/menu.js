@@ -64,6 +64,11 @@ const data = [
         label: "menu.sound-effect", // 효과음
         to: "/app/sound-effect",
       },
+      {
+        icon: "iconsminds-clef",
+        label: "menu.sound-songcache", // Song
+        to: "/app/sound-songcache",
+      },
     ]
   },
   {

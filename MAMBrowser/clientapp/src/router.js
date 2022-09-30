@@ -94,6 +94,12 @@ const routes = [
         path: "music/effect",
         component: () => import("./views/app/music/Effect")
       },
+      {
+        // 음원 - SONG
+        name: "songcache",
+        path: "music/songcache",
+        component: () => import("./views/app/music/SongCache")
+      },
       /**
        * 광고
        */

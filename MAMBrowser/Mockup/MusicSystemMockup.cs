@@ -13,68 +13,47 @@ namespace MAMBrowser
     {
         public Stream GetFileStream(string domain, int port, string jsonRequestContent, out long fileSize)
         {
-            fileSize = 0;
-            FileStream fs = new FileStream(@"\\192.168.1.202\mam\songtest.mp3", FileMode.Open, FileAccess.Read);
-            return fs;
+            throw new NotImplementedException();
+        }
+
+        public Stream GetFileStreamByFilePath(string filePath, out long fileSize)
+        {
+            throw new NotImplementedException();
         }
 
         public object[] GetRequestInfo(Dictionary<string, string> musicInfo)
         {
-            //var encodedFilePath = musicInfo[Define.MUSIC_FILEPATH];
-            //var filePath = MusicSeedWrapper.SeedDecrypt(encodedFilePath);
-            //var host = CommonUtility.GetHost(filePath);
-            //var domainAndPort = _info.StorageMaps[host.ToUpper()] as string;        // 뮤직서비스에 구현.
-            //var domain = domainAndPort.Split(':').First();
-            //var port = Convert.ToInt32(domainAndPort.Split(':').Last());
-            //var fileName = Path.GetFileName(filePath);
-
-            object[] returnData = new object[3];
-            returnData[0] = "\\test_svr";
-            returnData[1] = 0;
-            returnData[2] = @"Music001.wav";
-            return returnData;
+            throw new NotImplementedException();
         }
 
         public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)
         {
-            totalCount = 1;
-            using (FileStream fs = new FileStream(@".\Mockup\effect.xml", FileMode.Open, FileAccess.Read))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_EFFECT>));
-                var mbReturnDto = (EDTO_MB_RETURN<EDTO_EFFECT>)serializer.Deserialize(fs);
-                return mbReturnDto.Section.Data.Select(edto => new DTO_EFFECT(edto)).ToList();
-            }
+            throw new NotImplementedException();
         }
 
         public string SearchLyrics(string lyricsSeq)
         {
-            return "가사 테스트 입니다.";
+            throw new NotImplementedException();
         }
 
-        public IList<DTO_SONG> SearchSong(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
+        public IList<DTO_MUSIC> SearchSong(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
-            totalCount = 1;
-            using (FileStream fs = new FileStream(@".\Mockup\song.xml", FileMode.Open, FileAccess.Read))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(EDTO_MB_RETURN<EDTO_SONG>));
-                var mbReturnDto = (EDTO_MB_RETURN<EDTO_SONG>)serializer.Deserialize(fs);
-                return mbReturnDto.Section.Data.Select(edto => new DTO_SONG(edto)).ToList();
-            }
+            throw new NotImplementedException();
         }
 
         public void TempDownloadCore(string domain, int port, string jsonRequestContent, string targetSoundPath)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         public void TempDownloadWavAndEgy(string userId, string remoteIp, string token)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         public List<string> TempImageDownload(string userId, string remoteIp, string musicToken, string albumToken)
         {
-            return null;
+            throw new NotImplementedException();
         }
     }
 }
