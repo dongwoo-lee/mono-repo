@@ -546,8 +546,37 @@ export default {
       }
       this.loadingVisible = false;
     },
-    // 드래그 시작 시
+    searchTabIndex(text) {
+      switch (text) {
+        case "C1":
+          this.$emit("tabItemMove", 1);
+          break;
+        case "C2":
+          this.$emit("tabItemMove", 2);
+          break;
+        case "C3":
+          this.$emit("tabItemMove", 3);
+          break;
+        case "C4":
+          this.$emit("tabItemMove", 4);
+          break;
+        case "즐겨찾기":
+          this.$emit("tabItemMove", 5);
+          break;
+        default:
+          break;
+      }
+    },
+    getCoordinates(e) {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      const element = document.elementsFromPoint(mouseX, mouseY);
+      element.forEach((node) => {
+        node.tagName === "SPAN" && this.searchTabIndex(node.innerText);
+      });
+    },
     onDragStart(e) {
+      document.addEventListener("mousemove", this.getCoordinates);
       document.getElementById("app-container").classList.add("drag_");
       if (
         this.cueInfo.cuetype == "A" ||
@@ -563,6 +592,7 @@ export default {
     // 드래그 종료 시
     onDragEnd() {
       document.getElementById("app-container").classList.remove("drag_");
+      document.removeEventListener("mousemove", this.getCoordinates);
     },
     // 즐겨찾기 광고 그룹 필터
     sponsorFilter_Fav(obj) {

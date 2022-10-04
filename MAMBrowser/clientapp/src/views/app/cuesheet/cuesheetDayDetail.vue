@@ -57,11 +57,18 @@
             </div>
             <div class="left_bottom">
               <div style="height: 100%">
-                <DxTabPanel id="tabPanel" :defer-rendering="false">
+                <DxTabPanel
+                  id="tabPanel"
+                  :defer-rendering="false"
+                  :selectedIndex.sync="tabIndex"
+                >
                   <DxItem title="출력용">
                     <template #default>
                       <div>
-                        <PrintWidget :printHeight="printHeight" />
+                        <PrintWidget
+                          :printHeight="printHeight"
+                          @tabItemMove="changeTabIndex"
+                        />
                       </div>
                     </template>
                   </DxItem>
@@ -71,6 +78,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_1"
                         />
                       </div>
@@ -82,6 +90,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_2"
                         />
                       </div>
@@ -93,6 +102,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_3"
                         />
                       </div>
@@ -104,6 +114,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_4"
                         />
                       </div>
@@ -115,6 +126,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_my"
                         />
                       </div>
@@ -211,6 +223,7 @@ export default {
 
   data() {
     return {
+      tabIndex: 0,
       loadingVisible: false,
       loadPanelMessage: "데이터를 가져오는 중 입니다...",
       position: { of: "#cardView" },
@@ -433,6 +446,9 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
+    },
+    changeTabIndex(itemIndex) {
+      this.tabIndex = itemIndex;
     },
   },
 };
