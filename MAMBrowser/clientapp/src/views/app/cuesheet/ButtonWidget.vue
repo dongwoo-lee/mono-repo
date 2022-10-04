@@ -433,8 +433,8 @@
         <WavExportAbCart @isTotalDuration="isTotalDuration" />
       </div>
       <template #modal-footer="{ cancel }">
-        <div class="mydisc-check-box">
-          <DxCheckBox :value="true" :text="labelText" />
+        <div v-if="isMyDiskCheckBox" class="mydisc-check-box">
+          <DxCheckBox v-model="isWavCopy" :text="labelText" />
         </div>
         <DxButton :width="100" text="취소" @click="cancel()" />
         <DxButton
@@ -527,7 +527,15 @@ import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
 import WavExportAbCart from "../../../components/Popup/WavExportABCart.vue";
-import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
+import {
+  AUTHORITY,
+  AUTHORITY_ADMIN,
+  MY_DISK_PAGE_ID,
+  USER_ID,
+  ACCESS_GROP_ID,
+  USER_NAME,
+  PREVIEW_CODE,
+} from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
@@ -559,7 +567,13 @@ export default {
   },
   data() {
     return {
+      PREVIEW_CODE,
+      MY_DISK_PAGE_ID,
+      currentPageName: "",
+      IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
+      isMyDiskCheckBox: false,
       labelText: "병합 후 My 디스크에 해당 소재 추가",
+      isWavCopy: false,
       isTotalValue: true,
       goBackPoint: "",
       accrssCheck: true,
@@ -683,6 +697,9 @@ export default {
           moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
       }
     }
+    this.isMyDiskCheckBox = this.roleList.some(
+      (data) => data.id === this.MY_DISK_PAGE_ID && data.visible === "Y"
+    );
   },
   components: {
     DxCheckBox,
@@ -707,6 +724,7 @@ export default {
 
     ...mapGetters("cueList", ["mediasOption"]),
     ...mapGetters("cueList", ["userProOption"]),
+    ...mapGetters("user", ["roleList"]),
 
     btnWeekStates() {
       var result = this.weekButtons.map((btn) => {
@@ -753,6 +771,7 @@ export default {
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
     ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("cueList", ["getDateStr"]),
     ...mapActions("user", ["renewal"]),
 
     //템플릿으로 저장
@@ -983,6 +1002,8 @@ export default {
     },
     async OnExportWav() {
       this.loadingIconVal = true;
+      const date = new Date();
+      const dateStr = await this.getDateStr(date);
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
       cuesheetData.NormalCon.forEach((ele) => {
@@ -994,19 +1015,19 @@ export default {
           permanent: false,
         });
       } else {
-        var downloadName = "";
+        let downloadName = "";
         switch (this.cueInfo.cuetype) {
           case "D":
-            downloadName = `${this.cueInfo.day}_${this.cueInfo.title}`;
+            downloadName = `${this.cueInfo.title}_${dateStr}`;
             break;
           case "B":
-            downloadName = `[기본]_${this.cueInfo.title}`;
+            downloadName = `[기본]_${this.cueInfo.title}_${dateStr}`;
             break;
           case "T":
-            downloadName = `${this.cueInfo.title}`;
+            downloadName = `${this.cueInfo.title}_${dateStr}`;
             break;
           case "A":
-            downloadName = `${this.cueInfo.brddate}_${this.cueInfo.title}`;
+            downloadName = `${this.cueInfo.title}_${dateStr}`;
             break;
         }
         await axios
@@ -1017,14 +1038,8 @@ export default {
             pramList
           )
           .then((response) => {
-            const link = document.createElement("a");
-            link.href = `/api/CueAttachments/exportFileDownload?guid=${
-              response.data
-            }&userid=${sessionStorage.getItem(
-              USER_ID
-            )}&downloadname=${downloadName}.wav`;
-            document.body.appendChild(link);
-            link.click();
+            this.isWavCopy && this.copyToMySpace(response.data, downloadName);
+            this.downloadFile(response.data, downloadName);
           })
           .catch((error) => {
             console.log(error);
@@ -1033,6 +1048,30 @@ export default {
       this.loadingIconVal = false;
 
       this.$refs["modal-export-wav"].hide();
+    },
+    downloadFile(fileData, fileName) {
+      const link = document.createElement("a");
+      link.href = `/api/CueAttachments/exportFileDownload?guid=${fileData}&userid=${sessionStorage.getItem(
+        USER_ID
+      )}&downloadname=${fileName}.wav`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    copyToMySpace(filePath, fileName) {
+      this.$http
+        .post(
+          `/api/CueAttachments/WavCopyToMyspace?title=${fileName}`,
+          filePath
+        )
+        .then((res) => {
+          if (res.data.resultCode === 0) {
+            window.$notify("info", `소재가 My디스크에 추가되었습니다.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          }
+        });
     },
     async editWeekListClick() {
       const userName = sessionStorage.getItem(USER_NAME);

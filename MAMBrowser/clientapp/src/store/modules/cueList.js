@@ -1262,5 +1262,37 @@ export default {
                     break;
             }
         },
+        getDateStr({ }, payload) {
+            const date = payload;
+            let sYear = date.getFullYear();
+            let sMonth = date.getMonth() + 1;
+            let sDate = date.getDate();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            let milliseconds = date.getMilliseconds();
+
+            sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+            sDate = sDate > 9 ? sDate : "0" + sDate;
+            hours = hours > 9 ? hours : "0" + hours;
+            minutes = minutes > 9 ? minutes : "0" + minutes;
+            seconds = seconds > 9 ? seconds : "0" + seconds;
+
+            const result =
+                sYear +
+                "" +
+                sMonth +
+                "" +
+                sDate +
+                "" +
+                hours +
+                "" +
+                minutes +
+                "" +
+                seconds +
+                "" +
+                milliseconds;
+            return result;
+        }
     }
 }

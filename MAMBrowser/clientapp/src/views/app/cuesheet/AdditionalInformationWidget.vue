@@ -47,7 +47,7 @@
       <div class="title_text">메모</div>
       <div class="component">
         <DxTextBox
-          :maxLength="25"
+          :maxLength="100"
           placeholder="메모를 입력하세요."
           v-model="cueInfo.memo"
           :disabled="cueInfo.cuetype === 'A'"

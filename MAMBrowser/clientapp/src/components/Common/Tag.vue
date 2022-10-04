@@ -3,8 +3,8 @@
     <div id="cuesheet_tag_container">
       <DxTagBox
         v-if="cueInfo.cuetype != 'A'"
-        :acceptCustomValue="isAccept"
         :openOnFieldClick="false"
+        :acceptCustomValue="true"
         :value="value_items"
         :placeholder="placeholderText"
         :element-attr="accordionAttributes"
@@ -15,7 +15,7 @@
       >
         <template #field>
           <div class="dx-tag">
-            <DxTextBox :maxLength="maxTagTextLength" />
+            <DxTextBox :maxLength="maxTagTextLength" :readOnly="isAccept" />
           </div>
         </template>
         <div slot="tagTemplate" slot-scope="tagData" class="dx-tag-content">
@@ -48,7 +48,7 @@ export default {
       placeholderText: "추가된 태그가 없습니다.",
       maxTagTextLength: 20,
       accordionAttributes: { class: "cue_tag " },
-      isAccept: true,
+      isAccept: false,
     };
   },
   components: {
@@ -74,7 +74,7 @@ export default {
           }
         });
         this.SET_TAGS(Array.from(result));
-        this.isAccept = result.size >= this.maxTagCount ? false : true;
+        this.isAccept = result.size >= this.maxTagCount ? true : false;
       }
     },
     OnClickCommonTagItem(item) {

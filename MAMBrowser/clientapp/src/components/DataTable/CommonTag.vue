@@ -2,12 +2,12 @@
   <div class="tag_col">
     <b-badge
       v-for="item in rowData.tag"
-      :key="item"
+      :key="SetItems(item)"
       href="#"
       class="tag_badge mr-1 mb-1"
       variant="dark"
       @click.native="OnBadgeClick(item)"
-      ># {{ item.text ? item.text : item }}</b-badge
+      ># {{ SetItems(item) }}</b-badge
     >
   </div>
 </template>
@@ -23,8 +23,11 @@ export default {
     return {};
   },
   methods: {
+    SetItems(item) {
+      return item.text ? item.text : item;
+    },
     OnBadgeClick(item) {
-      this.$emit("tagItemFromCommonTag", item);
+      this.$emit("tagItemFromCommonTag", this.SetItems(item));
     },
   },
 };
