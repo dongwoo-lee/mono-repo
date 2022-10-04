@@ -59,15 +59,15 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("music")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromQuery] int searchType1, [FromQuery] string searchType2, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MUSIC>> FindMusic([FromQuery] int searchType1, [FromQuery] string searchType2, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MUSIC>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MUSIC>>();
             try
             {
-                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_MUSIC>();
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(searchText))
-                    result.ResultObject.Data = new List<DTO_SONG>();
+                    result.ResultObject.Data = new List<DTO_MUSIC>();
                 else
                     result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
