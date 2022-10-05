@@ -80,7 +80,6 @@ namespace MAMBrowser.Controllers
                         metaData.MEMO = title;
                         result = _privateBll.UploadFile(userId, stream, fileName, metaData);
                     }
-                    throw new Exception();
                 }
             }
             catch (Exception ex)

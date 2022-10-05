@@ -843,12 +843,23 @@ export default {
                     break;
                 //음반 기록실
                 case "S01G01C014":
+                    // Song으로 변환
+                    payload.row.cartcode = 'S01G01C032'
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.artistName;
                     payload.row.carttype = "SS";
                     break;
+                //Song
+                case "S01G01C032":
+                    payload.row.maintitle = payload.search_row.name;
+                    payload.row.subtitle = payload.search_row.artistName;
+                    payload.row.carttype = "SS";
+
+                    break;
                 //효과음
                 case "S01G01C015":
+                    // 프로소재로 변환
+                    payload.row.cartcode = 'S01G01C013'
                     payload.row.maintitle = payload.search_row.name;
                     payload.row.subtitle = payload.search_row.categoryName;
                     payload.row.carttype = "AC";
@@ -1166,20 +1177,8 @@ export default {
                                 row.endposition = search_row.intDuration;
                                 row.duration = search_row.intDuration;
                             }
-                            if (cartcode == "S01G01C014") {
-                                //음악(music) 마스터링 -> SONG 소재로 변환됨.
-                                //SONG 카트코드 'S01G01C032'를 넣어줌.
-                                row.cartcode = 'S01G01C032';
-                            }
-                            else if (cartcode == "S01G01C014") {
-                                //효과음(effect) 마스터링 -> Pro소재로 변환됨.
-                                //SONG 카트코드 'S01G01C013'를 넣어줌.
-                                row.cartcode = 'S01G01C013';
-                            }
-                            else {
-                                row.cartcode = cartcode;
-                            }
                             row.cartid = search_row.id;
+                            row.cartcode = cartcode;
                             dispatch(`cartCodeFilter`, ({
                                 row: row,
                                 search_row: search_row,
@@ -1258,21 +1257,8 @@ export default {
                                 row.endposition = search_row.intDuration;
                                 row.duration = search_row.intDuration;
                             }
-
-                            if (cartcode == "S01G01C014") {
-                                //음악(music) 마스터링 -> SONG 소재로 변환됨.
-                                //SONG 카트코드 'S01G01C032'를 넣어줌.
-                                row.cartcode = 'S01G01C032';
-                            }
-                            else if (cartcode == "S01G01C014") {
-                                //효과음(effect) 마스터링 -> Pro소재로 변환됨.
-                                //SONG 카트코드 'S01G01C013'를 넣어줌.
-                                row.cartcode = 'S01G01C013';
-                            }
-                            else {
-                                row.cartcode = cartcode;
-                            }
                             row.cartid = search_row.id;
+                            row.cartcode = cartcode;
                             dispatch(`cartCodeFilter`, ({
                                 row: row,
                                 search_row: search_row,

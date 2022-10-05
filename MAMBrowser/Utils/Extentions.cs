@@ -1067,6 +1067,10 @@ namespace MAMBrowser.Utils
                 case "S01G01C006":
                     result = "";
                     break;
+                case "S01G01C032":
+                    result = "SS";
+                    break;
+
 
                 default:
                     break;

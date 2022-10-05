@@ -23,9 +23,11 @@ let searchMenuList = {
       menuList_items: [
         { id: "1", name: "음반 기록실" },
         //{ id: "2", name: "공유소재" },
-        { id: "2", name: "프로소재" },
+        { id: "2", name: "Song" },
+        { id: "3", name: "프로소재" },
+        { id: "4", name: "MY디스크" },
         {
-          id: "3",
+          id: "5",
           name: "광고협찬",
           items: [
             //2022-04-01 부조SB 운영방침에 의해 폐기됨.
@@ -34,71 +36,71 @@ let searchMenuList = {
             //   name: "부조SB",
             // },
             {
-              id: "3_2",
+              id: "5_2",
               name: "부조SPOT(구 협찬)",
             },
             {
-              id: "3_3",
+              id: "5_3",
               name: "프로그램CM",
             },
             {
-              id: "3_4",
+              id: "5_4",
               name: "CM",
             },
           ],
         },
         {
-          id: "4",
+          id: "6",
           name: "제작",
           items: [
             {
-              id: "4_1",
+              id: "6_1",
               name: "취재물",
             },
             {
-              id: "4_2",
+              id: "6_2",
               name: "효과음",
             },
             {
-              id: "4_3",
+              id: "6_3",
               name: "Filler(PR)",
             },
             {
-              id: "4_3",
+              id: "6_3",
               name: "Filler(소재)",
             },
             {
-              id: "4_3",
+              id: "6_3",
               name: "Filler(시간)(변동/고정소재)",
             },
             {
-              id: "4_3",
+              id: "6_3",
               name: "Filler(기타)",
             },
           ],
         },
         {
-          id: "5",
+          id: "7",
           name: "기타",
           items: [
+            // {
+            //   id: "5_1",
+            //   name: "MY디스크",
+            // },
             {
-              id: "5_1",
-              name: "MY디스크",
-            },
-            {
-              id: "5_2",
+              id: "7_1",
               name: "프로그램",
             },
             {
-              id: "5_3",
+              id: "7_2",
               name: "DL3",
             },
             {
-              id: "5_4",
+              id: "7_3",
               name: "주조SB",
             },
             {
-              id: "5_5",
+              id: "7_4",
               name: "주조SPOT",
             },
           ],
@@ -1669,20 +1671,6 @@ let searchMenuList = {
           cartcode: "S01G01C020",
           name: "주조SPOT",
           options: [
-            // {
-            //   id: "startDate",
-            //   text: "시작일",
-            //   value: "",
-            //   type: "D",
-            //   selectVal: toDay,
-            // },
-            // {
-            //   id: "endDate",
-            //   text: "종료일",
-            //   value: "",
-            //   type: "D",
-            //   selectVal: toDay,
-            // },
             {
               startText: "시작일",
               endText: "종료일",
@@ -1761,6 +1749,92 @@ let searchMenuList = {
             {
               dataField: "reqCompleteDtm",
               caption: "방송의뢰일시",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              cellTemplate: "play_Template",
+              minWidth: "50",
+              caption: "작업",
+              alignment: "center",
+              allowSorting: false,
+            },
+          ],
+        },
+        {
+          // Song
+          num: 18,
+          id: "SONG",
+          cartcode: "S01G01C032",
+          name: "Song",
+          options: [
+            {
+              id: "albumName",
+              text: "앨범명",
+              value: "",
+              type: "T",
+            },
+            {
+              id: "artistName",
+              text: "가수명",
+              value: "",
+              type: "T",
+            },
+            {
+              id: "title",
+              text: "제목",
+              value: "",
+              type: "T",
+            },
+          ],
+          columns: [
+            {
+              dataField: "rowNO",
+              minWidth: "50",
+              caption: "순서",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              cellTemplate: "maxWidth_ellipsis_name",
+              caption: "곡명",
+              alignment: "center",
+              width: "600",
+              allowSorting: false,
+            },
+            {
+              dataField: "artistName",
+              caption: "아티스트",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              dataField: "albumName",
+              caption: "음반명",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              cellTemplate: "duration_Template",
+              caption: "길이(초)",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              dataField: "editorName",
+              caption: "등록인",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              dataField: "editDtm",
+              caption: "등록일",
+              alignment: "center",
+              allowSorting: false,
+            },
+            {
+              dataField: "musicID",
+              caption: "Music ID",
               alignment: "center",
               allowSorting: false,
             },

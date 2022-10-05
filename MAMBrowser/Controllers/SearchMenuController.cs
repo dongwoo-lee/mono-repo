@@ -62,6 +62,8 @@ namespace MAMBrowser.Controllers
             public string searchType2 { get; set; }
             public int gradeType { get; set; }
             public string searchText { get; set; }
+            public string albumName { get; set; }
+            public string artistName { get; set; }
 
         }
         public class MusicResultDTO
@@ -158,6 +160,42 @@ namespace MAMBrowser.Controllers
         #endregion
 
         #region 소재검색 테이블
+        //Song
+        [HttpGet("GetSearchTable/SONG")]
+        public DTO_RESULT<SongResultDTO> GetSONG([FromQuery] Pram pram)
+        {
+            var result = new DTO_RESULT<SongResultDTO>();
+            try
+            {
+                if (string.IsNullOrEmpty(pram.title) && string.IsNullOrEmpty(pram.albumName) && string.IsNullOrEmpty(pram.artistName))
+                {
+                    result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                    result.ResultObject = new SongResultDTO();
+                    result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                }
+                else
+                {
+                    var dto = new SongSearchOptionDTO()
+                    {
+                        AlbumName = pram.albumName,
+                        ArtistName = pram.artistName,
+                        SongName = pram.title,
+                        RowPerPage = pram.rowperpage,
+                        SelectPage = pram.selectpage,
+                    };
+                    result.ResultObject = MAMWebFactory.Instance.Search<SongResultDTO>(dto);
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
         //MY 공간
         [HttpGet("GetSearchTable/MyDisk")]
         public DTO_RESULT<MyDiskResultDTO> GetMyDisk([FromQuery] Pram pram)

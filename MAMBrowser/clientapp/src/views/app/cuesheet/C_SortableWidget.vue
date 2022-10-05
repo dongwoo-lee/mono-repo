@@ -41,7 +41,8 @@
                   class="iconsminds-cd-2"
                   v-if="
                     fileData[index - 1].cartcode == 'S01G01C014' ||
-                    fileData[index - 1].cartcode == 'S01G01C015'
+                    fileData[index - 1].cartcode == 'S01G01C015' ||
+                    fileData[index - 1].cartcode == 'S01G01C032'
                   "
                 ></i>
                 <i
