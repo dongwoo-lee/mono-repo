@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using MAMBrowser.DTO;
-using MAMBrowser.Foundation;
 using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using M30.AudioFile.Common;
 using M30.AudioFile.Common.Models;
+using MAMBrowser.Hubs;
+using Microsoft.AspNet.SignalR;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MAMBrowser.Controllers
 {
@@ -44,17 +47,16 @@ namespace MAMBrowser.Controllers
 
         //wav파일 내보내기
         [HttpPost("exportWavFile")]
-        public ActionResult<string> ExportWavFile([FromQuery] string userid, [FromBody] List<CueSheetConDTO> pram)
+        public Task<ActionResult<string>> ExportWavFile([FromQuery] string connectionId, [FromBody] List<CueSheetConDTO> pram, CancellationToken token)
         {
-            ActionResult<string> result;
+            Task<ActionResult<string>> result;
             try
             {
                 string userId = HttpContext.Items[Define.USER_ID] as string;
-                result = _bll.MergeAudioFilesIntoOneWav(userId, pram);
+                result = _bll.MergeAudioFilesIntoOneWav(userId, connectionId, pram, token);
             }
             catch (Exception ex)
             {
-
                 throw;
             }
             return result;

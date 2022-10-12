@@ -428,22 +428,33 @@
       ok-title="확인"
       cancel-title="취소"
       @ok="OnExportWav"
+      @hidden="OnWavExportCancel"
     >
       <div>
         <WavExportAbCart @isTotalDuration="isTotalDuration" />
       </div>
-      <template #modal-footer="{ cancel }">
+      <div>
+        <DxProgressBar
+          id="progress-bar-status"
+          :min="0"
+          :max="100"
+          :status-format="statusFormat"
+          :value="seconds"
+          width="100%"
+        />
+      </div>
+      <template #modal-footer="{}">
         <div v-if="isMyDiskCheckBox" class="mydisc-check-box">
           <DxCheckBox v-model="isWavCopy" :text="labelText" />
         </div>
-        <DxButton :width="100" text="취소" @click="cancel()" />
+        <DxButton :width="100" text="취소" @click="OnWavExportCancel" />
         <DxButton
           type="default"
           styling-mode="outlined"
           text="확인"
           :width="100"
           :height="30"
-          :disabled="!isTotalValue"
+          :disabled="!isWavExportDisabled"
           @click="OnExportWav()"
         >
         </DxButton>
@@ -523,6 +534,7 @@ import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import DxTextArea from "devextreme-vue/text-area";
 import { DxLoadIndicator } from "devextreme-vue/load-indicator";
+import { DxProgressBar } from "devextreme-vue/progress-bar";
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
@@ -540,9 +552,20 @@ import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
+
 import "moment/locale/ko";
 const moment = require("moment");
-
+function statusFormat(value) {
+  return `${parseInt(value * 100)}%`;
+}
+const CancelToken = axios.CancelToken;
+const signalR = require("@microsoft/signalr");
+const connection = new signalR.HubConnectionBuilder()
+  .withUrl("/api/ProgressHub")
+  .build();
+connection.start().catch(function (err) {
+  console.log("err", err);
+});
 export default {
   props: {
     type: String,
@@ -567,6 +590,9 @@ export default {
   },
   data() {
     return {
+      source: null,
+      statusFormat,
+      seconds: 0,
       PREVIEW_CODE,
       MY_DISK_PAGE_ID,
       currentPageName: "",
@@ -574,7 +600,7 @@ export default {
       isMyDiskCheckBox: false,
       labelText: "병합 후 My 디스크에 해당 소재 추가",
       isWavCopy: false,
-      isTotalValue: true,
+      isWavExportDisabled: true,
       goBackPoint: "",
       accrssCheck: true,
       loadingIconVal: false,
@@ -700,6 +726,9 @@ export default {
     this.isMyDiskCheckBox = this.roleList.some(
       (data) => data.id === this.MY_DISK_PAGE_ID && data.visible === "Y"
     );
+    connection.on("sendProgress", (progress) => {
+      this.seconds = progress;
+    });
   },
   components: {
     DxCheckBox,
@@ -713,6 +742,7 @@ export default {
     DxLoadIndicator,
     DxLoadPanel,
     WavExportAbCart,
+    DxProgressBar,
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
@@ -736,6 +766,9 @@ export default {
         return ele !== undefined;
       });
     },
+    // progressValue() {
+    //   return maxValue - this.seconds;
+    // },
   },
   created() {
     if (this.type == "B") {
@@ -865,6 +898,7 @@ export default {
         this.$refs["modal-export-zip"].show();
       }
       if (e.itemData.id == "wav") {
+        // this.maxValue
         this.$refs["modal-export-wav"].show();
       } else {
         eventBus.$emit("exportGo", e.itemData.id);
@@ -1002,7 +1036,9 @@ export default {
     },
     async OnExportWav() {
       this.loadingIconVal = true;
+      this.isWavExportDisabled = false;
       const date = new Date();
+      this.source = CancelToken.source();
       const dateStr = await this.getDateStr(date);
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
@@ -1032,10 +1068,9 @@ export default {
         }
         await axios
           .post(
-            `/api/CueAttachments/exportWavFile?userid=${sessionStorage.getItem(
-              USER_ID
-            )}`,
-            pramList
+            `/api/CueAttachments/exportWavFile?connectionId=${connection.connectionId}`,
+            pramList,
+            { cancelToken: this.source.token }
           )
           .then((response) => {
             this.isWavCopy && this.copyToMySpace(response.data, downloadName);
@@ -1046,7 +1081,15 @@ export default {
           });
       }
       this.loadingIconVal = false;
-
+      this.isWavExportDisabled = true;
+      this.$refs["modal-export-wav"].hide();
+      this.seconds = 0;
+    },
+    OnWavExportCancel() {
+      this.isWavExportDisabled = true;
+      if (this.source) {
+        this.source.cancel();
+      }
       this.$refs["modal-export-wav"].hide();
     },
     downloadFile(fileData, fileName) {
@@ -1149,7 +1192,7 @@ export default {
       this.editOptions = { ...this.cueInfo };
     },
     isTotalDuration(value) {
-      this.isTotalValue = value;
+      this.isWavExportDisabled = value;
     },
   },
 };

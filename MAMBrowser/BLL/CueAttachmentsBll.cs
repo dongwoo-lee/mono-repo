@@ -2,15 +2,16 @@
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.Dto;
-using M30_CueSheetDAO.Entity;
 using M30_CueSheetDAO.Interfaces;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
 using MAMBrowser.Helpers;
+using MAMBrowser.Hubs;
 using MAMBrowser.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NAudioFadeInOutTest;
@@ -20,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace MAMBrowser.BLL
@@ -31,14 +34,18 @@ namespace MAMBrowser.BLL
         private readonly WebServerFileHelper _fileHelper;
         private readonly APIBll _apiBll;
         private readonly ICueSheetDAO _dao;
+        private readonly IHubContext<ProgressHub> _hubContext;
 
-        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao)
+        private static bool isStopMerge = false;
+
+        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao,IHubContext<ProgressHub> hubContext)
         {
             _fileService = sr(MAMDefine.MirosConnection).FileSystem;
             _bll = bll;
             _apiBll = apiBll;
             _fileHelper = fileHelper;
             _dao = dao;
+            _hubContext = hubContext;
         }
 
         //CueCon > ZipFile 내려받기
@@ -206,11 +213,10 @@ namespace MAMBrowser.BLL
         }
 
         //CueCon > Wave 파일 하나로 합쳐 내려받기
-        public ActionResult<string> MergeAudioFilesIntoOneWav(string userid, List<CueSheetConDTO> pram)
+        public async Task<ActionResult<string>> MergeAudioFilesIntoOneWav(string userid, string connectionId, List<CueSheetConDTO> pram,CancellationToken token)
         {
             ActionResult<string> result;
             var playlist = new List<AudioFileReader>();
-
             var guid = Guid.NewGuid().ToString();
             var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{userid}\{guid}");
             string wavFileName = $"{guid}.wav";
@@ -224,6 +230,7 @@ namespace MAMBrowser.BLL
                 di_folder.Create();
             }
 
+            int pramIndex = 0;
             foreach (CueSheetConDTO ele in pram)
             {
                 if (ele.FILEPATH != null && ele.FILEPATH != "")
@@ -271,7 +278,6 @@ namespace MAMBrowser.BLL
                                     var fileItem = new AudioFileReader(item.FilePath);
                                     playlist.Add(fileItem);
                                 }
-
                             }
                         }
                         if (ele.CARTTYPE == "CM")
@@ -296,9 +302,44 @@ namespace MAMBrowser.BLL
                         }
                     }
                 }
+                await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((pramIndex+1)*50/pram.Count));
+                if (token.IsCancellationRequested)
+                {
+                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
+                    token.ThrowIfCancellationRequested();
+                }
+                pramIndex++;
             }
-            var resultPlaylist = new ConcatenatingSampleProvider(playlist);
-            WaveFileWriter.CreateWaveFile16(result.Value, resultPlaylist);
+            var resultPlaylist = new ConcatenatingSampleProvider(playlist).ToWaveProvider16();
+            var totalPlayTime = new TimeSpan();
+            foreach (var p_item in playlist)
+            {
+                totalPlayTime = totalPlayTime + p_item.TotalTime;
+            }
+            int write_index = 0;
+
+            using (WaveFileWriter writer = new WaveFileWriter(result.Value,  resultPlaylist.WaveFormat))
+            {
+                var buffer = new byte[resultPlaylist.WaveFormat.AverageBytesPerSecond*4];
+                var totalIndex = Math.Ceiling(totalPlayTime.TotalSeconds / 4);
+                while (true)
+                {
+                    int bytesRead = resultPlaylist.Read(buffer, 0, buffer.Length);
+                    if (bytesRead == 0)
+                    {
+                        // end of source provider
+                        break;
+                    }
+                    writer.Write(buffer, 0, bytesRead);
+                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((write_index + 1) * 50 / totalIndex) + 50);
+                    if (token.IsCancellationRequested)
+                    {
+                        await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
+                        token.ThrowIfCancellationRequested();
+                    }
+                    write_index++;
+                }
+            }
 
             foreach (var item in playlist)
             {
