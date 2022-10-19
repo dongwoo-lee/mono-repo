@@ -223,15 +223,11 @@ export default {
       this.SET_ATTACHMENTS(arrData);
     },
     OnUploadStarted(e) {
-      const regexImoji =
-        /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])|[~!@#$%^&*+|<>?:{}]/gi;
-      const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
+      const regex = /^[ㄱ-ㅎ|가-힣|a-z|0-9|_.|-|()]/gi;
       if (this.attachments.length >= this.maxAttachmentsCount) {
         e.component.abortUpload();
       }
-      if (regexImoji.test(e.file.name) || regex.test(e.file.name)) {
-        e.component.abortUpload();
-      }
+      !regex.test(e.file.name) && e.component.abortUpload();
     },
   },
 };

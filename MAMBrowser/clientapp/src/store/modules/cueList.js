@@ -11,15 +11,9 @@ export default {
         defCuesheetListArr: [], //기본큐시트 리스트 목록
         tempCuesheetListArr: [], //템플릿 리스트 목록
         archiveCuesheetListArr: [], //이전 큐시트 리스트 목록
-
-        userProOption: [], //리스트 옵션 - 프로그램명
-        mediasOption: [], //리스트 옵션 - 매체
-        userProList: [], //유저 - 전체 프로그램
         proUserList: "", //프로그램 - 전체 유저
-
         cueInfo: {}, //작성 정보 (CUE)
         searchListData: [], //소재
-
         printArr: [], //출력용
         abCartArr: [], //ab 카트
         cChannelData: [], //c 카트
@@ -225,9 +219,6 @@ export default {
         defCuesheetListArr: state => state.defCuesheetListArr,
         tempCuesheetListArr: state => state.tempCuesheetListArr,
         archiveCuesheetListArr: state => state.archiveCuesheetListArr,
-        userProOption: state => state.userProOption,
-        mediasOption: state => state.mediasOption,
-        userProList: state => state.userProList,
         proUserList: state => state.proUserList,
         cueInfo: state => state.cueInfo,
         searchListData: state => state.searchListData,
@@ -251,15 +242,6 @@ export default {
         },
         SET_ARCHIVECUESHEETLISTARR(state, payload) {
             state.archiveCuesheetListArr = payload
-        },
-        SET_USERPROOPTION(state, payload) {
-            state.userProOption = payload;
-        },
-        SET_MEDIASOPTION(state, payload) {
-            state.mediasOption = payload;
-        },
-        SET_USERPROLIST(state, payload) {
-            state.userProList = payload;
         },
         SET_PROUSERLIST(state, payload) {
             state.proUserList = payload;
@@ -290,97 +272,55 @@ export default {
         },
     },
     actions: {
-        //리스트 옵션 - 프로그램명 가져오기
-        async getuserProOption({ commit }, payload) {
-            var pram = { person: null }
-            if (payload.media != "") {
-                pram.media = payload.media
-            }
-            if (payload.gropId == "S01G04C004") {
-                pram.person = payload.person
-            }
-            return await $http.get(`/api/CueUserInfo/GetProgramList`, {
-                params: pram
-            })
-                .then((res) => {
-                    if (res.data.resultObject) {
-                        var dataList = res.data.resultObject
-                        var products = [];
-                        var selectProductList = [];
-                        if (dataList) {
-                            dataList.forEach((ele) => {
-                                products.push({
-                                    value: ele.productid,
-                                    text: ele.eventname,
-                                });
-                                selectProductList.push(ele.productid)
-                            });
-                        }
-                        commit('SET_USERPROOPTION', products);
-                        commit('SET_USERPROLIST', selectProductList)
-                    }
-                })
+        GetPgmListByBrdDate({ }, payload) {
+            return $http.get(`/api/CueUserInfo/GetPgmListByBrdDate`, { params: payload }).then((res) => res.data.resultObject)
         },
-        //유저 - 전체 프로그램 + 매체 가져오기
-        async getMediasOption({ commit }, payload) {
-            var pram = { person: null }
-            if (payload.gropId == "S01G04C004") {
-                pram.person = payload.person
-            }
-            return await $http.get(`/api/CueUserInfo/GetProgramList`, {
-                params: pram
+        GetSchPgmList({ }, payload) {
+            return $http.get(`/api/CueUserInfo/GetSCHPgmList`, { params: payload }).then((res) => res.data.resultObject)
+        },
+        SetMediaOption({ }, payload) {
+            const pgmList = payload
+            const optionList = [{ value: "", text: "전체" }];
+            const medias = [{ value: "A", text: "AM" }, { value: "F", text: "FM" }, { value: "D", text: "DMB" }]
+            medias.forEach((media) => {
+                if (pgmList?.some((item) => item.media === media.value)) optionList.push(media)
             })
-                .then((res) => {
-                    if (res.data.resultObject) {
-                        var dataList = res.data.resultObject
-                        var medias = [{
-                            value: "",
-                            text: "전체"
-                        }];
-                        var products = [];
-                        var media_a = dataList.filter(ele => ele.media.includes("A"));
-                        var media_f = dataList.filter(ele => ele.media.includes("F"));
-                        var media_d = dataList.filter(ele => ele.media.includes("D"));
-                        var media_c = dataList.filter(ele => ele.media.includes("C"));
-                        var media_z = dataList.filter(ele => ele.media.includes("Z"));
-                        if (media_a.length > 0) {
-                            medias.push({
-                                value: "A",
-                                text: "AM"
-                            })
-                        }
-                        if (media_f.length > 0) {
-                            medias.push({
-                                value: "F",
-                                text: "FM"
-                            })
-                        }
-                        if (media_d.length > 0) {
-                            medias.push({
-                                value: "D",
-                                text: "DMB"
-                            })
-                        }
-                        if (media_c.length > 0) {
-                            medias.push({
-                                value: "C",
-                                text: "공통"
-                            })
-                        }
-                        if (media_z.length > 0) {
-                            medias.push({
-                                value: "Z",
-                                text: "기타"
-                            })
-                        }
-                        dataList.forEach((ele) => {
-                            products.push(ele.productid);
-                        })
-                        commit('SET_MEDIASOPTION', medias)
-                        commit('SET_USERPROLIST', products)
-                    }
+            return optionList;
+        },
+        SetProgramCodeOption({ }, payload) {
+            const pgmList = payload
+            const optionList = [];
+            pgmList?.forEach((pgm) => {
+                optionList.push({ value: pgm.pgmcode, text: pgm.pgmname })
+            })
+            return optionList
+        },
+        SetProgramProductIdOption({ }, payload) {
+            const pgmList = payload
+            const optionList = [];
+            pgmList?.forEach((pgm) => {
+                pgm.pgmItem.forEach((item) => {
+                    optionList.push({ value: item.productid, text: item.eventname })
                 })
-
+            })
+            return optionList
+        },
+        SetProductIds({ }, payload) {
+            const pgmList = payload
+            const productIds = []
+            pgmList?.forEach((pgm) => {
+                pgm.pgmItem.forEach((item) => productIds.push(item.productid))
+            })
+            return productIds
+        },
+        GetDateString({ }, payload) {
+            const date = payload
+            let sYear = date.getFullYear();
+            let sMonth = date.getMonth() + 1;
+            let sDate = date.getDate();
+            sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+            sDate = sDate > 9 ? sDate : "0" + sDate;
+            return sYear + "" + sMonth + "" + sDate;
         },
         //프로그램 - 전체 유저 가져오기
         async getProUserList({ commit }, payload) {
@@ -465,9 +405,6 @@ export default {
         },
         //이전 큐시트 목록 가져오기
         getarchiveCuesheetListArr({ commit }, payload) {
-            if (typeof payload.products == 'string') {
-                payload.products = [payload.products]
-            }
             return $http.post(`/api/ArchiveCueSheet/GetArchiveCueList`, payload)
                 .then((res) => {
                     commit('SET_ARCHIVECUESHEETLISTARR', res.data.resultObject);
@@ -980,7 +917,6 @@ export default {
             }
             return payload.row
         },
-        //DTO 하는중
         setCueConData({ state, commit }, payload) {
             commit('SET_ABCARTARR', payload.normalCon);
             commit('SET_CCHANNELDATA', payload.instanceCon)

@@ -349,18 +349,6 @@
               />
             </div>
           </div>
-          <!-- <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">메모 :</div>
-            <div class="dx-field-value">
-              <DxTextArea
-                :height="60"
-                :maxLength="25"
-                width="320px"
-                v-model="editOptions.memo"
-                :disabled="cueInfo.cuetype == 'A'"
-              />
-            </div>
-          </div> -->
         </div>
       </div>
       <template #modal-footer="{ cancel }">
@@ -477,7 +465,7 @@
             <b-form-select
               style="width: 150px"
               v-model="cueInfo.media"
-              :options="mediasOption"
+              :options="mediaOptions"
               disabled
             />
           </b-form-group>
@@ -485,7 +473,7 @@
             <b-form-select
               style="width: 400px"
               v-model="cueInfo.productid"
-              :options="userProOption"
+              :options="programOptions"
               disabled
             />
           </b-form-group>
@@ -590,6 +578,11 @@ export default {
   },
   data() {
     return {
+      date: new Date(),
+      pramObj: { person: null, brd_dt: null, media: null },
+      pgmList: [],
+      mediaOptions: [],
+      programOptions: [],
       source: null,
       statusFormat,
       seconds: 0,
@@ -751,9 +744,6 @@ export default {
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["cueFavorites"]),
     ...mapGetters("cueList", ["cueInfo"]),
-
-    ...mapGetters("cueList", ["mediasOption"]),
-    ...mapGetters("cueList", ["userProOption"]),
     ...mapGetters("user", ["roleList"]),
 
     btnWeekStates() {
@@ -766,9 +756,6 @@ export default {
         return ele !== undefined;
       });
     },
-    // progressValue() {
-    //   return maxValue - this.seconds;
-    // },
   },
   created() {
     if (this.type == "B") {
@@ -803,8 +790,8 @@ export default {
     ...mapActions("cueList", ["addByTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
-    ...mapActions("cueList", ["getuserProOption"]),
     ...mapActions("cueList", ["getDateStr"]),
+    ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("user", ["renewal"]),
 
     //템플릿으로 저장
@@ -1117,14 +1104,10 @@ export default {
         });
     },
     async editWeekListClick() {
-      const userName = sessionStorage.getItem(USER_NAME);
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      var pram = {
-        person: userName,
-        gropId: gropId,
-        media: this.cueInfo.media,
-      };
-      var proOption = await this.getuserProOption(pram);
+      const { productid, title: eventName, media } = { ...this.cueInfo };
+      this.programOptions.push({ value: productid, text: eventName });
+
+      this.mediaOptions = await this.SetMediaOption([{ media: media }]);
       this.$refs["modal-editWeek"].show();
     },
     //적용요일 변경

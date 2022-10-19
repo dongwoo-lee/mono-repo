@@ -24,7 +24,8 @@ namespace MAMBrowser.Controllers
         }
         public class ArchPram
         {
-            public List<string> products { get; set; }
+            public string media { get; set; }
+            public string title { get; set; }
             public int row_per_page { get; set; }
             public int select_page { get; set; }
             public string start_dt { get; set; }
@@ -42,7 +43,7 @@ namespace MAMBrowser.Controllers
                 var tags = new List<string>();
                 if (pram.tag != ""&&pram.tag!=null)
                     tags.Add(pram.tag);
-                result.ResultObject = _bll.GetArchiveCueSheetList(pram.products, pram.start_dt, pram.end_dt, pram.row_per_page, pram.select_page, tags);
+                result.ResultObject = _bll.GetArchiveCueSheetList(pram.media,pram.title, pram.start_dt, pram.end_dt, pram.row_per_page, pram.select_page, tags);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

@@ -18,16 +18,17 @@
           <b-form-select
             style="width: 100px"
             v-model="searchItems.media"
-            :options="mediasOption"
-            @change="eventClick($event, 'list')"
+            :options="mediaOptions"
+            @change="onMediaChange($event)"
           />
         </b-form-group>
         <!-- 프로그램명 -->
         <b-form-group label="프로그램명" class="has-float-label">
           <b-form-select
             style="width: 400px"
-            v-model="searchItems.productid"
-            :options="programList"
+            v-model="searchItems.pgmcode"
+            :options="programOptions"
+            @change="onPgmChange($event)"
           />
         </b-form-group>
         <!-- 검색 버튼 -->
@@ -98,6 +99,7 @@
       title="기본 큐시트 추가"
       ok-title="확인"
       cancel-title="취소"
+      @hidden="cancel_modal"
       @ok="addWeekCue"
     >
       <div id="modelDiv" class="d-block text-center">
@@ -108,17 +110,17 @@
           <b-form-group label="매체" class="has-float-label">
             <b-form-select
               style="width: 150px"
-              v-model="cuesheetData.media"
-              :options="modal_mediasoption"
-              @change="eventClick($event, 'modal')"
+              v-model="searchItems_add_def_modal.media"
+              :options="mediaOptions_modal"
+              @change="onMediaChange_modal($event)"
             />
           </b-form-group>
           <b-form-group label="프로그램명" class="has-float-label ml-3">
             <b-form-select
               style="width: 400px"
-              v-model="cuesheetData.productid"
-              :options="modalProgramList"
-              @change="getWeekList($event)"
+              v-model="searchItems_add_def_modal.productid"
+              :options="programOptions_modal"
+              @change="onPgmChange_modal($event)"
             />
           </b-form-group>
         </div>
@@ -138,8 +140,8 @@
           </b-button-group>
         </div>
       </div>
-      <template #modal-footer="{ cancel }">
-        <DxButton :width="100" text="취소" @click="cancel()" />
+      <template #modal-footer="">
+        <DxButton :width="100" text="취소" @click="cancel_modal()" />
         <DxButton
           type="default"
           text="확인"
@@ -150,6 +152,7 @@
         </DxButton>
       </template>
     </b-modal>
+
     <!-- 기본큐시트 삭제 modal -->
     <b-modal
       id="modal-del"
@@ -181,7 +184,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
 import "moment/locale/ko";
@@ -195,16 +198,27 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
-      isWeekSlot: true,
-      programList: [{ value: "", text: "매체를 선택하세요" }],
-      modalProgramList: [{ value: "", text: "매체를 선택하세요" }],
+      date: new Date(),
+      pramObj: { person: null, brd_dt: null, media: null },
+      pgmList: [],
+      programOptions: [],
+      mediaOptions: [],
+      productIds: [],
       searchItems: {
         media: "", // 매체
+        pgmcode: "",
         productid: "", // 프로그램명
         cueid: -1, // 작성상태
         rowPerPage: 30,
         selectPage: 1,
       },
+      mediaOptions_modal: [],
+      programOptions_modal: [],
+      searchItems_add_def_modal: {
+        media: "",
+        productid: "",
+      },
+      isWeekSlot: true,
       weekButtons: [
         { caption: "월", value: "MON", state: false, disable: true },
         { caption: "화", value: "TUE", state: false, disable: true },
@@ -214,12 +228,6 @@ export default {
         { caption: "토", value: "SAT", state: false, disable: true },
         { caption: "일", value: "SUN", state: false, disable: true },
       ],
-      cuesheetData: {
-        edittime: "",
-        media: "",
-        personid: "",
-        productid: "",
-      },
       fields: [
         {
           name: "__checkbox",
@@ -283,17 +291,13 @@ export default {
           width: "10%",
         },
       ],
-      modal_mediasoption: [],
     };
   },
 
   computed: {
     ...mapGetters("cueList", ["defCuesheetListArr"]),
-    ...mapGetters("cueList", ["userProOption"]),
-    ...mapGetters("cueList", ["mediasOption"]),
-    ...mapGetters("cueList", ["userProList"]),
     btnWeekStates() {
-      var result = this.weekButtons.map((btn) => {
+      const result = this.weekButtons.map((btn) => {
         if (btn.state == true) {
           return btn.value;
         }
@@ -304,126 +308,94 @@ export default {
     },
   },
   async mounted() {
-    this.selectedIds = [];
+    this.isTableLoading = true;
+    const toDay = await this.GetDateString(this.date);
+    const userName = sessionStorage.getItem(USER_NAME);
+    const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+    if (gropId === "S01G04C004") this.pramObj.person = userName;
+
+    this.pramObj.brd_dt = toDay;
+    this.searchItems.brd_dt = toDay;
+    this.pgmList = await this.GetPgmListByBrdDate(this.pramObj);
+
+    [
+      this.mediaOptions,
+      this.programOptions,
+      this.programOptions_modal,
+      this.productIds,
+    ] = await Promise.all([
+      this.SetMediaOption(this.pgmList),
+      this.SetProgramCodeOption(this.pgmList),
+      this.SetProgramProductIdOption(this.pgmList),
+      this.SetProductIds(this.pgmList),
+    ]);
+    this.mediaOptions_modal = [...this.mediaOptions];
     this.getData();
-    await this.getProductName();
-    this.programList = this.userProOption;
-    this.searchItems.productid = this.userProList;
-    this.modalProgramList = this.userProOption;
-    this.modal_mediasoption = this.mediasOption.filter(
-      (ele, index) => index > 0
-    );
+    this.selectedIds = [];
   },
   methods: {
+    ...mapActions("cueList", ["GetDateString"]),
     ...mapActions("cueList", ["getcuesheetListArrDef"]),
-    ...mapActions("cueList", ["getMediasOption"]),
-    ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("cueList", ["GetPgmListByBrdDate"]),
+    ...mapActions("cueList", ["SetMediaOption"]),
+    ...mapActions("cueList", ["SetProgramCodeOption"]),
+    ...mapActions("cueList", ["SetProgramProductIdOption"]),
+    ...mapActions("cueList", ["SetProductIds"]),
     async getData() {
       this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      const userName = sessionStorage.getItem(USER_NAME);
       this.isTableLoading = this.isScrollLodaing ? false : true;
-      if (this.searchItems.productid == "") {
-        var pram = { person: userName, gropId: gropId };
-        await this.getMediasOption(pram);
-        this.searchItems.productid = this.userProList;
-      }
-      if (this.searchItems.productid == undefined) {
-        this.searchItems.productid = this.userProList;
-      }
-      var params = {
+      if (this.searchItems.productid === "")
+        this.searchItems.productid = this.productIds;
+      const params = {
         productids: this.searchItems.productid,
         row_per_page: this.searchItems.rowPerPage,
         select_page: this.searchItems.selectPage,
       };
-      var arrListResult = await this.getcuesheetListArrDef(params);
-      this.setResponseData(arrListResult);
+      const arrListResult = await this.getcuesheetListArrDef(params);
+      if (arrListResult) {
+        this.setResponseData(arrListResult);
+      }
       this.addScrollClass();
       this.isTableLoading = false;
       this.isScrollLodaing = false;
     },
-    //매체 선택시 프로그램 목록 가져오기 (일반,modal)
-    async eventClick(e, V) {
-      await this.getProductName(e);
-      if (V == "list") {
-        this.programList = this.userProOption;
-        this.searchItems.productid = this.userProList;
-      } else if (V == "modal") {
-        this.modalProgramList = this.userProOption;
-        this.cuesheetData.productid = "";
-      }
-    },
-    async getProductName(media) {
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      const userName = sessionStorage.getItem(USER_NAME);
-      var pram = { person: userName, gropId: gropId, media: media };
-      var proOption = await this.getuserProOption(pram);
-    },
-    async addModal() {
-      this.cuesheetData.media = this.mediasOption[1].value;
-      await this.getProductName(this.cuesheetData.media);
-      this.modalProgramList = this.userProOption;
-      this.cuesheetData.productid = "";
-      this.weekButtons.forEach((ele) => {
-        ele.state = false;
-        ele.disable = true;
-      });
-      this.$refs["modal-add"].show();
-    },
-    selectDelDefCue() {
-      if (this.selectedIds.length > 0) {
-        this.$bvModal.show("modal-del");
+    async onMediaChange(e) {
+      if (e === "") {
+        this.programOptions = await this.SetProgramCodeOption(this.pgmList);
+        this.searchItems.pgmcode = "";
+        this.searchItems.productid = this.productIds;
       } else {
-        window.$notify("error", `삭제할 기본 큐시트를 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
-        });
+        const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
+        const selectProgramList = await this.SetProductIds(selectMediaObj);
+        this.programOptions = await this.SetProgramCodeOption(selectMediaObj);
+        this.searchItems.pgmcode = "";
+        this.searchItems.productid = selectProgramList;
       }
     },
-    // 기본큐시트 추가 (modal)
-    async addWeekCue() {
-      const userId = sessionStorage.getItem(USER_ID);
-      var result = [];
-      this.btnWeekStates.forEach((ele) => {
-        var cueItem = {
-          personid: userId,
-          detail: [{ cueid: -1, week: ele }],
-          media: this.cuesheetData.media,
-          productid: this.cuesheetData.productid,
-          djname: "",
-          directorname: "",
-          membername: "",
-          headertitle: "",
-          footertitle: "",
-          memo: "",
-        };
-        result.push(cueItem);
-      });
-      if (result.length == 0) {
-        window.$notify("error", `기본 큐시트를 적용할 요일을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
-        });
+    async onMediaChange_modal(e) {
+      if (e === "") {
+        this.programOptions_modal = await this.SetProgramProductIdOption(
+          this.pgmList
+        );
+        this.searchItems_add_def_modal.productid = "";
       } else {
-        var pram = {
-          DefCueSheetDTO: result,
-        };
-        await this.$http
-          .post(`/api/DefCueSheet/SaveDefCue`, pram)
-          .then((res) => {
-            window.$notify("info", `기본 큐시트 추가완료.`, "", {
-              duration: 10000,
-              permanent: false,
-            });
-          });
-        await this.getProductName();
-        this.getData();
-        this.$refs["modal-add"].hide();
+        const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
+        this.programOptions_modal = await this.SetProgramProductIdOption(
+          selectMediaObj
+        );
+        this.searchItems_add_def_modal.productid = "";
       }
     },
-    // 요일확인 및 목록 가져오기 (modal)
-    async getWeekList(e) {
-      if (e == undefined || "" || null) {
+    async onPgmChange(e) {
+      if (e) {
+        const selectPgmCodeObj = this.pgmList.filter(
+          (pgm) => pgm.pgmcode === e
+        );
+        this.searchItems.productid = await this.SetProductIds(selectPgmCodeObj);
+      }
+    },
+    async onPgmChange_modal(e) {
+      if (!e) {
         this.weekButtons.forEach((ele) => {
           ele.state = false;
           ele.disable = true;
@@ -459,10 +431,73 @@ export default {
           });
       }
     },
-    //기본큐시트 삭제
+    async addModal() {
+      this.weekButtons.forEach((ele) => {
+        ele.state = false;
+        ele.disable = true;
+      });
+      this.$refs["modal-add"].show();
+    },
+    selectDelDefCue() {
+      if (this.selectedIds?.length > 0) {
+        this.$bvModal.show("modal-del");
+      } else {
+        window.$notify("error", `삭제할 기본 큐시트를 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      }
+    },
+    async addWeekCue() {
+      const userId = sessionStorage.getItem(USER_ID);
+      let result = [];
+      this.btnWeekStates?.forEach((ele) => {
+        var cueItem = {
+          personid: userId,
+          detail: [{ cueid: -1, week: ele }],
+          media: this.searchItems_add_def_modal.media,
+          productid: this.searchItems_add_def_modal.productid,
+          djname: "",
+          directorname: "",
+          membername: "",
+          headertitle: "",
+          footertitle: "",
+          memo: "",
+        };
+        result.push(cueItem);
+      });
+      if (result.length == 0) {
+        window.$notify("error", `기본 큐시트를 적용할 요일을 선택하세요.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
+      } else {
+        const pram = {
+          DefCueSheetDTO: result,
+        };
+        await this.$http
+          .post(`/api/DefCueSheet/SaveDefCue`, pram)
+          .then((res) => {
+            window.$notify("info", `기본 큐시트 추가완료.`, "", {
+              duration: 10000,
+              permanent: false,
+            });
+          });
+        this.getData();
+        this.$refs["modal-add"].hide();
+      }
+    },
+    async cancel_modal() {
+      this.searchItems_add_def_modal.productid = "";
+      this.searchItems_add_def_modal.media = "";
+      this.programOptions_modal = await this.SetProgramProductIdOption(
+        this.pgmList
+      );
+      this.$refs["modal-add"].hide();
+    },
     async delWeekCue(e) {
-      var delcueidList = [];
-      this.selectedIds.forEach((ids) => {
+      const delcueidList = [];
+      this.selectedIds?.forEach((ids) => {
         this.defCuesheetListArr.data[ids].detail.forEach((ele) => {
           delcueidList.push(ele.cueid);
         });

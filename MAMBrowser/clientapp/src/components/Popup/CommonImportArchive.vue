@@ -30,17 +30,12 @@
             <b-form-select
               style="width: 100px"
               v-model="searchItems.media"
-              :options="mediasOption"
-              @change="eventClick($event)"
+              :options="mediaOptions"
             />
           </b-form-group>
           <!-- 프로그램명 -->
           <b-form-group label="프로그램명" class="has-float-label">
-            <b-form-select
-              style="width: 400px"
-              v-model="searchItems.productid"
-              :options="programList"
-            />
+            <common-input-text v-model="searchItems.title" />
           </b-form-group>
           <!-- 검색 버튼 -->
           <b-form-group>
@@ -130,22 +125,21 @@ function get_date_str(date) {
 }
 
 var endDay = get_date_str(date);
-
 date.setDate(date.getDate() - 7);
 var startDay = get_date_str(date);
 export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      date,
       state: false,
       loadingIconVal: false,
-      date,
-      programList: [{ value: "", text: "매체를 선택하세요" }],
+      mediaOptions: [],
       searchItems: {
-        start_dt: "", // 시작일
-        end_dt: "", // 종료일
+        start_dt: startDay, // 시작일
+        end_dt: endDay, // 종료일
         media: "", // 매체
-        productid: "", // 프로그램명
+        title: "",
         rowPerPage: 30,
         selectPage: 1,
       },
@@ -270,13 +264,11 @@ export default {
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["archiveCuesheetListArr"]),
-    ...mapGetters("cueList", ["userProOption"]),
-    ...mapGetters("cueList", ["mediasOption"]),
-    ...mapGetters("cueList", ["userProList"]),
   },
-  mounted() {
-    this.searchItems.start_dt = startDay;
-    this.searchItems.end_dt = endDay;
+  async mounted() {
+    const allMedia = [{ media: "A" }, { media: "F" }, { media: "D" }];
+    this.mediaOptions = await this.SetMediaOption(allMedia);
+    this.getData();
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -286,15 +278,13 @@ export default {
     ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_ARCHIVECUESHEETLISTARR"]),
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
-    ...mapActions("cueList", ["getMediasOption"]),
-    ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("cueList", ["setStartTime"]),
 
     async getData() {
       if (this.state) {
         this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
         this.isTableLoading = this.isScrollLodaing ? false : true;
-        var temmedia = await this.eventClick();
         if (
           this.$fn.checkGreaterStartDate(
             this.searchItems.start_dt,
@@ -307,24 +297,13 @@ export default {
           this.hasErrorClass = true;
           return;
         }
-        if (this.searchItems.productid == "") {
-          var pram = { person: null, gropId: null };
-          await this.getMediasOption(pram);
-          this.searchItems.productid = this.userProList;
-        }
-        if (this.searchItems.productid == undefined) {
-          this.searchItems.productid = this.userProList;
-        }
-        var params = {
-          start_dt: this.searchItems.start_dt,
-          end_dt: this.searchItems.end_dt,
-          products: this.searchItems.productid,
-          row_per_page: this.searchItems.rowPerPage,
-          select_page: this.searchItems.selectPage,
-        };
-        if (typeof params.products == "string") {
-          params.products = [params.products];
-        }
+        const params = {};
+        params.start_dt = this.searchItems.start_dt;
+        params.end_dt = this.searchItems.end_dt;
+        if (this.searchItems.media) params.media = this.searchItems.media;
+        params.title = this.searchItems.title;
+        params.row_per_page = this.searchItems.rowPerPage;
+        params.select_page = this.searchItems.selectPage;
         await this.$http
           .post(`/api/ArchiveCueSheet/GetArchiveCueList`, params)
           .then((res) => {
@@ -469,16 +448,6 @@ export default {
             });
         }
       }
-    },
-    //매체 선택시 프로그램 목록 가져오기
-    eventClick(e) {
-      this.getProductName(e);
-    },
-    async getProductName(media) {
-      var pram = { person: null, gropId: null, media: media };
-      var proOption = await this.getuserProOption(pram);
-      this.programList = this.userProOption;
-      this.searchItems.productid = this.userProList;
     },
   },
 };

@@ -166,7 +166,6 @@ namespace MAMBrowser.Utils
             }
             return resultFavList;
         }
-
         public static CueSheetCollectionDTO DayConverting(this CueSheetCollectionEntity entity)
         {
             CueSheetCollectionDTO collectionDTO = SetCueData(entity.CueSheetConEntities, entity.PrintEntities, entity.AttachmentEntities, entity.TagEntities);
@@ -293,34 +292,30 @@ namespace MAMBrowser.Utils
 
             return collectionDTO;
         }
-
         public static IEnumerable<PgmListDTO> Converting(this List<ProgramListEntity> entity)
         {
             List<PgmListDTO> dto = new List<PgmListDTO>();
-            //List<ProgramListDetailDTO> detail = new List<ProgramListDetailDTO>();
-            foreach (var item in entity)
+            var group_entity = entity.GroupBy(x => new { x.MEDIA, x.PGMCODE });
+            foreach (var group in group_entity)
             {
                 var dtoItem = new PgmListDTO();
-                dtoItem.PRODUCTID = item.PRODUCTID;
-                dtoItem.PGMCODE = item.PGMCODE;
-                dtoItem.EVENTNAME = item.EVENTNAME;
-                dtoItem.SERVICENAME = item.SERVICENAME;
-                dtoItem.MEDIA = item.MEDIA;
-                //foreach (var detailItem in item.DETAILS)
-                //{
-                //    var dtoDetail = new ProgramListDetailDTO();
-                //    dtoDetail.EVENTNAME = detailItem.EVENTNAME;
-                //    dtoDetail.PRODUCTID = detailItem.PRODUCTID;
-                //    dtoDetail.SERVICENAME = detailItem.SERVICENAME;
-                //    detail.Add(dtoDetail);
-                //}
-                //dtoItem.DETAILS = detail;
+                dtoItem.pgmItem  = new List<PgmItem>();
+                foreach (var item in group)
+                {
+                    dtoItem.PGMCODE = item.PGMCODE;
+                    dtoItem.PGMNAME = item.PGMNAME;
+                    dtoItem.MEDIA = item.MEDIA;
+                    var pgmItem = new PgmItem();
+                    pgmItem.EVENTNAME = item.EVENTNAME;
+                    pgmItem.PRODUCTID = item.PRODUCTID;
+                    pgmItem.SERVICENAME = item.SERVICENAME;
+                    dtoItem.pgmItem.Add(pgmItem);
+                }
                 dto.Add(dtoItem);
             }
             return dto;
 
         }
-
         public static IEnumerable<CueSheetConDTO> SponsorConverting(this SponsorCollectionEntity entity)
         {
             List<CueSheetConDTO> collectionDTO = new List<CueSheetConDTO>();
@@ -516,7 +511,6 @@ namespace MAMBrowser.Utils
             }
             return entity;
         }
-
         public static DayCueSheetCreateParam DayToEntity(this CueSheetCollectionDTO dto)
         {
             //cue
@@ -718,7 +712,6 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
-
         public static List<PrintParam> Converting(this List<PrintDTO> prints)
         {
             var result = new List<PrintParam>();
@@ -812,7 +805,6 @@ namespace MAMBrowser.Utils
 
             return result;
         }
-
         public static List<TagParam> Converting(this List<string> tags)
         {
             var result = new List<TagParam>();
@@ -825,7 +817,6 @@ namespace MAMBrowser.Utils
 
             return result;
         }
-
         public static CueSheetCollectionDTO SetCueData(List<CueSheetConEntity> conData, List<PrintEntity> prints, List<AttachmentEntity> attachments, List<string> tags)
         {
             var collectionDTO = new CueSheetCollectionDTO();
@@ -942,7 +933,6 @@ namespace MAMBrowser.Utils
             collectionDTO.NormalCon = collectionDTO.NormalCon.OrderBy(nomal => nomal.ROWNUM).ToList();
             return collectionDTO;
         }
-
         public static List<PrintDTO> Converting(this List<PrintEntity> prints)
         {
             var result = new List<PrintDTO>();
@@ -960,7 +950,6 @@ namespace MAMBrowser.Utils
 
             return result.OrderBy(print => print.ROWNUM).ToList();
         }
-
         public static List<AttachmentDTO> Converting(this List<AttachmentEntity> attachments)
         {
             var result = new List<AttachmentDTO>();
@@ -978,7 +967,6 @@ namespace MAMBrowser.Utils
 
             return result;
         }
-
         private static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             HashSet<TKey> seenKeys = new HashSet<TKey>();
@@ -1077,6 +1065,5 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
-
     }
 }

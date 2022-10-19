@@ -7,18 +7,17 @@ namespace MAMBrowser.DTO
 {
     public class PgmListDTO
     {
-        public string PRODUCTID { get; set; }
         public string PGMCODE { get; set; }
-        public string EVENTNAME { get; set; }
-        public string SERVICENAME { get; set; }
+        public string PGMNAME { get; set; }
         public char MEDIA { get; set; }
-        //public List<ProgramListDetailDTO> PERSONS { get; set; }
-
+        public List<PgmItem> pgmItem { get; set; }
     }
 
-    //public class ProgramListDetailDTO
-    //{
-    //    public string PERSONID { get; set; }
+    public class PgmItem
+    {
+        public string PRODUCTID { get; set; }
+        public string EVENTNAME { get; set; }
+        public string SERVICENAME { get; set; }
+    }
 
-    //}
 }

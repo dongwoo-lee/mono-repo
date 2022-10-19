@@ -452,7 +452,6 @@ export default {
     ...mapGetters("cueList", ["searchListData"]),
     ...mapGetters("cueList", ["cChannelData"]),
     ...mapGetters("cueList", ["cueFavorites"]),
-    ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("cueList", ["cueInfo"]),
     sortableColor() {
       return (index) => {
@@ -749,13 +748,8 @@ export default {
 }
 .cart_div {
   background-color: #ededed;
-  /* background-color: #008ecc; */
-  /* opacity: 0.7; */
   overflow: auto;
   border-radius: 5px;
-
-  /* background-color: #EFF0F2; */
-  /* border-radius: 10px; */
 }
 .actionBtn .dx-button-content {
   width: 20px;
@@ -772,47 +766,33 @@ export default {
   padding-left: 3px;
   width: 28px;
 }
-/* .sortableView {
-  background: linear-gradient(45deg, #f5709d, #f0a39a);
-  background: linear-gradient(45deg, #f791b1, #ed9671);
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
-  color: white;
-  padding: 5px;
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-} */
 .backColor_1 {
   padding: 5px;
-  border: solid 3px rgb(211, 145, 145);
+  border: solid 3px #009efa;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_2 {
   padding: 5px;
-  border: solid 3px rgb(153, 211, 145);
-
+  border: solid 3px #00c9a7;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_3 {
   padding: 5px;
-  border: solid 3px rgb(149, 145, 211);
-
+  border: solid 3px #d83121;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_4 {
   padding: 5px;
-  border: solid 3px rgb(211, 145, 205);
-
+  border: solid 3px #ffc75f;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_my {
   padding: 5px;
-  border: solid 3px rgb(155, 161, 63);
-
+  border: solid 3px #b0a8b9;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
@@ -828,7 +808,6 @@ export default {
   float: right;
 }
 .blankView {
-  /* height: 100%; */
   color: white;
   font-size: 40px;
   padding-left: 8px;

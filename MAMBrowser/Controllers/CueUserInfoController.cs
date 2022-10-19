@@ -21,14 +21,14 @@ namespace MAMBrowser.Controllers
             _bll = bll;
         }
 
-        //유저별 프로그램 리스트 가져오기
-        [HttpGet("GetProgramList")]
-        public DTO_RESULT<IEnumerable<PgmListDTO>> GetUserProgramList(string person, char media)
+        // 방송일 프로그램 리스트 
+        [HttpGet("GetPgmListByBrdDate")]
+        public DTO_RESULT<IEnumerable<PgmListDTO>> GetPgmListByBrdDate (string person, char media,string brd_dt)
         {
             var result = new DTO_RESULT<IEnumerable<PgmListDTO>>();
             try
             {
-                result.ResultObject = _bll.GetUserPgmList(person, media);
+                result.ResultObject = _bll.GetPgmListByBrdDate(person, media,brd_dt);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch(Exception ex)
@@ -38,6 +38,25 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+
+        // 송출일 프로그램 리스트 
+        [HttpGet("GetSCHPgmList")]
+        public DTO_RESULT<IEnumerable<PgmListDTO>> GetSCHPgmList(string person, char media, string brd_dt)
+        {
+            var result = new DTO_RESULT<IEnumerable<PgmListDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetSCHPgmList(person, media, brd_dt);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
 
         //프로그램 전체 담당자 가져오기
         [HttpGet("GetDirectorList")]

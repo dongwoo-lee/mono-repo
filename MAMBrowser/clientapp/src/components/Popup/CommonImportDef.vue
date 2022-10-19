@@ -4,7 +4,7 @@
     ref="importDef"
     size="xl"
     title="기본 큐시트 가져오기"
-    @hide="state = false"
+    @hidden="cancel"
     @show="state = true"
   >
     <div class="d-block text-center">
@@ -20,16 +20,17 @@
               style="width: 100px"
               :disabled="disabledVal"
               v-model="searchItems.media"
-              :options="mediasOption"
-              @change="eventClick($event, 'list')"
+              :options="mediaOptions"
+              @change="onMediaChange($event)"
             />
           </b-form-group>
           <b-form-group label="프로그램명" class="has-float-label">
             <b-form-select
               style="width: 400px"
               :disabled="disabledVal"
-              v-model="searchItems.productid"
-              :options="programList"
+              v-model="searchItems.pgmcode"
+              :options="programOptions"
+              @change="onPgmChange($event)"
             />
           </b-form-group>
           <b-form-group>
@@ -71,7 +72,7 @@
         </template>
       </common-form>
     </div>
-    <template #modal-footer="{ cancel }">
+    <template #modal-footer="">
       <b-form-checkbox-group
         v-model="MenuSelected"
         :options="MenuOptions"
@@ -105,7 +106,7 @@
 </template>
 <script>
 import CommonWeeks from "../../components/DataTable/CommonWeeks.vue";
-import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
+import { ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
@@ -128,16 +129,22 @@ export default {
   },
   data() {
     return {
+      date: new Date(),
       state: false,
       loadingIconVal: false,
       disabledVal: true,
+      pramObj: { person: null, brd_dt: null, media: null },
+      pgmList: [],
+      programOptions: [],
+      mediaOptions: [],
+      productIds: [],
       searchItems: {
         media: "", // 매체
         productid: "", // 프로그램명
+        pgmcode: "",
         rowPerPage: 30,
         selectPage: 1,
       },
-      programList: [{ value: "", text: "매체를 선택하세요" }],
       fields: [
         {
           name: "__checkbox",
@@ -244,20 +251,41 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
+    this.isTableLoading = true;
+    const toDay = await this.GetDateString(this.date);
+    const userName = sessionStorage.getItem(USER_NAME);
+    const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
+    if (gropId === "S01G04C004") this.pramObj.person = userName;
+
+    this.pramObj.brd_dt = toDay;
+    this.searchItems.brd_dt = toDay;
+    this.searchItems.pgmcode = this.cueInfo.pgmcode;
+    this.pgmList = await this.GetPgmListByBrdDate(this.pramObj);
+
+    let pgmCodeObj = [];
     if (this.type == "T") {
+      pgmCodeObj = [...this.pgmList];
       this.disabledVal = false;
     } else {
-      this.searchItems.media = this.cueInfo.media;
+      pgmCodeObj = this.pgmList.filter(
+        (pgm) => pgm.pgmcode === this.cueInfo.pgmcode
+      );
     }
+    [this.mediaOptions, this.programOptions] = await Promise.all([
+      this.SetMediaOption(this.pgmList),
+      this.SetProgramCodeOption(this.pgmList),
+    ]);
+
+    this.searchItems.productid = await this.SetProductIds(pgmCodeObj);
+    this.getData();
+    this.selectedIds = [];
+    this.searchItems.media = this.cueInfo.media;
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["defCuesheetListArr"]),
-    ...mapGetters("cueList", ["userProOption"]),
-    ...mapGetters("cueList", ["mediasOption"]),
-    ...mapGetters("cueList", ["userProList"]),
     ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
@@ -267,40 +295,26 @@ export default {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_DEFCUESHEETLISTARR"]),
-    ...mapActions("cueList", ["getuserProOption"]),
-    ...mapActions("cueList", ["getMediasOption"]),
     ...mapActions("cueList", ["disableList"]),
     ...mapActions("cueList", ["setStartTime"]),
+
+    ...mapActions("cueList", ["GetDateString"]),
+    ...mapActions("cueList", ["GetPgmListByBrdDate"]),
+    ...mapActions("cueList", ["SetMediaOption"]),
+    ...mapActions("cueList", ["SetProgramCodeOption"]),
+    ...mapActions("cueList", ["SetProgramProductIdOption"]),
+    ...mapActions("cueList", ["SetProductIds"]),
 
     async getData() {
       if (this.state) {
         //기본 큐시트 목록 가져오기
         this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
-        const userName = sessionStorage.getItem(USER_NAME);
-        const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
         this.isTableLoading = this.isScrollLodaing ? false : true;
-        if (this.searchItems.productid == "") {
-          var pram = { person: userName, gropId: gropId };
-          var mediaOption = await this.getMediasOption(pram);
-          if (this.type != "T") {
-            var temmedia = await this.eventClick(this.cueInfo.media);
-            this.searchItems.productid = this.cueInfo.productid;
-          } else {
-            var temmedia = await this.eventClick();
-            this.searchItems.productid = this.userProList;
-          }
-        }
-        if (this.searchItems.productid == undefined) {
-          this.searchItems.productid = this.userProList;
-        }
         var params = {
           productids: this.searchItems.productid,
           row_per_page: this.searchItems.rowPerPage,
           select_page: this.searchItems.selectPage,
         };
-        if (typeof params.productids == "string") {
-          params.productids = [params.productids];
-        }
         await this.$http
           .post(`/api/DefCueSheet/GetDefList`, params)
           .then(async (res) => {
@@ -344,10 +358,10 @@ export default {
         });
         this.loadingIconVal = false;
       } else {
-        var rowNum_ab = 0;
-        var rowNum_print = 0;
-        var beforePrintData = [];
-        var beforeAbData = [];
+        let rowNum_ab = 0;
+        let rowNum_print = 0;
+        let beforePrintData = [];
+        let beforeAbData = [];
         if (this.importSelected == "update") {
           beforePrintData = this.printArr;
           if (beforePrintData.length > 0) {
@@ -417,7 +431,6 @@ export default {
                   responseCuesheetCollection.cueSheetDTO.headertitle;
                 oldCueInfo.membername =
                   responseCuesheetCollection.cueSheetDTO.membername;
-
                 var resultPrintData = beforePrintData.concat(
                   responseCuesheetCollection.printDTO
                 );
@@ -461,7 +474,6 @@ export default {
                 this.cueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
                 this.SET_CUEINFO(this.cueInfo);
               }
-
               var pram = {
                 data: responseCuesheetCollection.instanceCon,
                 items: this.MenuSelected,
@@ -469,22 +481,39 @@ export default {
               eventBus.$emit("updateCData", pram);
               this.selectedIds = null;
               this.loadingIconVal = false;
-              this.$refs["importDef"].hide();
+              this.cancel();
             });
         }
       }
     },
-    //매체 선택시 프로그램 목록 가져오기
-    async eventClick(e) {
-      await this.getProductName(e);
+    async onMediaChange(e) {
+      if (e === "") {
+        this.programOptions = await this.SetProgramCodeOption(this.pgmList);
+        this.searchItems.pgmcode = "";
+        this.searchItems.productid = this.productIds;
+      } else {
+        const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
+        const selectProgramList = await this.SetProductIds(selectMediaObj);
+        this.programOptions = await this.SetProgramCodeOption(selectMediaObj);
+        this.searchItems.pgmcode = "";
+        this.searchItems.productid = selectProgramList;
+      }
     },
-    async getProductName(media) {
-      const userName = sessionStorage.getItem(USER_NAME);
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      var pram = { person: userName, gropId: gropId, media: media };
-      var proOption = await this.getuserProOption(pram);
-      this.programList = this.userProOption;
-      this.searchItems.productid = this.userProList;
+    async onPgmChange(e) {
+      if (e) {
+        const selectPgmCodeObj = this.pgmList.filter(
+          (pgm) => pgm.pgmcode === e
+        );
+        this.searchItems.productid = await this.SetProductIds(selectPgmCodeObj);
+      }
+    },
+    async cancel() {
+      this.state = false;
+      if (this.type == "T") {
+        this.searchItems.media = "";
+        this.onMediaChange("");
+      }
+      this.$refs["importDef"].hide();
     },
   },
 };
