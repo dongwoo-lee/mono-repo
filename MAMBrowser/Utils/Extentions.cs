@@ -777,7 +777,7 @@ namespace MAMBrowser.Utils
                             obj.p_endposition = item.ENDPOSITION;
                             obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
                             obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
-                            obj.p_transtype = char.Parse(item.TRANSTYPE);
+                            obj.p_transtype = item.TRANSTYPE == null? 'S' : Char.Parse(item.TRANSTYPE);
                             obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE, 0, 100);
                             obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);
                             obj.p_memo = item.MEMO;

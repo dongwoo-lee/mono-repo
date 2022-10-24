@@ -213,140 +213,163 @@ namespace MAMBrowser.BLL
         }
 
         //CueCon > Wave 파일 하나로 합쳐 내려받기
-        public async Task<ActionResult<string>> MergeAudioFilesIntoOneWav(string userid, string connectionId, List<CueSheetConDTO> pram,CancellationToken token)
+        public async Task<DTO_RESULT<ActionResult<string>>> MergeAudioFilesIntoOneWav(string userid, string connectionId, List<CueSheetConDTO> pram,CancellationToken token)
         {
-            ActionResult<string> result;
-            var playlist = new List<AudioFileReader>();
-            var guid = Guid.NewGuid().ToString();
-            var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{userid}\{guid}");
-            string wavFileName = $"{guid}.wav";
-            result = Path.Combine(Path.GetDirectoryName(rootFolder), wavFileName);
-
-            DirectoryInfo di_folder = new DirectoryInfo(rootFolder);
-            DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(rootFolder));
-
-            if (!di_folder.Exists)
+            DTO_RESULT<ActionResult<string>> result = new DTO_RESULT<ActionResult<string>>();
+            try
             {
-                di_folder.Create();
-            }
+                var playlist = new List<AudioFileReader>();
+                var guid = Guid.NewGuid().ToString();
+                var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{userid}\{guid}");
+                string wavFileName = $"{guid}.wav";
+                var resultPath = Path.Combine(Path.GetDirectoryName(rootFolder), wavFileName);
 
-            int pramIndex = 0;
-            foreach (CueSheetConDTO ele in pram)
-            {
-                if (ele.FILEPATH != null && ele.FILEPATH != "")
+                DirectoryInfo di_folder = new DirectoryInfo(rootFolder);
+                DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(rootFolder));
+
+                if (!di_folder.Exists)
                 {
-                    //som, eom, fade in, fade out 없으면 그냥 기존ele.filepath로 진행되도록 하기
-                    var fileGuid = Guid.NewGuid().ToString();
-                    var outFilePath = Path.Combine(rootFolder, fileGuid + Path.GetFileName(ele.FILEPATH));
-                    _fileHelper.TrimWavFile(ele.FILEPATH, outFilePath, TimeSpan.FromMilliseconds(ele.STARTPOSITION), TimeSpan.FromMilliseconds(ele.ENDPOSITION));
-                    var fileItem = new AudioFileReader(outFilePath);
-                    if (ele.FADEINTIME || ele.FADEOUTTIME)
-                    {
-                        if (ele.FADEINTIME)
-                        {
-                            var fade = new DelayFadeOutSampleProvider(fileItem);
-                            var fadeInPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeIn_" + Path.GetFileName(outFilePath));
-                            fade.BeginFadeIn(2000);
-                            WaveFileWriter.CreateWaveFile16(fadeInPath, fade);
-                            fileItem.Close();
-                            fileItem = new AudioFileReader(fadeInPath);
-                        }
-                        if (ele.FADEOUTTIME)
-                        {
-                            var fade = new DelayFadeOutSampleProvider(fileItem);
-                            var fadeOutPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeOut_" + Path.GetFileName(outFilePath));
-                            fade.BeginFadeOut(ele.ENDPOSITION - ele.STARTPOSITION - 2000, 2000);
-                            WaveFileWriter.CreateWaveFile16(fadeOutPath, fade);
-                            fileItem.Close();
-                            fileItem = new AudioFileReader(fadeOutPath);
-                        }
-                    }
-                    playlist.Add(fileItem);
+                    di_folder.Create();
                 }
-                else
+
+                int pramIndex = 0;
+                foreach (CueSheetConDTO ele in pram)
                 {
-                    if (ele.ONAIRDATE != "")
+                    if (ele.FILEPATH != null && ele.FILEPATH != "")
                     {
-                        ele.AUDIOS = new List<CueSheetConAudioDTO>();
-                        if (ele.CARTTYPE == "SB")
+                        var fileGuid = Guid.NewGuid().ToString();
+                        var outFilePath = Path.Combine(rootFolder, fileGuid + Path.GetFileName(ele.FILEPATH));
+                        _fileHelper.TrimWavFile(ele.FILEPATH, outFilePath, TimeSpan.FromMilliseconds(ele.STARTPOSITION), TimeSpan.FromMilliseconds(ele.ENDPOSITION));
+                        var fileItem = new AudioFileReader(outFilePath);
+                        if (ele.FADEINTIME || ele.FADEOUTTIME)
                         {
-                            var collection = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
-                            if (collection.Data.Any())
+                            if (ele.FADEINTIME)
                             {
-                                foreach (var item in collection.Data)
+                                var fade = new DelayFadeOutSampleProvider(fileItem);
+                                var fadeInPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeIn_" + Path.GetFileName(outFilePath));
+                                fade.BeginFadeIn(2000);
+                                WaveFileWriter.CreateWaveFile16(fadeInPath, fade);
+                                fileItem.Close();
+                                fileItem = new AudioFileReader(fadeInPath);
+                            }
+                            if (ele.FADEOUTTIME)
+                            {
+                                var fade = new DelayFadeOutSampleProvider(fileItem);
+                                var fadeOutPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeOut_" + Path.GetFileName(outFilePath));
+                                fade.BeginFadeOut(ele.ENDPOSITION - ele.STARTPOSITION - 2000, 2000);
+                                WaveFileWriter.CreateWaveFile16(fadeOutPath, fade);
+                                fileItem.Close();
+                                fileItem = new AudioFileReader(fadeOutPath);
+                            }
+                        }
+                        playlist.Add(fileItem);
+                    }
+                    else
+                    {
+                        if (ele.ONAIRDATE != "")
+                        {
+                            ele.AUDIOS = new List<CueSheetConAudioDTO>();
+                            if (ele.CARTTYPE == "SB")
+                            {
+                                var collection = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
+                                if (collection.Data.Any())
                                 {
-                                    var fileItem = new AudioFileReader(item.FilePath);
-                                    playlist.Add(fileItem);
+                                    foreach (var item in collection.Data)
+                                    {
+                                        var fileItem = new AudioFileReader(item.FilePath);
+                                        playlist.Add(fileItem);
+                                    }
+                                }
+                            }
+                            if (ele.CARTTYPE == "CM")
+                            {
+                                var collection = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
+                                if (collection.Data.Any())
+                                {
+                                    foreach (var item in collection.Data)
+                                    {
+                                        var fileItem = new AudioFileReader(item.FilePath);
+                                        playlist.Add(fileItem);
+                                    }
                                 }
                             }
                         }
-                        if (ele.CARTTYPE == "CM")
+                        if (ele.AUDIOS != null)
                         {
-                            var collection = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
-                            if (collection.Data.Any())
+                            foreach (var item in ele.AUDIOS)
                             {
-                                foreach (var item in collection.Data)
-                                {
-                                    var fileItem = new AudioFileReader(item.FilePath);
-                                    playlist.Add(fileItem);
-                                }
+                                var fileItem = new AudioFileReader(item.P_MASTERFILE);
+                                playlist.Add(fileItem);
                             }
                         }
                     }
-                    if (ele.AUDIOS != null)
-                    {
-                        foreach (var item in ele.AUDIOS)
-                        {
-                            var fileItem = new AudioFileReader(item.P_MASTERFILE);
-                            playlist.Add(fileItem);
-                        }
-                    }
-                }
-                await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((pramIndex+1)*50/pram.Count));
-                if (token.IsCancellationRequested)
-                {
-                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
-                    token.ThrowIfCancellationRequested();
-                }
-                pramIndex++;
-            }
-            var resultPlaylist = new ConcatenatingSampleProvider(playlist).ToWaveProvider16();
-            var totalPlayTime = new TimeSpan();
-            foreach (var p_item in playlist)
-            {
-                totalPlayTime = totalPlayTime + p_item.TotalTime;
-            }
-            int write_index = 0;
-
-            using (WaveFileWriter writer = new WaveFileWriter(result.Value,  resultPlaylist.WaveFormat))
-            {
-                var buffer = new byte[resultPlaylist.WaveFormat.AverageBytesPerSecond*4];
-                var totalIndex = Math.Ceiling(totalPlayTime.TotalSeconds / 4);
-                while (true)
-                {
-                    int bytesRead = resultPlaylist.Read(buffer, 0, buffer.Length);
-                    if (bytesRead == 0)
-                    {
-                        // end of source provider
-                        break;
-                    }
-                    writer.Write(buffer, 0, bytesRead);
-                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((write_index + 1) * 50 / totalIndex) + 50);
+                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((pramIndex + 1) * 50 / pram.Count));
                     if (token.IsCancellationRequested)
                     {
                         await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
                         token.ThrowIfCancellationRequested();
                     }
-                    write_index++;
+                    pramIndex++;
                 }
-            }
+                var resultPlaylist = new ConcatenatingSampleProvider(playlist).ToWaveProvider16();
+                var totalPlayTime = new TimeSpan();
+                foreach (var p_item in playlist)
+                {
+                    totalPlayTime = totalPlayTime + p_item.TotalTime;
+                }
+                int write_index = 0;
 
-            foreach (var item in playlist)
+                using (WaveFileWriter writer = new WaveFileWriter(resultPath, resultPlaylist.WaveFormat))
+                {
+                    var buffer = new byte[resultPlaylist.WaveFormat.AverageBytesPerSecond * 4];
+                    var totalIndex = Math.Ceiling(totalPlayTime.TotalSeconds / 4);
+                    while (true)
+                    {
+                        int bytesRead = resultPlaylist.Read(buffer, 0, buffer.Length);
+                        if (bytesRead == 0)
+                        {
+                            // end of source provider
+                            break;
+                        }
+                        writer.Write(buffer, 0, bytesRead);
+                        await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((write_index + 1) * 50 / totalIndex) + 50);
+                        if (token.IsCancellationRequested)
+                        {
+                            await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
+                            token.ThrowIfCancellationRequested();
+                        }
+                        write_index++;
+                    }
+                }
+
+                foreach (var item in playlist)
+                {
+                    item.Close();
+                }
+
+                di_folder.Delete(true);
+                result.ResultObject = resultPath;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            // 중단
+            catch (OperationCanceledException ex)
             {
-                item.Close();
+                //파일, 폴더 삭제
+                // 중단 문구 보내야 함
+                //if (di_folder.Exists)
+                //{
+                //    di_folder.Create();
+                //}
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+                result.ResultObject = "중단되었습니다";
+                return result;
             }
-
-            di_folder.Delete(true);
+            catch(Exception ex)
+            {
+                //파일, 폴더 삭제
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
             return result;
         }
 

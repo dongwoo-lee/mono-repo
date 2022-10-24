@@ -189,7 +189,7 @@
           </div>
           <div class="dx-field-value mt-3 mb-5 pr-5">
             <DxTextBox
-              :placeholder="tmpTitleTextBoxValue"
+              :placeholder="templateTitle"
               width="320px"
               :maxLength="40"
               v-model="tmpTitleTextBoxValue"
@@ -799,12 +799,10 @@ export default {
       this.loadingIconVal = true;
       const userId = sessionStorage.getItem(USER_ID);
       var cueCon = await this.setCueConFav_save(false);
-      // var temParam = { personid: userId, tmptitle: this.tmpTitleTextBoxValue };
-      // cueCon.temParam = temParam;
+
       var tempItem = {
         personid: userId,
         detail: [{ cueid: -1 }],
-        title: this.tmpTitleTextBoxValue,
         djname: this.cueInfo.djname,
         directorname: this.cueInfo.directorname,
         membername: this.cueInfo.membername,
@@ -812,10 +810,10 @@ export default {
         footertitle: this.cueInfo.footertitle,
         memo: this.cueInfo.memo,
       };
-      this.tmpTitleTextBoxValue = this.templateTitle;
-      // var pram = {
-      //   CueSheetDTO: tempItem,
-      // };
+
+      this.tmpTitleTextBoxValue
+        ? (tempItem.title = this.tmpTitleTextBoxValue)
+        : (tempItem.title = this.templateTitle);
       cueCon.CueSheetDTO = tempItem;
 
       await this.addByTemplate(cueCon);
@@ -823,7 +821,7 @@ export default {
       this.$bvModal.hide("modal-template");
     },
     resetModal_tem() {
-      this.tmpTitleTextBoxValue = this.templateTitle;
+      this.tmpTitleTextBoxValue = "";
     },
     clearOk() {
       this.loadingIconVal = true;
@@ -1053,18 +1051,18 @@ export default {
             downloadName = `${this.cueInfo.title}_${dateStr}`;
             break;
         }
-        await axios
+        await this.$http
           .post(
             `/api/CueAttachments/exportWavFile?connectionId=${connection.connectionId}`,
             pramList,
             { cancelToken: this.source.token }
           )
           .then((response) => {
-            this.isWavCopy && this.copyToMySpace(response.data, downloadName);
-            this.downloadFile(response.data, downloadName);
-          })
-          .catch((error) => {
-            console.log(error);
+            if (response.data.resultCode === 0) {
+              const downPath = response.data.resultObject.value;
+              this.isWavCopy && this.copyToMySpace(downPath, downloadName);
+              this.downloadFile(downPath, downloadName);
+            }
           });
       }
       this.loadingIconVal = false;

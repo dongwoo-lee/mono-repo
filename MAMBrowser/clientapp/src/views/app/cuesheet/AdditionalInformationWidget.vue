@@ -50,7 +50,9 @@
           :maxLength="100"
           placeholder="메모를 입력하세요."
           v-model="cueInfo.memo"
+          :value="cueInfo.memo"
           :disabled="cueInfo.cuetype === 'A'"
+          @change="OnChangeMemo"
         />
       </div>
     </div>
@@ -86,7 +88,14 @@ export default {
     ...mapGetters("cueList", ["attachments"]),
     ...mapGetters("cueList", ["tags"]),
   },
-  methods: {},
+  methods: {
+    OnChangeMemo() {
+      const result = this.cueInfo.memo
+        .replace(/[^\w\s|ㄱ-ㅎ|가-힣|,]/gi, "")
+        .replace(/ /g, "");
+      this.cueInfo.memo = result;
+    },
+  },
 };
 </script>
 <style>

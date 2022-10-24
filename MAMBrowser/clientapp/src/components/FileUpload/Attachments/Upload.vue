@@ -6,6 +6,8 @@
         :chunk-size="chunkSize"
         labelText=""
         :uploadAbortedMessage="uploadAbortedMessage"
+        :uploadedMessage="uploadedMessage"
+        :invalidMaxFileSizeMessage="invalidMaxFileSizeMessage"
         :max-file-size="104857600"
         select-button-text="파일 업로드"
         name="file"
@@ -15,6 +17,7 @@
         :upload-custom-data="uploaderCustomData"
         @uploaded="onUploaded"
         @upload-started="OnUploadStarted"
+        @upload-aborted="onUploadAborted"
       >
       </DxFileUploader>
     </div>
@@ -142,7 +145,10 @@ export default {
         folder_date: "",
       }, //이후에 props로 바꾸기
       chunkSize: 1000000,
+      maxTitleLength: 120,
       uploadAbortedMessage: "파일을 추가할 수 없습니다.",
+      uploadedMessage: "업로드 완료",
+      invalidMaxFileSizeMessage: "파일 사이즈가 너무 큽니다.",
       accept:
         "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,.pdf,.docx,.hwp",
       getUrl: "/api/CueAttachments/chunkFileTempUpload",
@@ -199,6 +205,10 @@ export default {
             });
           });
       } else {
+        window.$notify("info", `삭제완료.`, "", {
+          duration: 10000,
+          permanent: false,
+        });
         file.delstate = true;
       }
     },
@@ -224,10 +234,24 @@ export default {
     },
     OnUploadStarted(e) {
       const regex = /^[ㄱ-ㅎ|가-힣|a-z|0-9|_.|-|()]/gi;
-      if (this.attachments.length >= this.maxAttachmentsCount) {
-        e.component.abortUpload();
-      }
+      this.attachments.length >= this.maxAttachmentsCount &&
+        e.component.abortUpload(1);
+      e.file.name.length >= this.maxTitleLength && e.component.abortUpload();
       !regex.test(e.file.name) && e.component.abortUpload();
+    },
+    onUploadAborted(e) {
+      const regex = /^[ㄱ-ㅎ|가-힣|a-z|0-9|_.|-|()]/gi;
+      if (!regex.test(e.file.name)) {
+        e.message = "파일 이름을 수정하세요. (특수문자, 다국어 불가)";
+      }
+      if (e.file.name.length >= this.maxTitleLength) {
+        e.message = "파일의 제목이 너무 깁니다.";
+      }
+      const fileContainer = Array.from(
+        e.element.querySelectorAll(".dx-fileuploader-file-name")
+      ).find((el) => el.textContent === e.file.name).parentElement.parentElement
+        .parentElement;
+      fileContainer.classList.add("dx-fileuploader-invalid");
     },
   },
 };

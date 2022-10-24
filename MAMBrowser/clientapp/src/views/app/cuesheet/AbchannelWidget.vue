@@ -118,7 +118,8 @@
               class="iconsminds-cd-2"
               v-if="
                 data.data.cartcode == 'S01G01C014' ||
-                data.data.cartcode == 'S01G01C015'
+                data.data.cartcode == 'S01G01C015' ||
+                data.data.cartcode == 'S01G01C032'
               "
             ></i>
             <i

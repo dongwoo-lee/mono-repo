@@ -29,7 +29,6 @@ namespace MAMBrowser.Controllers
             _privateBll = privateBll;
         }
 
-        //zip파일 내보내기
         [HttpPost("exportZipFile")]
         public ActionResult<string> ExportZipFile([FromQuery] string userid, [FromBody] List<CueSheetConDTO> pram)
         {
@@ -45,11 +44,11 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        //wav파일 내보내기
         [HttpPost("exportWavFile")]
-        public Task<ActionResult<string>> ExportWavFile([FromQuery] string connectionId, [FromBody] List<CueSheetConDTO> pram, CancellationToken token)
+        public Task<DTO_RESULT<ActionResult<string>>> ExportWavFile([FromQuery] string connectionId, [FromBody] List<CueSheetConDTO> pram, CancellationToken token)
         {
-            Task<ActionResult<string>> result;
+            Task<DTO_RESULT<ActionResult<string>>> result;
+            
             try
             {
                 string userId = HttpContext.Items[Define.USER_ID] as string;
@@ -60,7 +59,6 @@ namespace MAMBrowser.Controllers
                 throw;
             }
             return result;
-
         }
 
         [HttpPost("WavCopyToMyspace")]
@@ -112,7 +110,6 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
-        //첨부파일 ChunkFileUpload - Temp
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("chunkFileTempUpload")]
         public ActionResult<DTO_RESULT> ChunkFileTempUpload([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string folder_date)
