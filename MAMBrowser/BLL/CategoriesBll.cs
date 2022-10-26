@@ -31,10 +31,13 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetMDUserList();
         }
-
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMedia()
         {
             return _dao.GetMedia();
+        }
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetDL3Media()
+        {
+            return _dao.GetDL3Media();
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetMcrSpotMedia()
         {

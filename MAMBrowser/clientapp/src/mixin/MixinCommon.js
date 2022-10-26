@@ -20,6 +20,7 @@ let mixinCommon = {
       },
       numRowsToBottom: 5,
       mediaOptions: [], // 매체 목록
+      dl3MediaOptions: [], // dl3 매체 목록
       editorOptions: [], // 사용자(제작자) 목록
       sortItems: {},
       soundItem: {},
@@ -167,6 +168,10 @@ let mixinCommon = {
     // 매체목록 조회
     getMediaOptions() {
       this.requestCall("/api/Categories/media", "mediaOptions");
+    },
+    // DL3 매체 목록 조회
+    getDL3MediaOptions() {
+      this.requestCall("/api/Categories/dl3media", "dl3MediaOptions");
     },
     // 제작자(사용자) 목록 조회
     getEditorOptions() {
