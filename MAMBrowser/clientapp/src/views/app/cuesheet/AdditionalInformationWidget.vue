@@ -9,17 +9,25 @@
               pill
               variant="dark"
               :class="{
-                max_background: attachments.length >= max_attachments_count,
+                max_background:
+                  attachments.filter((item) => !item.delstate).length >=
+                  max_attachments_count,
               }"
             >
-              <span class="in_count">{{ attachments.length }}</span> /
+              <span class="in_count">{{
+                attachments.filter((item) => !item.delstate).length
+              }}</span>
+              /
               <span class="max_count">{{ max_attachments_count }}</span>
             </b-badge>
           </span>
         </div>
         <Attachments
           :maxAttachmentsCount="max_attachments_count"
-          :disableValue="attachments.length >= max_attachments_count"
+          :disableValue="
+            attachments.filter((item) => !item.delstate).length >=
+            max_attachments_count
+          "
         />
       </div>
     </div>
@@ -90,9 +98,8 @@ export default {
   },
   methods: {
     OnChangeMemo() {
-      const result = this.cueInfo.memo
-        .replace(/[^\w\s|ㄱ-ㅎ|가-힣|,]/gi, "")
-        .replace(/ /g, "");
+      const result = this.cueInfo.memo.replace(/[^\w\s|ㄱ-ㅎ|가-힣|, ]/gi, "");
+      // .replace(/ /g, "");
       this.cueInfo.memo = result;
     },
   },

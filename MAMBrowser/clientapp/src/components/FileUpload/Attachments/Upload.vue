@@ -97,6 +97,7 @@ import DxButton from "devextreme-vue/button";
 import { mapGetters, mapMutations } from "vuex";
 import { USER_ID } from "@/constants/config";
 import { eventBus } from "@/eventBus";
+import axios from "axios";
 const fileUploadRef = "fileUploader";
 const qs = require("qs");
 
@@ -213,18 +214,36 @@ export default {
       }
     },
     onFileDownload(file) {
-      const link = document.createElement("a");
-      link.href = `/api/CueAttachments/exportFileDownload?guid=${
-        file.filepath
-      }&userid=${sessionStorage.getItem(USER_ID)}&downloadname=${
-        file.filename
-      }`;
-      document.body.appendChild(link);
-      link.click();
+      axios
+        .get(
+          `/api/CueAttachments/exportFileDownload?guid=${
+            file.filepath
+          }&userid=${sessionStorage.getItem(USER_ID)}&downloadname=${
+            file.filename
+          }`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            const link = document.createElement("a");
+            link.href = `/api/CueAttachments/exportFileDownload?guid=${
+              file.filepath
+            }&userid=${sessionStorage.getItem(USER_ID)}&downloadname=${
+              file.filename
+            }`;
+            document.body.appendChild(link);
+            link.click();
+          }
+        })
+        .catch((err) => {
+          window.$notify("error", `파일 다운로드 오류.`, "", {
+            duration: 10000,
+            permanent: false,
+          });
+        });
     },
     onUploaded(e) {
       const arrData = _.cloneDeep(this.attachments);
-      var file = {};
+      const file = {};
       file.filepath = JSON.parse(e.request.response).resultObject;
       file.filename = e.file.name;
       file.filesize = e.file.size;
@@ -233,15 +252,13 @@ export default {
       this.SET_ATTACHMENTS(arrData);
     },
     OnUploadStarted(e) {
-      const regex = /^[ㄱ-ㅎ|가-힣|a-z|0-9|_.|-|()]/gi;
-      this.attachments.length >= this.maxAttachmentsCount &&
-        e.component.abortUpload(1);
+      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_.() -]/gi;
       e.file.name.length >= this.maxTitleLength && e.component.abortUpload();
-      !regex.test(e.file.name) && e.component.abortUpload();
+      regex.test(e.file.name) && e.component.abortUpload();
     },
     onUploadAborted(e) {
-      const regex = /^[ㄱ-ㅎ|가-힣|a-z|0-9|_.|-|()]/gi;
-      if (!regex.test(e.file.name)) {
+      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_.() -]/gi;
+      if (regex.test(e.file.name)) {
         e.message = "파일 이름을 수정하세요. (특수문자, 다국어 불가)";
       }
       if (e.file.name.length >= this.maxTitleLength) {
