@@ -25,7 +25,6 @@ using M30_CueSheetDAO;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.Hubs;
-using Microsoft.AspNet.SignalR;
 
 namespace MAMBrowser
 {

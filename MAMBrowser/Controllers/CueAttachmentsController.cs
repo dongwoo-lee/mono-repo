@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using M30.AudioFile.Common;
 using M30.AudioFile.Common.Models;
 using MAMBrowser.Hubs;
-using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using System.Threading;
 
