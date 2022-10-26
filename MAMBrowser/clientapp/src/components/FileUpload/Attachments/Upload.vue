@@ -8,6 +8,7 @@
         :uploadAbortedMessage="uploadAbortedMessage"
         :uploadedMessage="uploadedMessage"
         :invalidMaxFileSizeMessage="invalidMaxFileSizeMessage"
+        :invalidFileExtensionMessage="invalidFileExtensionMessage"
         :max-file-size="104857600"
         select-button-text="파일 업로드"
         name="file"
@@ -150,6 +151,8 @@ export default {
       uploadAbortedMessage: "파일을 추가할 수 없습니다.",
       uploadedMessage: "업로드 완료",
       invalidMaxFileSizeMessage: "파일 사이즈가 너무 큽니다.",
+      invalidFileExtensionMessage:
+        "추가할 수 없는 확장자 입니다. (가능 확장자 : docx, xlsx, pdf, hwp, txt)",
       accept:
         "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,.pdf,.docx,.hwp",
       getUrl: "/api/CueAttachments/chunkFileTempUpload",
@@ -194,10 +197,10 @@ export default {
               return item.filepath != file.filepath;
             });
             this.SET_ATTACHMENTS(resultArray);
-            window.$notify("info", `삭제완료.`, "", {
-              duration: 10000,
-              permanent: false,
-            });
+            // window.$notify("info", `삭제완료.`, "", {
+            //   duration: 10000,
+            //   permanent: false,
+            // });
           })
           .catch((err) => {
             window.$notify("error", `삭제실패.`, "", {
@@ -206,10 +209,10 @@ export default {
             });
           });
       } else {
-        window.$notify("info", `삭제완료.`, "", {
-          duration: 10000,
-          permanent: false,
-        });
+        // window.$notify("info", `삭제완료.`, "", {
+        //   duration: 10000,
+        //   permanent: false,
+        // });
         file.delstate = true;
       }
     },

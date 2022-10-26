@@ -26,6 +26,7 @@
       <TagBadge
         v-else
         :rowData="{ tag: value_items }"
+        class="cue_tag"
         @tagItemFromCommonTag="OnClickCommonTagItem"
       ></TagBadge>
     </div>
