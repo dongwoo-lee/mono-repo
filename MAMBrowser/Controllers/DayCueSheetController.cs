@@ -117,7 +117,7 @@ namespace MAMBrowser.Controllers
                     else
                     {
                         item.FILEID = _attachmentsBll.GetAttachmentsFileId();
-                        _attachmentsBll.MoveToStorage(item,false);
+                        _attachmentsBll.MoveToStorage(pram.CueSheetDTO.PRODUCTID, pram.CueSheetDTO.BRDDATE, item, false);
                         files.Add(item);
                     }
                 }
