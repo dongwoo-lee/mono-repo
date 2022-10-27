@@ -273,6 +273,10 @@
         </DxDataGrid>
       </div>
       <PlayerPopup
+        v-if="
+          searchListData.cartcode != 'S01G01C014' &&
+          searchListData.cartcode != 'S01G01C032'
+        "
         :showPlayerPopup="showPlayerPopup"
         :title="goTitle"
         :fileKey="soundItem.fileToken"
@@ -292,18 +296,30 @@
             : tempDownloadUrl_music
         "
         requestType="token"
-        v-if="searchListData.cartcode != 'S01G01C014'"
         @closePlayer="onClosePlayer"
       >
       </PlayerPopup>
+
       <MusicPlayerPopup
+        v-else-if="searchListData.cartcode == 'S01G01C032'"
+        :showPlayerPopup="showPlayerPopup"
+        :music="soundItem"
+        :streamingUrl="streamingUrl"
+        :waveformUrl="waveformUrl"
+        :tempDownloadUrl="tempDownloadUrl"
+        requestType="token"
+        @closePlayer="onClosePlayer"
+      >
+      </MusicPlayerPopup>
+
+      <MusicPlayerPopup
+        v-else
         :showPlayerPopup="showPlayerPopup"
         :music="soundItem"
         :streamingUrl="streamingUrl_music"
         :waveformUrl="waveformUrl_music"
         :tempDownloadUrl="tempDownloadUrl_music"
         requestType="token"
-        v-else
         @closePlayer="onClosePlayer"
       >
       </MusicPlayerPopup>

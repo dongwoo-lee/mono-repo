@@ -1,283 +1,313 @@
 <template>
   <div class="card-body masteringOption">
-    <div style="margin-left: 395px">
-      <h4 style="color: black">방송의뢰 옵션</h4>
-      <div
-        style="
-          padding: 20px;
-          padding-bottom: 5px;
-          width: 840px;
-          border: 1px solid silver;
-        "
-      >
-        <span style="width: 250px; float: left; margin-right: 20px">
-          <b-form-group label="Sample Rate" class="has-float-label">
-            <b-form-select
-              style="width: 250px"
-              v-model="SAMPLE_RATE"
-              :options="SampleRateOptions"
-            />
-          </b-form-group>
-        </span>
-        <span style="width: 250px; float: left; margin-right: 20px">
-          <b-form-group label="Bit Depth" class="has-float-label">
-            <b-form-select
-              style="width: 250px"
-              v-model="BIT_DEPTH"
-              :options="BitDepthOptions"
-            />
-          </b-form-group>
-        </span>
-        <span style="width: 250px">
-          <b-form-group label="Channels" class="has-float-label">
-            <b-form-select
-              style="width: 250px"
-              v-model="CHANNEL"
-              :options="ChannelsOptions"
-            />
-          </b-form-group>
-        </span>
-        <span style="width: 250px; float: left; margin-right: 20px">
-          <b-form-group label="무음 감지" class="has-float-label">
-            <b-form-select
-              style="width: 250px"
-              v-model="DETECT_SILENCE"
-              :options="DSOptions"
-            />
-          </b-form-group>
-        </span>
-        <span style="width: 115px; float: left; margin-right: 20px">
-          <b-form-group label="무음 감지 길이" class="has-float-label">
-            <b-form-input
-              style="width: 115px"
-              v-show="isDetect"
-              :state="this.sdu"
-              @change="durationInput"
-              v-model="SILENCE_DURATION"
-            />
-            <b-form-input
-              style="width: 115px"
-              disabled
-              v-show="!isDetect"
-              @change="durationInput"
-              v-model="SILENCE_DURATION"
-            />
-          </b-form-group>
-          <p
-            style="
-              position: absolute;
-              top: 245px;
-              left: 745px;
-              color: red;
-              font-size: 10.5px;
-            "
-          >
-            {{ getSILENCE_DURATION }}
-          </p>
-        </span>
-        <span style="width: 115px; float: left; margin-right: 20px">
-          <b-form-group label="무음 감지 데시벨" class="has-float-label">
-            <b-form-input
-              style="width: 115px"
-              v-show="isDetect"
-              :state="this.sdb"
-              @change="dbInput"
-              v-model="SILENCE_DB"
-            />
-            <b-form-input
-              style="width: 115px"
-              v-show="!isDetect"
-              disabled
-              @change="dbInput"
-              v-model="SILENCE_DB"
-            />
-          </b-form-group>
-          <p
-            style="
-              position: absolute;
-              top: 245px;
-              left: 880px;
-              color: red;
-              font-size: 10.5px;
-            "
-          >
-            {{ getSILENCE_DB }}
-          </p>
-        </span>
+    <div>
+      <!--전체-->
+      <div style="float: left">
+        <!--좌측-->
+        <h4 style="color: black">방송의뢰 옵션</h4>
+        <div
+          style="
+            padding: 20px;
+            padding-bottom: 5px;
+            height: 120px;
+            width: 840px;
+            border: 1px solid silver;
+          "
+        >
+          <span style="width: 250px; float: left; margin-right: 20px">
+            <b-form-group label="Sample Rate" class="has-float-label">
+              <b-form-select
+                style="width: 250px"
+                v-model="SAMPLE_RATE"
+                :options="SampleRateOptions"
+              />
+            </b-form-group>
+          </span>
+          <span style="width: 250px; float: left; margin-right: 20px">
+            <b-form-group label="Bit Depth" class="has-float-label">
+              <b-form-select
+                style="width: 250px"
+                v-model="BIT_DEPTH"
+                :options="BitDepthOptions"
+              />
+            </b-form-group>
+          </span>
+          <span style="width: 250px">
+            <b-form-group label="Channels" class="has-float-label">
+              <b-form-select
+                style="width: 250px"
+                v-model="CHANNEL"
+                :options="ChannelsOptions"
+              />
+            </b-form-group>
+          </span>
+          <span style="width: 250px; float: left; margin-right: 20px">
+            <b-form-group label="무음 감지" class="has-float-label">
+              <b-form-select
+                style="width: 250px"
+                v-model="DETECT_SILENCE"
+                :options="DSOptions"
+              />
+            </b-form-group>
+          </span>
+          <span style="width: 115px; float: left; margin-right: 20px">
+            <b-form-group label="무음 감지 길이" class="has-float-label">
+              <b-form-input
+                style="width: 115px"
+                v-show="isDetect"
+                :state="this.sdu"
+                @change="durationInput"
+                v-model="SILENCE_DURATION"
+              />
+              <b-form-input
+                style="width: 115px"
+                disabled
+                v-show="!isDetect"
+                @change="durationInput"
+                v-model="SILENCE_DURATION"
+              />
+            </b-form-group>
+            <p
+              style="
+                position: absolute;
+                top: 245px;
+                left: 745px;
+                color: red;
+                font-size: 10.5px;
+              "
+            >
+              {{ getSILENCE_DURATION }}
+            </p>
+          </span>
+          <span style="width: 115px; float: left; margin-right: 20px">
+            <b-form-group label="무음 감지 데시벨" class="has-float-label">
+              <b-form-input
+                style="width: 115px"
+                v-show="isDetect"
+                :state="this.sdb"
+                @change="dbInput"
+                v-model="SILENCE_DB"
+              />
+              <b-form-input
+                style="width: 115px"
+                v-show="!isDetect"
+                disabled
+                @change="dbInput"
+                v-model="SILENCE_DB"
+              />
+            </b-form-group>
+            <p
+              style="
+                position: absolute;
+                top: 245px;
+                left: 880px;
+                color: red;
+                font-size: 10.5px;
+              "
+            >
+              {{ getSILENCE_DB }}
+            </p>
+          </span>
 
-        <span style="width: 250px">
-          <b-form-group label="MP3 Decoder" class="has-float-label">
-            <b-form-input style="width: 250px" v-model="MP3_DECODER" />
+          <!-- <span style="width: 250px">
+            <b-form-group label="MP3 Decoder" class="has-float-label">
+              <b-form-input style="width: 250px" v-model="MP3_DECODER" />
+            </b-form-group>
+          </span> -->
+        </div>
+        <h4 style="color: black; margin-top: 20px">스토리지 설정</h4>
+        <div
+          style="
+            padding: 20px;
+            padding-bottom: 10px;
+            width: 840px;
+            height: 410px;
+            border: 1px solid silver;
+          "
+        >
+          <b-form-group
+            label="PGM-AM"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="AMState"
+              v-model="PGM_AM_PATH"
+              style="width: 375px"
+            />
           </b-form-group>
-        </span>
+          <b-form-group label="PGM-FM" class="has-float-label">
+            <b-form-input
+              :state="FMState"
+              v-model="PGM_FM_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="PGM-DMB"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="DMBState"
+              v-model="PGM_DMB_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="Pro"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="ProState"
+              v-model="PRO_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="MyDisk" class="has-float-label">
+            <b-form-input
+              :state="MyDiskState"
+              v-model="MYDISK_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="SPOT" class="has-float-label">
+            <b-form-input
+              :state="SpotState"
+              v-model="SPOT_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="취재물"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="ReportState"
+              v-model="REPORT_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="필러" class="has-float-label">
+            <b-form-input
+              :state="FillerState"
+              v-model="FILLER_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="변동소재"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="VarState"
+              v-model="VAR_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="고정소재" class="has-float-label">
+            <b-form-input
+              :state="StaticState"
+              v-model="STATIC_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="Song"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="SongState"
+              v-model="SONG_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="임시 업로드" class="has-float-label">
+            <b-form-input
+              :state="MamState"
+              v-model="MAM_UPLOAD_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="임시 작업"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="MstState"
+              v-model="MST_UPLOAD_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="삭제 파일 보관" class="has-float-label">
+            <b-form-input
+              :state="recycleState"
+              v-model="RECYCLE_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group
+            label="스토리지 ID"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="IdState"
+              v-model="STORAGE_ID"
+              style="width: 375px"
+            />
+          </b-form-group>
+          <b-form-group label="스토리지 암호" class="has-float-label">
+            <b-form-input
+              :state="PassState"
+              v-model="STORAGE_PASS"
+              style="width: 375px"
+            />
+          </b-form-group>
+        </div>
+        <div style="margin-left: 705px; margin-top: 15px; margin-bottom: -15px">
+          <b-button v-show="isDuration" variant="outline-primary" @click="save"
+            >저장</b-button
+          >
+          <b-button
+            v-show="!isDuration"
+            variant="outline-dark"
+            disabled
+            @click="save"
+            >저장</b-button
+          >
+          <b-button variant="outline-danger" @click="cancel">취소</b-button>
+        </div>
       </div>
-      <h4 style="color: black; margin-top: 20px">스토리지 설정</h4>
-      <div
-        style="
-          padding: 20px;
-          padding-bottom: 10px;
-          width: 840px;
-          height: 410px;
-          border: 1px solid silver;
-        "
-      >
-        <b-form-group
-          label="PGM-AM"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
+      <div style="float: left">
+        <h4 style="color: black; margin-left: 50px">기타 설정</h4>
+        <div
+          style="
+            padding: 20px;
+            padding-bottom: 10px;
+            width: 650px;
+            height: 120px;
+            border: 1px solid silver;
+            margin-left: 50px;
+          "
         >
-          <b-form-input
-            :state="AMState"
-            v-model="PGM_AM_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="PGM-FM" class="has-float-label">
-          <b-form-input
-            :state="FMState"
-            v-model="PGM_FM_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="PGM-DMB"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="DMBState"
-            v-model="PGM_DMB_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="Pro"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="ProState"
-            v-model="PRO_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="MyDisk" class="has-float-label">
-          <b-form-input
-            :state="MyDiskState"
-            v-model="MYDISK_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="SPOT" class="has-float-label">
-          <b-form-input
-            :state="SpotState"
-            v-model="SPOT_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="취재물"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="ReportState"
-            v-model="REPORT_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="필러" class="has-float-label">
-          <b-form-input
-            :state="FillerState"
-            v-model="FILLER_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="변동소재"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="VarState"
-            v-model="VAR_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="고정소재" class="has-float-label">
-          <b-form-input
-            :state="StaticState"
-            v-model="STATIC_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="Song"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="SongState"
-            v-model="SONG_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="임시 업로드" class="has-float-label">
-          <b-form-input
-            :state="MamState"
-            v-model="MAM_UPLOAD_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="임시 작업"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="MstState"
-            v-model="MST_UPLOAD_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="삭제 파일 보관" class="has-float-label">
-          <b-form-input
-            :state="recycleState"
-            v-model="RECYCLE_PATH"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group
-          label="스토리지 ID"
-          class="has-float-label"
-          style="float: left; margin-right: 40px"
-        >
-          <b-form-input
-            :state="IdState"
-            v-model="STORAGE_ID"
-            style="width: 375px"
-          />
-        </b-form-group>
-        <b-form-group label="스토리지 암호" class="has-float-label">
-          <b-form-input
-            :state="PassState"
-            v-model="STORAGE_PASS"
-            style="width: 375px"
-          />
-        </b-form-group>
-      </div>
-      <div style="margin-left: 705px; margin-top: 15px; margin-bottom: -15px">
-        <b-button v-show="isDuration" variant="outline-primary" @click="save"
-          >저장</b-button
-        >
-        <b-button
-          v-show="!isDuration"
-          variant="outline-dark"
-          disabled
-          @click="save"
-          >저장</b-button
-        >
-        <b-button variant="outline-danger" @click="cancel">취소</b-button>
+          <b-form-group
+            label="웹큐시트 첨부파일 위치"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="VarState"
+              v-model="WCS_ATTACH_PATH"
+              style="width: 375px"
+            />
+          </b-form-group>
+        </div>
       </div>
     </div>
   </div>
@@ -306,7 +336,8 @@ export default {
       SPOT_PATH: "",
       STATIC_PATH: "",
       VAR_PATH: "",
-      MP3_DECODER: "",
+      WCS_ATTACH_PATH: "",
+      // MP3_DECODER: "",
       SONG_PATH: "",
       MAM_UPLOAD_PATH: "",
       MST_UPLOAD_PATH: "",
@@ -522,9 +553,13 @@ export default {
           value: this.VAR_PATH,
         },
         {
-          name: "MP3_DECODER",
-          value: this.MP3_DECODER,
+          name: "WCS_ATTACH_PATH",
+          value: this.WCS_ATTACH_PATH,
         },
+        // {
+        //   name: "MP3_DECODER",
+        //   value: this.MP3_DECODER,
+        // },
         {
           name: "MST_UPLOAD_PATH",
           value: this.MST_UPLOAD_PATH,

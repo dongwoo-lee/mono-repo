@@ -403,9 +403,9 @@ namespace MAMBrowser.BLL
                 long chunkMaxSize = 104857600;
                 _fileHelper.CheckFileExtensionValid(extensionRuls, metaDataObject.FileName);
                 var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
-                //var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
-                //var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                var tempPath = @"\\ad2022-nas\AUDIO-FILE\mbcdata\CUESHEET_TEMP_UPLOAD"; //임시 경로
+                var wcsPathRoot = option.Find(dt => dt.Name == "WCS_ATTACH_PATH").Value.ToString();
+                var tempPath = Path.Combine(wcsPathRoot, "tmp");
+
                 var path = Path.Combine(tempPath, folder_date);
                 var filePath = Path.Combine(path, _fileHelper.GetTempFileName(metaDataObject));
                 var host = CommonUtility.GetHost(path);
@@ -431,20 +431,19 @@ namespace MAMBrowser.BLL
         }
 
         //Temp -> Storage Move
-        public AttachmentDTO MoveToStorage(AttachmentDTO file, bool copyVal)
+        public AttachmentDTO MoveToStorage(string productId, string brdDate, AttachmentDTO file, bool copyVal)
         {
             var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
-            var path = @"\\ad2022-nas\AUDIO-FILE\mbcdata\CUESHEET_ATTACHMENTS"; //임시 경로
-            var storagePath = Path.Combine(path, file.FILEID + "_" + Path.GetFileName(file.FILENAME));
-            //var filePath = Path.Combine(path, _fileHelper.GetTempFileName(metaDataObject));
+            var wcsPathRoot = option.Find(dt => dt.Name == "WCS_ATTACH_PATH").Value.ToString();
+            var cueFolder = Path.Combine(wcsPathRoot, $"{productId}_{brdDate}");
+
+            var storagePath = Path.Combine(cueFolder, file.FILEID + "_" + Path.GetFileName(file.FILENAME));
             var host = CommonUtility.GetHost(storagePath);
             var userinfo = GetStorageUserInfo(option);
             NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
 
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+            if (!Directory.Exists(cueFolder))
+                Directory.CreateDirectory(cueFolder);
 
             if (copyVal)
             {

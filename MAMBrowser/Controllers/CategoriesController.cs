@@ -50,6 +50,26 @@ namespace MAMBrowser.Controllers
             return result;
         }
         /// <summary>
+        /// DL3 매체 목록
+        /// </summary>
+        /// <returns>DL3 매체 목록 반환</returns>
+        [HttpGet("dl3media")]
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetDL3Media()
+        {
+            DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
+            try
+            {
+                result.ResultObject = _bll.GetDL3Media();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
+        /// <summary>
         /// 주조 SPOT 매체 목록
         /// </summary>
         /// <returns>주조 SPOT 매체 목록 반환</returns>
