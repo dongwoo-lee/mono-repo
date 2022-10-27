@@ -138,7 +138,7 @@ namespace MAMBrowser.Controllers
             {
                 _bll.DeleteAttachmentsFile(file);
                 var folder = new DirectoryInfo(Path.GetDirectoryName(file.FILEPATH));
-                if (folder.GetFileSystemInfos().Length == 0)
+                if (folder.GetFileSystemInfos().Length == 0 && folder.Exists)
                 {
                     Directory.Delete(Path.GetDirectoryName(file.FILEPATH));
                 }

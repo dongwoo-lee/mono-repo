@@ -232,37 +232,43 @@ namespace MAMBrowser.BLL
                     di_folder.Create();
                 }
 
+
                 int pramIndex = 0;
                 foreach (CueSheetConDTO ele in pram)
                 {
+
                     if (ele.FILEPATH != null && ele.FILEPATH != "")
                     {
-                        var fileGuid = Guid.NewGuid().ToString();
-                        var outFilePath = Path.Combine(rootFolder, fileGuid + Path.GetFileName(ele.FILEPATH));
-                        _fileHelper.TrimWavFile(ele.FILEPATH, outFilePath, TimeSpan.FromMilliseconds(ele.STARTPOSITION), TimeSpan.FromMilliseconds(ele.ENDPOSITION));
-                        var fileItem = new AudioFileReader(outFilePath);
-                        if (ele.FADEINTIME || ele.FADEOUTTIME)
+                        FileInfo fileInfo = new FileInfo(ele.FILEPATH);
+                        if (fileInfo.Exists)
                         {
-                            if (ele.FADEINTIME)
+                            var fileGuid = Guid.NewGuid().ToString();
+                            var outFilePath = Path.Combine(rootFolder, fileGuid + Path.GetFileName(ele.FILEPATH));
+                            _fileHelper.TrimWavFile(ele.FILEPATH, outFilePath, TimeSpan.FromMilliseconds(ele.STARTPOSITION), TimeSpan.FromMilliseconds(ele.ENDPOSITION));
+                            var fileItem = new AudioFileReader(outFilePath);
+                            if (ele.FADEINTIME || ele.FADEOUTTIME)
                             {
-                                var fade = new DelayFadeOutSampleProvider(fileItem);
-                                var fadeInPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeIn_" + Path.GetFileName(outFilePath));
-                                fade.BeginFadeIn(2000);
-                                WaveFileWriter.CreateWaveFile16(fadeInPath, fade);
-                                fileItem.Close();
-                                fileItem = new AudioFileReader(fadeInPath);
+                                if (ele.FADEINTIME)
+                                {
+                                    var fade = new DelayFadeOutSampleProvider(fileItem);
+                                    var fadeInPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeIn_" + Path.GetFileName(outFilePath));
+                                    fade.BeginFadeIn(2000);
+                                    WaveFileWriter.CreateWaveFile16(fadeInPath, fade);
+                                    fileItem.Close();
+                                    fileItem = new AudioFileReader(fadeInPath);
+                                }
+                                if (ele.FADEOUTTIME)
+                                {
+                                    var fade = new DelayFadeOutSampleProvider(fileItem);
+                                    var fadeOutPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeOut_" + Path.GetFileName(outFilePath));
+                                    fade.BeginFadeOut(ele.ENDPOSITION - ele.STARTPOSITION - 2000, 2000);
+                                    WaveFileWriter.CreateWaveFile16(fadeOutPath, fade);
+                                    fileItem.Close();
+                                    fileItem = new AudioFileReader(fadeOutPath);
+                                }
                             }
-                            if (ele.FADEOUTTIME)
-                            {
-                                var fade = new DelayFadeOutSampleProvider(fileItem);
-                                var fadeOutPath = Path.Combine(Path.GetDirectoryName(outFilePath), "_fadeOut_" + Path.GetFileName(outFilePath));
-                                fade.BeginFadeOut(ele.ENDPOSITION - ele.STARTPOSITION - 2000, 2000);
-                                WaveFileWriter.CreateWaveFile16(fadeOutPath, fade);
-                                fileItem.Close();
-                                fileItem = new AudioFileReader(fadeOutPath);
-                            }
+                            playlist.Add(fileItem);
                         }
-                        playlist.Add(fileItem);
                     }
                     else
                     {
