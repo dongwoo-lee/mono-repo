@@ -262,6 +262,7 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<MusicResultDTO>();
             try
             {
+                result.ResultObject = new MusicResultDTO();
                 result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_MUSIC>();
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(pram.searchText))
@@ -287,6 +288,7 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<EFFECTResultDTO>();
             try
             {
+                result.ResultObject = new EFFECTResultDTO();
                 result.ResultObject.Result = new DTO_RESULT_PAGE_LIST<DTO_EFFECT>();
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(pram.searchText))

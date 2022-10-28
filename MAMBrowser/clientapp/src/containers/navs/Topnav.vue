@@ -115,7 +115,7 @@
                         margin-right: 6px;
                       "
                     >
-                      v1.0.220725
+                      v1.0.221027
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">

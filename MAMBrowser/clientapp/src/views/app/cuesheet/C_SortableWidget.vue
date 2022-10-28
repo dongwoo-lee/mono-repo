@@ -531,8 +531,10 @@ export default {
             index: index,
             toIndex: totalIndex,
           });
-          arrData.splice(totalIndex - 1 + index, 1, rowData);
-          index++;
+          if (rowData) {
+            arrData.splice(totalIndex - 1 + index, 1, rowData);
+            index++;
+          }
         }
         if (this.channelKey == "channel_my") {
           //즐겨찾기

@@ -500,8 +500,10 @@ export default {
             formRowData: this.rowData,
             cartcode: this.searchListData.cartcode,
           });
-          arrData.splice(e.toIndex + index, 0, rowData);
-          index++;
+          if (rowData) {
+            arrData.splice(e.toIndex + index, 0, rowData);
+            index++;
+          }
         }
         this.setRownum(arrData);
         this.SET_ABCARTARR(arrData);

@@ -1094,32 +1094,38 @@ export default {
                                 search_row = await $http
                                     .post(`/api/SearchMenu/GetSongItem`, search_row)
                                     .then((res) => {
-                                        return res.data;
+                                        if (res.data.resultCode === 0) {
+                                            return res.data.resultObject.value;
+                                        }
                                     });
                             }
                             if (cartcode == "S01G01C015") {
                                 search_row = await $http
                                     .post(`/api/SearchMenu/GetEffectItem`, search_row)
                                     .then((res) => {
-                                        return res.data;
+                                        if (res.data.resultCode === 0) {
+                                            return res.data.resultObject
+                                        }
                                     });
                             }
-                            row.filetoken = search_row.fileToken;
-                            row.filepath = search_row.filePath;
-                            if (!search_row.intDuration) {
-                                row.endposition = 0;
-                                row.duration = 0;
-                            } else {
-                                row.endposition = search_row.intDuration;
-                                row.duration = search_row.intDuration;
+                            if (search_row) {
+                                row.filetoken = search_row.fileToken;
+                                row.filepath = search_row.filePath;
+                                if (!search_row.intDuration) {
+                                    row.endposition = 0;
+                                    row.duration = 0;
+                                } else {
+                                    row.endposition = search_row.intDuration;
+                                    row.duration = search_row.intDuration;
+                                }
+                                row.cartid = search_row.id;
+                                row.cartcode = cartcode;
+                                dispatch(`cartCodeFilter`, ({
+                                    row: row,
+                                    search_row: search_row,
+                                }));
+                                return row;
                             }
-                            row.cartid = search_row.id;
-                            row.cartcode = cartcode;
-                            dispatch(`cartCodeFilter`, ({
-                                row: row,
-                                search_row: search_row,
-                            }));
-                            return row;
 
                         default:
                             break;
@@ -1174,32 +1180,38 @@ export default {
                                 search_row = await $http
                                     .post(`/api/SearchMenu/GetSongItem`, search_row)
                                     .then((res) => {
-                                        return res.data;
+                                        if (res.data.resultCode === 0) {
+                                            return res.data.resultObject.value;
+                                        }
                                     });
                             }
                             if (cartcode == "S01G01C015") {
                                 search_row = await $http
                                     .post(`/api/SearchMenu/GetEffectItem`, search_row)
                                     .then((res) => {
-                                        return res.data;
+                                        if (res.data.resultCode === 0) {
+                                            return res.data.resultObject
+                                        }
                                     });
                             }
-                            row.filetoken = search_row.fileToken;
-                            row.filepath = search_row.filePath;
-                            if (!search_row.intDuration) {
-                                row.endposition = 0;
-                                row.duration = 0;
-                            } else {
-                                row.endposition = search_row.intDuration;
-                                row.duration = search_row.intDuration;
+                            if (search_row) {
+                                row.filetoken = search_row.fileToken;
+                                row.filepath = search_row.filePath;
+                                if (!search_row.intDuration) {
+                                    row.endposition = 0;
+                                    row.duration = 0;
+                                } else {
+                                    row.endposition = search_row.intDuration;
+                                    row.duration = search_row.intDuration;
+                                }
+                                row.cartid = search_row.id;
+                                row.cartcode = cartcode;
+                                dispatch(`cartCodeFilter`, ({
+                                    row: row,
+                                    search_row: search_row,
+                                }));
+                                return row;
                             }
-                            row.cartid = search_row.id;
-                            row.cartcode = cartcode;
-                            dispatch(`cartCodeFilter`, ({
-                                row: row,
-                                search_row: search_row,
-                            }));
-                            return row;
 
                         default:
                             break;
