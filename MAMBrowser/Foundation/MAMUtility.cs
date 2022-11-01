@@ -13,21 +13,21 @@ namespace MAMBrowser.Foundation
     {
         public static void TempDownloadToLocal(string userId, string remoteIp, IFileDownloadProtocol fileProtocol, string filePath)
         {
-            CommonUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
-            var targetFolder = CommonUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+            ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+            var targetFolder = GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
 
             var soundFileName = Path.GetFileName(filePath);
             var ext = Path.GetExtension(filePath).ToUpper();
-            var targetSoundPath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName);
+            var targetSoundPath = GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName);
             if (fileProtocol.ExistFile(filePath))
             {
                 fileProtocol.DownloadFile(filePath, targetSoundPath);
                 //다운로드된 mp2는 wav로 변환함.(mp3는 상관없음)
                 if (ext == Define.MP2)
                 {
-                    var convertFilePath = CommonUtility.GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName.ToUpper().Replace(ext, Define.WAV));
+                    var convertFilePath = GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName.ToUpper().Replace(ext, Define.WAV));
                     using (FileStream inStream = new FileStream(targetSoundPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         using (FileStream outStream = new FileStream(convertFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -43,7 +43,46 @@ namespace MAMBrowser.Foundation
             //        throw new Exception("등록된 파일을 찾을 수 없습니다.");
             //}
         }
-        
+
+        public static string GetTempFilePath(string tempDownloadRoot, string userId, string remoteIp, string fileName)
+        {
+            return $@"{GetTempFolder(tempDownloadRoot, userId, remoteIp)}\{fileName}";
+        }
+        public static string GetTempFolder(string tempDownloadRoot, string userId, string remoteIp)
+        {
+            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1" || remoteIp == "127.0.0.1")
+            {
+                remoteIp = "localhost";
+            }
+            return $@"{tempDownloadRoot}\{userId}_{remoteIp}";
+        }
+        public static void ClearTempFolder(string tempDownloadRoot, string userId, string remoteIp)
+        {
+            var targetFolder = GetTempFolder(tempDownloadRoot, userId, remoteIp);
+            if (Directory.Exists(targetFolder))
+            {
+                DateTime now = DateTime.Now;
+                var fileFullPathList = Directory.GetFiles(targetFolder);
+                foreach (var filePath in fileFullPathList)
+                {
+                    try
+                    {
+                        var createdDtm = File.GetLastAccessTime(filePath);
+
+                        if (now.Subtract(createdDtm).TotalSeconds > 300)
+                            File.Delete(filePath);
+                    }
+                    catch (IOException ex)
+                    {
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+        }
+
+
         public static List<float> GetWaveformCore(string soundFilePath)
         {
             var soundfileName = Path.GetFileName(soundFilePath);
@@ -78,8 +117,8 @@ namespace MAMBrowser.Foundation
        
         public static void InitTempFoler(string userId, string remoteIp)
         {
-            CommonUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
-            var targetFolder = CommonUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+            ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+            var targetFolder = GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
             if (!Directory.Exists(targetFolder))
                 Directory.CreateDirectory(targetFolder);
         }
