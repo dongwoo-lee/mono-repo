@@ -566,7 +566,7 @@ namespace MAMBrowser.Controllers
                 string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
                 string userId = HttpContext.Items[Define.USER_ID] as string;
                 MAMUtility.InitTempFoler(userId, remoteIp);
-                var tempFilePath = CommonUtility.GetTempFilePath(_appSesstings.TempDownloadPath, userId, remoteIp, downloadFileName);
+                var tempFilePath = MAMUtility.GetTempFilePath(_appSesstings.TempDownloadPath, userId, remoteIp, downloadFileName);
 
                 using (FileStream outFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
@@ -644,7 +644,7 @@ namespace MAMBrowser.Controllers
                 //string userId = HttpContext.Items[Define.USER_ID] as string;
                 //링크로 보내주기때문에 헤더에 토큰값이 없음.
 
-                var tempFilePath = CommonUtility.GetTempFilePath(_appSesstings.TempDownloadPath, userId, remoteIp, fileName);
+                var tempFilePath = MAMUtility.GetTempFilePath(_appSesstings.TempDownloadPath, userId, remoteIp, fileName);
                 var fileExt = Path.GetExtension(fileName);
                 var fileExtProvider = new FileExtensionContentTypeProvider();
                 string contentType;

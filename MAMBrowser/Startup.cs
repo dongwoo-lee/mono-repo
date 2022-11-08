@@ -187,7 +187,7 @@ namespace MAMBrowser
                 var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
                 var storage = storagesSection.Get<ExternalStorage>();
                 var logger = serviceProvider.GetRequiredService<ILogger<MusicWebService>>();
-                return new MusicWebService(storage, logger, Startup.AppSetting.TempDownloadPath, Startup.AppSetting.ExpireMusicTokenHour);
+                return new MusicWebService(storage, logger, Startup.AppSetting.ExpireMusicTokenHour);
             });
             services.AddTransient(serviceProvider =>
             {

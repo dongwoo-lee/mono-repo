@@ -40,7 +40,7 @@ namespace MAMBrowser.Controllers
             _hostingEnvironment = hostingEnvironment;
             _appSesstings = appSesstings.Value;
             _fileService = fileService;
-            //_fileService = new MusicSystemMockup();
+            // _fileService = new MusicSystemMockup(fileService);
             _fileHelper = fileHelper;
             _logger = logger;
         }
@@ -69,7 +69,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(searchText))
                     result.ResultObject.Data = new List<DTO_MUSIC>();
                 else
-                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+                    result.ResultObject.Data = _fileService.SearchMusic((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -184,6 +184,10 @@ namespace MAMBrowser.Controllers
                 _logger.LogError(ex.ToString());
                 return StatusCode((int)ex.StatusCode, ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         /// <summary>
         /// 음악/효과음 소재 - 임시 다운로드
@@ -193,10 +197,24 @@ namespace MAMBrowser.Controllers
         [HttpGet("temp-download")]
         public IActionResult MusicTempDownload([FromQuery] string token)
         {
-            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[Define.USER_ID] as string;
-            _fileService.TempDownloadWavAndEgy(userId, remoteIp, token);
-            return Ok();
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                string userId = HttpContext.Items[Define.USER_ID] as string;
+
+                MAMUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+                var targetFolder = MAMUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+                if (!Directory.Exists(targetFolder))
+                    Directory.CreateDirectory(targetFolder);
+
+
+                _fileService.LocalDownloadWavAndEgy(targetFolder, token);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpPost("music-to-myspace")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> MusicToMyspace([FromQuery] string token, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices] PrivateFileBll privateBll)
@@ -234,9 +252,22 @@ namespace MAMBrowser.Controllers
         [HttpGet("images/temp-download")]
         public ActionResult<List<string>> AlbumImageTempDownload([FromQuery] string token, [FromQuery] string albumToken)
         {
-            string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            string userId = HttpContext.Items[Define.USER_ID] as string;
-            return _fileService.TempImageDownload(userId, remoteIp, token, albumToken);
+            try
+            {
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                string userId = HttpContext.Items[Define.USER_ID] as string;
+
+                MAMUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+                var targetFolder = MAMUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+                if (!Directory.Exists(targetFolder))
+                    Directory.CreateDirectory(targetFolder);
+
+                return _fileService.LocalImageDownload(targetFolder, token, albumToken);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         /// <summary>
@@ -256,6 +287,10 @@ namespace MAMBrowser.Controllers
             catch (HttpStatusErrorException ex)
             {
                 return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 

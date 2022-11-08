@@ -29,7 +29,7 @@ namespace MAMBrowser.Controllers
         public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
             _fileService = fileService;
-            //_fileService = new MusicSystemMockup();
+            // _fileService = new MusicSystemMockup(fileService);
             _apiDao = apiDao;
         }
         public class Pram
@@ -268,7 +268,7 @@ namespace MAMBrowser.Controllers
                 if (string.IsNullOrEmpty(pram.searchText))
                     result.ResultObject.Result.Data = new List<DTO_MUSIC>();
                 else
-                    result.ResultObject.Result.Data = _fileService.SearchSong((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
+                    result.ResultObject.Result.Data = _fileService.SearchMusic((MusicSearchTypes1)pram.searchType1, pram.searchType2, (GradeTypes)pram.gradeType, pram.searchText, pram.rowperpage, pram.selectpage, out totalCount);
 
                 result.ResultObject.Result.TotalRowCount = totalCount;
                 result.ResultCode = RESUlT_CODES.SUCCESS;

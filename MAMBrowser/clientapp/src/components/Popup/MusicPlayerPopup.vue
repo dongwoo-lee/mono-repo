@@ -12,7 +12,16 @@
       <b-card>
         <b-row>
           <b-col cols="5">
+            <b-form-textarea
+              v-if="imagePathList.length <= 0"
+              rows="15"
+              v-model="NotExistImage"
+              no-resize
+              readonly
+            />
+
             <b-carousel
+              v-else
               id="carousel1"
               style="text-shadow: 1px 1px 2px #333; height: 300px; width: 300px"
               controls
@@ -80,6 +89,7 @@ export default {
       lyricsUrl: "/api/musicsystem/lyrics",
       imagePathList: [],
       lyrics: "",
+      NotExistImage: "등록된 이미지가 없습니다.",
       slide: 0,
       sliding: null,
       USER_ID,
@@ -141,7 +151,11 @@ export default {
   methods: {
     getMusic() {
       this.tempDownloadedImageUrl();
-      this.getLyrics();
+      if (this.music.lyricsSeq) {
+        this.getLyrics();
+      } else {
+        this.lyrics = "등록된 가사 정보가 없습니다.";
+      }
     },
     tempDownloadedImageUrl() {
       let userId = sessionStorage.getItem(USER_ID);
