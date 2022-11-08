@@ -302,7 +302,6 @@ export default {
     ...mapActions("cueList", ["GetPgmListByBrdDate"]),
     ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("cueList", ["SetProgramCodeOption"]),
-    ...mapActions("cueList", ["SetProgramProductIdOption"]),
     ...mapActions("cueList", ["SetProductIds"]),
 
     async getData() {

@@ -551,19 +551,19 @@ export default {
     searchTabIndex(text) {
       switch (text) {
         case "C1":
-          this.$emit("tabItemMove", 1);
-          break;
-        case "C2":
           this.$emit("tabItemMove", 2);
           break;
-        case "C3":
+        case "C2":
           this.$emit("tabItemMove", 3);
           break;
-        case "C4":
+        case "C3":
           this.$emit("tabItemMove", 4);
           break;
-        case "즐겨찾기":
+        case "C4":
           this.$emit("tabItemMove", 5);
+          break;
+        case "즐겨찾기":
+          this.$emit("tabItemMove", 6);
           break;
         default:
           break;

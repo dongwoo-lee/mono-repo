@@ -150,7 +150,8 @@ export default {
       maxTitleLength: 120,
       uploadAbortedMessage: "파일을 추가할 수 없습니다.",
       uploadedMessage: "업로드 완료",
-      invalidMaxFileSizeMessage: "파일 사이즈가 너무 큽니다.",
+      invalidMaxFileSizeMessage:
+        "업로드 파일 사이즈는 100MB를 넘을 수 없습니다.",
       invalidFileExtensionMessage:
         "추가할 수 없는 확장자 입니다. (가능 확장자 : docx, xlsx, pdf, hwp, txt)",
       accept:

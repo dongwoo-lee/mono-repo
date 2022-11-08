@@ -4,7 +4,7 @@
       현재 DAP(A, B)에 추가된 소재들을 하나의 Wav 파일로 병합하여 내보냅니다.
     </h3>
     <h3 v-else class="m-3" style="color: red">
-      소재 취합 후 길이는 {{ maxDuration / 3600000 }}시간을 넘을 수 없습니다.
+      최대 길이는 {{ maxDuration / 3600000 }}시간 입니다.
     </h3>
     <div
       class="wav-ab-grid p-4 mt-3 mb-3"
@@ -88,11 +88,35 @@
             }}
           </div>
         </template>
+        <DxColumn
+          cell-template="timeline-table"
+          alignment="center"
+          caption="Timeline"
+          :width="200"
+        />
+        <template #timeline-table="{ data }">
+          <div>
+            {{
+              $moment(data.data.timeLineVal)
+                | moment("subtract", "9 hours")
+                | moment("HH:mm:ss")
+            }}
+            ~
+            {{
+              $moment(
+                data.data.timeLineVal +
+                  (data.data.endposition - data.data.startposition)
+              )
+                | moment("subtract", "9 hours")
+                | moment("HH:mm:ss")
+            }}
+          </div>
+        </template>
         <DxSummary>
-          <DxTotalItem show-in-column="FadeOut" display-format="예상시간" />
+          <DxTotalItem show-in-column="소재 길이" display-format="예상시간" />
           <DxTotalItem
             :customize-text="customizeDuration"
-            show-in-column="소재 길이"
+            show-in-column="Timeline"
           />
         </DxSummary>
       </DxDataGrid>
@@ -100,7 +124,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import {
   DxDataGrid,
   DxColumn,
@@ -120,7 +144,7 @@ export default {
       maxDuration: 7200000, // 2시간
     };
   },
-  mounted() {
+  async mounted() {
     let i = 1;
     for (let item of this.abCartArr) {
       if (item.cartcode != "") {
@@ -129,6 +153,10 @@ export default {
         this.dataSource.push(content);
       }
     }
+    this.dataSource = await this.setTimeline({
+      starttime: 0,
+      DataList: this.dataSource,
+    });
   },
   components: {
     DxDataGrid,
@@ -142,6 +170,7 @@ export default {
     ...mapGetters("cueList", ["abCartArr"]),
   },
   methods: {
+    ...mapActions("cueList", ["setTimeline"]),
     formatDate,
     customizeDuration() {
       const max = moment(this.maxDuration)
@@ -160,6 +189,11 @@ export default {
 };
 </script>
 <style>
+@media (min-width: 1200px) {
+  .modal-xl {
+    max-width: 1500px;
+  }
+}
 .max-duration-color .dx-datagrid-summary-item {
   color: #2d6da3 !important;
 }

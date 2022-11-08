@@ -65,6 +65,7 @@ export default {
     ...mapMutations("cueList", ["SET_TAGS"]),
     onValueChanged(e) {
       if (this.tags !== e.value) {
+        let tagItem = "";
         const result = new Set();
         e.value.filter((tag) => {
           const item = tag.text
@@ -72,9 +73,14 @@ export default {
             .replace(/ /g, "");
           if (!!item) {
             result.add(item);
+            tagItem = item;
           }
         });
-        this.SET_TAGS(Array.from(result));
+        const resultArr = Array.from(result);
+        if (tagItem && this.tags.length === resultArr.length) {
+          this.$emit("sameTagError", tagItem);
+        }
+        this.SET_TAGS(resultArr);
         this.isAccept = result.size >= this.maxTagCount ? true : false;
       }
     },

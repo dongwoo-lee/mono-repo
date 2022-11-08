@@ -2,25 +2,26 @@
 using M30.AudioFile.Common.Foundation;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
-using MAMBrowser.Helpers;
+using MAMBrowser.Hubs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.Options;
 using NAudio.Wave;
-using NAudioFadeInOutTest;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MAMBrowser.Helper
 {
+
     public class WebServerFileHelper
     {
-        public WebServerFileHelper(IOptions<AppSettings> options)
+        public WebServerFileHelper()
         {
         }
 
@@ -178,12 +179,12 @@ namespace MAMBrowser.Helper
             result.EnableRangeProcessing = true;
             return result;
         }
-
         public void CheckFileExtensionValid(string[] extensionsRuls, string fileName)
         {
             fileName = fileName.ToLower();
 
-            var isValidExtenstion = extensionsRuls.Any(ext => {
+            var isValidExtenstion = extensionsRuls.Any(ext =>
+            {
                 return fileName.LastIndexOf(ext) > -1;
             });
             if (!isValidExtenstion)
@@ -201,7 +202,7 @@ namespace MAMBrowser.Helper
             using (var stream = new FileStream(path, FileMode.Append, FileAccess.Write))
             {
                 content.CopyTo(stream);
-                CheckMaxFileSize(stream,maxSize);
+                CheckMaxFileSize(stream, maxSize);
             }
         }
 
@@ -218,17 +219,13 @@ namespace MAMBrowser.Helper
             {
                 using (WaveFileWriter writer = new WaveFileWriter(outPath, reader.WaveFormat))
                 {
-                    int bytesPerMillisecond = reader.WaveFormat.AverageBytesPerSecond / 1000;
+                    double bytesPerMillisecond = reader.WaveFormat.AverageBytesPerSecond / 1000d;
 
-                    int startPos = (int)cutFromStart.TotalMilliseconds * bytesPerMillisecond;
+                    int startPos = (int)(cutFromStart.TotalMilliseconds * bytesPerMillisecond);
                     startPos = startPos - startPos % reader.WaveFormat.BlockAlign;
 
-                    int endBytes = (int)cutFromEnd.TotalMilliseconds * bytesPerMillisecond;
+                    int endBytes = (int)(cutFromEnd.TotalMilliseconds * bytesPerMillisecond);
                     int endPos = endBytes - endBytes % reader.WaveFormat.BlockAlign;
-
-                    //int endBytes = (int)cutFromEnd.TotalMilliseconds * bytesPerMillisecond;
-                    //endBytes = endBytes - endBytes % reader.WaveFormat.BlockAlign;
-                    //int endPos = (int)reader.Length - endBytes;
 
                     TrimWavFile(reader, writer, startPos, endPos);
                 }

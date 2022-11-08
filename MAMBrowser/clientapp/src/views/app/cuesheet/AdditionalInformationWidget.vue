@@ -34,7 +34,7 @@
     <div class="itme">
       <div class="title_text">
         <span>태그</span>
-        <span class="contents_counter ml-1">
+        <span class="contents_counter m-1">
           <b-badge
             pill
             variant="dark"
@@ -46,20 +46,47 @@
             <span class="max_count">{{ max_tag_count }}</span>
           </b-badge>
         </span>
+        <span class="tag_item_error_msg" v-show="errorMsg_value">{{
+          errorMsg
+        }}</span>
       </div>
       <div class="component">
-        <Tag :value_items="valueItems" :maxTagCount="max_tag_count" />
+        <Tag
+          :value_items="valueItems"
+          :maxTagCount="max_tag_count"
+          @sameTagError="OnTagErrorMsg"
+        />
       </div>
     </div>
     <div class="itme">
-      <div class="title_text">메모</div>
+      <div class="title_text">
+        <span>메모</span>
+        <span class="contents_counter ml-1">
+          <b-badge
+            pill
+            variant="dark"
+            :class="{
+              max_background: cueInfo.memo.length >= max_memo_length,
+            }"
+          >
+            <span class="in_count">{{
+              cueInfo.memo.length >= max_memo_length
+                ? max_memo_length
+                : cueInfo.memo.length
+            }}</span>
+            /
+            <span class="max_count">{{ max_memo_length }}</span>
+          </b-badge>
+        </span>
+      </div>
       <div class="component">
         <DxTextBox
-          :maxLength="100"
+          :maxLength="max_memo_length"
           placeholder="메모를 입력하세요."
           v-model="cueInfo.memo"
           :value="cueInfo.memo"
           :disabled="cueInfo.cuetype === 'A'"
+          @input="OnInputMemo"
           @change="OnChangeMemo"
         />
       </div>
@@ -82,9 +109,11 @@ export default {
       attachments_title_name: "첨부파일",
       max_tag_count: 15,
       max_attachments_count: 10,
+      max_memo_length: 100,
+      errorMsg: "동일한 태그가 추가되어 있습니다.",
+      errorMsg_value: false,
     };
   },
-  created() {},
   components: {
     Attachments,
     Tag,
@@ -97,15 +126,29 @@ export default {
     ...mapGetters("cueList", ["tags"]),
   },
   methods: {
+    OnInputMemo(e) {
+      this.cueInfo.memo = e.event.target.value;
+    },
     OnChangeMemo() {
       const result = this.cueInfo.memo.replace(/[^\w\s|ㄱ-ㅎ|가-힣|, ]/gi, "");
-      // .replace(/ /g, "");
       this.cueInfo.memo = result;
+    },
+    OnTagErrorMsg() {
+      this.errorMsg_value = true;
+      setTimeout(() => {
+        this.errorMsg_value = false;
+      }, 3000);
     },
   },
 };
 </script>
 <style>
+.red {
+  color: red;
+}
+.tag_item_error_msg {
+  color: #d9534f;
+}
 #additional_information {
   overflow: auto;
   height: 580px;

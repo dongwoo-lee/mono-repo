@@ -150,18 +150,6 @@ const url = [
         icon: "iconsminds-testimonal",
     },
     {
-        // (구)DAP
-        id: "S01G01C031",
-        to: "/app/cuesheet/old/list",
-        icon: "iconsminds-testimonal",
-    },
-    {
-        // (구)DAP 작성
-        id: "S01G01C025",
-        to: "/app/cuesheet/old/detail",
-        icon: "iconsminds-testimonal",
-    },
-    {
         // 일일 큐시트
         id: "S01G01C026",
         to: "/app/cuesheet/day/list",

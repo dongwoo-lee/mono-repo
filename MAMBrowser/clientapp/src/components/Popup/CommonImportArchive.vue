@@ -80,7 +80,9 @@
         text-field="name"
         disabled-field="notEnabled"
         plain
-      ></b-form-checkbox-group>
+      >
+        <span class="check-items-msg"> ※ 첨부파일은 가져올 수 없습니다. </span>
+      </b-form-checkbox-group>
       <b-form-radio-group
         v-model="importSelected"
         :options="importOptions"
@@ -455,10 +457,15 @@ export default {
 <style>
 .import-check-items {
   position: absolute;
+  display: flex;
   left: 40px;
   font-size: 13px;
 }
 .import-check-items .form-check-inline {
   margin-right: 20px !important;
+}
+.check-items-msg {
+  color: gray;
+  line-height: 28px;
 }
 </style>

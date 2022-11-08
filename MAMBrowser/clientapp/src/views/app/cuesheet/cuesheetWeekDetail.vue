@@ -71,6 +71,13 @@
                       </div>
                     </template>
                   </DxItem>
+                  <DxItem title="부가정보">
+                    <template #default>
+                      <div>
+                        <AdditionalWidget :valueItems="tags" />
+                      </div>
+                    </template>
+                  </DxItem>
                   <DxItem title="C1">
                     <template #default>
                       <div class="c_channel_panel">
@@ -123,13 +130,6 @@
                           :searchToggleSwitch="searchToggleSwitch"
                           channelKey="channel_my"
                         />
-                      </div>
-                    </template>
-                  </DxItem>
-                  <DxItem title="부가정보">
-                    <template #default>
-                      <div>
-                        <AdditionalWidget :valueItems="tags" />
                       </div>
                     </template>
                   </DxItem>

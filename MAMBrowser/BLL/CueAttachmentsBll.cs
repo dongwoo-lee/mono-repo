@@ -38,7 +38,7 @@ namespace MAMBrowser.BLL
 
         private static bool isStopMerge = false;
 
-        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao,IHubContext<ProgressHub> hubContext)
+        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao, IHubContext<ProgressHub> hubContext)
         {
             _fileService = sr(MAMDefine.MirosConnection).FileSystem;
             _bll = bll;
@@ -213,7 +213,7 @@ namespace MAMBrowser.BLL
         }
 
         //CueCon > Wave 파일 하나로 합쳐 내려받기
-        public async Task<DTO_RESULT<ActionResult<string>>> MergeAudioFilesIntoOneWav(string userid, string connectionId, List<CueSheetConDTO> pram,CancellationToken token)
+        public async Task<DTO_RESULT<ActionResult<string>>> MergeAudioFilesIntoOneWav(string userid, string connectionId, List<CueSheetConDTO> pram, CancellationToken token)
         {
             DTO_RESULT<ActionResult<string>> result = new DTO_RESULT<ActionResult<string>>();
             try
@@ -236,7 +236,6 @@ namespace MAMBrowser.BLL
                 int pramIndex = 0;
                 foreach (CueSheetConDTO ele in pram)
                 {
-
                     if (ele.FILEPATH != null && ele.FILEPATH != "")
                     {
                         FileInfo fileInfo = new FileInfo(ele.FILEPATH);
@@ -244,7 +243,47 @@ namespace MAMBrowser.BLL
                         {
                             var fileGuid = Guid.NewGuid().ToString();
                             var outFilePath = Path.Combine(rootFolder, fileGuid + Path.GetFileName(ele.FILEPATH));
-                            _fileHelper.TrimWavFile(ele.FILEPATH, outFilePath, TimeSpan.FromMilliseconds(ele.STARTPOSITION), TimeSpan.FromMilliseconds(ele.ENDPOSITION));
+
+                            int trim_write_index = 0;
+                            using (WaveFileReader reader = new WaveFileReader(ele.FILEPATH))
+                            {
+                                using (WaveFileWriter writer = new WaveFileWriter(outFilePath, reader.WaveFormat))
+                                {
+                                    double bytesPerMillisecond = reader.WaveFormat.AverageBytesPerSecond / 1000d;
+
+                                    int startPos = (int)(TimeSpan.FromMilliseconds(ele.STARTPOSITION).TotalMilliseconds * bytesPerMillisecond);
+                                    startPos = startPos - startPos % reader.WaveFormat.BlockAlign;
+
+                                    int endBytes = (int)(TimeSpan.FromMilliseconds(ele.ENDPOSITION).TotalMilliseconds * bytesPerMillisecond);
+                                    int endPos = endBytes - endBytes % reader.WaveFormat.BlockAlign;
+
+                                    reader.Position = startPos;
+                                    byte[] buffer = new byte[10240000];
+                                    double total_count = (endPos - startPos) / (double)buffer.Length;
+                                    while (reader.Position < endPos)
+                                    {
+                                        int bytesRequired = (int)(endPos - reader.Position);
+                                        if (bytesRequired > 0)
+                                        {
+                                            int bytesToRead = Math.Min(bytesRequired, buffer.Length);
+                                            int bytesRead = reader.Read(buffer, 0, bytesToRead);
+                                            if (bytesRead > 0)
+                                            {
+                                                writer.WriteData(buffer, 0, bytesRead);
+                                                await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", (((trim_write_index + 1) /
+                                                    Math.Ceiling(total_count) + pramIndex)) * 50 / pram.Count);
+                                                if (token.IsCancellationRequested)
+                                                {
+                                                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
+                                                    token.ThrowIfCancellationRequested();
+                                                }
+                                            }
+                                        }
+                                        trim_write_index++;
+                                    }
+                                }
+                            }
+
                             var fileItem = new AudioFileReader(outFilePath);
                             if (ele.FADEINTIME || ele.FADEOUTTIME)
                             {
@@ -308,12 +347,13 @@ namespace MAMBrowser.BLL
                                 playlist.Add(fileItem);
                             }
                         }
-                    }
-                    await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((pramIndex + 1) * 50 / pram.Count));
-                    if (token.IsCancellationRequested)
-                    {
-                        await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
-                        token.ThrowIfCancellationRequested();
+                        //progressBar (광고)
+                        await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", Convert.ToInt32((pramIndex + 1) * 50 / pram.Count));
+                        if (token.IsCancellationRequested)
+                        {
+                            await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", 0);
+                            token.ThrowIfCancellationRequested();
+                        }
                     }
                     pramIndex++;
                 }
@@ -370,7 +410,7 @@ namespace MAMBrowser.BLL
                 result.ResultObject = "중단되었습니다";
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //파일, 폴더 삭제
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;

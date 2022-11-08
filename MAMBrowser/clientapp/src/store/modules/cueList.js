@@ -300,7 +300,7 @@ export default {
             const optionList = [];
             pgmList?.forEach((pgm) => {
                 pgm.pgmItem.forEach((item) => {
-                    optionList.push({ value: item.productid, text: item.eventname })
+                    optionList.push({ value: { productid: item.productid, media: pgm.media }, text: item.eventname })
                 })
             })
             return optionList
@@ -1051,6 +1051,15 @@ export default {
                     }
                 });
             }
+        },
+        setTimeline({ }, payload) {
+            let starttime = moment(payload.starttime, "YYYY-MM-DDHH:mm:ss").valueOf() ? payload.starttime : 0
+            const list = [...payload.DataList]
+
+            list.forEach((ele, index) => {
+                index === 0 ? ele.timeLineVal = starttime : ele.timeLineVal = (list[index - 1].endposition - list[index - 1].startposition) + list[index - 1].timeLineVal
+            })
+            return list
         },
         maxLengthChecker({ }, payload) {
             if (payload.arrLength >= payload.maxLength) {

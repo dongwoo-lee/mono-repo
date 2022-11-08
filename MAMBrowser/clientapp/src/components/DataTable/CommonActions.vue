@@ -56,14 +56,6 @@
       <i class="iconsminds-shop i-custom-actions-shop" />
     </b-button>
     <b-button
-      v-if="oldVal"
-      id="cueBtn"
-      variant="outline-primary"
-      @click="getCueData('old')"
-    >
-      (구) 큐시트 작성</b-button
-    >
-    <b-button
       v-if="rowData.r_ONAIRTIME && rowData.cueid == -1 && !oldVal"
       id="cueBtn"
       variant="outline-primary"

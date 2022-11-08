@@ -118,7 +118,7 @@
           <b-form-group label="프로그램명" class="has-float-label ml-3">
             <b-form-select
               style="width: 400px"
-              v-model="searchItems_add_def_modal.productid"
+              v-model="searchItems_add_def_modal.items"
               :options="programOptions_modal"
               @change="onPgmChange_modal($event)"
             />
@@ -216,8 +216,9 @@ export default {
       programOptions_modal: [],
       searchItems_add_def_modal: {
         media: "",
-        productid: "",
+        items: {},
       },
+      selectAllMedia: "",
       isWeekSlot: true,
       weekButtons: [
         { caption: "월", value: "MON", state: false, disable: true },
@@ -377,13 +378,13 @@ export default {
         this.programOptions_modal = await this.SetProgramProductIdOption(
           this.pgmList
         );
-        this.searchItems_add_def_modal.productid = "";
+        this.searchItems_add_def_modal.items = {};
       } else {
         const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
         this.programOptions_modal = await this.SetProgramProductIdOption(
           selectMediaObj
         );
-        this.searchItems_add_def_modal.productid = "";
+        this.searchItems_add_def_modal.items = {};
       }
     },
     async onPgmChange(e) {
@@ -401,11 +402,12 @@ export default {
           ele.disable = true;
         });
       } else {
+        this.selectAllMedia = e.media;
         this.weekButtons.forEach((week) => {
           week.state = false;
         });
         var params = {
-          productids: [e],
+          productids: [e.productid],
           row_per_page: this.searchItems.rowPerPage,
           select_page: this.searchItems.selectPage,
         };
@@ -455,8 +457,7 @@ export default {
         var cueItem = {
           personid: userId,
           detail: [{ cueid: -1, week: ele }],
-          media: this.searchItems_add_def_modal.media,
-          productid: this.searchItems_add_def_modal.productid,
+          productid: this.searchItems_add_def_modal.items.productid,
           djname: "",
           directorname: "",
           membername: "",
@@ -464,6 +465,9 @@ export default {
           footertitle: "",
           memo: "",
         };
+        this.searchItems_add_def_modal.media
+          ? (cueItem.media = this.searchItems_add_def_modal.media)
+          : (cueItem.media = this.selectAllMedia);
         result.push(cueItem);
       });
       if (result.length == 0) {
@@ -488,7 +492,7 @@ export default {
       }
     },
     async cancel_modal() {
-      this.searchItems_add_def_modal.productid = "";
+      this.searchItems_add_def_modal.items = {};
       this.searchItems_add_def_modal.media = "";
       this.programOptions_modal = await this.SetProgramProductIdOption(
         this.pgmList
