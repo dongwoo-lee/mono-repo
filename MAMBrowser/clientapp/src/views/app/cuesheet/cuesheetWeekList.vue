@@ -204,6 +204,7 @@ export default {
       programOptions: [],
       mediaOptions: [],
       productIds: [],
+      selectMediaAllProductIds: [],
       searchItems: {
         media: "", // 매체
         pgmcode: "",
@@ -367,10 +368,12 @@ export default {
         this.searchItems.productid = this.productIds;
       } else {
         const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
-        const selectProgramList = await this.SetProductIds(selectMediaObj);
+        this.selectMediaAllProductIds = await this.SetProductIds(
+          selectMediaObj
+        );
         this.programOptions = await this.SetProgramCodeOption(selectMediaObj);
         this.searchItems.pgmcode = "";
-        this.searchItems.productid = selectProgramList;
+        this.searchItems.productid = this.selectMediaAllProductIds;
       }
     },
     async onMediaChange_modal(e) {
@@ -393,6 +396,12 @@ export default {
           (pgm) => pgm.pgmcode === e
         );
         this.searchItems.productid = await this.SetProductIds(selectPgmCodeObj);
+      } else {
+        if (this.searchItems.media) {
+          this.searchItems.productid = this.selectMediaAllProductIds;
+        } else {
+          this.searchItems.productid = this.productIds;
+        }
       }
     },
     async onPgmChange_modal(e) {

@@ -427,7 +427,7 @@
           :min="0"
           :max="100"
           :status-format="statusFormat"
-          :value="seconds"
+          :value.sync="seconds"
           width="100%"
         />
       </div>
@@ -1063,6 +1063,9 @@ export default {
               this.isWavCopy && this.copyToMySpace(downPath, downloadName);
               this.downloadFile(downPath, downloadName);
             }
+          })
+          .catch(() => {
+            this.seconds = 0;
           });
       }
       this.loadingIconVal = false;

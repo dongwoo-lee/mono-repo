@@ -820,7 +820,7 @@ export default {
   width: 100px;
 }
 .item_size_sm .dx-item-content {
-  line-height: 2.65;
+  line-height: 1.7;
   height: auto;
   width: 100px;
 }

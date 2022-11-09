@@ -289,7 +289,7 @@ export default {
         },
         SetProgramCodeOption({ }, payload) {
             const pgmList = payload
-            const optionList = [];
+            const optionList = [{ value: "", text: "" }];
             pgmList?.forEach((pgm) => {
                 optionList.push({ value: pgm.pgmcode, text: pgm.pgmname })
             })
