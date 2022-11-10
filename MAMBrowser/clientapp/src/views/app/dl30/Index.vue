@@ -48,7 +48,7 @@
           <b-form-select
             class="width-120"
             v-model="searchItems.media"
-            :options="mediaOptions"
+            :options="dl3MediaOptions"
             value-field="id"
             text-field="name"
             @change="searchCheck"
@@ -236,7 +236,7 @@ export default {
     };
   },
   created() {
-    this.getMediaOptions();
+    this.getDL3MediaOptions();
     this.getDlDeviceOptions();
   },
   methods: {

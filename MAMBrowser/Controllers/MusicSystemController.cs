@@ -59,17 +59,17 @@ namespace MAMBrowser.Controllers
         /// <param name="sortValue"></param>
         /// <returns></returns>
         [HttpGet("music")]
-        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindMusic([FromQuery] int searchType1, [FromQuery] string searchType2, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MUSIC>> FindMusic([FromQuery] int searchType1, [FromQuery] string searchType2, [FromQuery] int gradeType, [FromQuery] string searchText, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
         {
-            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MUSIC>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_MUSIC>>();
             try
             {
-                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_MUSIC>();
                 long totalCount = 0;
                 if (string.IsNullOrEmpty(searchText))
-                    result.ResultObject.Data = new List<DTO_SONG>();
+                    result.ResultObject.Data = new List<DTO_MUSIC>();
                 else
-                    result.ResultObject.Data = _fileService.SearchSong((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
+                    result.ResultObject.Data = _fileService.SearchMusic((MusicSearchTypes1)searchType1, searchType2, (GradeTypes)gradeType, searchText, rowPerPage, selectPage, out totalCount);
 
                 result.ResultObject.RowPerPage = rowPerPage;
                 result.ResultObject.SelectPage = selectPage;
@@ -195,7 +195,9 @@ namespace MAMBrowser.Controllers
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             string userId = HttpContext.Items[Define.USER_ID] as string;
-            _fileService.TempDownloadWavAndEgy(userId, remoteIp, token);
+            var folderPath = MAMUtility.GetTempFolder(_appSesstings.TempDownloadPath, userId, remoteIp);
+            MAMUtility.ClearTempFolder(_appSesstings.TempDownloadPath, userId, remoteIp);
+            _fileService.LocalDownloadWavAndEgy(folderPath, token);
             return Ok();
         }
         [HttpPost("music-to-myspace")]
@@ -236,7 +238,9 @@ namespace MAMBrowser.Controllers
         {
             string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
             string userId = HttpContext.Items[Define.USER_ID] as string;
-            return _fileService.TempImageDownload(userId, remoteIp, token, albumToken);
+            var folderPath = MAMUtility.GetTempFolder(_appSesstings.TempDownloadPath, userId, remoteIp);
+            MAMUtility.ClearTempFolder(_appSesstings.TempDownloadPath, userId, remoteIp);
+            return _fileService.LocalImageDownload(folderPath, token, albumToken);
         }
 
         /// <summary>
