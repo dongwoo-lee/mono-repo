@@ -343,6 +343,7 @@ export default {
     ...mapActions("cueList", ["SetProgramCodeOption"]),
     ...mapActions("cueList", ["SetProgramProductIdOption"]),
     ...mapActions("cueList", ["SetProductIds"]),
+    ...mapActions("cueList", ["enableNotification"]),
     async getData() {
       this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;
@@ -453,9 +454,9 @@ export default {
       if (this.selectedIds?.length > 0) {
         this.$bvModal.show("modal-del");
       } else {
-        window.$notify("error", `삭제할 기본 큐시트를 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `삭제할 기본 큐시트를 선택하세요.`,
         });
       }
     },
@@ -480,9 +481,9 @@ export default {
         result.push(cueItem);
       });
       if (result.length == 0) {
-        window.$notify("error", `기본 큐시트를 적용할 요일을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `기본 큐시트를 적용할 요일을 선택하세요.`,
         });
       } else {
         const pram = {
@@ -491,9 +492,9 @@ export default {
         await this.$http
           .post(`/api/DefCueSheet/SaveDefCue`, pram)
           .then((res) => {
-            window.$notify("info", `기본 큐시트 추가완료.`, "", {
-              duration: 10000,
-              permanent: false,
+            this.enableNotification({
+              type: "info",
+              message: `기본 큐시트 추가완료.`,
             });
           });
         this.getData();
@@ -525,15 +526,15 @@ export default {
           },
         })
         .then((res) => {
-          window.$notify("info", `기본 큐시트 삭제완료.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "info",
+            message: `기본 큐시트 삭제완료.`,
           });
         })
         .catch(() => {
-          window.$notify("error", `기본 큐시트 삭제실패.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "error",
+            message: `기본 큐시트 삭제실패.`,
           });
         });
       this.getData();

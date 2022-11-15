@@ -235,6 +235,7 @@ export default {
   methods: {
     ...mapActions("cueList", ["getcuesheetListArrTemp"]),
     ...mapActions("cueList", ["addByTemplate"]),
+    ...mapActions("cueList", ["enableNotification"]),
     async getData() {
       const userId = sessionStorage.getItem(USER_ID);
       this.isTableLoading = this.isScrollLodaing ? false : true;
@@ -275,9 +276,9 @@ export default {
       if (this.selectedIds.length > 0) {
         this.$bvModal.show("modal-del");
       } else {
-        window.$notify("error", `삭제할 템플릿을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `삭제할 템플릿을 선택하세요.`,
         });
       }
     },
@@ -298,15 +299,15 @@ export default {
             },
           })
           .then((res) => {
-            window.$notify("info", `템플릿 삭제완료.`, "", {
-              duration: 10000,
-              permanent: false,
+            this.enableNotification({
+              type: "info",
+              message: `템플릿 삭제완료.`,
             });
           })
           .catch((err) => {
-            window.$notify("error", `템플릿 삭제실패.`, "", {
-              duration: 10000,
-              permanent: false,
+            this.enableNotification({
+              type: "error",
+              message: `템플릿 삭제실패.`,
             });
           });
         this.getData();

@@ -233,6 +233,7 @@ export default {
     ...mapMutations("cueList", ["SET_TEMPCUESHEETLISTARR"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setStartTime"]),
+    ...mapActions("cueList", ["enableNotification"]),
 
     async getData() {
       if (this.state) {
@@ -267,9 +268,9 @@ export default {
     async ok() {
       this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
-        window.$notify("error", `템플릿을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `템플릿을 선택하세요.`,
         });
         this.loadingIconVal = false;
       } else {
@@ -300,9 +301,9 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "error",
+            message: `가져올 항목을 선택하세요.`,
           });
           this.loadingIconVal = false;
         } else {
@@ -353,9 +354,9 @@ export default {
                 );
                 if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_PRINTARR(resultPrintData);
@@ -375,9 +376,9 @@ export default {
                 );
                 if (resultABData.length > 500) {
                   resultABData.splice(500);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_ABCARTARR(resultABData);

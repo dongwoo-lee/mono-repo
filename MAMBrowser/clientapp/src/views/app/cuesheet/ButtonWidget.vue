@@ -793,6 +793,7 @@ export default {
     ...mapActions("cueList", ["getDateStr"]),
     ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("user", ["renewal"]),
+    ...mapActions("cueList", ["enableNotification"]),
 
     //템플릿으로 저장
     async addtemClick() {
@@ -937,15 +938,15 @@ export default {
               this.cueFavorites
             )
             .then((res) => {
-              window.$notify("info", `즐겨찾기 저장완료.`, "", {
-                duration: 10000,
-                permanent: false,
+              this.enableNotification({
+                type: "info",
+                message: `즐겨찾기 저장완료.`,
               });
             })
             .catch((err) => {
-              window.$notify("error", `즐겨찾기 저장실패.`, "", {
-                duration: 10000,
-                permanent: false,
+              this.enableNotification({
+                type: "error",
+                message: `즐겨찾기 저장실패.`,
               });
             });
           break;
@@ -974,9 +975,9 @@ export default {
         pramList.push(ele);
       });
       if (pramList.length == 0) {
-        window.$notify("error", `내려받을 소재가 없습니다.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `내려받을 소재가 없습니다.`,
         });
       } else {
         var downloadName = "";
@@ -1031,9 +1032,9 @@ export default {
         if (ele.cartcode != "") pramList.push(ele);
       });
       if (pramList.length == 0) {
-        window.$notify("error", `내려받을 소재가 없습니다.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `내려받을 소재가 없습니다.`,
         });
       } else {
         let downloadName = "";
@@ -1064,8 +1065,14 @@ export default {
               this.downloadFile(downPath, downloadName);
             }
           })
-          .catch(() => {
-            this.seconds = 0;
+          .catch((err) => {
+            if (err.code === "ECONNABORTED") {
+              this.enableNotification({
+                type: "error",
+                message: `요청시간이 만료되었습니다.`,
+              });
+              this.seconds = 0;
+            }
           });
       }
       this.loadingIconVal = false;
@@ -1097,9 +1104,9 @@ export default {
         )
         .then((res) => {
           if (res.data.resultCode === 0) {
-            window.$notify("info", `소재가 My디스크에 추가되었습니다.`, "", {
-              duration: 10000,
-              permanent: false,
+            this.enableNotification({
+              type: "info",
+              message: `소재가 My디스크에 추가되었습니다.`,
             });
           }
         });
@@ -1122,9 +1129,9 @@ export default {
         return ele.state == true;
       });
       if (stateList.length == 0) {
-        window.$notify("error", `적용요일을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `적용요일을 선택하세요.`,
         });
       } else {
         this.weekButtons.forEach((week, index) => {

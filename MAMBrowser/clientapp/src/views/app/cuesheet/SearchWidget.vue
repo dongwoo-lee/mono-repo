@@ -628,7 +628,7 @@ export default {
       this.subtable_data = [];
     },
     async onSelectionChanged(e) {
-      this.dataGrid.beginCustomLoading("Loading...");
+      e.component.beginCustomLoading("Loading...");
       if (e.selectedRowsData.length > 0) {
         var selectRowData = e.selectedRowsData[0];
         switch (this.searchDataList.id) {
@@ -648,8 +648,8 @@ export default {
             break;
         }
       }
-      this.dataGrid.endUpdate();
-      this.dataGrid.endCustomLoading();
+      e.component.endUpdate();
+      e.component.endCustomLoading();
     },
     itemclick(e) {
       const url = `/api/SearchMenu/GetSearchOption/`;

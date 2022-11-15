@@ -282,6 +282,7 @@ export default {
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
     ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("cueList", ["setStartTime"]),
+    ...mapActions("cueList", ["enableNotification"]),
 
     async getData() {
       if (this.state) {
@@ -293,7 +294,8 @@ export default {
             this.searchItems.end_dt
           )
         ) {
-          this.$fn.notify("error", {
+          this.enableNotification({
+            type: "error",
             message: "시작 날짜가 종료 날짜보다 큽니다.",
           });
           this.hasErrorClass = true;
@@ -326,9 +328,9 @@ export default {
     async ok() {
       this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
-        window.$notify("error", `큐시트를 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `큐시트를 선택하세요.`,
         });
         this.loadingIconVal = false;
       } else {
@@ -359,9 +361,9 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "error",
+            message: `가져올 항목을 선택하세요.`,
           });
           this.loadingIconVal = false;
         } else {
@@ -401,9 +403,9 @@ export default {
                 );
                 if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_PRINTARR(resultPrintData);
@@ -423,9 +425,9 @@ export default {
                 );
                 if (resultABData.length > 500) {
                   resultABData.splice(500);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_ABCARTARR(resultABData);

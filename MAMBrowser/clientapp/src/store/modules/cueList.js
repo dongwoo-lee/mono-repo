@@ -458,33 +458,19 @@ export default {
             });
             return productWeekList;
         },
-        async addByTemplate({ }, payload) {
+        async addByTemplate({ dispatch }, payload) {
             var temLength = 0
             await $http.get(`/api/TempCueSheet/GetTempList?personid=${payload.CueSheetDTO.personid}&row_per_page=100`)
                 .then((res) => {
                     temLength = res.data.resultObject.data.length
                 })
             if (temLength > 49) {
-                window.$notify(
-                    "error",
-                    `템플릿을 더이상 추가할 수 없습니다.`,
-                    '', {
-                    duration: 10000,
-                    permanent: false
-                }
-                )
+                dispatch(`enableNotification`, { type: "error", message: `템플릿을 더이상 추가할 수 없습니다.` });
             } else {
                 await $http
                     .post(`/api/TempCueSheet/SaveByTemp`, payload)
                     .then((res) => {
-                        window.$notify(
-                            "info",
-                            `템플릿 추가완료.`,
-                            '', {
-                            duration: 10000,
-                            permanent: false
-                        }
-                        )
+                        dispatch(`enableNotification`, { type: "info", message: `템플릿 추가완료.` });
                     })
             }
         },
@@ -528,25 +514,10 @@ export default {
                         delete newInfo.cueid
                         commit('SET_CUEINFO', newInfo)
                     })
-                    window.$notify(
-                        "info",
-                        `일일 큐시트 저장완료.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    dispatch(`enableNotification`, { type: "info", message: `일일 큐시트 저장완료.` });
                 })
                 .catch((err => {
-                    console.log("saveDayCue" + err.message);
-                    window.$notify(
-                        "error",
-                        `일일 큐시트 저장실패.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    dispatch(`enableNotification`, { type: "error", message: `일일 큐시트 저장실패.` });
                 }));
 
             if (payload == true) {
@@ -554,46 +525,17 @@ export default {
                     .post(`/api/DayCueSheet/SaveOldCue`, pram)
                     .then(async (res) => {
                         if (res.data == 1) {
-                            window.$notify(
-                                "info",
-                                `(구) DAP에 큐시트 저장완료.`,
-                                '', {
-                                duration: 10000,
-                                permanent: false
-                            }
-                            )
+                            dispatch(`enableNotification`, { type: "info", message: `(구) DAP에 큐시트 저장완료.` });
                         }
                         if (res.data == 0) {
-                            window.$notify(
-                                "error",
-                                `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)`,
-                                '', {
-                                duration: 10000,
-                                permanent: false
-                            }
-                            )
+                            dispatch(`enableNotification`, { type: "error", message: `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)` });
                         }
                         if (res.data == -1) {
-                            window.$notify(
-                                "error",
-                                `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.`,
-                                '', {
-                                duration: 10000,
-                                permanent: false
-                            }
-                            )
+                            dispatch(`enableNotification`, { type: "error", message: `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.` });
                         }
                     })
                     .catch((err) => {
-                        console.log(err)
-                        window.$notify(
-                            "error",
-                            `(구) DAP에 큐시트 저장실패.`,
-                            '', {
-                            duration: 10000,
-                            permanent: false
-                        }
-                        )
+                        dispatch(`enableNotification`, { type: "error", message: `(구) DAP에 큐시트 저장실패.` });
                     })
             }
         },
@@ -605,46 +547,17 @@ export default {
                 .post(`/api/DayCueSheet/SaveOldCue`, pram)
                 .then(async (res) => {
                     if (res.data == 1) {
-                        window.$notify(
-                            "info",
-                            `(구) DAP에 큐시트 저장완료.`,
-                            '', {
-                            duration: 10000,
-                            permanent: false
-                        }
-                        )
+                        dispatch(`enableNotification`, { type: "info", message: `(구) DAP에 큐시트 저장완료.` });
                     }
                     if (res.data == 0) {
-                        window.$notify(
-                            "error",
-                            `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)`,
-                            '', {
-                            duration: 10000,
-                            permanent: false
-                        }
-                        )
+                        dispatch(`enableNotification`, { type: "error", message: `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)` });
                     }
                     if (res.data == -1) {
-                        window.$notify(
-                            "error",
-                            `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.`,
-                            '', {
-                            duration: 10000,
-                            permanent: false
-                        }
-                        )
+                        dispatch(`enableNotification`, { type: "error", message: `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.` });
                     }
                 })
                 .catch((err) => {
-                    console.log(err)
-                    window.$notify(
-                        "error",
-                        `(구) DAP에 큐시트 저장실패.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    dispatch(`enableNotification`, { type: "error", message: `(구) DAP에 큐시트 저장실패.` });
                 })
         },
         //기본큐시트 저장
@@ -696,25 +609,10 @@ export default {
                             commit('SET_CUEINFO', cueInfoData)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(cueInfoData));
                         });
-                    window.$notify(
-                        "info",
-                        `기본 큐시트 저장완료.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    dispatch(`enableNotification`, { type: "info", message: `기본 큐시트 저장완료.` });
                 })
                 .catch((err => {
-                    console.log("saveDefCue" + err);
-                    window.$notify(
-                        "error",
-                        `기본 큐시트 저장실패.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    dispatch(`enableNotification`, { type: "error", message: `기본 큐시트 저장실패.` });
                 }));
         },
         //템플릿 저장
@@ -740,26 +638,10 @@ export default {
                             commit('SET_CUEINFO', newInfo)
                             sessionStorage.setItem("USER_INFO", JSON.stringify(newInfo));
                         });
-                    window.$notify(
-                        "info",
-                        `템플릿 저장완료.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
+                    dispatch(`enableNotification`, { type: "info", message: `템플릿 저장완료.` });
                 })
                 .catch((err => {
-                    console.log("saveTempCue" + err);
-                    window.$notify(
-                        "error",
-                        `템플릿 저장실패.`,
-                        '', {
-                        duration: 10000,
-                        permanent: false
-                    }
-                    )
-
+                    dispatch(`enableNotification`, { type: "error", message: `템플릿 저장실패.` });
                 }));
         },
         saveFavorites({ }, payload) {
@@ -767,155 +649,159 @@ export default {
         },
         //AB, C 필터
         cartCodeFilter({ }, payload) {
-            switch (payload.row.cartcode) {
+            const row = payload.row
+            const search_row = payload.search_row
+            const result = { ...row }
+            // if (search_row.existFile) { result.existFile = true }
+            switch (row.cartcode) {
                 //MY 디스크
                 case "S01G01C007":
-                    payload.row.maintitle = payload.search_row.title;
-                    payload.search_row.memo != null ? payload.row.subtitle = payload.search_row.memo : payload.row.subtitle = '';
+                    result.maintitle = search_row.title;
+                    search_row.memo != null ? result.subtitle = search_row.memo : result.subtitle = '';
                     break;
                 //DL30
                 case "S01G01C006":
-                    payload.row.maintitle = payload.search_row.recName;
-                    payload.row.subtitle = payload.search_row.sourceID;
+                    result.maintitle = search_row.recName;
+                    result.subtitle = search_row.sourceID;
                     break;
                 //음반 기록실
                 case "S01G01C014":
                     // Song으로 변환
-                    payload.row.cartcode = 'S01G01C032'
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.artistName;
-                    payload.row.carttype = "SS";
+                    result.cartcode = 'S01G01C032'
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.artistName;
+                    result.carttype = "SS";
                     break;
                 //Song
                 case "S01G01C032":
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.artistName;
-                    payload.row.carttype = "SS";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.artistName;
+                    result.carttype = "SS";
 
                     break;
                 //효과음
                 case "S01G01C015":
                     // 프로소재로 변환
-                    payload.row.cartcode = 'S01G01C013'
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.categoryName;
-                    payload.row.carttype = "AC";
+                    result.cartcode = 'S01G01C013'
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.categoryName;
+                    result.carttype = "AC";
 
                     break;
                 //프로소재
                 case "S01G01C013":
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.categoryName;
-                    payload.row.carttype = "AC";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.categoryName;
+                    result.carttype = "AC";
                     break;
                 //부조SB
                 case "S01G01C017":
-                    payload.row.maintitle = payload.search_row.name;
-                    if (payload.search_row.brdDT) {
-                        payload.row.subtitle = payload.search_row.pgmName;
-                        payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmcode = payload.search_row.pgmCODE;
-                        payload.row.carttype = "AS";
+                    result.maintitle = search_row.name;
+                    if (search_row.brdDT) {
+                        result.subtitle = search_row.pgmName;
+                        result.onairdate = search_row.brdDT;
+                        result.pgmcode = search_row.pgmCODE;
+                        result.carttype = "AS";
                     } else {
-                        payload.row.subtitle = payload.search_row.categoryName;
-                        payload.row.carttype = payload.search_row.categoryID;
+                        result.subtitle = search_row.categoryName;
+                        result.carttype = search_row.categoryID;
                     }
                     break;
                 //부조 SPOT
                 case "S01G01C010":
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.pgmName;
-                    payload.row.carttype = "ST";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.pgmName;
+                    result.carttype = "ST";
                     break;
                 //프로그램CM
                 case "S01G01C018":
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.carttype = "CM";
-                    if (payload.search_row.brdDT) {
-                        payload.row.subtitle = payload.search_row.status;
-                        payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmcode = payload.search_row.pgmCODE;
+                    result.maintitle = search_row.name;
+                    result.carttype = "CM";
+                    if (search_row.brdDT) {
+                        result.subtitle = search_row.status;
+                        result.onairdate = search_row.brdDT;
+                        result.pgmcode = search_row.pgmCODE;
                     } else {
-                        payload.row.subtitle = payload.search_row.advertiser;
+                        result.subtitle = search_row.advertiser;
                     }
                     break;
                 //CM
                 case "S01G01C019":
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.carttype = "CM";
-                    if (payload.search_row.brdDT) {
-                        payload.row.subtitle = payload.search_row.status;
-                        payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmcode = payload.search_row.pgmCODE;
+                    result.maintitle = search_row.name;
+                    result.carttype = "CM";
+                    if (search_row.brdDT) {
+                        result.subtitle = search_row.status;
+                        result.onairdate = search_row.brdDT;
+                        result.pgmcode = search_row.pgmCODE;
                     } else {
-                        payload.row.subtitle = payload.search_row.advertiser;
+                        result.subtitle = search_row.advertiser;
                     }
                     break;
                 //취재물
                 case "S01G01C012":
-                    payload.row.carttype = "RC";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.pgmName;
+                    result.carttype = "RC";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.pgmName;
                     break;
                 // Filler(PR)
                 case "S01G01C021":
-                    payload.row.carttype = "FC";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.categoryName;
-                    payload.row.cartid = payload.search_row.id;
+                    result.carttype = "FC";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.categoryName;
+                    result.cartid = search_row.id;
                     break;
                 // Filler(소재)
                 case "S01G01C022":
-                    payload.row.carttype = "FC";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.categoryName;
-                    payload.row.cartid = payload.search_row.id;
+                    result.carttype = "FC";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.categoryName;
+                    result.cartid = search_row.id;
                     break;
                 // Filler(시간)
                 case "S01G01C023":
-                    payload.row.carttype = "FC";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.status;
-                    payload.row.cartid = payload.search_row.id;
+                    result.carttype = "FC";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.status;
+                    result.cartid = search_row.id;
                     break;
                 // Filler(기타)
                 case "S01G01C024":
-                    payload.row.carttype = "FC";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.categoryName;
-                    payload.row.cartid = payload.search_row.id;
+                    result.carttype = "FC";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.categoryName;
+                    result.cartid = search_row.id;
                     break;
                 // 프로그램
                 case "S01G01C009":
-                    payload.row.carttype = "PM";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.status;
+                    result.carttype = "PM";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.status;
                     break;
                 // 주조SB
                 case "S01G01C016":
-                    payload.row.maintitle = payload.search_row.name;
-                    if (payload.search_row.brdDT) {
-                        payload.row.subtitle = payload.search_row.id;
-                        payload.row.onairdate = payload.search_row.brdDT;
-                        payload.row.pgmcode = payload.search_row.pgmCODE;
-                        payload.row.carttype = "AS";
+                    result.maintitle = search_row.name;
+                    if (search_row.brdDT) {
+                        result.subtitle = search_row.id;
+                        result.onairdate = search_row.brdDT;
+                        result.pgmcode = search_row.pgmCODE;
+                        result.carttype = "AS";
                     } else {
-                        payload.row.subtitle = payload.search_row.categoryName;
-                        payload.row.carttype = payload.search_row.categoryID;
+                        result.subtitle = search_row.categoryName;
+                        result.carttype = search_row.categoryID;
                     }
 
                     break;
                 // 주조SPOT
                 case "S01G01C020":
-                    payload.row.carttype = "MS";
-                    payload.row.maintitle = payload.search_row.name;
-                    payload.row.subtitle = payload.search_row.brdDT;
+                    result.carttype = "MS";
+                    result.maintitle = search_row.name;
+                    result.subtitle = search_row.brdDT;
                     break;
 
                 default:
                     break;
             }
-            return payload.row
+            return result
         },
         setCueConData({ state, commit }, payload) {
             commit('SET_ABCARTARR', payload.normalCon);
@@ -1061,12 +947,17 @@ export default {
             })
             return list
         },
-        maxLengthChecker({ }, payload) {
+        enableNotification({ }, payload) {
+            const type = payload.type;
+            const msg = payload.message
+            window.$notify(type, msg, "", {
+                duration: 10000,
+                permanent: false,
+            })
+        },
+        maxLengthChecker({ dispatch }, payload) {
             if (payload.arrLength >= payload.maxLength) {
-                window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
-                });
+                dispatch(`enableNotification`, { type: "error", message: `최대 개수를 초과하였습니다.` });
                 return false;
             } else {
                 return true;
@@ -1129,7 +1020,7 @@ export default {
                                 }
                                 row.cartid = search_row.id;
                                 row.cartcode = cartcode;
-                                dispatch(`cartCodeFilter`, ({
+                                row = dispatch(`cartCodeFilter`, ({
                                     row: row,
                                     search_row: search_row,
                                 }));
@@ -1215,7 +1106,7 @@ export default {
                                 }
                                 row.cartid = search_row.id;
                                 row.cartcode = cartcode;
-                                dispatch(`cartCodeFilter`, ({
+                                row = dispatch(`cartCodeFilter`, ({
                                     row: row,
                                     search_row: search_row,
                                 }));

@@ -95,7 +95,7 @@
 import DxFileUploader from "devextreme-vue/file-uploader";
 import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import { USER_ID } from "@/constants/config";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
@@ -184,6 +184,7 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_ATTACHMENTS"]),
+    ...mapActions("cueList", ["enableNotification"]),
     async onFileDelete(file) {
       if (!file.fileid) {
         await this.$http
@@ -198,22 +199,11 @@ export default {
               return item.filepath != file.filepath;
             });
             this.SET_ATTACHMENTS(resultArray);
-            // window.$notify("info", `삭제완료.`, "", {
-            //   duration: 10000,
-            //   permanent: false,
-            // });
           })
           .catch((err) => {
-            window.$notify("error", `삭제실패.`, "", {
-              duration: 10000,
-              permanent: false,
-            });
+            this.enableNotification({ type: "error", message: `삭제실패.` });
           });
       } else {
-        // window.$notify("info", `삭제완료.`, "", {
-        //   duration: 10000,
-        //   permanent: false,
-        // });
         file.delstate = true;
       }
     },
@@ -239,9 +229,9 @@ export default {
           }
         })
         .catch((err) => {
-          window.$notify("error", `파일 다운로드 오류.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "error",
+            message: `파일 다운로드 오류.`,
           });
         });
     },
