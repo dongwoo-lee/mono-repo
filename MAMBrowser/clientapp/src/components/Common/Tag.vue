@@ -65,20 +65,21 @@ export default {
     ...mapMutations("cueList", ["SET_TAGS"]),
     onValueChanged(e) {
       if (this.tags !== e.value) {
-        let tagItem = "";
         const result = new Set();
+        let emp = true;
         e.value.filter((tag) => {
           const item = tag.text
             .replace(/[^\w\s|ㄱ-ㅎ|가-힣|,]/gi, "")
             .replace(/ /g, "");
           if (!!item) {
             result.add(item);
-            tagItem = item;
+          } else {
+            emp = false;
           }
         });
         const resultArr = Array.from(result);
-        if (tagItem && this.tags.length === resultArr.length) {
-          this.$emit("sameTagError", tagItem);
+        if (emp && this.tags.length === resultArr.length) {
+          this.$emit("sameTagError");
         }
         this.SET_TAGS(resultArr);
         this.isAccept = result.size >= this.maxTagCount ? true : false;
