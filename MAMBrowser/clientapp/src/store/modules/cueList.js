@@ -652,7 +652,7 @@ export default {
             const row = payload.row
             const search_row = payload.search_row
             const result = { ...row }
-            // if (search_row.existFile) { result.existFile = true }
+            if (search_row.existFile) { result.existFile = true }
             switch (row.cartcode) {
                 //MY 디스크
                 case "S01G01C007":
@@ -1020,18 +1020,21 @@ export default {
                                 }
                                 row.cartid = search_row.id;
                                 row.cartcode = cartcode;
-                                row = dispatch(`cartCodeFilter`, ({
+                                row = await dispatch(`cartCodeFilter`, ({
                                     row: row,
                                     search_row: search_row,
                                 }));
-                                return row;
+                                if (row.existFile || (row.cartcode != '' && row.onairdate != '')) {
+                                    return row;
+                                } else {
+                                    return null;
+                                }
                             }
 
                         default:
                             break;
                     }
                     break;
-
                 case "print":
                     switch (search_row.contentType) {
                         case "AB":
@@ -1047,20 +1050,28 @@ export default {
                             return row;
 
                         case "S":
-                            row = { ...formRowData };
-                            row.usedtime = search_row.intDuration;
-                            switch (cartcode) {
-                                case "S01G01C007":
-                                    row.contents = search_row.title;
-                                    break;
-                                case "S01G01C006":
-                                    row.contents = search_row.recName;
-                                    break;
-                                default:
-                                    row.contents = search_row.name;
-                                    break;
+                            const obj = await dispatch(`cartCodeFilter`, ({
+                                row: { cartcode, onairdate: '' },
+                                search_row: search_row,
+                            }));
+                            if (obj.existFile || (obj.cartcode != '' && obj.onairdate != '')) {
+                                row = { ...formRowData };
+                                row.usedtime = search_row.intDuration;
+                                switch (cartcode) {
+                                    case "S01G01C007":
+                                        row.contents = search_row.title;
+                                        break;
+                                    case "S01G01C006":
+                                        row.contents = search_row.recName;
+                                        break;
+                                    default:
+                                        row.contents = search_row.name;
+                                        break;
+                                }
+                                return row;
+                            } else {
+                                return null;
                             }
-                            return row;
                         default:
                             break;
                     }
@@ -1106,11 +1117,15 @@ export default {
                                 }
                                 row.cartid = search_row.id;
                                 row.cartcode = cartcode;
-                                row = dispatch(`cartCodeFilter`, ({
+                                row = await dispatch(`cartCodeFilter`, ({
                                     row: row,
                                     search_row: search_row,
                                 }));
-                                return row;
+                                if (row.existFile || (row.cartcode != '' && row.onairdate != '')) {
+                                    return row;
+                                } else {
+                                    return null;
+                                }
                             }
 
                         default:

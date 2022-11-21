@@ -143,11 +143,7 @@
                   type="default"
                   hint="미리듣기/음원편집"
                   @click="onPreview(fileData[index - 1])"
-                  v-if="
-                    fileData[index - 1].onairdate == '' &&
-                    fileData[index - 1].filepath != null &&
-                    fileData[index - 1].filepath != ''
-                  "
+                  v-if="fileData[index - 1].existFile"
                 />
                 <DxButton
                   icon="music"
@@ -318,10 +314,10 @@ export default {
         fadeouttime: false,
         filetoken: "", //미리듣기 때문 바뀔수도있음
         filepath: "",
+        existFile: false,
         maintitle: "",
         memo: "", //바뀔수도있음
         onairdate: "",
-        //rownum: 0,
         startposition: 0,
         subtitle: "",
         transtype: "S",
@@ -482,6 +478,7 @@ export default {
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setContents"]),
+    ...mapActions("cueList", ["enableNotification"]),
     // 드래그 추가 시
     async onAdd(e, totalIndex) {
       this.loadingVisible = true;
@@ -502,7 +499,6 @@ export default {
         selectedRowsData = this.blankFilter(selectedRowsData);
         //모든 필터확인해서 남은 개수 보다 넘는 배열은 잘라내기
         selectedRowsData = this.checkMaxWidgetIndex(selectedRowsData);
-
         for (const data of selectedRowsData) {
           if (Object.keys(data).includes("subtitle")) {
             //ab
@@ -534,6 +530,11 @@ export default {
           if (rowData) {
             arrData.splice(totalIndex - 1 + index, 1, rowData);
             index++;
+          } else {
+            this.enableNotification({
+              type: "error",
+              message: `사용할 수 없는 소재입니다.`,
+            });
           }
         }
         if (this.channelKey == "channel_my") {
@@ -618,15 +619,10 @@ export default {
 
       //광고 그룹 있을 시
       if (groupBool) {
-        window.$notify(
-          "error",
-          `CM, SB 소재는 즐겨찾기에 추가할 수 없습니다.`,
-          "",
-          {
-            duration: 10000,
-            permanent: false,
-          }
-        );
+        this.enableNotification({
+          type: "error",
+          message: `CM, SB 소재는 즐겨찾기에 추가할 수 없습니다.`,
+        });
       }
       return obj;
     },

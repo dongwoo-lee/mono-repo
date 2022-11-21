@@ -142,6 +142,7 @@ namespace MAMBrowser.Utils
                     favItem.FILEPATH = "";
                     favItem.FILETOKEN = "";
                 }
+                if (string.IsNullOrEmpty(favItem.FILEPATH)) { favItem.ExistFile = false; } else { favItem.ExistFile = true; }
                 favList.Add(favItem);
             }
 
@@ -185,6 +186,7 @@ namespace MAMBrowser.Utils
             collectionDTO.CueSheetDTO.HEADERTITLE = entity.CueSheetEntity.HEADERTITLE ?? "";
             collectionDTO.CueSheetDTO.MEMBERNAME = entity.CueSheetEntity.MEMBERNAME ?? "";
             collectionDTO.CueSheetDTO.MEMO = entity.CueSheetEntity.MEMO ?? "";
+            
 
             foreach (DayCueSheetEntity item in entity.CueSheetEntity.Detail)
             {
@@ -865,6 +867,7 @@ namespace MAMBrowser.Utils
                     con.FILEPATH = "";
                     con.FILETOKEN = "";
                 }
+                if (string.IsNullOrEmpty(con.FILEPATH)) { con.ExistFile = false; } else { con.ExistFile = true; }
                 if (item.CHANNELTYPE == "N")
                 {
                     con.ROWNUM = item.SEQNUM;

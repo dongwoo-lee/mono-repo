@@ -282,7 +282,7 @@
                 icon="music"
                 type="default"
                 hint="미리듣기/음원편집"
-                v-if="data.data.filepath != null && data.data.filepath != ''"
+                v-if="data.data.existFile"
                 @click="onPreview(data.data)"
               />
             </div>
@@ -391,8 +391,8 @@ export default {
       rowData: {
         carttype: "",
         onairdate: "",
-        cartid: "", // 소재ID
-        cartcode: "", //그룹코드
+        cartid: "",
+        cartcode: "",
         startposition: 0,
         endposition: 0, //millisecond
         fadeintime: false,
@@ -400,10 +400,11 @@ export default {
         transtype: "S",
         maintitle: "",
         subtitle: "",
-        memo: "", //바뀔수도있음
+        memo: "",
         rownum: 1,
-        filetoken: "", //미리듣기 때문 바뀔수도있음
+        filetoken: "",
         filepath: "",
+        existFile: false,
         duration: 0, //string
         useflag: "Y",
       },
@@ -444,6 +445,7 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapActions("cueList", ["setContents"]),
     ...mapActions("cueList", ["maxLengthChecker"]),
+    ...mapActions("cueList", ["enableNotification"]),
     //드래그 추가 시
     async onAddChannelAB(e) {
       var rowArray = [];
@@ -503,8 +505,15 @@ export default {
           if (rowData) {
             arrData.splice(e.toIndex + index, 0, rowData);
             index++;
+          } else {
+            this.enableNotification({
+              type: "error",
+              message: `사용할 수 없는 소재입니다.`,
+            });
           }
         }
+        //합친 배열 store에 추가 (end)
+
         this.setRownum(arrData);
         this.SET_ABCARTARR(arrData);
         this.dataGrid.endUpdate();
