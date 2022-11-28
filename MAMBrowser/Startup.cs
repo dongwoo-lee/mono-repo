@@ -25,6 +25,7 @@ using M30_CueSheetDAO;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.Hubs;
+using MAMBrowser.Workers;
 
 namespace MAMBrowser
 {
@@ -62,6 +63,7 @@ namespace MAMBrowser
                 configuration.RootPath = "ClientApp";
             });
             services.AddSignalR();
+            services.AddHostedService<WebCueSheetServiceWorker>();
 
             StorageFactorySetting(services);
             DISetting(services);

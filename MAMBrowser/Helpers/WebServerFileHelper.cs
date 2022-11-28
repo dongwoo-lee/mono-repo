@@ -255,31 +255,5 @@ namespace MAMBrowser.Helper
 
         }
 
-        //public AudioFileReader FadeInOutWavFile(string filePath, bool fadeIn, bool fadeOut)
-        //{
-        //    var audio = new AudioFileReader(filePath);
-        //    var fade = new DelayFadeOutSampleProvider(audio);
-        //        //fadeOut.BeginFadeOut(ele.ENDPOSITION - ele.STARTPOSITION - 2000, 2000);
-        //        //WaveFileWriter.CreateWaveFile16(fadeOutFilePath, fadeOut);
-        //    if (fadeIn)
-        //    {
-        //        var fadeInPath = Path.Combine(Path.GetDirectoryName(filePath), "_fadeIn_" + Path.GetFileName(filePath));
-        //        fade.BeginFadeIn(2000);
-        //        audio = new AudioFileReader(fadeInPath);
-        //        WaveFileWriter.CreateWaveFile16(fadeInPath, audio);
-
-        //    }
-        //    if (fadeOut)
-        //    {
-        //        var fadeOutPath = Path.Combine(Path.GetDirectoryName(filePath), "_fadeOut_" + Path.GetFileName(filePath));
-        //        fade.BeginFadeOut()
-
-        //    }
-        //    return null;
-        //}
-
-
-
-
     }
 }
