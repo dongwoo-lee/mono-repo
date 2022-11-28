@@ -25,7 +25,7 @@
                   <span class="subtitle_css">●</span>
                   최종 편집 일시 :
                   <span>{{
-                    $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                    $moment(cueInfo.edittime).format("YYYY-MM-DD HH:mm:ss")
                   }}</span>
                 </span>
               </div>

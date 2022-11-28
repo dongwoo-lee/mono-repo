@@ -376,14 +376,14 @@
       ref="modal-export-zip"
       size="lg"
       centered
-      title="내보내기"
+      title="큐시트 로컬 저장"
       ok-title="확인"
       cancel-title="취소"
       @ok="exportZip"
     >
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
-          <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
+          <div class="mb-3">작성한 큐시트를 zip 파일로 묶어 저장합니다.</div>
           <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
         </div>
       </div>
@@ -412,7 +412,7 @@
       ref="modal-export-wav"
       size="xl"
       centered
-      title="Wav 내보내기"
+      title="Wav로 저장(A,B)"
       ok-title="확인"
       cancel-title="취소"
       @ok="OnExportWav"

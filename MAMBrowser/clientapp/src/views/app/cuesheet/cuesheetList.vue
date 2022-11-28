@@ -22,6 +22,8 @@
             :maxPeriodMonth="6"
             :required="false"
             :isCurrentDate="false"
+            @SEDateEvent="onSearch"
+            @SDateError="SDateErrorLog"
           />
           <!-- 매체 -->
           <b-form-group label="매체" class="has-float-label">
@@ -279,6 +281,12 @@ export default {
       this.status = "accepted";
       this.searchItems.tag = tag;
       this.getData();
+    },
+    SDateErrorLog() {
+      this.$fn.notify("error", {
+        message: "시작 날짜가 종료 날짜보다 큽니다.",
+      });
+      this.hasErrorClass = true;
     },
   },
 };

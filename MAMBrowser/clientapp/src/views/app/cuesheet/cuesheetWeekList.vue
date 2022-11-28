@@ -376,6 +376,7 @@ export default {
         this.searchItems.pgmcode = "";
         this.searchItems.productid = this.selectMediaAllProductIds;
       }
+      this.onSearch();
     },
     async onMediaChange_modal(e) {
       if (e === "") {

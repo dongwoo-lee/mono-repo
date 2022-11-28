@@ -228,6 +228,7 @@ export default {
         this.searchItems.pgmcode = "";
         this.searchItems.productid = this.selectMediaAllProductIds;
       }
+      this.onSearch();
     },
     async onPgmChange(e) {
       if (e) {
@@ -251,7 +252,6 @@ export default {
       this.searchItems.pgmcode = "";
       this.searchItems.productid = "";
       this.pgmList = await this.GetSchPgmList(this.pramObj);
-
       [this.mediaOptions, this.programOptions, this.productIds] =
         await Promise.all([
           this.SetMediaOption(this.pgmList),
@@ -260,6 +260,7 @@ export default {
         ]);
 
       this.searchItems.productid = this.productIds;
+      this.onSearch();
     },
   },
 };

@@ -39,7 +39,7 @@
                   <span>{{
                     cueInfo.edittime == null
                       ? ""
-                      : $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                      : $moment(cueInfo.edittime).format("YYYY-MM-DD HH:mm:ss")
                   }}</span>
                 </span>
               </div>
