@@ -1770,19 +1770,19 @@ let searchMenuList = {
           options: [
             {
               id: "albumName",
-              text: "앨범명",
+              text: "음반명",
               value: "",
               type: "T",
             },
             {
               id: "artistName",
-              text: "가수명",
+              text: "아티스트",
               value: "",
               type: "T",
             },
             {
               id: "title",
-              text: "제목",
+              text: "곡명",
               value: "",
               type: "T",
             },
