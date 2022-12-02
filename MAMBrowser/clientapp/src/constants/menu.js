@@ -64,6 +64,11 @@ const data = [
         label: "menu.sound-effect", // 효과음
         to: "/app/sound-effect",
       },
+      {
+        icon: "iconsminds-clef",
+        label: "menu.sound-songcache", // Song
+        to: "/app/sound-songcache",
+      },
     ]
   },
   {
@@ -131,16 +136,6 @@ const data = [
     icon: "iconsminds-testimonal",
     label: "menu.cuesheet",
     subs: [
-      {
-        icon: "iconsminds-notepad",
-        label: "menu.cuesheet-old-list", // (구)DAP 목록
-        to: "/app/cuesheet/old/list",
-      },
-      {
-        icon: "iconsminds-notepad",
-        label: "menu.cuesheet-old-detail", // (구)DAP 작성
-        to: "/app/cuesheet/old/detail",
-      },
       {
         icon: "iconsminds-notepad",
         label: "menu.cuesheet-day-list", // 일큐시트 목록

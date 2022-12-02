@@ -30,17 +30,12 @@
             <b-form-select
               style="width: 100px"
               v-model="searchItems.media"
-              :options="mediasOption"
-              @change="eventClick($event)"
+              :options="mediaOptions"
             />
           </b-form-group>
           <!-- 프로그램명 -->
           <b-form-group label="프로그램명" class="has-float-label">
-            <b-form-select
-              style="width: 400px"
-              v-model="searchItems.productid"
-              :options="programList"
-            />
+            <common-input-text v-model="searchItems.title" />
           </b-form-group>
           <!-- 검색 버튼 -->
           <b-form-group>
@@ -85,7 +80,9 @@
         text-field="name"
         disabled-field="notEnabled"
         plain
-      ></b-form-checkbox-group>
+      >
+        <span class="check-items-msg"> ※ 첨부파일은 가져올 수 없습니다. </span>
+      </b-form-checkbox-group>
       <b-form-radio-group
         v-model="importSelected"
         :options="importOptions"
@@ -130,22 +127,21 @@ function get_date_str(date) {
 }
 
 var endDay = get_date_str(date);
-
 date.setDate(date.getDate() - 7);
 var startDay = get_date_str(date);
 export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      date,
       state: false,
       loadingIconVal: false,
-      date,
-      programList: [{ value: "", text: "매체를 선택하세요" }],
+      mediaOptions: [],
       searchItems: {
-        start_dt: "", // 시작일
-        end_dt: "", // 종료일
+        start_dt: startDay, // 시작일
+        end_dt: endDay, // 종료일
         media: "", // 매체
-        productid: "", // 프로그램명
+        title: "",
         rowPerPage: 30,
         selectPage: 1,
       },
@@ -211,11 +207,14 @@ export default {
         },
       ],
       allCheck: true,
-      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4"],
+      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4", "tags", "memo"],
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "태그", value: "tags", notEnabled: true },
+        { name: "메모", value: "memo", notEnabled: true },
+        { name: "C1", value: "c1", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
         { name: "C3", value: "c3", notEnabled: true },
@@ -223,7 +222,7 @@ export default {
       ],
       importOptions: [
         { text: "덮어쓰기", value: "add" },
-        { text: "붙여넣기 (C채널 제외)", value: "update" },
+        { text: "붙여넣기", value: "update" },
       ],
     };
   },
@@ -231,7 +230,16 @@ export default {
     state: function (val) {
       this.getData();
       if (!val) {
-        (this.MenuSelected = ["print", "ab", "c1", "c2", "c3", "c4"]),
+        (this.MenuSelected = [
+          "print",
+          "ab",
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "tags",
+          "memo",
+        ]),
           this.MenuOptions.forEach((item) => {
             item.notEnabled = true;
           });
@@ -258,60 +266,48 @@ export default {
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["archiveCuesheetListArr"]),
-    ...mapGetters("cueList", ["userProOption"]),
-    ...mapGetters("cueList", ["mediasOption"]),
-    ...mapGetters("cueList", ["userProList"]),
   },
-  mounted() {
-    this.searchItems.start_dt = startDay;
-    this.searchItems.end_dt = endDay;
+  async mounted() {
+    const allMedia = [{ media: "A" }, { media: "F" }, { media: "D" }];
+    this.mediaOptions = await this.SetMediaOption(allMedia);
+    this.getData();
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_PRINTARR"]),
+    ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_ARCHIVECUESHEETLISTARR"]),
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
-    ...mapActions("cueList", ["getMediasOption"]),
-    ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("cueList", ["setStartTime"]),
+    ...mapActions("cueList", ["enableNotification"]),
 
     async getData() {
       if (this.state) {
         this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
         this.isTableLoading = this.isScrollLodaing ? false : true;
-        var temmedia = await this.eventClick();
         if (
           this.$fn.checkGreaterStartDate(
             this.searchItems.start_dt,
             this.searchItems.end_dt
           )
         ) {
-          this.$fn.notify("error", {
+          this.enableNotification({
+            type: "error",
             message: "시작 날짜가 종료 날짜보다 큽니다.",
           });
           this.hasErrorClass = true;
           return;
         }
-        if (this.searchItems.productid == "") {
-          var pram = { person: null, gropId: null };
-          await this.getMediasOption(pram);
-          this.searchItems.productid = this.userProList;
-        }
-        if (this.searchItems.productid == undefined) {
-          this.searchItems.productid = this.userProList;
-        }
-        var params = {
-          start_dt: this.searchItems.start_dt,
-          end_dt: this.searchItems.end_dt,
-          products: this.searchItems.productid,
-          row_per_page: this.searchItems.rowPerPage,
-          select_page: this.searchItems.selectPage,
-        };
-        if (typeof params.products == "string") {
-          params.products = [params.products];
-        }
+        const params = {};
+        params.start_dt = this.searchItems.start_dt;
+        params.end_dt = this.searchItems.end_dt;
+        if (this.searchItems.media) params.media = this.searchItems.media;
+        params.title = this.searchItems.title;
+        params.row_per_page = this.searchItems.rowPerPage;
+        params.select_page = this.searchItems.selectPage;
         await this.$http
           .post(`/api/ArchiveCueSheet/GetArchiveCueList`, params)
           .then((res) => {
@@ -332,9 +328,9 @@ export default {
     async ok() {
       this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
-        window.$notify("error", `큐시트를 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `큐시트를 선택하세요.`,
         });
         this.loadingIconVal = false;
       } else {
@@ -365,9 +361,9 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "error",
+            message: `가져올 항목을 선택하세요.`,
           });
           this.loadingIconVal = false;
         } else {
@@ -401,16 +397,15 @@ export default {
                   responseCuesheetCollection.cueSheetDTO.headertitle;
                 oldCueInfo.membername =
                   responseCuesheetCollection.cueSheetDTO.membername;
-                oldCueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(
                   responseCuesheetCollection.printDTO
                 );
                 if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_PRINTARR(resultPrintData);
@@ -430,13 +425,21 @@ export default {
                 );
                 if (resultABData.length > 500) {
                   resultABData.splice(500);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_ABCARTARR(resultABData);
                 eventBus.$emit("abDataSet");
+              }
+              //태그
+              this.MenuSelected.includes("tags") &&
+                this.SET_TAGS(responseCuesheetCollection.tags);
+              //메모
+              if (this.MenuSelected.includes("memo")) {
+                this.cueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
+                this.SET_CUEINFO(this.cueInfo);
               }
               var pram = {
                 data: responseCuesheetCollection.instanceCon,
@@ -450,26 +453,21 @@ export default {
         }
       }
     },
-    //매체 선택시 프로그램 목록 가져오기
-    eventClick(e) {
-      this.getProductName(e);
-    },
-    async getProductName(media) {
-      var pram = { person: null, gropId: null, media: media };
-      var proOption = await this.getuserProOption(pram);
-      this.programList = this.userProOption;
-      this.searchItems.productid = this.userProList;
-    },
   },
 };
 </script>
 <style>
 .import-check-items {
   position: absolute;
+  display: flex;
   left: 40px;
   font-size: 13px;
 }
 .import-check-items .form-check-inline {
   margin-right: 20px !important;
+}
+.check-items-msg {
+  color: gray;
+  line-height: 28px;
 }
 </style>

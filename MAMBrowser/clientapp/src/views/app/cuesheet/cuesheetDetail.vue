@@ -39,7 +39,7 @@
                   <span>{{
                     cueInfo.edittime == null
                       ? ""
-                      : $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                      : $moment(cueInfo.edittime).format("YYYY-MM-DD HH:mm:ss")
                   }}</span>
                 </span>
               </div>
@@ -54,6 +54,13 @@
                     <template #default>
                       <div>
                         <PrintWidget :printHeight="printHeight" />
+                      </div>
+                    </template>
+                  </DxItem>
+                  <DxItem title="부가정보">
+                    <template #default>
+                      <div>
+                        <AdditionalWidget :valueItems="tags" />
                       </div>
                     </template>
                   </DxItem>
@@ -132,6 +139,7 @@ import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
 import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
+import AdditionalWidget from "./AdditionalInformationWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
@@ -150,6 +158,7 @@ export default {
     AbchannelWidget,
     SortableWidget,
     DxLoadPanel,
+    AdditionalWidget,
   },
 
   data() {
@@ -176,6 +185,7 @@ export default {
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("cueList", ["proUserList"]),
+    ...mapGetters("cueList", ["tags"]),
   },
   methods: {
     ...mapActions("cueList", ["setCueConData"]),
@@ -189,7 +199,6 @@ export default {
       };
       var archiveConData = await this.getarchiveCuesheetCon(params);
       if (archiveConData) {
-        console.log(archiveConData);
         this.SET_CUEINFO(archiveConData.cueSheetDTO);
         this.setCueConData(archiveConData);
         this.getProUserList(rowData.productid);

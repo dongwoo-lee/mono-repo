@@ -37,7 +37,6 @@
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
     <PackageReference Include="DevExpress.Xpo" Version="20.2.3" />
     <PackageReference Include="FluentFTP" Version="33.0.2" />
-    <PackageReference Include="M30_CueSheetDAO" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
@@ -62,7 +61,7 @@
     <Reference Include="M30.AudioEngine">
       <HintPath>RefFiles\M30.AudioEngine.dll</HintPath>
     </Reference>
-    <Reference Include="M30.AudioFile.Common">
+      <Reference Include="M30.AudioFile.Common">
       <HintPath>RefFiles\M30.AudioFile.Common.dll</HintPath>
     </Reference>
     <Reference Include="M30.AudioFile.DAL">

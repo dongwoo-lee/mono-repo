@@ -41,7 +41,8 @@
                   class="iconsminds-cd-2"
                   v-if="
                     fileData[index - 1].cartcode == 'S01G01C014' ||
-                    fileData[index - 1].cartcode == 'S01G01C015'
+                    fileData[index - 1].cartcode == 'S01G01C015' ||
+                    fileData[index - 1].cartcode == 'S01G01C032'
                   "
                 ></i>
                 <i
@@ -142,11 +143,7 @@
                   type="default"
                   hint="미리듣기/음원편집"
                   @click="onPreview(fileData[index - 1])"
-                  v-if="
-                    fileData[index - 1].onairdate == '' &&
-                    fileData[index - 1].filepath != null &&
-                    fileData[index - 1].filepath != ''
-                  "
+                  v-if="fileData[index - 1].existFile"
                 />
                 <DxButton
                   icon="music"
@@ -317,10 +314,10 @@ export default {
         fadeouttime: false,
         filetoken: "", //미리듣기 때문 바뀔수도있음
         filepath: "",
+        existFile: false,
         maintitle: "",
         memo: "", //바뀔수도있음
         onairdate: "",
-        //rownum: 0,
         startposition: 0,
         subtitle: "",
         transtype: "S",
@@ -451,7 +448,6 @@ export default {
     ...mapGetters("cueList", ["searchListData"]),
     ...mapGetters("cueList", ["cChannelData"]),
     ...mapGetters("cueList", ["cueFavorites"]),
-    ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("cueList", ["cueInfo"]),
     sortableColor() {
       return (index) => {
@@ -482,6 +478,7 @@ export default {
     ...mapActions("cueList", ["setInstanceCon"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setContents"]),
+    ...mapActions("cueList", ["enableNotification"]),
     // 드래그 추가 시
     async onAdd(e, totalIndex) {
       this.loadingVisible = true;
@@ -502,7 +499,6 @@ export default {
         selectedRowsData = this.blankFilter(selectedRowsData);
         //모든 필터확인해서 남은 개수 보다 넘는 배열은 잘라내기
         selectedRowsData = this.checkMaxWidgetIndex(selectedRowsData);
-
         for (const data of selectedRowsData) {
           if (Object.keys(data).includes("subtitle")) {
             //ab
@@ -531,8 +527,15 @@ export default {
             index: index,
             toIndex: totalIndex,
           });
-          arrData.splice(totalIndex - 1 + index, 1, rowData);
-          index++;
+          if (rowData) {
+            arrData.splice(totalIndex - 1 + index, 1, rowData);
+            index++;
+          } else {
+            this.enableNotification({
+              type: "error",
+              message: `사용할 수 없는 소재입니다.`,
+            });
+          }
         }
         if (this.channelKey == "channel_my") {
           //즐겨찾기
@@ -546,8 +549,37 @@ export default {
       }
       this.loadingVisible = false;
     },
-    // 드래그 시작 시
+    searchTabIndex(text) {
+      switch (text) {
+        case "C1":
+          this.$emit("tabItemMove", 2);
+          break;
+        case "C2":
+          this.$emit("tabItemMove", 3);
+          break;
+        case "C3":
+          this.$emit("tabItemMove", 4);
+          break;
+        case "C4":
+          this.$emit("tabItemMove", 5);
+          break;
+        case "즐겨찾기":
+          this.$emit("tabItemMove", 6);
+          break;
+        default:
+          break;
+      }
+    },
+    getCoordinates(e) {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      const element = document.elementsFromPoint(mouseX, mouseY);
+      element.forEach((node) => {
+        node.tagName === "SPAN" && this.searchTabIndex(node.innerText);
+      });
+    },
     onDragStart(e) {
+      document.addEventListener("mousemove", this.getCoordinates);
       document.getElementById("app-container").classList.add("drag_");
       if (
         this.cueInfo.cuetype == "A" ||
@@ -563,6 +595,7 @@ export default {
     // 드래그 종료 시
     onDragEnd() {
       document.getElementById("app-container").classList.remove("drag_");
+      document.removeEventListener("mousemove", this.getCoordinates);
     },
     // 즐겨찾기 광고 그룹 필터
     sponsorFilter_Fav(obj) {
@@ -586,15 +619,10 @@ export default {
 
       //광고 그룹 있을 시
       if (groupBool) {
-        window.$notify(
-          "error",
-          `CM, SB 소재는 즐겨찾기에 추가할 수 없습니다.`,
-          "",
-          {
-            duration: 10000,
-            permanent: false,
-          }
-        );
+        this.enableNotification({
+          type: "error",
+          message: `CM, SB 소재는 즐겨찾기에 추가할 수 없습니다.`,
+        });
       }
       return obj;
     },
@@ -718,13 +746,8 @@ export default {
 }
 .cart_div {
   background-color: #ededed;
-  /* background-color: #008ecc; */
-  /* opacity: 0.7; */
   overflow: auto;
   border-radius: 5px;
-
-  /* background-color: #EFF0F2; */
-  /* border-radius: 10px; */
 }
 .actionBtn .dx-button-content {
   width: 20px;
@@ -741,47 +764,33 @@ export default {
   padding-left: 3px;
   width: 28px;
 }
-/* .sortableView {
-  background: linear-gradient(45deg, #f5709d, #f0a39a);
-  background: linear-gradient(45deg, #f791b1, #ed9671);
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
-  color: white;
-  padding: 5px;
-  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
-    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
-} */
 .backColor_1 {
   padding: 5px;
-  border: solid 3px rgb(211, 145, 145);
+  border: solid 3px #009efa;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_2 {
   padding: 5px;
-  border: solid 3px rgb(153, 211, 145);
-
+  border: solid 3px #00c9a7;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_3 {
   padding: 5px;
-  border: solid 3px rgb(149, 145, 211);
-
+  border: solid 3px #d83121;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_4 {
   padding: 5px;
-  border: solid 3px rgb(211, 145, 205);
-
+  border: solid 3px #ffc75f;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
 .backColor_my {
   padding: 5px;
-  border: solid 3px rgb(155, 161, 63);
-
+  border: solid 3px #b0a8b9;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: white;
 }
@@ -797,7 +806,6 @@ export default {
   float: right;
 }
 .blankView {
-  /* height: 100%; */
   color: white;
   font-size: 40px;
   padding-left: 8px;

@@ -25,6 +25,7 @@ using System.Threading;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.Common.Models;
+using M30.AudioFile.Common.DTO.Products;
 
 namespace MAMBrowser.Controllers
 {
@@ -940,5 +941,30 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+       
+        [HttpGet("song")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> FindSong([FromQuery] string title, [FromQuery] string albumName, [FromQuery] string artistName, [FromQuery] int rowPerPage, [FromQuery] int selectPage, [FromQuery] string sortKey, [FromQuery] string sortValue)
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_SONG>>();
+            try
+            {
+                if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(albumName) && string.IsNullOrEmpty(artistName))
+                {
+                    result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                    result.ResultObject = new DTO_RESULT_PAGE_LIST<DTO_SONG>();
+                }
+                else
+                {
+                    result.ResultObject = _bll.FindSong(title, albumName, artistName, rowPerPage, selectPage, sortKey, sortValue);
+                    result.ResultCode = RESUlT_CODES.SUCCESS;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
+            }
+            return result;
+        }
     }
 }

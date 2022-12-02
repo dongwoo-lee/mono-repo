@@ -16,21 +16,21 @@ namespace MAMBrowser.Controllers
     public class DefCueSheetController : Controller
     {
         private readonly DefCueSheetBll _bll;
+        private readonly CueAttachmentsBll _attachmentsBll;
         private readonly ILogger<ProductsController> _logger;
 
         public class Pram
         {
-            public List<string> productids {get;set; }
+            public List<string> productids { get; set; }
             public int row_per_page { get; set; }
             public int select_page { get; set; }
 
         }
 
-        public DefCueSheetController(DefCueSheetBll bll, ILogger<ProductsController> logger)
+        public DefCueSheetController(DefCueSheetBll bll, CueAttachmentsBll attachmentsBll)
         {
-            _logger = logger;
             _bll = bll;
-            
+            _attachmentsBll = attachmentsBll;
         }
 
         //기본 큐시트 목록 가져오기
@@ -77,6 +77,33 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<int>();
             try
             {
+                if (pram.Attachments != null)
+                {
+                    var files = new List<AttachmentDTO>();
+                    foreach (var item in pram.Attachments)
+                    {
+                        if (item.FILEID != 0)
+                        {
+                            //기존 데이터 삭제
+                            if (item.DELSTATE)
+                            {
+                                _attachmentsBll.DeleteAttachmentsFile(item);
+                            }
+                            else
+                            {
+                                files.Add(item);
+                            }
+                        }
+                        else
+                        {
+                            item.FILEID = _attachmentsBll.GetAttachmentsFileId();
+                            _attachmentsBll.MoveToStorage(pram.CueSheetDTO.PRODUCTID, pram.CueSheetDTO.BRDDATE, item, false);
+                            files.Add(item);
+                        }
+
+                    }
+                    pram.Attachments = files;
+                }
                 result.ResultObject = _bll.SaveDefaultCueSheet(pram);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
@@ -85,7 +112,7 @@ namespace MAMBrowser.Controllers
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
-                return result;
+            return result;
         }
 
         //기본큐시트 삭제
@@ -95,15 +122,25 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<bool>();
             try
             {
+                foreach (var i in delParams)
+                {
+                    var files = _attachmentsBll.GetAttachmentDTOs(i);
+
+                    foreach (var item in files)
+                    {
+                        _attachmentsBll.DeleteAttachmentsFile(item);
+                    }
+                }
+
                 result.ResultObject = _bll.DeleteDefaultCueSheet(delParams);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
-                return result;
+            return result;
         }
 
     }

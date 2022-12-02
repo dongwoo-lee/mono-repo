@@ -3,16 +3,15 @@ using M30.AudioFile.Common.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MAMBrowser.DTO;
-using MAMBrowser.Foundation;
-using MAMBrowser.Helpers;
 using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Microsoft.AspNetCore.Http;
+using M30.AudioFile.Common;
+using M30.AudioFile.Common.Models;
+using MAMBrowser.Hubs;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MAMBrowser.Controllers
 {
@@ -20,205 +19,138 @@ namespace MAMBrowser.Controllers
     [Route("api/[controller]")]
     public class CueAttachmentsController : Controller
     {
-        private readonly ProductsBll _bll;
-        private readonly IFileProtocol _fileService;
-        public CueAttachmentsController(ServiceResolver sr, ProductsBll bll)
+        private readonly CueAttachmentsBll _bll;
+        PrivateFileBll _privateBll;
+
+        public CueAttachmentsController(CueAttachmentsBll bll, PrivateFileBll privateBll)
         {
-            _fileService = sr(MAMDefine.MirosConnection).FileSystem;
             _bll = bll;
+            _privateBll = privateBll;
         }
 
-        public class Pram
-        {
-            public string userid { get; set; }
-            public string guid { get; set; }
-            public string downloadName { get; set; }
-        }
-        //zip파일 내보내기
         [HttpPost("exportZipFile")]
         public ActionResult<string> ExportZipFile([FromQuery] string userid, [FromBody] List<CueSheetConDTO> pram)
         {
+            ActionResult<string> result;
             try
             {
-                var guid = Guid.NewGuid().ToString();
-                var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{userid}\{guid}");
-                string xmlFileName= $"MetaData.xml";
-                string jsonFileName = $"MetaData.json"; 
-                string xmlFileFullPath = Path.Combine(rootFolder, xmlFileName);
-                string jsonFileFullPath = Path.Combine(rootFolder, jsonFileName);
-
-                DirectoryInfo di_folder = new DirectoryInfo(rootFolder);
-                DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(rootFolder));
-                if (!di_folder.Exists)
-                {
-                    di_folder.Create();
-                }
-                
-                foreach (CueSheetConDTO ele in pram)
-                {
-                    if (ele.FILEPATH != null && ele.FILEPATH != "")
-                    {
-                        var outFilePath = Path.Combine(rootFolder, Path.GetFileName(ele.FILEPATH));
-                        var audioData = new CueSheetConAudioDTO();
-                        ele.AUDIOS = new List<CueSheetConAudioDTO>();
-
-                        using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-                        {
-                            try
-                            {
-                                using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
-                                {
-                                    inStream.CopyTo(outFileStream);
-
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                ele.FILEPATH = "";
-                            }
-                        }
-                        ele.FILEPATH = outFilePath;
-                        audioData.P_TYPE = ele.CARTTYPE;
-                        audioData.P_SEQNUM = 1;
-                        audioData.P_CLIPID = ele.CARTID;
-                        audioData.P_MAINTITLE = ele.MAINTITLE;
-                        audioData.P_SUBTITLE = ele.SUBTITLE;
-                        audioData.P_DURATION = ele.DURATION;
-                        audioData.P_MASTERFILE = outFilePath;
-                        ele.AUDIOS.Add(audioData);
-                    }
-                    else
-                    {
-                        // 그룹소재 아이템 가져오기
-                        if (ele.ONAIRDATE != "")
-                        {
-                            ele.AUDIOS = new List<CueSheetConAudioDTO>();
-                            if (ele.CARTTYPE == "SB")
-                            {
-                                var collection = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
-                                if (collection.Data.Any())
-                                {
-                                    foreach (var item in collection.Data)
-                                    {
-                                        var result = new CueSheetConAudioDTO();
-                                        result.P_SEQNUM = item.RowNO;
-                                        result.P_CLIPID = item.ID;
-                                        result.P_MAINTITLE = item.Name;
-                                        result.P_DURATION = item.IntDuration;
-                                        result.P_MASTERFILE = item.FilePath;
-                                        result.P_CODEID = item.PgmCODE ?? "";
-                                        ele.AUDIOS.Add(result);
-                                    }
-
-                                }
-                            }
-                            if (ele.CARTTYPE == "CM")
-                            {
-                                var collection = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
-                                if (collection.Data.Any())
-                                {
-                                    foreach (var item in collection.Data)
-                                    {
-                                        var result = new CueSheetConAudioDTO();
-                                        result.P_SEQNUM = item.RowNO;
-                                        result.P_CLIPID = item.ID;
-                                        result.P_MAINTITLE = item.Name;
-                                        result.P_DURATION = item.IntDuration;
-                                        result.P_MASTERFILE = item.FilePath;
-                                        result.P_CODEID = item.PgmCODE ?? "";
-                                        ele.AUDIOS.Add(result);
-                                    }
-
-                                }
-                            }
-                        }
-                        if (ele.AUDIOS == null)
-                        {
-                            var audioData = new CueSheetConAudioDTO();
-                            ele.AUDIOS = new List<CueSheetConAudioDTO>();
-                            audioData.P_TYPE = ele.CARTTYPE;
-                            audioData.P_SEQNUM = 1;
-                            audioData.P_CLIPID = ele.CARTID;
-                            audioData.P_MAINTITLE = ele.MAINTITLE;
-                            audioData.P_SUBTITLE = ele.SUBTITLE;
-                            audioData.P_DURATION = ele.DURATION;
-                            audioData.P_MASTERFILE = "";
-                            ele.AUDIOS.Add(audioData);
-                        }
-                        else
-                        {
-                            foreach (var item in ele.AUDIOS)
-                            {
-                                var outFilePath = Path.Combine(rootFolder, Path.GetFileName(item.P_MASTERFILE));
-
-                                using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-                                {
-                                    try
-                                    {
-                                        using (var inStream = _fileService.GetFileStream(item.P_MASTERFILE, 0))
-                                        {
-                                            inStream.CopyTo(outFileStream);
-                                            item.P_MASTERFILE = outFilePath;
-                                        }
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Console.WriteLine(e.Message);
-                                        item.P_MASTERFILE = "";
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-                using (var FileStream = new StreamWriter(xmlFileFullPath))
-                {
-                    XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConDTO>));
-                    serialiser.Serialize(FileStream, pram);
-
-                }
-
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Converters.Add(new JavaScriptDateTimeConverter());
-                serializer.NullValueHandling = NullValueHandling.Ignore;
-
-                using (StreamWriter sw = new StreamWriter(jsonFileFullPath))
-                using (JsonWriter writer = new JsonTextWriter(sw))
-                {
-                    serializer.Serialize(writer, pram);
-                }
-                string zipFileName = $"{guid}.zip";
-                var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
-
-                ZipFileManager.Instance.CreateZIPFile(rootFolder, zipFilePath);
-                di_folder.Delete(true);
-                return Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
-
+                result = _bll.ExportToZipFile(userid, pram);
             }
             catch (Exception ex)
             {
                 throw;
             }
-
+            return result;
         }
 
-        [HttpGet("exportZipFileDownload")]
-        public FileResult ExportZipFileDownload([FromQuery] Pram queryPram)
+        [HttpPost("exportWavFile")]
+        public Task<DTO_RESULT<ActionResult<string>>> ExportWavFile([FromQuery] string connectionId, [FromBody] List<CueSheetConDTO> pram, CancellationToken token)
         {
-            var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
-            var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
+            Task<DTO_RESULT<ActionResult<string>>> result;
             
+            try
+            {
+                string userId = HttpContext.Items[Define.USER_ID] as string;
+                result = _bll.MergeAudioFilesIntoOneWav(userId, connectionId, pram, token);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return result;
+        }
+
+        [HttpPost("WavCopyToMyspace")]
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> WavFileCopyToMyspace([FromQuery] string title, [FromBody] string file_path)
+        {
+            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
+            try
+            {
+                if (System.IO.File.Exists(file_path))
+                {
+                    var metaData = new M30_MAM_PRIVATE_SPACE();
+                    string userId = HttpContext.Items[Define.USER_ID] as string;
+
+                    var fileName = Path.GetFileName(file_path);
+                    using (var stream = System.IO.File.Open(file_path, FileMode.Open,FileAccess.ReadWrite,FileShare.ReadWrite))
+                    {
+                        metaData.FILE_SIZE = stream.Length;
+                        metaData.TITLE = title;
+                        metaData.MEMO = title;
+                        result = _privateBll.UploadFile(userId, stream, fileName, metaData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+
+            return result;
+        }
+
+        // 다운로드 링크
+        [HttpGet("exportFileDownload")]
+        public FileResult ExportFileDownload([FromQuery] Pram queryPram)
+        {
+            FileResult result;
+            var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
+            var FilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
             var provider = new FileExtensionContentTypeProvider();
+
             string contentType;
-            if (!provider.TryGetContentType(zipFilePath, out contentType))
+            if (!provider.TryGetContentType(FilePath, out contentType))
             {
                 contentType = "application/octet-stream";
             }
-            return PhysicalFile(zipFilePath, contentType, $"{queryPram.downloadName}.zip");
+
+            result = PhysicalFile(FilePath, contentType, $"{queryPram.downloadName}");
+            return result;
+        }
+
+        [RequestSizeLimit(int.MaxValue)]
+        [HttpPost("chunkFileTempUpload")]
+        public ActionResult<DTO_RESULT> ChunkFileTempUpload([FromForm] IFormFile file, [FromForm] string chunkMetadata, [FromForm] string folder_date)
+        {
+            var result = new DTO_RESULT();
+            try
+            {
+                result.ResultObject = _bll.UploadToTemp(file, chunkMetadata, folder_date);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;
+                result.ErrorMsg = ex.Message;
+            }
+
+            return result;
+        }
+
+        [HttpDelete("attachmentsDelete")]
+        public ActionResult<DTO_RESULT> AttachmentsFileDelete([FromQuery] AttachmentDTO file)
+        {
+            var result = new DTO_RESULT();
+            try
+            {
+                _bll.DeleteAttachmentsFile(file);
+                var folder = new DirectoryInfo(Path.GetDirectoryName(file.FILEPATH));
+                if (folder.GetFileSystemInfos().Length == 0 && folder.Exists)
+                {
+                    Directory.Delete(Path.GetDirectoryName(file.FILEPATH));
+                }
+
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+                result.ErrorMsg = ex.Message;
+            }
+            return result;
         }
     }
-  
+
 }

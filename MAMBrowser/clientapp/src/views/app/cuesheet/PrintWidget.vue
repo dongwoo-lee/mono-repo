@@ -386,6 +386,7 @@ export default {
     ...mapActions("cueList", ["setStartTime"]),
     ...mapActions("cueList", ["setContents"]),
     ...mapActions("cueList", ["maxLengthChecker"]),
+    ...mapActions("cueList", ["enableNotification"]),
     //드래그 추가 시
     async onAddPrint(e) {
       var rowArray = [];
@@ -411,7 +412,7 @@ export default {
             break;
           } else {
             if (Object.keys(e.itemData).includes("subtitle")) {
-              //print
+              //ab
               data.contentType = "AB";
               rowArray.push(data);
             } else {
@@ -433,8 +434,15 @@ export default {
             formRowData: this.rowData,
             cartcode: this.searchListData.cartcode,
           });
-          arrData.splice(e.toIndex + index, 0, rowData);
-          index++;
+          if (rowData) {
+            arrData.splice(e.toIndex + index, 0, rowData);
+            index++;
+          } else {
+            this.enableNotification({
+              type: "error",
+              message: `사용할 수 없는 소재입니다.`,
+            });
+          }
         }
         arrData.forEach((row, index) => {
           row.rownum = index + 1;

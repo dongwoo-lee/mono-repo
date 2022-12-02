@@ -56,14 +56,6 @@
       <i class="iconsminds-shop i-custom-actions-shop" />
     </b-button>
     <b-button
-      v-if="oldVal"
-      id="cueBtn"
-      variant="outline-primary"
-      @click="getCueData('old')"
-    >
-      (구) 큐시트 작성</b-button
-    >
-    <b-button
       v-if="rowData.r_ONAIRTIME && rowData.cueid == -1 && !oldVal"
       id="cueBtn"
       variant="outline-primary"
@@ -163,6 +155,7 @@ export default {
   computed: {
     ...mapGetters("user", ["roleList", "isSystemTopAdmin"]),
   },
+  mounted() {},
   watch: {
     $route: {
       handler(to, from) {
@@ -262,7 +255,6 @@ export default {
     //큐시트 USER_INFO set
     getCueData(V) {
       sessionStorage.setItem("USER_INFO", JSON.stringify(this.rowData));
-      //this.SET_CUEINFO(this.rowData);
       this.$router.push({ path: "/app/cuesheet/" + V + "/detail" });
     },
   },

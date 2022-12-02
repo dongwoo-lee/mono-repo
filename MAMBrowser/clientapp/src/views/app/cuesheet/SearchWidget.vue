@@ -167,6 +167,15 @@
             </div>
           </template>
 
+          <template #maxWidth_ellipsis_name="{ data }">
+            <div
+              :title="data.data.name"
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ data.data.name }}
+            </div>
+          </template>
+
           <template #maxWidth_ellipsis_memo="{ data }">
             <div
               :title="data.data.memo"
@@ -264,6 +273,10 @@
         </DxDataGrid>
       </div>
       <PlayerPopup
+        v-if="
+          searchListData.cartcode != 'S01G01C014' &&
+          searchListData.cartcode != 'S01G01C032'
+        "
         :showPlayerPopup="showPlayerPopup"
         :title="goTitle"
         :fileKey="soundItem.fileToken"
@@ -283,18 +296,30 @@
             : tempDownloadUrl_music
         "
         requestType="token"
-        v-if="searchListData.cartcode != 'S01G01C014'"
         @closePlayer="onClosePlayer"
       >
       </PlayerPopup>
+
       <MusicPlayerPopup
+        v-else-if="searchListData.cartcode == 'S01G01C032'"
+        :showPlayerPopup="showPlayerPopup"
+        :music="soundItem"
+        :streamingUrl="streamingUrl"
+        :waveformUrl="waveformUrl"
+        :tempDownloadUrl="tempDownloadUrl"
+        requestType="token"
+        @closePlayer="onClosePlayer"
+      >
+      </MusicPlayerPopup>
+
+      <MusicPlayerPopup
+        v-else
         :showPlayerPopup="showPlayerPopup"
         :music="soundItem"
         :streamingUrl="streamingUrl_music"
         :waveformUrl="waveformUrl_music"
         :tempDownloadUrl="tempDownloadUrl_music"
         requestType="token"
-        v-else
         @closePlayer="onClosePlayer"
       >
       </MusicPlayerPopup>
@@ -603,7 +628,7 @@ export default {
       this.subtable_data = [];
     },
     async onSelectionChanged(e) {
-      this.dataGrid.beginCustomLoading("Loading...");
+      e.component.beginCustomLoading("Loading...");
       if (e.selectedRowsData.length > 0) {
         var selectRowData = e.selectedRowsData[0];
         switch (this.searchDataList.id) {
@@ -623,8 +648,8 @@ export default {
             break;
         }
       }
-      this.dataGrid.endUpdate();
-      this.dataGrid.endCustomLoading();
+      e.component.endUpdate();
+      e.component.endCustomLoading();
     },
     itemclick(e) {
       const url = `/api/SearchMenu/GetSearchOption/`;
@@ -642,25 +667,27 @@ export default {
         params: pram,
       }).then((res) => {
         const resData = res.data.resultObject;
-        for (const [key, value] of Object.entries(resData)) {
-          this.searchDataList.options.forEach((ele) => {
-            if (key == ele.name && value != null) {
-              ele.value = value.data.map((item) => {
-                return {
-                  text: item.name,
-                  value: item.id,
-                };
-              });
-              if (
-                ele.name == "medias" ||
-                ele.name == "cm" ||
-                ele.name == "report" ||
-                ele.name == "dlDevice"
-              ) {
-                ele.selectVal = ele.value[0].value;
+        if (resData) {
+          for (const [key, value] of Object.entries(resData)) {
+            this.searchDataList.options.forEach((ele) => {
+              if (key == ele.name && value != null) {
+                ele.value = value.data.map((item) => {
+                  return {
+                    text: item.name,
+                    value: item.id,
+                  };
+                });
+                if (
+                  ele.name == "medias" ||
+                  ele.name == "cm" ||
+                  ele.name == "report" ||
+                  ele.name == "dlDevice"
+                ) {
+                  ele.selectVal = ele.value[0].value;
+                }
               }
-            }
-          });
+            });
+          }
         }
       });
     },
@@ -788,12 +815,12 @@ export default {
   gap: 0px 15px;
 }
 .item_size_big .dx-item-content {
-  line-height: 3.8;
+  line-height: 2.52;
   height: auto;
   width: 100px;
 }
 .item_size_sm .dx-item-content {
-  line-height: 2.65;
+  line-height: 1.7;
   height: auto;
   width: 100px;
 }

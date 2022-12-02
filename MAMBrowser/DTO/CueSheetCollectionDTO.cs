@@ -7,7 +7,6 @@ namespace MAMBrowser.DTO
 {
     public class CueSheetCollectionDTO
     {
-        //public CueSheetCollectionDTO pram { get; set; }
         //큐시트 정보
         public CueSheetDTO CueSheetDTO { get; set; }
         //기본큐시트 정보
@@ -18,15 +17,12 @@ namespace MAMBrowser.DTO
         public List<CueSheetConDTO> NormalCon { get; set; }
         //C
         public IDictionary<string, List<CueSheetConDTO>> InstanceCon { get; set; }
-
         //기본큐시트 기존요일 제거 
         public int[] delParams { get; set; }
-
-
         //첨부파일 정보
-        //public List<AttachmentDTO> AttachmentDTO { get; set; }
+        public List<AttachmentDTO> Attachments { get; set; }
         //태그 정보
-        //public List<string> TagDTO { get; set; }
+        public List<string> Tags { get; set; }
     }
 
     public class CueSheetDTO
@@ -83,6 +79,7 @@ namespace MAMBrowser.DTO
         public string FILETOKEN { get; set; }
         public string CARTTYPE { get; set; }
         public string PGMCODE { get; set; }
+        public bool ExistFile { get; set; }
         // C
         public bool EDITTARGET { get; set; }
 
@@ -123,5 +120,24 @@ namespace MAMBrowser.DTO
         public int P_LENGTH { get; set; }
     }
 
+    public class AttachmentDTO
+    {
+        public long FILEID { get; set; }
+        public string FILEPATH { get; set; }
+        public string FILENAME { get; set; }
+        public int FILESIZE { get; set; }
+        public bool DELSTATE { get; set; }
+    }
 
+    public class DelFilePath
+    {
+        public int F_SEQNUM { get; set; } // 있으면 storage 저장, 없으면 신규
+    }
+
+    public class Pram
+    {
+        public string userid { get; set; }
+        public string guid { get; set; }
+        public string downloadName { get; set; }
+    }
 }

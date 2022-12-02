@@ -143,7 +143,8 @@ export default {
     },
   },
   methods: {
-    binput() {
+    binput(e) {
+      this.$emit("changeDatePicker", e.replace(/-/g, ""));
       this.selected = true;
     },
     inputBlurEvent(e) {

@@ -168,11 +168,13 @@ export default {
         },
       ],
       allCheck: true,
-      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4"],
+      MenuSelected: ["print", "ab", "c1", "c2", "c3", "c4", "tags", "memo"],
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
         { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "태그", value: "tags", notEnabled: true },
+        { name: "메모", value: "memo", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
         { name: "C3", value: "c3", notEnabled: true },
@@ -180,7 +182,7 @@ export default {
       ],
       importOptions: [
         { text: "덮어쓰기", value: "add" },
-        { text: "붙여넣기 (C채널 제외)", value: "update" },
+        { text: "붙여넣기", value: "update" },
       ],
     };
   },
@@ -188,7 +190,16 @@ export default {
     state: function (val) {
       this.getData();
       if (!val) {
-        (this.MenuSelected = ["print", "ab", "c1", "c2", "c3", "c4"]),
+        (this.MenuSelected = [
+          "print",
+          "ab",
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "tags",
+          "memo",
+        ]),
           this.MenuOptions.forEach((item) => {
             item.notEnabled = true;
           });
@@ -218,9 +229,11 @@ export default {
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_PRINTARR"]),
+    ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_TEMPCUESHEETLISTARR"]),
     ...mapActions("cueList", ["sponsorDataFun"]),
     ...mapActions("cueList", ["setStartTime"]),
+    ...mapActions("cueList", ["enableNotification"]),
 
     async getData() {
       if (this.state) {
@@ -255,9 +268,9 @@ export default {
     async ok() {
       this.loadingIconVal = true;
       if (this.selectedIds == null || this.selectedIds.length == 0) {
-        window.$notify("error", `템플릿을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `템플릿을 선택하세요.`,
         });
         this.loadingIconVal = false;
       } else {
@@ -288,9 +301,9 @@ export default {
           }
         }
         if (this.MenuSelected.length == 0) {
-          window.$notify("error", `가져올 항목을 선택하세요.`, "", {
-            duration: 10000,
-            permanent: false,
+          this.enableNotification({
+            type: "error",
+            message: `가져올 항목을 선택하세요.`,
           });
           this.loadingIconVal = false;
         } else {
@@ -335,16 +348,15 @@ export default {
                   responseCuesheetCollection.cueSheetDTO.headertitle;
                 oldCueInfo.membername =
                   responseCuesheetCollection.cueSheetDTO.membername;
-                oldCueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
 
                 var resultPrintData = beforePrintData.concat(
                   responseCuesheetCollection.printDTO
                 );
                 if (resultPrintData.length > 100) {
                   resultPrintData.splice(100);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_PRINTARR(resultPrintData);
@@ -364,13 +376,21 @@ export default {
                 );
                 if (resultABData.length > 500) {
                   resultABData.splice(500);
-                  window.$notify("error", `최대 개수를 초과하였습니다.`, "", {
-                    duration: 10000,
-                    permanent: false,
+                  this.enableNotification({
+                    type: "error",
+                    message: `최대 개수를 초과하였습니다.`,
                   });
                 }
                 this.SET_ABCARTARR(resultABData);
                 eventBus.$emit("abDataSet");
+              }
+              //태그
+              this.MenuSelected.includes("tags") &&
+                this.SET_TAGS(responseCuesheetCollection.tags);
+              //메모
+              if (this.MenuSelected.includes("memo")) {
+                this.cueInfo.memo = responseCuesheetCollection.cueSheetDTO.memo;
+                this.SET_CUEINFO(this.cueInfo);
               }
               var pram = {
                 data: responseCuesheetCollection.instanceCon,

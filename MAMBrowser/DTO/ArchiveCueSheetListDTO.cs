@@ -15,6 +15,7 @@ namespace MAMBrowser.DTO
         public string BRDDATE { get; set; }
         public DateTime BRDTIME { get; set; }
         public string CUETYPE { get; set; }
+        public List<string> TAG { get; set; }
 
     }
     public class ArchiveCueList_Page

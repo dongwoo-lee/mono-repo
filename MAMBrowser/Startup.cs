@@ -2,23 +2,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MAMBrowser.Helpers;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using VueCliMiddleware;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.IO;
-using System.Threading.Tasks;
 using MAMBrowser.Services;
 using System.Linq;
-using M30.AudioFile.DAL;
 using MAMBrowser.BLL;
 using MAMBrowser.Middleware;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using MAMBrowser.Foundation;
@@ -30,6 +24,8 @@ using M30_CueSheetDAO.Interfaces;
 using M30_CueSheetDAO;
 using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
+using MAMBrowser.Hubs;
+using MAMBrowser.Workers;
 
 namespace MAMBrowser
 {
@@ -66,8 +62,8 @@ namespace MAMBrowser
             {
                 configuration.RootPath = "ClientApp";
             });
-
-
+            services.AddSignalR();
+            services.AddHostedService<WebCueSheetServiceWorker>();
 
             StorageFactorySetting(services);
             DISetting(services);
@@ -114,6 +110,8 @@ namespace MAMBrowser
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                
+                endpoints.MapHub<ProgressHub>("/api/ProgressHub");
             });
 
             app.UseSpa(spa =>
@@ -133,11 +131,11 @@ namespace MAMBrowser
 
         private void DISetting(IServiceCollection services)
         {
-            //¿É¼Ç DI
+            //ï¿½É¼ï¿½ DI
             var optionSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(optionSection);
 
-            //±Û·Î¹ú ¼ÂÆÃ
+            //ï¿½Û·Î¹ï¿½ ï¿½ï¿½ï¿½ï¿½
             AppSetting = optionSection.Get<AppSettings>();
             QueryHelper.ConnectionString = AppSetting.ConnectionString;
             TokenGenerator.UseToken = true;
@@ -145,7 +143,7 @@ namespace MAMBrowser
             TokenGenerator.TokenIssuer = AppSetting.TokenIssuer;
             TokenGenerator.TokenSignature = AppSetting.TokenSignature;
 
-            //Å¥½ÃÆ® °ü·Ã DI µî·Ï
+            //Å¥ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ DI ï¿½ï¿½ï¿½
             services.AddTransient<ICueSheetDAO, CueSheetDAO>();
             services.AddTransient<ICommonDAO, CommonDAO>();
             services.AddTransient<ITemplateDAO, TemplateDAO>();
@@ -158,15 +156,14 @@ namespace MAMBrowser
             services.AddTransient<QueryHelper>();
             services.AddTransient<HttpContextDBLogger>();
 
-
-            //DAL µî·Ï
+            //DAL ï¿½ï¿½ï¿½
             services.AddTransient<APIDao>();
             services.AddTransient<CategoriesDao>();
             services.AddTransient<PrivateFileDao>();
             services.AddTransient<ProductsDao>();
             services.AddTransient<PublicFileDao>();
             services.AddTransient<LogDao>();
-            //BLL µî·Ï
+            //BLL ï¿½ï¿½ï¿½
             services.AddTransient<APIBll>();
             services.AddTransient<CategoriesBll>();
             services.AddTransient<PrivateFileBll>();
@@ -179,19 +176,20 @@ namespace MAMBrowser
             services.AddTransient<TemplateBll>();
             services.AddTransient<FavoriteBll>();
             services.AddTransient<ArchiveCueSheetBll>();
+            services.AddTransient<CueAttachmentsBll>();
 
-            //¼­ºñ½º µî·Ï
+            //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             services.AddScoped<IUserService, UserService>();
         }
         private void StorageFactorySetting(IServiceCollection services)
         {
-            //½ºÅä¸®Áö ¿¬°áÁ¤º¸ ÆÑÅä¸®±¸¼º
+            //ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½
             services.AddTransient<MusicWebService>(serviceProvider =>
             {
                 var storagesSection = Configuration.GetSection("StorageConnections:External:MusicConnection");
                 var storage = storagesSection.Get<ExternalStorage>();
                 var logger = serviceProvider.GetRequiredService<ILogger<MusicWebService>>();
-                return new MusicWebService(storage, logger,  Startup.AppSetting.ExpireMusicTokenHour);
+                return new MusicWebService(storage, logger, Startup.AppSetting.ExpireMusicTokenHour);
             });
             services.AddTransient(serviceProvider =>
             {

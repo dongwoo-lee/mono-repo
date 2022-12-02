@@ -1,0 +1,330 @@
+<template>
+  <div id="webcuesheet_fileupload">
+    <div>
+      <DxFileUploader
+        :ref="fileUploadRef"
+        :chunk-size="chunkSize"
+        labelText=""
+        :uploadAbortedMessage="uploadAbortedMessage"
+        :uploadedMessage="uploadedMessage"
+        :invalidMaxFileSizeMessage="invalidMaxFileSizeMessage"
+        :invalidFileExtensionMessage="invalidFileExtensionMessage"
+        :max-file-size="104857600"
+        select-button-text="파일 업로드"
+        name="file"
+        :disabled="disableValue || cueInfo.cuetype === 'A'"
+        :accept="accept"
+        :upload-url="getUrl"
+        :upload-custom-data="uploaderCustomData"
+        @uploaded="onUploaded"
+        @upload-started="OnUploadStarted"
+        @upload-aborted="onUploadAborted"
+      >
+      </DxFileUploader>
+    </div>
+    <div class="chunk-container">
+      <div
+        class="chunk-panel"
+        v-if="attachments.filter((item) => !item.delstate).length > 0"
+      >
+        <DxDataGrid
+          :data-source="attachments.filter((item) => !item.delstate)"
+          :showColumnLines="false"
+          :show-borders="false"
+          :showRowLines="true"
+          :row-alternation-enabled="false"
+          :show-column-headers="false"
+        >
+          <DxColumn
+            cell-template="row_index_template"
+            :width="50"
+            alignment="center"
+          />
+          <template #row_index_template="{ data }">
+            <div>
+              {{ data.rowIndex + 1 }}
+            </div>
+          </template>
+          <DxColumn data-field="filename" />
+          <DxColumn
+            :width="100"
+            cell-template="calculate_KB_Template"
+            alignment="right"
+          />
+          <template #calculate_KB_Template="{ data }">
+            <div class="dx-theme-accent-as-text-color">
+              {{ `${(data.data.filesize / 1024).toFixed(0)}kb` }}
+            </div>
+          </template>
+          <DxColumn
+            :width="100"
+            cell-template="btn_template"
+            alignment="center"
+          />
+          <template #btn_template="{ data }">
+            <div>
+              <span id="file_manager_btn">
+                <span class="mr-1">
+                  <DxButton
+                    icon="download"
+                    hint="다운로드"
+                    type="success"
+                    @click="onFileDownload(data.data)"
+                  />
+                </span>
+                <span>
+                  <DxButton
+                    v-if="cueInfo.cuetype != 'A'"
+                    icon="remove"
+                    hint="삭제"
+                    type="danger"
+                    styling-mode="outlined"
+                    @click="onFileDelete(data.data)"
+                  />
+                </span>
+              </span>
+            </div>
+          </template>
+        </DxDataGrid>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import DxFileUploader from "devextreme-vue/file-uploader";
+import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid";
+import DxButton from "devextreme-vue/button";
+import { mapGetters, mapMutations, mapActions } from "vuex";
+import { USER_ID } from "@/constants/config";
+import { eventBus } from "@/eventBus";
+import axios from "axios";
+const fileUploadRef = "fileUploader";
+const qs = require("qs");
+
+function get_date_str(date) {
+  var sYear = date.getFullYear();
+  var sMonth = date.getMonth() + 1;
+  var sDate = date.getDate();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
+  var milliseconds = date.getMilliseconds();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+  hours = hours > 9 ? hours : "0" + hours;
+  minutes = minutes > 9 ? minutes : "0" + minutes;
+  seconds = seconds > 9 ? seconds : "0" + seconds;
+
+  var result =
+    sYear +
+    "" +
+    sMonth +
+    "" +
+    sDate +
+    "" +
+    hours +
+    "" +
+    minutes +
+    "" +
+    seconds +
+    "" +
+    milliseconds;
+  return result;
+}
+
+export default {
+  props: {
+    maxAttachmentsCount: Number,
+    disableValue: { type: Boolean, default: false },
+  },
+  data() {
+    return {
+      fileUploadRef,
+      files: [],
+      uploaderCustomData: {
+        folder_date: "",
+      }, //이후에 props로 바꾸기
+      chunkSize: 1000000,
+      maxTitleLength: 120,
+      uploadAbortedMessage: "파일을 추가할 수 없습니다.",
+      uploadedMessage: "업로드 완료",
+      invalidMaxFileSizeMessage:
+        "업로드 파일 사이즈는 100MB를 넘을 수 없습니다.",
+      invalidFileExtensionMessage:
+        "추가할 수 없는 확장자 입니다. (가능 확장자 : docx, xlsx, pdf, hwp, txt)",
+      accept:
+        "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,.pdf,.docx,.hwp",
+      getUrl: "/api/CueAttachments/chunkFileTempUpload",
+    };
+  },
+  components: {
+    DxFileUploader,
+    DxDataGrid,
+    DxColumn,
+    DxButton,
+  },
+  created() {
+    const date = new Date();
+    this.uploaderCustomData.folder_date = get_date_str(date);
+    eventBus.$on("attachments-delete", () => {
+      this.attachments.forEach((file) => {
+        this.onFileDelete(file);
+      });
+      this.SET_ATTACHMENTS([]);
+    });
+  },
+  computed: {
+    ...mapGetters("cueList", ["attachments"]),
+    ...mapGetters("cueList", ["cueInfo"]),
+    fileUploader: function () {
+      return this.$refs[fileUploadRef].instance;
+    },
+  },
+  methods: {
+    ...mapMutations("cueList", ["SET_ATTACHMENTS"]),
+    ...mapActions("cueList", ["enableNotification"]),
+    async onFileDelete(file) {
+      if (!file.fileid) {
+        await this.$http
+          .delete(`/api/CueAttachments/attachmentsDelete`, {
+            params: file,
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          })
+          .then((res) => {
+            var resultArray = this.attachments.filter((item) => {
+              return item.filepath != file.filepath;
+            });
+            this.SET_ATTACHMENTS(resultArray);
+          })
+          .catch((err) => {
+            this.enableNotification({ type: "error", message: `삭제실패.` });
+          });
+      } else {
+        file.delstate = true;
+      }
+    },
+    onFileDownload(file) {
+      axios
+        .get(
+          `/api/CueAttachments/exportFileDownload?guid=${
+            file.filepath
+          }&userid=${sessionStorage.getItem(USER_ID)}&downloadname=${
+            file.filename
+          }`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            const link = document.createElement("a");
+            link.href = `/api/CueAttachments/exportFileDownload?guid=${
+              file.filepath
+            }&userid=${sessionStorage.getItem(USER_ID)}&downloadname=${
+              file.filename
+            }`;
+            document.body.appendChild(link);
+            link.click();
+          }
+        })
+        .catch((err) => {
+          this.enableNotification({
+            type: "error",
+            message: `파일 다운로드 오류.`,
+          });
+        });
+    },
+    onUploaded(e) {
+      const arrData = _.cloneDeep(this.attachments);
+      const file = {};
+      file.filepath = JSON.parse(e.request.response).resultObject;
+      file.filename = e.file.name;
+      file.filesize = e.file.size;
+      file.delstate = false;
+      arrData.push(file);
+      this.SET_ATTACHMENTS(arrData);
+    },
+    OnUploadStarted(e) {
+      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_.() -]/gi;
+      e.file.name.length >= this.maxTitleLength && e.component.abortUpload();
+      regex.test(e.file.name) && e.component.abortUpload();
+    },
+    onUploadAborted(e) {
+      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_.() -]/gi;
+      if (regex.test(e.file.name)) {
+        e.message = "파일 이름을 수정하세요. (특수문자, 다국어 불가)";
+      }
+      if (e.file.name.length >= this.maxTitleLength) {
+        e.message = "파일의 제목이 너무 깁니다.";
+      }
+      const fileContainer = Array.from(
+        e.element.querySelectorAll(".dx-fileuploader-file-name")
+      ).find((el) => el.textContent === e.file.name).parentElement.parentElement
+        .parentElement;
+      fileContainer.classList.add("dx-fileuploader-invalid");
+    },
+  },
+};
+</script>
+<style>
+#webcuesheet_fileupload {
+  position: relative;
+}
+#webcuesheet_fileupload .title {
+  position: absolute;
+  top: 0px;
+}
+#webcuesheet_fileupload .dx-fileuploader-wrapper {
+  padding: 15px 10px 0px 10px;
+}
+#webcuesheet_fileupload .dx-fileuploader-input-wrapper {
+  border: 1px solid #d7d7d7;
+  border-radius: 2px 2px 0px 0px;
+}
+#webcuesheet_fileupload .chunk-container {
+  max-height: 140px;
+  min-height: 60px;
+  overflow: auto;
+  border-bottom: 1px solid #d7d7d7;
+  border-right: 1px solid #d7d7d7;
+  border-left: 1px solid #d7d7d7;
+  border-radius: 0px 0px 2px 2px;
+  margin: 0px 10px 10px 10px;
+}
+#webcuesheet_fileupload .chunk-panel {
+  background-color: rgba(191, 191, 191, 0.15);
+}
+#webcuesheet_fileupload .dx-fileuploader-files-container {
+  padding: 0px;
+  border-right: 1px solid #d7d7d7;
+  border-left: 1px solid #d7d7d7;
+}
+#webcuesheet_fileupload .dx-fileuploader-file-container {
+  padding: 5px 15px 5px 15px;
+}
+#webcuesheet_fileupload .dx-fileuploader-input-wrapper .dx-button {
+  float: right;
+}
+#webcuesheet_fileupload .dx-fileuploader-button {
+  margin: 3px 10px 0px 0px;
+}
+#webcuesheet_fileupload .dx-fileuploader-input-label {
+  padding: 8px 15px;
+}
+#webcuesheet_fileupload .dx-fileuploader-file {
+  line-height: 18px;
+}
+#webcuesheet_fileupload .chunk-item {
+  padding: 10px 5px 5px 5px;
+  color: black;
+}
+#file_manager_btn .dx-button-content {
+  width: 20px;
+  height: 20px;
+  padding: 0px;
+}
+#webcuesheet_fileupload .dx-datagrid {
+  background-color: #f5f5f5;
+}
+</style>

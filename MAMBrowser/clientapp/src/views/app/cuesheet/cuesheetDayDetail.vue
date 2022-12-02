@@ -39,7 +39,7 @@
                   <span>{{
                     cueInfo.edittime == null
                       ? ""
-                      : $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                      : $moment(cueInfo.edittime).format("YYYY-MM-DD HH:mm:ss")
                   }}</span>
                 </span>
               </div>
@@ -49,17 +49,33 @@
               >
                 <ButtonWidget
                   :type="cueInfo.cuetype"
+                  :cueClearItems="cueClearItems"
+                  :cueClearOptions="cueClearOptions"
                   :saveText="searchToggleSwitch ? '저장' : ''"
                 />
               </div>
             </div>
             <div class="left_bottom">
               <div style="height: 100%">
-                <DxTabPanel id="tabPanel" :defer-rendering="false">
+                <DxTabPanel
+                  id="tabPanel"
+                  :defer-rendering="false"
+                  :selectedIndex.sync="tabIndex"
+                >
                   <DxItem title="출력용">
                     <template #default>
                       <div>
-                        <PrintWidget :printHeight="printHeight" />
+                        <PrintWidget
+                          :printHeight="printHeight"
+                          @tabItemMove="changeTabIndex"
+                        />
+                      </div>
+                    </template>
+                  </DxItem>
+                  <DxItem title="부가정보">
+                    <template #default>
+                      <div>
+                        <AdditionalWidget :valueItems="tags" />
                       </div>
                     </template>
                   </DxItem>
@@ -69,6 +85,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_1"
                         />
                       </div>
@@ -80,6 +97,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_2"
                         />
                       </div>
@@ -91,6 +109,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_3"
                         />
                       </div>
@@ -102,6 +121,7 @@
                         <SortableWidget
                           :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_4"
                         />
                       </div>
@@ -111,8 +131,9 @@
                     <template #default>
                       <div>
                         <SortableWidget
-                          :widgetIndex="16"
+                          :widgetIndex="widgetIndex"
                           :searchToggleSwitch="searchToggleSwitch"
+                          @tabItemMove="changeTabIndex"
                           channelKey="channel_my"
                         />
                       </div>
@@ -163,6 +184,7 @@ import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
 import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
+import AdditionalWidget from "./AdditionalInformationWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
@@ -196,10 +218,12 @@ export default {
     AbchannelWidget,
     SortableWidget,
     DxSpeedDialAction,
+    AdditionalWidget,
   },
 
   data() {
     return {
+      tabIndex: 0,
       loadingVisible: false,
       loadPanelMessage: "데이터를 가져오는 중 입니다...",
       position: { of: "#cardView" },
@@ -212,6 +236,14 @@ export default {
       printHeight: 560,
       abChannelHeight: 734,
       widgetIndex: 16,
+      cueClearItems: ["print", "ab", "attachments", "tags", "memo"],
+      cueClearOptions: [
+        { name: "출력용", value: "print", notEnabled: true },
+        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "첨부파일", value: "attachments", notEnabled: true },
+        { name: "태그", value: "tags", notEnabled: true },
+        { name: "메모", value: "memo", notEnabled: true },
+      ],
     };
   },
   async created() {
@@ -221,12 +253,12 @@ export default {
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("cueList", ["tags"]),
     ...mapGetters("cueList", ["proUserList"]),
     ...mapGetters("cueList", ["defCuesheetListArr"]),
     ...mapGetters("user", ["timer"]),
   },
   methods: {
-    ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["getProUserList"]),
     ...mapActions("cueList", ["setCueConData"]),
     ...mapActions("cueList", ["setclearCon"]),
@@ -262,6 +294,7 @@ export default {
         seqnum: rowData.seqnum,
         startdate: rowData.startdate,
         day: rowData.day,
+        memo: "",
       };
       await this.$http
         .get(`/api/daycuesheet/GetDayCue`, {
@@ -384,6 +417,9 @@ export default {
         this.printHeight = 310;
         this.abChannelHeight = 354;
         document
+          .querySelector("#additional_information")
+          .classList.add("additional_information_search_toggle_on");
+        document
           .querySelector(".detail_view")
           .insertBefore(document.getElementById("button_view"), null);
         document
@@ -397,6 +433,9 @@ export default {
         this.printHeight = 560;
         this.abChannelHeight = 734;
         document
+          .querySelector("#additional_information")
+          .classList.remove("additional_information_search_toggle_on");
+        document
           .getElementById("left_top")
           .insertBefore(document.getElementById("button_view"), null);
         document
@@ -408,6 +447,9 @@ export default {
         });
       }
       this.searchToggleSwitch = !this.searchToggleSwitch;
+    },
+    changeTabIndex(itemIndex) {
+      this.tabIndex = itemIndex;
     },
   },
 };

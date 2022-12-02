@@ -25,7 +25,7 @@
                   <span class="subtitle_css">●</span>
                   최종 편집 일시 :
                   <span>{{
-                    $moment(cueInfo.edittime).format("YYYY-MM-DD")
+                    $moment(cueInfo.edittime).format("YYYY-MM-DD HH:mm:ss")
                   }}</span>
                 </span>
               </div>
@@ -46,6 +46,13 @@
                     <template #default>
                       <div>
                         <PrintWidget :printHeight="printHeight" />
+                      </div>
+                    </template>
+                  </DxItem>
+                  <DxItem title="부가정보">
+                    <template #default>
+                      <div>
+                        <AdditionalWidget :valueItems="tags" />
                       </div>
                     </template>
                   </DxItem>
@@ -149,6 +156,7 @@ import ButtonWidget from "./ButtonWidget.vue";
 import AbchannelWidget from "./AbchannelWidget.vue";
 import PrintWidget from "./PrintWidget.vue";
 import SortableWidget from "./C_SortableWidget.vue";
+import AdditionalWidget from "./AdditionalInformationWidget.vue";
 import DxTabPanel, { DxItem } from "devextreme-vue/tab-panel";
 import DxSpeedDialAction from "devextreme-vue/speed-dial-action";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
@@ -180,6 +188,7 @@ export default {
     SortableWidget,
     DxSpeedDialAction,
     DxLoadPanel,
+    AdditionalWidget,
   },
   data() {
     return {
@@ -203,6 +212,7 @@ export default {
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
     ...mapGetters("user", ["timer"]),
+    ...mapGetters("cueList", ["tags"]),
   },
   methods: {
     ...mapActions("cueList", ["saveTempCue"]),
@@ -250,6 +260,9 @@ export default {
         this.printHeight = 310;
         this.abChannelHeight = 354;
         document
+          .querySelector("#additional_information")
+          .classList.add("additional_information_search_toggle_on");
+        document
           .querySelector(".detail_view")
           .insertBefore(document.getElementById("button_view"), null);
         document
@@ -262,6 +275,9 @@ export default {
       } else {
         this.printHeight = 560;
         this.abChannelHeight = 734;
+        document
+          .querySelector("#additional_information")
+          .classList.remove("additional_information_search_toggle_on");
         document
           .getElementById("left_top")
           .insertBefore(document.getElementById("button_view"), null);

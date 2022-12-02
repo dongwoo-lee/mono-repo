@@ -189,7 +189,7 @@
           </div>
           <div class="dx-field-value mt-3 mb-5 pr-5">
             <DxTextBox
-              :placeholder="tmpTitleTextBoxValue"
+              :placeholder="templateTitle"
               width="320px"
               :maxLength="40"
               v-model="tmpTitleTextBoxValue"
@@ -224,57 +224,6 @@
       @settings="(val) => (editOptions = val)"
     />
     <common-import-archive @settings="(val) => (editOptions = val)" />
-
-    <!-- 내보내기 -->
-    <b-modal
-      ref="modal-wav"
-      size="lg"
-      centered
-      title="내보내기"
-      ok-title="확인"
-      cancel-title="취소"
-    >
-      <div class="d-block text-center">
-        <div class="mb-3 mt-3" style="font-size: 20px">
-          <div>
-            현재 DAP (A,B) 탭에 추가된 소재를 하나의 WAV 파일로 병합합니다.
-          </div>
-        </div>
-        <div class="wavemodalDiv">
-          <div class="dx-fieldset">
-            <div class="dx-field">
-              <div class="dx-field-label wavemodalabel">병합될 소재 개수 :</div>
-              <div class="dx-field-value">10 개</div>
-            </div>
-            <div class="dx-field">
-              <div class="dx-field-label wavemodalabel">
-                완료 후 소재 길이 :
-              </div>
-              <div class="dx-field-value">00:45:54</div>
-            </div>
-          </div>
-        </div>
-        <div v-if="buttonText !== '확인'">
-          <DxProgressBar
-            id="progress-bar-status"
-            :class="{ complete: seconds == 0 }"
-            :min="0"
-            :max="maxValue"
-            :status-format="statusFormat"
-            :value="progressValue"
-            width="90%"
-          />
-        </div>
-      </div>
-      <template #modal-footer="{ cancel }">
-        <b-button variant="secondary" @click="cancelClick(cancel)"
-          >취소
-        </b-button>
-        <b-button variant="primary" @click="onButtonClick">
-          {{ buttonText }}
-        </b-button>
-      </template>
-    </b-modal>
 
     <!-- 큐시트 저장 -->
     <b-modal
@@ -400,18 +349,6 @@
               />
             </div>
           </div>
-          <div class="dx-field">
-            <div class="dx-field-label" style="font-size: 15px">메모 :</div>
-            <div class="dx-field-value">
-              <DxTextArea
-                :height="60"
-                :maxLength="25"
-                width="320px"
-                v-model="editOptions.memo"
-                :disabled="cueInfo.cuetype == 'A'"
-              />
-            </div>
-          </div>
         </div>
       </div>
       <template #modal-footer="{ cancel }">
@@ -436,17 +373,17 @@
 
     <!-- ExportZip -->
     <b-modal
-      ref="modal-export-zip-wave"
+      ref="modal-export-zip"
       size="lg"
       centered
-      title="내보내기"
+      title="큐시트 로컬 저장"
       ok-title="확인"
       cancel-title="취소"
-      @ok="exportZipWave"
+      @ok="exportZip"
     >
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
-          <div class="mb-3">작성된 내용을 ZIP 파일로 내보냅니다.</div>
+          <div class="mb-3">작성한 큐시트를 zip 파일로 묶어 저장합니다.</div>
           <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
         </div>
       </div>
@@ -464,7 +401,49 @@
           :width="100"
           :height="30"
           :disabled="loadingIconVal"
-          @click="exportZipWave()"
+          @click="exportZip()"
+        >
+        </DxButton>
+      </template>
+    </b-modal>
+
+    <!-- ExportWav -->
+    <b-modal
+      ref="modal-export-wav"
+      size="xl"
+      centered
+      title="Wav로 저장(A,B)"
+      ok-title="확인"
+      cancel-title="취소"
+      @ok="OnExportWav"
+      @hidden="OnWavExportCancel"
+    >
+      <div>
+        <WavExportAbCart @isTotalDuration="isTotalDuration" />
+      </div>
+      <div>
+        <DxProgressBar
+          id="progress-bar-status"
+          :min="0"
+          :max="100"
+          :status-format="statusFormat"
+          :value.sync="seconds"
+          width="100%"
+        />
+      </div>
+      <template #modal-footer="{}">
+        <div v-if="isMyDiskCheckBox" class="mydisc-check-box">
+          <DxCheckBox v-model="isWavCopy" :text="labelText" />
+        </div>
+        <DxButton :width="100" text="취소" @click="OnWavExportCancel" />
+        <DxButton
+          type="default"
+          styling-mode="outlined"
+          text="확인"
+          :width="100"
+          :height="30"
+          :disabled="!isWavExportDisabled"
+          @click="OnExportWav()"
         >
         </DxButton>
       </template>
@@ -486,7 +465,7 @@
             <b-form-select
               style="width: 150px"
               v-model="cueInfo.media"
-              :options="mediasOption"
+              :options="mediaOptions"
               disabled
             />
           </b-form-group>
@@ -494,7 +473,7 @@
             <b-form-select
               style="width: 400px"
               v-model="cueInfo.productid"
-              :options="userProOption"
+              :options="programOptions"
               disabled
             />
           </b-form-group>
@@ -537,26 +516,61 @@
 </template>
 
 <script>
+import { DxCheckBox } from "devextreme-vue/check-box";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import DxButton from "devextreme-vue/button";
 import DxTextBox from "devextreme-vue/text-box";
 import DxTextArea from "devextreme-vue/text-area";
 import { DxLoadIndicator } from "devextreme-vue/load-indicator";
+import { DxProgressBar } from "devextreme-vue/progress-bar";
 import CommonImportDef from "../../../components/Popup/CommonImportDef.vue";
 import CommonImportTem from "../../../components/Popup/CommonImportTem.vue";
 import CommonImportArchive from "../../../components/Popup/CommonImportArchive.vue";
-import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
+import WavExportAbCart from "../../../components/Popup/WavExportABCart.vue";
+import {
+  AUTHORITY,
+  AUTHORITY_ADMIN,
+  MY_DISK_PAGE_ID,
+  USER_ID,
+  ACCESS_GROP_ID,
+  USER_NAME,
+  PREVIEW_CODE,
+} from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { eventBus } from "@/eventBus";
 import axios from "axios";
+
 import "moment/locale/ko";
 const moment = require("moment");
-
+function statusFormat(value) {
+  return `${parseInt(value * 100)}%`;
+}
+const CancelToken = axios.CancelToken;
+const signalR = require("@microsoft/signalr");
+const connection = new signalR.HubConnectionBuilder()
+  .withUrl("/api/ProgressHub")
+  .build();
+connection.start().catch(function (err) {
+  console.log("err", err);
+});
 export default {
   props: {
     type: String,
     saveText: String,
+    cueClearItems: {
+      type: Array,
+      default: () => ["print", "ab", "tags", "memo"],
+    },
+    cueClearOptions: {
+      type: Array,
+      default: () => [
+        { name: "출력용", value: "print", notEnabled: true },
+        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "태그", value: "tags", notEnabled: true },
+        { name: "메모", value: "memo", notEnabled: true },
+      ],
+    },
     fav: {
       type: Boolean,
       default: false,
@@ -564,6 +578,22 @@ export default {
   },
   data() {
     return {
+      date: new Date(),
+      pramObj: { person: null, brd_dt: null, media: null },
+      pgmList: [],
+      mediaOptions: [],
+      programOptions: [],
+      source: null,
+      statusFormat,
+      seconds: 0,
+      PREVIEW_CODE,
+      MY_DISK_PAGE_ID,
+      currentPageName: "",
+      IS_ADMIN: sessionStorage.getItem(AUTHORITY) === AUTHORITY_ADMIN,
+      isMyDiskCheckBox: false,
+      labelText: "병합 후 My 디스크에 해당 소재 추가",
+      isWavCopy: false,
+      isWavExportDisabled: true,
       goBackPoint: "",
       accrssCheck: true,
       loadingIconVal: false,
@@ -573,7 +603,7 @@ export default {
       cuetype: "",
       allCheck: true,
       templateTitle: "",
-      selected: ["print", "ab"],
+      selected: [],
       cartSelected: ["c1", "c2", "c3", "c4"],
       oldCueOptions: [
         {
@@ -582,10 +612,7 @@ export default {
         },
       ],
       oldCueSelected: [true],
-      options: [
-        { name: "출력용", value: "print", notEnabled: true },
-        { name: "DAP(A, B)", value: "ab", notEnabled: true },
-      ],
+      options: [],
       cartOptions: [
         { name: "C1", value: "c1", notEnabled: true },
         { name: "C2", value: "c2", notEnabled: true },
@@ -601,6 +628,7 @@ export default {
       ],
       downloaditem: [
         { id: "zip", name: "큐시트 로컬 저장" },
+        { id: "wav", name: "Wav로 저장(AB)" },
         { id: "pdf", name: "PDF로 저장" },
         { id: "docx", name: "Word로 저장" },
         { id: "excel", name: "엑셀로 저장" },
@@ -688,22 +716,15 @@ export default {
           moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
       }
     }
-    // if (this.cueInfo.cuetype == "D" || this.cueInfo.cuetype == "A") {
-    //   this.templateTitle =
-    //     "[" +
-    //     this.cueInfo.media +
-    //     "]" +
-    //     this.cueInfo.title +
-    //     "_" +
-    //     moment(this.cueInfo.brdtime).format("YYYY-MM-DD");
-    // }
-    // if (this.cueInfo.cuetype == "B") {
-    //   this.templateTitle =
-    //     "[" + this.cueInfo.media + "]" + this.cueInfo.title + "_" + toDay;
-    // }
-    // this.tmpTitleTextBoxValue = this.templateTitle;
+    this.isMyDiskCheckBox = this.roleList.some(
+      (data) => data.id === this.MY_DISK_PAGE_ID && data.visible === "Y"
+    );
+    connection.on("sendProgress", (progress) => {
+      this.seconds = progress;
+    });
   },
   components: {
+    DxCheckBox,
     CommonImportDef,
     CommonImportTem,
     CommonImportArchive,
@@ -713,16 +734,17 @@ export default {
     DxTextArea,
     DxLoadIndicator,
     DxLoadPanel,
+    WavExportAbCart,
+    DxProgressBar,
   },
   computed: {
     ...mapGetters("cueList", ["abCartArr"]),
     ...mapGetters("cueList", ["cChannelData"]),
+    ...mapGetters("cueList", ["attachments"]),
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["cueFavorites"]),
     ...mapGetters("cueList", ["cueInfo"]),
-
-    ...mapGetters("cueList", ["mediasOption"]),
-    ...mapGetters("cueList", ["userProOption"]),
+    ...mapGetters("user", ["roleList"]),
 
     btnWeekStates() {
       var result = this.weekButtons.map((btn) => {
@@ -749,10 +771,14 @@ export default {
         }
       });
     }
+    this.selected = this.cueClearItems.concat();
+    this.options = this.cueClearOptions.concat();
   },
   methods: {
     ...mapMutations("cueList", ["SET_PRINTARR"]),
     ...mapMutations("cueList", ["SET_ABCARTARR"]),
+    ...mapMutations("cueList", ["SET_ATTACHMENTS"]),
+    ...mapMutations("cueList", ["SET_TAGS"]),
     ...mapMutations("cueList", ["SET_CCHANNELDATA"]),
     ...mapMutations("cueList", ["SET_CUEFAVORITES"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -761,26 +787,23 @@ export default {
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["saveTempCue"]),
     ...mapActions("cueList", ["saveOldCue"]),
-    ...mapActions("cueList", ["addTemplate"]),
+    ...mapActions("cueList", ["addByTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
-    ...mapActions("cueList", ["getuserProOption"]),
+    ...mapActions("cueList", ["getDateStr"]),
+    ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("user", ["renewal"]),
-
-    //테스트중
-    ...mapActions("cueList", ["exportZip"]),
+    ...mapActions("cueList", ["enableNotification"]),
 
     //템플릿으로 저장
     async addtemClick() {
       this.loadingIconVal = true;
       const userId = sessionStorage.getItem(USER_ID);
       var cueCon = await this.setCueConFav_save(false);
-      // var temParam = { personid: userId, tmptitle: this.tmpTitleTextBoxValue };
-      // cueCon.temParam = temParam;
+
       var tempItem = {
         personid: userId,
         detail: [{ cueid: -1 }],
-        title: this.tmpTitleTextBoxValue,
         djname: this.cueInfo.djname,
         directorname: this.cueInfo.directorname,
         membername: this.cueInfo.membername,
@@ -788,18 +811,18 @@ export default {
         footertitle: this.cueInfo.footertitle,
         memo: this.cueInfo.memo,
       };
-      this.tmpTitleTextBoxValue = this.templateTitle;
-      // var pram = {
-      //   CueSheetDTO: tempItem,
-      // };
+
+      this.tmpTitleTextBoxValue
+        ? (tempItem.title = this.tmpTitleTextBoxValue)
+        : (tempItem.title = this.templateTitle);
       cueCon.CueSheetDTO = tempItem;
 
-      await this.addTemplate(cueCon);
+      await this.addByTemplate(cueCon);
       this.loadingIconVal = false;
       this.$bvModal.hide("modal-template");
     },
     resetModal_tem() {
-      this.tmpTitleTextBoxValue = this.templateTitle;
+      this.tmpTitleTextBoxValue = "";
     },
     clearOk() {
       this.loadingIconVal = true;
@@ -809,6 +832,16 @@ export default {
         }
         if (this.selected.includes("ab")) {
           this.SET_ABCARTARR([]);
+        }
+        //첨부파일
+        this.selected.includes("attachments") &&
+          eventBus.$emit("attachments-delete");
+        //태그
+        this.selected.includes("tags") && this.SET_TAGS([]);
+        //메모
+        if (this.selected.includes("memo")) {
+          this.cueInfo.memo = "";
+          this.SET_CUEINFO(this.cueInfo);
         }
       }
       if (this.cartSelected.length > 0) {
@@ -826,7 +859,8 @@ export default {
     clickCheckTilte() {
       if (this.allCheck) {
         //아이템 전체 비활성화
-        this.selected = ["print", "ab"];
+        // this.selected = ["print", "ab"];
+        this.selected = this.cueClearItems.concat();
         this.cartSelected = ["c1", "c2", "c3", "c4"];
         this.options.forEach((ele) => {
           ele.notEnabled = true;
@@ -846,8 +880,12 @@ export default {
     },
     onDownloadItemClick(e) {
       //wav도 추가해야함
-      if (e.itemData.id == "zip" || e.itemData.id == "wav") {
-        this.$refs["modal-export-zip-wave"].show();
+      if (e.itemData.id == "zip") {
+        this.$refs["modal-export-zip"].show();
+      }
+      if (e.itemData.id == "wav") {
+        // this.maxValue
+        this.$refs["modal-export-wav"].show();
       } else {
         eventBus.$emit("exportGo", e.itemData.id);
       }
@@ -900,15 +938,15 @@ export default {
               this.cueFavorites
             )
             .then((res) => {
-              window.$notify("info", `즐겨찾기 저장완료.`, "", {
-                duration: 10000,
-                permanent: false,
+              this.enableNotification({
+                type: "info",
+                message: `즐겨찾기 저장완료.`,
               });
             })
             .catch((err) => {
-              window.$notify("error", `즐겨찾기 저장실패.`, "", {
-                duration: 10000,
-                permanent: false,
+              this.enableNotification({
+                type: "error",
+                message: `즐겨찾기 저장실패.`,
               });
             });
           break;
@@ -920,13 +958,10 @@ export default {
       this.loadingIconVal = false;
       this.$bvModal.hide("modal-save");
     },
-    // zip 파일 다운로드
-    async exportZipWave() {
+    // zip, wave 파일 다운로드
+    // wave는 AB만 들어가야 함 나중에 method 분리하기
+    async exportZip() {
       this.loadingIconVal = true;
-      // var pramQuery = {
-      //   name: sessionStorage.getItem(USER_ID),
-      //   title: this.cueInfo.title,
-      // };
       var cuesheetData = await this.setCueConFav_save(false);
       var pramList = [];
       for (var i = 1; i < 5; i++) {
@@ -940,9 +975,9 @@ export default {
         pramList.push(ele);
       });
       if (pramList.length == 0) {
-        window.$notify("error", `내려받을 소재가 없습니다.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `내려받을 소재가 없습니다.`,
         });
       } else {
         var downloadName = "";
@@ -969,11 +1004,11 @@ export default {
           )
           .then((response) => {
             const link = document.createElement("a");
-            link.href = `/api/CueAttachments/exportZipFileDownload?guid=${
+            link.href = `/api/CueAttachments/exportFileDownload?guid=${
               response.data
             }&userid=${sessionStorage.getItem(
               USER_ID
-            )}&downloadname=${downloadName}`;
+            )}&downloadname=${downloadName}.zip`;
             document.body.appendChild(link);
             link.click();
           })
@@ -983,17 +1018,104 @@ export default {
       }
       this.loadingIconVal = false;
 
-      this.$refs["modal-export-zip-wave"].hide();
+      this.$refs["modal-export-zip"].hide();
+    },
+    async OnExportWav() {
+      this.loadingIconVal = true;
+      this.isWavExportDisabled = false;
+      const date = new Date();
+      this.source = CancelToken.source();
+      const dateStr = await this.getDateStr(date);
+      var cuesheetData = await this.setCueConFav_save(false);
+      var pramList = [];
+      cuesheetData.NormalCon.forEach((ele) => {
+        if (ele.cartcode != "") pramList.push(ele);
+      });
+      if (pramList.length == 0) {
+        this.enableNotification({
+          type: "error",
+          message: `내려받을 소재가 없습니다.`,
+        });
+      } else {
+        let downloadName = "";
+        switch (this.cueInfo.cuetype) {
+          case "D":
+            downloadName = `${this.cueInfo.title}_${dateStr}`;
+            break;
+          case "B":
+            downloadName = `[기본]_${this.cueInfo.title}_${dateStr}`;
+            break;
+          case "T":
+            downloadName = `${this.cueInfo.title}_${dateStr}`;
+            break;
+          case "A":
+            downloadName = `${this.cueInfo.title}_${dateStr}`;
+            break;
+        }
+        await this.$http
+          .post(
+            `/api/CueAttachments/exportWavFile?connectionId=${connection.connectionId}`,
+            pramList,
+            { cancelToken: this.source.token }
+          )
+          .then((response) => {
+            if (response.data.resultCode === 0) {
+              const downPath = response.data.resultObject.value;
+              this.isWavCopy && this.copyToMySpace(downPath, downloadName);
+              this.downloadFile(downPath, downloadName);
+            }
+          })
+          .catch((err) => {
+            if (err.code === "ECONNABORTED") {
+              this.enableNotification({
+                type: "error",
+                message: `요청시간이 만료되었습니다.`,
+              });
+              this.seconds = 0;
+            }
+          });
+      }
+      this.loadingIconVal = false;
+      this.isWavExportDisabled = true;
+      this.$refs["modal-export-wav"].hide();
+      this.seconds = 0;
+    },
+    OnWavExportCancel() {
+      this.isWavExportDisabled = true;
+      if (this.source) {
+        this.source.cancel();
+      }
+      this.$refs["modal-export-wav"].hide();
+    },
+    downloadFile(fileData, fileName) {
+      const link = document.createElement("a");
+      link.href = `/api/CueAttachments/exportFileDownload?guid=${fileData}&userid=${sessionStorage.getItem(
+        USER_ID
+      )}&downloadname=${fileName}.wav`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    copyToMySpace(filePath, fileName) {
+      this.$http
+        .post(
+          `/api/CueAttachments/WavCopyToMyspace?title=${fileName}`,
+          filePath
+        )
+        .then((res) => {
+          if (res.data.resultCode === 0) {
+            this.enableNotification({
+              type: "info",
+              message: `소재가 My디스크에 추가되었습니다.`,
+            });
+          }
+        });
     },
     async editWeekListClick() {
-      const userName = sessionStorage.getItem(USER_NAME);
-      const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-      var pram = {
-        person: userName,
-        gropId: gropId,
-        media: this.cueInfo.media,
-      };
-      var proOption = await this.getuserProOption(pram);
+      const { productid, title: eventName, media } = { ...this.cueInfo };
+      this.programOptions.push({ value: productid, text: eventName });
+
+      this.mediaOptions = await this.SetMediaOption([{ media: media }]);
       this.$refs["modal-editWeek"].show();
     },
     //적용요일 변경
@@ -1007,9 +1129,9 @@ export default {
         return ele.state == true;
       });
       if (stateList.length == 0) {
-        window.$notify("error", `적용요일을 선택하세요.`, "", {
-          duration: 10000,
-          permanent: false,
+        this.enableNotification({
+          type: "error",
+          message: `적용요일을 선택하세요.`,
         });
       } else {
         this.weekButtons.forEach((week, index) => {
@@ -1060,6 +1182,9 @@ export default {
     resetModal() {
       this.editOptions = { ...this.cueInfo };
     },
+    isTotalDuration(value) {
+      this.isWavExportDisabled = value;
+    },
   },
 };
 </script>
@@ -1076,7 +1201,7 @@ export default {
   font-size: 14px;
   padding-top: 20px;
   padding-bottom: 10px;
-  margin: 0px 150px 0px 150px;
+  margin: 0px 130px 0px 130px;
 }
 /* 모달 CSS */
 #modal-setting .dx-field-label {
@@ -1088,5 +1213,9 @@ export default {
   .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
   font-family: "MBC 새로움 M" !important;
   width: 65%;
+}
+.mydisc-check-box {
+  position: absolute;
+  left: 40px;
 }
 </style>

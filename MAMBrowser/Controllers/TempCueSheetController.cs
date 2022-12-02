@@ -15,10 +15,12 @@ namespace MAMBrowser.Controllers
     public class TempCueSheetController : Controller
     {
         private readonly TemplateBll _bll;
+        private readonly CueAttachmentsBll _attachmentsBll;
 
-        public TempCueSheetController(TemplateBll bll)
+        public TempCueSheetController(TemplateBll bll, CueAttachmentsBll attachmentsBll)
         {
             _bll = bll;
+            _attachmentsBll = attachmentsBll;
         }
 
         // 템플릿 목록 가져오기
@@ -31,12 +33,12 @@ namespace MAMBrowser.Controllers
                 result.ResultObject = _bll.GetPersonIDWithTitleTemplateList(personid, title, row_per_page, select_page);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
-                return result;
+            return result;
 
         }
 
@@ -47,10 +49,10 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<CueSheetCollectionDTO>();
             try
             {
-                result.ResultObject =  _bll.GetTemplate(cueid, pgmcode, brd_dt);
+                result.ResultObject = _bll.GetTemplate(cueid, pgmcode, brd_dt);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
@@ -68,7 +70,25 @@ namespace MAMBrowser.Controllers
                 result.ResultObject = _bll.SaveTemplate(pram);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        //템플릿으로 저장
+        [HttpPost("SaveByTemp")]
+        public DTO_RESULT<int> SaveByTemplate([FromBody] CueSheetCollectionDTO pram)
+        {
+            var result = new DTO_RESULT<int>();
+            try
+            {
+                result.ResultObject = _bll.SaveTemplate(pram);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
@@ -83,10 +103,19 @@ namespace MAMBrowser.Controllers
             var result = new DTO_RESULT<bool>();
             try
             {
+                foreach (var i in tempids)
+                {
+                    var files = _attachmentsBll.GetAttachmentDTOs(i);
+
+                    foreach (var item in files)
+                    {
+                        _attachmentsBll.DeleteAttachmentsFile(item);
+                    }
+                }
                 result.ResultObject = _bll.DeleteTemplate(tempids);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
