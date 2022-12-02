@@ -111,6 +111,9 @@ export default {
   components: { SoundCopyrightPopup, CopyToMySpacePopup },
   data() {
     return {
+      streamingUrl: "/api/products/streaming",
+      waveformUrl: "/api/products/waveform",
+      tempDownloadUrl: "/api/products/temp-download",
       MySpaceScreenName: "[SONG]",
       allSelected: false,
       indeterminate: false,
