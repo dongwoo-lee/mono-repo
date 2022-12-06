@@ -250,22 +250,7 @@ namespace MAMBrowser.Controllers
                 var fileData = _bll.Get(key);
                 var fileName = Path.GetFileName(fileData.FilePath);
                 string userId = HttpContext.Items[Define.USER_ID] as string;
-                //using (var stream = _fileService.GetFileStream(fileData.FilePath, 0))
-                //{
-                //    metaData.FILE_SIZE = fileData.FileSize;
-                //    result = privateBll.UploadFile(userId, stream, fileName, metaData);
-                //}
-
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (var stream = _fileSystem.GetFileStream(fileData.FilePath, 0))
-                    {
-                        stream.CopyTo(ms);
-                    }
-                    ms.Position = 0;
-                    metaData.FILE_SIZE = fileData.FileSize;
-                    result = privateBll.UploadFile(userId, ms, fileName, metaData);
-                }
+                result = privateBll.RegistryMyDiskFromStorage(metaData.TITLE, metaData.MEMO, userId, fileData.FilePath);
             }
             catch (Exception ex)
             {

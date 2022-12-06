@@ -50,66 +50,17 @@ namespace MAMBrowser.BLL
             ms.Position = 0;
             return ms;
         }
-
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, Stream stream, string fileName, M30_MAM_PRIVATE_SPACE metaData)
-        {
-            // 파일 크기로 유효성검사 필요. 이함수 들어오기전 metaData의 FileSize필드 값이 꼭 채워져야함.
-            // 업로드시 IFROMFILE 객체의 사이즈
-            // PRODUCT MY공간 복사 : 넷드라이브 소스 스트림의 사이즈.  DB에 파일 사이즈 없음
-            // PUBLIC MY공간 복사 : DB의 파일 사이즈 사용
-            // DL30 MY공간 복사 : DB의 파일 사이즈 이용
-            // MUSIC MY공간 복사 : HTTP로 content의 content-length
-
-            //유효성검사
-            var validateResult = VerifyModel(userId, metaData, fileName);
-
-            if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
-            {
-                return validateResult;
-            }
-            else
-            {
-                long ID = _dao.GetID();
-                string date = DateTime.Now.ToString(Define.DTM8);
-                string newFileName = $"{ID.ToString() }_{fileName}";
-                string fileExt = Path.GetExtension(newFileName);
-                var relativeSourceFolder = $"{_fileProtocol.TmpUploadFolder}";
-                var relativeTargetFolder = @$"{_fileProtocol.UploadFolder}\{userId}\{userId}-{date}";
-                var relativeSourcePath = @$"{relativeSourceFolder}\{newFileName}";
-                var relativeTargetPath = @$"{relativeTargetFolder}\{newFileName}";
-
-                var audioHeaderStream = GetHeaderStream(stream);
-                //audioHeaderStream.Position = 0;
-                var soundInfo = AudioEngine.GetAudioInfo(audioHeaderStream, fileExt, metaData.FILE_SIZE);
-                audioHeaderStream.Position = 0;
-                _fileProtocol.MakeDirectory(relativeSourceFolder);
-                _fileProtocol.Upload(audioHeaderStream, stream, relativeSourcePath);
-                _fileProtocol.MakeDirectory(relativeTargetFolder);
-                _fileProtocol.Move(relativeSourcePath, relativeTargetPath);
-                stream.Dispose();
-                audioHeaderStream.Dispose();
-                
-                metaData.SEQ = ID;
-                metaData.USER_ID = userId;
-                metaData.AUDIO_FORMAT = soundInfo.AudioFormat;
-                metaData.FILE_PATH = @$"\\{_fileProtocol.UploadHost}\{relativeTargetPath}";
-                _dao.Insert(metaData, (int)soundInfo.TotalTime.TotalMilliseconds);
-               
-                return validateResult;
-            }
-        }
-
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, M30_MAM_PRIVATE_SPACE metaData, string fileName)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string title, string userId, long fileSize, string fileName)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             var user = _apiDao.GetUserSummary(userId);
-            if (user.DiskAvailable < metaData.FILE_SIZE)
+            if (user.DiskAvailable < fileSize)
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
                 result.ErrorMsg = "디스크 여유 공간이 부족합니다.";
                 return result;
             }
-            if (int.MaxValue < metaData.FILE_SIZE)
+            if (int.MaxValue < fileSize)
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
                 result.ErrorMsg = "파일 용량이 2GB를 초과하였습니다.";
@@ -121,7 +72,7 @@ namespace MAMBrowser.BLL
                 result.ErrorMsg = "WAV, MP3 파일만 업로드 할 수 있습니다.";
                 return result;
             }
-            if (IsExistTitle(metaData.TITLE))
+            if (IsExistTitle(title))
             {
                 result.ResultCode = RESUlT_CODES.INVALID_DATA;
                 result.ErrorMsg = "동일한 제목이 이미 있습니다. 제목을 수정해주세요.";
@@ -239,7 +190,15 @@ namespace MAMBrowser.BLL
             return result;
         }
 
-        public void ResistryMyDisk(string title, string memo, string userId, string uncSourceFilePath)
+        /// <summary>
+        /// Copy storage to storage
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="memo"></param>
+        /// <param name="userId"></param>
+        /// <param name="uncSourceFilePath"></param>
+        /// <returns></returns>
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> RegistryMyDiskFromStorage(string title, string memo, string userId, string uncSourceFilePath)
         {
             M30_MAM_PRIVATE_SPACE myDiskData = new M30_MAM_PRIVATE_SPACE();
             long fileSize = 0;
@@ -248,9 +207,9 @@ namespace MAMBrowser.BLL
             string fileExt = Path.GetExtension(uncSourceFilePath);
             string audioFormat = "";
 
-
+            
             //1. 파일의 헤더를 읽어서 wav형식, 음원길이, 파일크기 가져오기.
-            using (FileStream sourceStream = new FileStream(uncSourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (Stream sourceStream = _fileProtocol.GetFileStream(uncSourceFilePath, 0))
             {
                 fileSize = sourceStream.Length;
                 using (var audioHeaderStream = GetHeaderStream(sourceStream))
@@ -261,9 +220,16 @@ namespace MAMBrowser.BLL
                 }
             }
 
+            // 1.1 유효성 검사
+            var validateResult = VerifyModel(title, userId, fileSize, fileName);
+            if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
+                return validateResult;
+
             //2. MY-DISK 저장 공간 옵션 값 가져오기
             var options =_apiDao.GetOptions("S01G06C001").ToList();
-            var myDiskDirectory =options.Find(op => op.Name == "MYDISK_PATH");
+            var uncTempUploadPath = options.Find(op => op.Name == "MAM_UPLOAD_PATH").Value;
+            var uncMyDiskDirectory = options.Find(op => op.Name == "MYDISK_PATH").Value;
+
 
             //3. MY-DISK ID 채번 (파일명
             var myDiskID = _dao.GetID();
@@ -271,13 +237,18 @@ namespace MAMBrowser.BLL
             //4. MY-DISK 저장 공간 디렉토리 만들기
             string date = DateTime.Now.ToString(Define.DTM8);
             string newFileName = $"{myDiskID}_{fileName}";
-            var targetDirectory = @$"{myDiskDirectory}\{userId}\{userId}-{date}";
-            var targetFilePath = @$"{targetDirectory}\{newFileName}";
-            if (!Directory.Exists(targetDirectory))
-                Directory.CreateDirectory(targetDirectory);
+            var tempFilePath = Path.Combine(uncTempUploadPath, newFileName);
+            var uncTargetDirectory = @$"{uncMyDiskDirectory}\{userId}\{userId}-{date}";
+            var uncTargetFilePath = @$"{uncTargetDirectory}\{newFileName}";
 
-            //5. 파일을 목적지로 옮기기.
-            _fileProtocol.Move(uncSourceFilePath, targetFilePath);
+            if (!_fileProtocol.ExistDirectory(uncTempUploadPath))
+                _fileProtocol.MakeDirectory(uncTempUploadPath);
+
+            if (!_fileProtocol.ExistDirectory(uncTargetDirectory))
+                _fileProtocol.MakeDirectory(uncTargetDirectory);
+
+            //5. 파일을 임시 목적지로 복사.
+            _fileProtocol.Copy(uncSourceFilePath, tempFilePath);
               
             //6. DB에 등록하기.
             myDiskData.SEQ = myDiskID;
@@ -286,10 +257,166 @@ namespace MAMBrowser.BLL
             myDiskData.USER_ID = userId;
             myDiskData.AUDIO_FORMAT = audioFormat;
             myDiskData.FILE_SIZE = fileSize;
-            myDiskData.FILE_PATH = targetFilePath;
+            myDiskData.FILE_PATH = uncTargetFilePath;
             _dao.Insert(myDiskData, intDuration);
 
-        }
+            //7. 파일 최종위치로 옮김.
+            _fileProtocol.Move(tempFilePath, uncTargetFilePath);
 
+            return validateResult;
+        }
+        /// <summary>
+        /// upload local to storage
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="memo"></param>
+        /// <param name="userId"></param>
+        /// <param name="localSourceFilePath"></param>
+        /// <returns></returns>
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> RegistryMyDiskFromLocalFile(string title, string memo, string userId, string localSourceFilePath)
+        {
+            M30_MAM_PRIVATE_SPACE myDiskData = new M30_MAM_PRIVATE_SPACE();
+            long fileSize = 0;
+            int intDuration = 0;
+            string fileName = Path.GetFileName(localSourceFilePath);
+            string fileExt = Path.GetExtension(localSourceFilePath);
+            string audioFormat = "";
+
+
+            //1. 파일의 헤더를 읽어서 wav형식, 음원길이, 파일크기 가져오기.
+            using (Stream sourceStream = new FileStream(localSourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                fileSize = sourceStream.Length;
+                using (var audioHeaderStream = GetHeaderStream(sourceStream))
+                {
+                    var soundInfo = AudioEngine.GetAudioInfo(audioHeaderStream, fileExt, fileSize);
+                    audioFormat = soundInfo.AudioFormat;
+                    intDuration = (int)soundInfo.TotalTime.TotalMilliseconds;
+                }
+            }
+
+            // 1.1 유효성 검사
+            var validateResult = VerifyModel(title, userId, fileSize, fileName);
+            if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
+                return validateResult;
+
+            //2. MY-DISK 저장 공간 옵션 값 가져오기
+            var options = _apiDao.GetOptions("S01G06C001").ToList();
+            var uncTempUploadPath = options.Find(op => op.Name == "MAM_UPLOAD_PATH").Value;
+            var uncMyDiskDirectory = options.Find(op => op.Name == "MYDISK_PATH").Value;
+
+
+            //3. MY-DISK ID 채번 (파일명
+            var myDiskID = _dao.GetID();
+
+            //4. MY-DISK 저장 공간 디렉토리 만들기
+            string date = DateTime.Now.ToString(Define.DTM8);
+            string newFileName = $"{myDiskID}_{fileName}";
+            var tempFilePath = Path.Combine(uncTempUploadPath, newFileName);
+            var uncTargetDirectory = @$"{uncMyDiskDirectory}\{userId}\{userId}-{date}";
+            var uncTargetFilePath = @$"{uncTargetDirectory}\{newFileName}";
+
+            if (_fileProtocol.ExistDirectory(uncTempUploadPath))
+                _fileProtocol.MakeDirectory(uncTempUploadPath);
+
+            if (_fileProtocol.ExistDirectory(uncTargetDirectory))
+                _fileProtocol.MakeDirectory(uncTargetDirectory);
+
+            //5. 파일을 임시 목적지로 복사.
+            _fileProtocol.Upload(localSourceFilePath, tempFilePath);
+
+            //6. DB에 등록하기.
+            myDiskData.SEQ = myDiskID;
+            myDiskData.TITLE = title;
+            myDiskData.MEMO = memo;
+            myDiskData.USER_ID = userId;
+            myDiskData.AUDIO_FORMAT = audioFormat;
+            myDiskData.FILE_SIZE = fileSize;
+            myDiskData.FILE_PATH = uncTargetFilePath;
+            _dao.Insert(myDiskData, intDuration);
+
+            //7. 파일 최종위치로 옮김.
+            _fileProtocol.Move(tempFilePath, uncTargetFilePath);
+
+            return validateResult;
+        }
+        /// <summary>
+        /// 메모리 스트림으로 복사 후 처리.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="memo"></param>
+        /// <param name="userId"></param>
+        /// <param name="fileName"></param>
+        /// <param name="sourceStream"></param>
+        /// <returns></returns>
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> RegistryMyDiskFromMusicStream(string title, string memo, string userId, string fileName, Stream sourceStream)
+        {
+            M30_MAM_PRIVATE_SPACE myDiskData = new M30_MAM_PRIVATE_SPACE();
+            long fileSize = 0;
+            int intDuration = 0;
+            //string fileName = Path.GetFileName(fileName);
+            string fileExt = Path.GetExtension(fileName);
+            string audioFormat = "";
+
+            //1. 파일의 헤더를 읽어서 wav형식, 음원길이, 파일크기 가져오기.
+            using (MemoryStream ms = new MemoryStream())
+            {
+                sourceStream.CopyTo(ms);
+                fileSize = ms.Length;
+                ms.Position = 0;
+
+                using (var audioHeaderStream = GetHeaderStream(ms))
+                {
+                    var soundInfo = AudioEngine.GetAudioInfo(audioHeaderStream, fileExt, fileSize);
+                    audioFormat = soundInfo.AudioFormat;
+                    intDuration = (int)soundInfo.TotalTime.TotalMilliseconds;
+                }
+                ms.Position = 0;
+
+                // 1.1 유효성 검사
+                var validateResult = VerifyModel(title, userId, fileSize, fileName);
+                if (validateResult.ResultCode != RESUlT_CODES.SUCCESS)
+                    return validateResult;
+
+                //2. MY-DISK 저장 공간 옵션 값 가져오기
+                var options = _apiDao.GetOptions("S01G06C001").ToList();
+                var uncTempUploadPath = options.Find(op => op.Name == "MAM_UPLOAD_PATH").Value;
+                var uncMyDiskDirectory = options.Find(op => op.Name == "MYDISK_PATH");
+
+                //3. MY-DISK ID 채번 (파일명
+                var myDiskID = _dao.GetID();
+
+                //4. MY-DISK 저장 공간 디렉토리 만들기
+                string date = DateTime.Now.ToString(Define.DTM8);
+                string newFileName = $"{myDiskID}_{fileName}";
+                var tempFilePath = Path.Combine(uncTempUploadPath, newFileName);
+                var uncTargetDirectory = @$"{uncMyDiskDirectory}\{userId}\{userId}-{date}";
+                var uncTargetFilePath = @$"{uncTargetDirectory}\{newFileName}";
+
+                if (_fileProtocol.ExistDirectory(uncTempUploadPath))
+                    _fileProtocol.MakeDirectory(uncTempUploadPath);
+
+                if (_fileProtocol.ExistDirectory(uncTargetDirectory))
+                    _fileProtocol.MakeDirectory(uncTargetDirectory);
+
+                //5. 파일을 임시 목적지로 복사.
+                _fileProtocol.Upload(ms, tempFilePath);
+
+                //6. DB에 등록하기.
+                myDiskData.SEQ = myDiskID;
+                myDiskData.TITLE = title;
+                myDiskData.MEMO = memo;
+                myDiskData.USER_ID = userId;
+                myDiskData.AUDIO_FORMAT = audioFormat;
+                myDiskData.FILE_SIZE = fileSize;
+                myDiskData.FILE_PATH = uncTargetFilePath;
+                _dao.Insert(myDiskData, intDuration);
+
+                //7. 파일 최종위치로 옮김.
+                _fileProtocol.Move(tempFilePath, uncTargetFilePath);
+
+                return validateResult;
+            }
+        }
     }
 }

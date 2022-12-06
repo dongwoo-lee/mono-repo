@@ -448,9 +448,11 @@ namespace MAMBrowser.BLL
 
                 var path = Path.Combine(tempPath, folder_date);
                 var filePath = Path.Combine(path, _fileHelper.GetTempFileName(metaDataObject));
-                var host = CommonUtility.GetHost(path);
                 var userinfo = GetStorageUserInfo(option);
-                NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                //var host = CommonUtility.GetHost(tempPath);
+                //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                var directory = Path.GetDirectoryName(tempPath);
+                ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                 if (!Directory.Exists(path))
                 {
@@ -478,9 +480,11 @@ namespace MAMBrowser.BLL
             var cueFolder = Path.Combine(wcsPathRoot, $"{productId}_{brdDate}");
 
             var storagePath = Path.Combine(cueFolder, file.FILEID + "_" + Path.GetFileName(file.FILENAME));
-            var host = CommonUtility.GetHost(storagePath);
             var userinfo = GetStorageUserInfo(option);
-            NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+            //var host = CommonUtility.GetHost(storagePath);
+            //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+            var directory = Path.GetDirectoryName(storagePath);
+            ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
             if (!Directory.Exists(cueFolder))
                 Directory.CreateDirectory(cueFolder);
@@ -522,9 +526,12 @@ namespace MAMBrowser.BLL
                     }
 
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
-                    var userInfo = GetStorageUserInfo(option);
-                    var hostName = CommonUtility.GetHost(filePath);
-                    NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
+                    var userinfo = GetStorageUserInfo(option);
+                    //var hostName = CommonUtility.GetHost(filePath);
+                    //NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
+                    var directory = Path.GetDirectoryName(filePath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+
                     if (!System.IO.File.Exists(filePath))
                     {
                         result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;

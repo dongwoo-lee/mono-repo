@@ -14,19 +14,19 @@
       <!-- 검색 -->
       <template slot="form-search-area">
         <!-- 검색어 -->
-        <b-form-group label="앨범명" class="has-float-label">
+        <b-form-group label="음반명" class="has-float-label">
           <common-input-text
             v-model="searchItems.albumName"
             @inputEnterEvent="onSearch"
           />
         </b-form-group>
-        <b-form-group label="가수명" class="has-float-label">
+        <b-form-group label="아티스트" class="has-float-label">
           <common-input-text
             v-model="searchItems.artistName"
             @inputEnterEvent="onSearch"
           />
         </b-form-group>
-        <b-form-group label="제목" class="has-float-label">
+        <b-form-group label="곡명" class="has-float-label">
           <common-input-text
             v-model="searchItems.title"
             @inputEnterEvent="onSearch"
@@ -75,7 +75,7 @@
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           :MySpaceScreenName="MySpaceScreenName"
-          @ok="onMyDiskCopyFromMusic"
+          @ok="onMyDiskCopyFromProduct"
           @close="copyToMySpacePopup = false"
         >
         </CopyToMySpacePopup>

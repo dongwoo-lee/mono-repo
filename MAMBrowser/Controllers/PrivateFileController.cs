@@ -40,39 +40,6 @@ namespace MAMBrowser.Controllers
         }
 
         /// <summary>
-        /// My 공간- 파일+메타데이터 등록
-        /// </summary>
-        /// <param name="userId">유저확장ID</param>
-        /// <param name="file">파일</param>
-        /// <param name="metaData">메타데이터</param>
-        /// <returns></returns>
-        [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
-        [RequestSizeLimit(int.MaxValue)]
-        [HttpPost("files/{userId}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> UploadFile(string userId, [FromForm] IFormFile file, [ModelBinder(BinderType = typeof(JsonModelBinder))] M30_MAM_PRIVATE_SPACE metaData)
-        {
-            
-            DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
-            try
-            {
-                using (var stream = file.OpenReadStream())
-                {
-                    metaData.FILE_SIZE = file.Length;
-                    result =  _bll.UploadFile(userId, stream, file.FileName, metaData);
-                    if(result.ResultCode == RESUlT_CODES.SUCCESS)
-                    {
-                        _logBll.InfoAsync(HttpContext, userId, $"MY공간 소재 - 파일 업로드", UTF8JsonSerializer.Serialize(metaData));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.ToString();
-                FileLogger.Error(LOG_CATEGORIES.UNKNOWN_EXCEPTION.ToString(), ex.Message);
-            }
-            return result;
-        }
-        /// <summary>
         ///  My 공간 - 메타데이터 편집
         /// </summary>
         /// <param name="userId">유저확장ID</param>
@@ -112,7 +79,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("verify/{userId}")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> VerifyModel(string userId, [FromBody] M30_MAM_PRIVATE_SPACE metaData)
         {
-            return _bll.VerifyModel(userId, metaData, metaData.FILE_PATH);
+            return _bll.VerifyModel(metaData.TITLE, userId, metaData.FILE_SIZE, metaData.FILE_PATH);
         }
 
 

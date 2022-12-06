@@ -138,6 +138,8 @@ export default {
         this.getProMeta(rowData);
       } else if (this.MySpaceScreenName == "[음원]") {
         this.getSongMeta(rowData);
+      } else if (this.MySpaceScreenName == "[SONG]") {
+        this.getSongCacheMeta(rowData);
       } else if (this.MySpaceScreenName == "[효과음]") {
         this.getEffectMeta(rowData);
       } else if (this.MySpaceScreenName == "[Filler PR]") {
@@ -286,6 +288,24 @@ export default {
         "\n" +
         "배열번호 : " +
         rowData.sequenceNO;
+    },
+    getSongCacheMeta(rowData) {
+      this.metaData.title =
+        this.MySpaceScreenName +
+        rowData.name +
+        "_" +
+        rowData.artistName +
+        "_" +
+        rowData.albumName;
+      this.metaData.memo =
+        "재생 시간 : " +
+        rowData.duration +
+        "\n" +
+        "발매년도 : " +
+        rowData.productYear +
+        "\n" +
+        "musicID : " +
+        rowData.musicID;
     },
     getEffectMeta(rowData) {
       this.metaData.title =

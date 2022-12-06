@@ -797,13 +797,8 @@ namespace MAMBrowser.Controllers
                 string filePath = "";
                 if (TokenGenerator.ValidateFileToken(token, ref filePath))
                 {
-                    var fileName = Path.GetFileName(filePath);
                     string userId = HttpContext.Items[Define.USER_ID] as string;
-                    using (var stream = _fileSystem.GetFileStream(filePath, 0))
-                    {
-                        metaData.FILE_SIZE = stream.Length;
-                        result = privateBll.UploadFile(userId, stream, fileName, metaData);
-                    }
+                    result = privateBll.RegistryMyDiskFromStorage(metaData.TITLE, metaData.MEMO, userId, filePath);
                 }
                 else
                     throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
@@ -907,30 +902,14 @@ namespace MAMBrowser.Controllers
         /// <param name="seq">파일 SEQ</param>
         /// <returns></returns>
         [HttpPost("dl30-to-myspace/{seq}")]
-        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace([FromServices] ServiceResolver sr, long seq, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices] PrivateFileBll privateBll)
+        public DTO_RESULT<DTO_RESULT_OBJECT<string>> Dl30FileToMySpace(long seq, [FromBody] M30_MAM_PRIVATE_SPACE metaData, [FromServices] PrivateFileBll privateBll)
         {
             DTO_RESULT<DTO_RESULT_OBJECT<string>> result = new DTO_RESULT<DTO_RESULT_OBJECT<string>>();
             try
             {
-                var dlFileSystem = sr(MAMDefine.DLArchiveConnection).FileSystem;
                 var fileData = _bll.GetDLArchive(seq);
-                var fileName = Path.GetFileName(fileData.FilePath);
                 string userId = HttpContext.Items[Define.USER_ID] as string;
-                //using (var stream = fileService.GetFileStream(fileData.FilePath, 0))
-                //{
-                //    metaData.FILE_SIZE = fileData.FileSize;
-                //    result = privateBll.UploadFile(userId, stream, fileName, metaData);
-                //}
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (var stream = dlFileSystem.GetFileStream(fileData.FilePath, 0))
-                    {
-                        stream.CopyTo(ms);
-                    }
-                    ms.Position = 0;
-                    metaData.FILE_SIZE = fileData.FileSize;
-                    result = privateBll.UploadFile(userId, ms, fileName, metaData);
-                }
+                result = privateBll.RegistryMyDiskFromStorage(metaData.TITLE, metaData.MEMO, userId, fileData.FilePath);
             }
             catch (Exception ex)
             {

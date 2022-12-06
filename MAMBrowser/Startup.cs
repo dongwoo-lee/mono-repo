@@ -200,21 +200,6 @@ namespace MAMBrowser
             });
             services.AddTransient(serviceProvider =>
             {
-                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PrivateWorkConnection");
-                var storage = storagesSection.Get<StorageManager>();
-                storage.FileSystem = GetProtocol(storage);
-                return storage;
-            });
-
-            services.AddTransient(serviceProvider =>
-            {
-                var storagesSection = Configuration.GetSection("StorageConnections:Internal:PublicWorkConnection");
-                var storage = storagesSection.Get<StorageManager>();
-                storage.FileSystem = GetProtocol(storage);
-                return storage;
-            });
-            services.AddTransient(serviceProvider =>
-            {
                 var storagesSection = Configuration.GetSection("StorageConnections:Internal:MirosConnection");
                 var storage = storagesSection.Get<StorageManager>();
                 storage.FileSystem = GetProtocol(storage);
@@ -249,9 +234,9 @@ namespace MAMBrowser
             switch (sm.Protocol)
             {
                 case MAMDefine.FTP:
-                    return new FTPProtocol(sm.UploadHost, sm.UserId, sm.UserPass, sm.TmpUploadFolder, sm.UploadFolder, sm.EncodingType);
+                    return new FTPProtocol(sm.UserId, sm.UserPass, sm.EncodingType);
                 case MAMDefine.SMB:
-                    return new NetDriveProtocol(sm.UploadHost, sm.UserId, sm.UserPass, sm.TmpUploadFolder, sm.UploadFolder);
+                    return new NetDriveProtocol(sm.UserId, sm.UserPass);
                 default:
                     return null;
             }

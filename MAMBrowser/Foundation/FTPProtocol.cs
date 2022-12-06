@@ -11,21 +11,16 @@ namespace MAMBrowser.Foundation
     public class FTPProtocol : IFileProtocol
     {
         private const string FTP = @"ftp://";
-        public string UploadHost { get; set; }
         public string UserId { get; set; }
         public string UserPass { get; set; }
-        public string TmpUploadFolder { get; set; }
-        public string UploadFolder { get; set; }
         public int EncodingType { get; set; }
+        public string UploadHost { get; set; } = "";
 
-        public FTPProtocol(string uploadHost, string userId, string userPass, string tmpUploadFolder, string uploadFolder, int encodingType)
+        public FTPProtocol(string userId, string userPass, int encodingType)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            UploadHost = uploadHost;
             UserId = userId;
             UserPass = userPass;
-            TmpUploadFolder = tmpUploadFolder;
-            UploadFolder = uploadFolder;
             EncodingType = encodingType;
         }
         public void MakeDirectory(string directoryPath)
@@ -36,7 +31,11 @@ namespace MAMBrowser.Foundation
                 ftpClient.CreateDirectory(directoryPath);
             }
         }
-        public void Upload(Stream headerStream, Stream fileStream, string sourcePath)  //나중에 경로를 여기서 지정할수 있게끔...(지금은 상대경로 셋팅해서 들어옴)
+        public void Upload(string sourcePath, string targetPath)
+        {
+            throw new NotImplementedException("구현되지 않음");
+        }
+        public void Upload(Stream headerStream, Stream fileStream, string sourcePath) 
         {
             using (FtpClient ftpClient = new FtpClient(UploadHost, UserId, UserPass))
             {
@@ -136,6 +135,21 @@ namespace MAMBrowser.Foundation
                 ftpClient.Encoding = Encoding.GetEncoding(EncodingType);
                 return ftpClient.GetFileSize(sourcePath);
             }
+        }
+
+        public bool ExistDirectory(string directoryPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Upload(Stream localSourceStream, string targetPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Copy(string sourcePath, string targetPath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

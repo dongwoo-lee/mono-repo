@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using MAMBrowser.MAMDto;
 using M30.AudioFile.DAL.Dto;
 using M30.AudioFile.Common.Foundation;
+using System.IO;
 
 namespace MAMBrowser.Controllers
 {
@@ -589,8 +590,10 @@ namespace MAMBrowser.Controllers
 
                     var option = _bll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var userInfo = GetStorageUserInfo(option);
-                    var hostName = CommonUtility.GetHost(filePath);
-                    NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
+                    //var hostName = CommonUtility.GetHost(filePath);
+                    //NetworkShareAccessor.Access(hostName, userInfo["id"], userInfo["pass"]);
+                    var directory = Path.GetDirectoryName(filePath);
+                    ConnectNetDrive.Connect(directory, userInfo["id"], userInfo["pass"]);
                     if (!System.IO.File.Exists(filePath))
                     {
                         result.ResultCode = RESUlT_CODES.FILE_NOT_FOUND;

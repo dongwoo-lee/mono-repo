@@ -229,10 +229,11 @@ namespace MAMBrowser.Controllers
 
                 string userId = HttpContext.Items[Define.USER_ID] as string;
                 long fileSize;
+                
                 using (var stream = _fileService.GetFileStream(requestInfo[0] as string, Convert.ToInt32(requestInfo[1]), jsonMusicInfo, out fileSize))
                 {
                     metaData.FILE_SIZE = fileSize;
-                    result = privateBll.UploadFile(userId, stream, fileName, metaData);
+                    result = privateBll.RegistryMyDiskFromMusicStream(metaData.TITLE, metaData.MEMO, userId, fileName, stream);
                 }
             }
             catch (Exception ex)

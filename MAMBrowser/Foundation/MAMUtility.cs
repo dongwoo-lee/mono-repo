@@ -158,42 +158,5 @@ namespace MAMBrowser.Foundation
 
             return true;
         }
-        public static string GetTempFilePath(string tempDownloadRoot, string userId, string remoteIp, string fileName)
-        {
-            return $@"{GetTempFolder(tempDownloadRoot, userId, remoteIp)}\{fileName}";
-        }
-        public static string GetTempFolder(string tempDownloadRoot, string userId, string remoteIp)
-        {
-            if (string.IsNullOrEmpty(remoteIp) || remoteIp == "::1" || remoteIp == "127.0.0.1")
-            {
-                remoteIp = "localhost";
-            }
-            return $@"{tempDownloadRoot}\{userId}_{remoteIp}";
-        }
-        public static void ClearTempFolder(string tempDownloadRoot, string userId, string remoteIp)
-        {
-            var targetFolder = GetTempFolder(tempDownloadRoot, userId, remoteIp);
-            if (Directory.Exists(targetFolder))
-            {
-                DateTime now = DateTime.Now;
-                var fileFullPathList = Directory.GetFiles(targetFolder);
-                foreach (var filePath in fileFullPathList)
-                {
-                    try
-                    {
-                        var createdDtm = File.GetLastAccessTime(filePath);
-
-                        if (now.Subtract(createdDtm).TotalSeconds > 300)
-                            File.Delete(filePath);
-                    }
-                    catch (IOException ex)
-                    {
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-            }
-        }
     }
 }

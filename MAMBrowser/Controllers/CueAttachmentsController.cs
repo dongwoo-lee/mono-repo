@@ -68,17 +68,8 @@ namespace MAMBrowser.Controllers
             {
                 if (System.IO.File.Exists(file_path))
                 {
-                    var metaData = new M30_MAM_PRIVATE_SPACE();
                     string userId = HttpContext.Items[Define.USER_ID] as string;
-
-                    var fileName = Path.GetFileName(file_path);
-                    using (var stream = System.IO.File.Open(file_path, FileMode.Open,FileAccess.ReadWrite,FileShare.ReadWrite))
-                    {
-                        metaData.FILE_SIZE = stream.Length;
-                        metaData.TITLE = title;
-                        metaData.MEMO = title;
-                        result = _privateBll.UploadFile(userId, stream, fileName, metaData);
-                    }
+                    result = _privateBll.RegistryMyDiskFromLocalFile(title, title, userId, file_path);
                 }
             }
             catch (Exception ex)

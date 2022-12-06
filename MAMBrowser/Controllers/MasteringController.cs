@@ -76,10 +76,7 @@ namespace MAMBrowser.Controllers
         [HttpPost("TitleValidation")]
         public DTO_RESULT<DTO_RESULT_OBJECT<string>> TitleValidation([FromForm] string userId, [FromForm] string title, [FromForm] long fileSize, [FromForm]string fileName)
         {
-            M30_MAM_PRIVATE_SPACE metaData = new M30_MAM_PRIVATE_SPACE();
-            metaData.TITLE =  title;
-            metaData.FILE_SIZE = fileSize;
-            return _privateBll.VerifyModel(userId, metaData, fileName);
+            return _privateBll.VerifyModel(title, userId, fileSize, fileName);
         }
         [RequestSizeLimit(int.MaxValue)]
         [HttpPost("my-disk")]
@@ -102,9 +99,11 @@ namespace MAMBrowser.Controllers
 
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -172,9 +171,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -251,10 +252,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -332,9 +334,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -443,9 +447,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -521,9 +527,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -598,9 +606,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -674,9 +684,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -748,9 +760,11 @@ namespace MAMBrowser.Controllers
                     var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
                     var tempPath = option.Find(dt => dt.Name == "MAM_UPLOAD_PATH").Value.ToString();
                     var tempFilePath = Path.Combine(tempPath, GetTempFileName(metaDataObject));
-                    var host = CommonUtility.GetHost(tempPath);
                     var userinfo = GetStorageUserInfo(option);
-                    NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    //var host = CommonUtility.GetHost(tempPath);
+                    //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
+                    var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -1263,8 +1277,10 @@ namespace MAMBrowser.Controllers
             var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
             var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
             var pass = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
-            var host = CommonUtility.GetHost(recycleFoler);
-            NetworkShareAccessor.Access(host, id, pass);
+            //var host = CommonUtility.GetHost(recycleFoler);
+            //NetworkShareAccessor.Access(host, id, pass);
+            var directory = Path.GetDirectoryName(recycleFoler);
+            ConnectNetDrive.Connect(directory, id, pass);
 
             if (!Directory.Exists(recycleFoler))
                 Directory.CreateDirectory(recycleFoler);
@@ -1306,8 +1322,11 @@ namespace MAMBrowser.Controllers
                 var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
                 var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
                 var pass = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
-                var host = CommonUtility.GetHost(recycleFoler);
-                NetworkShareAccessor.Access(host, id, pass);
+                //var host = CommonUtility.GetHost(recycleFoler);
+                //NetworkShareAccessor.Access(host, id, pass);
+                var directory = Path.GetDirectoryName(recycleFoler);
+                ConnectNetDrive.Connect(directory, id, pass);
+
 
                 if (!Directory.Exists(recycleFoler))
                     Directory.CreateDirectory(recycleFoler);
