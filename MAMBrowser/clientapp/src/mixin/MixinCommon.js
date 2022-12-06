@@ -62,6 +62,13 @@ let mixinCommon = {
       "downloadConcatenate",
     ]),
     ...mapActions("user", ["getSummaryUser"]),
+    getMachineName(masteringMachine) {
+      if (masteringMachine) {
+        return masteringMachine;
+      } else {
+        return "DAR 방송의뢰";
+      }
+    },
     // 검색
     onSearch() {
       this.searchItems.selectPage = 1;

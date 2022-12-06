@@ -21,6 +21,11 @@
       @vuetable:row-clicked="rowClicked"
       @vuetable:cell-rightclicked="rightClicked"
     >
+      <template slot="rowNO" scope="props">
+        <div>
+          <slot name="rowNO" :props="props"></slot>
+        </div>
+      </template>
       <template v-if="isActionsSlot" slot="actions" scope="props">
         <div class="table-button-container">
           <slot name="actions" :props="props"></slot>

@@ -102,8 +102,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -174,8 +174,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -255,8 +255,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -337,8 +337,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -450,8 +450,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -530,8 +530,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -609,8 +609,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -687,8 +687,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {
@@ -763,8 +763,8 @@ namespace MAMBrowser.Controllers
                     var userinfo = GetStorageUserInfo(option);
                     //var host = CommonUtility.GetHost(tempPath);
                     //NetworkShareAccessor.Access(host, userinfo["id"], userinfo["pass"]);
-                    var directory = Path.GetDirectoryName(tempPath);
-                    ConnectNetDrive.Connect(directory, userinfo["id"], userinfo["pass"]);
+                    //var directory = Path.GetDirectoryName(tempPath);
+                    ConnectNetDrive.Connect(tempPath, userinfo["id"], userinfo["pass"]);
 
                     if (!Directory.Exists(tempPath))
                     {

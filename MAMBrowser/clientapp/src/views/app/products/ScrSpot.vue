@@ -94,6 +94,16 @@
           @sortableclick="onSortable"
           @refresh="onRefresh"
         >
+          <template slot="rowNO" scope="props">
+            <div>
+              <span
+                v-b-tooltip.hover
+                :title="getMachineName(props.props.rowData.masteringMachine)"
+                >{{ props.props.rowData.rowNO }}</span
+              >
+            </div>
+          </template>
+
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
@@ -215,7 +225,7 @@ export default {
       isTableLoading: false,
       fields: [
         {
-          name: "rowNO",
+          name: "__slot:rowNO",
           title: "순서",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
