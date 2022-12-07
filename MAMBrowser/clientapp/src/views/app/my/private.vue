@@ -270,6 +270,13 @@ export default {
       "setTypeSelected",
     ]),
     ...mapActions("file", ["open_popup"]),
+    getMachineName(masteringMachine) {
+      if (masteringMachine) {
+        return masteringMachine;
+      } else {
+        return "알 수 없음";
+      }
+    },
     FileModal() {
       this.setFileModal(true);
       this.setButton("private");
