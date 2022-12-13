@@ -84,7 +84,7 @@ import { USER_ID } from "@/constants/config";
 export default {
   data() {
     return {
-      tempImageDownloadUrl: "/api/musicsystem/images/temp-download",
+      tempImageDownloadUrl: "/api/musicsystem/song-images/temp-download",
       tempImageStreamingUrl: "/api/musicsystem/images/streaming",
       lyricsUrl: "/api/musicsystem/lyrics",
       imagePathList: [],
@@ -163,10 +163,7 @@ export default {
       this.imagePathList = [];
       if (this.music.albumToken) {
         this.$http
-          .get(
-            `${this.tempImageDownloadUrl}?token=${this.music.fileToken}&albumtoken=${this.music.albumToken}`,
-            null
-          )
+          .get(`${this.tempImageDownloadUrl}?songID=${this.music.id}`, null)
           .then((res) => {
             tempList = res.data;
             tempList.forEach((fileName) => {

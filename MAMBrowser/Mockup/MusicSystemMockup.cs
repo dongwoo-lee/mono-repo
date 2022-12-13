@@ -32,6 +32,11 @@ namespace MAMBrowser
             throw new Exception("실패");
         }
 
+        public List<string> GetImageUrlListByFilePath(string originFilePath, string albumFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
         public object[] GetRequestInfo(Dictionary<string, string> musicInfo)
         {
             var encodedFilePath = musicInfo[Define.MUSIC_FILEPATH];
@@ -72,6 +77,11 @@ namespace MAMBrowser
             List<string> fileNames = new List<string>();
             fileNames.Add("CDO28190.jpg");
             return fileNames;
+        }
+
+        public List<string> LocalImageDownloadFromFilePath(string targetFolder, string originFilePath, string albumFilePath)
+        {
+            throw new NotImplementedException();
         }
 
         public IList<DTO_EFFECT> SearchEffect(string text, int rowPerPage, int selectPage, out long totalCount)

@@ -81,7 +81,7 @@
         </CopyToMySpacePopup>
       </template>
     </common-form>
-    <MusicPlayerPopup
+    <SongPlayerPopup
       :showPlayerPopup="showPlayerPopup"
       :music="soundItem"
       :streamingUrl="streamingUrl"
@@ -90,7 +90,7 @@
       requestType="token"
       @closePlayer="onClosePlayer"
     >
-    </MusicPlayerPopup>
+    </SongPlayerPopup>
 
     <sound-copyright-popup
       :show="soundCopyrightPopup"

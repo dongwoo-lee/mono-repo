@@ -300,7 +300,7 @@
       >
       </PlayerPopup>
 
-      <MusicPlayerPopup
+      <SongPlayerPopup
         v-else-if="searchListData.cartcode == 'S01G01C032'"
         :showPlayerPopup="showPlayerPopup"
         :music="soundItem"
@@ -310,7 +310,7 @@
         requestType="token"
         @closePlayer="onClosePlayer"
       >
-      </MusicPlayerPopup>
+      </SongPlayerPopup>
 
       <MusicPlayerPopup
         v-else

@@ -23,6 +23,8 @@ using System.Xml.Serialization;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Models;
 using M30.AudioFile.DAL.WebService;
+using M30.AudioFile.DAL.Repositories;
+using M30.AudioFile.Common.Foundation;
 
 namespace MAMBrowser.Controllers
 {
@@ -316,6 +318,36 @@ namespace MAMBrowser.Controllers
                 result.ErrorMsg = ex.Message;
             }
             return result;
+        }
+
+
+        /// <summary>
+        /// SONG 소재 - 앨범 이미지 임시 다운로드
+        /// </summary>
+        /// <param name="token">파일 SEQ</param>
+        /// <returns></returns>
+        [HttpGet("song-images/temp-download")]
+        public ActionResult<List<string>> SongAlbumImageTempDownload([FromQuery] string songID)
+        {
+            try
+            {
+                SongRepository repo = new SongRepository(Startup.AppSetting.ConnectionString);
+                var song = repo.Get(songID);
+
+                string remoteIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                string userId = HttpContext.Items[Define.USER_ID] as string;
+
+                MAMUtility.ClearTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+                var targetFolder = MAMUtility.GetTempFolder(Startup.AppSetting.TempDownloadPath, userId, remoteIp);
+                if (!Directory.Exists(targetFolder))
+                    Directory.CreateDirectory(targetFolder);
+
+                return _fileService.LocalImageDownloadFromFilePath(targetFolder, song.OriginFilePath, song.AlbumCoverPath);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
