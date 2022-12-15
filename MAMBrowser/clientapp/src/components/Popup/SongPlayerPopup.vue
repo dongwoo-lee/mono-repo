@@ -1,6 +1,6 @@
 <template>
   <!-- 미리듣기 팝업 -->
-  <b-modal id="music-player" size="lg" v-model="show" no-close-on-backdrop>
+  <b-modal id="song-player" size="lg" v-model="show" no-close-on-backdrop>
     <template
       slot="modal-title"
       class="musicPlayer-overflow"
@@ -9,7 +9,7 @@
       <h5>{{ this.music.name }}</h5>
     </template>
     <template slot="default">
-      <b-card v-if="lyrics && imagePathList.length <= 0">
+      <b-card>
         <b-row>
           <b-col cols="5">
             <b-form-textarea

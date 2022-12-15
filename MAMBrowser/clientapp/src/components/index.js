@@ -8,6 +8,7 @@ import PlayerPopup from './Popup/PlayerPopup.vue';
 import EditPlayerPopup from './Popup/EditPlayerPopup.vue';
 import CMGroupPlayerPopup from './Popup/CMGroupPlayerPopup.vue';
 import MusicPlayerPopup from './Popup/MusicPlayerPopup.vue';
+import SongPlayerPopup from './Popup/SongPlayerPopup.vue';
 import CommonConfirm from './Popup/CommonConfirm';
 import CommonForm from './Form/CommonForm';
 import CommonDatePicker from './Form/CommonDatePicker';
@@ -34,6 +35,7 @@ Vue.component('PlayerPopup', PlayerPopup)
 Vue.component('EditPlayerPopup', EditPlayerPopup)
 Vue.component('CMGroupPlayerPopup', CMGroupPlayerPopup)
 Vue.component('MusicPlayerPopup', MusicPlayerPopup)
+Vue.component('SongPlayerPopup', SongPlayerPopup)
 Vue.component('CommonConfirm', CommonConfirm);
 Vue.component('CommonForm', CommonForm);
 Vue.component('CommonDatePicker', CommonDatePicker);

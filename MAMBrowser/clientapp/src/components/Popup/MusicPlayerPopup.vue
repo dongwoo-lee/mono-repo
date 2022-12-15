@@ -9,7 +9,7 @@
       <h5>{{ this.music.name }}</h5>
     </template>
     <template slot="default">
-      <b-card v-if="lyrics && imagePathList.length <= 0">
+      <b-card>
         <b-row>
           <b-col cols="5">
             <b-form-textarea
