@@ -46,9 +46,10 @@ namespace MAMBrowser.Workers
                 //attachments
                 DeleteOldTempFiles(rootdir_attach, before_time_attach);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _logger.LogWarning("WebCueSheetServiceWorker : File Delete Fail.");
+                _logger.LogWarning($"WebCueSheetServiceWorker : {ex.Message}");
             }
         }
 
