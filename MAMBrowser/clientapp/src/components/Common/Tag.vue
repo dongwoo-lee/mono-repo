@@ -47,6 +47,8 @@ export default {
     return {
       tagItemMessage: "해당 태그로 이전 큐시트 목록을 검색 하시겠습니까?",
       placeholderText: "추가된 태그가 없습니다.",
+      sameText: "동일한 태그가 추가되어 있습니다.",
+      emojiText: "특수문자(!@#$%^&*등등)는 입력할 수 없습니다.",
       maxTagTextLength: 20,
       accordionAttributes: { class: "cue_tag " },
       isAccept: false,
@@ -71,6 +73,9 @@ export default {
           const item = tag.text
             .replace(/[^\w\s|ㄱ-ㅎ|가-힣|,]/gi, "")
             .replace(/ /g, "");
+          if (item !== tag.text) {
+            this.$emit("tagError", this.emojiText);
+          }
           if (!!item) {
             result.add(item);
           } else {
@@ -79,7 +84,7 @@ export default {
         });
         const resultArr = Array.from(result);
         if (emp && this.tags.length === resultArr.length) {
-          this.$emit("sameTagError");
+          this.$emit("tagError", this.sameText);
         }
         this.SET_TAGS(resultArr);
         this.isAccept = result.size >= this.maxTagCount ? true : false;

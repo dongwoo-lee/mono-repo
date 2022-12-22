@@ -246,12 +246,12 @@ export default {
       this.SET_ATTACHMENTS(arrData);
     },
     OnUploadStarted(e) {
-      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_.() -]/gi;
+      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_,.(-) -]/gi;
       e.file.name.length >= this.maxTitleLength && e.component.abortUpload();
       regex.test(e.file.name) && e.component.abortUpload();
     },
     onUploadAborted(e) {
-      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_.() -]/gi;
+      const regex = /[^ㄱ-ㅎ|가-힣|a-z|0-9|_,.(-) -]/gi;
       if (regex.test(e.file.name)) {
         e.message = "파일 이름을 수정하세요. (특수문자, 다국어 불가)";
       }

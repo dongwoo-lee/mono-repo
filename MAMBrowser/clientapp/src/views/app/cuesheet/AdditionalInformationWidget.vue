@@ -54,7 +54,7 @@
         <Tag
           :value_items="valueItems"
           :maxTagCount="max_tag_count"
-          @sameTagError="OnTagErrorMsg"
+          @tagError="OnTagErrorMsg"
         />
       </div>
     </div>
@@ -110,7 +110,7 @@ export default {
       max_tag_count: 15,
       max_attachments_count: 10,
       max_memo_length: 100,
-      errorMsg: "동일한 태그가 추가되어 있습니다.",
+      errorMsg: "",
       errorMsg_value: false,
     };
   },
@@ -133,11 +133,14 @@ export default {
       const result = this.cueInfo.memo.replace(/[^\w\s|ㄱ-ㅎ|가-힣|, ]/gi, "");
       this.cueInfo.memo = result;
     },
-    OnTagErrorMsg() {
-      this.errorMsg_value = true;
-      setTimeout(() => {
-        this.errorMsg_value = false;
-      }, 3000);
+    OnTagErrorMsg(msg) {
+      if (!this.errorMsg_value) {
+        this.errorMsg = msg;
+        this.errorMsg_value = true;
+        setTimeout(() => {
+          this.errorMsg_value = false;
+        }, 3000);
+      }
     },
   },
 };
