@@ -7,7 +7,7 @@
         style="font-family: MBC 새로움 M"
         :isActive="this.isActive"
       >
-        <h3 slot="header">파일 업로드</h3>
+        <h3 slot="header">파일 업로드{{ getFileTypeText() }}</h3>
         <h4 slot="body">
           <div :class="[isActive ? 'new' : 'old']">
             <div :class="[isActive ? 'fold' : 'expand']">
@@ -341,6 +341,16 @@ export default {
       "resetUploaderCustomData",
       "RESET_ALL_METADATA",
     ]),
+    getFileTypeText() {
+      let fileTypeText = "";
+      this.typeOptions.forEach((e) => {
+        if (e.value == this.type) {
+          fileTypeText = e.text;
+        }
+      })
+
+      return " ("+fileTypeText+")"
+    },
     MetaModalOff() {
       if (this.fileUploading) {
         this.cancel = true;
