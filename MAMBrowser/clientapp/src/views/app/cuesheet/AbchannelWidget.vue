@@ -197,7 +197,12 @@
                 {{ data.data.maintitle }}
               </div>
               <div
-                style="color: #959595; font-size: 12px text-overflow: ellipsis; overflow: hidden"
+                style="
+                  color: #959595;
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                "
               >
                 {{ data.data.subtitle }}
               </div>

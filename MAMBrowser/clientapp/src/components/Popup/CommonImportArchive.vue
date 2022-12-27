@@ -6,6 +6,7 @@
     title="이전큐시트 가져오기"
     @hide="state = false"
     @show="state = true"
+    @hidden="cancel"
   >
     <div class="d-block text-center">
       <common-form
@@ -71,7 +72,7 @@
         </template>
       </common-form>
     </div>
-    <template #modal-footer="{ cancel }">
+    <template #modal-footer="{}">
       <b-form-checkbox-group
         v-model="MenuSelected"
         :options="MenuOptions"
@@ -452,6 +453,10 @@ export default {
             });
         }
       }
+    },
+    cancel() {
+      this.selectedIds = [];
+      this.$refs["importArchive"].hide();
     },
   },
 };

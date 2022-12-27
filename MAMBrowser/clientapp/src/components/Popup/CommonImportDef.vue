@@ -518,6 +518,7 @@ export default {
     },
     async cancel() {
       this.state = false;
+      this.selectedIds = [];
       if (this.type == "T") {
         this.searchItems.media = "";
         this.onMediaChange("");
