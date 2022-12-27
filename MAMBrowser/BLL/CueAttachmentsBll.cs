@@ -258,7 +258,7 @@ namespace MAMBrowser.BLL
                                     int endPos = endBytes - endBytes % reader.WaveFormat.BlockAlign;
 
                                     reader.Position = startPos;
-                                    byte[] buffer = new byte[10240000];
+                                    byte[] buffer = new byte[10485760];
                                     double total_count = (endPos - startPos) / (double)buffer.Length;
                                     while (reader.Position < endPos)
                                     {
@@ -269,7 +269,7 @@ namespace MAMBrowser.BLL
                                             int bytesRead = reader.Read(buffer, 0, bytesToRead);
                                             if (bytesRead > 0)
                                             {
-                                                writer.WriteData(buffer, 0, bytesRead);
+                                                writer.Write(buffer, 0, bytesRead);
                                                 await _hubContext.Clients.Client(connectionId).SendAsync("sendProgress", (((trim_write_index + 1) /
                                                     Math.Ceiling(total_count) + pramIndex)) * 50 / pram.Count);
                                                 if (token.IsCancellationRequested)
