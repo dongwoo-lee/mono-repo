@@ -76,7 +76,7 @@ namespace MAMBrowser.Workers
                     }
                 }
 
-                foreach (DirectoryInfo dir in dirs)
+                foreach (DirectoryInfo dir in dirs.Reverse())
                 {
                     if (!dir.GetFiles("*", SearchOption.AllDirectories).Any())
                     {
