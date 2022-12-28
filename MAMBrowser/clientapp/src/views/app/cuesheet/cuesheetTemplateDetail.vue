@@ -165,15 +165,10 @@ const qs = require("qs");
 
 export default {
   beforeRouteLeave(to, from, next) {
-    if (this.timer > 1) {
-      const answer = window.confirm(
-        "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
-      );
-      if (answer) {
-        eventBus.$off();
-        next();
-      }
-    } else {
+    const answer = window.confirm(
+      "저장하지 않은 데이터는 손실됩니다. 현재 페이지를 벗어나시겠습니까?"
+    );
+    if (answer) {
       eventBus.$off();
       next();
     }
@@ -211,7 +206,6 @@ export default {
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
-    ...mapGetters("user", ["timer"]),
     ...mapGetters("cueList", ["tags"]),
   },
   methods: {
