@@ -21,7 +21,7 @@ namespace MAMBrowser.Foundation
             var soundFileName = Path.GetFileName(filePath);
             var ext = Path.GetExtension(filePath).ToUpper();
             var targetSoundPath = GetTempFilePath(Startup.AppSetting.TempDownloadPath, userId, remoteIp, soundFileName);
-            if (fileProtocol.ExistFile(filePath))
+            if (fileProtocol.ExistFile(filePath))   //egy는 없을 수 있음. 없어도 다시만드므로 에러처리 안함.
             {
                 fileProtocol.DownloadFile(filePath, targetSoundPath);
                 //다운로드된 mp2는 wav로 변환함.(mp3는 상관없음)
@@ -37,11 +37,6 @@ namespace MAMBrowser.Foundation
                     }
                 }
             }
-            //else
-            //{
-            //    if(ext != Define.EGY)   //음원파일 다운로드 실패시.. 파형파일은 없어도 다시만드므로 상관없음.
-            //        throw new Exception("등록된 파일을 찾을 수 없습니다.");
-            //}
         }
 
         public static string GetTempFilePath(string tempDownloadRoot, string userId, string remoteIp, string fileName)

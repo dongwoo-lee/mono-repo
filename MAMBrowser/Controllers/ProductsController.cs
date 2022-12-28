@@ -797,6 +797,11 @@ namespace MAMBrowser.Controllers
                 string filePath = "";
                 if (TokenGenerator.ValidateFileToken(token, ref filePath))
                 {
+                    if (string.IsNullOrEmpty(filePath))
+                        throw new HttpStatusErrorException(HttpStatusCode.NotFound, "등록된 파일이 없습니다.");
+                    if (!System.IO.File.Exists(filePath))
+                        throw new HttpStatusErrorException(HttpStatusCode.NotFound, "스토리지에 파일이 없습니다.");
+
                     string userId = HttpContext.Items[Define.USER_ID] as string;
                     result = privateBll.RegistryMyDiskFromStorage(metaData.TITLE, metaData.MEMO, userId, filePath);
                 }
@@ -908,6 +913,12 @@ namespace MAMBrowser.Controllers
             try
             {
                 var fileData = _bll.GetDLArchive(seq);
+
+                if (string.IsNullOrEmpty(fileData.FilePath))
+                    throw new HttpStatusErrorException(HttpStatusCode.NotFound, "등록된 파일이 없습니다.");
+                if (!System.IO.File.Exists(fileData.FilePath))
+                    throw new HttpStatusErrorException(HttpStatusCode.NotFound, "스토리지에 파일이 없습니다.");
+
                 string userId = HttpContext.Items[Define.USER_ID] as string;
                 result = privateBll.RegistryMyDiskFromStorage(metaData.TITLE, metaData.MEMO, userId, fileData.FilePath);
             }

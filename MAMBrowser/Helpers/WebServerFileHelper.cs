@@ -54,13 +54,15 @@ namespace MAMBrowser.Helper
             string filePath = "";
             if (TokenGenerator.ValidateFileToken(token, ref filePath))
             {
-                string fileName = Path.GetFileName(filePath);
-
-                var egyFileName = Path.GetFileNameWithoutExtension(filePath) + Define.EGY;
-                var egyFilePath = filePath.Replace(fileName, egyFileName);
-
+                if(string.IsNullOrEmpty(filePath))
+                    throw new HttpStatusErrorException(HttpStatusCode.NotFound, "등록된 파일이 없습니다.");
+                if (!fileProtocol.ExistFile(filePath))
+                        throw new HttpStatusErrorException(HttpStatusCode.NotFound, "스토리지에 파일이 없습니다.");
+                
+                var egyFilePath = Path.ChangeExtension(filePath, Define.EGY);
                 MAMUtility.TempDownloadToLocal(userId, remoteIp, fileProtocol, filePath);       //임시파일 다운로드
                 MAMUtility.TempDownloadToLocal(userId, remoteIp, fileProtocol, egyFilePath);    //파형임시파일 다운로드
+                    
             }
             else
                 throw new HttpStatusErrorException(HttpStatusCode.Forbidden, "invalid token");
@@ -127,9 +129,12 @@ namespace MAMBrowser.Helper
         }
         public void TempDownloadFromPath(string filePath, string userId, string remoteIp, IFileProtocol fileProtocol)
         {
-            string fileName = Path.GetFileName(filePath);
-            var egyFilePath = Path.ChangeExtension(filePath, Define.EGY);
+            if (string.IsNullOrEmpty(filePath))
+                throw new HttpStatusErrorException(HttpStatusCode.NotFound, "등록된 파일이 없습니다.");
+            if (!fileProtocol.ExistFile(filePath))
+                throw new HttpStatusErrorException(HttpStatusCode.NotFound, "스토리지에 파일이 없습니다.");
 
+            var egyFilePath = Path.ChangeExtension(filePath, Define.EGY);
             MAMUtility.TempDownloadToLocal(userId, remoteIp, fileProtocol, filePath);       //임시파일 다운로드
             MAMUtility.TempDownloadToLocal(userId, remoteIp, fileProtocol, egyFilePath);    //파형임시파일 다운로드
         }
@@ -142,7 +147,7 @@ namespace MAMBrowser.Helper
             if (File.Exists(tempSoundPath))
                 return MAMUtility.GetWaveformCore(tempSoundPath);
             else
-                throw new Exception("준비된 파일을 찾을 수 없습니다.");
+                throw new Exception("등록된 파일이 없습니다.");
         }
         public IActionResult StreamingFromPath(string filePath, string userId, string remoteIp)
         {
