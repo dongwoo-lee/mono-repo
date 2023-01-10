@@ -19,6 +19,8 @@
             v-model="$v.searchItems.brd_dt.$model"
             required
             @changeDatePicker="changeDate"
+            :maxDate="maxDate"
+            :minDate="minDate"
           />
         </b-form-group>
         <!-- 매체 -->
@@ -84,7 +86,15 @@ const moment = require("moment");
 export default {
   mixins: [MixinBasicPage],
   data() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const nextMonth = new Date(today);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    console.info("nextMonth", nextMonth);
+
     return {
+      maxDate: nextMonth,
+      minDate: new Date(2022, 11 - 1, 1),
       date: new Date(),
       pramObj: { person: null, brd_dt: null, media: null },
       pgmList: [],

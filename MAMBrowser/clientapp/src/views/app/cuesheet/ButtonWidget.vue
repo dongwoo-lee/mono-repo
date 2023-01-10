@@ -551,9 +551,6 @@ const signalR = require("@microsoft/signalr");
 const connection = new signalR.HubConnectionBuilder()
   .withUrl("/api/ProgressHub")
   .build();
-connection.start().catch(function (err) {
-  console.log("err", err);
-});
 export default {
   props: {
     type: String,
@@ -719,9 +716,6 @@ export default {
     this.isMyDiskCheckBox = this.roleList.some(
       (data) => data.id === this.MY_DISK_PAGE_ID && data.visible === "Y"
     );
-    connection.on("sendProgress", (progress) => {
-      this.seconds = progress;
-    });
   },
   components: {
     DxCheckBox,
@@ -885,6 +879,14 @@ export default {
       }
       if (e.itemData.id == "wav") {
         // this.maxValue
+        if (!connection.connectionStarted) {
+          connection.start().catch(function (err) {
+            console.log("err", err);
+          });
+          connection.on("sendProgress", (progress) => {
+            this.seconds = progress;
+          });
+        }
         this.$refs["modal-export-wav"].show();
       } else {
         eventBus.$emit("exportGo", e.itemData.id);
