@@ -605,7 +605,7 @@ export default {
       oldCueOptions: [
         {
           text: "(구)DAP에 현재 큐시트 저장",
-          value: true,
+          value: false,
         },
       ],
       oldCueSelected: [true],
