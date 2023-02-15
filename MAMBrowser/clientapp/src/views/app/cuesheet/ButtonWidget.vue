@@ -969,11 +969,16 @@ export default {
       for (var i = 1; i < 5; i++) {
         cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
           if (ele.cartcode != null && ele.cartcode != "") {
+            ele.rownum = 16 * (i - 1) + ele.rownum;
+            ele["seqnum"] = ele["rownum"];
+            delete ele["rownum"];
             pramList.push(ele);
           }
         });
       }
       cuesheetData.NormalCon.forEach((ele) => {
+        ele["seqnum"] = ele["rownum"];
+        delete ele["rownum"];
         pramList.push(ele);
       });
       if (pramList.length == 0) {
