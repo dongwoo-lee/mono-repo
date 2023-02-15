@@ -539,27 +539,6 @@ export default {
                     })
             }
         },
-        //구 DAP 저장
-        async saveOldCue({ state, dispatch }) {
-            var pram = await dispatch('setCueConFav_save', true)
-            pram.CueSheetDTO = state.cueInfo;
-            await $http
-                .post(`/api/DayCueSheet/SaveOldCue`, pram)
-                .then(async (res) => {
-                    if (res.data == 1) {
-                        dispatch(`enableNotification`, { type: "info", message: `(구) DAP에 큐시트 저장완료.` });
-                    }
-                    if (res.data == 0) {
-                        dispatch(`enableNotification`, { type: "error", message: `해당 날짜의 큐시트는 작성이 불가합니다. (기존 큐시트 삭제 불가)` });
-                    }
-                    if (res.data == -1) {
-                        dispatch(`enableNotification`, { type: "error", message: `My디스크, DL3 소재는 저장할 수 없습니다. 소재 삭제 후 다시 시도해주세요.` });
-                    }
-                })
-                .catch((err) => {
-                    dispatch(`enableNotification`, { type: "error", message: `(구) DAP에 큐시트 저장실패.` });
-                })
-        },
         //기본큐시트 저장
         async saveDefCue({ commit, state, dispatch }) {
             var pram = await dispatch('setCueConFav_save', true)

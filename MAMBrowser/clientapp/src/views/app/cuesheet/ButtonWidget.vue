@@ -605,10 +605,10 @@ export default {
       oldCueOptions: [
         {
           text: "(구)DAP에 현재 큐시트 저장",
-          value: false,
+          value: true,
         },
       ],
-      oldCueSelected: [true],
+      oldCueSelected: [],
       options: [],
       cartOptions: [
         { name: "C1", value: "c1", notEnabled: true },
@@ -780,7 +780,6 @@ export default {
     ...mapActions("cueList", ["saveDayCue"]),
     ...mapActions("cueList", ["saveDefCue"]),
     ...mapActions("cueList", ["saveTempCue"]),
-    ...mapActions("cueList", ["saveOldCue"]),
     ...mapActions("cueList", ["addByTemplate"]),
     ...mapActions("cueList", ["setCueConFav_save"]),
     ...mapActions("cueList", ["setclearFav"]),
@@ -853,7 +852,6 @@ export default {
     clickCheckTilte() {
       if (this.allCheck) {
         //아이템 전체 비활성화
-        // this.selected = ["print", "ab"];
         this.selected = this.cueClearItems.concat();
         this.cartSelected = ["c1", "c2", "c3", "c4"];
         this.options.forEach((ele) => {
@@ -913,9 +911,6 @@ export default {
     async saveOk() {
       this.loadingIconVal = true;
       switch (this.type) {
-        case "O":
-          this.saveOldCue();
-          break;
         case "D":
           if (this.oldCueSelected.length != 0) {
             await this.saveDayCue(true);
