@@ -616,8 +616,8 @@ namespace MAMBrowser.Utils
                     favItem.p_cartcode = item.CARTCODE;
                     favItem.p_startposition = item.STARTPOSITION;
                     favItem.p_endposition = item.ENDPOSITION;
-                    favItem.p_fadeintime = item.FADEINTIME ? 300 : 0;
-                    favItem.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
+                    favItem.p_fadeintime = item.FADEINTIME ? 4000 : 0;
+                    favItem.p_fadeouttime = item.FADEOUTTIME ? 4000 : 0;
                     favItem.p_maintitle = item.MAINTITLE;
                     favItem.p_subtitle = item.SUBTITLE;
                     favItem.p_memo = item.MEMO;
@@ -654,8 +654,6 @@ namespace MAMBrowser.Utils
                         resultItem.Description_in = item.MEMO;
                         resultItem.LLevel_in = 0;
                         resultItem.RLevel_in = 0;
-                        //resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
-                        //resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
                         resultItem.FadeInTime_in = 0;
                         resultItem.FadeOutTime_in = 0;
                         resultItem.ExtroTime_in = 0;
@@ -689,8 +687,6 @@ namespace MAMBrowser.Utils
                             resultItem.Description_in = item.MEMO;
                             resultItem.LLevel_in = 0;
                             resultItem.RLevel_in = 0;
-                            //resultItem.FadeInTime_in = item.FADEINTIME ? 300 : 0;
-                            //resultItem.FadeOutTime_in = item.FADEOUTTIME ? 300 : 0;
                             resultItem.FadeInTime_in = 0;
                             resultItem.FadeOutTime_in = 0;
                             resultItem.ExtroTime_in = 0;
@@ -748,8 +744,8 @@ namespace MAMBrowser.Utils
                     obj.p_useflag = (item.USEFLAG == null) ? 'Y' : char.Parse(item.USEFLAG);
                     obj.p_startposition = item.STARTPOSITION;
                     obj.p_endposition = item.ENDPOSITION;
-                    obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
-                    obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
+                    obj.p_fadeintime = item.FADEINTIME ? 4000 : 0;
+                    obj.p_fadeouttime = item.FADEOUTTIME ? 4000 : 0;
                     obj.p_transtype = char.Parse(item.TRANSTYPE);
                     obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE, 0, 100);
                     obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);
@@ -777,8 +773,8 @@ namespace MAMBrowser.Utils
                             obj.p_useflag = 'Y';
                             obj.p_startposition = item.STARTPOSITION;
                             obj.p_endposition = item.ENDPOSITION;
-                            obj.p_fadeintime = item.FADEINTIME ? 300 : 0;
-                            obj.p_fadeouttime = item.FADEOUTTIME ? 300 : 0;
+                            obj.p_fadeintime = item.FADEINTIME ? 4000 : 0;
+                            obj.p_fadeouttime = item.FADEOUTTIME ? 4000 : 0;
                             obj.p_transtype = item.TRANSTYPE == null? 'S' : Char.Parse(item.TRANSTYPE);
                             obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE, 0, 100);
                             obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);

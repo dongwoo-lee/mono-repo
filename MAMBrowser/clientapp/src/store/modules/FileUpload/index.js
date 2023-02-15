@@ -968,6 +968,9 @@ export default {
     resetLocalFiles(state) {
       state.localFiles = [];
     },
+    resetButton(state) {
+      state.button = "";
+    },
     resetType(state) {
       state.type = "null";
     },

@@ -78,13 +78,18 @@ export default {
       this.timer = null;
     },
     countdown() {
-      if (this.totalTime >= 1) {
-        this.totalTime--;
-        this.SET_TIMER(this.totalTime);
-      } else {
-        this.totalTime = 0;
-        this.clearTimer();
-        LoginPopupRefElement.loginPopup.show();
+      let access_token = sessionStorage.getItem("access_token");
+      if (access_token) {
+        var base64Payload = access_token.split('.')[1];
+        let payload = Buffer.from(base64Payload, 'base64');
+        let token = JSON.parse(payload.toString())
+        let curTime = Date.now() / 1000;
+        this.totalTime = token.exp - curTime;
+        if (curTime > token.exp) {
+          this.totalTime = 0;
+          this.clearTimer();
+          LoginPopupRefElement.loginPopup.show();
+        }
       }
     },
     toHHmmss(time) {
