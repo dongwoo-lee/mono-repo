@@ -551,9 +551,6 @@ const signalR = require("@microsoft/signalr");
 const connection = new signalR.HubConnectionBuilder()
   .withUrl("/api/ProgressHub")
   .build();
-connection.start().catch(function (err) {
-  console.log("err", err);
-});
 export default {
   props: {
     type: String,
@@ -719,9 +716,6 @@ export default {
     this.isMyDiskCheckBox = this.roleList.some(
       (data) => data.id === this.MY_DISK_PAGE_ID && data.visible === "Y"
     );
-    connection.on("sendProgress", (progress) => {
-      this.seconds = progress;
-    });
   },
   components: {
     DxCheckBox,
@@ -885,6 +879,14 @@ export default {
       }
       if (e.itemData.id == "wav") {
         // this.maxValue
+        if (!connection.connectionStarted) {
+          connection.start().catch(function (err) {
+            console.log("err", err);
+          });
+          connection.on("sendProgress", (progress) => {
+            this.seconds = progress;
+          });
+        }
         this.$refs["modal-export-wav"].show();
       } else {
         eventBus.$emit("exportGo", e.itemData.id);
@@ -967,11 +969,16 @@ export default {
       for (var i = 1; i < 5; i++) {
         cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
           if (ele.cartcode != null && ele.cartcode != "") {
+            ele.rownum = 16 * (i - 1) + ele.rownum;
+            ele["seqnum"] = ele["rownum"];
+            delete ele["rownum"];
             pramList.push(ele);
           }
         });
       }
       cuesheetData.NormalCon.forEach((ele) => {
+        ele["seqnum"] = ele["rownum"];
+        delete ele["rownum"];
         pramList.push(ele);
       });
       if (pramList.length == 0) {

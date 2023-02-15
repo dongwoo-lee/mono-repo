@@ -333,6 +333,7 @@ export default {
   },
   methods: {
     ...mapMutations("FileIndexStore", [
+      "resetButton",
       "setTypeSelected",
       "setUploaderCustomData",
       "setMasteringListData",
@@ -564,19 +565,7 @@ export default {
       this.setTypeSelected(v);
     },
     setTypeOptions() {
-      if (this.button == "nav") {
-        this.masteringMenuList.forEach((item) => {
-          if (item.visible == "Y") {
-            var id;
-            masteringMenuData.forEach((data) => {
-              if (data.id == item.id) {
-                id = data.value;
-              }
-            });
-            this.typeOptions.push({ value: id, text: item.name });
-          }
-        });
-      } else {
+      if (this.button == "private") {
         this.masteringMenuList.forEach((item) => {
           if (item.name == "MY디스크") {
             var id;
@@ -588,7 +577,20 @@ export default {
             this.typeOptions.push({ value: id, text: item.name });
           }
         });
+      } else {
+        this.masteringMenuList.forEach((item) => {
+          if (item.visible == "Y") {
+            var id;
+            masteringMenuData.forEach((data) => {
+              if (data.id == item.id) {
+                id = data.value;
+              }
+            });
+            this.typeOptions.push({ value: id, text: item.name });
+          }
+        });
       }
+      this.resetButton();
     },
   },
 };

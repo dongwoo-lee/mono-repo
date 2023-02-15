@@ -1220,16 +1220,38 @@ namespace MAMBrowser.Controllers
         }
         void RequestMastering(MasteringMetaBase meta, string userId, byte priority)
         {
-            var mstParam = new I_MSTHistoryParam(meta);
-            var connectionString = Startup.AppSetting.ConnectionString;
-            MSTHistoryRepository repository = new MSTHistoryRepository(connectionString);
-            var mstSeq = repository.Add<long>(mstParam);
+            long mstSeq = -1;
+            try
+            {
+                var mstParam = new I_MSTHistoryParam(meta);
+                MSTHistoryRepository repository = new MSTHistoryRepository(Startup.AppSetting.ConnectionString);
+                mstSeq = repository.Add<long>(mstParam);
+                meta.MstSeq = mstSeq;
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"DB 서버 연결 실패 ({ex.Message})";
+                _dbLogger.ErrorAsync(HttpContext, userId, $"마스터링 요청 실패 - {meta.SoundType} : {errorMsg}", UTF8JsonSerializer.Serialize(meta)).Wait();
+                throw new Exception(errorMsg);
+            }
 
-            meta.MstSeq = mstSeq;
-            RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
-            rb.Enqueue(meta, (byte)priority);
-
-            _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 요청 - {meta.SoundType}", UTF8JsonSerializer.Serialize(meta)).Wait();
+            try
+            {
+                RabbitMQueue.RabbitMQ rb = new RabbitMQueue.RabbitMQ();
+                rb.Enqueue(meta, (byte)priority);
+                _dbLogger.InfoAsync(HttpContext, userId, $"마스터링 요청 - {meta.SoundType}", UTF8JsonSerializer.Serialize(meta)).Wait();
+            }
+            catch(Exception ex)
+            {
+                string errorMsg = $"마스터링 서버 연결 실패 ({ex.Message})";
+                _dbLogger.ErrorAsync(HttpContext, userId, $"마스터링 요청 실패 - {meta.SoundType} : {errorMsg}", UTF8JsonSerializer.Serialize(meta)).Wait();
+                if (mstSeq != -1)
+                {
+                    MSTHistoryRepository repository = new MSTHistoryRepository(Startup.AppSetting.ConnectionString);
+                    repository.Edit(new U_MSTHistoryParam2 { SEQ_IN = mstSeq, WORK_STATUS_IN = 6, NOTE_IN = errorMsg });
+                }
+                throw new Exception(errorMsg);
+            }
         }
 
 

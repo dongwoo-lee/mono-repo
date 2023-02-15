@@ -25,6 +25,7 @@
           :disabled="disabVal"
           :size="size"
           :max="maxDate"
+          :min="minDate"
           @input="binput"
         />
       </b-input-group-append>
@@ -90,6 +91,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    minDate: null,
   },
   data() {
     return {

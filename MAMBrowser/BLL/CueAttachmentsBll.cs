@@ -12,6 +12,7 @@ using MAMBrowser.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NAudioFadeInOutTest;
@@ -35,10 +36,12 @@ namespace MAMBrowser.BLL
         private readonly APIBll _apiBll;
         private readonly ICueSheetDAO _dao;
         private readonly IHubContext<ProgressHub> _hubContext;
+        private readonly ILogger _logger;
+
 
         private static bool isStopMerge = false;
 
-        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao, IHubContext<ProgressHub> hubContext)
+        public CueAttachmentsBll(ServiceResolver sr, ProductsBll bll, APIBll apiBll, WebServerFileHelper fileHelper, ICueSheetDAO dao, IHubContext<ProgressHub> hubContext, ILogger<CueAttachmentsBll> logger)
         {
             _fileService = sr(MAMDefine.MirosConnection).FileSystem;
             _bll = bll;
@@ -46,6 +49,7 @@ namespace MAMBrowser.BLL
             _fileHelper = fileHelper;
             _dao = dao;
             _hubContext = hubContext;
+            _logger= logger;
         }
 
         //CueCon > ZipFile 내려받기
@@ -256,6 +260,18 @@ namespace MAMBrowser.BLL
 
                                     int endBytes = (int)(TimeSpan.FromMilliseconds(ele.ENDPOSITION).TotalMilliseconds * bytesPerMillisecond);
                                     int endPos = endBytes - endBytes % reader.WaveFormat.BlockAlign;
+
+                                    if (endPos > reader.Length)
+                                    {
+                                        _logger.LogWarning($"EOM is larger than the actual file length. CARTID : {ele.CARTID}, ENDPOSITION : {ele.ENDPOSITION}, LENGTH : {reader.TotalTime.TotalMilliseconds}" );
+                                        endPos = (int)reader.Length;
+                                    }
+
+                                    if(startPos<0)
+                                    {
+                                        _logger.LogWarning($"SOM is less than 0. CARTID : {ele.CARTID}, STARTPOSITION : {ele.STARTPOSITION}, LENGTH : {reader.TotalTime.TotalMilliseconds}");
+                                        startPos = 0;
+                                    }
 
                                     reader.Position = startPos;
                                     byte[] buffer = new byte[10485760];
