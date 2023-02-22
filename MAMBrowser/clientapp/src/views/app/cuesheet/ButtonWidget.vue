@@ -965,15 +965,13 @@ export default {
         cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
           if (ele.cartcode != null && ele.cartcode != "") {
             ele.rownum = 16 * (i - 1) + ele.rownum;
-            ele["seqnum"] = ele["rownum"];
-            delete ele["rownum"];
+            ele.channeltype = 'I';
             pramList.push(ele);
           }
         });
       }
       cuesheetData.NormalCon.forEach((ele) => {
-        ele["seqnum"] = ele["rownum"];
-        delete ele["rownum"];
+        ele.channeltype = 'N';
         pramList.push(ele);
       });
       if (pramList.length == 0) {
