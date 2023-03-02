@@ -2,7 +2,9 @@
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common.Foundation;
 using M30.AudioFile.DAL.Dto;
+using M30_CueSheetDAO.Entity;
 using M30_CueSheetDAO.Interfaces;
+using M30_CueSheetDAO.ParamEntity;
 using MAMBrowser.DTO;
 using MAMBrowser.Foundation;
 using MAMBrowser.Helper;
@@ -25,6 +27,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using static DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper;
 
 namespace MAMBrowser.BLL
 {
@@ -56,6 +59,7 @@ namespace MAMBrowser.BLL
         public ActionResult<string> ExportToZipFile(string userid, List<CueSheetConDTO> pram)
         {
             ActionResult<string> result;
+            var list = new List<CueSheetConEntity>();
 
             var guid = Guid.NewGuid().ToString();
             var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{userid}\{guid}");
@@ -73,12 +77,10 @@ namespace MAMBrowser.BLL
 
             foreach (CueSheetConDTO ele in pram)
             {
+                CueSheetConEntity entity = new CueSheetConEntity();
                 if (ele.FILEPATH != null && ele.FILEPATH != "")
                 {
                     var outFilePath = Path.Combine(rootFolder, Path.GetFileName(ele.FILEPATH));
-                    var audioData = new CueSheetConAudioDTO();
-                    ele.AUDIOS = new List<CueSheetConAudioDTO>();
-
                     using (FileStream outFileStream = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         try
@@ -86,16 +88,15 @@ namespace MAMBrowser.BLL
                             using (var inStream = _fileService.GetFileStream(ele.FILEPATH, 0))
                             {
                                 inStream.CopyTo(outFileStream);
-
                             }
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
-                            ele.FILEPATH = "";
                         }
                     }
-                    ele.FILEPATH = outFilePath;
+                    CueSheetConAudioEntity audioData = new CueSheetConAudioEntity();
+                    entity = ele?.DtoToEntity();
                     audioData.P_TYPE = ele.CARTTYPE;
                     audioData.P_SEQNUM = 1;
                     audioData.P_CLIPID = ele.CARTID;
@@ -103,31 +104,32 @@ namespace MAMBrowser.BLL
                     audioData.P_SUBTITLE = ele.SUBTITLE;
                     audioData.P_DURATION = ele.DURATION;
                     audioData.P_MASTERFILE = outFilePath;
-                    ele.AUDIOS.Add(audioData);
+                    entity.AUDIOS.Add(audioData);
+                    list.Add(entity);
                 }
                 else
                 {
                     // 그룹소재 아이템 가져오기
                     if (ele.ONAIRDATE != "")
                     {
-                        ele.AUDIOS = new List<CueSheetConAudioDTO>();
                         if (ele.CARTTYPE == "SB")
                         {
                             var collection = _bll.FindSBContents(ele.ONAIRDATE, ele.CARTID);
                             if (collection.Data.Any())
                             {
+                                entity = ele?.DtoToEntity();
                                 foreach (var item in collection.Data)
                                 {
-                                    var result_dto = new CueSheetConAudioDTO();
+                                    var result_dto = new CueSheetConAudioEntity();
                                     result_dto.P_SEQNUM = item.RowNO;
                                     result_dto.P_CLIPID = item.ID;
                                     result_dto.P_MAINTITLE = item.Name;
                                     result_dto.P_DURATION = item.IntDuration;
                                     result_dto.P_MASTERFILE = item.FilePath;
                                     result_dto.P_CODEID = item.PgmCODE ?? "";
-                                    ele.AUDIOS.Add(result_dto);
+                                    entity.AUDIOS.Add(result_dto);
                                 }
-
+                                list.Add(entity);
                             }
                         }
                         if (ele.CARTTYPE == "CM")
@@ -135,25 +137,26 @@ namespace MAMBrowser.BLL
                             var collection = _bll.FindCMContents(ele.ONAIRDATE, ele.CARTID);
                             if (collection.Data.Any())
                             {
+                                entity = ele?.DtoToEntity();
                                 foreach (var item in collection.Data)
                                 {
-                                    var result_dto = new CueSheetConAudioDTO();
+                                    var result_dto = new CueSheetConAudioEntity();
                                     result_dto.P_SEQNUM = item.RowNO;
                                     result_dto.P_CLIPID = item.ID;
                                     result_dto.P_MAINTITLE = item.Name;
                                     result_dto.P_DURATION = item.IntDuration;
                                     result_dto.P_MASTERFILE = item.FilePath;
                                     result_dto.P_CODEID = item.PgmCODE ?? "";
-                                    ele.AUDIOS.Add(result_dto);
+                                    entity.AUDIOS.Add(result_dto);
                                 }
-
+                                list.Add(entity);
                             }
                         }
                     }
-                    if (ele.AUDIOS == null)
+                    if (entity.AUDIOS == null)
                     {
-                        var audioData = new CueSheetConAudioDTO();
-                        ele.AUDIOS = new List<CueSheetConAudioDTO>();
+                        var audioData = new CueSheetConAudioEntity();
+                        entity = ele?.DtoToEntity();
                         audioData.P_TYPE = ele.CARTTYPE;
                         audioData.P_SEQNUM = 1;
                         audioData.P_CLIPID = ele.CARTID;
@@ -161,11 +164,12 @@ namespace MAMBrowser.BLL
                         audioData.P_SUBTITLE = ele.SUBTITLE;
                         audioData.P_DURATION = ele.DURATION;
                         audioData.P_MASTERFILE = "";
-                        ele.AUDIOS.Add(audioData);
+                        entity.AUDIOS.Add(audioData);
+                        list.Add(entity);
                     }
                     else
                     {
-                        foreach (var item in ele.AUDIOS)
+                        foreach (var item in entity.AUDIOS)
                         {
                             var outFilePath = Path.Combine(rootFolder, Path.GetFileName(item.P_MASTERFILE));
 
@@ -188,13 +192,11 @@ namespace MAMBrowser.BLL
                         }
                     }
                 }
-
-
             }
             using (var FileStream = new StreamWriter(xmlFileFullPath))
             {
-                XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConDTO>));
-                serialiser.Serialize(FileStream, pram);
+                XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConEntity>));
+                serialiser.Serialize(FileStream, list);
 
             }
 
@@ -205,7 +207,7 @@ namespace MAMBrowser.BLL
             using (StreamWriter sw = new StreamWriter(jsonFileFullPath))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                serializer.Serialize(writer, pram);
+                serializer.Serialize(writer, list);
             }
             string zipFileName = $"{guid}.zip";
             var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
@@ -215,6 +217,7 @@ namespace MAMBrowser.BLL
             result = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);
             return result;
         }
+
 
         //CueCon > Wave 파일 하나로 합쳐 내려받기
         public async Task<DTO_RESULT<ActionResult<string>>> MergeAudioFilesIntoOneWav(string userid, string connectionId, List<CueSheetConDTO> pram, CancellationToken token)

@@ -964,9 +964,10 @@ export default {
       for (var i = 1; i < 5; i++) {
         cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
           if (ele.cartcode != null && ele.cartcode != "") {
-            ele.rownum = 16 * (i - 1) + ele.rownum;
-            ele.channeltype = 'I';
-            pramList.push(ele);
+            let cObj = {...ele}
+            cObj.channeltype = "I"
+            cObj.rownum = ele.rownum + ((i-1) * 16)
+            pramList.push(cObj);
           }
         });
       }
