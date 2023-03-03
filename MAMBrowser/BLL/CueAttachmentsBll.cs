@@ -193,10 +193,17 @@ namespace MAMBrowser.BLL
                     }
                 }
             }
+
+            var obj = new ExportZipEntity();
+            obj.CueSheetConEntities = list;
+            obj.Version = "1.0.0";
+            obj.UserID = userid;
+            obj.ExportDtm = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            obj.ExportSystemName = "MAM";
             using (var FileStream = new StreamWriter(xmlFileFullPath))
             {
-                XmlSerializer serialiser = new XmlSerializer(typeof(List<CueSheetConEntity>));
-                serialiser.Serialize(FileStream, list);
+                XmlSerializer serialiser = new XmlSerializer(typeof(ExportZipEntity));
+                serialiser.Serialize(FileStream, obj);
 
             }
 
@@ -207,7 +214,7 @@ namespace MAMBrowser.BLL
             using (StreamWriter sw = new StreamWriter(jsonFileFullPath))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                serializer.Serialize(writer, list);
+                serializer.Serialize(writer, obj);
             }
             string zipFileName = $"{guid}.zip";
             var zipFilePath = Path.Combine(Path.GetDirectoryName(rootFolder), zipFileName);

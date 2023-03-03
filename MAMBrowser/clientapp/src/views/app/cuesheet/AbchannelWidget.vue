@@ -239,13 +239,13 @@
         <template #start_Template="{ data }">
           <div>
             <div v-if="!data.data.fadeintime && data.data.startposition > 0">
-              <b-icon icon="screwdriver"></b-icon>
+              <img src="/assets/img/play-edit.png"/>
             </div>
             <div v-if="data.data.fadeintime && !data.data.startposition > 0">
-              <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+              <img src="/assets/img/play-fadein.png"/>
             </div>
             <div v-if="data.data.fadeintime && data.data.startposition > 0">
-              <b-icon icon="tools"></b-icon>
+              <img src="/assets/img/play-som-fadein.png"/>
             </div>
           </div>
         </template>
@@ -258,7 +258,7 @@
                 data.data.duration > data.data.endposition
               "
             >
-              <b-icon icon="screwdriver"></b-icon>
+              <img src="/assets/img/play-edit.png"/>
             </div>
             <div
               v-if="
@@ -267,7 +267,7 @@
                   data.data.duration == data.data.endposition)
               "
             >
-              <b-icon style="transform: rotate(90deg)" icon="wrench"></b-icon>
+              <img src="/assets/img/play-fadeout.png"/>
             </div>
             <div
               v-if="
@@ -275,7 +275,7 @@
                 data.data.duration > data.data.endposition
               "
             >
-              <b-icon icon="tools"></b-icon>
+              <img src="/assets/img/play-eom-fadeout.png"/>
             </div>
           </div>
         </template>

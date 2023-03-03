@@ -74,14 +74,14 @@
                   "
                 ></i>
               </div>
-              <div style="width: 15px">
+              <div style="width: 17px">
                 <div
                   v-if="
                     !fileData[index - 1].fadeintime &&
                     fileData[index - 1].startposition > 0
                   "
                 >
-                  <b-icon icon="screwdriver"></b-icon>
+              <img src="/assets/img/play-edit.png"/>
                 </div>
                 <div
                   v-if="
@@ -89,10 +89,7 @@
                     !fileData[index - 1].startposition > 0
                   "
                 >
-                  <b-icon
-                    style="transform: rotate(90deg)"
-                    icon="wrench"
-                  ></b-icon>
+              <img src="/assets/img/play-fadein.png"/>
                 </div>
                 <div
                   v-if="
@@ -100,10 +97,10 @@
                     fileData[index - 1].startposition > 0
                   "
                 >
-                  <b-icon icon="tools"></b-icon>
+              <img src="/assets/img/play-som-fadein.png"/>
                 </div>
               </div>
-              <div style="width: 15px">
+              <div style="width: 17px">
                 <div
                   v-if="
                     !fileData[index - 1].fadeouttime &&
@@ -111,7 +108,7 @@
                       fileData[index - 1].endposition
                   "
                 >
-                  <b-icon icon="screwdriver"></b-icon>
+              <img src="/assets/img/play-edit.png"/>
                 </div>
                 <div
                   v-if="
@@ -122,10 +119,7 @@
                         fileData[index - 1].endposition)
                   "
                 >
-                  <b-icon
-                    style="transform: rotate(90deg)"
-                    icon="wrench"
-                  ></b-icon>
+              <img src="/assets/img/play-fadeout.png"/>
                 </div>
                 <div
                   v-if="
@@ -134,7 +128,7 @@
                       fileData[index - 1].endposition
                   "
                 >
-                  <b-icon icon="tools"></b-icon>
+              <img src="/assets/img/play-eom-fadeout.png"/>
                 </div>
               </div>
               <div class="actionBtn">

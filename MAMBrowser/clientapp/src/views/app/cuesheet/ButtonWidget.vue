@@ -233,15 +233,18 @@
       title="저장"
       ok-title="확인"
       cancel-title="취소"
+      @show="modalSaveOpen"
       @ok="saveOk"
     >
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
           <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
             "{{ cueInfo.title }}" 큐시트를 저장합니다.
+            <h5 class="pt-2" v-if="isMyDiskExist">( My 공간 소재는 큐시트에 저장 되지 않습니다. )</h5>
           </div>
           <div class="mb-3" v-if="cueInfo.cuetype == 'B' && !fav">
             "{{ cueInfo.title }}" 기본 큐시트를 저장합니다.
+            <h5 class="pt-2" v-if="isMyDiskExist">( My 공간 소재는 큐시트에 저장 되지 않습니다. )</h5>
           </div>
           <div class="mb-3" v-if="cueInfo.cuetype == 'T' && !fav">
             "{{ cueInfo.title }}" 템플릿을 저장합니다.
@@ -601,6 +604,7 @@ export default {
       allCheck: true,
       templateTitle: "",
       selected: [],
+      isMyDiskExist:false,
       cartSelected: ["c1", "c2", "c3", "c4"],
       oldCueOptions: [
         {
@@ -955,6 +959,13 @@ export default {
       this.loadingIconVal = false;
       this.$bvModal.hide("modal-save");
     },
+    modalSaveOpen() {
+      this.checkMyDisk()
+      },
+    checkMyDisk() {
+      let totalItems = this.abCartArr.concat(this.cChannelData.channel_1,this.cChannelData.channel_2,this.cChannelData.channel_3,this.cChannelData.channel_4)
+      return this.isMyDiskExist = totalItems.some(item => item.cartcode ==="S01G01C007")
+      },
     // zip, wave 파일 다운로드
     // wave는 AB만 들어가야 함 나중에 method 분리하기
     async exportZip() {
