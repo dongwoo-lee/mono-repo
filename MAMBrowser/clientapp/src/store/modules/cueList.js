@@ -1,4 +1,4 @@
-import $http from "../../http";
+import $http from "../../http2";
 const qs = require("qs");
 import "moment/locale/ko";
 const moment = require("moment");
