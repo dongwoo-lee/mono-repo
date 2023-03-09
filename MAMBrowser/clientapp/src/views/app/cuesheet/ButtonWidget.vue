@@ -252,14 +252,14 @@
           <div class="mb-3" v-if="fav">즐겨찾기를 저장합니다.</div>
           <b-spinner v-if="loadingIconVal" small variant="primary"></b-spinner>
           <div v-if="type != 'O' && cueInfo.cuetype == 'D' && !fav">
-            <b-form-checkbox-group
+            <!-- <b-form-checkbox-group
               class="custom-checkbox-group mt-5"
               style="font-size: 16px"
               v-model="oldCueSelected"
               :options="oldCueOptions"
               value-field="value"
               text-field="text"
-            />
+            /> -->
           </div>
         </div>
       </div>
