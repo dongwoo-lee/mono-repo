@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MAMBrowser.Utils
 {
@@ -786,6 +785,31 @@ namespace MAMBrowser.Utils
                 }
             }
 
+            return result;
+        }
+        public static CueSheetConEntity DtoToEntity(this CueSheetConDTO con)
+        {
+            var result = new CueSheetConEntity();
+            result.AUDIOS = new List<CueSheetConAudioEntity>();
+
+            if (con != null)
+            {
+                result.CHANNELTYPE = con.CHANNELTYPE;
+                result.SEQNUM = con.ROWNUM;
+                result.ONAIRDATE = con.ONAIRDATE;
+                result.CARTID = con.CARTID;
+                result.CARTCODE = con.CARTCODE;
+                result.USEFLAG = (con.USEFLAG == null) ? "Y" : con.USEFLAG;
+                result.STARTPOSITION = con.STARTPOSITION;
+                result.ENDPOSITION = con.ENDPOSITION;
+                result.FADEINTIME = con.FADEINTIME ? 4000 : 0;
+                result.FADEOUTTIME = con.FADEOUTTIME ? 4000 : 0;
+                result.TRANSTYPE = con.TRANSTYPE;
+                result.MAINTITLE = CheckByteLength(con.MAINTITLE, 100) ? con.MAINTITLE : ByteSubstring(con.MAINTITLE, 0, 100);
+                result.SUBTITLE = CheckByteLength(con.SUBTITLE, 100) ? con.SUBTITLE : ByteSubstring(con.SUBTITLE, 0, 100);
+                result.MEMO = con.MEMO;
+                result.PGMCODE = con.PGMCODE;
+            }
             return result;
         }
         public static List<AttachmentsParam> Converting(this List<AttachmentDTO> attas)
