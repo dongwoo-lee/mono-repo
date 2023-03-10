@@ -316,10 +316,10 @@ namespace MAMBrowser.BLL
             var uncTargetDirectory = @$"{uncMyDiskDirectory}\{userId}\{userId}-{date}";
             var uncTargetFilePath = @$"{uncTargetDirectory}\{newFileName}";
 
-            if (_fileProtocol.ExistDirectory(uncTempUploadPath))
+            if (!_fileProtocol.ExistDirectory(uncTempUploadPath))
                 _fileProtocol.MakeDirectory(uncTempUploadPath);
 
-            if (_fileProtocol.ExistDirectory(uncTargetDirectory))
+            if (!_fileProtocol.ExistDirectory(uncTargetDirectory))
                 _fileProtocol.MakeDirectory(uncTargetDirectory);
 
             //5. 파일을 임시 목적지로 복사.
