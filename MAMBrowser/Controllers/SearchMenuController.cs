@@ -29,7 +29,7 @@ namespace MAMBrowser.Controllers
         public SearchMenuController(MusicWebService fileService, APIDao apiDao)
         {
             _fileService = fileService;
-            // _fileService = new MusicSystemMockup(fileService);
+            //_fileService = new MusicSystemMockup(fileService);
             _apiDao = apiDao;
         }
         public class Pram
@@ -786,12 +786,12 @@ namespace MAMBrowser.Controllers
                 int bitDepth = Convert.ToInt32(options.Find(dt => dt.Name == "BIT_DEPTH").Value);
                 int channel = Convert.ToInt32(options.Find(dt => dt.Name == "CHANNEL").Value);
 
-                string workFolder = options.Find(dt => dt.Name == "MST_UPLOAD_PATH").Value.ToString();
                 string targetFolder = options.Find(dt => dt.Name == "SONG_PATH").Value.ToString();
+                string tempFolder = Path.Combine(targetFolder, "temp");
 
                 string fileExt = Path.GetExtension(pram.FilePath);
                 SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
-                result.ResultObject = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+                result.ResultObject = sm.MasteringSong(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, tempFolder, targetFolder, -17, null, null);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
@@ -828,7 +828,7 @@ namespace MAMBrowser.Controllers
 
                 string fileExt = Path.GetExtension(pram.FilePath);
                 SongMastering sm = new SongMastering(Startup.AppSetting.ConnectionString, storageId, storagePass, sampleRate, bitDepth, channel);
-                result.ResultObject = sm.MasteringEffect(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, null, null);
+                result.ResultObject = sm.MasteringEffect(pram, stream, fileExt, HttpContext.Items[Define.USER_ID] as string, workFolder, targetFolder, -17, null, null);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)
