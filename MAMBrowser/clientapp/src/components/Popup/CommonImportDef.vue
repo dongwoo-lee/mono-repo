@@ -72,7 +72,7 @@
         </template>
       </common-form>
     </div>
-    <template #modal-footer="">
+    <template #modal-footer>
       <b-form-checkbox-group
         v-model="MenuSelected"
         :options="MenuOptions"
@@ -106,7 +106,7 @@
 </template>
 <script>
 import CommonWeeks from "../../components/DataTable/CommonWeeks.vue";
-import { ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
+import {USER_NAME , CUESHEET_CODE} from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
@@ -256,8 +256,9 @@ export default {
     this.isTableLoading = true;
     const toDay = await this.GetDateString(this.date);
     const userName = sessionStorage.getItem(USER_NAME);
-    const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-    if (gropId === "S01G04C004") this.pramObj.person = userName;
+    await this.renewal();
+    const isCueAdmin = this.behaviorList.some( (data) => data.id === CUESHEET_CODE && data.visible === "Y");
+    if(!isCueAdmin) this.pramObj.person = userName;
 
     this.pramObj.brd_dt = toDay;
     this.searchItems.brd_dt = toDay;
@@ -288,6 +289,7 @@ export default {
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["defCuesheetListArr"]),
     ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("user",["behaviorList"])
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -305,6 +307,8 @@ export default {
     ...mapActions("cueList", ["SetProgramCodeOption"]),
     ...mapActions("cueList", ["SetProductIds"]),
     ...mapActions("cueList", ["enableNotification"]),
+
+    ...mapActions("user",["renewal"]),
 
     async getData() {
       if (this.state) {

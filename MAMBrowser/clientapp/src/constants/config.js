@@ -13,6 +13,8 @@ export const SYSTEM_MANAGEMENT_CODE = "S01G02C001";
 export const PREVIEW_CODE = "S01G02C002";
 /* behavior download code */
 export const DOWNLOAD_CODE = "S01G02C003";
+/* behavior all programs cuesheet */
+export const CUESHEET_CODE = "S01G02C005";
 /* role my disk page id */
 export const MY_DISK_PAGE_ID = "S01G01C007";
 /* behavior authority*/

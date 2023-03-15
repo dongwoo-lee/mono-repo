@@ -140,7 +140,7 @@
           </b-button-group>
         </div>
       </div>
-      <template #modal-footer="">
+      <template #modal-footer>
         <DxButton :width="100" text="취소" @click="cancel_modal()" />
         <DxButton
           type="default"
@@ -185,7 +185,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { USER_ID, ACCESS_GROP_ID, USER_NAME } from "@/constants/config";
+import { USER_ID, USER_NAME ,CUESHEET_CODE} from "@/constants/config";
 import DxButton from "devextreme-vue/button";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
@@ -298,6 +298,7 @@ export default {
 
   computed: {
     ...mapGetters("cueList", ["defCuesheetListArr"]),
+    ...mapGetters("user",["behaviorList"]),
     btnWeekStates() {
       const result = this.weekButtons.map((btn) => {
         if (btn.state == true) {
@@ -313,13 +314,12 @@ export default {
     this.isTableLoading = true;
     const toDay = await this.GetDateString(this.date);
     const userName = sessionStorage.getItem(USER_NAME);
-    const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-    if (gropId === "S01G04C004") this.pramObj.person = userName;
-
+    await this.renewal();
+    const isCueAdmin = this.behaviorList.some( (data) => data.id === CUESHEET_CODE && data.visible === "Y");
+    if(!isCueAdmin) this.pramObj.person = userName;
     this.pramObj.brd_dt = toDay;
     this.searchItems.brd_dt = toDay;
     this.pgmList = await this.GetPgmListByBrdDate(this.pramObj);
-
     [
       this.mediaOptions,
       this.programOptions,
@@ -344,6 +344,7 @@ export default {
     ...mapActions("cueList", ["SetProgramProductIdOption"]),
     ...mapActions("cueList", ["SetProductIds"]),
     ...mapActions("cueList", ["enableNotification"]),
+    ...mapActions("user",["renewal"]),
     async getData() {
       this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;

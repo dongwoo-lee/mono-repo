@@ -25,7 +25,7 @@
         icon="columnchooser"
         v-b-modal.modal-template
         hint="템플릿으로 저장"
-        v-if="!fav && accrssCheck"
+        v-if="!fav"
       />
       <DxDropDownButton
         :items="activefolderitem"
@@ -535,9 +535,7 @@ import {
   AUTHORITY_ADMIN,
   MY_DISK_PAGE_ID,
   USER_ID,
-  ACCESS_GROP_ID,
-  USER_NAME,
-  PREVIEW_CODE,
+  PREVIEW_CODE
 } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
@@ -595,7 +593,6 @@ export default {
       isWavCopy: false,
       isWavExportDisabled: true,
       goBackPoint: "",
-      accrssCheck: true,
       loadingIconVal: false,
       tmpTitleTextBoxValue: "",
       proid: "",
@@ -673,16 +670,6 @@ export default {
 
       default:
         break;
-    }
-    const gropId = sessionStorage.getItem(ACCESS_GROP_ID);
-    if (
-      gropId == "S01G04C004" ||
-      gropId == "S01G04C006" ||
-      gropId == "S01G04C001"
-    ) {
-      this.accrssCheck = true;
-    } else {
-      this.accrssCheck = false;
     }
     this.editOptions = { ...this.cueInfo };
     this.templateTitle = this.cueInfo.title + "_(복사)";
