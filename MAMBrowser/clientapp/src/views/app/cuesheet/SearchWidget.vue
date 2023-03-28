@@ -141,7 +141,7 @@
                 type="default"
                 hint="미리듣기"
                 styling-mode="outlined"
-                v-if="data.data.filePath != null"
+                v-if="data.data.existFile"
                 @click="onPreview(data.data)"
               />
             </div>
@@ -251,7 +251,7 @@
                 type="default"
                 hint="미리듣기"
                 styling-mode="outlined"
-                v-if="data.data.filePath != null"
+                v-if="data.data.existFile"
                 @click="onPreview(data.data)"
               />
             </div>
@@ -888,7 +888,9 @@ export default {
 
 .search_view
   .dx-datagrid-table
-  .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row)
+  .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(
+    .dx-row-removed
+  ):not(.dx-edit-row)
   > td:not(.dx-focused) {
   background-color: #bf4e6a !important;
   color: #333 !important;
