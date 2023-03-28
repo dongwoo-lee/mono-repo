@@ -240,11 +240,15 @@
         <div class="mb-3 mt-3" style="font-size: 20px">
           <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
             "{{ cueInfo.title }}" 큐시트를 저장합니다.
-            <h5 class="pt-2" v-if="isMyDiskExist">( My 공간 소재는 큐시트에 저장 되지 않습니다. )</h5>
+            <h5 class="pt-2" v-if="isMyDiskExist">
+              ( My 공간 소재는 큐시트에 저장 되지 않습니다. )
+            </h5>
           </div>
           <div class="mb-3" v-if="cueInfo.cuetype == 'B' && !fav">
             "{{ cueInfo.title }}" 기본 큐시트를 저장합니다.
-            <h5 class="pt-2" v-if="isMyDiskExist">( My 공간 소재는 큐시트에 저장 되지 않습니다. )</h5>
+            <h5 class="pt-2" v-if="isMyDiskExist">
+              ( My 공간 소재는 큐시트에 저장 되지 않습니다. )
+            </h5>
           </div>
           <div class="mb-3" v-if="cueInfo.cuetype == 'T' && !fav">
             "{{ cueInfo.title }}" 템플릿을 저장합니다.
@@ -535,7 +539,7 @@ import {
   AUTHORITY_ADMIN,
   MY_DISK_PAGE_ID,
   USER_ID,
-  PREVIEW_CODE
+  PREVIEW_CODE,
 } from "@/constants/config";
 import DxDropDownButton from "devextreme-vue/drop-down-button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
@@ -564,7 +568,7 @@ export default {
       type: Array,
       default: () => [
         { name: "출력용", value: "print", notEnabled: true },
-        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "SLAP (A, B)", value: "ab", notEnabled: true },
         { name: "태그", value: "tags", notEnabled: true },
         { name: "메모", value: "memo", notEnabled: true },
       ],
@@ -601,7 +605,7 @@ export default {
       allCheck: true,
       templateTitle: "",
       selected: [],
-      isMyDiskExist:false,
+      isMyDiskExist: false,
       cartSelected: ["c1", "c2", "c3", "c4"],
       oldCueOptions: [
         {
@@ -947,12 +951,19 @@ export default {
       this.$bvModal.hide("modal-save");
     },
     modalSaveOpen() {
-      this.checkMyDisk()
-      },
+      this.checkMyDisk();
+    },
     checkMyDisk() {
-      let totalItems = this.abCartArr.concat(this.cChannelData.channel_1,this.cChannelData.channel_2,this.cChannelData.channel_3,this.cChannelData.channel_4)
-      return this.isMyDiskExist = totalItems.some(item => item.cartcode ==="S01G01C007")
-      },
+      let totalItems = this.abCartArr.concat(
+        this.cChannelData.channel_1,
+        this.cChannelData.channel_2,
+        this.cChannelData.channel_3,
+        this.cChannelData.channel_4
+      );
+      return (this.isMyDiskExist = totalItems.some(
+        (item) => item.cartcode === "S01G01C007"
+      ));
+    },
     // zip, wave 파일 다운로드
     // wave는 AB만 들어가야 함 나중에 method 분리하기
     async exportZip() {
@@ -962,15 +973,15 @@ export default {
       for (var i = 1; i < 5; i++) {
         cuesheetData.InstanceCon["channel_" + i].forEach((ele) => {
           if (ele.cartcode != null && ele.cartcode != "") {
-            let cObj = {...ele}
-            cObj.channeltype = "I"
-            cObj.rownum = ele.rownum + ((i-1) * 16)
+            let cObj = { ...ele };
+            cObj.channeltype = "I";
+            cObj.rownum = ele.rownum + (i - 1) * 16;
             pramList.push(cObj);
           }
         });
       }
       cuesheetData.NormalCon.forEach((ele) => {
-        ele.channeltype = 'N';
+        ele.channeltype = "N";
         pramList.push(ele);
       });
       if (pramList.length == 0) {

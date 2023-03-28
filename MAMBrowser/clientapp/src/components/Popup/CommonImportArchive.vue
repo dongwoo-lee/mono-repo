@@ -212,7 +212,7 @@ export default {
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
-        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "SLAP (A, B)", value: "ab", notEnabled: true },
         { name: "태그", value: "tags", notEnabled: true },
         { name: "메모", value: "memo", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },

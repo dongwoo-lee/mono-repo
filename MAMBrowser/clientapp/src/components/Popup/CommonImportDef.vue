@@ -106,7 +106,7 @@
 </template>
 <script>
 import CommonWeeks from "../../components/DataTable/CommonWeeks.vue";
-import {USER_NAME , CUESHEET_CODE} from "@/constants/config";
+import { USER_NAME, CUESHEET_CODE } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
@@ -207,7 +207,7 @@ export default {
       importSelected: "add",
       MenuOptions: [
         { name: "출력용", value: "print", notEnabled: true },
-        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "SLAP (A, B)", value: "ab", notEnabled: true },
         { name: "태그", value: "tags", notEnabled: true },
         { name: "메모", value: "memo", notEnabled: true },
         { name: "C1", value: "c1", notEnabled: true },
@@ -257,8 +257,10 @@ export default {
     const toDay = await this.GetDateString(this.date);
     const userName = sessionStorage.getItem(USER_NAME);
     await this.renewal();
-    const isCueAdmin = this.behaviorList.some( (data) => data.id === CUESHEET_CODE && data.visible === "Y");
-    if(!isCueAdmin) this.pramObj.person = userName;
+    const isCueAdmin = this.behaviorList.some(
+      (data) => data.id === CUESHEET_CODE && data.visible === "Y"
+    );
+    if (!isCueAdmin) this.pramObj.person = userName;
 
     this.pramObj.brd_dt = toDay;
     this.searchItems.brd_dt = toDay;
@@ -289,7 +291,7 @@ export default {
     ...mapGetters("cueList", ["printArr"]),
     ...mapGetters("cueList", ["defCuesheetListArr"]),
     ...mapGetters("cueList", ["cueInfo"]),
-    ...mapGetters("user",["behaviorList"])
+    ...mapGetters("user", ["behaviorList"]),
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
@@ -308,7 +310,7 @@ export default {
     ...mapActions("cueList", ["SetProductIds"]),
     ...mapActions("cueList", ["enableNotification"]),
 
-    ...mapActions("user",["renewal"]),
+    ...mapActions("user", ["renewal"]),
 
     async getData() {
       if (this.state) {
@@ -538,6 +540,7 @@ export default {
   left: 40px;
   font-size: 13px;
 }
+
 .import-check-items .form-check-inline {
   margin-right: 20px !important;
 }

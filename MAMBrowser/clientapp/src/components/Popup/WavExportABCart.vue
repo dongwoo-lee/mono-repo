@@ -1,7 +1,7 @@
 <template>
   <div style="text-align: center">
     <h3 class="m-3" v-if="isTotalValue">
-      현재 DAP(A, B)에 추가된 소재들을 하나의 Wav 파일로 병합하여 내보냅니다.
+      현재 SLAP (A, B)에 추가된 소재들을 하나의 Wav 파일로 병합하여 내보냅니다.
     </h3>
     <h3 v-else class="m-3" style="color: red">
       최대 길이는 {{ maxDuration / 3600000 }}시간 입니다.

@@ -81,7 +81,7 @@
                     fileData[index - 1].startposition > 0
                   "
                 >
-              <img src="/assets/img/play-edit.png"/>
+                  <img src="/assets/img/play-edit.png" />
                 </div>
                 <div
                   v-if="
@@ -89,7 +89,7 @@
                     !fileData[index - 1].startposition > 0
                   "
                 >
-              <img src="/assets/img/play-fadein.png"/>
+                  <img src="/assets/img/play-fadein.png" />
                 </div>
                 <div
                   v-if="
@@ -97,7 +97,7 @@
                     fileData[index - 1].startposition > 0
                   "
                 >
-              <img src="/assets/img/play-som-fadein.png"/>
+                  <img src="/assets/img/play-som-fadein.png" />
                 </div>
               </div>
               <div style="width: 17px">
@@ -108,7 +108,7 @@
                       fileData[index - 1].endposition
                   "
                 >
-              <img src="/assets/img/play-edit.png"/>
+                  <img src="/assets/img/play-edit.png" />
                 </div>
                 <div
                   v-if="
@@ -119,7 +119,7 @@
                         fileData[index - 1].endposition)
                   "
                 >
-              <img src="/assets/img/play-fadeout.png"/>
+                  <img src="/assets/img/play-fadeout.png" />
                 </div>
                 <div
                   v-if="
@@ -128,7 +128,7 @@
                       fileData[index - 1].endposition
                   "
                 >
-              <img src="/assets/img/play-eom-fadeout.png"/>
+                  <img src="/assets/img/play-eom-fadeout.png" />
                 </div>
               </div>
               <div class="actionBtn">
@@ -513,14 +513,16 @@ export default {
       if (rowArray.length > 0) {
         var index = 0;
         for await (const ele of rowArray) {
-          var rowData = await this.setContents({
-            type: "c",
-            search_row: ele,
-            formRowData: this.rowData,
-            cartcode: this.searchListData.cartcode,
-            index: index,
-            toIndex: totalIndex,
-          });
+          if (ele.existFile) {
+            var rowData = await this.setContents({
+              type: "c",
+              search_row: ele,
+              formRowData: this.rowData,
+              cartcode: this.searchListData.cartcode,
+              index: index,
+              toIndex: totalIndex,
+            });
+          }
           if (rowData) {
             arrData.splice(totalIndex - 1 + index, 1, rowData);
             index++;
@@ -724,7 +726,7 @@ export default {
 };
 </script>
 
-<style >
+<style>
 .drag_ {
   position: fixed;
   height: 100%;

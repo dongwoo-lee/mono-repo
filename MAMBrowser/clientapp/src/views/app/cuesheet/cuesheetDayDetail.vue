@@ -234,7 +234,7 @@ export default {
       cueClearItems: ["print", "ab", "attachments", "tags", "memo"],
       cueClearOptions: [
         { name: "출력용", value: "print", notEnabled: true },
-        { name: "DAP(A, B)", value: "ab", notEnabled: true },
+        { name: "SLAP (A, B)", value: "ab", notEnabled: true },
         { name: "첨부파일", value: "attachments", notEnabled: true },
         { name: "태그", value: "tags", notEnabled: true },
         { name: "메모", value: "memo", notEnabled: true },

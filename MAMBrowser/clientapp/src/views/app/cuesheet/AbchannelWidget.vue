@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="abchannel_view">
-      <div class="abchannel_title mt-2 ml-1">DAP (A,B)</div>
+      <div class="abchannel_title mt-2 ml-1">SLAP (A,B)</div>
       <div
         class="mt-2 ml-1"
         :class="{
@@ -239,13 +239,13 @@
         <template #start_Template="{ data }">
           <div>
             <div v-if="!data.data.fadeintime && data.data.startposition > 0">
-              <img src="/assets/img/play-edit.png"/>
+              <img src="/assets/img/play-edit.png" />
             </div>
             <div v-if="data.data.fadeintime && !data.data.startposition > 0">
-              <img src="/assets/img/play-fadein.png"/>
+              <img src="/assets/img/play-fadein.png" />
             </div>
             <div v-if="data.data.fadeintime && data.data.startposition > 0">
-              <img src="/assets/img/play-som-fadein.png"/>
+              <img src="/assets/img/play-som-fadein.png" />
             </div>
           </div>
         </template>
@@ -258,7 +258,7 @@
                 data.data.duration > data.data.endposition
               "
             >
-              <img src="/assets/img/play-edit.png"/>
+              <img src="/assets/img/play-edit.png" />
             </div>
             <div
               v-if="
@@ -267,7 +267,7 @@
                   data.data.duration == data.data.endposition)
               "
             >
-              <img src="/assets/img/play-fadeout.png"/>
+              <img src="/assets/img/play-fadeout.png" />
             </div>
             <div
               v-if="
@@ -275,7 +275,7 @@
                 data.data.duration > data.data.endposition
               "
             >
-              <img src="/assets/img/play-eom-fadeout.png"/>
+              <img src="/assets/img/play-eom-fadeout.png" />
             </div>
           </div>
         </template>
@@ -392,7 +392,7 @@ export default {
       lengthCheck: false,
       grpParam: {},
       maxLength: 500,
-      playTem_name: "DAP (A,B)",
+      playTem_name: "SLAP (A,B)",
       rowData: {
         carttype: "",
         onairdate: "",
@@ -501,12 +501,14 @@ export default {
         //합친 배열 store에 추가
         var index = 0;
         for await (const ele of rowArray) {
-          var rowData = await this.setContents({
-            type: "ab",
-            search_row: ele,
-            formRowData: this.rowData,
-            cartcode: this.searchListData.cartcode,
-          });
+          if (ele.existFile) {
+            var rowData = await this.setContents({
+              type: "ab",
+              search_row: ele,
+              formRowData: this.rowData,
+              cartcode: this.searchListData.cartcode,
+            });
+          }
           if (rowData) {
             arrData.splice(e.toIndex + index, 0, rowData);
             index++;
