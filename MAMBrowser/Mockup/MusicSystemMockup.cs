@@ -21,7 +21,7 @@ namespace MAMBrowser
         }
         public Stream GetFileStream(string domain, int port, string jsonRequestContent, out long fileSize)
         {
-            string filePath = @"Mockup\CDO28190A-10.wav";
+            string filePath = @"c:\CDO28190A-10.wav";
             FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             fileSize = fs.Length;
             return fs;
@@ -116,7 +116,7 @@ namespace MAMBrowser
 
         public IList<DTO_MUSIC> SearchMusic(MusicSearchTypes1 searchType, string searchType2, GradeTypes gradeType, string searchText, int rowPerPage, int selectPage, out long totalCount)
         {
-            string filePath = @"Mockup\song2.xml";
+            string filePath = @"Mockup\song.xml";
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 int rowNo = 1;
