@@ -718,7 +718,7 @@ namespace MAMBrowser.Utils
                 PrintParam obj = new PrintParam();
                 obj.p_code = item.CODE;
                 obj.p_seqnum = item.ROWNUM;
-                obj.p_contents = CheckByteLength(item.CONTENTS, 100) ? item.CONTENTS : ByteSubstring(item.CONTENTS, 0, 100);
+                obj.p_contents = TrimMaxLength(item.CONTENTS, 100);
                 obj.p_usedtime = item.USEDTIME;
                 obj.p_etc = item.ETC;
                 result.Add(obj);
@@ -746,8 +746,8 @@ namespace MAMBrowser.Utils
                     obj.p_fadeintime = item.FADEINTIME ? 4000 : 0;
                     obj.p_fadeouttime = item.FADEOUTTIME ? 4000 : 0;
                     obj.p_transtype = char.Parse(item.TRANSTYPE);
-                    obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE, 0, 100);
-                    obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);
+                    obj.p_maintitle = TrimMaxLength(item.MAINTITLE, 100);
+                    obj.p_subtitle = TrimMaxLength(item.SUBTITLE, 100);
                     obj.p_memo = item.MEMO;
                     result.Add(obj);
                 }
@@ -775,8 +775,8 @@ namespace MAMBrowser.Utils
                             obj.p_fadeintime = item.FADEINTIME ? 4000 : 0;
                             obj.p_fadeouttime = item.FADEOUTTIME ? 4000 : 0;
                             obj.p_transtype = item.TRANSTYPE == null? 'S' : Char.Parse(item.TRANSTYPE);
-                            obj.p_maintitle = CheckByteLength(item.MAINTITLE, 100) ? item.MAINTITLE : ByteSubstring(item.MAINTITLE, 0, 100);
-                            obj.p_subtitle = CheckByteLength(item.SUBTITLE, 100) ? item.SUBTITLE : ByteSubstring(item.SUBTITLE, 0, 100);
+                            obj.p_maintitle = TrimMaxLength(item.MAINTITLE, 100);
+                            obj.p_subtitle = TrimMaxLength(item.SUBTITLE, 100);
                             obj.p_memo = item.MEMO;
                             result.Add(obj);
                         }
@@ -805,8 +805,8 @@ namespace MAMBrowser.Utils
                 result.FADEINTIME = con.FADEINTIME ? 4000 : 0;
                 result.FADEOUTTIME = con.FADEOUTTIME ? 4000 : 0;
                 result.TRANSTYPE = con.TRANSTYPE;
-                result.MAINTITLE = CheckByteLength(con.MAINTITLE, 100) ? con.MAINTITLE : ByteSubstring(con.MAINTITLE, 0, 100);
-                result.SUBTITLE = CheckByteLength(con.SUBTITLE, 100) ? con.SUBTITLE : ByteSubstring(con.SUBTITLE, 0, 100);
+                result.MAINTITLE = TrimMaxLength(con.MAINTITLE, 100);
+                result.SUBTITLE = TrimMaxLength(con.SUBTITLE, 100);
                 result.MEMO = con.MEMO;
                 result.PGMCODE = con.PGMCODE;
             }
@@ -1001,6 +1001,14 @@ namespace MAMBrowser.Utils
                 }
             }
         }
+        private static string TrimMaxLength(string data, int length)
+        {
+            if (string.IsNullOrEmpty(data))
+                return data;
+            else
+                return data.Length >= length ? data.Substring(0, length) : data;
+        }
+
         public static bool CheckByteLength(String Data, int maxLength)
         {
             byte[] byteTEMP = Encoding.Default.GetBytes(Data);
