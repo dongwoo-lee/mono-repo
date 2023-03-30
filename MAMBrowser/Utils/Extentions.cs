@@ -617,8 +617,8 @@ namespace MAMBrowser.Utils
                     favItem.p_endposition = item.ENDPOSITION;
                     favItem.p_fadeintime = item.FADEINTIME ? 4000 : 0;
                     favItem.p_fadeouttime = item.FADEOUTTIME ? 4000 : 0;
-                    favItem.p_maintitle = item.MAINTITLE;
-                    favItem.p_subtitle = item.SUBTITLE;
+                    favItem.p_maintitle = TrimMaxLength(item.MAINTITLE,100);
+                    favItem.p_subtitle =TrimMaxLength(item.SUBTITLE,100);
                     favItem.p_memo = item.MEMO;
                     result.Add(favItem);
                 }
