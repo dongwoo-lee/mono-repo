@@ -134,6 +134,7 @@
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
+          <DxColumnFixing :enabled="true" />
           <template #play_Template="{ data }">
             <div>
               <DxButton
@@ -341,6 +342,7 @@ import {
   DxSelection,
   DxRowDragging,
   DxPaging,
+  DxColumnFixing,
   DxLoadPanel,
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
@@ -427,6 +429,8 @@ export default {
         },
         {
           cellTemplate: "play_Template",
+          fixed: true,
+          fixedPosition: "right",
           caption: "작업",
           alignment: "center",
         },
@@ -459,6 +463,8 @@ export default {
         },
         {
           cellTemplate: "play_Template",
+          fixed: true,
+          fixedPosition: "right",
           caption: "작업",
           alignment: "center",
         },
@@ -478,6 +484,7 @@ export default {
     DxRowDragging,
     DxButton,
     mapMutations,
+    DxColumnFixing,
     DxPaging,
     DxLoadPanel,
   },

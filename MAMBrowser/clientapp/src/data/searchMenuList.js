@@ -214,6 +214,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -400,6 +402,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -598,6 +602,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -860,6 +866,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -914,6 +922,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1008,6 +1018,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1102,6 +1114,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1232,6 +1246,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1326,6 +1342,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1395,6 +1413,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1502,6 +1522,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1590,6 +1612,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1754,6 +1778,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
@@ -1840,6 +1866,8 @@ let searchMenuList = {
             },
             {
               cellTemplate: "play_Template",
+              fixed: true,
+              fixedPosition: "right",
               minWidth: "50",
               caption: "작업",
               alignment: "center",
