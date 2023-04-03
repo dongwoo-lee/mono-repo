@@ -223,93 +223,12 @@ let searchMenuList = {
             },
           ],
         },
-        //2022-04-01 부조SB 운영방침에 의해 폐기됨.
-        // {
-        //   num: 1,
-        //   id: "PUBLIC_FILE",
-        //   cartcode: "S01G01C011",
-        //   name: "공유소재",
-        //   options: [
-        //     {
-        //       id: "startDate",
-        //       text: "시작일",
-        //       value: "",
-        //       type: "D",
-        //     },
-        //     {
-        //       id: "endDate",
-        //       text: "종료일",
-        //       value: "",
-        //       type: "D",
-        //     },
-        //     {
-        //       id: "media",
-        //       text: "매체",
-        //       value: [],
-        //       type: "S",
-        //       name: "medias",
-        //     },
-        //     {
-        //       id: "cate",
-        //       text: "분류",
-        //       value: [],
-        //       type: "S",
-        //       name: "publicSecond",
-        //     },
-        //     {
-        //       id: "editor",
-        //       text: "제작자",
-        //       value: [],
-        //       type: "S",
-        //       name: "userList",
-        //     },
-        //     {
-        //       id: "title",
-        //       text: "제목",
-        //       value: "",
-        //       type: "T",
-        //     },
-        //     {
-        //       id: "memo",
-        //       text: "메모",
-        //       value: "",
-        //       type: "T",
-        //     },
-        //   ],
-        //   columns:
-        //     [
-        //       { dataField: "rowNO",minWidth: "50", caption: "순서" },
-        //       { dataField: "categoryName", caption: "분류" },
-        //       { dataField: "title", caption: "제목" },
-        //       { dataField: "memo", caption: "메모" },
-        //       { dataField: "fileExt", caption: "파일형식" },
-        //       { dataField: "fileSize", caption: "파일사이즈" },
-        //       { dataField: "audioFormat", caption: "오디오포맷" },
-        //       { dataField: "userName", caption: "제작자" },
-        //       { dataField: "editedDtm", caption: "등록일시" },
-        //       { dataField: "__slot:actions", caption: "추가작업" }
-        //     ],
-        // },
         {
           num: 2,
           id: "OLD_PRO",
           cartcode: "S01G01C013",
           name: "프로소재",
           options: [
-            // {
-            //   id: "startDate",
-            //   text: "시작일(방송의뢰)",
-            //   value: "",
-            //   type: "D",
-            //   selectVal: toDay,
-            // },
-            // {
-            //   id: "endDate",
-            //   text: "종료일(방송의뢰)",
-            //   value: "",
-            //   type: "D",
-            //   selectVal: toDay,
-            // },
             {
               startText: "시작일(방송의뢰)",
               endText: "종료일(방송의뢰)",
@@ -411,109 +330,12 @@ let searchMenuList = {
             },
           ],
         },
-        // {
-        //   num: 3,
-        //   id: "SCR_SB",
-        //   cartcode: "S01G01C017",
-        //   name: "부조SB",
-        //   options: [
-        //     {
-        //       id: "brddate",
-        //       text: "방송일",
-        //       value: "",
-        //       type: "D",
-        //       selectVal: toDay,
-        //       requiredVal: true
-        //     },
-        //     {
-        //       id: "media",
-        //       text: "매체",
-        //       value: [],
-        //       type: "S",
-        //       name: "medias",
-        //     },
-        //     {
-        //       id: "pgm",
-        //       text: "사용처",
-        //       value: [],
-        //       type: "S",
-        //       name: "pgmCodes",
-        //     },
-        //   ],
-        //   columns: [
-        //     //{ cellTemplate: "row_Template", caption: "순서", width: "7%", alignment: "center", allowSorting: false },
-        //     {
-        //       dataField: "rowNO",
-        //       caption: "순서",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "id",
-        //       caption: "SB ID",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "name",
-        //       caption: "SB명",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "length",
-        //       caption: "길이",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "pgmName",
-        //       caption: "사용처명",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "capacity",
-        //       caption: "용량",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "status",
-        //       caption: "상태",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //     {
-        //       dataField: "editorName",
-        //       caption: "담당자",
-        //       alignment: "center",
-        //       allowSorting: false,
-        //     },
-        //   ],
-        // },
         {
           num: 4,
           id: "SCR_SPOT",
           cartcode: "S01G01C010",
           name: "부조SPOT(구 협찬)",
           options: [
-            // {
-            //   id: "startDate",
-            //   text: "시작일",
-            //   value: "",
-            //   type: "D",
-            //   selectVal: toDay,
-
-            // },
-            // {
-            //   id: "endDate",
-            //   text: "종료일",
-            //   value: "",
-            //   type: "D",
-            //   selectVal: toDay,
-
-            // },
             {
               startText: "시작일",
               endText: "종료일",
