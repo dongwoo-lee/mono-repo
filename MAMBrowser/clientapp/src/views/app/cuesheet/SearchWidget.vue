@@ -131,6 +131,7 @@
           :showRowLines="true"
           :columnAutoWidth="true"
           @selection-changed="onSelectionChanged"
+          @rowPrepared="onRowPrepared"
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
@@ -242,6 +243,7 @@
           :columns="subtable_columns"
           :showRowLines="true"
           :columnAutoWidth="true"
+          @rowPrepared="onRowPrepared"
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
@@ -359,7 +361,6 @@ DataGrid.defaultOptions({
 });
 
 const dataGridRef = "dataGrid";
-//var main_table_width_size = document.getElementById("main_table").clientWidth;
 export default {
   mixins: [searchMenuList, MixinCommon],
   props: {
@@ -531,6 +532,11 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_SEARCHLISTDATA"]),
+    onRowPrepared(e) {
+      if (e.rowType === "data" && e.data.existFile === false) {
+        e.rowElement.style.color = "red";
+      }
+    },
     //아이템 소재 가져오기
     eventClick(newObjectState, object) {
       const url_public = `/api/SearchMenu/GetPublicSecond`;
