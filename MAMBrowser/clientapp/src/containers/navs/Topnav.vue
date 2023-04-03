@@ -36,12 +36,7 @@
               <td rowspan="2" v-if="isMasteringValid()">
                 <b-button
                   v-if="isMasteringValid()"
-                  class="
-                    btn btn-outline-primary btn-sm
-                    default
-                    cutom-label
-                    mr-2
-                  "
+                  class="btn btn-outline-primary btn-sm default cutom-label mr-2"
                   id="fileuploadbutton"
                   @click="openFileModal"
                   style="
@@ -115,7 +110,7 @@
                         margin-right: 6px;
                       "
                     >
-                      v1.0.230309
+                      v1.0.230331
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">

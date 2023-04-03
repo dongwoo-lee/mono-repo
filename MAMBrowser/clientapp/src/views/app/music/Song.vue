@@ -116,7 +116,7 @@
           ref="refCopyToMySpacePopup"
           :show="copyToMySpacePopup"
           :MySpaceScreenName="MySpaceScreenName"
-          @ok="onMyDiskCopyFromProduct"
+          @ok="onMyDiskCopyFromMusic"
           @close="copyToMySpacePopup = false"
         >
         </CopyToMySpacePopup>

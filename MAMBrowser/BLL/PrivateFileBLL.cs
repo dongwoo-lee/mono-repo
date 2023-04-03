@@ -381,7 +381,7 @@ namespace MAMBrowser.BLL
                 //2. MY-DISK 저장 공간 옵션 값 가져오기
                 var options = _apiDao.GetOptions("S01G06C001").ToList();
                 var uncTempUploadPath = options.Find(op => op.Name == "MAM_UPLOAD_PATH").Value;
-                var uncMyDiskDirectory = options.Find(op => op.Name == "MYDISK_PATH");
+                var uncMyDiskDirectory = options.Find(op => op.Name == "MYDISK_PATH").Value;
 
                 //3. MY-DISK ID 채번 (파일명
                 var myDiskID = _dao.GetID();
@@ -402,7 +402,10 @@ namespace MAMBrowser.BLL
                 //5. 파일을 임시 목적지로 복사.
                 _fileProtocol.Upload(ms, tempFilePath);
 
-                //6. DB에 등록하기.
+                //7. 파일 최종위치로 옮김.
+                _fileProtocol.Move(tempFilePath, uncTargetFilePath);
+
+                //8. DB에 등록하기.
                 myDiskData.SEQ = myDiskID;
                 myDiskData.TITLE = title;
                 myDiskData.MEMO = memo;
@@ -411,9 +414,6 @@ namespace MAMBrowser.BLL
                 myDiskData.FILE_SIZE = fileSize;
                 myDiskData.FILE_PATH = uncTargetFilePath;
                 _dao.Insert(myDiskData, intDuration);
-
-                //7. 파일 최종위치로 옮김.
-                _fileProtocol.Move(tempFilePath, uncTargetFilePath);
 
                 return validateResult;
             }
