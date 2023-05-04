@@ -77,10 +77,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters} from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
-import { USER_NAME ,CUESHEET_CODE} from "@/constants/config";
+import { USER_NAME, CUESHEET_CODE } from "@/constants/config";
 const moment = require("moment");
 
 export default {
@@ -177,15 +177,17 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("user",["behaviorList"])
-  },  
+    ...mapGetters("user", ["behaviorList"]),
+  },
   async mounted() {
     this.isTableLoading = true;
     const toDay = await this.GetDateString(this.date);
     const userName = sessionStorage.getItem(USER_NAME);
     await this.renewal();
-    const isCueAdmin = this.behaviorList.some( (data) => data.id === CUESHEET_CODE && data.visible === "Y");
-    if(!isCueAdmin) this.pramObj.person = userName;
+    const isCueAdmin = this.behaviorList.some(
+      (data) => data.id === CUESHEET_CODE && data.visible === "Y"
+    );
+    if (!isCueAdmin) this.pramObj.person = userName;
     this.pramObj.brd_dt = toDay;
     this.searchItems.brd_dt = toDay;
     this.pgmList = await this.GetSchPgmList(this.pramObj);
@@ -205,7 +207,7 @@ export default {
     ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("cueList", ["SetProgramCodeOption"]),
     ...mapActions("cueList", ["SetProductIds"]),
-    ...mapActions("user",["renewal"]),
+    ...mapActions("user", ["renewal"]),
     async getData() {
       this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;

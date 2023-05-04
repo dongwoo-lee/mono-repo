@@ -10,7 +10,7 @@ using System.Text;
 
 namespace MAMBrowser.Utils
 {
-    public static class Extentions
+    public static class ExtentionsCueSheet
     {
         public static IEnumerable<DayCueSheetListDTO> Converting(this List<DayCueSheetListEntity> entity)
         {

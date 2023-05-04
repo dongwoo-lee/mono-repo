@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import UserList from "./template/UserList";
-import Role from "./template/Role";
-import masteringOption from "./template/masteringOption";
-import System from "./template/System";
+import UserList from "../template/UserList";
+import Role from "../template/Role";
+import masteringOption from "../template/masteringOption";
+import System from "../template/System";
 
 export default {
   components: { UserList, Role, System, masteringOption },

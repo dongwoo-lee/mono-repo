@@ -41,7 +41,6 @@
       class="icon-buton"
       :title="getTitle('delete')"
       :disabled="!isPossibleDelete"
-      :style="getDeleteStyle()"
       @click.stop="onDelete()"
     >
       <b-icon icon="trash" class="icon" variant="danger"></b-icon>
@@ -89,6 +88,21 @@
       variant="outline-primary"
       @click="getCueData('previous')"
       >큐시트 조회</b-button
+    >
+    <b-button
+      v-if="configActions.includes('modify')"
+      class="config_btn"
+      variant="outline-primary"
+      @click="modifyConfigRowData()"
+      >편집</b-button
+    >
+    <b-button
+      v-if="configActions.includes('delete')"
+      class="config_btn"
+      variant="danger"
+      @click="deleteConfigRowData()"
+    >
+      삭제</b-button
     >
   </div>
 </template>
@@ -141,6 +155,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    configActions: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -176,6 +194,9 @@ export default {
       );
     },
     displayMyDiskCopy() {
+      if (this.configActions.length != 0) {
+        return false;
+      }
       const exceptPageNames = [
         this.ROUTE_NAMES.PRIVATE,
         this.ROUTE_NAMES.WASTE_BASKET,
@@ -257,6 +278,12 @@ export default {
       sessionStorage.setItem("USER_INFO", JSON.stringify(this.rowData));
       this.$router.push({ path: "/app/cuesheet/" + V + "/detail" });
     },
+    modifyConfigRowData() {
+      this.$emit("modifyConfigRowData", this.rowData);
+    },
+    deleteConfigRowData() {
+      this.$emit("deleteConfigRowData", this.rowData);
+    },
   },
 };
 </script>
@@ -273,5 +300,9 @@ export default {
 #cueBtn_update:active {
   color: white;
   opacity: 0.8;
+}
+.config_btn {
+  padding: 1px 10px;
+  margin: 0px 5px;
 }
 </style>

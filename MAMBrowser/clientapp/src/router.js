@@ -229,8 +229,18 @@ const routes = [
       },
       {
         name: "config",
-        path: "config", // 설정
-        component: () => import("./views/app/config/Index")
+        path: "config/miros", // MIROS 설정
+        component: () => import("./views/app/config/miros/Index")
+      },
+      {
+        name: "config",
+        path: "config/system", // 시스템 설정 
+        component: () => import("./views/app/config/system/Index")
+      },
+      {
+        name: "config",
+        path: "config/remove", // 소재 삭제 관리
+        component: () => import("./views/app/config/remove/Index")
       },
       {
         name: "log",

@@ -118,8 +118,16 @@
                       >사용자 로그보기</b-dropdown-item
                     >
                     <b-dropdown-item
-                      @click="$router.push({ path: '/app/config' })"
-                      >설정</b-dropdown-item
+                      @click="$router.push({ path: '/app/config/miros' })"
+                      >MIROS 설정</b-dropdown-item
+                    >
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/config/system' })"
+                      >시스템 설정</b-dropdown-item
+                    >
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/config/remove' })"
+                      >소재 삭제 관리</b-dropdown-item
                     >
                     <b-dropdown-divider />
                   </div>
