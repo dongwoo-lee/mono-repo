@@ -8,9 +8,11 @@
           :dayAgo="startDayAgo"
           :monthAgo="startMonthAgo"
           :yearAgo="startYearAgo"
+          :maxDate="maxLimitDate"
           :isCurrentDate="isCurrentDate"
           :required="required"
           :disabVal="disabVal"
+          :editText="editTextVal"
           @input="onSInput"
           @commonDateEvent="commonDateEvent"
         />
@@ -20,8 +22,10 @@
         <common-date-picker
           :value="eDate"
           :isCurrentDate="isCurrentDate"
-          :maxDate="maxDate"
           :required="required"
+          :maxDate="maxDate"
+          :minDate="minLimitDate"
+          :editText="editTextVal"
           @input="onEInput"
           @commonDateEvent="commonDateEvent"
         />
@@ -92,6 +96,18 @@ export default {
       default: true,
     },
     disabVal: {
+      type: Boolean,
+      default: false,
+    },
+    maxLimitDate: {
+      type: Date,
+      default: null,
+    },
+    minLimitDate: {
+      type: Date,
+      default: null,
+    },
+    editTextVal: {
       type: Boolean,
       default: false,
     },

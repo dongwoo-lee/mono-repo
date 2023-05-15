@@ -188,6 +188,7 @@ namespace MAMBrowser
 
             services.AddTransient<ManagementSqlSession>();
             services.AddTransient<ManagementSystemBll>();
+            services.AddTransient<ManagementDeleteProductsBll>();
 
             //���� ���
             services.AddScoped<IUserService, UserService>();

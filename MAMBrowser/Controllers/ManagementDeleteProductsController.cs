@@ -1,0 +1,185 @@
+﻿using M30.AudioFile.Common.DTO;
+using M30.AudioFile.Common;
+using MAMBrowser.BLL;
+using Microsoft.AspNetCore.Mvc;
+using static MAMBrowser.DTO.ManagementDeleteProductsDTO;
+using System.Collections.Generic;
+using System;
+using MAMBrowser.DTO;
+
+namespace MAMBrowser.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ManagementDeleteProductsController : ControllerBase
+    {
+        private readonly ManagementDeleteProductsBll _bll;
+        public ManagementDeleteProductsController(ManagementDeleteProductsBll bll)
+        {
+            _bll = bll;
+        }
+
+        #region 소재 삭제 관리
+
+        [HttpPost("GetDelAudioList")]
+        public DTO_RESULT<PageListCollectionDTO<AudioFileDTO>> GetDelAudioList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<AudioFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<AudioFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelAudioFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        [HttpPost("GetDelSpotList")]
+        public DTO_RESULT<PageListCollectionDTO<SpotFileDTO>> GetDelSpotList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<SpotFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<SpotFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelSpotFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+        [HttpPost("GetDelEtcList")]
+        public DTO_RESULT<PageListCollectionDTO<EtcFileDTO>> GetDelEtcList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<EtcFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<EtcFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelEtcFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+        [HttpPost("GetDelFillerList")]
+        public DTO_RESULT<PageListCollectionDTO<FillerFileDTO>> GetDelFillerList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<FillerFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<FillerFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelFillerFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+        [HttpPost("GetDelReportList")]
+        public DTO_RESULT<PageListCollectionDTO<ReportFileDTO>> GetDelReportList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<ReportFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<ReportFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelReportFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+
+        [HttpPost("GetDelProductList")]
+        public DTO_RESULT<PageListCollectionDTO<ProductFileDTO>> GetDelProductList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<ProductFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<ProductFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelProductFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        [HttpPost("GetDelSongList")]
+        public DTO_RESULT<PageListCollectionDTO<SongFileDTO>> GetDelSongList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<SongFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<SongFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelSongFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        [HttpDelete("DeleteAudioClipFile")]
+        public DTO_RESULT<bool> DeleteCommCode(DeleteAudioClipIdsParamDTO dto)
+        {
+            DTO_RESULT<bool> result = new DTO_RESULT<bool>();
+            try
+            {
+                result.ResultObject = _bll.DeleteAudioFiles(dto);
+                if (!result.ResultObject)
+                {
+                    throw new Exception();
+                }
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        #endregion
+
+
+        #region MIROS 휴지통
+        [HttpPost("GetRecycleList")]
+        public DTO_RESULT<PageListCollectionDTO<RecycleDTO>> GetRecycleList([FromBody] SelectRecycleParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<RecycleDTO>> result = new DTO_RESULT<PageListCollectionDTO<RecycleDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetRecycleList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        #endregion
+    }
+}

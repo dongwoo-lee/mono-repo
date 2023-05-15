@@ -15,14 +15,12 @@ namespace MAMBrowser.BLL
         private readonly IUserManagementDAO _dao_user;
         private readonly ICodeManagementDAO _dao_code;
         private readonly IMirosManagementDAO _dao_miros;
-        private readonly IDelManagementDAO _dao_del;
-        public ManagementSystemBll(IGroupManagementDAO dao_group, IUserManagementDAO dao_user, ICodeManagementDAO dao_code, IMirosManagementDAO dao_miros, IDelManagementDAO dao_del)
+        public ManagementSystemBll(IGroupManagementDAO dao_group, IUserManagementDAO dao_user, ICodeManagementDAO dao_code, IMirosManagementDAO dao_miros)
         {
             _dao_group = dao_group;
             _dao_user = dao_user;
             _dao_code= dao_code;
             _dao_miros = dao_miros;
-            _dao_del= dao_del;
         }
         public MenuList GetRoleOptions()
         {
@@ -89,15 +87,6 @@ namespace MAMBrowser.BLL
         public List<CommMenuMapDTO> GetCommMenuMapList(string mapCd)
         {
             return _dao_miros.GetCommMenuMapList(mapCd).Converting();
-        }
-        public List<AudioFileDTO> GetDelAudioFileList(SelectDelProductParamDTO dto) 
-        {
-            SelectProductFileParam param = new SelectProductFileParamBuilder()
-                .SetStartDate(dto.startdate)
-                .SetEndDate(dto.enddate)
-                .SetName(dto.name)
-                .Build();
-            return _dao_del.GetAudioFileList(param).Converting();
         }
 
         public bool AddGroup(GroupDTO group)

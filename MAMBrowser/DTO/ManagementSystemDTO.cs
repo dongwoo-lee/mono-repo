@@ -74,51 +74,6 @@ namespace MAMBrowser.DTO
             public char VISIBLE { get; set; }
             public char ENABLE { get; set; }
         }
-        public class BaseFileDTO
-        {
-            public string AUDIOCLIPID { get; set; }
-            public string MASTERFILE { get; set; }
-            public DateTime MASTERTIME { get; set; }
-            public DateTime EDITTIME { get; set; }
-            public string EDITFILE { get; set; }
-            public string ENERGYFILE { get; set; }
-            public string CALLFILE { get; set; }
-            public string EDITOR { get; set; }
-        }
-        public class AudioFileDTO : BaseFileDTO
-        {
-            public string AUDIONAME { get; set; }
-            public DateTime LASTONAIRDATE { get; set; }
-        }
-        public class SpotFileDTO : BaseFileDTO
-        {
-            public string SPOTNAME { get; set; }
-            public string OPRSPOTID { get; set; }
-        }
-        public class EtcFileDTO : BaseFileDTO
-        {
-            public string AUDIONAME { get; set; }
-        }
-        public class FillerFileDTO : BaseFileDTO
-        {
-            public string FILLERNAME { get; set; }
-            public string ENDDATE { get; set; }
-        }
-        public class ReportFileDTO : BaseFileDTO
-        {
-            public string REPORTNAME { get; set; }
-            public string ONAIRDATE { get; set; }
-        }
-        public class ProductFileDTO : BaseFileDTO
-        {
-            public string EVENTNAME { get; set; }
-            public string ONAIRDATE { get; set; }
-        }
-        public class SongFileDTO : BaseFileDTO
-        {
-            public string SONGNAME { get; set; }
-            public string LASTONAIRDATE { get; set; }
-        }
         public class OptionsDTO
         {
             public string value { get; set; }
@@ -152,14 +107,6 @@ namespace MAMBrowser.DTO
             public string parentCode { get; set; }
         }
 
-        public class SelectDelProductParamDTO
-        {
-            public string name { get; set; }
-            public string startdate { get; set; }
-            public string enddate { get; set; }
-            public string onairdate { get; set; }
-            public char media { get; set; }
-        }
     }
 
 }

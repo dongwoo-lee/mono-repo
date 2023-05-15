@@ -7,6 +7,7 @@
         class="form-control input-picker"
         :placeholder="placeHolder"
         :value="inputValue | yyyyMMdd"
+        :readonly="editText"
         @input="onInput"
         @blur="inputBlurEvent"
       />
@@ -92,6 +93,10 @@ export default {
       default: false,
     },
     minDate: null,
+    editText: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

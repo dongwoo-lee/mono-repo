@@ -41,6 +41,7 @@ export default {
         {
           key: "table",
           label: "구분",
+          type: "selectBox",
           selected: "CommCode",
           options: [
             {
@@ -56,6 +57,7 @@ export default {
         {
           key: "mapCd",
           label: "코드",
+          type: "selectBox",
           selected: "",
           options: [],
         },
@@ -497,6 +499,9 @@ export default {
         .delete(this.delete_url + this.selectedTable, { data: rowData })
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
+            this.$fn.notify("primary", {
+              message: "삭제 완료",
+            });
             this.getData();
           } else {
             this.$fn.notify("server-error", { message: "추가 에러" });

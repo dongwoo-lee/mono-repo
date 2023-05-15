@@ -51,7 +51,7 @@
         >
           <common-vue-select
             id="vselect"
-            style="width:220px;"
+            style="width: 220px"
             :vSelectProps="vSelectProps"
             :suggestions="pgmOptions"
             @inputEvent="onPgmSelected"
@@ -75,7 +75,7 @@
               </div>
             </div>
             <b-table
-              style="height:580px"
+              style="height: 580px"
               class="custom-table"
               ref="custom-table"
               thead-class="custom-table-color"
@@ -88,7 +88,7 @@
               empty-text="데이터가 없습니다."
               :busy="isTableLoading"
               select-mode="single"
-              selectedVariant="primary"
+              selected-variant="primary"
               :fields="fields"
               :items="responseData.data"
               @row-selected="rowSelected"
@@ -108,7 +108,7 @@
                 <b-button
                   v-if="
                     data.item.id == selectedItem.id &&
-                      data.item.length !== '00:00'
+                    data.item.length !== '00:00'
                   "
                   :id="`download-${data.index}`"
                   class="icon-buton"
@@ -118,7 +118,7 @@
                       grpType: 'sb',
                       brd_Dt: searchItems.brd_dt,
                       grpId: data.item.id,
-                      downloadName: downloadName(data.item)
+                      downloadName: downloadName(data.item),
                     })
                   "
                 >
@@ -165,7 +165,7 @@
                   class="icon-buton"
                   v-b-tooltip.hover.top="{
                     title: IS_ADMIN ? data.item.filePath : '미리듣기',
-                    customClass: rowCustomClass(data)
+                    customClass: rowCustomClass(data),
                   }"
                   @click.stop="onPreview(data.item)"
                 >
@@ -208,7 +208,7 @@ export default {
         key: "pgmName",
         label: "사용처명",
         sortable: true,
-        tdClass: "text-muted"
+        tdClass: "text-muted",
       });
     }
   },
@@ -220,13 +220,13 @@ export default {
         brd_dt: "",
         cate: "P",
         pgm: "",
-        pgmName: ""
+        pgmName: "",
       },
       localType: null,
       localTypeOptions: [
         { value: null, text: "선택해주세요." },
         { value: "mcr", text: "주조SB" },
-        { value: "scr", text: "부조SB" }
+        { value: "scr", text: "부조SB" },
       ],
       fields: [
         { key: "index", label: "순서", tdClass: "list-item-heading" },
@@ -235,28 +235,28 @@ export default {
           key: "name",
           label: "SB명",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         {
           key: "length",
           label: "길이(초)",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         {
           key: "capacity",
           label: "용량(초)",
           sortable: true,
-          tdClass: "text-muted bold"
+          tdClass: "text-muted bold",
         },
         { key: "status", label: "상태", sortable: true, tdClass: "text-muted" },
         {
           key: "editorName",
           label: "담당자",
           sortable: true,
-          tdClass: "text-muted"
+          tdClass: "text-muted",
         },
-        { key: "actions", label: "추가작업", tdClass: "text-muted" }
+        { key: "actions", label: "추가작업", tdClass: "text-muted" },
       ],
       fieldsContents: [
         { key: "rowNO", label: "순서", tdClass: "list-item-heading" },
@@ -264,19 +264,19 @@ export default {
           key: "categoryID",
           label: "구분",
           tdClass: "text-muted",
-          thStyle: { width: "10%" }
+          thStyle: { width: "10%" },
         },
         {
           key: "categoryName",
           label: "광고주명/분류명",
           tdClass: "text-muted",
-          thStyle: { width: "20%" }
+          thStyle: { width: "20%" },
         },
         { key: "id", label: "소재ID", tdClass: "text-muted" },
         { key: "name", label: "소재명", tdClass: "text-muted" },
         { key: "length", label: "길이(초)", tdClass: "text-muted" },
-        { key: "actions", label: "추가작업", tdClass: "text-muted" }
-      ]
+        { key: "actions", label: "추가작업", tdClass: "text-muted" },
+      ],
     };
   },
 
@@ -316,7 +316,7 @@ export default {
       } else {
         return `${rowData.name}_${rowData.brdDT}_${rowData.pgmName}_${rowData.id}`;
       }
-    }
-  }
+    },
+  },
 };
 </script>

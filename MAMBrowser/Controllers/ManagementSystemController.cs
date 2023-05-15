@@ -1112,28 +1112,6 @@ namespace MAMBrowser.Controllers
 
         #endregion
 
-        #region 소재 삭제 관리
-
-        [HttpPost("GetDelAudioList")]
-        public DTO_RESULT<List<AudioFileDTO>> GetDelAudioList([FromBody]SelectDelProductParamDTO dto)
-        {
-            DTO_RESULT<List<AudioFileDTO>> result = new DTO_RESULT<List<AudioFileDTO>>();
-            try
-            {
-                result.ResultObject = _bll.GetDelAudioFileList(dto);
-                result.ResultCode = RESUlT_CODES.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMsg = ex.Message;
-                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
-            }
-            return result;
-        }
-
-
-        #endregion
-
         #region Select Options
         [HttpGet("GetRoleOptions")]
         public DTO_RESULT<MenuList> GetRoleOptions()

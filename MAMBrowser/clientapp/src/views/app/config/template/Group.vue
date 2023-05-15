@@ -378,6 +378,9 @@ export default {
       if (role) {
         this.$http.delete(this.delete_url + role).then((res) => {
           if (res.status === 200 && res.data.resultObject) {
+            this.$fn.notify("primary", {
+              message: "삭제 완료",
+            });
             this.getData();
           } else {
             this.$fn.notify("server-error", { message: "추가 에러" });

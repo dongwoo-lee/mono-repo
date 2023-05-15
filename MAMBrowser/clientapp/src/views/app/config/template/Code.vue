@@ -38,6 +38,7 @@ export default {
         {
           key: "product",
           label: "소재",
+          type: "selectBox",
           selected: "stsp",
           options: [
             {
@@ -480,6 +481,9 @@ export default {
         })
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
+            this.$fn.notify("primary", {
+              message: "삭제 완료",
+            });
             this.getData();
           } else {
             this.$fn.notify("server-error", { message: "추가 에러" });

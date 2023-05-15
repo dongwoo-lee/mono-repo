@@ -9,6 +9,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
+using static MAMBrowser.DTO.ManagementDeleteProductsDTO;
 using static MAMBrowser.DTO.ManagementSystemDTO;
 
 namespace MAMBrowser.Utils
@@ -239,6 +240,20 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
+        public static BaseFileDTO SetBaseFileDTO(BaseFileEntity entity)
+        {
+            BaseFileDTO result = new BaseFileDTO();
+            result.AUDIOCLIPID = entity.AUDIOCLIPID;
+            result.NAME= entity.NAME;
+            result.MASTERFILE = entity.MASTERFILE ?? "";
+            result.MASTERTIME = entity.MASTERTIME != null ? DateTime.ParseExact(entity.MASTERTIME, "yyyyMMdd HH:mm:ss", CultureInfo.InvariantCulture): default(DateTime);
+            result.EDITTIME = entity.EDITTIME != null ? DateTime.ParseExact(entity.EDITTIME, "yyyyMMdd HH:mm:ss", CultureInfo.InvariantCulture) : default(DateTime);
+            result.EDITFILE = entity.EDITFILE ?? "";
+            result.ENERGYFILE = entity.ENERGYFILE ?? "";
+            result.CALLFILE = entity.CALLFILE ?? "";
+            result.EDITOR = entity.EDITOR;
+            return result;
+        }
         public static List<AudioFileDTO> Converting(this List<AudioFileEntity> entitys)
         {
             var result = new List<AudioFileDTO>();
@@ -248,6 +263,7 @@ namespace MAMBrowser.Utils
                 AudioFileDTO item = new AudioFileDTO()
                 {
                     AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME= baseItem.NAME,
                     MASTERFILE = baseItem.MASTERFILE,
                     MASTERTIME = baseItem.MASTERTIME,
                     EDITTIME = baseItem.EDITTIME,
@@ -256,24 +272,176 @@ namespace MAMBrowser.Utils
                     CALLFILE = baseItem.CALLFILE,
                     EDITOR = baseItem.EDITOR
                 };
-                item.AUDIONAME = entity.AUDIONAME;
-                item.LASTONAIRDATE = DateTime.ParseExact(entity.LASTONAIRDATE, "yyyyMMdd", CultureInfo.InvariantCulture);
+                item.LASTONAIRDATE = entity.LASTONAIRDATE!=null
+                    ?DateTime.ParseExact(entity.LASTONAIRDATE, "yyyyMMdd", CultureInfo.InvariantCulture)
+                    :default(DateTime);
                 result.Add(item);
             }
             return result;
         }
-        public static BaseFileDTO SetBaseFileDTO(BaseFileEntity entity)
+        public static List<SpotFileDTO> Converting(this List<SpotFileEntity> entitys)
         {
-            BaseFileDTO result = new BaseFileDTO();
-            result.AUDIOCLIPID = entity.AUDIOCLIPID;
-            result.MASTERFILE = entity.MASTERFILE;
-            result.MASTERTIME = DateTime.ParseExact(entity.MASTERTIME, "yyyyMMdd HH:mm:ss", CultureInfo.InvariantCulture);
-            result.EDITTIME= DateTime.ParseExact(entity.EDITTIME, "yyyyMMdd HH:mm:ss", CultureInfo.InvariantCulture);
-            result.EDITFILE = entity.EDITFILE;
-            result.ENERGYFILE = entity.ENERGYFILE;
-            result.CALLFILE = entity.CALLFILE;
-            result.EDITOR = entity.EDITOR;
+            var result = new List<SpotFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                SpotFileDTO item = new SpotFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                item.OPRSPOTID = entity.OPRSPOTID ?? "";
+                result.Add(item);
+            }
             return result;
         }
+        public static List<EtcFileDTO> Converting(this List<EtcFileEntity> entitys)
+        {
+            var result = new List<EtcFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                EtcFileDTO item = new EtcFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                result.Add(item);
+            }
+            return result;
+        }
+        public static List<FillerFileDTO> Converting(this List<FillerFileEntity> entitys)
+        {
+            var result = new List<FillerFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                FillerFileDTO item = new FillerFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                item.ENDDATE = entity.ENDDATE != null 
+                    ? DateTime.ParseExact(entity.ENDDATE, "yyyyMMdd", CultureInfo.InvariantCulture) 
+                    : default(DateTime);
+                result.Add(item);
+            }
+            return result;
+        }
+        public static List<ReportFileDTO> Converting(this List<ReportFileEntity> entitys)
+        {
+            var result = new List<ReportFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                ReportFileDTO item = new ReportFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                item.ONAIRDATE = entity.ONAIRDATE != null 
+                    ? DateTime.ParseExact(entity.ONAIRDATE, "yyyyMMdd", CultureInfo.InvariantCulture) 
+                    : default(DateTime);
+                result.Add(item);
+            }
+            return result;
+        }
+
+        public static List<ProductFileDTO> Converting(this List<ProductFileEntity> entitys)
+        {
+            var result = new List<ProductFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                ProductFileDTO item = new ProductFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                item.ONAIRDATE = entity.ONAIRDATE!=null
+                    ?DateTime.ParseExact(entity.ONAIRDATE, "yyyyMMdd", CultureInfo.InvariantCulture)
+                    :default(DateTime);
+                result.Add(item);
+            }
+            return result;
+        }
+        public static List<SongFileDTO> Converting(this List<SongFileEntity> entitys)
+        {
+            var result = new List<SongFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                SongFileDTO item = new SongFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                item.LASTONAIRDATE = entity.LASTONAIRDATE != null 
+                    ? DateTime.ParseExact(entity.LASTONAIRDATE, "yyyyMMdd", CultureInfo.InvariantCulture) 
+                    : default(DateTime);
+                result.Add(item);
+            }
+            return result;
+        }
+        public static List<RecycleDTO> Converting(this List<RecycleEntity> entitys)
+        {
+            var result = new List<RecycleDTO>();
+            foreach (var entity in entitys)
+            {
+                var item = new RecycleDTO();
+                item.SEQ = entity.SEQ;
+                item.AUDIOCLIPID = entity.AUDIOCLIPID;
+                item.MASTERFILE = entity.MASTERFILE ?? "";
+                item.USERID = entity.USERID ?? "";
+                item.DELTIME = entity.DELTIME != null 
+                    ? DateTime.ParseExact(entity.DELTIME, "yyyyMMdd HH:mm:ss", CultureInfo.InvariantCulture) 
+                    : default(DateTime);
+                result.Add(item);
+            }
+            return result;
+        }
+
     }
 }
