@@ -1167,6 +1167,41 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        [HttpGet("GetDevNameOptions")]
+        public DTO_RESULT<MenuList> GetDevNameOptions()
+        {
+            DTO_RESULT<MenuList> result = new DTO_RESULT<MenuList>();
+            try
+            {
+                result.ResultObject = _bll.GetGroupDevNameList();
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+        [HttpGet("GetDptNameOptions")]
+        public DTO_RESULT<MenuList> GetDptNameOptions(string devision)
+        {
+            DTO_RESULT<MenuList> result = new DTO_RESULT<MenuList>();
+            try
+            {
+                result.ResultObject = _bll.GetGroupDptNameList(devision);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+
+
         #endregion
     }
 }

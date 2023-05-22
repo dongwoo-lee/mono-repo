@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Security;
@@ -100,6 +101,34 @@ namespace MAMBrowser.Utils
                 item.text = option.NAME + " <" + option.CODE + ">";
                 item.value = option.CODE;
                 result.code.Add(item);
+            }
+            return result;
+        }
+        public static MenuList Converting(this List<GroupByDevisionEntity> entity)
+        {
+            var groupEntity = entity.GroupBy(g => g.DEVISION);
+            var result = new MenuList();
+            result.devision = new List<OptionsDTO>();
+            foreach (var group in groupEntity)
+            {
+                var item = new OptionsDTO();
+                item.text = group.FirstOrDefault().DEVNAME;
+                item.value = group.Key;
+                result.devision.Add(item);
+            }
+            return result;
+        }
+        public static MenuList Converting(this List<GroupByDevisionEntity> entity, string devision="")
+        {
+            var devNameEntitys = entity.Where(d=>d.DEVISION==devision).ToList();
+            var result = new MenuList();
+            result.department = new List<OptionsDTO>();
+            foreach (var option in devNameEntitys)
+            {
+                var item = new OptionsDTO();
+                item.text = option.DPTNAME;
+                item.value = option.DEPARTMENT;
+                result.department.Add(item);
             }
             return result;
         }

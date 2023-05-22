@@ -40,6 +40,14 @@ namespace MAMBrowser.BLL
 
             return _dao_miros.GetGroupByCommCodeList(param).Converting();
         }
+        public MenuList GetGroupDevNameList()
+        {
+            return _dao_user.GetGroupByDevisionList().Converting();
+        }
+        public MenuList GetGroupDptNameList(string devision)
+        {
+            return _dao_user.GetGroupByDevisionList().Converting(devision);
+        }
         public List<GroupDTO> GetGroup()
         {
             return _dao_group.GetGroupManagementList().Converting();

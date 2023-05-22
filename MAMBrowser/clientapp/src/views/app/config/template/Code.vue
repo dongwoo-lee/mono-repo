@@ -1,6 +1,7 @@
 <template>
   <div>
     <BasicTable
+      ref="basicTableRef"
       :data-source="dataSource"
       :fields="fields"
       :is-loading="isLoading"
@@ -15,6 +16,7 @@
     <AddModal
       :items="addItems"
       :modal-title="addBtnName"
+      :textDisabledList="['creator']"
       @editOk="onAddOk"
       modal-id="modal-config-add"
     />
@@ -31,6 +33,7 @@
 import BasicTable from "../widget/table_basic.vue";
 import AddModal from "../widget/popup_edit.vue";
 import ModifyModal from "../widget/popup_edit.vue";
+import { USER_ID } from "@/constants/config";
 export default {
   data() {
     return {
@@ -260,24 +263,7 @@ export default {
           item: "",
           value: "",
           type: "select",
-          selectOptions: [
-            {
-              text: "A",
-              value: "A",
-            },
-            {
-              text: "F",
-              value: "F",
-            },
-            {
-              text: "D",
-              value: "D",
-            },
-            {
-              text: "C",
-              value: "C",
-            },
-          ],
+          selectOptions: [],
           state: "notNull",
           maxLength: 10,
         },
@@ -345,6 +331,10 @@ export default {
         });
     },
     getItemOptions() {
+      this.getCodeIdOptions();
+      this.getMediaOptions();
+    },
+    getCodeIdOptions() {
       const url = "/api/Managementsystem/GetCodeIdOptions";
       this.$http.get(url).then((res) => {
         if (res.status === 200) {
@@ -355,6 +345,25 @@ export default {
                 item.selectOptions = options[key];
               }
             });
+          });
+        }
+      });
+    },
+    getMediaOptions() {
+      const url = "/api/Categories/media/mcrspot";
+      this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const options = res.data.resultObject.data;
+          options.forEach((op) => {
+            op.text = op.name;
+            op.value = op.id;
+            delete op.name;
+            delete op.id;
+          });
+          this.all_items.forEach((item) => {
+            if (item.key === "media") {
+              item.selectOptions = options;
+            }
           });
         }
       });
@@ -383,6 +392,9 @@ export default {
       const result_items = [];
       this.all_items.forEach((item) => {
         const isCheckItem = this.fields.some((field) => field.key === item.key);
+        if (item.key === "creator") {
+          item.value = sessionStorage.getItem(USER_ID);
+        }
         if (isCheckItem) result_items.push({ ...item });
       });
       this.changeAudioCodeType(result_items);
@@ -423,10 +435,13 @@ export default {
       this.selectedProduct = event;
       this.getData();
     },
-    onDeleteOk(rowData) {
+    async onDeleteOk(rowData) {
+      this.$refs.basicTableRef.onOverlayValTrue();
       if (rowData) {
-        this.deleteData(rowData);
+        await this.deleteData(rowData);
       }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-del");
     },
     onAddOk(editVal) {
       const pram = {};
@@ -463,6 +478,9 @@ export default {
         });
     },
     updataData(pram) {
+      if (Object.keys(pram).includes("creator")) {
+        pram.creator = sessionStorage.getItem(USER_ID);
+      }
       this.$http
         .post(this.update_url + this.selectedProduct + "code", pram)
         .then((res) => {
@@ -474,8 +492,8 @@ export default {
           }
         });
     },
-    deleteData(rowData) {
-      this.$http
+    async deleteData(rowData) {
+      await this.$http
         .delete(this.delete_url + this.selectedProduct + "code", {
           data: rowData,
         })

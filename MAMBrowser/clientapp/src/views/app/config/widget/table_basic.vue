@@ -82,6 +82,16 @@
           </b-input-group-append>
         </b-input-group>
       </b-form-group>
+
+      <b-form-group
+        label-align="left"
+        v-if="deleteOptionButtonTitle"
+        class="ml-3"
+      >
+        <b-button variant="primary default" @click="deleteOptionEvent">
+          {{ deleteOptionButtonTitle }}
+        </b-button>
+      </b-form-group>
     </b-col>
 
     <b-table
@@ -96,7 +106,7 @@
       :busy="isLoading"
       :fields="fields"
       :items="dataSource"
-      :filter="autoSearch ? filter : null"
+      :filter="autoSearch ? searchText : null"
       :filter-included-fields="filterFileds"
       @row-selected="onRowSelected"
       sticky-header="600px"
@@ -108,6 +118,16 @@
           @change="selectAllRows"
         ></b-form-checkbox>
         <div v-else style="margin: 3px">{{ data.label }}</div>
+      </template>
+      <template #cell()="{ item, value }">
+        <div v-if="value.includes('__filePath :')">
+          <b-icon
+            icon="file-earmark"
+            scale="1.3"
+            v-b-tooltip.hover="value"
+          ></b-icon>
+        </div>
+        <div v-else>{{ value }}</div>
       </template>
       <template #cell(selected)="{ item, index }">
         <b-form-checkbox
@@ -127,18 +147,17 @@
           <strong>loading...</strong>
         </div>
       </template>
-      <template v-slot:cell(codeAndName)="{ item }">
-        <div>{{ item.codeAndNameText }}</div>
-      </template>
       <template v-slot:cell(actions)="{ item, index }">
         <common-actions
           :rowData="item"
           :config-actions="configActions"
           @modifyConfigRowData="onModifyConfigRowData"
           @deleteConfigRowData="onDeleteConfigRowData"
+          @downloadConfigRowData="onDownloadConfigRowData"
         />
       </template>
     </b-table>
+
     <div v-if="pageOptions">
       <b-col
         md="12"
@@ -180,32 +199,56 @@
     <div>
       <b-modal
         id="modal-config-del"
-        size="s"
+        size="lg"
         centered
+        no-close-on-backdrop
         ok-title="확인"
         cancel-title="취소"
+        @show="permanentlyVal = []"
         @ok="deleteOk"
       >
+        <b-overlay :show="overlayVal" no-wrap />
         <div class="text-center">
-          <h5>{{ del_ask_message }}</h5>
+          <div v-if="delName && rowData[delName]">
+            <span style="display: inline-flex">
+              <h5>"{{ rowData[delName] }}" 을(를) 삭제하시겠습니까?</h5>
+            </span>
+          </div>
+          <h5 v-else>{{ del_ask_message }}</h5>
+          <b-form-checkbox-group
+            v-if="permanentlyDeleteOption"
+            class="custom-checkbox-group mt-3"
+            style="font-size: 16px"
+            v-model="permanentlyVal"
+            :options="permanentlyDeleteOption"
+            value-field="value"
+            text-field="text"
+          />
         </div>
       </b-modal>
       <b-modal
         id="modal-config-file-del"
         size="lg"
         centered
+        no-close-on-backdrop
         ok-title="확인"
         cancel-title="취소"
         @show="permanentlyVal = []"
         @ok="fileDeleteOk"
       >
-        <div class="mt-4 text-center">
-          <span style="display: inline-flex">
-            <h5 v-if="isSelectDelete">선택된 {{ selected.length }} 개의</h5>
-            <h5>음원을 삭제하시겠습니까?</h5>
+        <b-overlay :show="overlayVal" no-wrap />
+        <div class="mt-3 text-center">
+          <span>
+            <h5 v-if="selected.length === 1 && delName && selected[0][delName]">
+              "{{ selected[0][delName] }}" 항목을 삭제하시겠습니까?
+            </h5>
+            <h5 v-else>
+              선택된 {{ selected.length }} 개의 항목을 삭제하시겠습니까?
+            </h5>
           </span>
           <b-form-checkbox-group
-            class="custom-checkbox-group mt-5"
+            v-if="permanentlyDeleteOption"
+            class="custom-checkbox-group mt-3"
             style="font-size: 16px"
             v-model="permanentlyVal"
             :options="permanentlyDeleteOption"
@@ -247,10 +290,6 @@ export default {
       type: Array,
       defalut: () => [],
     },
-    filter: {
-      type: String,
-      defalut: "",
-    },
     autoSearch: {
       type: Boolean,
       default: true,
@@ -278,6 +317,18 @@ export default {
       type: Array,
       defalut: () => [],
     },
+    deleteOptionButtonTitle: {
+      type: String,
+      default: "",
+    },
+    delName: {
+      type: String,
+      default: "",
+    },
+    permanentlyDeleteOption: {
+      type: Array,
+      default: () => [],
+    },
     totalCount: {
       type: Number,
       default: 0,
@@ -287,13 +338,6 @@ export default {
     return {
       ref_table: "refTable",
       del_ask_message: "삭제하시겠습니까?",
-      isSelectDelete: false,
-      permanentlyDeleteOption: [
-        {
-          text: "해당 음원을 'MIROS 휴지통'으로 이동하지 않고 영구적으로 삭제합니다.",
-          value: false,
-        },
-      ],
       permanentlyVal: [],
       rowData: {},
       searchText: "",
@@ -306,6 +350,7 @@ export default {
       perPage: 0,
       maxLimitDate: null,
       minLimitDate: null,
+      overlayVal: false,
     };
   },
   created() {
@@ -354,12 +399,7 @@ export default {
     onDeleteConfigRowData(rowData) {
       if (rowData) {
         this.rowData = rowData;
-        if (this.configActions.includes("file")) {
-          this.isSelectDelete = false;
-          this.$bvModal.show("modal-config-file-del");
-        } else {
-          this.$bvModal.show("modal-config-del");
-        }
+        this.$bvModal.show("modal-config-del");
       }
     },
     onChangeSelectBox(event, item) {
@@ -374,10 +414,12 @@ export default {
     onChangePerPage() {
       this.$emit("changePerPage", this.perPage);
     },
-    deleteOk() {
+    deleteOk(e) {
+      e.preventDefault();
       this.$emit("deleteOk", this.rowData, this.permanentlyVal);
     },
-    fileDeleteOk() {
+    fileDeleteOk(e) {
+      e.preventDefault();
       this.$emit("deleteSelectedItems", this.selected, this.permanentlyVal);
     },
     onRowSelected(item) {
@@ -400,8 +442,19 @@ export default {
       }
     },
     onDeleteSelectedItems() {
-      this.isSelectDelete = true;
       this.$bvModal.show("modal-config-file-del");
+    },
+    onDownloadConfigRowData(rowData) {
+      this.$emit("downloadConfigRowData", rowData);
+    },
+    deleteOptionEvent() {
+      this.$emit("deleteOptionEvent");
+    },
+    onOverlayValTrue() {
+      this.overlayVal = true;
+    },
+    onOverlayValFalse() {
+      this.overlayVal = false;
     },
   },
 };
@@ -421,5 +474,11 @@ export default {
 }
 .brd_date_picker .input-group {
   width: 180px;
+}
+#modal-config-file-del .modal-body {
+  position: unset;
+}
+#modal-config-del .modal-body {
+  position: unset;
 }
 </style>

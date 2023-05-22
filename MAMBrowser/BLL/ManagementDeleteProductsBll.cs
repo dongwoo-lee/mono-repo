@@ -143,6 +143,24 @@ namespace MAMBrowser.BLL
             return result;
 
         }
+        public bool DeleteRecycleFiles(DeleteAudioClipIdsParamDTO dto)
+        {
+            foreach (var item in dto.IDs)
+            {
+                if (string.IsNullOrEmpty(item.MASTERFILE) || !File.Exists(item.MASTERFILE))
+                {
+                    //_dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
+                    DeleteRecycleData(item.AUDIOCLIPID);
+                }
+                else
+                {
+                    File.Delete(item.MASTERFILE);
+                    //_dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
+                    DeleteRecycleData(item.AUDIOCLIPID);
+                }
+            }
+            return true;
+        }
         public bool DeleteAudioFiles(DeleteAudioClipIdsParamDTO dto)
         {
             foreach (var item in dto.IDs)
@@ -188,7 +206,6 @@ namespace MAMBrowser.BLL
                         //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
                     }
                 }
-
             }
             return true;
         }
@@ -213,8 +230,15 @@ namespace MAMBrowser.BLL
             //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
             return result;
         }
-
-
+        private bool DeleteRecycleData(string audioClipId)
+        {
+            DeleteAudioFileParam param = new DeleteAudioFileParamBuilder()
+                .SetAudioClipid(audioClipId)
+                .Build();
+            var result = _dao_del.DeleteRecycle(param);
+            //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
+            return result;
+        }
         public PageListCollectionDTO<RecycleDTO> GetRecycleList(SelectRecycleParamDTO dto)
         {
             var result = new PageListCollectionDTO<RecycleDTO>();

@@ -6,6 +6,8 @@ using static MAMBrowser.DTO.ManagementDeleteProductsDTO;
 using System.Collections.Generic;
 using System;
 using MAMBrowser.DTO;
+using Microsoft.AspNetCore.StaticFiles;
+using System.IO;
 
 namespace MAMBrowser.Controllers
 {
@@ -139,7 +141,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpDelete("DeleteAudioClipFile")]
-        public DTO_RESULT<bool> DeleteCommCode(DeleteAudioClipIdsParamDTO dto)
+        public DTO_RESULT<bool> DeleteAudioClipFile(DeleteAudioClipIdsParamDTO dto)
         {
             DTO_RESULT<bool> result = new DTO_RESULT<bool>();
             try
@@ -180,6 +182,43 @@ namespace MAMBrowser.Controllers
             return result;
         }
 
+        [HttpDelete("DeleteRecycle")]
+        public DTO_RESULT<bool> DeleteRecycle(DeleteAudioClipIdsParamDTO dto)
+        {
+            DTO_RESULT<bool> result = new DTO_RESULT<bool>();
+            try
+            {
+                result.ResultObject = _bll.DeleteRecycleFiles(dto);
+                if (!result.ResultObject)
+                {
+                    throw new Exception();
+                }
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
+        [HttpGet("RecycleFileDownload")]
+        public FileResult RecycleFileDownload([FromQuery] Pram queryPram)
+        {
+            FileResult result;
+            var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
+            var FilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
+            var fileName = Path.GetFileName(queryPram.guid);
+            var provider = new FileExtensionContentTypeProvider();
+
+            string contentType;
+            if (!provider.TryGetContentType(FilePath, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            result = PhysicalFile(FilePath, contentType, fileName);
+            return result;
+        }
         #endregion
     }
 }

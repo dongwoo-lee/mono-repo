@@ -142,9 +142,9 @@ export default {
       items_copy: [],
       CheckBoxSelected: [],
       checkBoxOptions: [],
+      invalidFeedback: "테스트중",
     };
   },
-  created() {},
   components: { DxButton },
   methods: {
     showEditPopup() {
@@ -175,7 +175,11 @@ export default {
       this.setEditValue();
       this.$emit("editOk", this.items_copy);
     },
-    onTextInput(event, item) {
+    async onTextInput(event, item) {
+      // const regex = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
+      // if (regex.test(item.editedVal)) {
+      //   item.editedVal = await item.editedVal.replace(regex, "");
+      // }
       this.isNotNull(event, item);
       this.isOtherValidation(event, item);
     },
@@ -200,5 +204,13 @@ export default {
 <style>
 .check-group-item {
   display: flex;
+}
+.validation-message {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 5px;
 }
 </style>

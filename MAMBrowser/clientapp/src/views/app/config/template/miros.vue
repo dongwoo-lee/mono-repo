@@ -1,6 +1,7 @@
 <template>
   <div>
     <BasicTable
+      ref="basicTableRef"
       :data-source="dataSource"
       :fields="fields"
       :is-loading="isLoading"
@@ -22,7 +23,13 @@
     <ModifyModal
       :items="modifyItems"
       :modal-title="modifyBtnName"
-      :textDisabledList="['code', 'maP_CD', 'grP_CD', 'systeM_CD']"
+      :textDisabledList="[
+        'code',
+        'maP_CD',
+        'grP_CD',
+        'systeM_CD',
+        'parenT_CODE',
+      ]"
       @editOk="onModifyOk"
       modal-id="modal-config-modify"
     />
@@ -453,10 +460,13 @@ export default {
       }
     },
 
-    onDeleteOk(rowData) {
+    async onDeleteOk(rowData) {
+      this.$refs.basicTableRef.onOverlayValTrue();
       if (rowData) {
-        this.deleteData(rowData);
+        await this.deleteData(rowData);
       }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-del");
     },
     onAddOk(editVal) {
       const pram = {};
@@ -475,6 +485,7 @@ export default {
     insertData(pram) {
       this.$http.post(this.add_url + this.selectedTable, pram).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
+          this.getItemOptions();
           this.getData();
           this.$bvModal.hide("modal-config-add");
         } else {
@@ -487,6 +498,7 @@ export default {
         .post(this.update_url + this.selectedTable, pram)
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
+            this.getItemOptions();
             this.getData();
             this.$bvModal.hide("modal-config-modify");
           } else {
@@ -494,14 +506,15 @@ export default {
           }
         });
     },
-    deleteData(rowData) {
-      this.$http
+    async deleteData(rowData) {
+      await this.$http
         .delete(this.delete_url + this.selectedTable, { data: rowData })
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
             this.$fn.notify("primary", {
               message: "삭제 완료",
             });
+            this.getItemOptions();
             this.getData();
           } else {
             this.$fn.notify("server-error", { message: "추가 에러" });

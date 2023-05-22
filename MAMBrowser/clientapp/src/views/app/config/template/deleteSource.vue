@@ -6,6 +6,7 @@
       :fields="fields"
       :is-loading="isLoading"
       :config-actions="['delete', 'file', 'select_del']"
+      del-name="name"
       :filter-fileds="searchField"
       :filter="selectParm.name"
       :autoSearch="false"
@@ -16,6 +17,7 @@
       :brd_dt="selectParm.brdDate"
       :total-count="dataSource.totalRowCount"
       :page-options="pageOptions"
+      :permanently-delete-option="permanentlyDeleteOption"
       @deleteOk="onDeleteOk"
       @deleteSelectedItems="OnDeleteSelectedItems"
       @changeSelectBox="onChangeSelectBox"
@@ -58,6 +60,12 @@ export default {
         selectPage: 1,
       },
       pageOptions: [30, 50, 100],
+      permanentlyDeleteOption: [
+        {
+          text: "해당 음원을 'MIROS 휴지통'으로 이동하지 않고 영구적으로 삭제합니다.",
+          value: false,
+        },
+      ],
       itemsData: [
         {
           key: "audio",
@@ -246,20 +254,7 @@ export default {
           label: "매체",
           type: "selectBox",
           selected: "A",
-          options: [
-            {
-              value: "A",
-              text: "AM",
-            },
-            {
-              value: "F",
-              text: "FM",
-            },
-            {
-              value: "D",
-              text: "DMB",
-            },
-          ],
+          options: [],
         },
       ],
       dataSource: [],
@@ -277,6 +272,7 @@ export default {
           sortDirection: "desc",
           thClass: "text-center",
           tdClass: "text-center",
+          thStyle: { width: "60px" },
         },
         {
           key: "name",
@@ -299,6 +295,12 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
+          formatter: (value) => {
+            if (value) {
+              return "__filePath : " + value;
+            }
+          },
+          thStyle: { width: "120px" },
         },
         {
           key: "onairdate",
@@ -333,6 +335,7 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
+          thStyle: { width: "80px" },
         },
         {
           key: "mastertime",
@@ -340,10 +343,10 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "250px" },
           formatter: (value, key, item) => {
             return moment(value).format("YYYY-MM-DD");
           },
+          thStyle: { width: "150px" },
         },
         {
           key: "edittime",
@@ -354,6 +357,7 @@ export default {
           formatter: (value, key, item) => {
             return moment(value).format("YYYY-MM-DD");
           },
+          thStyle: { width: "150px" },
         },
         {
           key: "editfile",
@@ -361,25 +365,43 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
+          formatter: (value) => {
+            if (value) {
+              return "__filePath : " + value;
+            }
+          },
+          thStyle: { width: "120px" },
         },
         {
           key: "energyfile",
           label: "에너지파일경로",
           thClass: "text-center",
           tdClass: "text-center",
+          formatter: (value) => {
+            if (value) {
+              return "__filePath : " + value;
+            }
+          },
+          thStyle: { width: "120px" },
         },
         {
           key: "callfile",
           label: "CALL파일경로",
           thClass: "text-center",
           tdClass: "text-center",
+          formatter: (value) => {
+            if (value) {
+              return "__filePath : " + value;
+            }
+          },
+          thStyle: { width: "120px" },
         },
         {
           key: "actions",
           label: "작업",
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "200px" },
+          thStyle: { width: "80px" },
         },
       ],
       get_data_url: "/api/managementdeleteproducts/getDel",
@@ -389,6 +411,7 @@ export default {
   components: { BasicTable },
   created() {
     this.setProducts("product");
+    this.getMediaOptions();
   },
   methods: {
     getData() {
@@ -409,6 +432,25 @@ export default {
           }
           this.isLoading = false;
         });
+    },
+    getMediaOptions() {
+      const url = "/api/Categories/media/mcrspot";
+      this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const options = res.data.resultObject.data;
+          options.forEach((op) => {
+            op.text = op.name;
+            op.value = op.id;
+            delete op.name;
+            delete op.id;
+          });
+          this.all_selectMenu.forEach((item) => {
+            if (item.key === "media") {
+              item.options = options;
+            }
+          });
+        }
+      });
     },
     inDateSet(date, format) {
       return moment(date).format(format);
@@ -467,38 +509,46 @@ export default {
       this.selectParm.rowPerPage = perPage;
       this.getData();
     },
-    onDeleteOk(rowData, permanentlyVal) {
+    async onDeleteOk(rowData, permanentlyVal) {
+      this.$refs.basicTableRef.onOverlayValTrue();
       if (permanentlyVal.length > 0) {
-        this.deleteData([rowData], true);
+        await this.deleteData([rowData], true);
       } else {
-        this.deleteData([rowData], false);
+        await this.deleteData([rowData], false);
       }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-del");
     },
-    OnDeleteSelectedItems(items, permanentlyVal) {
+    async OnDeleteSelectedItems(items, permanentlyVal) {
+      this.$refs.basicTableRef.onOverlayValTrue();
       if (permanentlyVal.length > 0) {
-        this.deleteData(items, true);
+        await this.deleteData(items, true);
       } else {
-        this.deleteData(items, false);
+        await this.deleteData(items, false);
       }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-file-del");
     },
-    deleteData(data, permanentlyVal) {
+    async deleteData(data, permanentlyVal) {
       if (data) {
         const param = {
           userId: sessionStorage.getItem(USER_ID),
           permanentlyVal: permanentlyVal,
           ids: data,
         };
-        this.$http.delete(this.delete_url, { data: param }).then((res) => {
-          if (res.status === 200 && res.data.resultObject) {
-            this.$fn.notify("primary", {
-              message:
-                "작업 완료 : 자세한 내용은 '자동삭제규칙'탭에서 로그를 확인하세요.",
-            });
-            this.getData();
-          } else {
-            this.$fn.notify("server-error", { message: "추가 에러" });
-          }
-        });
+        await this.$http
+          .delete(this.delete_url, { data: param })
+          .then((res) => {
+            if (res.status === 200 && res.data.resultObject) {
+              this.$fn.notify("primary", {
+                message:
+                  "작업 완료 : 자세한 내용은 '자동삭제규칙'탭에서 로그를 확인하세요.",
+              });
+              this.getData();
+            } else {
+              this.$fn.notify("server-error", { message: "추가 에러" });
+            }
+          });
       }
     },
   },

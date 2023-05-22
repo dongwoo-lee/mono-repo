@@ -1,6 +1,7 @@
 <template>
   <div>
     <BasicTable
+      ref="basicTableRef"
       :data-source="dataSource"
       :fields="fields"
       :is-loading="isLoading"
@@ -93,7 +94,6 @@ export default {
         //   sortable: true,
         //   thClass: "text-center",
         //   tdClass: "text-center",
-        //   thStyle: { width: "250px" },
         // },
         {
           key: "code",
@@ -101,7 +101,6 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "200px" },
         },
         {
           key: "rolE_NAME",
@@ -109,7 +108,6 @@ export default {
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
-          thStyle: { width: "200px" },
         },
         {
           key: "actions",
@@ -312,10 +310,13 @@ export default {
       await this.setModifyItems(rowData);
       this.$bvModal.show("modal-config-modify");
     },
-    onDeleteOk(rowData) {
+    async onDeleteOk(rowData) {
+      this.$refs.basicTableRef.onOverlayValTrue();
       if (rowData.role) {
-        this.deleteData(rowData.role);
+        await this.deleteData(rowData.role);
       }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-del");
     },
     onAddOk(editVal) {
       const pram = {};
@@ -333,7 +334,15 @@ export default {
       }
       item.editedVal = digit.join("");
     },
-    onOtherValidation(text, item, items_copy) {
+    async onOtherValidation(text, item, items_copy) {
+      // const regex = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
+      // const nonKoreanColumns = [
+      //   "role",
+      //   "dbid",
+      //   "approle",
+      //   "sysrole",
+      //   "serverrole",
+      // ];
       if (item.key === "dbpasswd" || item.key === "dbpasswd_re") {
         const passwdItem = items_copy.filter((ele) => ele.key === "dbpasswd");
         const passwd_re = items_copy.filter((ele) => ele.key === "dbpasswd_re");
@@ -346,6 +355,18 @@ export default {
           passwd_re[0].isState = false;
         }
       }
+      // if (nonKoreanColumns.includes(item.key)) {
+      //   const colItem = items_copy.find((ele) => ele.key === item.key);
+      //   if (regex.test(text)) {
+      //     colItem.editedVal = "";
+      //     console.log(colItem.editedVal);
+      //     colItem.isState = false;
+      //     colItem.editedVal = await colItem.editedVal.replace(regex, "");
+      //     text = colItem.editedVal;
+      //   } else {
+      //     colItem.isState = null;
+      //   }
+      // }
     },
     onModifyOk(editVal) {
       const pram = {};
@@ -374,9 +395,9 @@ export default {
         }
       });
     },
-    deleteData(role) {
+    async deleteData(role) {
       if (role) {
-        this.$http.delete(this.delete_url + role).then((res) => {
+        await this.$http.delete(this.delete_url + role).then((res) => {
           if (res.status === 200 && res.data.resultObject) {
             this.$fn.notify("primary", {
               message: "삭제 완료",

@@ -1,6 +1,7 @@
 <template>
   <div>
     <BasicTable
+      ref="basicTableRef"
       :data-source="dataSource"
       :fields="fields"
       :is-loading="isLoading"
@@ -104,14 +105,14 @@ export default {
           },
         },
         {
-          key: "tel1",
+          key: "teL1",
           label: "사내 전화번호",
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
         },
         // {
-        //   key: "tel2",
+        //   key: "teL2",
         //   label: "개인 전화번호",
         //   sortable: true,
         //   thClass: "text-center",
@@ -188,8 +189,8 @@ export default {
           label: "소속국실",
           item: "",
           value: "",
-          type: "text",
-          inputType: "password",
+          type: "select",
+          selectOptions: [],
           state: null,
           maxLength: 20,
         },
@@ -198,7 +199,8 @@ export default {
           label: "소속부서",
           item: "",
           value: "",
-          type: "text",
+          type: "select",
+          selectOptions: [],
           state: null,
           maxLength: 20,
         },
@@ -213,7 +215,7 @@ export default {
           maxLength: 20,
         },
         {
-          key: "tel1",
+          key: "teL1",
           label: "사내 전화번호",
           item: "",
           value: "",
@@ -223,7 +225,7 @@ export default {
           maxLength: 20,
         },
         {
-          key: "tel2",
+          key: "teL2",
           label: "개인 전화번호",
           item: "",
           value: "",
@@ -266,7 +268,6 @@ export default {
       add_url: "/api/managementsystem/addUser",
       update_url: "/api/managementsystem/updateUser",
       delete_url: "/api/managementsystem/deleteUser?personid=",
-      options_url: "/api/Managementsystem/GetRoleOptions",
     };
   },
   components: { BasicTable, AddModal, ModifyModal },
@@ -289,7 +290,11 @@ export default {
     inDateSet(date, format) {
       return moment(date).format(format);
     },
-    getItemOptions() {
+    async getItemOptions() {
+      await this.getRoleOptions();
+      await this.getDevNameOptions();
+    },
+    getRoleOptions() {
       const url = "/api/Managementsystem/GetRoleOptions";
       this.$http.get(url).then((res) => {
         if (res.status === 200) {
@@ -301,6 +306,29 @@ export default {
               }
             });
           });
+        }
+      });
+    },
+    getDevNameOptions() {
+      const url = "/api/Managementsystem/GetDevNameOptions";
+      this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const options = res.data.resultObject;
+          Object.keys(options).forEach((key) => {
+            this.items.forEach((item) => {
+              if (item.key === key) {
+                item.selectOptions = options[key];
+              }
+            });
+          });
+        }
+      });
+    },
+    async getDptNameOptions(devision) {
+      const url = "/api/Managementsystem/GetDptNameOptions";
+      return await this.$http.get(url + "?devision=" + devision).then((res) => {
+        if (res.status === 200) {
+          return res.data.resultObject.department;
         }
       });
     },
@@ -337,10 +365,13 @@ export default {
       await this.setModifyItems(rowData);
       this.$bvModal.show("modal-config-modify");
     },
-    onDeleteOk(rowData) {
+    async onDeleteOk(rowData) {
+      this.$refs.basicTableRef.onOverlayValTrue();
       if (rowData.personid) {
-        this.deleteData(rowData.personid);
+        await this.deleteData(rowData.personid);
       }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-del");
     },
     onAddOk(editVal) {
       const pram = {};
@@ -349,7 +380,7 @@ export default {
       });
       this.insertData(pram);
     },
-    onOtherValidation(text, item, items_copy) {
+    async onOtherValidation(text, item, items_copy) {
       if (item.key === "passwd" || item.key === "passwd_re") {
         const passwdItem = items_copy.filter((ele) => ele.key === "passwd");
         const passwd_re = items_copy.filter((ele) => ele.key === "passwd_re");
@@ -361,6 +392,14 @@ export default {
         } else {
           passwd_re[0].isState = false;
         }
+      }
+      if (item.key === "devision") {
+        const dptItem = items_copy.find((item) => item.key === "department");
+
+        const options = await this.getDptNameOptions(text);
+        dptItem.selectOptions = options;
+        console.log(options);
+        console.log(dptItem);
       }
     },
     onModifyOk(editVal) {
@@ -390,9 +429,9 @@ export default {
         }
       });
     },
-    deleteData(role) {
+    async deleteData(role) {
       if (role) {
-        this.$http.delete(this.delete_url + role).then((res) => {
+        await this.$http.delete(this.delete_url + role).then((res) => {
           if (res.status === 200 && res.data.resultObject) {
             this.$fn.notify("primary", {
               message: "삭제 완료",

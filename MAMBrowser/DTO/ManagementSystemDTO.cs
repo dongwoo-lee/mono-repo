@@ -85,6 +85,8 @@ namespace MAMBrowser.DTO
             public List<OptionsDTO> role { get; set; }
             public List<OptionsDTO> mcodeid { get; set; }
             public List<OptionsDTO> code { get; set; }
+            public List<OptionsDTO> devision { get; set; }
+            public List<OptionsDTO> department { get; set; }
         }
         public class DeleteCodeParamDTO
         {

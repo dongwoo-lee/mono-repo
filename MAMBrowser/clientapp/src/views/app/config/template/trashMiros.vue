@@ -1,28 +1,40 @@
 <template>
   <div>
     <BasicTable
+      ref="basicTableRef"
       :data-source="dataSource.data"
       :fields="fields"
       :is-loading="isLoading"
-      :config-actions="['delete', 'select_del']"
+      :config-actions="['delete', 'select_del', 'download']"
       :autoSearch="false"
+      del-name="audioclipid"
       :select-box-menu="selectMenu"
       :start_dt="selectParm.startDate"
       :end_dt="selectParm.endDate"
       :total-count="dataSource.totalRowCount"
       :page-options="pageOptions"
-      alCount="dataSource.totalRowCount"
+      :delete-option-button-title="deleteOptionTitle"
       @deleteOk="onDeleteOk"
+      @downloadConfigRowData="onDownloadConfigRowData"
       @deleteSelectedItems="OnDeleteSelectedItems"
       @changeSelectBox="onChangeSelectBox"
       @selectDate="onSelectDate"
       @selectCurrentPage="onSelectCurrentPage"
       @changePerPage="onChangePerPage"
+      @deleteOptionEvent="onDeleteOptionEvent"
+    />
+    <DeleteOptionModal
+      :items="deleteOptionsItems"
+      :modal-title="deleteOptionTitle"
+      :cycle-time="deleteCycleItem"
+      @editOk="onDeleteOptionModalOk"
     />
   </div>
 </template>
 <script>
 import BasicTable from "../widget/table_basic.vue";
+import DeleteOptionModal from "../widget/popup_delete_option.vue";
+import { USER_ID } from "@/constants/config";
 import "moment/locale/ko";
 const moment = require("moment");
 const date = new Date();
@@ -39,6 +51,7 @@ function get_date_str(date) {
 const endDay = get_date_str(date);
 date.setDate(date.getDate() - 365);
 const startDay = get_date_str(date);
+const toDay = new Date();
 
 export default {
   data() {
@@ -151,12 +164,60 @@ export default {
           thStyle: { width: "200px" },
         },
       ],
+      deleteOptionTitle: "영구 삭제 옵션",
+      deleteOptionsItems: [],
+      deleteOptionKeyList: {
+        key: "",
+        label: "",
+        item: "",
+        value: 0,
+        selectOptions: [
+          {
+            value: 7,
+            text:
+              "7일" +
+              this.inDateSet(
+                new Date().setDate(new Date().getDate() - 7),
+                " (YYYY년 MM월 DD일 이전소재 삭제)"
+              ),
+          },
+          {
+            value: 14,
+            text:
+              "14일" +
+              this.inDateSet(
+                new Date().setDate(new Date().getDate() - 14),
+                " (YYYY년 MM월 DD일 이전소재 삭제)"
+              ),
+          },
+          {
+            value: 21,
+            text:
+              "21일" +
+              this.inDateSet(
+                new Date().setDate(new Date().getDate() - 21),
+                " (YYYY년 MM월 DD일 이전소재 삭제)"
+              ),
+          },
+          {
+            value: 30,
+            text:
+              "30일" +
+              this.inDateSet(
+                new Date().setDate(new Date().getDate() - 30),
+                " (YYYY년 MM월 DD일 이전소재 삭제)"
+              ),
+          },
+        ],
+      },
+      deleteCycleItem: { key: "CYCLE_TIME_TRASH", label: "삭제 주기 옵션" },
       get_data_url: "/api/managementdeleteproducts/GetRecycleList",
-      delete_url: "/api/managementdeleteproducts/",
+      delete_url: "/api/managementdeleteproducts/DeleteRecycle",
     };
   },
-  components: { BasicTable },
+  components: { BasicTable, DeleteOptionModal },
   created() {
+    this.setDeleteOpions();
     // this.getData();
   },
   methods: {
@@ -169,6 +230,41 @@ export default {
           this.$fn.notify("server-error", { message: "조회 에러" });
         }
         this.isLoading = false;
+      });
+    },
+    async setDeleteOpions() {
+      const resultItemList = [];
+      const productList = this.selectMenu.find(
+        (item) => item.key === "audioClipItem"
+      );
+      const deleteOptionData = await this.getDeleteOptionsData();
+      productList.options.forEach((ele) => {
+        if (ele.value !== "") {
+          const deleteOpionItem = { ...this.deleteOptionKeyList };
+          const optionVal = deleteOptionData.find(
+            (data) => data.name === ele.text + "_DEL_CYCLE"
+          );
+          deleteOpionItem.key = ele.text + "_DEL_CYCLE";
+          deleteOpionItem.label = ele.text;
+          deleteOpionItem.value = optionVal.value;
+          resultItemList.push(deleteOpionItem);
+        }
+      });
+      this.deleteOptionsItems = resultItemList;
+    },
+    async getDeleteOptionsData() {
+      const url = "/api/options/S01G07C001";
+      return await this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const data = res.data.resultObject.data;
+          const cycleData = data.find(
+            (item) => item.name === this.deleteCycleItem.key
+          );
+          if (cycleData) {
+            this.deleteCycleItem.value = cycleData.value;
+          }
+          return data;
+        }
       });
     },
     inDateSet(date, format) {
@@ -197,24 +293,84 @@ export default {
       this.selectParm.rowPerPage = perPage;
       this.getData();
     },
-    onDeleteOk(rowData) {
-      if (rowData.personid) {
-        this.deleteData(rowData.personid);
+    async onDeleteOk(rowData) {
+      this.$refs.basicTableRef.onOverlayValTrue();
+      if (rowData) {
+        await this.deleteData([rowData]);
+      }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-del");
+    },
+    async deleteData(data) {
+      if (data) {
+        const param = {
+          ids: data,
+        };
+        await this.$http
+          .delete(this.delete_url, { data: param })
+          .then((res) => {
+            if (res.status === 200 && res.data.resultObject) {
+              this.$fn.notify("primary", {
+                message:
+                  "작업 완료 : 자세한 내용은 '자동삭제규칙'탭에서 로그를 확인하세요.",
+              });
+              this.getData();
+            } else {
+              this.$fn.notify("server-error", { message: "추가 에러" });
+            }
+          });
       }
     },
-    deleteData(role) {
-      if (role) {
-        this.$http.delete(this.delete_url + role).then((res) => {
-          if (res.status === 200 && res.data.resultObject) {
-            this.getData();
-          } else {
-            this.$fn.notify("server-error", { message: "추가 에러" });
+    onDownloadConfigRowData(rowData) {
+      this.$http
+        .get(
+          `/api/managementdeleteproducts/RecycleFileDownload?guid=${
+            rowData.masterfile
+          }&userid=${sessionStorage.getItem(USER_ID)}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            const link = document.createElement("a");
+            link.href = `/api/managementdeleteproducts/RecycleFileDownload?guid=${
+              rowData.masterfile
+            }&userid=${sessionStorage.getItem(USER_ID)}`;
+            document.body.appendChild(link);
+            link.click();
           }
         });
-      }
     },
-    OnDeleteSelectedItems(items) {
-      console.log(items);
+    updateDeleteOptions(pram) {
+      const url = "/api/options/S01G07C001";
+      this.$http.post(url, pram).then((res) => {
+        if (res.status === 200) {
+          this.$fn.notify("primary", {
+            message: "변경 완료",
+          });
+          this.setDeleteOpions();
+          this.$bvModal.hide("modal-delete-option");
+        } else {
+          this.$fn.notify("server-error", { message: "추가 에러" });
+        }
+      });
+    },
+    async OnDeleteSelectedItems(items) {
+      this.$refs.basicTableRef.onOverlayValTrue();
+      if (items) {
+        await this.deleteData(items);
+      }
+      this.$refs.basicTableRef.onOverlayValFalse();
+      this.$bvModal.hide("modal-config-file-del");
+    },
+    onDeleteOptionEvent() {
+      this.$bvModal.show("modal-delete-option");
+    },
+    onDeleteOptionModalOk(editVal, cycleTimeVal) {
+      const pram = [];
+      editVal.forEach((ele) => {
+        pram.push({ name: ele.key, value: String(ele.editedVal) });
+      });
+      pram.push({ name: cycleTimeVal.key, value: cycleTimeVal.editedVal });
+      this.updateDeleteOptions(pram);
     },
   },
 };

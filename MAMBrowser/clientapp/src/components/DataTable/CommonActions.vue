@@ -97,6 +97,15 @@
       >편집</b-button
     >
     <b-button
+      v-if="configActions.includes('download')"
+      :disabled="rowData.masterfile ? false : true"
+      class="config_btn"
+      variant="success"
+      @click="downloadConfigRowData()"
+    >
+      다운로드</b-button
+    >
+    <b-button
       v-if="configActions.includes('delete')"
       class="config_btn"
       variant="danger"
@@ -283,6 +292,9 @@ export default {
     },
     deleteConfigRowData() {
       this.$emit("deleteConfigRowData", this.rowData);
+    },
+    downloadConfigRowData() {
+      this.$emit("downloadConfigRowData", this.rowData);
     },
   },
 };
