@@ -51,7 +51,6 @@ function get_date_str(date) {
 const endDay = get_date_str(date);
 date.setDate(date.getDate() - 365);
 const startDay = get_date_str(date);
-const toDay = new Date();
 
 export default {
   data() {
@@ -304,6 +303,8 @@ export default {
     async deleteData(data) {
       if (data) {
         const param = {
+          userId: sessionStorage.getItem(USER_ID),
+          systemCd: "S06",
           ids: data,
         };
         await this.$http

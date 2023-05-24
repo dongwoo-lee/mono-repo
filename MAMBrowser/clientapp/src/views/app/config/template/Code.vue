@@ -200,7 +200,7 @@ export default {
           value: "",
           type: "text",
           state: "notNull",
-          maxLength: 10,
+          maxLength: 4,
         },
         {
           key: "codename",
@@ -219,7 +219,7 @@ export default {
           type: "select",
           selectOptions: [],
           state: "notNull",
-          maxLength: 10,
+          maxLength: 4,
         },
         {
           key: "scodeid",
@@ -228,7 +228,7 @@ export default {
           value: "",
           type: "text",
           state: "notNull",
-          maxLength: 10,
+          maxLength: 4,
         },
         {
           key: "scodename",
@@ -255,7 +255,7 @@ export default {
           value: "",
           type: "text",
           state: "notNull",
-          maxLength: 20,
+          maxLength: 30,
         },
         {
           key: "media",
@@ -265,7 +265,6 @@ export default {
           type: "select",
           selectOptions: [],
           state: "notNull",
-          maxLength: 10,
         },
         {
           key: "creator",
@@ -274,7 +273,7 @@ export default {
           value: "",
           type: "text",
           state: "notNull",
-          maxLength: 20,
+          maxLength: 8,
         },
         {
           key: "pd",
@@ -283,7 +282,7 @@ export default {
           value: "",
           type: "text",
           state: null,
-          maxLength: 20,
+          maxLength: 8,
         },
         {
           key: "ad",
@@ -292,7 +291,7 @@ export default {
           value: "",
           type: "text",
           state: null,
-          maxLength: 10,
+          maxLength: 8,
         },
       ],
       items: [],

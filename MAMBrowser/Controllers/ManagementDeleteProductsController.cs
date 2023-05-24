@@ -8,6 +8,7 @@ using System;
 using MAMBrowser.DTO;
 using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
+using MAMBrowser.Helpers;
 
 namespace MAMBrowser.Controllers
 {
@@ -16,9 +17,12 @@ namespace MAMBrowser.Controllers
     public class ManagementDeleteProductsController : ControllerBase
     {
         private readonly ManagementDeleteProductsBll _bll;
-        public ManagementDeleteProductsController(ManagementDeleteProductsBll bll)
+        private readonly HttpContextDBLogger _dbLogger;
+
+        public ManagementDeleteProductsController(ManagementDeleteProductsBll bll, HttpContextDBLogger dbLogger)
         {
             _bll = bll;
+            _dbLogger = dbLogger;
         }
 
         #region 소재 삭제 관리
@@ -155,6 +159,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
+                _dbLogger.ErrorAsync(dto.SystemCd, dto.UserId, $"소재 삭제 (수동) : {ex.Message}", null);
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
@@ -162,7 +167,6 @@ namespace MAMBrowser.Controllers
         }
 
         #endregion
-
 
         #region MIROS 휴지통
         [HttpPost("GetRecycleList")]
@@ -197,6 +201,7 @@ namespace MAMBrowser.Controllers
             }
             catch (Exception ex)
             {
+                _dbLogger.ErrorAsync(dto.SystemCd, dto.UserId, $"MIROS 휴지통 (수동) : {ex.Message}", null);
                 result.ErrorMsg = ex.Message;
                 result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
             }
@@ -217,6 +222,35 @@ namespace MAMBrowser.Controllers
                 contentType = "application/octet-stream";
             }
             result = PhysicalFile(FilePath, contentType, fileName);
+            return result;
+        }
+        #endregion
+
+        #region 자동 삭제 규칙
+        [HttpPost("GetCommLogList")]
+        public DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> GetCommLogList([FromBody] SelectCommLogParamDTO dto)
+        {
+            DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>> result = new DTO_RESULT<DTO_RESULT_PAGE_LIST<DTO_LOG>>();
+            try
+            {
+                result.ResultObject = _dbLogger.GetLogList(
+                    dto.systemCode,
+                    dto.startdate,
+                    dto.enddate,
+                    dto.logLevel,
+                    dto.userName,
+                    dto.description,
+                    dto.RowPerPage,
+                    dto.SelectPage,
+                    dto.sortKey,
+                    dto.sortValue );
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
             return result;
         }
         #endregion

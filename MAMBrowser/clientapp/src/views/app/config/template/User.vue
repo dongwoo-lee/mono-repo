@@ -153,7 +153,7 @@ export default {
           value: "",
           type: "text",
           state: "notNull",
-          maxLength: 20,
+          maxLength: 8,
         },
         {
           key: "passwd",
@@ -192,7 +192,6 @@ export default {
           type: "select",
           selectOptions: [],
           state: null,
-          maxLength: 20,
         },
         {
           key: "department",
@@ -202,7 +201,6 @@ export default {
           type: "select",
           selectOptions: [],
           state: null,
-          maxLength: 20,
         },
         {
           key: "indate",
@@ -212,7 +210,7 @@ export default {
           type: "text",
           inputType: "date",
           state: "notNull",
-          maxLength: 20,
+          maxLength: 8,
         },
         {
           key: "teL1",
@@ -222,7 +220,7 @@ export default {
           type: "text",
           inputType: "tel",
           state: null,
-          maxLength: 20,
+          maxLength: 12,
         },
         {
           key: "teL2",
@@ -242,7 +240,7 @@ export default {
           type: "text",
           inputType: "email",
           state: null,
-          maxLength: 20,
+          maxLength: 30,
         },
         {
           key: "rank",
@@ -251,7 +249,7 @@ export default {
           value: "",
           type: "text",
           state: null,
-          maxLength: 20,
+          maxLength: 4,
         },
         {
           key: "role",
@@ -261,7 +259,6 @@ export default {
           type: "select",
           selectOptions: [],
           state: "notNull",
-          maxLength: 20,
         },
       ],
       get_data_url: "/api/managementsystem/getUser",
@@ -294,9 +291,9 @@ export default {
       await this.getRoleOptions();
       await this.getDevNameOptions();
     },
-    getRoleOptions() {
+    async getRoleOptions() {
       const url = "/api/Managementsystem/GetRoleOptions";
-      this.$http.get(url).then((res) => {
+      await this.$http.get(url).then((res) => {
         if (res.status === 200) {
           const options = res.data.resultObject;
           Object.keys(options).forEach((key) => {
@@ -309,9 +306,9 @@ export default {
         }
       });
     },
-    getDevNameOptions() {
+    async getDevNameOptions() {
       const url = "/api/Managementsystem/GetDevNameOptions";
-      this.$http.get(url).then((res) => {
+      await this.$http.get(url).then((res) => {
         if (res.status === 200) {
           const options = res.data.resultObject;
           Object.keys(options).forEach((key) => {

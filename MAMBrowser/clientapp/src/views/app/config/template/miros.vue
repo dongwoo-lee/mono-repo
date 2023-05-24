@@ -147,7 +147,6 @@ export default {
               type: "select",
               selectOptions: [],
               state: null,
-              maxLength: 20,
             },
             {
               key: "name",
@@ -156,7 +155,7 @@ export default {
               value: "",
               type: "text",
               state: null,
-              maxLength: 10,
+              maxLength: 50,
             },
           ],
         },
@@ -257,7 +256,6 @@ export default {
               type: "select",
               selectOptions: [],
               state: "notNull",
-              maxLength: 20,
             },
             {
               key: "grP_CD",
@@ -267,7 +265,6 @@ export default {
               type: "select",
               selectOptions: [],
               state: "notNull",
-              maxLength: 10,
             },
             {
               key: "code",
@@ -277,7 +274,6 @@ export default {
               type: "select",
               selectOptions: [],
               state: "notNull",
-              maxLength: 10,
             },
             {
               key: "visible",
@@ -296,7 +292,6 @@ export default {
                 },
               ],
               state: "notNull",
-              maxLength: 20,
             },
             {
               key: "enable",
@@ -315,7 +310,6 @@ export default {
                 },
               ],
               state: "notNull",
-              maxLength: 20,
             },
           ],
         },

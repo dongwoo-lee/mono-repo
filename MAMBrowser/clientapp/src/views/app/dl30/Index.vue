@@ -68,6 +68,21 @@
           >
         </b-form-group>
       </template>
+      <template slot="form-btn-area">
+        <span>
+          ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'
+          {{ deleteCycleItem.mydiskDelCycleMonth }}일
+          {{
+            inDateSet(
+              new Date().setDate(
+                new Date().getDate() - deleteCycleItem.mydiskDelCycleMonth
+              ),
+              " (YYYY년 MM월 DD일)"
+            )
+          }}
+          이전 WAV 소재가 삭제됩니다.
+        </span>
+      </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
         {{ getTotalRowCount() }}
@@ -145,6 +160,8 @@
 <script>
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import CopyToMySpacePopup from "../../../components/Popup/CopyToMySpacePopup";
+import "moment/locale/ko";
+const moment = require("moment");
 export default {
   components: { CopyToMySpacePopup },
   mixins: [MixinBasicPage],
@@ -233,9 +250,14 @@ export default {
         },
       ],
       dlDeviceOptions: [],
+      deleteCycleItem: {
+        mydiskDelCycleMonth: 0,
+        cycleTime: "00:00",
+      },
     };
   },
   created() {
+    this.setDeleteOptionsData();
     this.getDL3MediaOptions();
     this.getDlDeviceOptions();
   },
@@ -274,6 +296,48 @@ export default {
         this.searchItems.dlDeviceSeq = this.dlDeviceOptions[0].id;
         this.getData();
       }
+    },
+    async setDeleteOptionsData() {
+      const url = "/api/options/S01G07C001";
+      await this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const data = res.data.resultObject.data;
+          const cycleData = data.find(
+            (item) => item.name === "DL3_WAV_DEL_CYCLE"
+          );
+          const cycleTime = data.find(
+            (item) => item.name === "CYCLE_TIME_TRASH"
+          );
+          if (cycleData) {
+            this.deleteCycleItem.mydiskDelCycleMonth = cycleData.value;
+          }
+          if (cycleTime) {
+            this.deleteCycleItem.cycleTime = cycleTime.value;
+          }
+        }
+      });
+    },
+    inDateSet(date, format) {
+      return moment(date).format(format);
+    },
+    convertTimeString(timeString) {
+      var timeComponents = timeString.split(":");
+      var hours = parseInt(timeComponents[0], 10);
+      var minutes = parseInt(timeComponents[1], 10);
+      var formattedTime;
+
+      if (hours === 0) {
+        formattedTime = "오전 12시 " + minutes + "분";
+      } else if (hours < 12) {
+        formattedTime = "오전 " + hours + "시 " + minutes + "분";
+      } else if (hours === 12) {
+        formattedTime = "오후 12시 " + minutes + "분";
+      } else {
+        var afternoonHours = hours - 12;
+        formattedTime = "오후 " + afternoonHours + "시 " + minutes + "분";
+      }
+
+      return formattedTime;
     },
   },
 };

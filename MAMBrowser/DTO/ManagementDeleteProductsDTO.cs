@@ -68,6 +68,7 @@ namespace MAMBrowser.DTO
         public class DeleteAudioClipIdsParamDTO
         {
             public string UserId { get; set; }
+            public string SystemCd { get; set; }
             public bool PermanentlyVal { get; set; }
             public List<DeleteAudioClipFileParamDTO> IDs { get; set; }
         }
@@ -77,6 +78,15 @@ namespace MAMBrowser.DTO
             public string startdate { get; set; }
             public string enddate { get; set; }
             public string audiotype { get; set; }
+        }
+        public class SelectCommLogParamDTO : PageParamDTO
+        {
+            public string systemCode { get; set; }
+            public string startdate { get; set; }
+            public string enddate { get; set; }
+            public string logLevel { get; set; }
+            public string userName { get; set; }
+            public string description { get; set; }
         }
     }
 }

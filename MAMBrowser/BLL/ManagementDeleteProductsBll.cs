@@ -1,29 +1,27 @@
 ﻿using M30_ManagementDAO.Interfaces;
 using M30_ManagementDAO.ParamEntity;
-using static MAMBrowser.DTO.ManagementSystemDTO;
-using System.Collections.Generic;
 using MAMBrowser.Utils;
 using static MAMBrowser.DTO.ManagementDeleteProductsDTO;
 using MAMBrowser.DTO;
-using M30_CueSheetDAO.ParamEntity;
-using M30.AudioFile.DAL.Repositories;
-using M30.AudioFile.Common;
-using MAMBrowser.Foundation;
-using Microsoft.AspNetCore.Http;
 using System.IO;
-using System;
-using MAMBrowser.Entiies;
-using System.Web.Http.Tracing;
+using MAMBrowser.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace MAMBrowser.BLL
 {
     public class ManagementDeleteProductsBll
     {
         private readonly IDelManagementDAO _dao_del;
-        public ManagementDeleteProductsBll(IDelManagementDAO dao_del)
+        private readonly HttpContextDBLogger _dbLogger;
+
+        public ManagementDeleteProductsBll(IDelManagementDAO dao_del,HttpContextDBLogger dbLogger)
         {
             _dao_del = dao_del;
+            _dbLogger= dbLogger;
         }
+
+        #region 소재 삭제, miros 휴지통 - Select
+
         public PageListCollectionDTO<AudioFileDTO> GetDelAudioFileList(SelectDelProductParamDTO dto)
         {
             var result = new PageListCollectionDTO<AudioFileDTO>();
@@ -106,7 +104,6 @@ namespace MAMBrowser.BLL
             result.Data = data.DataList?.Converting();
             return result;
         }
-
         public PageListCollectionDTO<ProductFileDTO> GetDelProductFileList(SelectDelProductParamDTO dto)
         {
             var result = new PageListCollectionDTO<ProductFileDTO>();
@@ -143,102 +140,7 @@ namespace MAMBrowser.BLL
             return result;
 
         }
-        public bool DeleteRecycleFiles(DeleteAudioClipIdsParamDTO dto)
-        {
-            foreach (var item in dto.IDs)
-            {
-                if (string.IsNullOrEmpty(item.MASTERFILE) || !File.Exists(item.MASTERFILE))
-                {
-                    //_dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
-                    DeleteRecycleData(item.AUDIOCLIPID);
-                }
-                else
-                {
-                    File.Delete(item.MASTERFILE);
-                    //_dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
-                    DeleteRecycleData(item.AUDIOCLIPID);
-                }
-            }
-            return true;
-        }
-        public bool DeleteAudioFiles(DeleteAudioClipIdsParamDTO dto)
-        {
-            foreach (var item in dto.IDs)
-            {
-                if (string.IsNullOrEmpty(item.MASTERFILE)||!File.Exists(item.MASTERFILE))
-                {
-                    //_dbLogger.WarnAsync(HttpContext, userId, $"마스터링 파일삭제(자동) - {audioClipId} : 파일을 찾을 수 없습니다.", $"{filePath}").Wait();
-                    ImmediateDeleteAudioFile(item.AUDIOCLIPID);
-                }
-                else
-                {
-                    if (!dto.PermanentlyVal)
-                    {
-                        //miros 휴지통으로
-                        var fileName = Path.GetFileName(item.MASTERFILE);
-                        string recyclePath = Path.Combine(Path.GetDirectoryName(item.MASTERFILE), "RECYCLE");
-                        if (!Directory.Exists(recyclePath))
-                        {
-                            Directory.CreateDirectory(recyclePath);
-                        }
-                        File.Move(item.MASTERFILE, Path.Combine(recyclePath, fileName));
-                        DeleteAudioFileAndMoveToRecycle(item.AUDIOCLIPID, Path.Combine(recyclePath, fileName), dto.UserId);
-                    }
-                    else
-                    {
-                        //영구삭제
-                        File.Delete(item.MASTERFILE);
-                        ImmediateDeleteAudioFile(item.AUDIOCLIPID);
-                    }
 
-                    var egyFilePath = Path.ChangeExtension(item.MASTERFILE, ".egy");
-                    if (File.Exists(egyFilePath))
-                    {
-                        File.Delete(egyFilePath);
-                        //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
-                    }
-
-                    var editfolderName = Directory.GetParent(Directory.GetParent(item.MASTERFILE).FullName).FullName;
-                    var editfilePath = Path.Combine(editfolderName, "EDIT", item.AUDIOCLIPID);
-                    if (Directory.Exists(editfilePath))
-                    {
-                        Directory.Delete(editfilePath, true);
-                        //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
-                    }
-                }
-            }
-            return true;
-        }
-        private bool DeleteAudioFileAndMoveToRecycle(string audioClipId, string FilePath,string UserId )
-        {
-                DeleteProductFileParam param = new DeleteProductFileParamBuilder()
-                    .SetAudioClipId(audioClipId)
-                    .SetFilePath(FilePath)
-                    .SetUserId(UserId)
-                    .Build();
-            var result = _dao_del.DeleteAudioFileAndMoveToTrash(param);
-            //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
-
-            return result;
-        }
-        private bool ImmediateDeleteAudioFile(string audioClipId)
-        {
-            DeleteAudioFileParam param = new DeleteAudioFileParamBuilder()
-                .SetAudioClipid(audioClipId)
-                .Build();
-            var result = _dao_del.ImmediateDeleteAudioFile(param);
-            //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
-            return result;
-        }
-        private bool DeleteRecycleData(string audioClipId)
-        {
-            DeleteAudioFileParam param = new DeleteAudioFileParamBuilder()
-                .SetAudioClipid(audioClipId)
-                .Build();
-            var result = _dao_del.DeleteRecycle(param);
-            //_dbLogger.InfoAsync(HttpContext, userId, $"마스터링 EGY파일 삭제(자동) - {audioClipId}", null).Wait();
-            return result;
-        }
         public PageListCollectionDTO<RecycleDTO> GetRecycleList(SelectRecycleParamDTO dto)
         {
             var result = new PageListCollectionDTO<RecycleDTO>();
@@ -257,6 +159,128 @@ namespace MAMBrowser.BLL
             return result;
         }
 
+        #endregion
+
+        #region 소재 삭제, miros 휴지통 - Delete
+
+        public bool DeleteRecycleFiles(DeleteAudioClipIdsParamDTO dto)
+        {
+            foreach (var item in dto.IDs)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(item.MASTERFILE))
+                    {
+                        _dbLogger.WarnAsync(dto.SystemCd, dto.UserId, $"MIROS 휴지통 (수동) - {item.AUDIOCLIPID} : 파일 경로가 없습니다.", null);
+                        DeleteRecycleData(item.AUDIOCLIPID, dto.SystemCd, dto.UserId);
+                    }
+                    else if (!File.Exists(item.MASTERFILE))
+                    {
+                        _dbLogger.WarnAsync(dto.SystemCd, dto.UserId, $"MIROS 휴지통 (수동) - {item.AUDIOCLIPID} : 파일이 존재하지 않습니다.", $"{item.MASTERFILE}");
+                        DeleteRecycleData(item.AUDIOCLIPID, dto.SystemCd, dto.UserId);
+                    }
+                    else
+                    {
+                        File.Delete(item.MASTERFILE);
+                        DeleteRecycleData(item.AUDIOCLIPID, dto.SystemCd, dto.UserId);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    _dbLogger.ErrorAsync(dto.SystemCd, dto.UserId, $"MIROS 휴지통 (수동) - {item.AUDIOCLIPID} : {ex.Message}", $"{item.MASTERFILE}");
+                }
+            }
+            return true;
+        }
+        public bool DeleteAudioFiles(DeleteAudioClipIdsParamDTO dto)
+        {
+            foreach (var item in dto.IDs)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(item.MASTERFILE))
+                    {
+                        _dbLogger.WarnAsync(dto.SystemCd, dto.UserId, $"소재 삭제 (수동) - {item.AUDIOCLIPID} : 파일 경로가 없습니다.", null);
+                        ImmediateDeleteAudioFile(item.AUDIOCLIPID, dto.SystemCd, dto.UserId);
+                    }
+                    else if (!File.Exists(item.MASTERFILE))
+                    {
+                        _dbLogger.WarnAsync(dto.SystemCd, dto.UserId, $"소재 삭제 (수동) - {item.AUDIOCLIPID} : 파일이 존재하지 않습니다.", $"{item.MASTERFILE}");
+                        ImmediateDeleteAudioFile(item.AUDIOCLIPID, dto.SystemCd, dto.UserId);
+                    }
+                    else
+                    {
+                        if (!dto.PermanentlyVal)
+                        {
+                            var fileName = Path.GetFileName(item.MASTERFILE);
+                            string recyclePath = Path.Combine(Path.GetDirectoryName(item.MASTERFILE), "RECYCLE");
+                            if (!Directory.Exists(recyclePath))
+                            {
+                                Directory.CreateDirectory(recyclePath);
+                            }
+                            File.Move(item.MASTERFILE, Path.Combine(recyclePath, fileName));
+                            DeleteAudioFileAndMoveToRecycle(item.AUDIOCLIPID, Path.Combine(recyclePath, fileName), dto.SystemCd, dto.UserId);
+                        }
+                        else
+                        {
+                            File.Delete(item.MASTERFILE);
+                            ImmediateDeleteAudioFile(item.AUDIOCLIPID, dto.SystemCd, dto.UserId);
+                        }
+
+                        var egyFilePath = Path.ChangeExtension(item.MASTERFILE, ".egy");
+                        if (File.Exists(egyFilePath))
+                        {
+                            File.Delete(egyFilePath);
+                            _dbLogger.InfoAsync(dto.SystemCd, dto.UserId, $"소재 삭제 EGY File 삭제 (수동) - {item.AUDIOCLIPID}", null);
+                        }
+
+                        var editfolderName = Directory.GetParent(Directory.GetParent(item.MASTERFILE).FullName).FullName;
+                        var editfilePath = Path.Combine(editfolderName, "EDIT", item.AUDIOCLIPID);
+                        if (Directory.Exists(editfilePath))
+                        {
+                            Directory.Delete(editfilePath, true);
+                            _dbLogger.InfoAsync(dto.SystemCd, dto.UserId, $"소재 삭제 EDIT File 삭제 (수동) - {item.AUDIOCLIPID}", null);
+                        }
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    _dbLogger.ErrorAsync(dto.SystemCd, dto.UserId, $"소재 삭제 (수동) - {item.AUDIOCLIPID} : {ex.Message}", $"{item.MASTERFILE}");
+                }
+            }
+            return true;
+        }
+        private bool DeleteAudioFileAndMoveToRecycle(string audioClipId, string FilePath, string systemCd, string userId )
+        {
+                DeleteProductFileParam param = new DeleteProductFileParamBuilder()
+                    .SetAudioClipId(audioClipId)
+                    .SetFilePath(FilePath)
+                    .SetUserId(userId)
+                    .Build();
+            var result = _dao_del.DeleteAudioFileAndMoveToTrash(param);
+            _dbLogger.InfoAsync(systemCd, userId, $"소재 삭제 MIROS 휴지통 Move (수동) - {audioClipId}", null);
+
+            return result;
+        }
+        private bool ImmediateDeleteAudioFile(string audioClipId, string systemCd, string userId)
+        {
+            DeleteAudioFileParam param = new DeleteAudioFileParamBuilder()
+                .SetAudioClipid(audioClipId)
+                .Build();
+            var result = _dao_del.ImmediateDeleteAudioFile(param);
+            _dbLogger.InfoAsync(systemCd, userId, $"소재 삭제 File Delete (수동) - {audioClipId}", null);
+            return result;
+        }
+        private bool DeleteRecycleData(string audioClipId,string systemCd, string userId)
+        {
+            DeleteAudioFileParam param = new DeleteAudioFileParamBuilder()
+                .SetAudioClipid(audioClipId)
+                .Build();
+            var result = _dao_del.DeleteRecycle(param);
+            _dbLogger.InfoAsync(systemCd, userId, $"MIROS 휴지통 File Delete (수동) - {audioClipId}", null);
+            return result;
+        }
+        #endregion
 
     }
 }

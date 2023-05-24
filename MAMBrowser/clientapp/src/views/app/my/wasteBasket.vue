@@ -59,6 +59,19 @@
             >휴지통 비우기</b-button
           >
         </b-input-group>
+        <span>
+          ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'
+          {{ deleteCycleItem.mydiskDelCycleMonth }}개월
+          {{
+            inDateSet(
+              new Date().setMonth(
+                new Date().getMonth() - deleteCycleItem.mydiskDelCycleMonth
+              ),
+              " (YYYY년 MM월 DD일)"
+            )
+          }}
+          이전 소재가 삭제됩니다.
+        </span>
       </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
@@ -137,6 +150,8 @@
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import { USER_ID } from "@/constants/config";
 import { mapActions } from "vuex";
+import "moment/locale/ko";
+const moment = require("moment");
 
 export default {
   mixins: [MixinBasicPage],
@@ -156,6 +171,10 @@ export default {
       recycleId: null,
       isTableLoading: false,
       innerHtmlSelectedFileNames: "",
+      deleteCycleItem: {
+        mydiskDelCycleMonth: 0,
+        cycleTime: "00:00",
+      },
       fields: [
         {
           name: "__checkbox",
@@ -217,6 +236,7 @@ export default {
     };
   },
   created() {
+    this.setDeleteOptionsData();
     this.$nextTick(() => {
       this.getData();
     });
@@ -237,6 +257,46 @@ export default {
           this.isTableLoading = false;
           this.isScrollLodaing = false;
         });
+    },
+    async setDeleteOptionsData() {
+      const url = "/api/options/S01G07C001";
+      await this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const data = res.data.resultObject.data;
+          const cycleData = data.find(
+            (item) => item.name === "MYDISK_TRASH_DEL_CYCLE"
+          );
+          const cycleTime = data.find((item) => item.name === "CYCLE_TIME");
+          if (cycleData) {
+            this.deleteCycleItem.mydiskDelCycleMonth = cycleData.value;
+          }
+          if (cycleTime) {
+            this.deleteCycleItem.cycleTime = cycleTime.value;
+          }
+        }
+      });
+    },
+    inDateSet(date, format) {
+      return moment(date).format(format);
+    },
+    convertTimeString(timeString) {
+      var timeComponents = timeString.split(":");
+      var hours = parseInt(timeComponents[0], 10);
+      var minutes = parseInt(timeComponents[1], 10);
+      var formattedTime;
+
+      if (hours === 0) {
+        formattedTime = "오전 12시 " + minutes + "분";
+      } else if (hours < 12) {
+        formattedTime = "오전 " + hours + "시 " + minutes + "분";
+      } else if (hours === 12) {
+        formattedTime = "오후 12시 " + minutes + "분";
+      } else {
+        var afternoonHours = hours - 12;
+        formattedTime = "오후 " + afternoonHours + "시 " + minutes + "분";
+      }
+
+      return formattedTime;
     },
     // 단일 영구 삭제 확인창
     onDeleteConfirm(rowData) {

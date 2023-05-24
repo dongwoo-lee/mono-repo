@@ -260,7 +260,6 @@ export default {
       dataSource: [],
       isLoading: false,
       placeholderText: "이름을 입력하세요.",
-      filter: "",
       searchField: [],
       fields: [],
       all_fields: [
@@ -533,6 +532,7 @@ export default {
       if (data) {
         const param = {
           userId: sessionStorage.getItem(USER_ID),
+          systemCd: "S06",
           permanentlyVal: permanentlyVal,
           ids: data,
         };

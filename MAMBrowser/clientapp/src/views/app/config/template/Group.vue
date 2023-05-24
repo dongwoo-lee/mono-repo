@@ -190,7 +190,7 @@ export default {
           value: "",
           type: "text",
           state: null,
-          maxLength: 20,
+          maxLength: 15,
         },
         {
           key: "code",
@@ -355,13 +355,17 @@ export default {
           passwd_re[0].isState = false;
         }
       }
+      // const regex = /^[a-zA-Z]+$/;
+      //     if (!regex.test(event.target.value)) {
+      //       event.target.value = event.target.value.replace(/[^a-zA-Z]/g, '');
+      //       this.errorMessage = 'Please enter alphabetic characters only.';
+      //     } else {
+      //       this.errorMessage = '';
+      //     }
       // if (nonKoreanColumns.includes(item.key)) {
       //   const colItem = items_copy.find((ele) => ele.key === item.key);
-      //   if (regex.test(text)) {
-      //     colItem.editedVal = "";
-      //     console.log(colItem.editedVal);
-      //     colItem.isState = false;
-      //     colItem.editedVal = await colItem.editedVal.replace(regex, "");
+      //   if (!regex.test(text)) {
+      //     colItem.editedVal = await colItem.editedVal.replace(/[^a-zA-Z]/g, "");
       //     text = colItem.editedVal;
       //   } else {
       //     colItem.isState = null;
