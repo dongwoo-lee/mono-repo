@@ -140,6 +140,23 @@ namespace MAMBrowser.BLL
             return result;
 
         }
+        public PageListCollectionDTO<MasSpotFileDTO> GetDelMasSpotFileList(SelectDelProductParamDTO dto)
+        {
+            var result = new PageListCollectionDTO<MasSpotFileDTO>();
+            SelectProductFileParam param = new SelectProductFileParamBuilder()
+                .SetStartDate(dto.startdate)
+                .SetEndDate(dto.enddate)
+                .SetName(dto.name)
+                .SetRowPage(dto.RowPerPage)
+                .SetSelectPage(dto.SelectPage)
+                .Build();
+            var data = _dao_del.GetMasSpotFileList(param);
+            result.RowPerPage = dto.RowPerPage;
+            result.SelectPage = dto.SelectPage;
+            result.TotalRowCount = data.TotalCount;
+            result.Data = data.DataList?.Converting();
+            return result;
+        }
 
         public PageListCollectionDTO<RecycleDTO> GetRecycleList(SelectRecycleParamDTO dto)
         {
@@ -258,7 +275,7 @@ namespace MAMBrowser.BLL
                     .SetUserId(userId)
                     .Build();
             var result = _dao_del.DeleteAudioFileAndMoveToTrash(param);
-            _dbLogger.InfoAsync(systemCd, userId, $"소재 삭제 MIROS 휴지통 Move (수동) - {audioClipId}", null);
+            _dbLogger.InfoAsync(systemCd, userId, $"소재 삭제 -> MIROS 휴지통 : 파일 Move, DB Move (수동) - {audioClipId}", null);
 
             return result;
         }
@@ -268,7 +285,7 @@ namespace MAMBrowser.BLL
                 .SetAudioClipid(audioClipId)
                 .Build();
             var result = _dao_del.ImmediateDeleteAudioFile(param);
-            _dbLogger.InfoAsync(systemCd, userId, $"소재 삭제 File Delete (수동) - {audioClipId}", null);
+            _dbLogger.InfoAsync(systemCd, userId, $"소재 삭제 DB 삭제 (수동) - {audioClipId}", null);
             return result;
         }
         private bool DeleteRecycleData(string audioClipId,string systemCd, string userId)
@@ -277,7 +294,7 @@ namespace MAMBrowser.BLL
                 .SetAudioClipid(audioClipId)
                 .Build();
             var result = _dao_del.DeleteRecycle(param);
-            _dbLogger.InfoAsync(systemCd, userId, $"MIROS 휴지통 File Delete (수동) - {audioClipId}", null);
+            _dbLogger.InfoAsync(systemCd, userId, $"MIROS 휴지통 DB 삭제 (수동) - {audioClipId}", null);
             return result;
         }
         #endregion

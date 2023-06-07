@@ -6,6 +6,7 @@
       :fields="fields"
       :is-loading="isLoading"
       :config-actions="['add', 'delete', 'modify']"
+      del-name="personid"
       :add-btn-name="addBtnName"
       :filter-fileds="searchField"
       :placeholder-text="placeholderText"
@@ -87,7 +88,7 @@ export default {
           tdClass: "text-center",
         },
         {
-          key: "departmant",
+          key: "department",
           label: "소속부서",
           sortable: true,
           thClass: "text-center",
@@ -191,7 +192,6 @@ export default {
           value: "",
           type: "select",
           selectOptions: [],
-          state: null,
         },
         {
           key: "department",
@@ -200,7 +200,6 @@ export default {
           value: "",
           type: "select",
           selectOptions: [],
-          state: null,
         },
         {
           key: "indate",
@@ -268,9 +267,8 @@ export default {
     };
   },
   components: { BasicTable, AddModal, ModifyModal },
-  created() {
+  async created() {
     this.getData();
-    this.getItemOptions();
   },
   methods: {
     getData() {
@@ -313,8 +311,11 @@ export default {
           const options = res.data.resultObject;
           Object.keys(options).forEach((key) => {
             this.items.forEach((item) => {
-              if (item.key === key) {
-                item.selectOptions = options[key];
+              if (item.key === key && options[key]) {
+                item.selectOptions = [
+                  ...[{ text: "", value: "" }],
+                  ...options[key],
+                ];
               }
             });
           });
@@ -329,7 +330,8 @@ export default {
         }
       });
     },
-    setAddItems() {
+    async setAddItems() {
+      await this.getItemOptions();
       this.addItems = _.cloneDeep(this.items);
       this.addItems.forEach((ele) => {
         if (ele.key === "indate") {
@@ -337,10 +339,11 @@ export default {
         }
       });
     },
-    setModifyItems(rowData) {
+    async setModifyItems(rowData) {
+      await this.getItemOptions();
       this.modifyItems = _.cloneDeep(this.items);
       Object.keys(rowData).forEach((ele) => {
-        this.modifyItems.forEach((item) => {
+        this.modifyItems.forEach(async (item) => {
           if (item.key === ele) {
             if (item.key === "indate") {
               item.value = this.inDateSet(rowData["indate"], "YYYY-MM-DD");
@@ -353,6 +356,16 @@ export default {
           }
         });
       });
+      const devItem = this.modifyItems.find((item) => item.key === "devision");
+      if (devItem) {
+        const deptItem = this.modifyItems.find(
+          (item) => item.key === "department"
+        );
+        deptItem.selectOptions = [
+          ...[{ text: "", value: "" }],
+          ...(await this.getDptNameOptions(devItem.value)),
+        ];
+      }
     },
     async openAddPopup() {
       await this.setAddItems();
@@ -393,10 +406,12 @@ export default {
       if (item.key === "devision") {
         const dptItem = items_copy.find((item) => item.key === "department");
 
-        const options = await this.getDptNameOptions(text);
+        const options = [
+          ...[{ text: "", value: "" }],
+          ...(await this.getDptNameOptions(text)),
+        ];
         dptItem.selectOptions = options;
-        console.log(options);
-        console.log(dptItem);
+        dptItem.editedVal = "";
       }
     },
     onModifyOk(editVal) {

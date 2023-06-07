@@ -454,6 +454,33 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
+
+        public static List<MasSpotFileDTO> Converting(this List<MasSpotFileEntity> entitys)
+        {
+            var result = new List<MasSpotFileDTO>();
+            foreach (var entity in entitys)
+            {
+                BaseFileDTO baseItem = SetBaseFileDTO(entity);
+                MasSpotFileDTO item = new MasSpotFileDTO()
+                {
+                    AUDIOCLIPID = baseItem.AUDIOCLIPID,
+                    NAME = baseItem.NAME,
+                    MASTERFILE = baseItem.MASTERFILE,
+                    MASTERTIME = baseItem.MASTERTIME,
+                    EDITTIME = baseItem.EDITTIME,
+                    EDITFILE = baseItem.EDITFILE,
+                    ENERGYFILE = baseItem.ENERGYFILE,
+                    CALLFILE = baseItem.CALLFILE,
+                    EDITOR = baseItem.EDITOR
+                };
+                item.ENDDATE = entity.ENDDATE != null
+                    ? DateTime.ParseExact(entity.ENDDATE, "yyyyMMdd", CultureInfo.InvariantCulture)
+                    : default(DateTime);
+                result.Add(item);
+            }
+            return result;
+        }
+
         public static List<RecycleDTO> Converting(this List<RecycleEntity> entitys)
         {
             var result = new List<RecycleDTO>();

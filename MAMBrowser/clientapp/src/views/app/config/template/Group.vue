@@ -6,6 +6,7 @@
       :fields="fields"
       :is-loading="isLoading"
       :config-actions="['add', 'delete', 'modify']"
+      del-name="role"
       :add-btn-name="addBtnName"
       @modifyConfigRowData="onModifyConfigRowData"
       @deleteOk="onDeleteOk"

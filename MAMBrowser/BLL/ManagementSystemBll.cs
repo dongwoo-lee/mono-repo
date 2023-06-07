@@ -72,9 +72,9 @@ namespace MAMBrowser.BLL
         {
             return _dao_code.GetRptCodeList().Converting();
         }
-        public List<AudioCodeDTO> GetAudioCodeList() 
+        public List<AudioCodeDTO> GetAudioCodeList(string revocationExcept) 
         {
-            return _dao_code.GetAudioCodeList().Converting();
+            return _dao_code.GetAudioCodeList(revocationExcept).Converting();
         }
         public List<FillerCodeDTO> GetFillerCodeList() 
         {

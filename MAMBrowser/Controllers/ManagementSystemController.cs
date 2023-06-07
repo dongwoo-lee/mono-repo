@@ -270,12 +270,12 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpPost("GetAudioCode")]
-        public DTO_RESULT<List<AudioCodeDTO>> GetAudioCode()
+        public DTO_RESULT<List<AudioCodeDTO>> GetAudioCode([FromBody] string revocationExcept)
         {
             DTO_RESULT<List<AudioCodeDTO>> result = new DTO_RESULT<List<AudioCodeDTO>>();
             try
             {
-                result.ResultObject = _bll.GetAudioCodeList();
+                result.ResultObject = _bll.GetAudioCodeList(revocationExcept);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

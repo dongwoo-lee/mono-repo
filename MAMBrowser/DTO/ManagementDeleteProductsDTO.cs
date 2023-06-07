@@ -42,6 +42,10 @@ namespace MAMBrowser.DTO
         {
             public DateTime LASTONAIRDATE { get; set; }
         }
+        public class MasSpotFileDTO : BaseFileDTO
+        {
+            public DateTime ENDDATE { get; set; }
+        }
 
         public class RecycleDTO
         {

@@ -13,7 +13,7 @@
             <b-tabs content-class="mt-3" fill>
               <b-tab title="소재 삭제" @click="onTab('delete-source')" active />
               <b-tab title="MIROS 휴지통" @click="onTab('trash-miros')" />
-              <b-tab title="자동 삭제 규칙" @click="onTab('auto-remove')" />
+              <b-tab title="삭제 로그" @click="onTab('auto-remove')" />
               <component :is="tabName"></component>
             </b-tabs>
           </b-container>

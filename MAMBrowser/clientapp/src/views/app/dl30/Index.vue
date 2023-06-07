@@ -71,16 +71,16 @@
       <template slot="form-btn-area">
         <span>
           ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'
-          {{ deleteCycleItem.mydiskDelCycleMonth }}일
+          {{ deleteCycleItem.mydiskDelCycleMonth }}개월
           {{
             inDateSet(
-              new Date().setDate(
-                new Date().getDate() - deleteCycleItem.mydiskDelCycleMonth
+              new Date().setMonth(
+                new Date().getMonth() - deleteCycleItem.mydiskDelCycleMonth
               ),
               " (YYYY년 MM월 DD일)"
             )
           }}
-          이전 WAV 소재가 삭제됩니다.
+          이전 소재가 삭제됩니다.
         </span>
       </template>
       <!-- 테이블 페이지 -->

@@ -28,6 +28,12 @@
                   :type="item.inputType"
                   @input="onTextInput($event, item)"
                 />
+                <!-- <b-form-feedback
+                  class="edit_popup_validation"
+                  v-if="!item.isState"
+                >
+                  ※{{ feedBackMessage }} 
+                </b-form-feedback> -->
               </b-form-group>
               <div
                 v-if="item.type === 'codename_check'"
@@ -120,6 +126,7 @@
 </template>
 <script>
 import DxButton from "devextreme-vue/button";
+
 export default {
   props: {
     items: {
@@ -142,14 +149,14 @@ export default {
       items_copy: [],
       CheckBoxSelected: [],
       checkBoxOptions: [],
-      invalidFeedback: "테스트중",
+      feedBackMessage: "",
     };
   },
   components: { DxButton },
   methods: {
-    showEditPopup() {
+    async showEditPopup() {
       this.items_copy = _.cloneDeep(this.items);
-      this.clearEditVal();
+      await this.clearEditVal();
     },
     setEditValue() {
       this.items_copy.forEach((ele) => {
@@ -175,11 +182,7 @@ export default {
       this.setEditValue();
       this.$emit("editOk", this.items_copy);
     },
-    async onTextInput(event, item) {
-      // const regex = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
-      // if (regex.test(item.editedVal)) {
-      //   item.editedVal = await item.editedVal.replace(regex, "");
-      // }
+    onTextInput(event, item) {
       this.isNotNull(event, item);
       this.isOtherValidation(event, item);
     },
@@ -187,10 +190,12 @@ export default {
       this.$emit("checkGroupClick", event, item, index);
     },
     isNotNull(text, item) {
-      if (text) {
-        item.isState = null;
-      } else {
-        item.isState = false;
+      if (item.state === "notNull") {
+        if (text) {
+          item.isState = null;
+        } else {
+          item.isState = false;
+        }
       }
       this.$forceUpdate();
     },
@@ -212,5 +217,12 @@ export default {
   color: #dc3545;
   font-size: 14px;
   margin-top: 5px;
+}
+.edit_popup_validation {
+  position: absolute;
+  top: -18px;
+  right: 8px;
+  text-align: end;
+  font-size: xx-small;
 }
 </style>

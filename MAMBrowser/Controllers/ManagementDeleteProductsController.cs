@@ -165,7 +165,22 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
-
+        [HttpPost("GetDelMasSpotList")]
+        public DTO_RESULT<PageListCollectionDTO<MasSpotFileDTO>> GetDelMasSpotList([FromBody] SelectDelProductParamDTO dto)
+        {
+            DTO_RESULT<PageListCollectionDTO<MasSpotFileDTO>> result = new DTO_RESULT<PageListCollectionDTO<MasSpotFileDTO>>();
+            try
+            {
+                result.ResultObject = _bll.GetDelMasSpotFileList(dto);
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return result;
+        }
         #endregion
 
         #region MIROS 휴지통

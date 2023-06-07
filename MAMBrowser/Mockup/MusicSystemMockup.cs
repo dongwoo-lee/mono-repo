@@ -69,6 +69,11 @@ namespace MAMBrowser
             File.Copy(filePath2, target2, true);
         }
 
+        public void LocalDownloadWavAndEgyFromPath(string targetFolder, string sourceFilePath)
+        {
+            _originService.LocalDownloadWavAndEgyFromPath(targetFolder, sourceFilePath);
+        }
+
         public List<string> LocalImageDownload(string targetFolder, string musicToken, string albumToken)
         {
             string filePath = @"\\ad2022-nas\AUDIO-FILE\mbcdata\Music\CDO28190.jpg";

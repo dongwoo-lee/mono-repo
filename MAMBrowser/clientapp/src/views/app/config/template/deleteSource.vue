@@ -199,6 +199,25 @@ export default {
           ],
           selectItemList: ["audioClipItem", "startEndDate"],
         },
+        {
+          key: "masspot",
+          fieldsList: [
+            "selected",
+            "no",
+            "name",
+            "audioclipid",
+            "masterfile",
+            "enddate",
+            "editor",
+            "mastertime",
+            "edittime",
+            "editfile",
+            "energyfile",
+            "callfile",
+            "actions",
+          ],
+          selectItemList: ["audioClipItem", "startEndDate"],
+        },
       ],
       selectMenu: [],
       all_selectMenu: [
@@ -246,6 +265,10 @@ export default {
             {
               value: "song",
               text: "SONG",
+            },
+            {
+              value: "masspot",
+              text: "MASSPOT",
             },
           ],
         },

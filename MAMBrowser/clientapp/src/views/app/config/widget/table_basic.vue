@@ -42,6 +42,7 @@
           >
           </b-form-select>
         </b-form-group>
+        <!-- :maxPeriodMonth="12" -->
         <common-start-end-date-picker
           v-if="item.type === 'startEndDate'"
           :startDate.sync="startDate"
@@ -91,6 +92,18 @@
         <b-button variant="primary default" @click="deleteOptionEvent">
           {{ deleteOptionButtonTitle }}
         </b-button>
+      </b-form-group>
+
+      <b-form-group class="ml-3" v-if="isRevocationExcept">
+        <b-form-checkbox
+          id="checkbox-1"
+          v-model="revocationExceptVal"
+          value="(폐지)"
+          unchecked-value=""
+          @input="onRevocationInput()"
+        >
+          폐지된 프로그램 제외
+        </b-form-checkbox>
       </b-form-group>
     </b-col>
 
@@ -333,6 +346,10 @@ export default {
       type: Number,
       default: 0,
     },
+    isRevocationExcept: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -351,6 +368,7 @@ export default {
       maxLimitDate: null,
       minLimitDate: null,
       overlayVal: false,
+      revocationExceptVal: "(폐지)",
     };
   },
   created() {
@@ -363,6 +381,10 @@ export default {
   },
 
   methods: {
+    onRevocationInput() {
+      this.$emit("revocationInput", this.revocationExceptVal);
+      this.revocationExceptVal = "(폐지)"
+    },
     clearSearchText() {
       this.searchText = "";
     },

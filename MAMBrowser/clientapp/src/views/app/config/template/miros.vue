@@ -6,6 +6,7 @@
       :fields="fields"
       :is-loading="isLoading"
       :config-actions="['add', 'delete', 'modify']"
+      del-name="code"
       :add-btn-name="addBtnName"
       :select-box-menu="selectMenu"
       @modifyConfigRowData="onModifyConfigRowData"

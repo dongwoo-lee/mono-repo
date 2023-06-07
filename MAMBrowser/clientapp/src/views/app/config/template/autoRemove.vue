@@ -85,12 +85,19 @@ export default {
           thStyle: { width: "60px" },
         },
         {
-          key: "systemCode",
-          label: "systemCode",
+          key: "logLevel",
+          label: "logLevel",
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
         },
+        // {
+        //   key: "systemCode",
+        //   label: "systemCode",
+        //   sortable: true,
+        //   thClass: "text-center",
+        //   tdClass: "text-center",
+        // },
         // {
         //   key: "category",
         //   label: "category",
@@ -101,13 +108,6 @@ export default {
         {
           key: "description",
           label: "description",
-          sortable: true,
-          thClass: "text-center",
-          tdClass: "text-center",
-        },
-        {
-          key: "logLevel",
-          label: "logLevel",
           sortable: true,
           thClass: "text-center",
           tdClass: "text-center",
@@ -145,7 +145,7 @@ export default {
           thClass: "text-center",
           tdClass: "text-center",
           formatter: (value, key, item) => {
-            return moment(value).format("YYYY-MM-DD");
+            return moment(value).format("YYYY-MM-DD HH:mm:ss");
           },
         },
       ],
@@ -253,7 +253,19 @@ export default {
         const deleteOpionItem = { ...this.deleteOptionKeyList };
         const optionVal = deleteOptionData.find((data) => data.name === ele);
         deleteOpionItem.key = ele;
-        deleteOpionItem.label = ele;
+        switch (deleteOpionItem.key) {
+          case "DL3_MP3_DEL_CYCLE":
+            deleteOpionItem.label = "DL3 (MAP)";
+            break;
+          case "DL3_WAV_DEL_CYCLE":
+            deleteOpionItem.label = "DL3 (WAV)";
+            break;
+          case "MYDISK_TRASH_DEL_CYCLE":
+            deleteOpionItem.label = "MY 디스크 (휴지통)";
+            break;
+          default:
+            break;
+        }
         deleteOpionItem.value = optionVal.value;
         resultItemList.push(deleteOpionItem);
       });

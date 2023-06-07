@@ -6,12 +6,15 @@
       :fields="fields"
       :is-loading="isLoading"
       :config-actions="['add', 'delete', 'modify']"
+      :del-name="delName"
       :add-btn-name="addBtnName"
       :select-box-menu="selectMenu"
+      :is-revocation-except="isRevocationExcept"
       @modifyConfigRowData="onModifyConfigRowData"
       @deleteOk="onDeleteOk"
       @openAddPopup="openAddPopup"
       @changeSelectBox="onChangeSelectBox"
+      @revocationInput="onRevocationInput"
     />
     <AddModal
       :items="addItems"
@@ -82,10 +85,12 @@ export default {
       selectedProduct: "stsp",
       addBtnName: "코드 추가",
       modifyBtnName: "코드 편집",
+      delName: "codeid",
       addItems: [],
       modifyItems: [],
       dataSource: [],
       isLoading: false,
+      isRevocationExcept: false,
       filter: "",
       all_fields: [
         {
@@ -163,7 +168,7 @@ export default {
 
         {
           key: "creator",
-          label: "생성자",
+          label: "편집자",
           sortable: true,
           sortDirection: "desc",
           thClass: "text-center",
@@ -268,7 +273,7 @@ export default {
         },
         {
           key: "creator",
-          label: "생성자",
+          label: "편집자",
           item: "",
           value: "",
           type: "text",
@@ -307,10 +312,13 @@ export default {
     this.getItemOptions();
   },
   methods: {
-    getData() {
+    getData(revocationExceptVal = "(폐지)") {
       this.isLoading = true;
       this.$http
-        .post(this.get_data_url + this.selectedProduct + "code")
+        .post(
+          this.get_data_url + this.selectedProduct + "code",
+          revocationExceptVal
+        )
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
             const cols = ["no", ...Object.keys(res.data.resultObject[0])];
@@ -432,6 +440,18 @@ export default {
     },
     onChangeSelectBox(event, item) {
       this.selectedProduct = event;
+      if (event === "songs") {
+        this.delName = "mcodeid";
+      } else if (event === "spot") {
+        this.delName = "spotid";
+      } else {
+        this.delName = "codeid";
+      }
+      if (event === "audio") {
+        this.isRevocationExcept = true;
+      } else {
+        this.isRevocationExcept = false;
+      }
       this.getData();
     },
     async onDeleteOk(rowData) {
@@ -506,6 +526,9 @@ export default {
             this.$fn.notify("server-error", { message: "추가 에러" });
           }
         });
+    },
+    onRevocationInput(value) {
+      this.getData(value);
     },
   },
 };
