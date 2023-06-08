@@ -314,7 +314,7 @@ export default {
   opacity: 0.8;
 }
 .config_btn {
-  padding: 1px 10px;
+  padding: 1px 10px !important;
   margin: 0px 5px;
 }
 </style>
