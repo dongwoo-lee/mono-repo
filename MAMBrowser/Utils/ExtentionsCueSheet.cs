@@ -1078,7 +1078,7 @@ namespace MAMBrowser.Utils
                     result = "SS";
                     break;
                 case "S01G01C015":
-                    result = "SS";
+                    result = "AC";
                     break;
                 case "S01G01C007":
                     result = "";
