@@ -1,4 +1,4 @@
-﻿using M30_ManagementDAO.Entity;
+﻿using M30_ManagementControlDAO.Entity;
 using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;

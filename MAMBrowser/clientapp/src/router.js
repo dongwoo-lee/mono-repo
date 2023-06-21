@@ -166,8 +166,26 @@ const routes = [
       {
         // DL3.0
         name: "dl30",
-        path: "dl30",
+        path: "monitoring/dl30",
         component: () => import("./views/app/dl30/Index")
+      },
+      {
+        // 송출리스트
+        name: "broadcastList",
+        path: "monitoring/broadcastList",
+        component: () => import("./views/app/broadcastList/Index")
+      },
+      {
+        // 스튜디오
+        name: "studio",
+        path: "monitoring/studio",
+        component: () => import("./views/app/studio/Index")
+      },
+      {
+        // 프로그램
+        name: "programInfo",
+        path: "monitoring/programInfo",
+        component: () => import("./views/app/programInfo/Index")
       },
       /**
       * CueSheet

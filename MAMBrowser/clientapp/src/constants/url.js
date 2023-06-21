@@ -74,6 +74,7 @@ const url = [
         to: "/app/music/songcache",
         icon: "iconsminds-clef",
     },
+
     {
         // 광고
         id: "S01G01C004",
@@ -139,9 +140,32 @@ const url = [
         icon: "iconsminds-notepad",
     },
     {
-        // DL3.0
+        // 아카이브 (DL)
         id: "S01G01C006",
-        to: "/app/dl30",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // DL3
+        id: "S01G01C033",
+        to: "/app/monitoring/dl30",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // 송출리스트
+        id: "S01G01C034",
+        to: "/app/monitoring/broadcastList",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // 스튜디오
+        id: "S01G01C035",
+        to: "/app/monitoring/studio",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // 프로그램
+        id: "S01G01C036",
+        to: "/app/monitoring/programInfo",
         icon: "iconsminds-big-data",
     },
     {

@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
-using M30_ManagementDAO.Entity;
 using MAMBrowser.DTO;
 using M30.AudioFile.Common.DTO;
 using M30.AudioFile.Common;
 using static MAMBrowser.DTO.ManagementSystemDTO;
-using M30_ManagementDAO.ParamEntity;
 
 namespace MAMBrowser.Controllers
 {

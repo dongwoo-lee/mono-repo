@@ -26,9 +26,9 @@ using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.Hubs;
 using MAMBrowser.Workers;
-using M30_ManagementDAO;
-using M30_ManagementDAO.Interfaces;
-using M30_ManagementDAO.DAO;
+using M30_ManagementControlDAO;
+using M30_ManagementControlDAO.Interfaces;
+using M30_ManagementControlDAO.DAO;
 
 namespace MAMBrowser
 {
@@ -156,8 +156,9 @@ namespace MAMBrowser
             services.AddTransient<ICodeManagementDAO, CodeManagementDAO>();
             services.AddTransient<IMirosManagementDAO, MirosManagementDAO>();
             services.AddTransient<IDelManagementDAO,DelManagementDAO>();
+            services.AddTransient<ITransMissionListDAO,TransMissionListDAO>();
             services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
-            ManagementSqlSession.ConnectionString = AppSetting.ConnectionString;
+            ManagementControlSqlSession.ConnectionString = AppSetting.ConnectionString;
             MAMWebFactory.Instance.Setting(AppSetting.ConnectionString);
 
             services.AddTransient<WebServerFileHelper>();
@@ -186,9 +187,11 @@ namespace MAMBrowser
             services.AddTransient<ArchiveCueSheetBll>();
             services.AddTransient<CueAttachmentsBll>();
 
-            services.AddTransient<ManagementSqlSession>();
+            services.AddTransient<ManagementControlSqlSession>();
             services.AddTransient<ManagementSystemBll>();
             services.AddTransient<ManagementDeleteProductsBll>();
+
+            services.AddTransient<TransMissionListBll>();
 
             //���� ���
             services.AddScoped<IUserService, UserService>();
