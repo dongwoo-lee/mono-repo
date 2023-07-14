@@ -26,6 +26,11 @@
           <slot name="rowNO" :props="props"></slot>
         </div>
       </template>
+      <template slot="productID" scope="props">
+        <div>
+          <slot name="productID" :props="props"></slot>
+        </div>
+      </template>
       <template v-if="isActionsSlot" slot="actions" scope="props">
         <div class="table-button-container">
           <slot name="actions" :props="props"></slot>

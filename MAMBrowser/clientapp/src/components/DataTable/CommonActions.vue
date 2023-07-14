@@ -113,6 +113,81 @@
     >
       삭제</b-button
     >
+    <span id="broadcast_btn">
+      <b-dropdown
+        v-if="isBroadcastConfigAction"
+        :disabled="!isDropdownStatus(rowData)"
+      >
+        <template #button-content> 미리듣기 </template>
+        <b-dropdown-item
+          v-if="rowData.pgmfilepath"
+          @click.stop="onPreview('pgm')"
+          >PGM</b-dropdown-item
+        >
+        <b-dropdown-item v-if="rowData.dlfilepatH_1" @click="onPreview('dl_1')"
+          >DL (주)</b-dropdown-item
+        >
+        <b-dropdown-item v-if="rowData.dlfilepatH_2" @click="onPreview('dl_2')"
+          >DL (예비)</b-dropdown-item
+        >
+      </b-dropdown>
+      <b-dropdown
+        v-if="isBroadcastConfigAction"
+        :disabled="!isDropdownStatus(rowData)"
+      >
+        <template #button-content>
+          다운로드
+          <!-- <b-icon icon="play"></b-icon> -->
+        </template>
+        <b-dropdown-item
+          v-if="rowData.pgmfilepath"
+          @click="
+            downloadFileAction(rowData.pgmfilepath, 'PGM_' + rowData.eventname)
+          "
+          >PGM</b-dropdown-item
+        >
+        <b-dropdown-item
+          v-if="rowData.dlfilepatH_1"
+          @click="
+            downloadFileAction(
+              rowData.dlfilepatH_1,
+              'DL_주' + rowData.eventname
+            )
+          "
+          >DL (주)</b-dropdown-item
+        >
+        <b-dropdown-item
+          v-if="rowData.dlfilepatH_2"
+          @click="
+            downloadFileAction(
+              rowData.dlfilepatH_2,
+              'DL_예비' + rowData.eventname
+            )
+          "
+          >DL (예비)</b-dropdown-item
+        >
+      </b-dropdown>
+      <b-button
+        v-if="isBroadcastConfigAction"
+        :disabled="!rowData.cueid"
+        variant="outline-primary"
+        size="sm"
+        title="큐시트"
+        @click="getCueListAndData()"
+      >
+        <b-icon icon="receipt-cutoff" class="icon"></b-icon
+      ></b-button>
+      <b-button
+        v-if="isBroadcastConfigAction"
+        :disabled="!rowData.sourceid"
+        variant="outline-primary"
+        size="sm"
+        title="선곡리스트"
+        @click="getMusicSelectionList()"
+      >
+        <b-icon icon="music-note-list" class="icon"></b-icon
+      ></b-button>
+    </span>
   </div>
 </template>
 <script>
@@ -126,6 +201,7 @@ import {
   ROUTE_NAMES,
 } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
 export default {
   props: {
     rowData: {
@@ -168,6 +244,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    isBroadcastConfigAction: {
+      type: Boolean,
+      default: false,
+    },
+    broadcastSearchParam: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -193,6 +277,7 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
+    ...mapActions("cueList", ["getcuesheetListArr"]),
     logout() {
       this.SET_LOGOUT();
       this.$router.push("/user/Login");
@@ -226,8 +311,26 @@ export default {
     displayEtc(value) {
       return this.etcData.some((data) => data === value);
     },
-    onPreview() {
-      this.$emit("preview", this.rowData);
+    onPreview(key) {
+      const resultData = { ...this.rowData };
+      switch (key) {
+        case "dl_1":
+          resultData.fileToken = resultData.dlfiletokeN_1;
+          this.$emit("preview", resultData);
+          break;
+        case "dl_2":
+          resultData.fileToken = resultData.dlfiletokeN_2;
+          this.$emit("preview", resultData);
+          break;
+        case "pgm":
+          resultData.fileToken = resultData.pgmfiletoken;
+          this.$emit("preview", resultData);
+          break;
+
+        default:
+          this.$emit("preview", this.rowData);
+          break;
+      }
     },
     onDownload() {
       this.$emit("download", this.rowData, this.downloadName);
@@ -296,6 +399,49 @@ export default {
     downloadConfigRowData() {
       this.$emit("downloadConfigRowData", this.rowData);
     },
+    downloadFileAction(filePath, fileName) {
+      this.$http
+        .get(
+          `/api/managementdeleteproducts/RecycleFileDownload?guid=${filePath}&userid=${sessionStorage.getItem(
+            USER_ID
+          )}&downloadName=${fileName}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            const link = document.createElement("a");
+            link.href = `/api/managementdeleteproducts/RecycleFileDownload?guid=${filePath}&userid=${sessionStorage.getItem(
+              USER_ID
+            )}&downloadName=${fileName}`;
+            document.body.appendChild(link);
+            link.click();
+          }
+        });
+    },
+    async getCueListAndData() {
+      const params = {
+        brd_dt: this.broadcastSearchParam.brdDate,
+        products: [this.rowData.productid],
+        row_per_page: 30,
+        select_page: 1,
+        media: this.broadcastSearchParam.media,
+      };
+      const cuesheetData = await this.getcuesheetListArr(params);
+      if (cuesheetData.data.resultObject.data.length == 1) {
+        sessionStorage.setItem(
+          "USER_INFO",
+          JSON.stringify(cuesheetData.data.resultObject.data[0])
+        );
+        window.open("/app/cuesheet/day/detail", "_blank");
+      }
+    },
+    isDropdownStatus(rowData) {
+      return (
+        rowData.dlfilepatH_1 || rowData.dlfilepatH_2 || rowData.pgmfilepath
+      );
+    },
+    getMusicSelectionList() {
+      this.$emit("clickMusicSelectionListBtn");
+    },
   },
 };
 </script>
@@ -316,5 +462,12 @@ export default {
 .config_btn {
   padding: 1px 10px !important;
   margin: 0px 5px;
+}
+#broadcast_btn button:disabled:hover {
+  pointer-events: none;
+}
+#broadcast_btn button:disabled {
+  color: #d7d7d7 !important;
+  border-color: #d7d7d7 !important;
 }
 </style>

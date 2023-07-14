@@ -2,151 +2,272 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="스튜디오" />
+        <piaf-breadcrumb heading="스튜디오 정보" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
-    <common-form :searchItems="searchItems" :isDisplayBtnArea="true">
+    <common-form
+      :searchItems="searchItems"
+      :isDisplayBtnArea="true"
+      :isDisplayPageSize="false"
+    >
       <!-- 검색 -->
       <template slot="form-search-area">
+        <!-- 스튜디오 -->
+        <b-form-group label="스튜디오" class="has-float-label">
+          <b-form-select
+            style="width: 100px"
+            v-model="searchItems.studioid"
+            :options="studioInfoOptions"
+            value-field="id"
+            text-field="name"
+            @change="onSearch"
+          />
+        </b-form-group>
         <!-- 방송일 -->
-        <b-form-group label="방송일" class="has-float-label">
-          <common-date-picker required />
+        <b-form-group label="조회일" class="has-float-label">
+          <common-date-picker
+            required
+            v-model="searchItems.brdDate"
+            @changeDatePicker="changeDate"
+          />
         </b-form-group>
-        <!-- 매체 -->
-        <b-form-group label="매체" class="has-float-label">
-          <b-form-select style="width: 100px" v-model="searchItems.media" />
-        </b-form-group>
-        <!-- 검색 버튼 -->
-        <b-form-group>
-          <b-button variant="outline-primary default" @click="onSearch"
-            >검색</b-button
-          >
-        </b-form-group>
-      </template>
-      <!-- 테이블 페이지 -->
-      <template slot="form-table-page-area">
-        {{ getPageInfo() }}
       </template>
       <template slot="form-table-area">
-        <!-- 테이블 -->
-        <common-data-table-scroll-paging
-          ref="scrollPaging"
-          tableHeight="525px"
-          :fields="fields"
-          :rows="responseData.data"
-          :per-page="responseData.rowPerPage"
-          :totalCount="responseData.totalRowCount"
-          is-actions-slot
-          :num-rows-to-bottom="5"
-          :isTableLoading="isTableLoading"
-          @scrollPerPage="onScrollPerPage"
-          @refresh="onRefresh"
+        <DxScheduler
+          :showAllDayPanel="false"
+          :firstDayOfWeek="1"
+          :data-source="dataSource"
+          :current-date="changeFormatStringDate(searchItems.brdDate)"
+          :height="600"
+          :editing="true"
+          current-view="week"
+          startDateExpr="startdate"
+          endDateExpr="enddate"
+          textExpr="description"
+          timeCellTemplate="timeCellTemplate"
+          appointment-template="AppointmentTemplateSlot"
+          dateCellTemplate="dateCellTemplateSlot"
+          :onAppointmentClick="onAppointmentClick"
+          :onAppointmentDblClick="onAppointmentDblClick"
         >
-          <template slot="actions" scope="props">
-            <common-actions :rowData="props.props.rowData"> </common-actions>
+          <DxResource :data-source="resourcesData" field-expr="tdid" />
+          <template #timeCellTemplate="{ data: dataCell }">
+            <div style="font-family: 'MBC 새로움 M'; font-size: small">
+              {{ dataCell.text ? subtractHours(dataCell.text, 7) : "" }}
+            </div>
           </template>
-        </common-data-table-scroll-paging>
+          <template #dateCellTemplateSlot="{ data: dataCell }">
+            <div style="font-family: 'MBC 새로움 M'">
+              {{ dataCell ? subtractWeek(dataCell.date) : "" }}
+            </div>
+          </template>
+          <template #AppointmentTemplateSlot="{ data }">
+            <div class="studio_scheduler_app m-1">
+              <span>
+                <b-badge variant="dark" v-if="data.appointmentData.gubun == '1'"
+                  >L</b-badge
+                >
+                <b-badge
+                  variant="light"
+                  v-if="data.appointmentData.gubun == '2'"
+                  >R</b-badge
+                >
+              </span>
+              <span>
+                {{ data.appointmentData.description }}
+              </span>
+            </div>
+          </template>
+        </DxScheduler>
       </template>
     </common-form>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
+import { mapActions, mapGetters } from "vuex";
+import { DxScheduler, DxResource } from "devextreme-vue/scheduler";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 const moment = require("moment");
+const date = new Date();
+
+function get_date_str(date) {
+  let sYear = date.getFullYear();
+  let sMonth = date.getMonth() + 1;
+  let sDate = date.getDate();
+
+  sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+  sDate = sDate > 9 ? sDate : "0" + sDate;
+
+  return sYear + "" + sMonth + "" + sDate;
+}
+const toDay = get_date_str(date);
 
 export default {
   mixins: [MixinBasicPage],
   data() {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const nextMonth = new Date(today);
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-
     return {
-      date: new Date(),
-      searchItems: {
-        brdDate: null, // 방송일
-        media: "A", // 매체
-        rowPerPage: 30,
-        selectPage: 1,
-      },
-      fields: [
-        {
-          name: "media",
-          title: "매체",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "10%",
-          callback: (value) => {
-            switch (value) {
-              case "A":
-                return "AM";
-              case "F":
-                return "FM";
-              case "D":
-                return "DMB";
-              case "C":
-                return "공통";
-              case "Z":
-                return "기타";
-              default:
-                break;
-            }
-          },
-        },
-        {
-          name: "r_ONAIRTIME",
-          title: "방송예정일",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-          width: "15%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYY-MM-DD'T'HH:mm:ss").format(
-                  "YYYY-MM-DD (ddd)"
-                );
-          },
-        },
-        {
-          name: "r_ONAIRTIME",
-          title: "방송시간",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "15%",
-          callback: (value) => {
-            return value === null
-              ? ""
-              : moment(value, "YYYY-MM-DD'T'HH:mm:ss").format("HH:mm");
-          },
-        },
-        {
-          name: "eventname",
-          title: "프로그램명",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center bold",
-        },
-        {
-          name: "__slot:actions",
-          title: "작업",
-          titleClass: "center aligned text-center",
-          dataClass: "center aligned text-center",
-          width: "10%",
-        },
+      resourcesData: [],
+      dataSource: [
+        // {
+        //   text2: "두시만세",
+        //   gb_name: "김은비",
+        //   gb_empno: "960768",
+        //   startdate: "2023-06-28T05:20:00",
+        //   enddate: "2023-06-28T06:05:00",
+        // },
+        // {
+        //   text: "Customer Workshop",
+        //   startDate: new Date("2023-06-29T07:30"),
+        //   endDate: new Date("2023-06-29T09:00"),
+        // },
       ],
+      searchItems: {
+        brdDate: "2023-06-28T05:20:00",
+        studioid: "01",
+      },
+      studioInfoOptions: [],
     };
   },
   mounted() {
     this.getData();
+    this.getStudioInfoMenu();
+  },
+  components: {
+    DxScheduler,
+    DxResource,
   },
   methods: {
+    test(date) {
+      console.log(date);
+    },
     async getData() {
-      console.log("getData");
+      const [monday, sunday] = this.getWeekDates(this.searchItems.brdDate);
+      const params = {
+        as_from: monday,
+        as_to: sunday,
+        as_stid: this.searchItems.studioid,
+      };
+      const data = await this.getReturnList(params);
+      if (data) {
+        this.dataSource = data.data.resultObject.studioAssigns;
+        this.resourcesData = data.data.resultObject.schedulerResources;
+        this.resourcesData.find((ele) => ele.id == "N").color = "#C8C8C8";
+        this.resourcesData.push({ id: null, color: "#D1DFEC" });
+      }
+    },
+    changeDate(date) {
+      this.searchItems.brdDate = date;
+      this.getData();
+    },
+    getReturnList(params) {
+      const url = "/api/studio/GetSudioAssignList";
+      return this.$http.get(url, params).then((res) => {
+        if (res.status === 200 && res.data.resultObject) {
+          res.data.resultObject.studioAssigns.forEach((ele) => {
+            ele.startdate = this.subtractDate(ele.startdate, 5);
+            ele.enddate = this.subtractDate(ele.enddate, 5);
+          });
+          return res;
+        }
+      });
+    },
+    subtractDate(dateTimeString, hours) {
+      const formattedDateTimeString = moment(dateTimeString)
+        .subtract(hours, "hours")
+        .format("YYYY-MM-DDTHH:mm:ss");
+      return formattedDateTimeString;
+    },
+    subtractHours(timeString, hours) {
+      const formattedTime = moment(timeString, "h:mm A")
+        .subtract(hours, "hours")
+        .format("h:mm A");
+      return formattedTime;
+    },
+    subtractWeek(dateString) {
+      const momentDate = moment(dateString, "ddd MMM D YYYY HH:mm:ss [GMT]ZZ");
+
+      if (!momentDate.isValid()) {
+        return ""; // 유효하지 않은 날짜인 경우 빈 문자열 반환 또는 원하는 에러 처리를 수행
+      }
+
+      const convertedDateString = momentDate
+        .format("ddd D")
+        .replace("Fri", "금")
+        .replace("Sat", "토")
+        .replace("Sun", "일")
+        .replace("Mon", "월")
+        .replace("Tue", "화")
+        .replace("Wed", "수")
+        .replace("Thu", "목");
+      console.log(convertedDateString);
+      return convertedDateString;
+    },
+    getStudioInfoMenu() {
+      const url = "/api/studio/GetSudioInfoMenu";
+      this.$http.get(url).then((res) => {
+        if (res.status === 200 && res.data.resultObject) {
+          this.studioInfoOptions = res.data.resultObject.data;
+        }
+      });
+    },
+    getWeekDates(dateString) {
+      const year = dateString.substring(0, 4);
+      const month = dateString.substring(4, 6) - 1; // 월은 0부터 시작하므로 1을 뺌
+      const day = dateString.substring(6);
+      const date = new Date(year, month, day);
+      const firstDayOfWeek = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate() - date.getDay() + 1
+      ); // 해당 주의 월요일
+
+      const monday = this.formatDate(firstDayOfWeek); // 월요일 날짜
+      const sunday = this.formatDate(
+        new Date(
+          firstDayOfWeek.getFullYear(),
+          firstDayOfWeek.getMonth(),
+          firstDayOfWeek.getDate() + 6
+        )
+      ); // 일요일 날짜
+
+      return [monday, sunday];
+    },
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return year + month + day;
+    },
+    changeFormatStringDate(date) {
+      return (
+        date.substring(0, 4) +
+        "-" +
+        date.substring(4, 6) +
+        "-" +
+        date.substring(6)
+      );
+    },
+    onAppointmentClick(e) {
+      e.cancel = true;
+    },
+    onAppointmentDblClick(e) {
+      e.cancel = true;
     },
   },
 };
 </script>
+<style>
+.dx-scheduler-header {
+  display: none;
+}
+.dx-scheduler-container {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+.studio_scheduler_app {
+  color: black;
+  font-family: "MBC 새로움 M";
+}
+</style>

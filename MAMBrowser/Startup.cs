@@ -29,6 +29,7 @@ using MAMBrowser.Workers;
 using M30_ManagementControlDAO;
 using M30_ManagementControlDAO.Interfaces;
 using M30_ManagementControlDAO.DAO;
+using M30_ManagementControlDAO.WebService;
 
 namespace MAMBrowser
 {
@@ -157,6 +158,7 @@ namespace MAMBrowser
             services.AddTransient<IMirosManagementDAO, MirosManagementDAO>();
             services.AddTransient<IDelManagementDAO,DelManagementDAO>();
             services.AddTransient<ITransMissionListDAO,TransMissionListDAO>();
+            services.AddTransient<IStudioInfomationDAO,StudioInfomationDAO>();
             services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
             ManagementControlSqlSession.ConnectionString = AppSetting.ConnectionString;
             MAMWebFactory.Instance.Setting(AppSetting.ConnectionString);
@@ -192,6 +194,7 @@ namespace MAMBrowser
             services.AddTransient<ManagementDeleteProductsBll>();
 
             services.AddTransient<TransMissionListBll>();
+            services.AddTransient<StudioBll>();
 
             //���� ���
             services.AddScoped<IUserService, UserService>();
@@ -205,6 +208,13 @@ namespace MAMBrowser
                 var storage = storagesSection.Get<ExternalStorage>();
                 var logger = serviceProvider.GetRequiredService<ILogger<MusicWebService>>();
                 return new MusicWebService(storage, logger, Startup.AppSetting.ExpireMusicTokenHour);
+            });
+            services.AddTransient<StudioWebService>(serviceProvider => 
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:External:StudioConnection");
+                var storage = storagesSection.Get<ExternalConnectionInfo>();
+                var logger = serviceProvider.GetRequiredService<ILogger<StudioWebService>>();
+                return new StudioWebService(storage, logger);
             });
             services.AddTransient(serviceProvider =>
             {

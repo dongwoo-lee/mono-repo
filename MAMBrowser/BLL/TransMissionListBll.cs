@@ -1,8 +1,10 @@
-﻿using M30_ManagementControlDAO.DAO;
+﻿using M30.AudioFile.Common;
+using M30_ManagementControlDAO.DAO;
 using M30_ManagementControlDAO.Interfaces;
 using M30_ManagementControlDAO.ParamEntity;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
+using System;
 using System.Collections.Generic;
 using static DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper;
 
@@ -21,6 +23,7 @@ namespace MAMBrowser.BLL
             var param = new TransMissionListParamBuilder()
                 .SetBrdDate(dto.brddate)
                 .SetMedia(dto.media)
+                .SetProductType(dto.producttype)
                 .SetRowPage(dto.RowPerPage)
                 .SetSelectPage(dto.SelectPage)
                 .Build();
@@ -31,6 +34,16 @@ namespace MAMBrowser.BLL
             result.TotalRowCount = data.TotalCount;
             result.Data = data.DataList?.Converting();
             return result;
+        }
+        public List<ProgramInfomationDTO> GetProgramInfomationList(ProgramInfoParamDTO dto)
+        {
+            var param = new ProgramInfomationParamBuilder()
+                .SetBrdDate(dto.brddate)
+                .SetMedia(dto.media)
+                .SetPgmCode(dto.pgmcode)
+                .Build();
+
+            return null;
 
         }
     }
