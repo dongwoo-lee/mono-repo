@@ -80,11 +80,14 @@
               >
             </div>
           </template>
-          <template slot="studioId" scope="props">
+          <template slot="studioName" scope="props">
             <div>
-              <a href="#" v-if="props.props.rowData.studioid">{{
-                props.props.rowData.mainmachine
-              }}</a>
+              <a
+                href="#"
+                v-if="props.props.rowData.studioname"
+                @click="goStudioInfo(props.props.rowData)"
+                >{{ props.props.rowData.mainmachine }}</a
+              >
               <span v-else>{{ props.props.rowData.mainmachine }}</span>
             </div>
           </template>
@@ -189,16 +192,14 @@ export default {
         //   width: "6%",
         // },
         {
-          name: "__slot:studioId",
-          // name: "mainmachine",
+          name: "__slot:studioName",
           title: "메인소스",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%",
         },
         {
-          // name: "__slot:studioId",
-          name: "studioid",
+          name: "studioname",
           title: "스튜디오ID",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
@@ -380,8 +381,24 @@ export default {
       this.$bvModal.show(this.modalId);
     },
     goProgramInfo(rowData) {
-      console.log(rowData);
-      // window.open("/app/monitoring/programInfo", "_blank");
+      window.open(
+        "/app/monitoring/programInfo?brdDate=" +
+          this.searchItems.brdDate +
+          "&media=" +
+          this.searchItems.media +
+          "&pgmcode=" +
+          rowData.pgmcode,
+        "_blank"
+      );
+    },
+    goStudioInfo(rowData) {
+      window.open(
+        "/app/monitoring/studio?brdDate=" +
+          this.searchItems.brdDate +
+          "&studioname=" +
+          rowData.studioname,
+        "_blank"
+      );
     },
   },
 };

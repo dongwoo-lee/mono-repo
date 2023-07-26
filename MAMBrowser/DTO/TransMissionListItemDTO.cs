@@ -6,7 +6,7 @@ namespace MAMBrowser.DTO
     {
         public int ROWNO { get; set; }
         public string MAINMACHINE { get; set; }
-        public string STUDIOID { get; set; }
+        public string STUDIONAME { get; set; }
         public string TDNAME { get; set; }
         public int SEQNUM { get; set; }
         public string PRODUCTID { get; set; }

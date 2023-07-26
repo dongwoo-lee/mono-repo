@@ -36,9 +36,9 @@
           <slot name="programName" :props="props"></slot>
         </div>
       </template>
-      <template slot="studioId" scope="props">
+      <template slot="studioName" scope="props">
         <div>
-          <slot name="studioId" :props="props"></slot>
+          <slot name="studioName" :props="props"></slot>
         </div>
       </template>
       <template v-if="isActionsSlot" slot="actions" scope="props">

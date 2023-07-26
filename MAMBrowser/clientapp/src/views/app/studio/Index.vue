@@ -135,9 +135,18 @@ export default {
       studioInfoOptions: [],
     };
   },
-  mounted() {
-    this.getData();
-    this.getStudioInfoMenu();
+  async mounted() {
+    const queryParams = this.$route.query;
+    const isQuery = queryParams.brdDate && queryParams.studioname;
+    await this.getStudioInfoMenu();
+    if (isQuery) {
+      this.searchItems.brdDate = queryParams.brdDate;
+      const studioOptionItem = this.studioInfoOptions.find(
+        (item) => item.name === queryParams.studioname
+      );
+      this.searchItems.studioid = studioOptionItem.id;
+    }
+    await this.getData();
   },
   components: {
     DxScheduler,
@@ -219,9 +228,9 @@ export default {
       const dayOfWeek = momentDate.day();
       return dayOfWeek === 0 || dayOfWeek === 6; // 0: 일요일(Sunday), 6: 토요일(Saturday)
     },
-    getStudioInfoMenu() {
+    async getStudioInfoMenu() {
       const url = "/api/studioInfomation/GetSudioInfoMenu";
-      this.$http.get(url).then((res) => {
+      await this.$http.get(url).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
           this.studioInfoOptions = res.data.resultObject.data;
         }

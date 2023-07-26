@@ -16,45 +16,6 @@ namespace MAMBrowser.Utils
 {
     public static class ExtentionsControl
     {
-        public static List<TransMissionListItemDTO> Converting(this List<TransMissionEntity> entitys)
-        {
-            var result = new List<TransMissionListItemDTO>();
-            var index = 1;
-            foreach (var entity in entitys)
-            {
-                var item = new TransMissionListItemDTO();
-                item.ROWNO = index;
-                item.MAINMACHINE = entity.MAINMACHINE;
-                item.SEQNUM = entity.SEQNUM;
-                item.PRODUCTID = entity.PRODUCTID;
-                item.PRODUCTTYPE = entity.PRODUCTTYPE;
-                item.EVENTMODF = entity.EVENTMODF;
-                item.SOURCEID = entity.SOURCEID;
-                item.ONAIRTIME = entity.ONAIRTIME;
-                item.DURATION = entity.DURATION;
-                item.EVENTNAME = entity.EVENTNAME;
-                item.DLFILEPATH_1 = entity.DLFILEPATH_1;
-                if (!string.IsNullOrEmpty(item.DLFILEPATH_1))
-                {
-                    item.DLFILETOKEN_1 = TokenGenerator.GenerateFileToken(item.DLFILEPATH_1);
-                }
-                item.DLFILEPATH_2 = entity.DLFILEPATH_2;
-                if (!string.IsNullOrEmpty(item.DLFILEPATH_2))
-                {
-                    item.DLFILETOKEN_2 = TokenGenerator.GenerateFileToken(item.DLFILEPATH_2);
-                }
-                item.PGMFILEPATH = entity.PGMFILEPATH;
-                if (!string.IsNullOrEmpty(item.PGMFILEPATH))
-                {
-                    item.PGMFILETOKEN = TokenGenerator.GenerateFileToken(item.PGMFILEPATH);
-                }
-                item.CUEID = entity.CUEID;
-                result.Add(item);
-                index++;
-            }
-            return result;
-        }
-
         public static List<TransMissionListItemDTO> Converting(this List<TransMissionEntity> entitys, StudioAssignListEntity studioAssigns)
         {
             var result = new List<TransMissionListItemDTO>();
@@ -66,7 +27,8 @@ namespace MAMBrowser.Utils
                 item.MAINMACHINE = entity.MAINMACHINE;
                 item.SEQNUM = entity.SEQNUM;
                 item.PRODUCTID = entity.PRODUCTID;
-                item.STUDIOID = entity.MAPI_STNAME;
+                item.PGMCODE = entity.PGMCODE;
+                item.STUDIONAME = entity.MAPI_STNAME;
                 item.PRODUCTTYPE = entity.PRODUCTTYPE;
                 item.EVENTMODF= entity.EVENTMODF;
                 item.SOURCEID = entity.SOURCEID;

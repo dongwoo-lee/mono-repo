@@ -179,13 +179,15 @@ const routes = [
         // 스튜디오
         name: "studio",
         path: "monitoring/studio",
-        component: () => import("./views/app/studio/Index")
+        component: () => import("./views/app/studio/Index"),
+        props: true
       },
       {
         // 프로그램
         name: "programInfo",
         path: "monitoring/programInfo",
-        component: () => import("./views/app/programInfo/Index")
+        component: () => import("./views/app/programInfo/Index"),
+        props: true
       },
       /**
       * CueSheet

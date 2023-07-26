@@ -228,6 +228,10 @@ export default {
     };
   },
   async mounted() {
+    const queryParams = this.$route.query;
+    const isQuery =
+      queryParams.brdDate && queryParams.pgmcode && queryParams.media;
+
     this.toDay = await this.GetDateString(this.date);
     const param = {
       person: null,
@@ -246,7 +250,13 @@ export default {
     this.mediaOptions = this.mediaOptions.filter((ele) => ele.value !== "");
     this.programOptions = this.programOptions.filter((ele) => ele.value !== "");
 
-    // await this.setNowPgmcode();
+    if (isQuery) {
+      this.searchItems.brdDate = queryParams.brdDate;
+      this.searchItems.media = queryParams.media;
+      this.searchItems.pgmcode = queryParams.pgmcode;
+    } else {
+      await this.setNowPgmcode();
+    }
     await this.getData();
   },
   methods: {
@@ -275,7 +285,6 @@ export default {
       const url = "/api/programInfomation/getprogramInfo";
       return this.$http.post(url, params).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
-          console.log(res);
           return res;
         }
       });
