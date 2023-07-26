@@ -158,6 +158,7 @@ namespace MAMBrowser
             services.AddTransient<IMirosManagementDAO, MirosManagementDAO>();
             services.AddTransient<IDelManagementDAO,DelManagementDAO>();
             services.AddTransient<ITransMissionListDAO,TransMissionListDAO>();
+            services.AddTransient<IProgramInfomationDAO, ProgramInfomationDAO>();
             services.AddTransient<IStudioInfomationDAO,StudioInfomationDAO>();
             services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
             ManagementControlSqlSession.ConnectionString = AppSetting.ConnectionString;
@@ -194,7 +195,8 @@ namespace MAMBrowser
             services.AddTransient<ManagementDeleteProductsBll>();
 
             services.AddTransient<TransMissionListBll>();
-            services.AddTransient<StudioBll>();
+            services.AddTransient<ProgramInfomationBll>();
+            services.AddTransient<StudioInfomationBll>();
 
             //���� ���
             services.AddScoped<IUserService, UserService>();

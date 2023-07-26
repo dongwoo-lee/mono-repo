@@ -90,13 +90,12 @@ export default {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const nextMonth = new Date(today);
     nextMonth.setMonth(nextMonth.getMonth() + 1);
-    console.info("nextMonth", nextMonth);
 
     return {
       maxDate: nextMonth,
       minDate: new Date(2022, 11 - 1, 1),
       date: new Date(),
-      pramObj: { person: null, brd_dt: null, media: null },
+      pramObj: { person: null, brd_dt: null, media: null, pgmcode: "NEW" },
       pgmList: [],
       programOptions: [],
       mediaOptions: [],
@@ -199,6 +198,7 @@ export default {
         this.SetProductIds(this.pgmList),
       ]);
     this.getData();
+    console.log("day", this.pgmList);
   },
   methods: {
     ...mapActions("cueList", ["GetDateString"]),

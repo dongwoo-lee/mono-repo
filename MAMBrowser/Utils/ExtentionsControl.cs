@@ -9,6 +9,8 @@ using System.Threading;
 using DevExpress.Data.Filtering.Helpers;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Web.WebPages;
+using static DevExpress.Xpo.DB.DataStoreLongrunnersWatch;
 
 namespace MAMBrowser.Utils
 {
@@ -26,6 +28,7 @@ namespace MAMBrowser.Utils
                 item.SEQNUM = entity.SEQNUM;
                 item.PRODUCTID = entity.PRODUCTID;
                 item.PRODUCTTYPE = entity.PRODUCTTYPE;
+                item.EVENTMODF = entity.EVENTMODF;
                 item.SOURCEID = entity.SOURCEID;
                 item.ONAIRTIME = entity.ONAIRTIME;
                 item.DURATION = entity.DURATION;
@@ -51,27 +54,105 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
-        public static ProgramInfomationDTO Converting(this List<ProgramInfomationEntity> entitys)
+
+        public static List<TransMissionListItemDTO> Converting(this List<TransMissionEntity> entitys, StudioAssignListEntity studioAssigns)
         {
-            //var result = new List<ProgramInfomationDTO>();
-            //foreach (var entity in entitys)
-            //{
-            //    var item = new ProgramInfomationDTO();
-            //    item.MAINMACHINE = entity.MAINMACHINE;
-            //    item.SEQNUM = entity.SEQNUM;
-            //    item.PRODUCTID = entity.PRODUCTID;
-            //    item.PRODUCTTYPE = entity.PRODUCTTYPE;
-            //    item.SOURCEID = entity.SOURCEID;
-            //    item.ONAIRTIME = entity.ONAIRTIME;
-            //    item.DURATION = entity.DURATION;
-            //    item.EVENTNAME = entity.EVENTNAME;
-            //    item.DLFILEPATH_1 = entity.DLFILEPATH_1;
-            //    item.CUEID = entity.CUEID;
-            //    result.Add(item);
-            //    index++;
-            //}
-            //return result;
-            return null;
+            var result = new List<TransMissionListItemDTO>();
+            var index = 1;
+            foreach (var entity in entitys)
+            {
+                var item = new TransMissionListItemDTO();
+                item.ROWNO = index;
+                item.MAINMACHINE = entity.MAINMACHINE;
+                item.SEQNUM = entity.SEQNUM;
+                item.PRODUCTID = entity.PRODUCTID;
+                item.STUDIOID = entity.MAPI_STNAME;
+                item.PRODUCTTYPE = entity.PRODUCTTYPE;
+                item.EVENTMODF= entity.EVENTMODF;
+                item.SOURCEID = entity.SOURCEID;
+                item.ONAIRTIME = entity.ONAIRTIME;
+                item.DURATION = entity.DURATION;
+                item.EVENTNAME = entity.EVENTNAME;
+                item.DLFILEPATH_1 = entity.DLFILEPATH_1;
+                if (!string.IsNullOrEmpty(item.DLFILEPATH_1))
+                {
+                    item.DLFILETOKEN_1 = TokenGenerator.GenerateFileToken(item.DLFILEPATH_1);
+                }
+                item.DLFILEPATH_2 = entity.DLFILEPATH_2;
+                if (!string.IsNullOrEmpty(item.DLFILEPATH_2))
+                {
+                    item.DLFILETOKEN_2 = TokenGenerator.GenerateFileToken(item.DLFILEPATH_2);
+                }
+                item.PGMFILEPATH = entity.PGMFILEPATH;
+                if (!string.IsNullOrEmpty(item.PGMFILEPATH))
+                {
+                    item.PGMFILETOKEN = TokenGenerator.GenerateFileToken(item.PGMFILEPATH);
+                }
+                if (!String.IsNullOrEmpty(entity.MAPI_STNAME)&&entity.PRODUCTTYPE=='P'&&entity.EVENTMODF!='C'&&entity.EVENTMODF!='T')
+                {
+                    var studioSchedul = studioAssigns.RstudioAssignedList.Where(assign => assign.STNAME == entity.MAPI_STNAME).ToList();
+                    foreach (var schedulItem in studioSchedul)
+                    {
+                        var startTimeDate = ConvertToDateTime(schedulItem.STIME, 0, 0, schedulItem.W_DATE);
+                        var endTimeDate = ConvertToDateTime(schedulItem.ETIME, 0, 0, schedulItem.W_DATE);
+                        if ((entity.ONAIRTIME >= startTimeDate) && (entity.ONAIRTIME <= endTimeDate))
+                        {
+                            item.TDNAME = schedulItem.GB_NAME;
+                            break;
+                        }
+                    }
+                }
+                item.CUEID = entity.CUEID;
+                result.Add(item);
+                index++;
+            }
+            return result;
+        }
+        public static ProgramInfomationDTO Converting(this List<ProgramInfomationEntity> entitys, StudioAssignListEntity studioAssigns)
+        {
+            var result = new ProgramInfomationDTO();
+            result.productIdDetails = new List<ProductIdDetail>();
+            var groupbyEntitys = entitys.GroupBy(entity => new { entity.PGMCODE,entity.MEDIA, entity.PGMNAME,entity.STARTDATE,entity.KEYWORD,entity.DESCRIPTION,entity.STAFFS });
+
+            foreach (var entity in groupbyEntitys)
+            {
+                result.PGMCODE = entity.Key.PGMCODE;
+                result.PGMNAME = entity.Key.PGMNAME;
+                result.STARTDATE = entity.Key.STARTDATE;
+                result.KEYWORD = entity.Key.KEYWORD;
+                result.STAFFS= entity.Key.STAFFS;
+                result.MEDIA = entity.Key.MEDIA;
+                result.DESCRIPTION = entity.Key.DESCRIPTION;
+                //imagePath 해야 함
+            }
+            foreach (var entity in entitys)
+            {
+                var item = new ProductIdDetail();
+                item.PRODUCTID= entity.PRODUCTID;
+                item.EVENTNAME= entity.EVENTNAME;
+                item.ONAIRTIME= entity.ONAIRTIME;
+                item.MAINMACHINE = entity.MAINMACHINE;
+                item.STUDIONAME = entity.MAPI_STNAME;
+                item.LIVEFLAG= entity.LIVEFLAG;
+                item.CUEID= entity.CUEID;
+                if (!String.IsNullOrEmpty(entity.MAPI_STNAME))
+                {
+                    var studioSchedul = studioAssigns.RstudioAssignedList.Where(assign=>assign.STNAME==entity.MAPI_STNAME).ToList();
+                    foreach (var schedulItem in studioSchedul)
+                    {
+                        var startTimeDate = ConvertToDateTime(schedulItem.STIME, 0, 0, schedulItem.W_DATE);
+                        var endTimeDate = ConvertToDateTime(schedulItem.ETIME,0,0,schedulItem.W_DATE);
+                        if((entity.ONAIRTIME >= startTimeDate) && (entity.ONAIRTIME <= endTimeDate))
+                        {
+                            item.TDNAME = schedulItem.GB_NAME;
+                            break;
+                        }
+                    }
+                }
+                result.productIdDetails.Add(item);
+            }
+
+            return result;
         }
         public static List<StudioAssign> SetAssigns(this List<StudioAssignedList> entitys)
         {
@@ -116,10 +197,13 @@ namespace MAMBrowser.Utils
             var groupbyEntitys = entitys.GroupBy(entity => new{ entity.GB_EMPNO,entity.TD_COLOR});
             foreach (var entity in groupbyEntitys)
             {
-                var item = new SchedulerResources();
-                item.ID = entity.Key.GB_EMPNO;
-                item.COLOR = "rgb("+entity.Key.TD_COLOR+")";
-                result.Add(item);
+                if (!String.IsNullOrEmpty(entity.Key.TD_COLOR) && !String.IsNullOrEmpty(entity.Key.GB_EMPNO))
+                {
+                    var item = new SchedulerResources();
+                    item.ID = entity.Key.GB_EMPNO;
+                    item.COLOR = "rgb(" + entity.Key.TD_COLOR + ")";
+                    result.Add(item);
+                }
             }
             return result;
         }

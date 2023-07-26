@@ -31,6 +31,16 @@
           <slot name="productID" :props="props"></slot>
         </div>
       </template>
+      <template slot="programName" scope="props">
+        <div>
+          <slot name="programName" :props="props"></slot>
+        </div>
+      </template>
+      <template slot="studioId" scope="props">
+        <div>
+          <slot name="studioId" :props="props"></slot>
+        </div>
+      </template>
       <template v-if="isActionsSlot" slot="actions" scope="props">
         <div class="table-button-container">
           <slot name="actions" :props="props"></slot>

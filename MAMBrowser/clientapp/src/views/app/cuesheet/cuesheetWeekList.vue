@@ -185,7 +185,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { USER_ID, USER_NAME ,CUESHEET_CODE} from "@/constants/config";
+import { USER_ID, USER_NAME, CUESHEET_CODE } from "@/constants/config";
 import DxButton from "devextreme-vue/button";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
@@ -199,7 +199,7 @@ export default {
   data() {
     return {
       date: new Date(),
-      pramObj: { person: null, brd_dt: null, media: null },
+      pramObj: { person: null, brd_dt: null, media: null, pgmcode: "NEW" },
       pgmList: [],
       programOptions: [],
       mediaOptions: [],
@@ -298,7 +298,7 @@ export default {
 
   computed: {
     ...mapGetters("cueList", ["defCuesheetListArr"]),
-    ...mapGetters("user",["behaviorList"]),
+    ...mapGetters("user", ["behaviorList"]),
     btnWeekStates() {
       const result = this.weekButtons.map((btn) => {
         if (btn.state == true) {
@@ -315,8 +315,10 @@ export default {
     const toDay = await this.GetDateString(this.date);
     const userName = sessionStorage.getItem(USER_NAME);
     await this.renewal();
-    const isCueAdmin = this.behaviorList.some( (data) => data.id === CUESHEET_CODE && data.visible === "Y");
-    if(!isCueAdmin) this.pramObj.person = userName;
+    const isCueAdmin = this.behaviorList.some(
+      (data) => data.id === CUESHEET_CODE && data.visible === "Y"
+    );
+    if (!isCueAdmin) this.pramObj.person = userName;
     this.pramObj.brd_dt = toDay;
     this.searchItems.brd_dt = toDay;
     this.pgmList = await this.GetPgmListByBrdDate(this.pramObj);
@@ -344,7 +346,7 @@ export default {
     ...mapActions("cueList", ["SetProgramProductIdOption"]),
     ...mapActions("cueList", ["SetProductIds"]),
     ...mapActions("cueList", ["enableNotification"]),
-    ...mapActions("user",["renewal"]),
+    ...mapActions("user", ["renewal"]),
     async getData() {
       this.searchItems.rowPerPage = Number(this.searchItems.rowPerPage);
       this.isTableLoading = this.isScrollLodaing ? false : true;

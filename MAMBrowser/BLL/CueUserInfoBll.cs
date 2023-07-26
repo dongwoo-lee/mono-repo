@@ -23,23 +23,25 @@ namespace MAMBrowser.BLL
         }
 
         //방송일 프로그램 목록 가져오기 
-        public IEnumerable<PgmListDTO> GetPgmListByBrdDate(string person, char media,string brd_dt)
+        public IEnumerable<PgmListDTO> GetPgmListByBrdDate(string person, char media,string brd_dt,string pgmcode)
         {
             ProgramListParam param = new ProgramListParamBuilder()
                 .SetMedia(media)
                 .SetPerson(person)
                 .SetBrdDate(brd_dt)
+                .SetPgmCode(pgmcode)
                 .Build();
 
             return _dao.GetProgramList(param)?.Converting();
         }
         //송출표 프로그램 목록 가져오기
-        public IEnumerable<PgmListDTO> GetSCHPgmList(string person, char media, string brd_dt)
+        public IEnumerable<PgmListDTO> GetSCHPgmList(string person, char media, string brd_dt,string pgmcode)
         {
             ProgramListParam param = new ProgramListParamBuilder()
                 .SetMedia(media)
                 .SetPerson(person)
                 .SetBrdDate(brd_dt)
+                .SetPgmCode(pgmcode)
                 .Build();
 
             return _dao.GetSCHPpgmList(param)?.Converting();

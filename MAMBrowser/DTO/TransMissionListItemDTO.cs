@@ -6,14 +6,17 @@ namespace MAMBrowser.DTO
     {
         public int ROWNO { get; set; }
         public string MAINMACHINE { get; set; }
+        public string STUDIOID { get; set; }
+        public string TDNAME { get; set; }
         public int SEQNUM { get; set; }
         public string PRODUCTID { get; set; }
+        public string PGMCODE { get; set; }
         public char PRODUCTTYPE { get; set; }
+        public char EVENTMODF { get; set; }
         public string SOURCEID { get; set; }
         public DateTime ONAIRTIME { get; set; }
         public int DURATION { get; set; }
         public string EVENTNAME { get; set; }
-        //기술감독 필요
         public string DLFILEPATH_1 { get; set; }
         public string DLFILETOKEN_1 { get; set; }
         public string DLFILEPATH_2 { get; set; }

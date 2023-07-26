@@ -2,6 +2,7 @@
 using M30_ManagementControlDAO.DAO;
 using M30_ManagementControlDAO.Interfaces;
 using M30_ManagementControlDAO.ParamEntity;
+using M30_ManagementControlDAO.WebService;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
 using System;
@@ -13,9 +14,12 @@ namespace MAMBrowser.BLL
     public class TransMissionListBll
     {
         private readonly ITransMissionListDAO _dao;
-        public TransMissionListBll(ITransMissionListDAO dao)
+        private readonly IStudioWebService _studioService;
+
+        public TransMissionListBll(ITransMissionListDAO dao, StudioWebService studioService)
         {
             _dao = dao;
+            _studioService = new StudioSystemMockup(studioService);
         }
         public PageListCollectionDTO<TransMissionListItemDTO> GetTransMissionList(TransMissionListParamDTO dto)
         {
@@ -29,22 +33,16 @@ namespace MAMBrowser.BLL
                 .Build();
 
             var data = _dao.GetTransMissionList(param);
+            var studioAssign = _studioService.GetStudioAssign(dto.brddate, dto.brddate, null, null);
+
             result.RowPerPage = dto.RowPerPage;
             result.SelectPage = dto.SelectPage;
             result.TotalRowCount = data.TotalCount;
-            result.Data = data.DataList?.Converting();
+            if(result.TotalRowCount > 0)
+            {
+                result.Data = data.DataList?.Converting(studioAssign);
+            }
             return result;
-        }
-        public List<ProgramInfomationDTO> GetProgramInfomationList(ProgramInfoParamDTO dto)
-        {
-            var param = new ProgramInfomationParamBuilder()
-                .SetBrdDate(dto.brddate)
-                .SetMedia(dto.media)
-                .SetPgmCode(dto.pgmcode)
-                .Build();
-
-            return null;
-
         }
     }
 }

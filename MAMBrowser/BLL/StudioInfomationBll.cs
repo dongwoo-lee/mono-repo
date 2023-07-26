@@ -12,12 +12,12 @@ using MAMBrowser.Utils;
 
 namespace MAMBrowser.BLL
 {
-    public class StudioBll
+    public class StudioInfomationBll
     {
         private readonly IStudioInfomationDAO _dao;
         private readonly IStudioWebService _studioService;
 
-        public StudioBll(IStudioInfomationDAO dao, StudioWebService studioService)
+        public StudioInfomationBll(IStudioInfomationDAO dao, StudioWebService studioService)
         {
             _dao = dao;
             _studioService = new StudioSystemMockup(studioService);

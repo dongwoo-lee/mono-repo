@@ -36,6 +36,7 @@
       <template slot="form-table-area">
         <DxScheduler
           :showAllDayPanel="false"
+          :showCurrentTimeIndicator="false"
           :firstDayOfWeek="1"
           :data-source="dataSource"
           :current-date="changeFormatStringDate(searchItems.brdDate)"
@@ -58,7 +59,10 @@
             </div>
           </template>
           <template #dateCellTemplateSlot="{ data: dataCell }">
-            <div style="font-family: 'MBC 새로움 M'">
+            <div
+              style="font-family: 'MBC 새로움 M'"
+              :class="{ weekend_font_color: isWeekend(dataCell.date) }"
+            >
               {{ dataCell ? subtractWeek(dataCell.date) : "" }}
             </div>
           </template>
@@ -125,7 +129,7 @@ export default {
         // },
       ],
       searchItems: {
-        brdDate: "2023-06-28T05:20:00",
+        brdDate: toDay,
         studioid: "01",
       },
       studioInfoOptions: [],
@@ -140,9 +144,6 @@ export default {
     DxResource,
   },
   methods: {
-    test(date) {
-      console.log(date);
-    },
     async getData() {
       const [monday, sunday] = this.getWeekDates(this.searchItems.brdDate);
       const params = {
@@ -152,9 +153,13 @@ export default {
       };
       const data = await this.getReturnList(params);
       if (data) {
+        console.log(data);
         this.dataSource = data.data.resultObject.studioAssigns;
         this.resourcesData = data.data.resultObject.schedulerResources;
-        this.resourcesData.find((ele) => ele.id == "N").color = "#C8C8C8";
+        const empColor = this.resourcesData.find((ele) => ele.id == "N");
+        if (empColor) {
+          empColor.color = "#C8C8C8";
+        }
         this.resourcesData.push({ id: null, color: "#D1DFEC" });
       }
     },
@@ -163,7 +168,7 @@ export default {
       this.getData();
     },
     getReturnList(params) {
-      const url = "/api/studio/GetSudioAssignList";
+      const url = "/api/studioInfomation/GetSudioAssignList";
       return this.$http.get(url, params).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
           res.data.resultObject.studioAssigns.forEach((ele) => {
@@ -202,11 +207,20 @@ export default {
         .replace("Tue", "화")
         .replace("Wed", "수")
         .replace("Thu", "목");
-      console.log(convertedDateString);
       return convertedDateString;
     },
+    isWeekend(dateString) {
+      const momentDate = moment(dateString, "ddd MMM D YYYY HH:mm:ss [GMT]ZZ");
+
+      if (!momentDate.isValid()) {
+        return false; // 유효하지 않은 날짜인 경우 false 반환 또는 원하는 에러 처리를 수행
+      }
+
+      const dayOfWeek = momentDate.day();
+      return dayOfWeek === 0 || dayOfWeek === 6; // 0: 일요일(Sunday), 6: 토요일(Saturday)
+    },
     getStudioInfoMenu() {
-      const url = "/api/studio/GetSudioInfoMenu";
+      const url = "/api/studioInfomation/GetSudioInfoMenu";
       this.$http.get(url).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
           this.studioInfoOptions = res.data.resultObject.data;
@@ -269,5 +283,8 @@ export default {
 .studio_scheduler_app {
   color: black;
   font-family: "MBC 새로움 M";
+}
+.weekend_font_color {
+  color: red;
 }
 </style>

@@ -13,11 +13,11 @@ namespace MAMBrowser.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StudioController : ControllerBase
+    public class StudioInfomationController : ControllerBase
     {
-        private readonly StudioBll _bll;
+        private readonly StudioInfomationBll _bll;
 
-        public StudioController(StudioBll bll)
+        public StudioInfomationController(StudioInfomationBll bll)
         {
             _bll= bll;
         }

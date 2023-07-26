@@ -33,10 +33,10 @@
             @change="onSearch"
           />
         </b-form-group>
-        <!-- 검색 버튼
+        <!-- 조회 버튼
         <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch"
-            >검색</b-button
+            >조회</b-button
           >
         </b-form-group> -->
         <b-form-checkbox
@@ -80,6 +80,14 @@
               >
             </div>
           </template>
+          <template slot="studioId" scope="props">
+            <div>
+              <a href="#" v-if="props.props.rowData.studioid">{{
+                props.props.rowData.mainmachine
+              }}</a>
+              <span v-else>{{ props.props.rowData.mainmachine }}</span>
+            </div>
+          </template>
           <template slot="productID" scope="props">
             <div>
               <span
@@ -90,11 +98,26 @@
               >
             </div>
           </template>
+          <template slot="programName" scope="props">
+            <div>
+              <a
+                href="#"
+                v-if="
+                  props.props.rowData.producttype == 'P' &&
+                  props.props.rowData.eventmodf != 'C' &&
+                  props.props.rowData.eventmodf != 'T'
+                "
+                @click="goProgramInfo(props.props.rowData)"
+                >{{ props.props.rowData.eventname }}</a
+              >
+              <span v-else>{{ props.props.rowData.eventname }}</span>
+            </div>
+          </template>
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
               :isBroadcastConfigAction="true"
-              :broadcastSearchParam="searchItems"
+              :cueParam="searchItems"
               @preview="onPreview"
               @clickMusicSelectionListBtn="onMusicSelectionList"
             />
@@ -124,6 +147,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import TableView from "../../../components/Modal/CommonTableViewModal.vue";
@@ -141,7 +165,9 @@ export default {
       date: new Date(),
       modalId: "music_selection_list_modal",
       searchItems: {
+        // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
         brdDate: "20221001",
+        // brdDate: null,
         media: "A",
         productType: "P",
         rowPerPage: 30,
@@ -163,8 +189,17 @@ export default {
         //   width: "6%",
         // },
         {
-          name: "mainmachine",
+          name: "__slot:studioId",
+          // name: "mainmachine",
           title: "메인소스",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "6%",
+        },
+        {
+          // name: "__slot:studioId",
+          name: "studioid",
+          title: "스튜디오ID",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "6%",
@@ -193,7 +228,7 @@ export default {
           title: "방송길이",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
-          width: "6%",
+          width: "8%",
           callback: (value) => {
             return value === null
               ? ""
@@ -201,10 +236,20 @@ export default {
           },
         },
         {
-          name: "eventname",
+          name: "__slot:programName",
           title: "프로그램이름",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center bold",
+        },
+        {
+          name: "tdname",
+          title: "기술감독",
+          titleClass: "center aligned text-center",
+          dataClass: "center aligned text-center",
+          width: "8%",
+          callback: (value) => {
+            return value === "N" ? "" : value;
+          },
         },
         {
           name: "__slot:actions",
@@ -219,11 +264,15 @@ export default {
   components: {
     TableView,
   },
-  mounted() {
+  async mounted() {
+    const toDay = await this.GetDateString(this.date);
+    // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
+    // this.searchItems.brdDate = toDay;
     this.getMediaOptions();
     this.getData();
   },
   methods: {
+    ...mapActions("cueList", ["GetDateString"]),
     async getData() {
       await this.setData();
       this.nowPgmRowMoveFocus();
@@ -260,9 +309,10 @@ export default {
       await this.getData();
     },
     nowPgmRowMoveFocus() {
+      // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
       // const currentTime = new Date();
-      //테스트
-      const currentTime = new Date(2022, 9, 1, 11, 0, 3);
+      const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+
       const rowItems = this.responseData.data.filter((row) => {
         return new Date(row.onairtime) < currentTime;
       });
@@ -313,7 +363,11 @@ export default {
       });
       if (this.searchItems.productType != "P") {
         const rowItems = this.responseData.data.filter((row) => {
-          return row.producttype == "P";
+          return (
+            row.producttype == "P" &&
+            row.eventmodf != "C" &&
+            row.eventmodf != "T"
+          );
         });
         rowItems.forEach((ele) => {
           const targetRow = rows[ele.rowno - 1];
@@ -321,17 +375,13 @@ export default {
         });
       }
     },
+    //선곡리스트 가져오기
     onMusicSelectionList() {
-      // let url = "/api/managementsystem/getGroup";
-      // this.$http.post(url).then((res) => {
-      //   if (res.status === 200) {
-      //     console.log(res.data.resultObject);
-      //     this.$bvModal.show(this.modalId);
-      //   } else {
-      //     this.$fn.notify("server-error", { message: "조회 에러" });
-      //   }
-      // });
       this.$bvModal.show(this.modalId);
+    },
+    goProgramInfo(rowData) {
+      console.log(rowData);
+      // window.open("/app/monitoring/programInfo", "_blank");
     },
   },
 };

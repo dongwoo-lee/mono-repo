@@ -168,7 +168,7 @@
         >
       </b-dropdown>
       <b-button
-        v-if="isBroadcastConfigAction"
+        v-if="isBroadcastConfigAction || isProgramInfoConfigAction"
         :disabled="!rowData.cueid"
         variant="outline-primary"
         size="sm"
@@ -248,7 +248,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    broadcastSearchParam: {
+    isProgramInfoConfigAction: {
+      type: Boolean,
+      defalut: false,
+    },
+    cueParam: {
       type: Object,
       default: () => {},
     },
@@ -417,15 +421,18 @@ export default {
           }
         });
     },
-    async getCueListAndData() {
-      const params = {
-        brd_dt: this.broadcastSearchParam.brdDate,
+    getCueListAndData() {
+      const param = {
+        brd_dt: this.cueParam.brdDate,
         products: [this.rowData.productid],
+        media: this.cueParam.media,
         row_per_page: 30,
         select_page: 1,
-        media: this.broadcastSearchParam.media,
       };
-      const cuesheetData = await this.getcuesheetListArr(params);
+      this.goCuesheet(param);
+    },
+    async goCuesheet(param) {
+      const cuesheetData = await this.getcuesheetListArr(param);
       if (cuesheetData.data.resultObject.data.length == 1) {
         sessionStorage.setItem(
           "USER_INFO",
