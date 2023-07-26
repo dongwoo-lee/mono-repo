@@ -501,7 +501,7 @@ export default {
         //합친 배열 store에 추가
         var index = 0;
         for await (const ele of rowArray) {
-          if (ele.existFile) {
+          if (ele.existFile === undefined || ele.existFile === true) {
             var rowData = await this.setContents({
               type: "ab",
               search_row: ele,

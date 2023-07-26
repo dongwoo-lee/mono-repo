@@ -513,7 +513,7 @@ export default {
       if (rowArray.length > 0) {
         var index = 0;
         for await (const ele of rowArray) {
-          if (ele.existFile) {
+          if (ele.existFile === undefined || ele.existFile === true) {
             var rowData = await this.setContents({
               type: "c",
               search_row: ele,
