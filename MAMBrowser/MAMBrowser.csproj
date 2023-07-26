@@ -70,6 +70,9 @@
     <Reference Include="M30_CueSheetDAO">
       <HintPath>RefFiles\M30_CueSheetDAO.dll</HintPath>
     </Reference>
+    <Reference Include="M30_ManagementControlDAO">
+      <HintPath>RefFiles\M30_ManagementControlDAO.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
