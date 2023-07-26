@@ -19,7 +19,8 @@ namespace MAMBrowser.BLL
         public StudioInfomationBll(IStudioInfomationDAO dao, StudioWebService studioService)
         {
             _dao = dao;
-            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = new StudioSystemMockup(studioService);
+            _studioService = studioService;
         }
 
         public DTO_RESULT_LIST<DTO_CATEGORY> GetStudioInfoMenu()

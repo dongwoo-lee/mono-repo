@@ -15,7 +15,8 @@ namespace MAMBrowser.BLL
         public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService)
         {
             _dao = dao;
-            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = new StudioSystemMockup(studioService);
+            _studioService = studioService;
         }
         public ProgramInfomationDTO GetProgramInfomationList(ProgramInfoParamDTO dto)
         {

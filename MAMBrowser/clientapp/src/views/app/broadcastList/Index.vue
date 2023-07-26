@@ -169,8 +169,8 @@ export default {
       modalId: "music_selection_list_modal",
       searchItems: {
         // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
-        brdDate: "20221001",
-        // brdDate: null,
+        // brdDate: "20221001",
+        brdDate: null,
         media: "A",
         productType: "P",
         rowPerPage: 30,
@@ -268,7 +268,7 @@ export default {
   async mounted() {
     const toDay = await this.GetDateString(this.date);
     // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
-    // this.searchItems.brdDate = toDay;
+    this.searchItems.brdDate = toDay;
     this.getMediaOptions();
     this.getData();
   },
@@ -311,69 +311,73 @@ export default {
     },
     nowPgmRowMoveFocus() {
       // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
-      // const currentTime = new Date();
-      const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+      const currentTime = new Date();
+      // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
 
-      const rowItems = this.responseData.data.filter((row) => {
-        return new Date(row.onairtime) < currentTime;
-      });
-      if (
-        rowItems.length > 0 &&
-        new Date(
-          this.responseData.data[this.responseData.data.length - 1].onairtime
-        )
-          .toISOString()
-          .slice(0, 10) == currentTime.toISOString().slice(0, 10)
-      ) {
-        const tableElement = this.$refs.scrollPaging.$el;
-        const vuetableElement = tableElement.querySelector(
-          `.vuetable-body-wrapper`
-        );
-        const rows = tableElement.querySelectorAll(`tbody tr`);
-        const targetRow = rows[rowItems[rowItems.length - 1].rowno];
-        targetRow.classList.add("focus_tr");
-        vuetableElement.scrollTo({
-          top:
-            targetRow.offsetTop -
-            vuetableElement.offsetHeight / 2 +
-            targetRow.offsetHeight / 2,
-          behavior: "smooth",
+      if (this.responseData.data) {
+        const rowItems = this.responseData.data.filter((row) => {
+          return new Date(row.onairtime) < currentTime;
         });
-      } else {
-        const elements = document.getElementsByClassName("focus_tr");
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].classList.remove("focus_tr");
+        if (
+          rowItems.length > 0 &&
+          new Date(
+            this.responseData.data[this.responseData.data.length - 1].onairtime
+          )
+            .toISOString()
+            .slice(0, 10) == currentTime.toISOString().slice(0, 10)
+        ) {
+          const tableElement = this.$refs.scrollPaging.$el;
+          const vuetableElement = tableElement.querySelector(
+            `.vuetable-body-wrapper`
+          );
+          const rows = tableElement.querySelectorAll(`tbody tr`);
+          const targetRow = rows[rowItems[rowItems.length - 1].rowno];
+          targetRow.classList.add("focus_tr");
+          vuetableElement.scrollTo({
+            top:
+              targetRow.offsetTop -
+              vuetableElement.offsetHeight / 2 +
+              targetRow.offsetHeight / 2,
+            behavior: "smooth",
+          });
+        } else {
+          const elements = document.getElementsByClassName("focus_tr");
+          for (let i = 0; i < elements.length; i++) {
+            elements[i].classList.remove("focus_tr");
+          }
+          const tableElement = this.$refs.scrollPaging.$el;
+          const vuetableElement = tableElement.querySelector(
+            `.vuetable-body-wrapper`
+          );
+          const rows = tableElement.querySelectorAll(`tbody tr`);
+          const targetRow = rows[0];
+          vuetableElement.scrollTo({
+            top: targetRow.offsetTop,
+          });
         }
-        const tableElement = this.$refs.scrollPaging.$el;
-        const vuetableElement = tableElement.querySelector(
-          `.vuetable-body-wrapper`
-        );
-        const rows = tableElement.querySelectorAll(`tbody tr`);
-        const targetRow = rows[0];
-        vuetableElement.scrollTo({
-          top: targetRow.offsetTop,
-        });
       }
     },
     pgmRowColor() {
       const tableElement = this.$refs.scrollPaging.$el;
       const rows = tableElement.querySelectorAll(`tbody tr`);
-      this.responseData.data.forEach((ele) => {
-        const targetRow = rows[ele.rowno - 1];
-        targetRow.classList.remove("pgm_tr");
-      });
-      if (this.searchItems.productType != "P") {
-        const rowItems = this.responseData.data.filter((row) => {
-          return (
-            row.producttype == "P" &&
-            row.eventmodf != "C" &&
-            row.eventmodf != "T"
-          );
-        });
-        rowItems.forEach((ele) => {
+      if (this.responseData.data) {
+        this.responseData.data.forEach((ele) => {
           const targetRow = rows[ele.rowno - 1];
-          targetRow.classList.add("pgm_tr");
+          targetRow.classList.remove("pgm_tr");
         });
+        if (this.searchItems.productType != "P") {
+          const rowItems = this.responseData.data.filter((row) => {
+            return (
+              row.producttype == "P" &&
+              row.eventmodf != "C" &&
+              row.eventmodf != "T"
+            );
+          });
+          rowItems.forEach((ele) => {
+            const targetRow = rows[ele.rowno - 1];
+            targetRow.classList.add("pgm_tr");
+          });
+        }
       }
     },
     //선곡리스트 가져오기

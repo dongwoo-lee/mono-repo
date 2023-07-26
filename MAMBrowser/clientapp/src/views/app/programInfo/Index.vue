@@ -308,8 +308,9 @@ export default {
     },
     async setNowPgmcode() {
       const params = {
-        // brdDate: this.toDay,
-        brdDate: "20221001",
+        // 최신데이터 없어서 TEST
+        brdDate: this.toDay,
+        // brdDate: "20221001",
         media: this.searchItems.media,
         producTtype: "P",
         rowPerPage: 30,
@@ -317,7 +318,9 @@ export default {
       };
       const transList = await this.getToDayTransMissionList(params);
       if (transList) {
-        const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+        // 최신데이터 없어서 TEST
+        const currentTime = new Date();
+        // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
         const rowItems = transList.data.resultObject.data.filter((row) => {
           return new Date(row.onairtime) < currentTime;
         });
