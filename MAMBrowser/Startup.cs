@@ -160,6 +160,7 @@ namespace MAMBrowser
             services.AddTransient<ITransMissionListDAO,TransMissionListDAO>();
             services.AddTransient<IProgramInfomationDAO, ProgramInfomationDAO>();
             services.AddTransient<IStudioInfomationDAO,StudioInfomationDAO>();
+            services.AddTransient<IPlaylistPerBrdProgramDAO, PlaylistPerBrdProgramDAO>();
             services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
             ManagementControlSqlSession.ConnectionString = AppSetting.ConnectionString;
             MAMWebFactory.Instance.Setting(AppSetting.ConnectionString);
@@ -197,6 +198,7 @@ namespace MAMBrowser
             services.AddTransient<TransMissionListBll>();
             services.AddTransient<ProgramInfomationBll>();
             services.AddTransient<StudioInfomationBll>();
+            services.AddTransient<PlaylistPerBrdProgramBll>();
 
             //���� ���
             services.AddScoped<IUserService, UserService>();

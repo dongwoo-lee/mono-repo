@@ -8,6 +8,7 @@ using System.Linq;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
 using M30_ManagementControlDAO.WebService;
+using Microsoft.Extensions.Logging;
 
 namespace MAMBrowser.BLL
 {
@@ -16,11 +17,14 @@ namespace MAMBrowser.BLL
         private readonly IStudioInfomationDAO _dao;
         private readonly IStudioWebService _studioService;
 
-        public StudioInfomationBll(IStudioInfomationDAO dao, StudioWebService studioService)
+        private readonly ILogger<StudioInfomationBll> _logger;
+
+        public StudioInfomationBll(IStudioInfomationDAO dao, StudioWebService studioService,ILogger<StudioInfomationBll> logger)
         {
             _dao = dao;
-            //_studioService = new StudioSystemMockup(studioService);
-            _studioService = studioService;
+            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = studioService;
+            _logger = logger;
         }
 
         public DTO_RESULT_LIST<DTO_CATEGORY> GetStudioInfoMenu()
@@ -29,6 +33,7 @@ namespace MAMBrowser.BLL
             result.Data = new List<DTO_CATEGORY>();
             var api_studio_infos = _studioService.GetStudioInfo();
             var miros_studio_maps = _dao.GetMirosStudioMaps();
+
             var query = from miros_studio in miros_studio_maps 
                         join api_studio in api_studio_infos.RstudioList on miros_studio.MAPI_STNAME equals api_studio.STNAME
                         select new
@@ -40,6 +45,7 @@ namespace MAMBrowser.BLL
 
             foreach (var info in query)
             {
+
                 DTO_CATEGORY item = new DTO_CATEGORY();
                 item.ID = info.STID;
                 item.Name = info.STNAME;

@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Web.WebPages;
 using static DevExpress.Xpo.DB.DataStoreLongrunnersWatch;
+using System.IO;
 
 namespace MAMBrowser.Utils
 {
@@ -70,7 +71,7 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
-        public static ProgramInfomationDTO Converting(this List<ProgramInfomationEntity> entitys, StudioAssignListEntity studioAssigns)
+        public static ProgramInfomationDTO Converting(this List<ProgramInfomationEntity> entitys, StudioAssignListEntity studioAssigns,string imgPath)
         {
             var result = new ProgramInfomationDTO();
             result.productIdDetails = new List<ProductIdDetail>();
@@ -85,7 +86,7 @@ namespace MAMBrowser.Utils
                 result.STAFFS= entity.Key.STAFFS;
                 result.MEDIA = entity.Key.MEDIA;
                 result.DESCRIPTION = entity.Key.DESCRIPTION;
-                //imagePath 해야 함
+                result.IMAGEPATH = GetpgmImgPath(entity.Key.PGMCODE, imgPath);
             }
             foreach (var entity in entitys)
             {
@@ -169,6 +170,60 @@ namespace MAMBrowser.Utils
             }
             return result;
         }
+        public static List<PlaylistPerBrdProgramDTO> Converting(this List<PlaylistPerBrdProgramEntity> entitys)
+        {
+            var result = new List<PlaylistPerBrdProgramDTO>();
+            foreach (var entity in entitys)
+            {
+                var item = new PlaylistPerBrdProgramDTO();
+                item.SEQ = entity.SEQ;
+                item.SCHDATE = entity.SCH_DATE;
+                item.AUDIOCLIPID = entity.AUDIO_CLIP_ID;
+                item.MUSICID = entity.MUSIC_ID;
+                item.ENCODEDATE = entity.ENCODE_DATE;
+                item.AUDIOFILETYPE = entity.AUDIO_FILE_TYPE;
+                item.PRODUCTID = entity.PRODUCT_ID;
+                item.PRODUCTNAME = entity.PRODUCT_NAME;
+                item.PGMCODE = entity.PGM_CODE;
+                item.PGMNAME = entity.PGM_NAME;
+                item.STARTDTM = entity.START_DTM;
+                item.ENDDTM = entity.END_DTM;
+                item.STUDIONAME = entity.STUDIO_NAME;
+                item.SLAPNAME = entity.SLAP_NAME;
+                item.BRDCTYPE = entity.BRDC_TYPE;
+                item.MAINTITLE = entity.MAIN_TITLE;
+                item.SUBTITLE = entity.SUB_TITLE;
+                item.PLAYTIME = entity.PLAY_TIME;
+                item.TOTALTIME = entity.TOTAL_TIME;
+                item.USERID = entity.USER_ID;
+                item.USERNAME = entity.USER_NAME;
+                item.REGDTM = entity.REG_DTM;
+                result.Add(item);
+            }
+            return result;
+        }
+        public static List<PlaylistStatisticsDTO> Converting(this List<PlaylistStatisticsEntity> entitys)
+        {
+            var result = new List<PlaylistStatisticsDTO>();
+            foreach (var entity in entitys)
+            {
+                var item = new PlaylistStatisticsDTO();
+                item.RANK = entity.RANK;
+                item.PERIOD = entity.PERIOD;
+                item.MEDIANAME = entity.MEDIANAME;
+                item.PERSONID = entity.PERSONID;
+                item.PERSONNAME = entity.PERSONNAME;
+                item.SONGNAME = entity.SONGNAME;
+                item.PGMNAME = entity.PGM_NAME;
+                item.PLAYCNT = entity.PLAY_CNT;
+                item.PLAYTIME = entity.PLAY_TIME;
+                item.TOTALTIME = entity.TOTAL_TIME;
+                item.SUMMARYDATE = entity.SUMMARY_DATE;
+                item.MASTERFILE = entity.MASTERFILE;
+                result.Add(item);
+            }
+            return result;
+        }
         public static DateTime ConvertToDateTime(string timeData,int calHours, int calMinutes, string dateData)
         {
             int hours = int.Parse(timeData.Substring(0, 2));
@@ -186,6 +241,18 @@ namespace MAMBrowser.Utils
 
             DateTime result = new DateTime(year, month, day, hours, minutes, 0);
             return result.AddHours(calHours).AddMinutes(calMinutes);
+        }
+        public static string GetpgmImgPath(string pgmcode, string path)
+        {
+            if (!String.IsNullOrEmpty(pgmcode) && Directory.Exists(path))
+            {
+                string[] files = Directory.GetFiles(path, $"{pgmcode}.*");
+                if (files.Length > 0)
+                {
+                    return files[0];
+                }
+            }
+            return null;
         }
     }
 }

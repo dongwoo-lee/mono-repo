@@ -40,11 +40,11 @@
           />
         </b-form-group>
         <!-- 조회 버튼 -->
-        <!-- <b-form-group>
+        <b-form-group>
           <b-button variant="outline-primary default" @click="onSearch"
             >조회</b-button
           >
-        </b-form-group> -->
+        </b-form-group>
       </template>
       <template slot="form-table-page-area">
         <div>
@@ -71,16 +71,11 @@
             </div>
             <div v-if="!isDetailLoading && dataSource.pgmcode">
               <div class="image_and_detail">
-                <div class="image_">
-                  <img
-                    :src="
-                      dataSource.imagepath
-                        ? dataSource.imagepath
-                        : '/assets/img/login-backgound1.jpg'
-                    "
-                    onerror="this.src='/assets/img/login-backgound1.jpg'"
-                    style="width: 100%"
-                  />
+                <div class="image_box">
+                  <div class="image_">
+                    <img v-if="imageUrl" :src="imageUrl" alt="Image" />
+                    <div class="noImg">No Image</div>
+                  </div>
                 </div>
                 <div class="detail_">
                   <div class="dx-field" v-if="dataSource.staffs">
@@ -101,9 +96,16 @@
                     <div class="dx-field-label">코드</div>
                     <div class="dx-field-value">{{ dataSource.pgmcode }}</div>
                   </div>
-                  <div class="dx-field" v-if="dataSource.imagepath">
-                    <div class="dx-field-label">대표이미지</div>
-                    <div class="dx-field-value">{{ dataSource.imagepath }}</div>
+                  <div class="dx-field">
+                    <div class="dx-field-label mt-2">대표이미지</div>
+                    <div class="dx-field-value">
+                      <b-button
+                        variant="outline-secondary"
+                        size="sm"
+                        @click="openModal()"
+                        >파일 편집</b-button
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
@@ -134,14 +136,20 @@
           <template slot="actions" scope="props">
             <common-actions
               :rowData="props.props.rowData"
-              :cueParam="searchItems"
               :isProgramInfoConfigAction="true"
+              @goCueSheetDate="onGoCueSheetDate"
             >
             </common-actions>
           </template>
         </common-data-table-scroll-paging>
       </template>
     </common-form>
+    <FileUploadModal
+      :modalId="pgmModalId"
+      modalTitle="대표이미지 파일 편집"
+      :is-save-loading="isSaveLoading"
+      @uploadOk="onUploadOk"
+    />
   </div>
 </template>
 
@@ -149,6 +157,7 @@
 import { mapActions, mapGetters } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
+import FileUploadModal from "../config/widget/popup_file_upload.vue";
 const moment = require("moment");
 
 export default {
@@ -156,7 +165,9 @@ export default {
   data() {
     return {
       date: new Date(),
+      pgmModalId: "pgmInfoFileUploadModal",
       isDetailLoading: false,
+      imageUrl: "",
       dataSource: {
         staffs: "",
         keyword: "",
@@ -174,6 +185,7 @@ export default {
       pgmList: [],
       mediaOptions: [],
       programOptions: [],
+      isSaveLoading: false,
       fields: [
         {
           name: "productid",
@@ -259,11 +271,14 @@ export default {
     }
     await this.getData();
   },
+  components: { FileUploadModal },
   methods: {
     ...mapActions("cueList", ["GetDateString"]),
     ...mapActions("cueList", ["SetMediaOption"]),
     ...mapActions("cueList", ["SetProgramCodeOption"]),
     ...mapActions("cueList", ["GetPgmListByBrdDate"]),
+    ...mapActions("cueList", ["getcuesheetListArr"]),
+    ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
     async getData() {
       this.isTableLoading = this.isScrollLodaing ? false : true;
       this.isDetailLoading = true;
@@ -276,6 +291,7 @@ export default {
       if (dataList) {
         this.dataSource = dataList.data.resultObject;
       }
+      this.getPgmImg();
       this.addScrollClass();
       this.isTableLoading = false;
       this.isScrollLodaing = false;
@@ -288,6 +304,19 @@ export default {
           return res;
         }
       });
+    },
+    getPgmImg() {
+      this.imageUrl = "";
+      const url = "/api/programInfomation/GetPgmImgFile";
+      if (this.dataSource.imagepath) {
+        this.$http
+          .get(url + "?imgPath=" + this.dataSource.imagepath)
+          .then((res) => {
+            if (res.status === 200) {
+              this.imageUrl = "data:image/png;base64," + res.data.resultObject;
+            }
+          });
+      }
     },
     async onMediaChange(e) {
       const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
@@ -306,11 +335,14 @@ export default {
       this.searchItems.brdDate = date;
       await this.getData();
     },
+    openModal() {
+      this.$bvModal.show(this.pgmModalId);
+    },
     async setNowPgmcode() {
       const params = {
         // 최신데이터 없어서 TEST
-        brdDate: this.toDay,
-        // brdDate: "20221001",
+        // brdDate: this.toDay,
+        brdDate: "20221001",
         media: this.searchItems.media,
         producTtype: "P",
         rowPerPage: 30,
@@ -319,8 +351,8 @@ export default {
       const transList = await this.getToDayTransMissionList(params);
       if (transList) {
         // 최신데이터 없어서 TEST
-        const currentTime = new Date();
-        // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+        // const currentTime = new Date();
+        const currentTime = new Date(2022, 9, 1, 11, 6, 0);
         const rowItems = transList.data.resultObject.data.filter((row) => {
           return new Date(row.onairtime) < currentTime;
         });
@@ -357,6 +389,49 @@ export default {
         }
       });
     },
+    async onUploadOk(file) {
+      this.isSaveLoading = true;
+      const url = "/api/programInfomation/UpdatePgmImgFile";
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("pgmcode", this.dataSource.pgmcode);
+      await this.$http.post(url, formData).then((res) => {
+        if (res.status === 200 && res.data.resultObject) {
+          //버튼 로딩 이미지 하고
+        }
+      });
+      this.imageUrl = "";
+      this.isSaveLoading = false;
+      this.$bvModal.hide(this.pgmModalId);
+      this.getData();
+    },
+    async onGoCueSheetDate(rowData) {
+      const param = {
+        start_dt: this.searchItems.brdDate,
+        end_dt: this.searchItems.brdDate,
+        products: [rowData.productid],
+        media: this.searchItems.media,
+        row_per_page: 30,
+        select_page: 1,
+      };
+      const cueItem = await this.getarchiveCuesheetListArr(param);
+      if (cueItem.data.resultObject.data.length == 1) {
+        sessionStorage.setItem(
+          "USER_INFO",
+          JSON.stringify(cueItem.data.resultObject.data[0])
+        );
+        window.open("/app/cuesheet/previous/detail", "_blank");
+      } else {
+        cueItem = await this.getcuesheetListArr(param);
+        if (cueItem.data.resultObject.data.length == 1) {
+          sessionStorage.setItem(
+            "USER_INFO",
+            JSON.stringify(cueItem.data.resultObject.data[0])
+          );
+          window.open("/app/cuesheet/day/detail", "_blank");
+        }
+      }
+    },
   },
 };
 </script>
@@ -380,11 +455,36 @@ export default {
   align-items: stretch;
   height: 180px;
 }
+.image_and_detail .image_box {
+  flex-shrink: 0;
+  width: 350px;
+}
 .image_and_detail .image_ {
-  flex: 2;
+  position: relative;
+  width: 330px;
+  height: 185px;
+}
+.image_and_detail img {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+.image_and_detail .image_ .noImg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 180px;
+  background-color: rgba(183, 183, 183, 0.1);
+  border-width: 2px;
+  border-color: darkgray;
+  border-style: dashed;
+  color: darkgray;
+  box-sizing: border-box;
 }
 .image_and_detail .detail_ {
-  flex: 8;
+  flex-grow: 1;
 }
 .image_and_detail .detail_ .dx-field {
   margin: 0;

@@ -162,7 +162,6 @@ export default {
       };
       const data = await this.getReturnList(params);
       if (data) {
-        console.log(data);
         this.dataSource = data.data.resultObject.studioAssigns;
         this.resourcesData = data.data.resultObject.schedulerResources;
         const empColor = this.resourcesData.find((ele) => ele.id == "N");
@@ -178,15 +177,26 @@ export default {
     },
     getReturnList(params) {
       const url = "/api/studioInfomation/GetSudioAssignList";
-      return this.$http.get(url, params).then((res) => {
-        if (res.status === 200 && res.data.resultObject) {
-          res.data.resultObject.studioAssigns.forEach((ele) => {
-            ele.startdate = this.subtractDate(ele.startdate, 5);
-            ele.enddate = this.subtractDate(ele.enddate, 5);
-          });
-          return res;
-        }
-      });
+      return this.$http
+        .get(
+          url +
+            "?as_from=" +
+            params.as_from +
+            "&as_to=" +
+            params.as_to +
+            "&as_stid=" +
+            params.as_stid +
+            "&as_pgmid="
+        )
+        .then((res) => {
+          if (res.status === 200 && res.data.resultObject) {
+            res.data.resultObject.studioAssigns.forEach((ele) => {
+              ele.startdate = this.subtractDate(ele.startdate, 5);
+              ele.enddate = this.subtractDate(ele.enddate, 5);
+            });
+            return res;
+          }
+        });
     },
     subtractDate(dateTimeString, hours) {
       const formattedDateTimeString = moment(dateTimeString)

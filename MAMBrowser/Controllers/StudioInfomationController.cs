@@ -40,7 +40,7 @@ namespace MAMBrowser.Controllers
         }
 
         [HttpGet("GetSudioAssignList")]
-        public DTO_RESULT<StudioSchedulerDTO> GetStudioAssignList(string as_from, string as_to, string as_stid)
+        public DTO_RESULT<StudioSchedulerDTO> GetStudioAssignList([FromQuery] string as_from, [FromQuery] string as_to, [FromQuery] string as_stid)
         {
             var result = new DTO_RESULT<StudioSchedulerDTO>();
             try

@@ -202,6 +202,8 @@ import {
 } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import { USER_ID } from "@/constants/config";
+import "moment/locale/ko";
+const moment = require("moment");
 export default {
   props: {
     rowData: {
@@ -252,10 +254,6 @@ export default {
       type: Boolean,
       defalut: false,
     },
-    cueParam: {
-      type: Object,
-      default: () => {},
-    },
   },
   data() {
     return {
@@ -281,7 +279,6 @@ export default {
   },
   methods: {
     ...mapMutations("cueList", ["SET_CUEINFO"]),
-    ...mapActions("cueList", ["getcuesheetListArr"]),
     logout() {
       this.SET_LOGOUT();
       this.$router.push("/user/Login");
@@ -422,24 +419,7 @@ export default {
         });
     },
     getCueListAndData() {
-      const param = {
-        brd_dt: this.cueParam.brdDate,
-        products: [this.rowData.productid],
-        media: this.cueParam.media,
-        row_per_page: 30,
-        select_page: 1,
-      };
-      this.goCuesheet(param);
-    },
-    async goCuesheet(param) {
-      const cuesheetData = await this.getcuesheetListArr(param);
-      if (cuesheetData.data.resultObject.data.length == 1) {
-        sessionStorage.setItem(
-          "USER_INFO",
-          JSON.stringify(cuesheetData.data.resultObject.data[0])
-        );
-        window.open("/app/cuesheet/day/detail", "_blank");
-      }
+      this.$emit("goCueSheetDate", this.rowData);
     },
     isDropdownStatus(rowData) {
       return (

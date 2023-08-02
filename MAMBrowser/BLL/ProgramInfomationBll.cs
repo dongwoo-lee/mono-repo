@@ -1,10 +1,15 @@
-﻿using M30_ManagementControlDAO.Interfaces;
+﻿using DevExpress.Data.Extensions;
+using M30.AudioFile.DAL.Dao;
+using M30_ManagementControlDAO.Interfaces;
 using M30_ManagementControlDAO.ParamEntity;
 using M30_ManagementControlDAO.WebService;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MAMBrowser.BLL
 {
@@ -12,11 +17,14 @@ namespace MAMBrowser.BLL
     {
         private readonly IProgramInfomationDAO _dao;
         private readonly IStudioWebService _studioService;
-        public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService)
+        private readonly APIDao _api_dao;
+
+        public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService, APIDao api_dao)
         {
             _dao = dao;
-            //_studioService = new StudioSystemMockup(studioService);
-            _studioService = studioService;
+            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = studioService;
+            _api_dao= api_dao;
         }
         public ProgramInfomationDTO GetProgramInfomationList(ProgramInfoParamDTO dto)
         {
@@ -28,12 +36,36 @@ namespace MAMBrowser.BLL
                 .SetPgmCode(dto.pgmcode)
                 .Build();
             var entity = _dao.GetProgramInfomationList(param);
+            var options = _api_dao.GetOptions("S01G06C001");
+            var index = options.FindIndex(op => op.Name == "PGM_IMAGE_PATH");
+
             if (entity.Count > 0 && DateTime.ParseExact(entity[0].STARTDATE, "yyyyMMdd", null)<= DateTime.ParseExact(dto.brddate, "yyyyMMdd", null))
             {
                 var studioAssign = _studioService.GetStudioAssign(dto.brddate, dto.brddate, null, null);
-                result = _dao.GetProgramInfomationList(param).Converting(studioAssign);
+                result = _dao.GetProgramInfomationList(param).Converting(studioAssign, index > 0 ? options[index].Value:"");
             }
             return result;
+        }
+        public void UpdatePgmImgFile(IFormFile file,string pgmcode)
+        {
+            var options = _api_dao.GetOptions("S01G06C001");
+            var index = options.FindIndex(op => op.Name == "PGM_IMAGE_PATH");
+            var path = index > 0 ? options[index].Value : "";
+            var imgPath = ExtentionsControl.GetpgmImgPath(pgmcode, path);
+            if (File.Exists(imgPath))
+            {
+                File.Delete(imgPath);
+            }
+            if(!String.IsNullOrEmpty(path)&&file != null)
+            {
+                string fileExtension = Path.GetExtension(file.FileName);
+                string newFilePath = Path.Combine(path, pgmcode + fileExtension);
+
+                using (var stream = new FileStream(newFilePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+            }
         }
     }
 }

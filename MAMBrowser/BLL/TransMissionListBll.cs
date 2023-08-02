@@ -19,8 +19,8 @@ namespace MAMBrowser.BLL
         public TransMissionListBll(ITransMissionListDAO dao, StudioWebService studioService)
         {
             _dao = dao;
-            //_studioService = new StudioSystemMockup(studioService);
-            _studioService = studioService;
+            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = studioService;
         }
         public PageListCollectionDTO<TransMissionListItemDTO> GetTransMissionList(TransMissionListParamDTO dto)
         {

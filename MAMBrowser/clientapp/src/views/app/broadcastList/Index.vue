@@ -120,9 +120,9 @@
             <common-actions
               :rowData="props.props.rowData"
               :isBroadcastConfigAction="true"
-              :cueParam="searchItems"
               @preview="onPreview"
               @clickMusicSelectionListBtn="onMusicSelectionList"
+              @goCueSheetDate="onGoCueSheetDate"
             />
           </template>
         </common-data-table-scroll-paging>
@@ -169,8 +169,8 @@ export default {
       modalId: "music_selection_list_modal",
       searchItems: {
         // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
-        // brdDate: "20221001",
-        brdDate: null,
+        brdDate: "20221001",
+        // brdDate: null,
         media: "A",
         productType: "P",
         rowPerPage: 30,
@@ -268,12 +268,14 @@ export default {
   async mounted() {
     const toDay = await this.GetDateString(this.date);
     // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
-    this.searchItems.brdDate = toDay;
+    // this.searchItems.brdDate = toDay;
     this.getMediaOptions();
     this.getData();
   },
   methods: {
     ...mapActions("cueList", ["GetDateString"]),
+    ...mapActions("cueList", ["getcuesheetListArr"]),
+    ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
     async getData() {
       await this.setData();
       this.nowPgmRowMoveFocus();
@@ -311,8 +313,8 @@ export default {
     },
     nowPgmRowMoveFocus() {
       // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
-      const currentTime = new Date();
-      // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+      // const currentTime = new Date();
+      const currentTime = new Date(2022, 9, 1, 11, 6, 0);
 
       if (this.responseData.data) {
         const rowItems = this.responseData.data.filter((row) => {
@@ -403,6 +405,33 @@ export default {
           rowData.studioname,
         "_blank"
       );
+    },
+    async onGoCueSheetDate(rowData) {
+      const param = {
+        start_dt: this.searchItems.brdDate,
+        end_dt: this.searchItems.brdDate,
+        products: [rowData.productid],
+        media: this.searchItems.media,
+        row_per_page: 30,
+        select_page: 1,
+      };
+      const cueItem = await this.getarchiveCuesheetListArr(param);
+      if (cueItem.data.resultObject.data.length == 1) {
+        sessionStorage.setItem(
+          "USER_INFO",
+          JSON.stringify(cueItem.data.resultObject.data[0])
+        );
+        window.open("/app/cuesheet/previous/detail", "_blank");
+      } else {
+        cueItem = await this.getcuesheetListArr(param);
+        if (cueItem.data.resultObject.data.length == 1) {
+          sessionStorage.setItem(
+            "USER_INFO",
+            JSON.stringify(cueItem.data.resultObject.data[0])
+          );
+          window.open("/app/cuesheet/day/detail", "_blank");
+        }
+      }
     },
   },
 };
