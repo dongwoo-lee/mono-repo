@@ -41,6 +41,16 @@
           <slot name="studioName" :props="props"></slot>
         </div>
       </template>
+      <template slot="rankHoverMusicId" scope="props">
+        <div>
+          <slot name="rankHoverMusicId" :props="props"></slot>
+        </div>
+      </template>
+      <template slot="songnameHoverAlbum" scope="props">
+        <div>
+          <slot name="songnameHoverAlbum" :props="props"></slot>
+        </div>
+      </template>
       <template v-if="isActionsSlot" slot="actions" scope="props">
         <div class="table-button-container">
           <slot name="actions" :props="props"></slot>

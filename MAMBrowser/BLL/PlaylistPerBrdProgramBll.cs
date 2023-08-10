@@ -18,6 +18,10 @@ namespace MAMBrowser.BLL
             var param = new PlaylistPerBrdProgramParamBuilder()
                 .SetBrdDate(dto.brddate)
                 .SetProductid(dto.productid)
+                .SetPeriod(dto.period)
+                .SetUserid(dto.userid)
+                .SetEnddate(dto.enddate)
+                .SetAudioclipid(dto.audioclipid)
                 .SetRowPage(dto.RowPerPage)
                 .SetSelectPage(dto.SelectPage)
                 .Build();

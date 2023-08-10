@@ -129,6 +129,10 @@
                       @click="$router.push({ path: '/app/config/remove' })"
                       >소재 삭제 관리</b-dropdown-item
                     >
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/config/monitoring' })"
+                      >관리자 모니터링</b-dropdown-item
+                    >
                     <b-dropdown-divider />
                   </div>
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>

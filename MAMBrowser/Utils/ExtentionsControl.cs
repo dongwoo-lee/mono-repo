@@ -173,9 +173,11 @@ namespace MAMBrowser.Utils
         public static List<PlaylistPerBrdProgramDTO> Converting(this List<PlaylistPerBrdProgramEntity> entitys)
         {
             var result = new List<PlaylistPerBrdProgramDTO>();
+            var index = 1;
             foreach (var entity in entitys)
             {
                 var item = new PlaylistPerBrdProgramDTO();
+                item.ROWNO = index;
                 item.SEQ = entity.SEQ;
                 item.SCHDATE = entity.SCH_DATE;
                 item.AUDIOCLIPID = entity.AUDIO_CLIP_ID;
@@ -191,14 +193,17 @@ namespace MAMBrowser.Utils
                 item.STUDIONAME = entity.STUDIO_NAME;
                 item.SLAPNAME = entity.SLAP_NAME;
                 item.BRDCTYPE = entity.BRDC_TYPE;
-                item.MAINTITLE = entity.MAIN_TITLE;
-                item.SUBTITLE = entity.SUB_TITLE;
+                item.SONGNAME = entity.SONGNAME;
+                item.ALBUMNAME = entity.ALBUMNAME;
+                item.PRODUCTYEAR= entity.PRODUCTYEAR;
+                item.ARTIST = entity.ARTIST;
                 item.PLAYTIME = entity.PLAY_TIME;
                 item.TOTALTIME = entity.TOTAL_TIME;
                 item.USERID = entity.USER_ID;
                 item.USERNAME = entity.USER_NAME;
                 item.REGDTM = entity.REG_DTM;
                 result.Add(item);
+                index++;
             }
             return result;
         }
@@ -209,17 +214,31 @@ namespace MAMBrowser.Utils
             {
                 var item = new PlaylistStatisticsDTO();
                 item.RANK = entity.RANK;
-                item.PERIOD = entity.PERIOD;
-                item.MEDIANAME = entity.MEDIANAME;
-                item.PERSONID = entity.PERSONID;
-                item.PERSONNAME = entity.PERSONNAME;
+                //item.SEQ= entity.SEQ;
+                item.AUDIOCLIPID = entity.AUDIO_CLIP_ID;
+                item.MUSICID = entity.MUSICID;
+                //item.PERIOD = entity.PERIOD;
+                //item.MEDIA = entity.MEDIA_CD;
+                //item.PERSONID = entity.PERSONID;
+                //item.PERSONNAME = entity.PERSONNAME;
                 item.SONGNAME = entity.SONGNAME;
-                item.PGMNAME = entity.PGM_NAME;
+                item.ARTIST = entity.ARTIST;
+                item.ALBUMNAME= entity.ALBUMNAME;
+                //item.PGMNAME = entity.PGM_NAME;
                 item.PLAYCNT = entity.PLAY_CNT;
-                item.PLAYTIME = entity.PLAY_TIME;
-                item.TOTALTIME = entity.TOTAL_TIME;
+                //item.PLAYTIME = entity.PLAY_TIME;
+                //item.TOTALTIME = entity.TOTAL_TIME;
                 item.SUMMARYDATE = entity.SUMMARY_DATE;
-                item.MASTERFILE = entity.MASTERFILE;
+                item.FilePath = entity.MASTERFILE;
+                if (!string.IsNullOrEmpty(item.FilePath))
+                {
+                    item.FileToken = TokenGenerator.GenerateFileToken(item.FilePath);
+                    item.ExistFile = true;
+                }
+                else
+                {
+                    item.ExistFile = false;
+                }
                 result.Add(item);
             }
             return result;

@@ -5,6 +5,12 @@ const url = [
         icon: "iconsminds-shop",
     },
     {
+        // My 선곡 집계
+        id: "S01G01C037",
+        to: "/app/my/music-ranking",
+        icon: "iconsminds-big-data",
+    },
+    {
         // My 디스크
         id: "S01G01C007",
         to: "/app/my/private",
@@ -74,7 +80,12 @@ const url = [
         to: "/app/music/songcache",
         icon: "iconsminds-clef",
     },
-
+    {
+        // 선곡 통계
+        id: "S01G01C038",
+        to: "/app/music/statistics",
+        icon: "iconsminds-big-data",
+    },
     {
         // 광고
         id: "S01G01C004",
@@ -157,13 +168,13 @@ const url = [
         icon: "iconsminds-big-data",
     },
     {
-        // 스튜디오
+        // 스튜디오 정보
         id: "S01G01C035",
         to: "/app/monitoring/studio",
         icon: "iconsminds-big-data",
     },
     {
-        // 프로그램
+        // 프로그램 정보
         id: "S01G01C036",
         to: "/app/monitoring/programInfo",
         icon: "iconsminds-big-data",

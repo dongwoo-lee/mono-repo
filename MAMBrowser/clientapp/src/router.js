@@ -35,6 +35,12 @@ const routes = [
        * My 공간
        */
       {
+        // My 선곡 집계 
+        name: "music-ranking",
+        path: "my/music-ranking",
+        component: () => import("./views/app/my/musicRanking")
+      },
+      {
         // My 공간
         name: ROUTE_NAMES.PRIVATE,
         path: "my/private",
@@ -99,6 +105,12 @@ const routes = [
         name: "songcache",
         path: "music/songcache",
         component: () => import("./views/app/music/SongCache")
+      },
+      {
+        // 음원 - SONG
+        name: "statistics",
+        path: "music/statistics",
+        component: () => import("./views/app/music/Statistics")
       },
       /**
        * 광고
@@ -261,6 +273,11 @@ const routes = [
         name: "config",
         path: "config/remove", // 소재 삭제 관리
         component: () => import("./views/app/config/remove/Index")
+      },
+      {
+        name: "config",
+        path: "config/monitoring", // 관리자 모니터링
+        component: () => import("./views/app/config/monitoring/Index")
       },
       {
         name: "log",

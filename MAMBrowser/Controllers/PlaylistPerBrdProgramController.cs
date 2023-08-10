@@ -17,6 +17,7 @@ namespace MAMBrowser.Controllers
             _bll = bll;
         }
 
+        //선곡리스트
         [HttpPost("GetPlaylistProgram")]
         public DTO_RESULT<PageListCollectionDTO<PlaylistPerBrdProgramDTO>> GetPlaylistProgram([FromBody] PlaylistPerBrdProgramParamDTO dto)
         {
@@ -33,6 +34,7 @@ namespace MAMBrowser.Controllers
             }
             return result;
         }
+        //선곡통계
         [HttpPost("GetPlaylistStatistics")]
         public DTO_RESULT<PageListCollectionDTO<PlaylistStatisticsDTO>> GetPlaylistStatistics([FromBody] PlaylistStatisticsParamDTO dto)
         {

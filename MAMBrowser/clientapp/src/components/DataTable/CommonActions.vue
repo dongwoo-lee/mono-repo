@@ -46,6 +46,14 @@
       <b-icon icon="trash" class="icon" variant="danger"></b-icon>
     </b-button>
     <b-button
+      v-if="displayEtc('down-excel')"
+      class="icon-buton"
+      :title="getTitle('down-excel')"
+      @click.stop="onDownExcel()"
+    >
+      <b-icon icon="file-earmark-excel" class="icon"></b-icon>
+    </b-button>
+    <b-button
       v-if="displayMyDiskCopy()"
       class="icon-buton"
       :disabled="!existFile()"
@@ -366,6 +374,9 @@ export default {
       if (type === "mydisk-copy") {
         return "My 공간으로 복사";
       }
+      if (type === "down-excel") {
+        return "Excel 다운로드";
+      }
       return "";
     },
     getDeleteStyle() {
@@ -427,7 +438,10 @@ export default {
       );
     },
     getMusicSelectionList() {
-      this.$emit("clickMusicSelectionListBtn");
+      this.$emit("clickMusicSelectionListBtn", this.rowData);
+    },
+    onDownExcel() {
+      this.$emit("downExcel", this.rowData);
     },
   },
 };

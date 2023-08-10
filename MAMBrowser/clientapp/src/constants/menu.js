@@ -7,6 +7,11 @@ const data = [
     subs: [
       {
         icon: "simple-icon-paper-plane",
+        label: "menu.music-ranking",
+        to: "/app/music-ranking"
+      },
+      {
+        icon: "simple-icon-paper-plane",
         label: "menu.private",
         to: "/app/private"
       },
@@ -68,6 +73,11 @@ const data = [
         icon: "iconsminds-clef",
         label: "menu.sound-songcache", // Song
         to: "/app/sound-songcache",
+      },
+      {
+        icon: "iconsminds-clef",
+        label: "menu.sound-statistics", // Song
+        to: "/app/sound-statistics",
       },
     ]
   },

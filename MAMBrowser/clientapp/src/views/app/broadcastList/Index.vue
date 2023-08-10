@@ -141,10 +141,10 @@
     >
     </PlayerPopup>
     <TableView
-      title="선곡리스트"
+      :title="playlist_modal_title"
       :id="modalId"
-      :data-source="responseData.data"
-      :column-data="fields"
+      :data-source="playlistDataSource"
+      :column-data="playlist_fields"
     />
   </div>
 </template>
@@ -260,6 +260,64 @@ export default {
           width: "28%",
         },
       ],
+      playlist_fields: [
+        {
+          dataField: "rowno",
+          width: "50",
+          caption: "순서",
+          alignment: "center",
+          allowSorting: false,
+        },
+        // {
+        //   dataField: "audioclipid",
+        //   caption: "CLIP ID",
+        //   width: "130",
+        //   alignment: "center",
+        //   allowSorting: false,
+        // },
+        {
+          dataField: "musicid",
+          caption: "음악ID",
+          width: "130",
+          alignment: "center",
+          allowSorting: false,
+        },
+        {
+          dataField: "startdtm",
+          caption: "송출 시작 일시",
+          width: "200",
+          alignment: "center",
+          allowSorting: false,
+        },
+        {
+          dataField: "songname",
+          caption: "곡명",
+          alignment: "center",
+          allowSorting: false,
+        },
+        {
+          dataField: "artist",
+          caption: "가수",
+          alignment: "center",
+          allowSorting: false,
+        },
+        {
+          cellTemplate: "totaltime_template",
+          caption: "음원 길이",
+          width: "100",
+          alignment: "center",
+          allowSorting: false,
+        },
+        {
+          cellTemplate: "playtime_template",
+          caption: "송출 길이",
+          width: "100",
+          alignment: "center",
+          allowSorting: false,
+        },
+      ],
+      playlist_modal_title: "",
+      playlistDataSource: [],
     };
   },
   components: {
@@ -383,7 +441,25 @@ export default {
       }
     },
     //선곡리스트 가져오기
-    onMusicSelectionList() {
+    async onMusicSelectionList(rowData) {
+      const url = "/api/PlaylistPerBrdProgram/GetPlaylistProgram";
+      this.playlist_modal_title =
+        "[" +
+        moment(this.searchItems.brdDate, "YYYYMMDD").format("YYYY-MM-DD") +
+        "] " +
+        rowData.eventname +
+        " 선곡리스트";
+
+      const param = {
+        brddate: this.searchItems.brdDate,
+        productid: rowData.productid,
+      };
+      await this.$http.post(url, param).then((res) => {
+        if (res.status === 200 && res.data.resultObject) {
+          this.playlistDataSource = res.data.resultObject.data;
+        }
+      });
+      // playlistDataSource
       this.$bvModal.show(this.modalId);
     },
     goProgramInfo(rowData) {
