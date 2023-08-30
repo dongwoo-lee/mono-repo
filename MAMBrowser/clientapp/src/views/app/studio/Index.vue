@@ -32,6 +32,12 @@
             @changeDatePicker="changeDate"
           />
         </b-form-group>
+        <!-- 조회 버튼 -->
+        <b-form-group>
+          <b-button variant="outline-primary default" @click="onSearch"
+            >조회</b-button
+          >
+        </b-form-group>
       </template>
       <template slot="form-table-area">
         <DxScheduler
@@ -41,7 +47,7 @@
           :data-source="dataSource"
           :current-date="changeFormatStringDate(searchItems.brdDate)"
           :height="600"
-          :editing="true"
+          :editing="false"
           current-view="week"
           startDateExpr="startdate"
           endDateExpr="enddate"
@@ -55,7 +61,7 @@
           <DxResource :data-source="resourcesData" field-expr="tdid" />
           <template #timeCellTemplate="{ data: dataCell }">
             <div style="font-family: 'MBC 새로움 M'; font-size: small">
-              {{ dataCell.text ? subtractHours(dataCell.text, 7) : "" }}
+              {{ setTimeTemplate(dataCell) }}
             </div>
           </template>
           <template #dateCellTemplateSlot="{ data: dataCell }">
@@ -114,20 +120,7 @@ export default {
   data() {
     return {
       resourcesData: [],
-      dataSource: [
-        // {
-        //   text2: "두시만세",
-        //   gb_name: "김은비",
-        //   gb_empno: "960768",
-        //   startdate: "2023-06-28T05:20:00",
-        //   enddate: "2023-06-28T06:05:00",
-        // },
-        // {
-        //   text: "Customer Workshop",
-        //   startDate: new Date("2023-06-29T07:30"),
-        //   endDate: new Date("2023-06-29T09:00"),
-        // },
-      ],
+      dataSource: [],
       searchItems: {
         brdDate: toDay,
         studioid: "01",
@@ -153,6 +146,13 @@ export default {
     DxResource,
   },
   methods: {
+    setTimeTemplate(cell) {
+      if (cell.text) {
+        return moment(cell.date).subtract(-5, "hours").format("HH:mm");
+      } else {
+        return "";
+      }
+    },
     async getData() {
       const [monday, sunday] = this.getWeekDates(this.searchItems.brdDate);
       const params = {

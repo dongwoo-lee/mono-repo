@@ -198,7 +198,6 @@ export default {
         this.SetProductIds(this.pgmList),
       ]);
     this.getData();
-    console.log("day", this.pgmList);
   },
   methods: {
     ...mapActions("cueList", ["GetDateString"]),

@@ -240,6 +240,8 @@ export default {
     };
   },
   async mounted() {
+    this.isTableLoading = this.isScrollLodaing ? false : true;
+    this.isDetailLoading = true;
     const queryParams = this.$route.query;
     const isQuery =
       queryParams.brdDate && queryParams.pgmcode && queryParams.media;
@@ -341,8 +343,8 @@ export default {
     async setNowPgmcode() {
       const params = {
         // 최신데이터 없어서 TEST
-        // brdDate: this.toDay,
-        brdDate: "20221001",
+        brdDate: this.toDay,
+        // brdDate: "20221001",
         media: this.searchItems.media,
         producTtype: "P",
         rowPerPage: 30,
@@ -351,8 +353,8 @@ export default {
       const transList = await this.getToDayTransMissionList(params);
       if (transList) {
         // 최신데이터 없어서 TEST
-        // const currentTime = new Date();
-        const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+        const currentTime = new Date();
+        // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
         const rowItems = transList.data.resultObject.data.filter((row) => {
           return new Date(row.onairtime) < currentTime;
         });
@@ -409,20 +411,23 @@ export default {
       const param = {
         start_dt: this.searchItems.brdDate,
         end_dt: this.searchItems.brdDate,
+        brd_dt: this.searchItems.brdDate,
         products: [rowData.productid],
         media: this.searchItems.media,
         row_per_page: 30,
         select_page: 1,
       };
-      const cueItem = await this.getarchiveCuesheetListArr(param);
-      if (cueItem.data.resultObject.data.length == 1) {
+      //이전큐시트 목록에서 확인 후 Go Page
+      const archiveItem = await this.getarchiveCuesheetListArr(param);
+      if (archiveItem.data.resultObject.data.length == 1) {
         sessionStorage.setItem(
           "USER_INFO",
-          JSON.stringify(cueItem.data.resultObject.data[0])
+          JSON.stringify(archiveItem.data.resultObject.data[0])
         );
         window.open("/app/cuesheet/previous/detail", "_blank");
       } else {
-        cueItem = await this.getcuesheetListArr(param);
+        //일일큐시트 목록에서 확인 후 Go Page
+        const cueItem = await this.getcuesheetListArr(param);
         if (cueItem.data.resultObject.data.length == 1) {
           sessionStorage.setItem(
             "USER_INFO",

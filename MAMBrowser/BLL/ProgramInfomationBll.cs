@@ -22,9 +22,9 @@ namespace MAMBrowser.BLL
         public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService, APIDao api_dao)
         {
             _dao = dao;
-            _studioService = new StudioSystemMockup(studioService);
-            //_studioService = studioService;
-            _api_dao= api_dao;
+            //_studioService = new StudioSystemMockup(studioService);
+            _studioService = studioService;
+            _api_dao = api_dao;
         }
         public ProgramInfomationDTO GetProgramInfomationList(ProgramInfoParamDTO dto)
         {

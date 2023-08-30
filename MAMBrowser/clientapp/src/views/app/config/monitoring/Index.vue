@@ -11,9 +11,9 @@
         <b-card>
           <b-container fluid>
             <b-tabs content-class="mt-3" fill>
-              <!-- <b-tab title="DL3 / DCM" @click="onTab('monitor-dl3-dcm')" active /> -->
-              <!-- <b-tab title="SLAP" @click="onTab('monitor-slap')" /> -->
-              <!-- <b-tab title="기타" @click="onTab('monitor-etc')" /> -->
+              <b-tab title="DL3 / DCM" @click="onTab('dl3-dcm')" />
+              <b-tab title="SLAP" @click="onTab('slap')" active />
+              <b-tab title="기타" @click="onTab('etc')" />
               <component :is="tabName"></component>
             </b-tabs>
           </b-container>
@@ -24,15 +24,16 @@
 </template>
 
 <script>
-// import DeleteSource from "../template/deleteSource";
-// import TrashMiros from "../template/trashMiros";
-// import AutoRemove from "../template/autoRemove";
+import Dl3Dcm from "../template/monitor_DL3_DCM";
+import Slap from "../template/monitor_SLAP";
+import Etc from "../template/monitor_ETC";
 
 export default {
-  components: { DeleteSource, TrashMiros, AutoRemove },
+  components: { Dl3Dcm, Slap, Etc },
   data() {
     return {
-      tabName: "monitor-dl3-dcm",
+      // tabName: "dl3-dcm",
+      tabName: "slap",
     };
   },
   methods: {
