@@ -1,4 +1,5 @@
 ﻿using DevExpress.Data.Extensions;
+using log4net.Repository.Hierarchy;
 using M30.AudioFile.DAL.Dao;
 using M30_ManagementControlDAO.Interfaces;
 using M30_ManagementControlDAO.ParamEntity;
@@ -6,6 +7,7 @@ using M30_ManagementControlDAO.WebService;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,13 +20,15 @@ namespace MAMBrowser.BLL
         private readonly IProgramInfomationDAO _dao;
         private readonly IStudioWebService _studioService;
         private readonly APIDao _api_dao;
+        private readonly ILogger<ProgramInfomationBll> _logger;
 
-        public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService, APIDao api_dao)
+        public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService, APIDao api_dao,ILogger<ProgramInfomationBll> logger)
         {
             _dao = dao;
             //_studioService = new StudioSystemMockup(studioService);
             _studioService = studioService;
             _api_dao = api_dao;
+            _logger= logger;
         }
         public ProgramInfomationDTO GetProgramInfomationList(ProgramInfoParamDTO dto)
         {
@@ -41,9 +45,11 @@ namespace MAMBrowser.BLL
 
             if (entity.Count > 0 && DateTime.ParseExact(entity[0].STARTDATE, "yyyyMMdd", null)<= DateTime.ParseExact(dto.brddate, "yyyyMMdd", null))
             {
-                var studioAssign = _studioService.GetStudioAssign(dto.brddate, dto.brddate, null, null);
+                var studioAssign = _studioService.GetStudioAssign(dto.brddate, dto.brddate, "", "");
+                _logger.LogInformation($"SelectAssignedStudio_program : {studioAssign}");
                 result = _dao.GetProgramInfomationList(param).Converting(studioAssign, index > 0 ? options[index].Value:"");
             }
+            _logger.LogInformation($"SelectAssignedStudio_program_result : {result}");
             return result;
         }
         public void UpdatePgmImgFile(IFormFile file,string pgmcode)

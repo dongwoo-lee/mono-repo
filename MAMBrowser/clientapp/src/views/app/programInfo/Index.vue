@@ -289,6 +289,7 @@ export default {
         brddate: this.searchItems.brdDate,
         pgmcode: this.searchItems.pgmcode,
       };
+      console.log("params", params);
       const dataList = await this.getReturnList(params);
       if (dataList) {
         this.dataSource = dataList.data.resultObject;
@@ -322,6 +323,7 @@ export default {
     },
     async onMediaChange(e) {
       const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
+      console.log("selectMediaObj", selectMediaObj);
       this.programOptions = await this.SetProgramCodeOption(selectMediaObj);
       this.programOptions = this.programOptions.filter(
         (ele) => ele.value !== ""
@@ -354,12 +356,13 @@ export default {
       if (transList) {
         // 최신데이터 없어서 TEST
         const currentTime = new Date();
-        // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
+        // const currentTime = new Date(2022, 9, 3, 11, 6, 0);
         const rowItems = transList.data.resultObject.data.filter((row) => {
           return new Date(row.onairtime) < currentTime;
         });
         if (rowItems.length > 0) {
           const nowPgmItem = rowItems[rowItems.length - 1];
+          console.log("nowPgmItem", nowPgmItem);
           const codes = this.pgmList.filter(
             (pgm) => pgm.media === this.searchItems.media
           );
@@ -387,6 +390,7 @@ export default {
       const url = "/api/TransMissionList/GetTransMissionList";
       return this.$http.post(url, params).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
+          console.log("GetTodayTransMissionList", res.data.resultObject);
           return res;
         }
       });

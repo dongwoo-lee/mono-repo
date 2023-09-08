@@ -243,6 +243,7 @@ export default {
       await this.$http.get(url).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
           this.studioInfoOptions = res.data.resultObject.data;
+          console.log("studioInfoMenu", res.data.resultObject.data);
         }
       });
     },

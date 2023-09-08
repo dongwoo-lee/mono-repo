@@ -33,7 +33,7 @@
                 )
               "
             >
-              {{ dataSource[itemCount * (index - 1) + (i - 1)].location }}
+              {{ dataSource[itemCount * (index - 1) + (i - 1)].location }}F
             </span>
             <span class="name">
               {{ dataSource[itemCount * (index - 1) + (i - 1)].deviceName }}

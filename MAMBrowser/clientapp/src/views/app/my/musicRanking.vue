@@ -68,7 +68,7 @@
         <!-- 검색 버튼 -->
         <b-form-group>
           <b-button variant="btn-outline-primary default" @click="onSearch"
-            >검색</b-button
+            >조회</b-button
           >
         </b-form-group>
       </template>

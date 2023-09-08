@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import TableView from "../../../components/Modal/CommonTableViewModal.vue";
@@ -323,6 +323,9 @@ export default {
   components: {
     TableView,
   },
+  computed: {
+    ...mapGetters("cueList", ["cueInfo"]),
+  },
   async mounted() {
     const toDay = await this.GetDateString(this.date);
     // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
@@ -334,6 +337,7 @@ export default {
     ...mapActions("cueList", ["GetDateString"]),
     ...mapActions("cueList", ["getcuesheetListArr"]),
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
+    ...mapMutations("cueList", ["SET_CUEINFO"]),
     async getData() {
       await this.setData();
       this.nowPgmRowMoveFocus();
@@ -495,6 +499,7 @@ export default {
       //이전큐시트 목록에서 확인 후 Go Page
       const archiveItem = await this.getarchiveCuesheetListArr(param);
       if (archiveItem.data.resultObject.data.length == 1) {
+        this.SET_CUEINFO(archiveItem.data.resultObject.data[0]);
         sessionStorage.setItem(
           "USER_INFO",
           JSON.stringify(archiveItem.data.resultObject.data[0])
@@ -503,12 +508,15 @@ export default {
       } else {
         //일일큐시트 목록에서 확인 후 Go Page
         const cueItem = await this.getcuesheetListArr(param);
+        console.log(cueItem);
         if (cueItem.data.resultObject.data.length == 1) {
+          this.SET_CUEINFO(cueItem.data.resultObject.data[0]);
           sessionStorage.setItem(
             "USER_INFO",
             JSON.stringify(cueItem.data.resultObject.data[0])
           );
-          window.open("/app/cuesheet/day/detail", "_blank");
+          // window.open("/app/cuesheet/day/detail", "_blank");
+          this.$router.push({ path: "/app/cuesheet/day/detail" });
         }
       }
     },

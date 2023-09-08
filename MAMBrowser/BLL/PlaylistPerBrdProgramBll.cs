@@ -1,16 +1,20 @@
-﻿using M30_ManagementControlDAO.Interfaces;
+﻿using DevExpress.Xpo.Logger;
+using M30_ManagementControlDAO.Interfaces;
 using M30_ManagementControlDAO.ParamEntity;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace MAMBrowser.BLL
 {
     public class PlaylistPerBrdProgramBll
     {
         private readonly IPlaylistPerBrdProgramDAO _dao;
-        public PlaylistPerBrdProgramBll(IPlaylistPerBrdProgramDAO dao)
+        private readonly ILogger<PlaylistPerBrdProgramBll> _logger;
+        public PlaylistPerBrdProgramBll(IPlaylistPerBrdProgramDAO dao,ILogger<PlaylistPerBrdProgramBll> logger)
         {
             _dao = dao;
+            _logger= logger;
         }
         public PageListCollectionDTO<PlaylistPerBrdProgramDTO> GetPlaylistBrdProgramList(PlaylistPerBrdProgramParamDTO dto)
         {
