@@ -93,7 +93,7 @@ export default {
       slot: true,
       searchItems: {
         searchText: "",
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "DESC",

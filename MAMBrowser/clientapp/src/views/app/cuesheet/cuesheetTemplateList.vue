@@ -171,7 +171,7 @@ export default {
     return {
       searchTemptitle: "",
       searchItems: {
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
       },
       tmpTitleTextBoxValue: "이름없는 템플릿",

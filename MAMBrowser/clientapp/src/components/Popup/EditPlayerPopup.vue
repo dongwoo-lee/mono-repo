@@ -1,6 +1,6 @@
 <template>
   <!-- 미리듣기 팝업 -->
-  <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
+  <b-modal id="modal-player" size="lg2" v-model="show" no-close-on-backdrop>
     <template slot="modal-title">
       <div
         style="display: inline-flex"

@@ -192,7 +192,7 @@ export default {
         editorName: "", // 사용자 이름
         name: "", // 소재명
         // isAvailable: this.screenName === 'pr' ? 'Y': 'N',
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

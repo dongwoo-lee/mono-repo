@@ -1,6 +1,6 @@
 <template>
   <!-- 미리듣기 팝업 -->
-  <b-modal id="modal-player" size="lg" v-model="show" no-close-on-backdrop>
+  <b-modal id="modal-player" size="lg2" v-model="show" no-close-on-backdrop>
     <template slot="modal-title">
       <h5 class="player-overflow" :title="title">
         {{ title }}
@@ -81,6 +81,12 @@ export default {
     closePlayer() {
       this.$refs.play.close();
       this.$emit("closePlayer");
+    },
+    changedVolume2(num) {
+      this.$refs.play.changedVolume2(num);
+    },
+    SkipSec(num) {
+      this.$refs.play.SkipSec(num);
     },
   },
 };

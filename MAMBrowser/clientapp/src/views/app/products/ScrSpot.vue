@@ -217,7 +217,7 @@ export default {
         name: "", // 소재명
         media: "A", // 매체
         pgmName: "", // 사용처명
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "DESC",

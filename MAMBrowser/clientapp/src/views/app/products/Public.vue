@@ -212,7 +212,7 @@ export default {
         editor: "", // 제작자
         title: "", // 제목
         memo: "", // 메모
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

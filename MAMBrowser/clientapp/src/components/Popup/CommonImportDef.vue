@@ -143,7 +143,7 @@ export default {
         media: "", // 매체
         productid: "", // 프로그램명
         pgmcode: "",
-        rowPerPage: 30,
+        rowPerPage: 300,
         selectPage: 1,
       },
       fields: [
