@@ -70,7 +70,7 @@
       </template>
       <template slot="form-btn-area">
         <span>
-          ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'
+          <!--※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'
           {{ deleteCycleItem.mydiskDelCycleMonth }}개월
           {{
             inDateSet(
@@ -80,7 +80,7 @@
               " (YYYY년 MM월 DD일)"
             )
           }}
-          이전 소재가 삭제됩니다.
+          이전 소재가 삭제됩니다.-->
         </span>
       </template>
       <!-- 테이블 페이지 -->
@@ -176,7 +176,7 @@ export default {
         regDtm: new Date().toISOString().substring(0, 10), // 편성일자
         dlDeviceSeq: 0,
         pgmName: "", // 녹음명
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

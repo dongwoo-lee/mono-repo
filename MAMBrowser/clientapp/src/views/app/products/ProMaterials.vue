@@ -188,7 +188,7 @@ export default {
         name: "", // 소재명
         start_dt: "", // 시작일
         end_dt: "", // 종료일
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

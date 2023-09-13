@@ -138,7 +138,7 @@ export default {
         media: "", // 매체
         title: "",
         tag: "", //태그
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
       },
       fields: [

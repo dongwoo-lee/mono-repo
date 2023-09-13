@@ -60,7 +60,7 @@
           >
         </b-input-group>
         <span>
-          ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'
+          <!-- ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시' 
           {{ deleteCycleItem.mydiskDelCycleMonth }}개월
           {{
             inDateSet(
@@ -70,7 +70,7 @@
               " (YYYY년 MM월 DD일)"
             )
           }}
-          이전 소재가 삭제됩니다.
+          이전 소재가 삭제됩니다.-->
         </span>
       </template>
       <!-- 테이블 페이지 -->
@@ -162,7 +162,7 @@ export default {
         // cate: '',           // 분류
         title: "", // 제목
         memo: "", // 메모
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "deletedDtm",
         sortValue: "desc",

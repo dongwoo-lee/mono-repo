@@ -13,37 +13,39 @@
       <div>
         <b-container class="bv-example-row" v-if="isSuccess">
           <b-row>
-            <b-col cols="3" class="p-0 mb-2">
-              <p align="left">
-                <b-button-group size="sm">
-                  <b-button
-                    @click="somClick"
-                    :disabled="cueInfo.cuetype == 'A'"
-                  >
-                    Start Point
-                  </b-button>
-                  <b-button
-                    @click="eomClick"
-                    :disabled="cueInfo.cuetype == 'A'"
-                  >
-                    End Point
-                  </b-button>
-                </b-button-group>
-              </p>
-            </b-col>
-            <b-col cols="4" class="pl-3">
-              <p align="left" style="margin-top: 8px; margin-bootm: 0">
+            <b-col>
+              <span>
+                <b-button
+                  style="padding: 6px"
+                  variant="outline-primary"
+                  @click="somClick"
+                  :disabled="cueInfo.cuetype == 'A'"
+                >
+                  시작지점 설정
+                </b-button>
+                <b-button
+                  style="padding: 6px"
+                  variant="outline-primary"
+                  @click="eomClick"
+                  :disabled="cueInfo.cuetype == 'A'"
+                >
+                  종료지점 설정
+                </b-button>
+                <span style="border: 1px solid silver; padding: 8px"
+                  >{{ somTime }} / {{ eomTime }}</span
+                >
                 <b-form-checkbox-group
+                  style="display: flex"
                   class="custom-checkbox-group"
                   v-model="selected"
                   :options="fadeOptions"
                   value-field="value"
                   text-field="text"
                   :disabled="cueInfo.cuetype == 'A'"
-                />
-              </p>
-            </b-col>
-            <b-col cols="5">
+                /> </span
+            ></b-col>
+
+            <b-col cols="4">
               <div style="margin-top: 8px; margin-bootm: 0">
                 <div class="iconButton" style="float: right; margin-left: 10px">
                   <i
@@ -115,22 +117,69 @@
           </b-col>
           <b-col>
             <div align="center">
-              <b-btn variant="outline-primary" size="sm" @click.prevent="Play"
+              <b-btn
+                style="padding-left: 8px; padding-right: 8px"
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="SkipSec(-5)"
+                title="5초전"
+              >
+                <b-icon
+                  icon="arrow-counterclockwise"
+                  aria-hidden="true"
+                ></b-icon>
+              </b-btn>
+
+              <b-btn
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="Play"
+                title="재생/일시정지"
                 >▶/||</b-btn
               >
-              <b-btn variant="outline-primary" size="sm" @click.prevent="Stop"
+              <b-btn
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="Stop"
+                title="중지"
                 >■</b-btn
               >
-              <b-btn variant="outline-primary" size="sm" @click="editplay"
-                >영역 Play</b-btn
+              <b-btn
+                style="padding-left: 8px; padding-right: 8px"
+                variant="outline-primary"
+                size="sm"
+                @click="editplay"
+                >구간 재생</b-btn
               >
+              <b-btn
+                style="padding-left: 8px; padding-right: 8px"
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="SkipSec(5)"
+                title="5초후"
+              >
+                <b-icon icon="arrow-clockwise" aria-hidden="true"></b-icon>
+              </b-btn>
             </div>
           </b-col>
           <b-col>
             <div>
-              <p align="right" class="m-0">{{ somTime }} / {{ eomTime }}</p>
               <p align="right" class="m-0">
-                {{ CurrentTime }} / {{ TotalTime }}
+                {{ CurrentTime }} / {{ TotalTime }}({{ speed }}배속)
+                <b-btn
+                  style="padding: 6px"
+                  variant="outline-primary"
+                  @click.prevent="SetFast(-0.25)"
+                  title="0.25 감속"
+                  ><b-icon icon="skip-backward" aria-hidden="true"></b-icon
+                ></b-btn>
+                <b-btn
+                  style="padding: 6px"
+                  variant="outline-primary"
+                  @click.prevent="SetFast(0.25)"
+                  title="0.25 가속"
+                  ><b-icon icon="skip-forward" aria-hidden="true"></b-icon
+                ></b-btn>
               </p>
             </div>
           </b-col>
@@ -162,6 +211,7 @@ export default {
   },
   data() {
     return {
+      speed: 1,
       selected: [],
       isMute: false,
       wavesurfer: null,
@@ -238,6 +288,16 @@ export default {
     ...mapGetters("cueList", ["cueInfo"]),
   },
   methods: {
+    SetFast(num) {
+      this.speed = this.speed + num;
+      if (this.speed < 0.25) this.speed = 0.25;
+      else if (this.speed >= 4) this.speed = 4;
+
+      wavesurfer.setPlaybackRate(this.speed, true);
+    },
+    SkipSec(num) {
+      wavesurfer.skipForward(num);
+    },
     editplay() {
       wavesurfer.regions.list["Trim"].play();
     },

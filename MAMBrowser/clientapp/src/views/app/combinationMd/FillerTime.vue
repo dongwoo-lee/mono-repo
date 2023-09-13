@@ -216,7 +216,7 @@ export default {
         editor: "", // 사용자
         editorName: "", // 사용자 이름
         // isAvailable: 'Y',
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",
