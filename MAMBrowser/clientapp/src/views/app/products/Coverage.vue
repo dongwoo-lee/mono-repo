@@ -211,7 +211,7 @@ export default {
         editor: "", // 제작자
         name: "", // 소재명
         isMastering: "Y",
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

@@ -143,7 +143,7 @@ export default {
         end_dt: endDay, // 종료일
         media: "", // 매체
         title: "",
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
       },
       fields: [

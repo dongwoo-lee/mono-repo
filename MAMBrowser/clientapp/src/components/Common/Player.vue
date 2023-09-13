@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div
+    @keyup.left="SkipSec(-5)"
+    @keyup.right="SkipSec(5)"
+    @keyup.up="changedVolume2(0.1)"
+    @keyup.down="changedVolume2(-0.1)"
+  >
     <div>
       <div v-if="errorMsg">
         {{ errorMsg }}
@@ -89,16 +94,60 @@
           </b-col>
           <b-col>
             <div align="center">
-              <b-btn variant="outline-primary" size="sm" @click.prevent="Play"
+              <b-btn
+                style="padding-left: 8px; padding-right: 8px"
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="SkipSec(-5)"
+                title="5초전"
+              >
+                <b-icon
+                  icon="arrow-counterclockwise"
+                  aria-hidden="true"
+                ></b-icon>
+              </b-btn>
+              <b-btn
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="Play"
+                title="재생/일시정지"
                 >▶/||</b-btn
               >
-              <b-btn variant="outline-primary" size="sm" @click.prevent="Stop"
+              <b-btn
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="Stop"
+                title="중지"
                 >■</b-btn
               >
+              <b-btn
+                style="padding-left: 8px; padding-right: 8px"
+                variant="outline-primary"
+                size="sm"
+                @click.prevent="SkipSec(5)"
+                title="5초후"
+                ><b-icon icon="arrow-clockwise" aria-hidden="true"></b-icon>
+              </b-btn>
             </div>
           </b-col>
           <b-col>
-            <p align="right">{{ CurrentTime }} / {{ TotalTime }}</p>
+            <p align="right">
+              {{ CurrentTime }} / {{ TotalTime }}({{ speed }}배속)
+              <b-btn
+                style="padding: 6px"
+                variant="outline-primary"
+                @click.prevent="SetFast(-0.25)"
+                title="0.25 감속"
+                ><b-icon icon="skip-backward" aria-hidden="true"></b-icon
+              ></b-btn>
+              <b-btn
+                style="padding: 6px"
+                variant="outline-primary"
+                @click.prevent="SetFast(0.25)"
+                title="0.25 가속"
+                ><b-icon icon="skip-forward" aria-hidden="true"></b-icon
+              ></b-btn>
+            </p>
           </b-col>
         </b-row>
       </b-container>
@@ -124,6 +173,7 @@ export default {
   },
   data() {
     return {
+      speed: 1,
       isMute: false,
       wavesurfer: null,
       CurrentTime: "00:00:00",
@@ -373,6 +423,15 @@ export default {
           }
         });
     },
+    SetFast(num) {
+      this.speed = this.speed + num;
+      if (this.speed < 0.25) this.speed = 0.25;
+      else if (this.speed >= 4) this.speed = 4;
+      wavesurfer.setPlaybackRate(this.speed, true);
+    },
+    SkipSec(num) {
+      wavesurfer.skipForward(num);
+    },
     Play() {
       if (wavesurfer.isPlaying()) {
         wavesurfer.pause();
@@ -393,6 +452,10 @@ export default {
     },
     changedVolume(v) {
       wavesurfer.setVolume(v);
+    },
+    changedVolume2(v) {
+      var volume = wavesurfer.getVolume();
+      wavesurfer.setVolume(volume - v);
     },
     changedZoom(v) {
       var zoomLevel = Number(v);

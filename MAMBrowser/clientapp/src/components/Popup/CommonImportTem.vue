@@ -126,7 +126,7 @@ export default {
       loadingIconVal: false,
       temtitle: "",
       searchItems: {
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
       },
       fields: [

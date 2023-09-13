@@ -120,7 +120,8 @@
         <DxDataGrid
           id="search_data_grid"
           :data-source="searchtable_data.columns"
-          :remote-operations="true"
+          :remote-operations="remoteOper"
+          ,
           :cellHintEnabled="true"
           :height="gridHeight"
           :focused-row-enabled="false"
@@ -135,6 +136,7 @@
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
+          <DxSorting mode="single" />
           <DxColumnFixing :enabled="true" />
           <template #play_Template="{ data }">
             <div>
@@ -247,6 +249,7 @@
           keyExpr="rowNO"
           noDataText="데이터가 없습니다."
         >
+          <!-- <DxSorting mode="single" /> -->
           <template #play_Template="{ data }">
             <div>
               <DxButton
@@ -346,6 +349,7 @@ import {
   DxPaging,
   DxColumnFixing,
   DxLoadPanel,
+  DxSorting,
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import { USER_ID } from "@/constants/config";
@@ -371,8 +375,9 @@ export default {
       streamingUrl_music: "/api/musicsystem/streaming",
       waveformUrl_music: "/api/musicsystem/waveform",
       tempDownloadUrl_music: "/api/musicsystem/temp-download",
+      remoteOper: true,
       refreshKey: 0,
-      pageSize: 30,
+      pageSize: 100,
       gridHeight: 0,
       allSelected: false,
       indeterminate: false,
@@ -388,9 +393,11 @@ export default {
       },
       searchtable_columns: [],
       searchItems: {
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         totalRowCount: 0,
+        sortKey: "",
+        sortValue: "",
       },
       dataGridRef,
       viewTableName: "음반 기록실",
@@ -402,31 +409,37 @@ export default {
           dataField: "rowNO",
           caption: "순서",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "categoryID",
           caption: "구분",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "categoryName",
           caption: "광고주명/분류명",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "id",
           caption: "소재ID",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "name",
           caption: "소재명",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "length",
           caption: "길이",
           alignment: "center",
+          allowSorting: false,
         },
         {
           cellTemplate: "play_Template",
@@ -434,6 +447,7 @@ export default {
           fixedPosition: "right",
           caption: "작업",
           alignment: "center",
+          allowSorting: false,
         },
       ],
       cmFields: [
@@ -441,26 +455,31 @@ export default {
           dataField: "rowNO",
           caption: "순서",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "advertiser",
           caption: "광고주",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "name",
           caption: "소재명",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "length",
           caption: "길이(초)",
           alignment: "center",
+          allowSorting: false,
         },
         {
           dataField: "codingDT",
           caption: "제작일",
           alignment: "center",
+          allowSorting: false,
         },
         {
           cellTemplate: "play_Template",
@@ -468,6 +487,7 @@ export default {
           fixedPosition: "right",
           caption: "작업",
           alignment: "center",
+          allowSorting: false,
         },
       ],
     };
@@ -488,6 +508,7 @@ export default {
     DxColumnFixing,
     DxPaging,
     DxLoadPanel,
+    DxSorting,
   },
   computed: {
     ...mapGetters("cueList", ["searchListData"]),
@@ -716,6 +737,7 @@ export default {
       );
     },
     async getData(Val) {
+      this.remoteOper = true;
       var basedata = this.searchItems;
       this.searchtable_data.cartcode = this.searchDataList.cartcode;
       if (
@@ -726,13 +748,24 @@ export default {
       ) {
         this.pageSize = 200;
       } else {
-        this.pageSize = 30;
+        this.pageSize = this.searchItems.rowPerPage;
       }
       const result = Object.assign({}, basedata, Val);
       this.searchtable_data.columns = await new CustomStore({
         key: "rowNO",
         load: (loadOptions) => {
           loadOptions.requireGroupCount = false;
+          //그룹소재인기 아닌 단일소재인경우 정렬값을 설정.
+          if (!this.isGroupData(this.searchDataList.cartcode)) {
+            if (loadOptions.sort) {
+              result.sortKey = loadOptions.sort[0].selector;
+              if (result.sortKey) {
+                result.sortValue =
+                  loadOptions.sort[0].desc == true ? "DESC" : "ASC";
+              }
+            }
+          }
+
           if (loadOptions.skip >= 0 && loadOptions.skip % this.pageSize == 0) {
             result.selectPage = loadOptions.skip / this.pageSize + 1;
             return this.$http(
@@ -768,6 +801,17 @@ export default {
     },
     onDragEnd() {
       document.getElementById("app-container").classList.remove("drag_");
+    },
+    isGroupData(dataCode) {
+      switch (dataCode) {
+        case "S01G01C016":
+        case "S01G01C017":
+        case "S01G01C018":
+        case "S01G01C019":
+          return true;
+        default:
+          return false;
+      }
     },
   },
 };
@@ -830,12 +874,12 @@ export default {
 .item_size_big .dx-item-content {
   line-height: 2.52;
   height: auto;
-  width: 100px;
+  width: 50px;
 }
 .item_size_sm .dx-item-content {
   line-height: 1.7;
   height: auto;
-  width: 100px;
+  width: 50px;
 }
 .dropdown-menu {
   position: fixed !important;

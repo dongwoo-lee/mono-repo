@@ -182,6 +182,8 @@ namespace MAMBrowser.Controllers
                         SongName = pram.title,
                         RowPerPage = pram.rowperpage,
                         SelectPage = pram.selectpage,
+                        SortKey = pram.sortKey,
+                        SortValue = pram.sortValue
                     };
                     result.ResultObject = MAMWebFactory.Instance.Search<SongResultDTO>(dto);
                     result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -212,6 +214,8 @@ namespace MAMBrowser.Controllers
                     Memo = pram.memo,
                     RowPerPage = pram.rowperpage,
                     SelectPage = pram.selectpage,
+                    SortKey = pram.sortKey,
+                    SortValue = pram.sortValue
                 };
                 result.ResultObject = MAMWebFactory.Instance.Search<MyDiskResultDTO>(dto);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
@@ -240,7 +244,8 @@ namespace MAMBrowser.Controllers
                     name = pram.name,
                     RowPerPage = pram.rowperpage,
                     SelectPage = pram.selectpage,
-
+                    SortKey = pram.sortKey,
+                    SortValue = pram.sortValue
                 };
 
                 result.ResultObject = MAMWebFactory.Instance.Search<DL30ResultDTO>(dto);

@@ -106,7 +106,7 @@ export default {
         userName: "", // 작업자
         start_dt: "", // 등록일 시작일
         end_dt: "", // 등록일 종료일
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

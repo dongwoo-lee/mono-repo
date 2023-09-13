@@ -164,7 +164,7 @@ export default {
         searchType2: "song_idx",
         gradeType: 0,
         searchText: "",
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

@@ -170,7 +170,7 @@ export default {
         media: "A",
         brd_dt: "",
         pgm: "",
-        rowPerPage: 30,
+        rowPerPage: 100,
         selectPage: 1,
         sortKey: "",
         sortValue: "",

@@ -38,10 +38,14 @@
                     :value="searchItems.rowPerPage"
                     @change="onChagne"
                   >
-                    <b-form-select-option value="30">30개</b-form-select-option>
-                    <b-form-select-option value="50">50개</b-form-select-option>
-                    <b-form-select-option value="100" v-if="templateVal"
+                    <b-form-select-option value="100"
                       >100개</b-form-select-option
+                    >
+                    <b-form-select-option value="200"
+                      >200개</b-form-select-option
+                    >
+                    <b-form-select-option value="300" v-if="templateVal"
+                      >300개</b-form-select-option
                     >
                   </b-form-select>
                 </div>
