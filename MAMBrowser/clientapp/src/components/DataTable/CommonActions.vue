@@ -51,7 +51,7 @@
       :title="getTitle('down-excel')"
       @click.stop="onDownExcel()"
     >
-      <b-icon icon="file-earmark-excel" class="icon"></b-icon>
+      <b-icon icon="file-earmark-text" class="icon"></b-icon>
     </b-button>
     <b-button
       v-if="displayMyDiskCopy()"
@@ -187,7 +187,7 @@
       ></b-button>
       <b-button
         v-if="isBroadcastConfigAction"
-        :disabled="!rowData.sourceid"
+        :disabled="!rowData.ishistory"
         variant="outline-primary"
         size="sm"
         title="선곡리스트"

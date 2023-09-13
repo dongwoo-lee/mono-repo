@@ -152,7 +152,7 @@ export default {
         this.getMcrSpotMeta(rowData);
       } else if (this.MySpaceScreenName == "[Filler 시간]") {
         this.getFillerTimeMeta(rowData);
-      } else if (this.MySpaceScreenName == "[MY 선곡 집계]") {
+      } else if (this.MySpaceScreenName == "[MY 선곡 순위]") {
         this.getMyMusicRanking(rowData);
       }
     },

@@ -24,6 +24,7 @@ namespace MAMBrowser.DTO
         public string PGMFILEPATH { get; set; }
         public string PGMFILETOKEN { get; set; }
         public int CUEID { get; set; }
+        public bool ISHISTORY { get; set; }
     }
     public class TransMissionListParamDTO : PageParamDTO
     {

@@ -66,6 +66,7 @@ namespace MAMBrowser.Utils
                     }
                 }
                 item.CUEID = entity.CUEID;
+                item.ISHISTORY = (entity.ISHISTORY == '1') ? true : false;
                 result.Add(item);
                 index++;
             }
@@ -252,13 +253,8 @@ namespace MAMBrowser.Utils
             int month = int.Parse(dateData.Substring(4, 2));
             int day = int.Parse(dateData.Substring(6, 2));
 
-            if (hours >= 24)
-            {
-                day = day + 1;
-                hours= hours - 24;
-            }
-
-            DateTime result = new DateTime(year, month, day, hours, minutes, 0);
+            DateTime result = new DateTime(year, month, day);
+            result = result.AddHours(hours).AddMinutes(minutes);
             return result.AddHours(calHours).AddMinutes(calMinutes);
         }
         public static string GetpgmImgPath(string pgmcode, string path)

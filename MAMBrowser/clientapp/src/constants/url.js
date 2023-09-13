@@ -5,7 +5,7 @@ const url = [
         icon: "iconsminds-shop",
     },
     {
-        // My 선곡 집계
+        // My 선곡 순위
         id: "S01G01C037",
         to: "/app/my/music-ranking",
         icon: "iconsminds-big-data",
@@ -81,7 +81,7 @@ const url = [
         icon: "iconsminds-clef",
     },
     {
-        // 선곡 통계
+        // 전체 선곡 순위 
         id: "S01G01C038",
         to: "/app/music/statistics",
         icon: "iconsminds-big-data",

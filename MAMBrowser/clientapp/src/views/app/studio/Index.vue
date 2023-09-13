@@ -51,7 +51,6 @@
           current-view="week"
           startDateExpr="startdate"
           endDateExpr="enddate"
-          textExpr="description"
           timeCellTemplate="timeCellTemplate"
           appointment-template="AppointmentTemplateSlot"
           dateCellTemplate="dateCellTemplateSlot"
@@ -84,8 +83,12 @@
                   >R</b-badge
                 >
               </span>
-              <span>
-                {{ data.appointmentData.description }}
+              <span
+                style="font-size: larger"
+                v-b-tooltip.hover.bottom
+                :title="setAppointmentMainTitle(data)"
+              >
+                {{ setAppointmentMainTitle(data) }}
               </span>
             </div>
           </template>
@@ -101,7 +104,8 @@ import { mapActions, mapGetters } from "vuex";
 import { DxScheduler, DxResource } from "devextreme-vue/scheduler";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 const moment = require("moment");
-const date = new Date();
+// const date = new Date();
+const date = new Date("2023-05-29");
 
 function get_date_str(date) {
   let sYear = date.getFullYear();
@@ -123,7 +127,7 @@ export default {
       dataSource: [],
       searchItems: {
         brdDate: toDay,
-        studioid: "01",
+        studioid: null,
       },
       studioInfoOptions: [],
     };
@@ -138,6 +142,8 @@ export default {
         (item) => item.name === queryParams.studioname
       );
       this.searchItems.studioid = studioOptionItem.id;
+    } else if (this.studioInfoOptions) {
+      this.searchItems.studioid = this.studioInfoOptions[0].id;
     }
     await this.getData();
   },
@@ -243,7 +249,6 @@ export default {
       await this.$http.get(url).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
           this.studioInfoOptions = res.data.resultObject.data;
-          console.log("studioInfoMenu", res.data.resultObject.data);
         }
       });
     },
@@ -289,6 +294,12 @@ export default {
     },
     onAppointmentDblClick(e) {
       e.cancel = true;
+    },
+    setAppointmentMainTitle(data) {
+      let tdName = data.appointmentData.tdname
+        ? " (" + data.appointmentData.tdname + ")"
+        : "";
+      return data.appointmentData.description + tdName;
     },
   },
 };

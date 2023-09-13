@@ -11,7 +11,7 @@
         <b-card>
           <b-container fluid>
             <b-tabs content-class="mt-3" fill>
-              <b-tab title="DL3 / DCM" @click="onTab('dl3-dcm')" />
+              <b-tab title="DL3" @click="onTab('dl3')" />
               <b-tab title="SLAP" @click="onTab('slap')" active />
               <b-tab title="기타" @click="onTab('etc')" />
               <component :is="tabName"></component>
@@ -24,15 +24,15 @@
 </template>
 
 <script>
-import Dl3Dcm from "../template/monitor_DL3_DCM";
+import Dl3 from "../template/monitor_DL3";
 import Slap from "../template/monitor_SLAP";
 import Etc from "../template/monitor_ETC";
 
 export default {
-  components: { Dl3Dcm, Slap, Etc },
+  components: { Dl3, Slap, Etc },
   data() {
     return {
-      // tabName: "dl3-dcm",
+      // tabName: "dl3",
       tabName: "slap",
     };
   },

@@ -72,8 +72,12 @@
           >
         </b-form-group>
       </template>
-      <!-- 버튼 -->
-      <template slot="form-btn-area"> </template>
+      <template slot="form-btn-area">
+        <span>
+          <span style="color: #008ecc">●</span>
+          <span>{{ setSearchDateStr() }}</span>
+        </span>
+      </template>
       <!-- 테이블 페이지 -->
       <template slot="form-table-page-area">
         {{ getTotalRowCount() }}
@@ -303,7 +307,7 @@ export default {
         { username: "유저 이름" },
         { regdtm: "등록 일시" },
       ],
-      MySpaceScreenName: "[MY 선곡 집계]",
+      MySpaceScreenName: "[MY 선곡 순위]",
     };
   },
   components: { CopyToMySpacePopup },
@@ -564,7 +568,7 @@ export default {
       });
     },
     getExcelFileName(rowData) {
-      let name = "";
+      let name = "[전체 선곡 순위]";
       if (this.searchItems.media) {
         name = name + this.searchItems.media;
       }
@@ -646,6 +650,29 @@ export default {
           title: "내려받을 데이터가 없습니다.",
         });
       }
+    },
+    setSearchDateStr() {
+      let e_date = moment(this.searchItems.enddate, "YYYYMMDD");
+      let s_date = "";
+      switch (this.searchItems.period) {
+        case "WEEK":
+          s_date = e_date.clone().subtract(7, "days").add(1, "days");
+          break;
+        case "MONTH":
+          s_date = e_date.clone().subtract(1, "month").add(1, "days");
+          break;
+        case "YEAR":
+          s_date = e_date.clone().subtract(1, "year").add(1, "days");
+          break;
+
+        default:
+          break;
+      }
+      return (
+        s_date.format("YYYY년 MM월 DD일") +
+        " ~ " +
+        e_date.format("YYYY년 MM월 DD일")
+      );
     },
   },
 };

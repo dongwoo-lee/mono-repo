@@ -1,5 +1,5 @@
 <template>
-  <div>DL3 / DCM</div>
+  <div>DL3</div>
 </template>
 <script>
 export default {

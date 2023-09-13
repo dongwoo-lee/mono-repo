@@ -35,7 +35,7 @@ const routes = [
        * My 공간
        */
       {
-        // My 선곡 집계 
+        // My 선곡 순위 
         name: "music-ranking",
         path: "my/music-ranking",
         component: () => import("./views/app/my/musicRanking")
