@@ -612,9 +612,10 @@ export default {
         enddate: this.searchItems.enddate,
       };
       const playlist = await this.getPlaylist(params);
+      console.log("playlist", playlist);
       if (
         playlist.data.resultObject.data &&
-        playlist.data.resultObject.data.length > 1
+        playlist.data.resultObject.data.length > 0
       ) {
         const dataGrid = playlist.data.resultObject.data;
         const workbook = new Workbook();

@@ -22,8 +22,8 @@ namespace MAMBrowser.BLL
         public StudioInfomationBll(IStudioInfomationDAO dao, StudioWebService studioService,ILogger<StudioInfomationBll> logger)
         {
             _dao = dao;
-            //_studioService = new StudioSystemMockup(studioService);
-            _studioService = studioService;
+            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = studioService;
             _logger = logger;
         }
 

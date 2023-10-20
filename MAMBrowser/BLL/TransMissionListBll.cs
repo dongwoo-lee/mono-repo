@@ -22,8 +22,8 @@ namespace MAMBrowser.BLL
         public TransMissionListBll(ITransMissionListDAO dao, StudioWebService studioService,ILogger<TransMissionListBll> logger)
         {
             _dao = dao;
-            //_studioService = new StudioSystemMockup(studioService);
-            _studioService = studioService;
+            _studioService = new StudioSystemMockup(studioService);
+            //_studioService = studioService;
             _logger = logger;
         }
         public PageListCollectionDTO<TransMissionListItemDTO> GetTransMissionList(TransMissionListParamDTO dto)
