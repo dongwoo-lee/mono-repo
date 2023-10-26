@@ -87,6 +87,7 @@
   </b-modal>
 </template>
 <script>
+import { USER_ID } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import MixinBasicPage from "../../mixin/MixinBasicPage";
 import DxButton from "devextreme-vue/button";
@@ -237,12 +238,13 @@ export default {
     ...mapActions("cueList", ["enableNotification"]),
 
     async getData() {
+      const userId = sessionStorage.getItem(USER_ID);
       if (this.state) {
         this.isTableLoading = this.isScrollLodaing ? false : true;
         await this.$http
           .get(`/api/TempCueSheet/GetTempList`, {
             params: {
-              personid: this.id,
+              personid: userId,
               title: this.temtitle,
               row_per_page: this.searchItems.rowPerPage,
               select_page: this.searchItems.selectPage,
