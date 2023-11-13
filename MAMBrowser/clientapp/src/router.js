@@ -232,6 +232,11 @@ const routes = [
         path: "config/miros", // MIROS 설정
         component: () => import("./views/app/config/miros/Index")
       },
+       {
+        name: "config",
+        path: "config/monitoring", // monitoring 설정
+        component: () => import("./views/app/config/monitoring/index")
+      },
       {
         name: "config",
         path: "config/system", // 시스템 설정 

@@ -122,6 +122,10 @@
                       >MIROS 설정</b-dropdown-item
                     >
                     <b-dropdown-item
+                      @click="$router.push({ path: '/app/config/monitoring' })"
+                      >모니터링 설정</b-dropdown-item
+                    >
+                    <b-dropdown-item
                       @click="$router.push({ path: '/app/config/system' })"
                       >시스템 설정</b-dropdown-item
                     >
@@ -161,10 +165,10 @@ import {
   mapActions,
   mapState,
   createLogger,
-} from "vuex";
-import { MenuIcon, MobileMenuIcon } from "../../components/Svg";
-import { SYSTEM_MANAGEMENT_CODE } from "../../constants/config";
-import { getDirection, setDirection } from "../../utils";
+} from "vuex"
+import { MenuIcon, MobileMenuIcon } from "../../components/Svg"
+import { SYSTEM_MANAGEMENT_CODE } from "../../constants/config"
+import { getDirection, setDirection } from "../../utils"
 
 export default {
   components: {
@@ -174,10 +178,10 @@ export default {
   data() {
     return {
       SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE,
-    };
+    }
   },
   created() {
-    this.renewal();
+    this.renewal()
   },
   methods: {
     ...mapMutations("menu", [
@@ -188,58 +192,58 @@ export default {
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
     ...mapMutations("FileIndexStore", ["setFileModal", "setButton"]),
     isMasteringValid() {
-      var visible;
+      var visible
       this.behaviorList.forEach((e) => {
         if (e.id == "S01G02C004" && e.visible == "Y") {
-          visible = e.visible;
+          visible = e.visible
         }
-      });
+      })
       if (visible == "Y") {
-        return true;
+        return true
       } else {
-        return false;
+        return false
       }
     },
     openFileModal() {
-      this.setFileModal(true);
-      this.setButton("nav");
+      this.setFileModal(true)
+      this.setButton("nav")
     },
     logout() {
-      this.SET_LOGOUT();
-      this.$router.push("/user/Login");
+      this.SET_LOGOUT()
+      this.$router.push("/user/Login")
     },
     isDisplaySetting() {
       return this.behaviorList.some(
-        (item) => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === "Y"
-      );
+        (item) => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === "Y",
+      )
     },
     getTo() {
       if (this.roleList) {
         const firstVisibleIndex = this.roleList.findIndex(
-          (role) => role.visible === "Y"
-        );
+          (role) => role.visible === "Y",
+        )
         if (this.roleList[firstVisibleIndex]) {
-          return this.roleList[firstVisibleIndex].to;
+          return this.roleList[firstVisibleIndex].to
         }
       }
 
-      return "";
+      return ""
     },
     resetTimer() {
-      this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
+      this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT()
       this.renewal().then((res) => {
         if (res && res.data && res.data.resultCode === 0) {
-          this.$notify("primary", "로그인 연장되었습니다.");
+          this.$notify("primary", "로그인 연장되었습니다.")
         }
-      });
+      })
     },
     getConDBNameStyle() {
-      if (!this.conDBName) return {};
+      if (!this.conDBName) return {}
       if (this.conDBName.indexOf("운영") > -1) {
-        return { color: "darkblue", opacity: 0.8 };
+        return { color: "darkblue", opacity: 0.8 }
       }
 
-      return { color: "darkred", opacity: 0.8 };
+      return { color: "darkred", opacity: 0.8 }
     },
   },
   computed: {
@@ -265,11 +269,11 @@ export default {
   watch: {
     "$i18n.locale"(to, from) {
       if (from !== to) {
-        this.$router.go(this.$route.path);
+        this.$router.go(this.$route.path)
       }
     },
   },
-};
+}
 </script>
 <style scoped>
 .free-space-blue {
@@ -277,6 +281,7 @@ export default {
   font-weight: 600;
   margin-left: 20px;
 }
+
 .free-space-red {
   color: red;
   font-weight: 600;
