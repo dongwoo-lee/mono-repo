@@ -10,129 +10,141 @@
               $event,
               'collapse-' + index,
               i,
-              dataSource[itemCount * (index - 1) + (i - 1)]
+              dataSource[itemCount * (index - 1) + (i - 1)],
             )
-          "
+            "
           v-if="dataSource[itemCount * (index - 1) + (i - 1)]"
         >
           <div
             class="btn_header"
-            :class="
-              getStatusHeaderColorClass(
-                dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
-                  .agentStatus
-              )
-            "
+            :class="getStatusHeaderColorClass(
+              dataSource[itemCount * (index - 1) + (i - 1)].healthPacket
+                .agent_status,
+            )
+              "
           >
             <span
               class="floor"
-              :class="
-                getStatusFloorColorClass(
-                  dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
-                    .agentStatus
-                )
-              "
+              :class="getStatusFloorColorClass(
+                dataSource[itemCount * (index - 1) + (i - 1)].healthPacket
+                  .agent_status,
+              )
+                "
             >
-              {{ dataSource[itemCount * (index - 1) + (i - 1)].location }}F
+              {{
+                dataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
+                  .location
+              }}F
             </span>
             <span class="name">
-              {{ dataSource[itemCount * (index - 1) + (i - 1)].deviceName }}
-            </span>
-            <span class="device">
               {{
-                getDeviceName(
-                  dataSource[itemCount * (index - 1) + (i - 1)].extInfo.slapType
-                )
+                dataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
+                  .device_name
               }}
             </span>
+            <!-- <span class="device">
+              {{
+                getDeviceName(
+                  dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
+                    .agenT_TYPE,
+                )
+              }}
+            </span> -->
           </div>
           <div class="btn_body">
             {{
-              dataSource[itemCount * (index - 1) + (i - 1)].extInfo
-                .logonUserName
-                ? dataSource[itemCount * (index - 1) + (i - 1)].extInfo
-                    .logonUserName + " / "
-                : ""
+              dataSource[itemCount * (index - 1) + (i - 1)].agentInfo?.slap_info
+                .user_name
+              ? dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
+                ?.slap_info.user_name + " / "
+              : ""
             }}
-            {{ dataSource[itemCount * (index - 1) + (i - 1)].agentInfo.title }}
+            {{
+              dataSource[itemCount * (index - 1) + (i - 1)].agentInfo?.slap_info
+                .cuesheet_name
+            }}
           </div>
         </b-button>
       </div>
       <div>
-        <b-collapse :id="'collapse-' + index" class="collapse_detail">
+        <b-collapse
+          :id="'collapse-' + index"
+          class="collapse_detail"
+        >
           <b-card
             class="detail_body"
-            v-if="
-              rowIndex && dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-            "
+            v-if="rowIndex && dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+              "
           >
             <dl class="group_content">
               <dt class="content_title">단말 모델명 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceModel
+                    .deviceInfo.device_model
                 }}
               </dd>
               <dt class="content_title">단말 컴퓨터 이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .machineName
+                    .deviceInfo.machine_name
                 }}
               </dd>
               <dt class="content_title">윈도우 버전 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].osVersion
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.os_version
                 }}
               </dd>
               <dt class="content_title">프로세서 정보 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .processorInfo
+                    .deviceInfo.processor_info
                 }}
               </dd>
               <dt class="content_title">IP정보 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].ipInfo
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.ip_info
                 }}
               </dd>
               <dt class="content_title">cpu 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceStatus.cpu
+                    .healthPacket.dynamic_data.CPU
                 }}
               </dd>
               <dt class="content_title">메모리 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceStatus.memory
+                    .healthPacket.dynamic_data.MEMORY
                 }}
               </dd>
               <dt class="content_title">디스크 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceStatus.disk
+                    .healthPacket.dynamic_data.DISK
                 }}
               </dd>
               <dt class="content_title">디스크 읽기/쓰기</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceStatus.diskIOUseRate
+                    .healthPacket.dynamic_data.DISK_IO_USE_RATE
                 }}
               </dd>
               <dt class="content_title">네트워크 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceStatus.networkUseRate
+                    .healthPacket.dynamic_data.NETWORK_USE_RATE
                 }}
               </dd>
               <!-- <div
@@ -150,29 +162,29 @@
               <dt class="content_title">스튜디오명 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].extInfo
-                    .studioName
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.slap_info.studio_name
                 }}
               </dd>
               <dt class="content_title">SLAP이름 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].extInfo
-                    .slapName
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.slap_info.slap_name
                 }}
               </dd>
               <dt class="content_title">큐시트이름 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].extInfo
-                    .cueSheetName
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.slap_info.cuesheet_name
                 }}
               </dd>
               <dt class="content_title">로그인 사용자 이름 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].extInfo
-                    .logonUserName
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.slap_info.user_name
                 }}
               </dd>
               <dt class="content_title">Agent 작동상태 :</dt>
@@ -192,7 +204,7 @@
 <script>
 import * as signalR from "@microsoft/signalr";
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("http://localhost:8005/Hub1")
+  .withUrl("/mntr/hub")
   .withAutomaticReconnect({
     nextRetryDelayInMilliseconds: () => {
       return 1000;
@@ -222,21 +234,24 @@ export default {
   },
   methods: {
     getData() {
-      this.$http
-        .get(`http://localhost:8005/Monitoring/device/slap`, null)
-        .then((res) => {
-          // console.info("getAll", res.data);
-          this.dataSource = res.data;
-        });
+      this.$http.get(`/mntr/Monitoring/GetAllDevice`, null).then((res) => {
+        console.log("res :>> ", res);
+        // console.info("getAll", res.data);
+        this.dataSource = res.data;
+        console.log("this.dataSource :>> ", this.dataSource);
+      });
     },
     getDevice(deviceID) {
+      console.log("deviceID :>> ", deviceID);
       this.$http
-        .get(`http://localhost:8005/Monitoring/device/slap/${deviceID}`, null)
+        .get(`/mntr/Monitoring/GetAgentInfoById?deviceId=${deviceID}`)
         .then((res) => {
-          const device = this.dataSource.find((d) => d.deviceID == deviceID);
-          device.agentInfo = res.data.agentInfo;
-          device.deviceStatus = res.data.deviceStatus;
-          device.extInfo = res.data.extInfo;
+          const device = this.dataSource.find(
+            (d) => d.deviceInfo.device_id == deviceID,
+          );
+          // device.agentInfo = res.data.agentInfo;
+          // device.deviceStatus = res.data.deviceStatus;
+          device.slap_info = res.data.slap_info;
         });
     },
     async startGetDevicePolling(deviceID) {
@@ -250,12 +265,15 @@ export default {
       clearInterval(this.pollingTimer);
     },
     connectSignalR() {
-      connection.on("ChangedAgentStatus", (status) => {
+      connection.on("/HealthPacket", (status) => {
+        var object = JSON.parse(status);
+        console.log("object.DynamicData :>> ", object.DynamicData);
         // console.info("ChangedAgentStatus", status);
         const device = this.dataSource.find(
-          (d) => d.deviceID == status.deviceID
+          (d) => d.deviceInfo.device_id == object.DynamicData.DEVICE_ID,
         );
-        device.agentInfo = status;
+        device.healthPacket.agent_status = object.AGENT_STATUS;
+        device.healthPacket.dynamic_data = object.DynamicData;
       });
       connection.onreconnecting((error) => {
         console.info("onreconnecting", error);
@@ -271,8 +289,10 @@ export default {
       }
     },
     toggleCollapse(event, collapseId, colIndex, rowItem) {
-      const elementsWithSpecificClass =
-        document.querySelectorAll(".highlight_border");
+      console.log("rowItem :>> ", rowItem);
+      const elementsWithSpecificClass = document.querySelectorAll(
+        ".highlight_border",
+      );
       const clickedButtonElement = event.target;
       const monitorItemElement = clickedButtonElement.closest(".monitor_item");
 
@@ -301,18 +321,18 @@ export default {
             this.clearColArray(colItemId);
           } else {
             //다른 btn 눌렀을 때
-            this.startGetDevicePolling(rowItem.deviceID);
+            this.startGetDevicePolling(rowItem.deviceInfo.device_id);
             this.collapseStates[0][colItemId] = colIndex;
           }
         } else {
           // 다른 라인 탭 눌렀을 때
           this.clearColArray(colItemId);
-          this.startGetDevicePolling(rowItem.deviceID);
+          this.startGetDevicePolling(rowItem.deviceInfo.device_id);
           this.setColArray(collapseId, colIndex);
         }
       } else {
         //열린 탭 아무것도 없을 때
-        this.startGetDevicePolling(rowItem.deviceID);
+        this.startGetDevicePolling(rowItem.deviceInfo.device_id);
         this.setColArray(collapseId, colIndex);
       }
       // 선택한 item -> detail에 출력
@@ -390,15 +410,18 @@ export default {
   height: 650px;
   overflow: auto;
 }
+
 .monitor_container .monitor_group {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+
 .monitor_container .monitor_item {
   padding: 0;
   margin: 10px 10px 10px 10px;
   border: solid silver 1px;
 }
+
 .monitor_container .collapse_detail {
   margin: 0px 10px;
   padding: 10px;
@@ -408,19 +431,23 @@ export default {
   box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 5px 3px !important;
   /* background-color: #f8f9fa; */
 }
+
 .collapse_detail .card-body {
   padding: 1rem;
 }
+
 .monitor_container .detail_body {
   height: 300px;
   overflow: auto;
   background-color: #f8f9fa;
 }
+
 .monitor_container .btn_header {
   position: relative;
   /* background-color: #008eca !important; */
   padding: 5px;
 }
+
 .monitor_container .floor {
   position: absolute;
   top: 0;
@@ -429,6 +456,7 @@ export default {
   padding: 5px;
   /* background-color: #44546a; */
 }
+
 .monitor_container .device {
   position: absolute;
   top: 5px;
@@ -438,16 +466,19 @@ export default {
   border-radius: 3px;
   color: black;
 }
+
 .monitor_container .btn_body {
   background-color: white;
   color: black;
   padding: 5px;
 }
+
 .monitor_container .monitor_items {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
 }
+
 .highlight_border {
   /* border-radius: 3px !important; */
   box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 5px 5px !important;
@@ -455,25 +486,30 @@ export default {
 
   /* box-shadow: silver 0px 0px 0px 1px !important; */
 }
+
 .detail_body .group_content {
   float: left;
   width: 45%;
   margin: 0% 1.6%;
   /* border-right: solid silver 1px; */
 }
+
 .detail_body .content_title {
   display: inline-block;
   vertical-align: top;
   width: 25%;
   margin-right: 10px;
 }
+
 .detail_body .content_text {
   display: inline-block;
   width: 70%;
 }
+
 .detail_body dt {
   margin-bottom: 10px;
 }
+
 .status-online-header {
   background-color: #008eca !important;
 }
@@ -485,6 +521,7 @@ export default {
 .status-error-header {
   background-color: #c43d4b !important;
 }
+
 .status-online-floor {
   background-color: #44546a;
 }
@@ -496,18 +533,21 @@ export default {
 .status-error-floor {
   background-color: #833c0c;
 }
+
 .status-online-color {
   color: blue;
 }
+
 .status-offline-color {
   color: gray;
 }
+
 .status-error-color {
   color: red;
 }
+
 .monitor_container .device_total_count {
   position: absolute;
   bottom: 8px;
   right: 50px;
-}
-</style>
+}</style>
