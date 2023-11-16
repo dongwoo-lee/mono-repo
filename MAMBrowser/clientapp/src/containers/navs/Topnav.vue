@@ -129,9 +129,9 @@
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/miros' })"
                     >MIROS 설정</b-dropdown-item>
-                    <b-dropdown-item
-                      @click="$router.push({ path: '/app/config/monitoring' })"
-                    >모니터링 설정</b-dropdown-item>
+                    <b-dropdown-item @click="
+                      $router.push({ path: '/app/config/monitoring-setting' })
+                      ">모니터링 설정</b-dropdown-item>
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/system' })"
                     >시스템 설정</b-dropdown-item>

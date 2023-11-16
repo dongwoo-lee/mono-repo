@@ -59,8 +59,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\M30_CueSheetDAO\mbc-cuesheetdao\M30.CueSheetDAO\M30_CueSheetDAO.csproj" />
-    <ProjectReference Include="..\..\M30_ManagementControlDAO\M30_ManagementControlDAO\M30_ManagementControlDAO.csproj" />
+    <!--<ProjectReference Include="..\..\M30_CueSheetDAO\mbc-cuesheetdao\M30.CueSheetDAO\M30_CueSheetDAO.csproj" />
+    <ProjectReference Include="..\..\M30_ManagementControlDAO\M30_ManagementControlDAO\M30_ManagementControlDAO.csproj" />-->
   </ItemGroup>
   <ItemGroup>
     <Reference Include="M30.AudioEngine">
