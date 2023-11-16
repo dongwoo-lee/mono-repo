@@ -1,11 +1,20 @@
 <template>
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
-      <clock className="system ml-2" style="font-weight: 500"></clock>
-      <div class="system" style="color: darkblue; opacity: 0.8">
+      <clock
+        className="system ml-2"
+        style="font-weight: 500"
+      ></clock>
+      <div
+        class="system"
+        style="color: darkblue; opacity: 0.8"
+      >
         {{ conNetworkName }}
       </div>
-      <div class="system" :style="getConDBNameStyle()">{{ conDBName }}</div>
+      <div
+        class="system"
+        :style="getConDBNameStyle()"
+      >{{ conDBName }}</div>
       <!-- 메뉴 네비 -->
       <!-- <a
         href="#"
@@ -23,7 +32,11 @@
       </a>
     </div>
     <!-- 로고 -->
-    <router-link class="navbar-logo" tag="a" :to="getTo()">
+    <router-link
+      class="navbar-logo"
+      tag="a"
+      :to="getTo()"
+    >
       <span class="logo d-none d-xs-block"></span>
       <span class="logo-mobile d-block d-xs-none"></span>
     </router-link>
@@ -33,7 +46,10 @@
         <div class="user d-inline-block">
           <table class="topnav-right-table">
             <tr>
-              <td rowspan="2" v-if="isMasteringValid()">
+              <td
+                rowspan="2"
+                v-if="isMasteringValid()"
+              >
                 <b-button
                   v-if="isMasteringValid()"
                   class="btn btn-outline-primary btn-sm default cutom-label mr-2"
@@ -70,19 +86,14 @@
                 <div>
                   <span class="current">
                     {{ $fn.formatMBBytes(currentUser.diskUsed) }} /
-                    {{ currentUser.diskMax }} GB</span
-                  >
-                  <span
-                    :class="
-                      currentUser.diskAvailable <= 1000 * 1000 * 100
-                        ? 'free-space-red'
-                        : 'free-space-blue'
-                    "
-                    >여유
+                    {{ currentUser.diskMax }} GB</span>
+                  <span :class="currentUser.diskAvailable <= 1000 * 1000 * 100
+                      ? 'free-space-red'
+                      : 'free-space-blue'
+                    ">여유
                     {{
                       $fn.formatMBBytes(currentUser.diskAvailable, 1048000)
-                    }}</span
-                  >
+                    }}</span>
                 </div>
               </td>
               <!-- 사용자 정보 -->
@@ -102,37 +113,34 @@
                         {{ currentUser.name }}({{ currentUser.menuGrpName }})
                       </span>
                     </div>
-                    <div
-                      style="
+                    <div style="
                         float: right;
                         color: red;
                         font-size: 12px;
                         margin-right: 6px;
-                      "
-                    >
-                      v1.0.230824
+                      ">
+                      v1.0.230906
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">
-                    <b-dropdown-item @click="$router.push({ path: '/app/log' })"
-                      >사용자 로그보기</b-dropdown-item
-                    >
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/log' })">사용자
+                      로그보기</b-dropdown-item>
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/miros' })"
-                      >MIROS 설정</b-dropdown-item
-                    >
+                    >MIROS 설정</b-dropdown-item>
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/monitoring' })"
-                      >모니터링 설정</b-dropdown-item
-                    >
+                    >모니터링 설정</b-dropdown-item>
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/system' })"
-                      >시스템 설정</b-dropdown-item
-                    >
+                    >시스템 설정</b-dropdown-item>
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/remove' })"
-                      >소재 삭제 관리</b-dropdown-item
-                    >
+                    >소재 삭제 관리</b-dropdown-item>
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/config/monitoring' })"
+                    >관리자 모니터링</b-dropdown-item>
                     <b-dropdown-divider />
                   </div>
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
@@ -165,10 +173,10 @@ import {
   mapActions,
   mapState,
   createLogger,
-} from "vuex"
-import { MenuIcon, MobileMenuIcon } from "../../components/Svg"
-import { SYSTEM_MANAGEMENT_CODE } from "../../constants/config"
-import { getDirection, setDirection } from "../../utils"
+} from "vuex";
+import { MenuIcon, MobileMenuIcon } from "../../components/Svg";
+import { SYSTEM_MANAGEMENT_CODE } from "../../constants/config";
+import { getDirection, setDirection } from "../../utils";
 
 export default {
   components: {
@@ -178,10 +186,10 @@ export default {
   data() {
     return {
       SYSTEM_MANAGEMENT_CODE: SYSTEM_MANAGEMENT_CODE,
-    }
+    };
   },
   created() {
-    this.renewal()
+    this.renewal();
   },
   methods: {
     ...mapMutations("menu", [
@@ -192,58 +200,58 @@ export default {
     ...mapMutations("user", ["SET_INIT_CALL_LOGIN_AUTH_TRY_CNT", "SET_LOGOUT"]),
     ...mapMutations("FileIndexStore", ["setFileModal", "setButton"]),
     isMasteringValid() {
-      var visible
+      var visible;
       this.behaviorList.forEach((e) => {
         if (e.id == "S01G02C004" && e.visible == "Y") {
-          visible = e.visible
+          visible = e.visible;
         }
-      })
+      });
       if (visible == "Y") {
-        return true
+        return true;
       } else {
-        return false
+        return false;
       }
     },
     openFileModal() {
-      this.setFileModal(true)
-      this.setButton("nav")
+      this.setFileModal(true);
+      this.setButton("nav");
     },
     logout() {
-      this.SET_LOGOUT()
-      this.$router.push("/user/Login")
+      this.SET_LOGOUT();
+      this.$router.push("/user/Login");
     },
     isDisplaySetting() {
       return this.behaviorList.some(
         (item) => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === "Y",
-      )
+      );
     },
     getTo() {
       if (this.roleList) {
         const firstVisibleIndex = this.roleList.findIndex(
           (role) => role.visible === "Y",
-        )
+        );
         if (this.roleList[firstVisibleIndex]) {
-          return this.roleList[firstVisibleIndex].to
+          return this.roleList[firstVisibleIndex].to;
         }
       }
 
-      return ""
+      return "";
     },
     resetTimer() {
-      this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT()
+      this.SET_INIT_CALL_LOGIN_AUTH_TRY_CNT();
       this.renewal().then((res) => {
         if (res && res.data && res.data.resultCode === 0) {
-          this.$notify("primary", "로그인 연장되었습니다.")
+          this.$notify("primary", "로그인 연장되었습니다.");
         }
-      })
+      });
     },
     getConDBNameStyle() {
-      if (!this.conDBName) return {}
+      if (!this.conDBName) return {};
       if (this.conDBName.indexOf("운영") > -1) {
-        return { color: "darkblue", opacity: 0.8 }
+        return { color: "darkblue", opacity: 0.8 };
       }
 
-      return { color: "darkred", opacity: 0.8 }
+      return { color: "darkred", opacity: 0.8 };
     },
   },
   computed: {
@@ -269,11 +277,11 @@ export default {
   watch: {
     "$i18n.locale"(to, from) {
       if (from !== to) {
-        this.$router.go(this.$route.path)
+        this.$router.go(this.$route.path);
       }
     },
   },
-}
+};
 </script>
 <style scoped>
 .free-space-blue {
@@ -286,5 +294,4 @@ export default {
   color: red;
   font-weight: 600;
   margin-left: 20px;
-}
-</style>
+}</style>

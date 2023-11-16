@@ -23,12 +23,12 @@ namespace MAMBrowser.Controllers
 
         // 방송일 프로그램 리스트 
         [HttpGet("GetPgmListByBrdDate")]
-        public DTO_RESULT<IEnumerable<PgmListDTO>> GetPgmListByBrdDate (string person, char media,string brd_dt)
+        public DTO_RESULT<IEnumerable<PgmListDTO>> GetPgmListByBrdDate (string person, char media,string brd_dt,string pgmcode)
         {
             var result = new DTO_RESULT<IEnumerable<PgmListDTO>>();
             try
             {
-                result.ResultObject = _bll.GetPgmListByBrdDate(person, media,brd_dt);
+                result.ResultObject = _bll.GetPgmListByBrdDate(person, media,brd_dt,pgmcode);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch(Exception ex)
@@ -41,12 +41,12 @@ namespace MAMBrowser.Controllers
 
         // 송출일 프로그램 리스트 
         [HttpGet("GetSCHPgmList")]
-        public DTO_RESULT<IEnumerable<PgmListDTO>> GetSCHPgmList(string person, char media, string brd_dt)
+        public DTO_RESULT<IEnumerable<PgmListDTO>> GetSCHPgmList(string person, char media, string brd_dt,string pgmcode)
         {
             var result = new DTO_RESULT<IEnumerable<PgmListDTO>>();
             try
             {
-                result.ResultObject = _bll.GetSCHPgmList(person, media, brd_dt);
+                result.ResultObject = _bll.GetSCHPgmList(person, media, brd_dt, pgmcode);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

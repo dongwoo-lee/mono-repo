@@ -152,6 +152,8 @@ export default {
         this.getMcrSpotMeta(rowData);
       } else if (this.MySpaceScreenName == "[Filler 시간]") {
         this.getFillerTimeMeta(rowData);
+      } else if (this.MySpaceScreenName == "[MY 선곡 순위]") {
+        this.getMyMusicRanking(rowData);
       }
     },
     getRowData() {
@@ -372,6 +374,11 @@ export default {
         "\n" +
         "편집자 : " +
         rowData.editorName;
+    },
+    getMyMusicRanking(rowData) {
+      this.metaData.title =
+        this.MySpaceScreenName + rowData.songname + "_" + rowData.pgmname;
+      this.metaData.memo = "순위 : " + rowData.rank;
     },
   },
 };
