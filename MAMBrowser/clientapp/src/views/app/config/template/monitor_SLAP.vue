@@ -187,13 +187,13 @@
                     ?.slap_info.user_name
                 }}
               </dd>
-              <dt class="content_title">Agent 작동상태 :</dt>
+              <!-- <dt class="content_title">Agent 작동상태 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)].agentInfo
                     .agentStatus
                 }}
-              </dd>
+              </dd> -->
             </dl>
           </b-card>
         </b-collapse>
@@ -234,15 +234,12 @@ export default {
   },
   methods: {
     getData() {
-      this.$http.get(`/mntr/Monitoring/GetAllDevice`, null).then((res) => {
-        console.log("res :>> ", res);
+      this.$http.get(`/mntr/Monitoring/GetAllInfo`, null).then((res) => {
         // console.info("getAll", res.data);
         this.dataSource = res.data;
-        console.log("this.dataSource :>> ", this.dataSource);
       });
     },
     getDevice(deviceID) {
-      console.log("deviceID :>> ", deviceID);
       this.$http
         .get(`/mntr/Monitoring/GetAgentInfoById?deviceId=${deviceID}`)
         .then((res) => {
@@ -267,7 +264,6 @@ export default {
     connectSignalR() {
       connection.on("/HealthPacket", (status) => {
         var object = JSON.parse(status);
-        console.log("object.DynamicData :>> ", object.DynamicData);
         // console.info("ChangedAgentStatus", status);
         const device = this.dataSource.find(
           (d) => d.deviceInfo.device_id == object.DynamicData.DEVICE_ID,

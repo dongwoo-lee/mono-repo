@@ -17,7 +17,7 @@ module.exports = {
         changeOrigin: true
       },
       "/mntr": {
-        target: "http://localhost:5005"
+        target: "http://192.168.1.236:5005"
       }
     },
     hot: true
