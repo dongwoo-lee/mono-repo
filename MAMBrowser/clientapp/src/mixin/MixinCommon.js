@@ -345,6 +345,15 @@ let mixinCommon = {
           // eventBus.$emit('common-loading-overlay-hide');
         });
     },
+    onMyDiskCopyFromMusicRanking() {
+      var item = this.$refs.refCopyToMySpacePopup.getRowData();
+      var metaData = this.$refs.refCopyToMySpacePopup.getMetaData();
+      this.onMyDisCopy(
+        `/api/products/product-to-myspace?token=${item.fileToken}`,
+        item.songname,
+        metaData
+      );
+    },
     onCopyToMySpacePopup(rowData) {
       this.$refs.refCopyToMySpacePopup.setData(rowData);
       this.copyToMySpacePopup = true;

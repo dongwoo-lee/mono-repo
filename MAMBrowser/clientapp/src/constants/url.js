@@ -5,6 +5,12 @@ const url = [
         icon: "iconsminds-shop",
     },
     {
+        // My 선곡 순위
+        id: "S01G01C037",
+        to: "/app/my/music-ranking",
+        icon: "iconsminds-big-data",
+    },
+    {
         // My 디스크
         id: "S01G01C007",
         to: "/app/my/private",
@@ -75,6 +81,12 @@ const url = [
         icon: "iconsminds-clef",
     },
     {
+        // 전체 선곡 순위 
+        id: "S01G01C038",
+        to: "/app/music/statistics",
+        icon: "iconsminds-big-data",
+    },
+    {
         // 광고
         id: "S01G01C004",
         icon: "iconsminds-coins",
@@ -139,9 +151,32 @@ const url = [
         icon: "iconsminds-notepad",
     },
     {
-        // DL3.0
+        // 아카이브 (DL)
         id: "S01G01C006",
-        to: "/app/dl30",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // DL3
+        id: "S01G01C033",
+        to: "/app/monitoring/dl30",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // 송출리스트
+        id: "S01G01C034",
+        to: "/app/monitoring/broadcastList",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // 스튜디오 정보
+        id: "S01G01C035",
+        to: "/app/monitoring/studio",
+        icon: "iconsminds-big-data",
+    },
+    {
+        // 프로그램 정보
+        id: "S01G01C036",
+        to: "/app/monitoring/programInfo",
         icon: "iconsminds-big-data",
     },
     {

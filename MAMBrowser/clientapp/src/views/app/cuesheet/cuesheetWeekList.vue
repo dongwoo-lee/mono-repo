@@ -199,7 +199,7 @@ export default {
   data() {
     return {
       date: new Date(),
-      pramObj: { person: null, brd_dt: null, media: null },
+      pramObj: { person: null, brd_dt: null, media: null, pgmcode: "NEW" },
       pgmList: [],
       programOptions: [],
       mediaOptions: [],
