@@ -59,8 +59,6 @@
                   />
                 </b-form-group>
                 <b-form-checkbox
-                  id="checkbox-1"
-                  name="checkbox-1"
                   v-model="item.isStop"
                   :value="true"
                   :unchecked-value="false"
