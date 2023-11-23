@@ -34,32 +34,11 @@
                 padding-right: 20px;
               ">
               <div style="display: flex; align-items: baseline">
-                <DxTextBox
-                  value="192.168.1.236"
-                  mode="text"
-                  styling-mode="outlined"
-                  label="IP"
-                />
                 <DxButton
-                  style="margin-left: 20px"
-                  text="장비찾기"
+                  text="장비등록"
                   type="white"
                   styling-mode="outlined"
                   @click="SearchDevice"
-                />
-              </div>
-              <div>
-                <DxButton
-                  style="margin-left: 20px"
-                  text="중지"
-                  type="white"
-                  styling-mode="outlined"
-                />
-                <DxButton
-                  style="margin-left: 20px"
-                  text="재시작"
-                  type="white"
-                  styling-mode="outlined"
                 />
               </div>
             </div>
@@ -67,9 +46,9 @@
               <DxDataGrid
                 width="100%"
                 height="65vh"
-                @initialized="onDeviceDataGridInitialized"
+                @initialized="onActiveDeviceDataGridInitialized"
                 :show-borders="true"
-                :data-source="deviceList"
+                :data-source="activeDevice"
                 :allow-column-resizing="true"
               >
                 <DxPaging :page-size="20" />
@@ -86,6 +65,13 @@
               <DxFilterRow :visible='true' apply-filter='auto' />
               <DxSelection mode='multiple' show-check-boxes-mode='always' select-all-mode='allPages' /> -->
                 <DxColumn
+                  width="8vw"
+                  data-field="alias_name"
+                  data-type="string"
+                  caption="장비명"
+                />
+
+                <DxColumn
                   width="10vw"
                   data-field="device_id"
                   data-type="string"
@@ -97,12 +83,7 @@
                   data-type="string"
                   caption="모델명"
                 />
-                <DxColumn
-                  width="8vw"
-                  data-field="device_name"
-                  data-type="string"
-                  caption="단말명"
-                />
+
                 <DxColumn
                   width="3vw"
                   data-field="device_type"
@@ -139,16 +120,16 @@
                   data-type="string"
                   caption="프로세서 정보"
                 />
-                <!-- <DxColumn
-                  width="3vw"
-                  data-field="watch_service_status_risk"
+                <DxColumn
+                  width="4vw"
+                  data-field="agent_code"
                   data-type="string"
-                  caption="감시 정보"
-                /> -->
+                  caption="장비 코드"
+                />
                 <DxColumn
                   css-class="cell-button"
                   width="3vw"
-                  caption="정보"
+                  caption="액션"
                   cell-template="infoTemplate"
                 />
 
@@ -178,6 +159,124 @@
     </b-row>
     <DxPopup
       @initialized="onEditPopupInit($event)"
+      :visible="searchVisible"
+      :drag-enabled="false"
+      :show-close-button="false"
+      :show-title="true"
+      width="90vw"
+      height="80vh"
+      container="#wrapper"
+      title="장비 등록"
+    >
+      <DxDataGrid
+        width="100%"
+        height="65vh"
+        @initialized="onInactiveDeviceDataGridInitialized"
+        key-expr="device_id"
+        :show-borders="true"
+        :data-source="inactiveDevice"
+        :allow-column-resizing="true"
+        :onSelectionChanged="onSelectionChanged"
+      >
+        <DxPaging :page-size="20" />
+        <DxPager
+          :allowed-page-sizes="[20]"
+          :show-page-size-selector="false"
+          :show-info="true"
+          :visible="true"
+          info-text="전체 {2}개"
+        />
+        <!--<DxScrolling mode='standard' row-rendering-mode='standard' />
+              <DxColumnFixing :enabled='true' />
+              <DxHeaderFilter :visible='true' />
+              <DxFilterRow :visible='true' apply-filter='auto' />
+               -->
+        <DxSelection
+          mode="multiple"
+          show-check-boxes-mode="always"
+          select-all-mode="allPages"
+        />
+        <DxColumn
+          width="8vw"
+          data-field="alias_name"
+          data-type="string"
+          caption="장비명"
+        />
+
+        <DxColumn
+          width="10vw"
+          data-field="device_id"
+          data-type="string"
+          caption="장비ID"
+        />
+        <DxColumn
+          width="12vw"
+          data-field="device_model"
+          data-type="string"
+          caption="모델명"
+        />
+
+        <DxColumn
+          width="3vw"
+          data-field="device_type"
+          data-type="string"
+          caption="유형"
+        />
+        <DxColumn
+          width="6vw"
+          data-field="ip_info"
+          data-type="string"
+          caption="IP 정보"
+        />
+        <DxColumn
+          width="3vw"
+          data-field="location"
+          data-type="string"
+          caption="위치"
+        />
+        <DxColumn
+          width="8vw"
+          data-field="machine_name"
+          data-type="string"
+          caption="컴퓨터명"
+        />
+        <DxColumn
+          width="14vw"
+          data-field="os_version"
+          data-type="string"
+          caption="OS정보"
+        />
+        <DxColumn
+          width="12vw"
+          data-field="processor_info"
+          data-type="string"
+          caption="프로세서 정보"
+        />
+        <DxColumn
+          width="4vw"
+          data-field="agent_code"
+          data-type="string"
+          caption="장비 코드"
+        />
+      </DxDataGrid>
+      <div>
+        <DxButton
+          text="등록"
+          type="default"
+          styling-mode="outlined"
+          @click="ActivateDevice"
+        />
+        <DxButton
+          text="닫기"
+          type="default"
+          styling-mode="outlined"
+          @click="searchVisible = false"
+        />
+      </div>
+    </DxPopup>
+
+    <DxPopup
+      @initialized="onEditPopupInit($event)"
       :visible="editVisible"
       :drag-enabled="false"
       :show-close-button="false"
@@ -200,6 +299,12 @@
               justify-content: space-between;
             ">
             <DxTextBox
+              v-model:value="editData.alias_name"
+              mode="text"
+              styling-mode="outlined"
+              label="단말명"
+            />
+            <DxTextBox
               :value="editData.device_id"
               mode="text"
               styling-mode="outlined"
@@ -213,12 +318,7 @@
               label="모델명"
               :read-only="true"
             />
-            <DxTextBox
-              v-model:value="editData.device_name"
-              mode="text"
-              styling-mode="outlined"
-              label="단말명"
-            />
+
             <DxNumberBox
               :value="editData.device_type"
               styling-mode="outlined"
@@ -256,6 +356,13 @@
               mode="text"
               styling-mode="outlined"
               label="프로세서 정보"
+              :read-only="true"
+            />
+            <DxTextBox
+              :value="editData.agent_code"
+              mode="text"
+              styling-mode="outlined"
+              label="장비 코드"
               :read-only="true"
             />
           </div>
@@ -312,6 +419,7 @@ import {
   DxColumn,
   DxPaging,
   DxPager,
+  DxSelection,
 } from "devextreme-vue/data-grid";
 import { DxTextBox } from "devextreme-vue/text-box";
 import { DxNumberBox } from "devextreme-vue/number-box";
@@ -341,6 +449,7 @@ export default {
     DxColumn,
     DxPaging,
     DxPager,
+    DxSelection,
     DxTextBox,
     DxNumberBox,
     DxButton,
@@ -352,21 +461,12 @@ export default {
   data() {
     return {
       loadingVisible: false,
-      deviceList: [
-        {
-          // device_id: "2C- F0 - 5D - D1 - 0C - B3",
-          // device_name: "CDS",
-          // location: "10",
-          // device_type: 0,
-          // device_model: "ms - 7879",
-          // machine_name: "ADSOFT",
-          // os_version: "WINDOWS11",
-          // processor_info: "I7 - 10400",
-          // ip_info: "192.168.1.236",
-          // watch_service_status_risk: "Y",
-        },
-      ],
-      deviceDataGrid: null,
+      activeDevice: [],
+      inactiveDevice: [],
+      selectedDevice: [],
+      activeDataGrid: null,
+      inactiveDataGrid: null,
+      searchVisible: false,
       editVisible: false,
       editData: {},
       editButtonOptions: {
@@ -402,22 +502,34 @@ export default {
     };
   },
   async created() {
-    this.GetAllDevice();
+    this.GetDevice();
   },
   methods: {
-    async GetAllDevice() {
-      var res = await axios.get(`/mntr/Monitoring/GetAllDevice`);
-      console.log("GetAllDevice :>> ", res);
-      this.deviceList = res.data;
-      this.deviceDataGrid.refresh();
+    async GetDevice() {
+      this.loadingVisible = true;
+      var res = await axios.get(`/mntr/Monitoring/GetDevice`);
+      console.log("GetDevice :>> ", res);
+      this.activeDevice = res.data;
+      this.activeDataGrid.refresh();
+      this.loadingVisible = false;
     },
     async SearchDevice() {
       this.loadingVisible = true;
       var res = await axios.get(`/mntr/Monitoring/SearchDevice`);
       console.log("SearchDevice :>> ", res);
-      this.deviceList = res.data;
-      this.deviceDataGrid.refresh();
+      this.inactiveDevice = res.data;
       this.loadingVisible = false;
+      this.searchVisible = true;
+    },
+    async ActivateDevice() {
+      this.loadingVisible = true;
+      var param = {
+        deviceIds: this.selectedDevice,
+      };
+      var res = await axios.post(`/mntr/Monitoring/ActivateDevice`, param);
+      this.searchVisible = false;
+      this.loadingVisible = false;
+      this.GetDevice();
     },
     async UpdateDevice() {
       this.loadingVisible = true;
@@ -429,7 +541,7 @@ export default {
       };
       var res = await axios.patch(`/mntr/Monitoring/UpdateDevice`, param);
       console.log("UpdateDevice :>> ", res);
-      this.GetAllDevice();
+      this.GetDevice();
       this.loadingVisible = false;
     },
     async RemoveDevice() {
@@ -438,13 +550,19 @@ export default {
         data: { device_id: this.removeData.device_id },
       });
       console.log("RemoveDevice :>> ", res);
-      this.GetAllDevice();
+      this.GetDevice();
       this.loadingVisible = false;
     },
-    onDeviceDataGridInitialized(e) {
-      this.deviceDataGrid = e.component;
+    onActiveDeviceDataGridInitialized(e) {
+      this.activeDataGrid = e.component;
     },
-
+    onInactiveDeviceDataGridInitialized(e) {
+      this.inactiveDataGrid = e.component;
+    },
+    onSelectionChanged(e) {
+      console.log("onSelectionChanged :>> ", e);
+      this.selectedDevice = e.currentSelectedRowKeys;
+    },
     editPopupOn(data) {
       this.editVisible = true;
       this.editData = data;
