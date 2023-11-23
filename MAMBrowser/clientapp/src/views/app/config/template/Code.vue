@@ -304,6 +304,7 @@ export default {
       add_url: "/api/managementsystem/add",
       update_url: "/api/managementsystem/update",
       delete_url: "/api/managementsystem/delete",
+      revocationExceptVal: "(폐지)",
     };
   },
   components: { BasicTable, AddModal, ModifyModal },
@@ -489,7 +490,7 @@ export default {
         .post(this.add_url + this.selectedProduct + "code", pram)
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
-            this.getData();
+            this.getData(this.revocationExceptVal);
             this.$bvModal.hide("modal-config-add");
           } else {
             this.$fn.notify("server-error", { message: "추가 에러" });
@@ -504,7 +505,7 @@ export default {
         .post(this.update_url + this.selectedProduct + "code", pram)
         .then((res) => {
           if (res.status === 200 && res.data.resultObject) {
-            this.getData();
+            this.getData(this.revocationExceptVal);
             this.$bvModal.hide("modal-config-modify");
           } else {
             this.$fn.notify("server-error", { message: "추가 에러" });
@@ -528,6 +529,7 @@ export default {
         });
     },
     onRevocationInput(value) {
+      this.revocationExceptVal = value;
       this.getData(value);
     },
   },
