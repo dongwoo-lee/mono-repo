@@ -428,21 +428,7 @@ import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { DxPopup, DxToolbarItem } from "devextreme-vue/popup";
 import { DxScrollView } from "devextreme-vue/scroll-view";
 import axios from "axios";
-const signalR = require("@microsoft/signalr");
-const connection = new signalR.HubConnectionBuilder()
-  .withUrl("/mntr/hub")
-  .build();
-connection.start().catch(function (err) {
-  console.log("err", err);
-});
-// connection.on("/HealthPacket", (message) => {
-//   var object = JSON.parse(message);
-//   console.log(
-//     object.HealthPacket.DEVICE_ID + " : " + object.HealthPacket.AGENT_STATUS,
-//   );
-//
-//   //TODO: 패킷과 일치하는 장비의 상태 변경
-// });
+
 export default {
   components: {
     DxDataGrid,
@@ -529,15 +515,14 @@ export default {
       var res = await axios.post(`/mntr/Monitoring/ActivateDevice`, param);
       this.searchVisible = false;
       this.loadingVisible = false;
+      this.inactiveDataGrid.deselectAll();
       this.GetDevice();
     },
     async UpdateDevice() {
       this.loadingVisible = true;
       var param = {
         device_id: this.editData.device_id,
-        device_name: this.editData.device_name,
-        ip_info: this.editData.ip_info,
-        location: this.editData.location,
+        alias_name: this.editData.alias_name,
       };
       var res = await axios.patch(`/mntr/Monitoring/UpdateDevice`, param);
       console.log("UpdateDevice :>> ", res);
@@ -561,7 +546,7 @@ export default {
     },
     onSelectionChanged(e) {
       console.log("onSelectionChanged :>> ", e);
-      this.selectedDevice = e.currentSelectedRowKeys;
+      this.selectedDevice = e.selectedRowKeys;
     },
     editPopupOn(data) {
       this.editVisible = true;

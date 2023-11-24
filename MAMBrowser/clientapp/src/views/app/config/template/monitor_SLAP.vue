@@ -12,26 +12,28 @@
               i,
               dataSource[itemCount * (index - 1) + (i - 1)],
             )
-          "
+            "
           v-if="dataSource[itemCount * (index - 1) + (i - 1)]"
         >
           <div
             class="btn_header"
-            :class="
-              getStatusHeaderColorClass(
-                dataSource[itemCount * (index - 1) + (i - 1)].healthPacket
-                  .agent_status,
-              )
-            "
+            :class="getStatusHeaderColorClass(
+              dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.agent_status
+                ? true
+                : false,
+            )
+              "
           >
             <span
               class="floor"
-              :class="
-                getStatusFloorColorClass(
-                  dataSource[itemCount * (index - 1) + (i - 1)].healthPacket
-                    .agent_status,
-                )
-              "
+              :class="getStatusFloorColorClass(
+                dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                  ?.agent_status
+                  ? true
+                  : false,
+              )
+                "
             >
               {{
                 dataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
@@ -41,40 +43,42 @@
             <span class="name">
               {{
                 dataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
-                  .device_name
+                  .alias_name
               }}
             </span>
-            <!-- <span class="device">
+            <span class="device">
               {{
                 getDeviceName(
                   dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
-                    .agenT_TYPE,
+                    .agent_type,
                 )
               }}
-            </span> -->
+            </span>
           </div>
           <div class="btn_body">
             {{
               dataSource[itemCount * (index - 1) + (i - 1)].agentInfo?.slap_info
-                .user_name
-                ? dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
-                    ?.slap_info.user_name + " / "
-                : ""
+                ?.user_name
+              ? dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
+                ?.slap_info?.user_name + " / "
+              : ""
             }}
             {{
               dataSource[itemCount * (index - 1) + (i - 1)].agentInfo?.slap_info
-                .cuesheet_name
+                ?.cuesheet_name
             }}
           </div>
         </b-button>
       </div>
       <div>
-        <b-collapse :id="'collapse-' + index" class="collapse_detail">
+        <b-collapse
+          :id="'collapse-' + index"
+          class="collapse_detail"
+        >
           <b-card
             class="detail_body"
-            v-if="
-              rowIndex && dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-            "
+            v-if="rowIndex && dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+              "
           >
             <dl class="group_content">
               <dt class="content_title">단말 모델명 :</dt>
@@ -147,53 +151,43 @@
                     .healthPacket.dynamic_data.NETWORK_USE_RATE
                 }}
               </dd>
-              <!-- <div
-                v-for="(value, key) in dataSource[
-                  itemCount * (index - 1) + (rowIndex - 1)
-                ]"
-              >
-                <div v-if="!(typeof value === 'object')">
-                  <dt class="content_title">{{ key }}</dt>
-                  <dd class="content_text">{{ value }}</dd>
-                </div>
-              </div> -->
             </dl>
             <dl class="group_content">
               <dt class="content_title">스튜디오명 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.slap_info.studio_name
+                    ?.agentInfo?.slap_info.studio_name
                 }}
               </dd>
               <dt class="content_title">SLAP이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.slap_info.slap_name
+                    ?.agentInfo?.slap_info.slap_name
                 }}
               </dd>
               <dt class="content_title">큐시트이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.slap_info.cuesheet_name
+                    ?.agentInfo?.slap_info.cuesheet_name
                 }}
               </dd>
               <dt class="content_title">로그인 사용자 이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.slap_info.user_name
+                    ?.agentInfo?.slap_info?.user_name
                 }}
               </dd>
-              <!-- <dt class="content_title">Agent 작동상태 :</dt>
+              <dt class="content_title">감시 프로세스 상태 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].agentInfo
-                    .agentStatus
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.healthPacket?.dynamic_data?.WATCH_SERVICE_STATUS
                 }}
-              </dd> -->
+              </dd>
             </dl>
           </b-card>
         </b-collapse>
@@ -202,156 +196,159 @@
   </div>
 </template>
 <script>
-import * as signalR from "@microsoft/signalr"
-const connection = new signalR.HubConnectionBuilder()
-  .withUrl("/mntr/hub")
-  .withAutomaticReconnect({
-    nextRetryDelayInMilliseconds: () => {
-      return 1000
-    },
-  })
-  .configureLogging(signalR.LogLevel.Error)
-  .build()
+import * as signalR from "@microsoft/signalr";
+import axios from "axios";
+
 export default {
   data() {
     return {
+      connection: null,
       itemCount: 6,
       detailItem: {},
       collapseStates: [],
       rowData: {},
       rowIndex: null,
       dataSource: [],
-    }
+    };
   },
   components: {},
-  async mounted() {
-    await this.getData()
-    await this.connectSignalR()
+  async created() {
+    await this.GetAllActiveDeviceInfo();
+    await this.createSignalR();
+    await this.connectSignalR();
   },
   async beforeDestroy() {
-    await this.disconnectSignalR()
-    this.stopGetDevicePolling()
+    await this.disconnectSignalR();
+    this.stopGetDevicePolling();
+    this.dataSource = [];
   },
   methods: {
-    getData() {
-      this.$http.get(`/mntr/Monitoring/GetAllInfo`, null).then((res) => {
-        // console.info("getAll", res.data);
-        this.dataSource = res.data
-      })
+    async GetAllActiveDeviceInfo() {
+      var res = await axios.get(`/mntr/Monitoring/GetAllActiveDeviceInfo`, null);
+      this.dataSource = await res.data;
     },
-    getDevice(deviceID) {
-      this.$http
-        .get(`/mntr/Monitoring/GetAgentInfoById?deviceId=${deviceID}`)
-        .then((res) => {
-          const device = this.dataSource.find(
-            (d) => d.deviceInfo.device_id == deviceID,
-          )
-          // device.agentInfo = res.data.agentInfo;
-          // device.deviceStatus = res.data.deviceStatus;
-          device.slap_info = res.data.slap_info
-        })
+    async GetActiveAgentInfoById(deviceID) {
+      var res = await axios.get(
+        `/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
+        null,
+      );
+      const device = this.dataSource.find(
+        (d) => d.deviceInfo.device_id == deviceID,
+      );
+      device = res.data;
     },
     async startGetDevicePolling(deviceID) {
-      const pollingInterval = 5000
-      this.getDevice(deviceID)
+      const pollingInterval = 5000;
+      this.GetActiveAgentInfoById(deviceID);
       this.pollingTimer = setInterval(() => {
-        this.getDevice(deviceID)
-      }, pollingInterval)
+        this.GetActiveAgentInfoById(deviceID);
+      }, pollingInterval);
     },
     stopGetDevicePolling() {
-      clearInterval(this.pollingTimer)
+      clearInterval(this.pollingTimer);
+    },
+    createSignalR() {
+      this.connection = new signalR.HubConnectionBuilder()
+        .withUrl("/mntr/hub")
+        .withAutomaticReconnect({
+          nextRetryDelayInMilliseconds: () => {
+            return 1000;
+          },
+        })
+        .configureLogging(signalR.LogLevel.Error)
+        .build();
     },
     connectSignalR() {
-      connection.on("/HealthPacket", (status) => {
-        var object = JSON.parse(status)
-        // console.info("ChangedAgentStatus", status);
+      this.connection.on("SIGNALRINFO", (status) => {
+        var object = JSON.parse(status);
+
         const device = this.dataSource.find(
-          (d) => d.deviceInfo.device_id == object.DynamicData.DEVICE_ID,
-        )
-        device.healthPacket.agent_status = object.AGENT_STATUS
-        device.healthPacket.dynamic_data = object.DynamicData
-      })
-      connection.onreconnecting((error) => {
-        console.info("onreconnecting", error)
-      })
-      connection.onreconnected((connectionId) => {
-        console.info("onreconnected", connectionId)
-      })
-      connection.start()
+          (d) => d.deviceInfo.device_id == object.DEVICE_ID,
+        );
+        console.log("device :>> ", device);
+        // device.healthPacket.agent_status = object.AGENT_STATUS;
+        // device.healthPacket.dynamic_data = object.DynamicData;
+      });
+      this.connection.onreconnecting((error) => {
+        console.info("onreconnecting", error);
+      });
+      this.connection.onreconnected((connectionId) => {
+        console.info("onreconnected", connectionId);
+      });
+      this.connection.start();
     },
     async disconnectSignalR() {
-      if (connection) {
-        await connection.stop()
-      }
+      await this.connection.stop();
+      await this.connection.off("/HealthPacket");
+      this.connection = null;
     },
     toggleCollapse(event, collapseId, colIndex, rowItem) {
-      console.log("rowItem :>> ", rowItem)
       const elementsWithSpecificClass = document.querySelectorAll(
         ".highlight_border",
-      )
-      const clickedButtonElement = event.target
-      const monitorItemElement = clickedButtonElement.closest(".monitor_item")
+      );
+      const clickedButtonElement = event.target;
+      const monitorItemElement = clickedButtonElement.closest(".monitor_item");
 
       // 특정 클래스를 추가하거나 제거하기
       if (monitorItemElement) {
         if (!monitorItemElement.classList.contains("highlight_border")) {
           elementsWithSpecificClass.forEach((element) => {
-            element.classList.remove("highlight_border")
-          })
+            element.classList.remove("highlight_border");
+          });
           // 특정 클래스가 없으면 추가
-          monitorItemElement.classList.add("highlight_border")
+          monitorItemElement.classList.add("highlight_border");
         } else {
           // 특정 클래스가 있으면 제거
-          monitorItemElement.classList.remove("highlight_border")
+          monitorItemElement.classList.remove("highlight_border");
         }
       }
 
       if (this.collapseStates.length > 0) {
-        this.stopGetDevicePolling()
+        this.stopGetDevicePolling();
         //이미 열린 탭 있을 때
-        const colItemId = Object.keys(this.collapseStates[0])[0]
+        const colItemId = Object.keys(this.collapseStates[0])[0];
         if (colItemId === collapseId) {
           //같은 라인의 탭 눌렀을 때
           if (this.collapseStates[0][colItemId] === colIndex) {
             //같은 btn 눌렀을 때
-            this.clearColArray(colItemId)
+            this.clearColArray(colItemId);
           } else {
             //다른 btn 눌렀을 때
-            this.startGetDevicePolling(rowItem.deviceInfo.device_id)
-            this.collapseStates[0][colItemId] = colIndex
+            this.startGetDevicePolling(rowItem.deviceInfo.device_id);
+            this.collapseStates[0][colItemId] = colIndex;
           }
         } else {
           // 다른 라인 탭 눌렀을 때
-          this.clearColArray(colItemId)
-          this.startGetDevicePolling(rowItem.deviceInfo.device_id)
-          this.setColArray(collapseId, colIndex)
+          this.clearColArray(colItemId);
+          this.startGetDevicePolling(rowItem.deviceInfo.device_id);
+          this.setColArray(collapseId, colIndex);
         }
       } else {
         //열린 탭 아무것도 없을 때
-        this.startGetDevicePolling(rowItem.deviceInfo.device_id)
-        this.setColArray(collapseId, colIndex)
+        this.startGetDevicePolling(rowItem.deviceInfo.device_id);
+        this.setColArray(collapseId, colIndex);
       }
       // 선택한 item -> detail에 출력
-      this.rowIndex = colIndex
+      this.rowIndex = colIndex;
     },
     setColArray(colId, index) {
       if (colId && index) {
-        this.toggleEvent(colId)
-        this.collapseStates.push({ [colId]: index })
+        this.toggleEvent(colId);
+        this.collapseStates.push({ [colId]: index });
       }
     },
     clearColArray(colId) {
-      this.toggleEvent(colId)
-      this.collapseStates = []
+      this.toggleEvent(colId);
+      this.collapseStates = [];
     },
     toggleEvent(colId) {
-      this.$root.$emit("bv::toggle::collapse", colId)
+      this.$root.$emit("bv::toggle::collapse", colId);
     },
     getStatusHeaderColorClass(status) {
       if (status) {
-        return "status-online-header"
+        return "status-online-header";
       } else {
-        return "status-error-header"
+        return "status-error-header";
       }
       //  if (status === "Online") {
       //   return "status-online-header";
@@ -363,9 +360,9 @@ export default {
     },
     getStatusFloorColorClass(status) {
       if (status) {
-        return "status-online-floor"
+        return "status-online-floor";
       } else {
-        return "status-error-floor"
+        return "status-error-floor";
       }
       // if (status === "Online") {
       //   return "status-online-floor";
@@ -378,28 +375,28 @@ export default {
     getStatusTextColorClass(status, agentKey) {
       if (agentKey === "Status") {
         if (status === "Online") {
-          return "status-online-color"
+          return "status-online-color";
         } else if (status === "Offline") {
-          return "status-offline-color"
+          return "status-offline-color";
         } else if (status === "Error") {
-          return "status-error-color"
+          return "status-error-color";
         }
       }
     },
     getDeviceName(name) {
       switch (name) {
         case 0:
-          return "M"
+          return "M";
         case 1:
-          return "S"
+          return "S";
         case 2:
-          return "B"
+          return "B";
         default:
-          break
+          break;
       }
     },
   },
-}
+};
 </script>
 <style>
 .monitor_container {
@@ -546,5 +543,4 @@ export default {
   position: absolute;
   bottom: 8px;
   right: 50px;
-}
-</style>
+}</style>
