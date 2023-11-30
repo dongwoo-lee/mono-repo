@@ -19,9 +19,9 @@
             class="btn_header"
             :class="getStatusHeaderColorClass(
               dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                ?.agent_status
-                ? true
-                : false,
+                ?.agent_status &&
+              dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.watch_service_status,
             )
               "
           >
@@ -29,9 +29,9 @@
               class="floor"
               :class="getStatusFloorColorClass(
                 dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                  ?.agent_status
-                  ? true
-                  : false,
+                  ?.agent_status &&
+                dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                  ?.watch_service_status,
               )
                 "
             >
@@ -49,23 +49,27 @@
             <span class="device">
               {{
                 getDeviceName(
-                  dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
-                    .agent_type,
+                  dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                    .slap_type,
                 )
               }}
             </span>
           </div>
           <div class="btn_body">
             {{
-              dataSource[itemCount * (index - 1) + (i - 1)].agentInfo?.slap_info
+              dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.user_name
-              ? dataSource[itemCount * (index - 1) + (i - 1)].agentInfo
-                ?.slap_info?.user_name + " / "
-              : ""
+              ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.user_name
+              : "정보없음"
             }}
+            /
             {{
-              dataSource[itemCount * (index - 1) + (i - 1)].agentInfo?.slap_info
+              dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.cuesheet_name
+              ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.cuesheet_name
+              : "정보없음"
             }}
           </div>
         </b-button>
@@ -120,35 +124,35 @@
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.dynamic_data.CPU
+                    .healthPacket.resource.cpu
                 }}
               </dd>
               <dt class="content_title">메모리 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.dynamic_data.MEMORY
+                    .healthPacket.resource.memory
                 }}
               </dd>
               <dt class="content_title">디스크 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.dynamic_data.DISK
+                    .healthPacket.resource.disk
                 }}
               </dd>
               <dt class="content_title">디스크 읽기/쓰기</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.dynamic_data.DISK_IO_USE_RATE
+                    .healthPacket.resource.disk_io_use_rate
                 }}
               </dd>
               <dt class="content_title">네트워크 사용률 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.dynamic_data.NETWORK_USE_RATE
+                    .healthPacket.resource.network_use_rate
                 }}
               </dd>
             </dl>
@@ -157,35 +161,42 @@
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slap_info.studio_name
+                    ?.agentInfo?.slaP_INFO.studioName
                 }}
               </dd>
               <dt class="content_title">SLAP이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slap_info.slap_name
+                    ?.agentInfo?.slaP_INFO.slapName
                 }}
               </dd>
               <dt class="content_title">큐시트이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slap_info.cuesheet_name
+                    .signalR_Info.cuesheet_name
                 }}
               </dd>
               <dt class="content_title">로그인 사용자 이름 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slap_info?.user_name
+                    .signalR_Info.user_name
+                }}
+              </dd>
+              <dt class="content_title">에이전트 상태 :</dt>
+              <dd class="content_text">
+                {{
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.signalR_Info?.agent_status
                 }}
               </dd>
               <dt class="content_title">감시 프로세스 상태 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.healthPacket?.dynamic_data?.WATCH_SERVICE_STATUS
+                    ?.signalR_Info?.watch_service_status
                 }}
               </dd>
             </dl>
@@ -224,7 +235,10 @@ export default {
   },
   methods: {
     async GetAllActiveDeviceInfo() {
-      var res = await axios.get(`/mntr/Monitoring/GetAllActiveDeviceInfo`, null);
+      var res = await axios.get(
+        `/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=1`,
+        null,
+      );
       this.dataSource = await res.data;
     },
     async GetActiveAgentInfoById(deviceID) {
@@ -232,13 +246,15 @@ export default {
         `/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
         null,
       );
-      const device = this.dataSource.find(
+
+      let device = this.dataSource.find(
         (d) => d.deviceInfo.device_id == deviceID,
       );
-      device = res.data;
+      device.healthPacket.resource = res.data.healthPacket.resource;
+      device.agentInfo.slaP_INFO = res.data.agentInfo.slaP_INFO;
     },
     async startGetDevicePolling(deviceID) {
-      const pollingInterval = 5000;
+      const pollingInterval = 1000;
       this.GetActiveAgentInfoById(deviceID);
       this.pollingTimer = setInterval(() => {
         this.GetActiveAgentInfoById(deviceID);
@@ -261,13 +277,14 @@ export default {
     connectSignalR() {
       this.connection.on("SIGNALRINFO", (status) => {
         var object = JSON.parse(status);
-
         const device = this.dataSource.find(
           (d) => d.deviceInfo.device_id == object.DEVICE_ID,
         );
-        console.log("device :>> ", device);
-        // device.healthPacket.agent_status = object.AGENT_STATUS;
-        // device.healthPacket.dynamic_data = object.DynamicData;
+        device.signalR_Info.agent_status = object.AGENT_STATUS;
+        device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
+        device.signalR_Info.slap_type = object.SLAP_TYPE;
+        device.signalR_Info.user_name = object.USER_NAME;
+        device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
       });
       this.connection.onreconnecting((error) => {
         console.info("onreconnecting", error);
@@ -279,7 +296,7 @@ export default {
     },
     async disconnectSignalR() {
       await this.connection.stop();
-      await this.connection.off("/HealthPacket");
+      await this.connection.off("SIGNALRINFO");
       this.connection = null;
     },
     toggleCollapse(event, collapseId, colIndex, rowItem) {

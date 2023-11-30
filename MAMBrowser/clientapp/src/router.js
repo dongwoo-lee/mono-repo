@@ -279,11 +279,11 @@ const routes = [
         path: "config/monitoring", // 관리자 모니터링
         component: () => import("./views/app/config/monitoring/Index")
       },
-      {
-        name: "config",
-        path: "config/monitoring-setting", // 관리자 모니터링 설정
-        component: () => import("./views/app/config/monitoring-setting/Index")
-      },
+      // {
+      //   name: "config",
+      //   path: "config/monitoring-setting", // 관리자 모니터링 설정
+      //   component: () => import("./views/app/config/monitoring-setting/Index")
+      // },
       {
         name: "log",
         path: "log", // 사용자 로그보기
