@@ -494,7 +494,6 @@ export default {
     async GetDevice() {
       this.loadingVisible = true;
       var res = await axios.get(`/mntr/Monitoring/GetDevice`);
-      console.log("GetDevice :>> ", res);
       this.activeDevice = res.data;
       this.activeDataGrid.refresh();
       this.loadingVisible = false;
@@ -545,7 +544,6 @@ export default {
       this.inactiveDataGrid = e.component;
     },
     onSelectionChanged(e) {
-      console.log("onSelectionChanged :>> ", e);
       this.selectedDevice = e.selectedRowKeys;
     },
     editPopupOn(data) {

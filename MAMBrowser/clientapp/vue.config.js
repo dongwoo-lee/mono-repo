@@ -13,12 +13,13 @@ module.exports = {
     proxy: {
       "/api": {
         target: "http://192.168.1.236:20080",
+        // target: "http://localhost:8000",
         ws: true,
         changeOrigin: true
       },
-      "/mntr": {
-        target: "http://192.168.1.236:8001"
-      }
+      // "/mntr": {
+      //   target: "http://192.168.1.236:8001"
+      // }
     },
     hot: true
     // contentBase: 'dist',

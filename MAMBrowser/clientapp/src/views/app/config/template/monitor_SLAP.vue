@@ -213,6 +213,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      monitoringServerInfo: "",
       connection: null,
       itemCount: 6,
       detailItem: {},
@@ -224,6 +225,7 @@ export default {
   },
   components: {},
   async created() {
+    await this.GetMonitoringServerInfo();
     await this.GetAllActiveDeviceInfo();
     await this.createSignalR();
     await this.connectSignalR();
@@ -234,16 +236,31 @@ export default {
     this.dataSource = [];
   },
   methods: {
+    async GetMonitoringServerInfo() {
+      var res = await axios.get(`/api/GetMonitoringServerInfo`);
+      this.monitoringServerInfo = await res.data.ResultObject;
+    },
     async GetAllActiveDeviceInfo() {
-      var res = await axios.get(
-        `/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=1`,
-        null,
-      );
-      this.dataSource = await res.data;
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
+
+      try {
+        var res = await axios.get(
+          `http://${this.monitoringServerInfo}/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=1`,
+          null,
+        );
+        this.dataSource = await res.data;
+      } catch (err) {
+        console.log(err.message);
+      }
     },
     async GetActiveAgentInfoById(deviceID) {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       var res = await axios.get(
-        `/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
         null,
       );
 
@@ -265,7 +282,7 @@ export default {
     },
     createSignalR() {
       this.connection = new signalR.HubConnectionBuilder()
-        .withUrl("/mntr/hub")
+        .withUrl(`http://${this.monitoringServerInfo}/mntr/hub`)
         .withAutomaticReconnect({
           nextRetryDelayInMilliseconds: () => {
             return 1000;

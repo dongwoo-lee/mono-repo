@@ -13,26 +13,24 @@
               DL3DataSource[itemCount * (index - 1) + (i - 1)],
               'DL3',
             )
-          "
+            "
           v-if="DL3DataSource[itemCount * (index - 1) + (i - 1)]"
         >
           <div
             class="btn_header"
-            :class="
-              getStatusHeaderColorClass(
-                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                  ?.agent_status,
-              )
-            "
+            :class="getDL3StatusHeaderColorClass(
+              DL3DataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.agent_status,
+            )
+              "
           >
             <span
               class="floor"
-              :class="
-                getStatusFloorColorClass(
-                  DL3DataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                    ?.agent_status,
-                )
-              "
+              :class="getDL3StatusFloorColorClass(
+                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                  ?.agent_status,
+              )
+                "
             >
               {{
                 DL3DataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
@@ -50,142 +48,102 @@
             {{
               DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.user_name
-                ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                    ?.user_name
-                : "정보없음"
+              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.user_name
+              : "정보없음"
             }}
             /
             {{
               DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.cuesheet_name
-                ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                    ?.cuesheet_name
-                : "정보없음"
+              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.cuesheet_name
+              : "정보없음"
             }}
           </div>
         </b-button>
       </div>
       <div>
-        <b-collapse :id="'collapse-' + index" class="collapse_detail">
+        <b-collapse
+          :id="'collapse-' + index"
+          class="collapse_detail"
+        >
           <b-card
             class="detail_body"
-            v-if="
-              rowIndex &&
-              DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-            "
+            v-if="rowIndex && DL3DataSource[0]"
           >
             <dl class="group_content">
               <dt class="content_title">단말 모델명 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.device_model
-                }}
+                {{ DL3DataSource[0].deviceInfo.device_model }}
               </dd>
               <dt class="content_title">단말 컴퓨터 이름 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.machine_name
-                }}
+                {{ DL3DataSource[0].deviceInfo.machine_name }}
               </dd>
               <dt class="content_title">윈도우 버전 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.os_version
-                }}
+                {{ DL3DataSource[0].deviceInfo.os_version }}
               </dd>
               <dt class="content_title">프로세서 정보 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.processor_info
-                }}
+                {{ DL3DataSource[0].deviceInfo.processor_info }}
               </dd>
               <dt class="content_title">IP정보 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.ip_info
-                }}
+                {{ DL3DataSource[0].deviceInfo.ip_info }}
               </dd>
               <dt class="content_title">cpu 사용률 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.cpu
-                }}
+                {{ DL3DataSource[0].healthPacket.resource.cpu }}
               </dd>
               <dt class="content_title">메모리 사용률 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.memory
-                }}
+                {{ DL3DataSource[0].healthPacket.resource.memory }}
               </dd>
               <dt class="content_title">디스크 사용률 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.disk
-                }}
+                {{ DL3DataSource[0].healthPacket.resource.disk }}
               </dd>
               <dt class="content_title">디스크 읽기/쓰기</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.disk_io_use_rate
-                }}
+                {{ DL3DataSource[0].healthPacket.resource.disk_io_use_rate }}
               </dd>
               <dt class="content_title">네트워크 사용률 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.network_use_rate
-                }}
+                {{ DL3DataSource[0].healthPacket.resource.network_use_rate }}
               </dd>
             </dl>
             <dl class="group_content">
               <dt class="content_title">메인 오디오 서버 상태 :</dt>
               <dd class="content_text">
                 {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.dL3_INFO.audioServerMainStatus
+                  DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerMainStatus
                 }}
               </dd>
               <dt class="content_title">서브 오디오 서버 상태 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.dL3_INFO.audioServerSubStatus
-                }}
+                {{ DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerSubStatus }}
               </dd>
               <dt class="content_title">메인 파일 에이전트 상태 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.dL3_INFO.fileAgentMainStatus
-                }}
+                {{ DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentMainStatus }}
               </dd>
               <dt class="content_title">서브 파일 에이전트 상태 :</dt>
               <dd class="content_text">
-                {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.dL3_INFO.fileAgentSubStatus
-                }}
+                {{ DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentSubStatus }}
               </dd>
               <!-- <dt class="content_title">에이전트 상태 :</dt>
               <dd class="content_text">
                 {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                  DL3DataSource[0]
                     ?.signalR_Info?.agent_status
                 }}
               </dd>
               <dt class="content_title">감시 프로세스 상태 :</dt>
               <dd class="content_text">
                 {{
-                  DL3DataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                  DL3DataSource[0]
                     ?.signalR_Info?.watch_service_status
                 }}
               </dd> -->
@@ -210,26 +168,24 @@
               etcDataSource[itemCount * (index - 1) + (i - 1)],
               'etc',
             )
-          "
+            "
           v-if="etcDataSource[itemCount * (index - 1) + (i - 1)]"
         >
           <div
             class="btn_header2"
-            :class="
-              getStatusHeaderColorClass(
-                etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                  ?.agent_status,
-              )
-            "
+            :class="getEtcStatusHeaderColorClass(
+              etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.agent_status,
+            )
+              "
           >
             <span
               class="floor2"
-              :class="
-                getStatusFloorColorClass(
-                  etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                    ?.agent_status,
-                )
-              "
+              :class="getEtcStatusFloorColorClass(
+                etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                  ?.agent_status,
+              )
+                "
             >
               {{
                 etcDataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
@@ -247,29 +203,31 @@
             {{
               etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.user_name
-                ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                    ?.user_name
-                : "정보없음"
+              ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.user_name
+              : "정보없음"
             }}
             /
             {{
               etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.cuesheet_name
-                ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                    ?.cuesheet_name
-                : "정보없음"
+              ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.cuesheet_name
+              : "정보없음"
             }}
           </div>
         </b-button>
       </div>
       <div>
-        <b-collapse :id="'collapse2-' + index" class="collapse_detail2">
+        <b-collapse
+          :id="'collapse2-' + index"
+          class="collapse_detail2"
+        >
           <b-card
             class="detail_body2"
-            v-if="
-              rowIndex &&
+            v-if="rowIndex &&
               etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-            "
+              "
           >
             <dl class="group_content2">
               <dt class="content_title2">단말 모델명 :</dt>
@@ -394,12 +352,13 @@
   </div>
 </template>
 <script>
-import * as signalR from "@microsoft/signalr"
-import axios from "axios"
+import * as signalR from "@microsoft/signalr";
+import axios from "axios";
 
 export default {
   data() {
     return {
+      monitoringServerInfo: "",
       connection: null,
       itemCount: 6,
       detailItem: {},
@@ -408,233 +367,240 @@ export default {
       rowIndex: null,
       etcDataSource: [],
       DL3DataSource: [],
-    }
+    };
   },
   components: {},
   async created() {
-    await this.GetAllActiveDeviceInfo()
-    await this.createSignalR()
-    await this.connectSignalR()
+    await this.GetMonitoringServerInfo();
+    await this.GetAllActiveDeviceInfo();
+    await this.createSignalR();
+    await this.connectSignalR();
   },
   async beforeDestroy() {
-    await this.disconnectSignalR()
-    this.stopGetDevicePolling()
-    this.etcDataSource = []
+    await this.disconnectSignalR();
+    this.stopGetDevicePolling();
+    this.etcDataSource = [];
   },
   methods: {
+    async GetMonitoringServerInfo() {
+      var res = await axios.get(`/api/GetMonitoringServerInfo`);
+      this.monitoringServerInfo = await res.data.ResultObject;
+    },
     async GetAllActiveDeviceInfo() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       var res = await axios.get(
-        `/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${2}`,
+        `http://${this.monitoringServerInfo
+        }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${2}`,
         null,
-      )
-      this.DL3DataSource = await res.data
+      );
+      this.DL3DataSource = await res.data;
 
       var res = await axios.get(
-        `/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${4}`,
+        `http://${this.monitoringServerInfo
+        }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${4}`,
         null,
-      )
-      this.etcDataSource = await res.data
+      );
+      this.etcDataSource = await res.data;
     },
     async GetActiveAgentInfoById(deviceID, type) {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       var res = await axios.get(
-        `/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
         null,
-      )
-      let device
+      );
       if (type === "DL3") {
-        console.log("111")
-        let device = this.DL3DataSource.find(
-          (d) => d.deviceInfo.device_id == deviceID,
-        )
-        device.healthPacket.resource = res.data.healthPacket.resource
-        device.agentInfo.dL3_INFO = res.data.agentInfo.dl3_INFO
+        this.DL3DataSource[0].healthPacket.resource =
+          res.data.healthPacket.resource;
+        this.DL3DataSource[0].agentInfo.dL3_INFO = res.data.agentInfo.dL3_INFO;
       } else if (type == "etc") {
-        console.log("222")
         let device = this.etcDataSource.find(
           (d) => d.deviceInfo.device_id == deviceID,
-        )
-        device.healthPacket.resource = res.data.healthPacket.resource
-        device.agentInfo.slap_info = res.data.agentInfo.slap_info
+        );
+        device.healthPacket.resource = await res.data.healthPacket.resource;
       }
     },
     async startGetDevicePolling(deviceID, type) {
-      const pollingInterval = 1000
-      this.GetActiveAgentInfoById(deviceID, type)
+      const pollingInterval = 1000;
+      this.GetActiveAgentInfoById(deviceID, type);
       this.pollingTimer = setInterval(() => {
-        this.GetActiveAgentInfoById(deviceID, type)
-      }, pollingInterval)
+        this.GetActiveAgentInfoById(deviceID, type);
+      }, pollingInterval);
     },
     stopGetDevicePolling() {
-      clearInterval(this.pollingTimer)
+      clearInterval(this.pollingTimer);
     },
     createSignalR() {
       this.connection = new signalR.HubConnectionBuilder()
-        .withUrl("/mntr/hub")
+        .withUrl(`http://${this.monitoringServerInfo}/mntr/hub`)
         .withAutomaticReconnect({
           nextRetryDelayInMilliseconds: () => {
-            return 1000
+            return 1000;
           },
         })
         .configureLogging(signalR.LogLevel.Error)
-        .build()
+        .build();
     },
     connectSignalR() {
       this.connection.on("SIGNALRINFO", (status) => {
-        var object = JSON.parse(status)
+        var object = JSON.parse(status);
         if (object.DEVICE_TYPE == "2") {
           const device = this.DL3DataSource.find(
             (d) => d.deviceInfo.device_id == object.DEVICE_ID,
-          )
-          device.signalR_Info.agent_status = object.AGENT_STATUS
-          device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS
-          device.signalR_Info.slap_type = object.SLAP_TYPE
-          device.signalR_Info.user_name = object.USER_NAME
-          device.signalR_Info.cuesheet_name = object.CUESHEET_NAME
+          );
+          device.signalR_Info.agent_status = object.AGENT_STATUS;
+          device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
+          device.signalR_Info.slap_type = object.SLAP_TYPE;
+          device.signalR_Info.user_name = object.USER_NAME;
+          device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
         } else if ((object.DEVICE_TYPE = "4")) {
           const device = this.etcDataSource.find(
             (d) => d.deviceInfo.device_id == object.DEVICE_ID,
-          )
-          device.signalR_Info.agent_status = object.AGENT_STATUS
-          device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS
-          device.signalR_Info.slap_type = object.SLAP_TYPE
-          device.signalR_Info.user_name = object.USER_NAME
-          device.signalR_Info.cuesheet_name = object.CUESHEET_NAME
+          );
+          device.signalR_Info.agent_status = object.AGENT_STATUS;
+          device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
+          device.signalR_Info.slap_type = object.SLAP_TYPE;
+          device.signalR_Info.user_name = object.USER_NAME;
+          device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
         }
-      })
+      });
       this.connection.onreconnecting((error) => {
-        console.info("onreconnecting", error)
-      })
+        console.info("onreconnecting", error);
+      });
       this.connection.onreconnected((connectionId) => {
-        console.info("onreconnected", connectionId)
-      })
-      this.connection.start()
+        console.info("onreconnected", connectionId);
+      });
+      this.connection.start();
     },
     async disconnectSignalR() {
-      await this.connection.stop()
-      await this.connection.off("SIGNALRINFO")
-      this.connection = null
+      await this.connection.stop();
+      await this.connection.off("SIGNALRINFO");
+      this.connection = null;
     },
     toggleCollapse(event, collapseId, colIndex, rowItem, type) {
       const elementsWithSpecificClass = document.querySelectorAll(
         ".highlight_border",
-      )
-      const clickedButtonElement = event.target
+      );
+      const clickedButtonElement = event.target;
 
-      let monitorItemElement = null
+      let monitorItemElement = null;
       if (type == "DL3") {
-        monitorItemElement = clickedButtonElement.closest(".monitor_item2")
+        monitorItemElement = clickedButtonElement.closest(".monitor_item");
       } else {
-        monitorItemElement = clickedButtonElement.closest(".monitor_item")
+        monitorItemElement = clickedButtonElement.closest(".monitor_item2");
       }
 
       // 특정 클래스를 추가하거나 제거하기
       if (monitorItemElement) {
         if (!monitorItemElement.classList.contains("highlight_border")) {
           elementsWithSpecificClass.forEach((element) => {
-            element.classList.remove("highlight_border")
-          })
+            element.classList.remove("highlight_border");
+          });
           // 특정 클래스가 없으면 추가
-          monitorItemElement.classList.add("highlight_border")
+          monitorItemElement.classList.add("highlight_border");
         } else {
           // 특정 클래스가 있으면 제거
-          monitorItemElement.classList.remove("highlight_border")
+          monitorItemElement.classList.remove("highlight_border");
         }
       }
 
       if (this.collapseStates.length > 0) {
-        this.stopGetDevicePolling()
+        this.stopGetDevicePolling();
         //이미 열린 탭 있을 때
-        const colItemId = Object.keys(this.collapseStates[0])[0]
+        const colItemId = Object.keys(this.collapseStates[0])[0];
         if (colItemId === collapseId) {
           //같은 라인의 탭 눌렀을 때
           if (this.collapseStates[0][colItemId] === colIndex) {
             //같은 btn 눌렀을 때
-            this.clearColArray(colItemId)
+            this.clearColArray(colItemId);
           } else {
             //다른 btn 눌렀을 때
-            this.startGetDevicePolling(rowItem.deviceInfo.device_id, type)
-            this.collapseStates[0][colItemId] = colIndex
+            this.startGetDevicePolling(rowItem.deviceInfo.device_id, type);
+            this.collapseStates[0][colItemId] = colIndex;
           }
         } else {
           // 다른 라인 탭 눌렀을 때
-          this.clearColArray(colItemId)
-          this.startGetDevicePolling(rowItem.deviceInfo.device_id, type)
-          this.setColArray(collapseId, colIndex)
+          this.clearColArray(colItemId);
+          this.startGetDevicePolling(rowItem.deviceInfo.device_id, type);
+          this.setColArray(collapseId, colIndex);
         }
       } else {
         //열린 탭 아무것도 없을 때
-        this.startGetDevicePolling(rowItem.deviceInfo.device_id, type)
-        this.setColArray(collapseId, colIndex)
+        this.startGetDevicePolling(rowItem.deviceInfo.device_id, type);
+        this.setColArray(collapseId, colIndex);
       }
       // 선택한 item -> detail에 출력
-      this.rowIndex = colIndex
+      this.rowIndex = colIndex;
     },
     setColArray(colId, index) {
       if (colId && index) {
-        this.toggleEvent(colId)
-        this.collapseStates.push({ [colId]: index })
+        this.toggleEvent(colId);
+        this.collapseStates.push({ [colId]: index });
       }
     },
     clearColArray(colId) {
-      this.toggleEvent(colId)
-      this.collapseStates = []
+      this.toggleEvent(colId);
+      this.collapseStates = [];
     },
     toggleEvent(colId) {
-      this.$root.$emit("bv::toggle::collapse", colId)
+      this.$root.$emit("bv::toggle::collapse", colId);
     },
-    getStatusHeaderColorClass(status) {
+    getDL3StatusHeaderColorClass(status) {
       if (status) {
-        return "status-online-header"
+        return "status-online-header";
       } else {
-        return "status-error-header"
+        return "status-error-header";
       }
-      //  if (status === "Online") {
-      //   return "status-online-header";
-      // } else if (status === "Offline") {
-      //   return "status-offline-header";
-      // } else if (status === "Error") {
-      //   return "status-error-header";
-      // }
     },
-    getStatusFloorColorClass(status) {
+    getDL3StatusFloorColorClass(status) {
       if (status) {
-        return "status-online-floor"
+        return "status-online-floor";
       } else {
-        return "status-error-floor"
+        return "status-error-floor";
       }
-      // if (status === "Online") {
-      //   return "status-online-floor";
-      // } else if (status === "Offline") {
-      //   return "status-offline-floor";
-      // } else if (status === "Error") {
-      //   return "status-error-floor";
-      // }
+    },
+    getEtcStatusHeaderColorClass(status) {
+      if (status) {
+        return "status-online-header2";
+      } else {
+        return "status-error-header2";
+      }
+    },
+    getEtcStatusFloorColorClass(status) {
+      if (status) {
+        return "status-online-floor2";
+      } else {
+        return "status-error-floor2";
+      }
     },
     getStatusTextColorClass(status, agentKey) {
       if (agentKey === "Status") {
         if (status === "Online") {
-          return "status-online-color"
+          return "status-online-color";
         } else if (status === "Offline") {
-          return "status-offline-color"
+          return "status-offline-color";
         } else if (status === "Error") {
-          return "status-error-color"
+          return "status-error-color";
         }
       }
     },
     getDeviceName(name) {
       switch (name) {
         case 0:
-          return "M"
+          return "M";
         case 1:
-          return "S"
+          return "S";
         case 2:
-          return "B"
+          return "B";
         default:
-          break
+          break;
       }
     },
   },
-}
+};
 </script>
 <style>
 .monitor_container {
@@ -927,5 +893,4 @@ export default {
   position: absolute;
   bottom: 8px;
   right: 50px;
-}
-</style>
+}</style>

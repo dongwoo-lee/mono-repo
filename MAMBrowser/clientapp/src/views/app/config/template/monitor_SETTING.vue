@@ -448,6 +448,7 @@ export default {
   },
   data() {
     return {
+      monitoringServerInfo: "",
       loadingVisible: false,
       activeDevice: [],
       inactiveDevice: [],
@@ -490,52 +491,85 @@ export default {
     };
   },
   async created() {
-    this.GetDevice();
+    await this.GetMonitoringServerInfo();
+    await this.GetDevice();
   },
   methods: {
+    async GetMonitoringServerInfo() {
+      var res = await axios.get(`/api/GetMonitoringServerInfo`);
+      this.monitoringServerInfo = await res.data.ResultObject;
+    },
     async GetDevice() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       this.loadingVisible = true;
-      var res = await axios.get(`/mntr/Monitoring/GetDevice`);
+      var res = await axios.get(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/GetDevice`,
+      );
       console.log("GetDevice :>> ", res);
       this.activeDevice = res.data;
       this.activeDataGrid.refresh();
       this.loadingVisible = false;
     },
     async SearchDevice() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       this.loadingVisible = true;
-      var res = await axios.get(`/mntr/Monitoring/SearchDevice`);
+      var res = await axios.get(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/SearchDevice`,
+      );
       console.log("SearchDevice :>> ", res);
       this.inactiveDevice = res.data;
       this.loadingVisible = false;
       this.searchVisible = true;
     },
     async ActivateDevice() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       this.loadingVisible = true;
       var param = {
         deviceIds: this.selectedDevice,
       };
-      var res = await axios.post(`/mntr/Monitoring/ActivateDevice`, param);
+      var res = await axios.post(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/ActivateDevice`,
+        param,
+      );
       this.searchVisible = false;
       this.loadingVisible = false;
       this.inactiveDataGrid.deselectAll();
       this.GetDevice();
     },
     async UpdateDevice() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       this.loadingVisible = true;
       var param = {
         device_id: this.editData.device_id,
         alias_name: this.editData.alias_name,
       };
-      var res = await axios.patch(`/mntr/Monitoring/UpdateDevice`, param);
+      var res = await axios.patch(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/UpdateDevice`,
+        param,
+      );
       console.log("UpdateDevice :>> ", res);
       this.GetDevice();
       this.loadingVisible = false;
     },
     async RemoveDevice() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
       this.loadingVisible = true;
-      var res = await axios.delete(`/mntr/Monitoring/RemoveDevice`, {
-        data: { device_id: this.removeData.device_id },
-      });
+      var res = await axios.delete(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/RemoveDevice`,
+        {
+          data: { device_id: this.removeData.device_id },
+        },
+      );
       console.log("RemoveDevice :>> ", res);
       this.GetDevice();
       this.loadingVisible = false;
@@ -547,7 +581,6 @@ export default {
       this.inactiveDataGrid = e.component;
     },
     onSelectionChanged(e) {
-      console.log("onSelectionChanged :>> ", e);
       this.selectedDevice = e.selectedRowKeys;
     },
     editPopupOn(data) {
