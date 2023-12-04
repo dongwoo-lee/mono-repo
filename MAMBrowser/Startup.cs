@@ -105,7 +105,7 @@ namespace MAMBrowser
             // global cors policy
             app.UseCors(x => x
                 .SetIsOriginAllowed(origin => true)
-                .AllowAnyMethod()
+                .WithMethods("GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS")
                 .AllowAnyHeader()
                 .AllowCredentials());
 
