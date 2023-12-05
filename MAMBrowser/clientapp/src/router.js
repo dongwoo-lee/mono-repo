@@ -229,12 +229,12 @@ const routes = [
       },
       {
         name: "config",
-        path: "config/miros", // MIROS 설정
+        path: "config/miros", // MMB 설정
         component: () => import("./views/app/config/miros/Index")
       },
       {
         name: "config",
-        path: "config/system", // 시스템 설정 
+        path: "config/system", // MIROS 설정 
         component: () => import("./views/app/config/system/Index")
       },
       {
