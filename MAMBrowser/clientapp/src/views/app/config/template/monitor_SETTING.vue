@@ -25,12 +25,13 @@
         
       </div>
     </div> -->
-    <div style="margin-top: 20px">
+    <div style="margin-top: 20px; font-family: 'MBC 새로움 M'">
       <DxDataGrid
+        style="font-family: 'MBC 새로움 M'"
         width="100%"
         height="60vh"
         @initialized="onActiveDeviceDataGridInitialized"
-        @cellPrepared="onCellPrepared"
+        @cellPrepared="onActiveCellPrepared"
         :show-borders="true"
         :data-source="activeDevice"
         :allow-column-resizing="true"
@@ -43,6 +44,7 @@
         </DxToolbar>
         <template #searchDeviceTemplate>
           <DxButton
+            style="font-family: 'MBC 새로움 M'"
             icon="add"
             text="장비등록"
             type="white"
@@ -52,6 +54,7 @@
         </template>
         <DxPaging :page-size="20" />
         <DxPager
+          style="font-family: 'MBC 새로움 M'"
           :allowed-page-sizes="[20]"
           :show-page-size-selector="false"
           :show-info="true"
@@ -88,9 +91,13 @@
           data-field="device_type"
           data-type="string"
           caption="유형"
+          cell-template="typeTemplate"
         />
+        <template #typeTemplate="{ data: rowInfo }">
+          {{ getType(rowInfo.data.device_type) }}
+        </template>
         <DxColumn
-          width="6vw"
+          width="7vw"
           data-field="ip_info"
           data-type="string"
           caption="IP 정보"
@@ -108,7 +115,7 @@
           caption="컴퓨터명"
         />
         <DxColumn
-          width="14vw"
+          width="12vw"
           data-field="os_version"
           data-type="string"
           caption="OS정보"
@@ -127,7 +134,7 @@
         />
         <DxColumn
           css-class="cell-button"
-          width="3vw"
+          width="4vw"
           caption="액션"
           cell-template="infoTemplate"
         />
@@ -153,8 +160,9 @@
       </DxDataGrid>
     </div>
     <DxPopup
+      style="font-family: 'MBC 새로움 M'"
       @initialized="onEditPopupInit($event)"
-      :visible="searchVisible"
+      :visible="activeDevicePopupVisible"
       :drag-enabled="false"
       :show-close-button="false"
       :show-title="true"
@@ -164,10 +172,11 @@
       title="장비 등록"
     >
       <DxDataGrid
+        style="font-family: 'MBC 새로움 M'"
         width="100%"
         height="65vh"
         @initialized="onInactiveDeviceDataGridInitialized"
-        @cellPrepared="onCellPrepared"
+        @cellPrepared="onInactiveCellPrepared"
         key-expr="device_id"
         :show-borders="true"
         :data-source="inactiveDevice"
@@ -182,11 +191,21 @@
           :visible="true"
           info-text="전체 {2}개"
         />
-        <!--<DxScrolling mode='standard' row-rendering-mode='standard' />
-              <DxColumnFixing :enabled='true' />
-              <DxHeaderFilter :visible='true' />
-              <DxFilterRow :visible='true' apply-filter='auto' />
-               -->
+        <DxToolbar>
+          <DxItem
+            location="after"
+            template="refreshDeviceTemplate"
+          />
+        </DxToolbar>
+        <template #refreshDeviceTemplate>
+          <DxButton
+            icon="refresh"
+            text="재검색"
+            type="white"
+            styling-mode="outlined"
+            @click="SearchDeviceApi"
+          />
+        </template>
         <DxSelection
           mode="multiple"
           show-check-boxes-mode="always"
@@ -197,9 +216,17 @@
           data-field="alias_name"
           data-type="string"
           caption="장비명"
+          cell-template="aliasTemplate"
         />
-
+        <template #aliasTemplate="{ data: rowInfo }">
+          <DxTextBox
+            v-model:value="rowInfo.data.alias_name"
+            mode="text"
+            styling-mode="outlined"
+          />
+        </template>
         <DxColumn
+          style="vertical-align: middle"
           width="10vw"
           data-field="device_id"
           data-type="string"
@@ -255,10 +282,11 @@
           caption="장비 코드"
         />
       </DxDataGrid>
-      <div>
+      <div style="display: flex; justify-content: space-between">
         <DxButton
           text="등록"
           type="default"
+          :disabled="selectedDevice.length == 0"
           styling-mode="outlined"
           @click="ActivateDevice"
         />
@@ -266,7 +294,7 @@
           text="닫기"
           type="default"
           styling-mode="outlined"
-          @click="searchVisible = false"
+          @click="activeDevicePopupOff"
         />
       </div>
     </DxPopup>
@@ -295,6 +323,7 @@
               justify-content: space-between;
             ">
             <DxTextBox
+              style="font-family: 'MBC 새로움 M'"
               v-model:value="editData.alias_name"
               mode="text"
               styling-mode="outlined"
@@ -381,6 +410,7 @@
     </DxPopup>
 
     <DxPopup
+      style="font-family: 'MBC 새로움 M'"
       @initialized="onRemovePopupInit($event)"
       :visible="removeVisible"
       :drag-enabled="false"
@@ -391,10 +421,14 @@
       container="#wrapper"
       title="장비 제거"
     >
-      <div>장비 ID : {{ this.removeData.device_id }}</div>
-      <div>장비명 : {{ this.removeData.device_name }}</div>
+      <div style="font-family: 'MBC 새로움 M'">장비 ID : {{ this.removeData.device_id
+      }}</div>
+      <div style="font-family: 'MBC 새로움 M'">장비명 : {{ this.removeData.alias_name }}
+      </div>
       <br />
-      장비를 제거하시겠습니까?
+      <span style="font-family: 'MBC 새로움 M'">
+        장비를 제거하시겠습니까?
+      </span>
       <DxToolbarItem
         widget="dxButton"
         toolbar="bottom"
@@ -427,6 +461,7 @@ import DxButton from "devextreme-vue/button";
 import { DxLoadPanel } from "devextreme-vue/load-panel";
 import { DxPopup, DxToolbarItem } from "devextreme-vue/popup";
 import { DxScrollView } from "devextreme-vue/scroll-view";
+import MixinBasicPage from "../../../../mixin/MixinBasicPage";
 import axios from "axios";
 
 export default {
@@ -446,6 +481,7 @@ export default {
     DxToolbarItem,
     DxScrollView,
   },
+  mixins: [MixinBasicPage],
   data() {
     return {
       monitoringServerInfo: "",
@@ -455,7 +491,7 @@ export default {
       selectedDevice: [],
       activeDataGrid: null,
       inactiveDataGrid: null,
-      searchVisible: false,
+      activeDevicePopupVisible: false,
       editVisible: false,
       editData: {},
       editButtonOptions: {
@@ -513,31 +549,67 @@ export default {
       this.loadingVisible = false;
     },
     async SearchDevice() {
+      this.loadingVisible = true;
+      await this.SearchDeviceApi();
+      this.loadingVisible = false;
+      this.activeDevicePopupOn();
+    },
+    async SearchDeviceApi() {
       if (this.monitoringServerInfo == "") {
         await this.GetMonitoringServerInfo();
       }
-      this.loadingVisible = true;
       var res = await axios.get(
         `http://${this.monitoringServerInfo}/mntr/Monitoring/SearchDevice`,
       );
       console.log("SearchDevice :>> ", res);
       this.inactiveDevice = res.data;
-      this.loadingVisible = false;
-      this.searchVisible = true;
+      this.inactiveDataGrid.repaint();
+    },
+    activeDevicePopupOn() {
+      this.activeDevicePopupVisible = true;
+    },
+    activeDevicePopupOff() {
+      this.activeDevicePopupVisible = false;
+      this.inactiveDataGrid.deselectAll();
     },
     async ActivateDevice() {
       if (this.monitoringServerInfo == "") {
         await this.GetMonitoringServerInfo();
       }
+
+      if (this.selectedDevice.length == 0) {
+        this.$fn.notify("error", { title: "장비를 선택해주세요." });
+        return;
+      }
+
+      var result = 0;
+      this.selectedDevice.map((item) => {
+        var data = this.inactiveDevice.find((x) => x.device_id == item);
+        if (data == undefined || data.alias_name.length == 0) {
+          result++;
+        }
+      });
+      if (result > 0) {
+        this.$fn.notify("error", { title: "장비명을 입력해주세요." });
+        return;
+      }
       this.loadingVisible = true;
-      var param = {
-        deviceIds: this.selectedDevice,
-      };
+      var selectedDeviceInfo = [];
+      this.selectedDevice.map((item) => {
+        var data = {
+          device_id: item,
+          alias_name: this.inactiveDevice.find((x) => x.device_id == item)
+            .alias_name,
+        };
+
+        selectedDeviceInfo.push(data);
+      });
+
       var res = await axios.post(
         `http://${this.monitoringServerInfo}/mntr/Monitoring/ActivateDevice`,
-        param,
+        selectedDeviceInfo,
       );
-      this.searchVisible = false;
+      this.activeDevicePopupOff();
       this.loadingVisible = false;
       this.inactiveDataGrid.deselectAll();
       this.GetDevice();
@@ -585,9 +657,8 @@ export default {
     },
     editPopupOn(data) {
       this.editVisible = true;
-      this.editData = data;
+      this.editData = JSON.parse(JSON.stringify(data));
     },
-
     onEditPopupInit(e) {
       this.editPopup = e.component;
 
@@ -606,14 +677,47 @@ export default {
         arg.stopPropagation();
       });
     },
-    onCellPrepared(e) {
+    onActiveCellPrepared(e) {
       if (e.rowType === "header") {
         e.cellElement.style.backgroundColor = "#2a4878";
         e.cellElement.style.color = "white";
+      }
+    },
+    onInactiveCellPrepared(e) {
+      if (e.rowType === "header") {
+        e.cellElement.style.backgroundColor = "#2a4878";
+        e.cellElement.style.color = "white";
+      }
+      if (e.rowType === "data") {
+        e.cellElement.style.verticalAlign = "middle";
+      }
+    },
+    getType(type) {
+      if (type == 1) {
+        return "SLAP";
+      } else if (type == 2) {
+        return "DL3";
+      } else if (type == 4) {
+        return "일반";
       }
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.dx-popup-title {
+  font-family: "MBC 새로움 M";
+}
+
+.dx-button {
+  font-family: "MBC 새로움 M";
+}
+
+.dx-info {
+  font-family: "MBC 새로움 M";
+}
+
+.dx-texteditor-input {
+  font-family: "MBC 새로움 M" !important;
+}</style>
