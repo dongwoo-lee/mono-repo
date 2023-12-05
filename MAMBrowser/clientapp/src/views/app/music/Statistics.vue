@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="선곡 통계" />
+        <piaf-breadcrumb heading="전체 선곡 순위" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -345,7 +345,7 @@ export default {
       });
     },
     getMediaOptions() {
-      const url = "/api/Categories/media/mcrspot";
+      const url = "/api/Categories/media";
       this.$http.get(url).then((res) => {
         if (res.status === 200) {
           const options = [{ value: "", text: "전체" }];

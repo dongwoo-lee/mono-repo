@@ -12,8 +12,8 @@ module.exports = {
     headers: { "Cache-Control": "no-cache, no-store" },
     proxy: {
       "/api": {
-        target: "http://192.168.1.236:20080",
-        // target: "http://localhost:8000",
+        // target: "http://192.168.1.236:20080",
+        target: "http://localhost:8000",
         ws: true,
         changeOrigin: true
       },

@@ -21,7 +21,7 @@
           <div v-if="textVisible && !imageSource">
             <span>{{ imageText }}</span>
           </div>
-          <img :src="imageSource" v-else alt="" />
+          <img class="responsive_image" :src="imageSource" v-else alt="" />
         </div>
         <div class="mt-4" style="text-align: center">
           <input
@@ -157,5 +157,8 @@ export default {
 }
 span {
   font-family: "MBC 새로움 M" !important;
+}
+.responsive_image {
+  object-fit: cover;
 }
 </style>

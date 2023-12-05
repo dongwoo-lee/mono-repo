@@ -348,7 +348,7 @@ export default {
       });
     },
     getMediaOptions() {
-      const url = "/api/Categories/media/mcrspot";
+      const url = "/api/Categories/media";
       this.$http.get(url).then((res) => {
         if (res.status === 200) {
           const options = [{ value: "", text: "전체" }];
