@@ -46,19 +46,11 @@
           </div>
           <div class="btn_body">
             {{
-              DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.user_name
-              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.user_name
-              : "정보없음"
-            }}
-            /
-            {{
-              DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.cuesheet_name
-              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.cuesheet_name
-              : "정보없음"
+              DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
+                ?.watch_process_name
+              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
+                ?.watch_process_name
+              : "감시 프로세스 없음"
             }}
           </div>
         </b-button>
@@ -153,7 +145,7 @@
       </div>
     </div>
 
-    <hr />
+    <hr v-if="!DL3DataSource.length == 0" />
 
     <div v-for="index in Math.ceil(etcDataSource.length / itemCount)">
       <div class="monitor_group2">
@@ -201,19 +193,11 @@
           </div>
           <div class="btn_body2">
             {{
-              etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.user_name
-              ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.user_name
-              : "정보없음"
-            }}
-            /
-            {{
-              etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.cuesheet_name
-              ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.cuesheet_name
-              : "정보없음"
+              DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
+                ?.watch_process_name
+              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
+                ?.watch_process_name
+              : "감시 프로세스 없음"
             }}
           </div>
         </b-button>

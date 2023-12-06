@@ -250,7 +250,7 @@
           {{ getType(rowInfo.data.device_type) }}
         </template>
         <DxColumn
-          width="6vw"
+          width="7vw"
           data-field="ip_info"
           data-type="string"
           caption="IP 정보"
@@ -276,7 +276,7 @@
           caption="컴퓨터명"
         />
         <DxColumn
-          width="14vw"
+          width="12w"
           data-field="os_version"
           data-type="string"
           caption="OS정보"
@@ -382,7 +382,6 @@
               mode="text"
               styling-mode="outlined"
               label="위치"
-              :disabled="true"
             />
             <DxTextBox
               :value="editData.machine_name"
@@ -406,11 +405,10 @@
               :disabled="true"
             />
             <DxTextBox
-              :value="editData.agent_code"
+              v-model:value="editData.agent_code"
               mode="text"
               styling-mode="outlined"
               label="장비 코드"
-              :disabled="true"
             />
           </div>
         </DxScrollView>
@@ -519,7 +517,6 @@ export default {
         text: "저장",
         onClick: () => {
           this.UpdateDevice();
-          this.editVisible = false;
         },
       },
       editCloseButtonOptions: {
@@ -678,6 +675,7 @@ export default {
           device_id: item,
           alias_name: matchedItem.alias_name,
           location: matchedItem.location,
+          agent_code: matchedItem.agent_code,
         };
 
         selectedDeviceInfo.push(data);
@@ -696,10 +694,58 @@ export default {
       if (this.monitoringServerInfo == "") {
         await this.GetMonitoringServerInfo();
       }
+
+      if (
+        this.editData.alias_name == null ||
+        this.editData.alias_name == undefined ||
+        this.editData.alias_name.length == 0
+      ) {
+        this.$fn.notify("error", { title: "장비명을 입력해주세요." });
+        return;
+      }
+      if (
+        this.editData.location == null ||
+        this.editData.location == undefined ||
+        this.editData.location.length == 0
+      ) {
+        this.$fn.notify("error", { title: "위치를 입력해주세요." });
+        return;
+      }
+
       this.loadingVisible = true;
+      var validAgentCodeParam = [
+        {
+          alias_name: this.editData.alias_name,
+          agent_code: this.editData.agent_code,
+        },
+      ];
+      var res = await axios.get(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/ValidAgentCode`,
+        {
+          params: validAgentCodeParam,
+          paramsSerializer: () => {
+            return qs.stringify(
+              { param: validAgentCodeParam },
+              { arrayFormat: "indices", allowDots: true },
+            );
+          },
+        },
+      );
+      if (!res.data["result"]) {
+        res.data["aliasNames"].map((item) => {
+          this.$fn.notify("error", {
+            title: `${item} 장비의 코드가 이미 존재합니다.`,
+          });
+        });
+        this.loadingVisible = false;
+        return;
+      }
+
       var param = {
         device_id: this.editData.device_id,
         alias_name: this.editData.alias_name,
+        location: this.editData.location,
+        agent_code: this.editData.agent_code,
       };
       var res = await axios.patch(
         `http://${this.monitoringServerInfo}/mntr/Monitoring/UpdateDevice`,
@@ -708,6 +754,7 @@ export default {
       console.log("UpdateDevice :>> ", res);
       this.GetDevice();
       this.loadingVisible = false;
+      this.editVisible = false;
     },
     async RemoveDevice() {
       if (this.monitoringServerInfo == "") {
