@@ -1,5 +1,12 @@
 <template>
   <div class="monitor_container">
+    <h3>DL3</h3>
+    <br v-if="DL3DataSource.length == 0" />
+    <h6
+      v-if="DL3DataSource.length == 0"
+      style="text-align: center"
+    >장비 없음</h6>
+    <br v-if="DL3DataSource.length == 0" />
     <div v-for="index in Math.ceil(DL3DataSource.length / itemCount)">
       <div class="monitor_group">
         <b-button
@@ -33,23 +40,23 @@
                 "
             >
               {{
-                DL3DataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
+                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
                   .location
               }}F
             </span>
             <span class="name">
               {{
-                DL3DataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
+                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
                   .alias_name
               }}
             </span>
           </div>
           <div class="btn_body">
             {{
-              DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
-                ?.watch_process_name
-              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
-                ?.watch_process_name
+              DL3DataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
+                ?.watchProcessName
+              ? DL3DataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
+                ?.watchProcessName
               : "감시 프로세스 없음"
             }}
           </div>
@@ -67,43 +74,43 @@
             <dl class="group_content">
               <dt class="content_title">단말 모델명 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].deviceInfo.device_model }}
+                {{ DL3DataSource[0]?.deviceInfo.device_model }}
               </dd>
               <dt class="content_title">단말 컴퓨터 이름 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].deviceInfo.machine_name }}
+                {{ DL3DataSource[0]?.deviceInfo.machine_name }}
               </dd>
               <dt class="content_title">윈도우 버전 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].deviceInfo.os_version }}
+                {{ DL3DataSource[0]?.deviceInfo.os_version }}
               </dd>
               <dt class="content_title">프로세서 정보 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].deviceInfo.processor_info }}
+                {{ DL3DataSource[0]?.deviceInfo.processor_info }}
               </dd>
               <dt class="content_title">IP정보 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].deviceInfo.ip_info }}
+                {{ DL3DataSource[0]?.deviceInfo.ip_info }}
               </dd>
               <dt class="content_title">cpu 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].healthPacket.resource.cpu }}
+                {{ DL3DataSource[0]?.healthPacket.resource.cpu }}
               </dd>
               <dt class="content_title">메모리 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].healthPacket.resource.memory }}
+                {{ DL3DataSource[0]?.healthPacket.resource.memory }}
               </dd>
               <dt class="content_title">디스크 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].healthPacket.resource.disk }}
+                {{ DL3DataSource[0]?.healthPacket.resource.disk }}
               </dd>
               <dt class="content_title">디스크 읽기/쓰기</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].healthPacket.resource.disk_io_use_rate }}
+                {{ DL3DataSource[0]?.healthPacket.resource.disk_io_use_rate }}
               </dd>
               <dt class="content_title">네트워크 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0].healthPacket.resource.network_use_rate }}
+                {{ DL3DataSource[0]?.healthPacket.resource.network_use_rate }}
               </dd>
             </dl>
             <dl class="group_content">
@@ -145,8 +152,14 @@
       </div>
     </div>
 
-    <hr v-if="!DL3DataSource.length == 0" />
-
+    <hr />
+    <h3>일반</h3>
+    <br v-if="etcDataSource.length == 0" />
+    <h6
+      v-if="etcDataSource.length == 0"
+      style="text-align: center"
+    >장비 없음</h6>
+    <br v-if="etcDataSource.length == 0" />
     <div v-for="index in Math.ceil(etcDataSource.length / itemCount)">
       <div class="monitor_group2">
         <b-button
@@ -167,7 +180,9 @@
             class="btn_header2"
             :class="getEtcStatusHeaderColorClass(
               etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                ?.agent_status,
+                ?.agent_status &&
+              etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.watch_service_status,
             )
               "
           >
@@ -175,28 +190,30 @@
               class="floor2"
               :class="getEtcStatusFloorColorClass(
                 etcDataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                  ?.agent_status,
+                  ?.agent_status &&
+                etcDataSource[itemCount * (index - 1) + (i - 1)]
+                  ?.signalR_Info?.watch_service_status,
               )
                 "
             >
               {{
-                etcDataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
+                etcDataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
                   .location
               }}F
             </span>
             <span class="name2">
               {{
-                etcDataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
+                etcDataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
                   .alias_name
               }}
             </span>
           </div>
           <div class="btn_body2">
             {{
-              DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
-                ?.watch_process_name
-              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].agent_info
-                ?.watch_process_name
+              etcDataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
+                ?.watchProcessName
+              ? etcDataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
+                ?.watchProcessName + " 감시 중"
               : "감시 프로세스 없음"
             }}
           </div>
@@ -218,70 +235,70 @@
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.device_model
+                    ?.deviceInfo.device_model
                 }}
               </dd>
               <dt class="content_title2">단말 컴퓨터 이름 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.machine_name
+                    ?.deviceInfo.machine_name
                 }}
               </dd>
               <dt class="content_title2">윈도우 버전 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.os_version
+                    ?.deviceInfo.os_version
                 }}
               </dd>
               <dt class="content_title2">프로세서 정보 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.processor_info
+                    ?.deviceInfo.processor_info
                 }}
               </dd>
               <dt class="content_title2">IP정보 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .deviceInfo.ip_info
+                    ?.deviceInfo.ip_info
                 }}
               </dd>
               <dt class="content_title2">cpu 사용률 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.cpu
+                    ?.healthPacket.resource.cpu
                 }}
               </dd>
               <dt class="content_title2">메모리 사용률 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.memory
+                    ?.healthPacket.resource.memory
                 }}
               </dd>
               <dt class="content_title2">디스크 사용률 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.disk
+                    ?.healthPacket.resource.disk
                 }}
               </dd>
               <dt class="content_title2">디스크 읽기/쓰기</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.disk_io_use_rate
+                    ?.healthPacket.resource.disk_io_use_rate
                 }}
               </dd>
               <dt class="content_title2">네트워크 사용률 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .healthPacket.resource.network_use_rate
+                    ?.healthPacket.resource.network_use_rate
                 }}
               </dd>
             </dl>
@@ -435,6 +452,9 @@ export default {
           const device = this.DL3DataSource.find(
             (d) => d.deviceInfo.device_id == object.DEVICE_ID,
           );
+          if (device == undefined) {
+            return;
+          }
           device.signalR_Info.agent_status = object.AGENT_STATUS;
           device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
           device.signalR_Info.slap_type = object.SLAP_TYPE;
@@ -444,6 +464,9 @@ export default {
           const device = this.etcDataSource.find(
             (d) => d.deviceInfo.device_id == object.DEVICE_ID,
           );
+          if (device == undefined) {
+            return;
+          }
           device.signalR_Info.agent_status = object.AGENT_STATUS;
           device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
           device.signalR_Info.slap_type = object.SLAP_TYPE;

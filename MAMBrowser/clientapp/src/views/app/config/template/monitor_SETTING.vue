@@ -647,7 +647,7 @@ export default {
       });
 
       var res = await axios.get(
-        `http://${this.monitoringServerInfo}/mntr/Monitoring/ValidAgentCode`,
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/CntAgentCode`,
         {
           params: validAgentCodeParam,
           paramsSerializer: () => {
@@ -713,32 +713,22 @@ export default {
       }
 
       this.loadingVisible = true;
-      var validAgentCodeParam = [
-        {
-          alias_name: this.editData.alias_name,
-          agent_code: this.editData.agent_code,
-        },
-      ];
-      var res = await axios.get(
-        `http://${this.monitoringServerInfo}/mntr/Monitoring/ValidAgentCode`,
-        {
-          params: validAgentCodeParam,
-          paramsSerializer: () => {
-            return qs.stringify(
-              { param: validAgentCodeParam },
-              { arrayFormat: "indices", allowDots: true },
-            );
-          },
-        },
-      );
-      if (!res.data["result"]) {
-        res.data["aliasNames"].map((item) => {
+
+      if (
+        this.editData.agent_code != null &&
+        this.editData.agent_code != undefined &&
+        this.editData.agent_code.length != 0
+      ) {
+        var res = await axios.get(
+          `http://${this.monitoringServerInfo}/mntr/Monitoring/ValidAgentCode?deviceId=${this.editData.device_id}&agentCode=${this.editData.agent_code}`,
+        );
+        if (res.data != 0) {
           this.$fn.notify("error", {
-            title: `${item} 장비의 코드가 이미 존재합니다.`,
+            title: `장비 코드가 이미 존재합니다.`,
           });
-        });
-        this.loadingVisible = false;
-        return;
+          this.loadingVisible = false;
+          return;
+        }
       }
 
       var param = {
@@ -817,13 +807,21 @@ export default {
         e.cellElement.style.verticalAlign = "middle";
       }
     },
+    // 0 : 일반
+    // 1 : DASHBOARD SLAP
+    // 2 : DL3
+    // 3 : DCM    -> 일반 처리
+    // 4 : EDITOR -> 일반 처리
+    // 5 : 일반 SLAP
     getType(type) {
       if (type == 1) {
-        return "SLAP";
+        return "대시보드 SLAP";
       } else if (type == 2) {
         return "DL3";
-      } else if (type == 4) {
+      } else if (type == 0 || type == 3 || type == 4) {
         return "일반";
+      } else if (type == 5) {
+        return "일반 SLAP";
       }
     },
   },
