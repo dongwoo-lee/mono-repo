@@ -25,8 +25,8 @@ namespace MAMBrowser.BLL
         public ProgramInfomationBll(IProgramInfomationDAO dao, StudioWebService studioService, APIDao api_dao,ILogger<ProgramInfomationBll> logger)
         {
             _dao = dao;
-            _studioService = new StudioSystemMockup(studioService);
-            //_studioService = studioService;
+            //_studioService = new StudioSystemMockup(studioService);
+            _studioService = studioService;
             _api_dao = api_dao;
             _logger= logger;
         }

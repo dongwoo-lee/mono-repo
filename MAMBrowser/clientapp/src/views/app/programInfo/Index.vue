@@ -73,7 +73,12 @@
               <div class="image_and_detail">
                 <div class="image_box">
                   <div class="image_">
-                    <img v-if="imageUrl" :src="imageUrl" alt="Image" />
+                    <img
+                      class="responsive_image"
+                      v-if="imageUrl"
+                      :src="imageUrl"
+                      alt="Image"
+                    />
                     <div class="noImg">No Image</div>
                   </div>
                 </div>
@@ -289,7 +294,6 @@ export default {
         brddate: this.searchItems.brdDate,
         pgmcode: this.searchItems.pgmcode,
       };
-      console.log("params", params);
       const dataList = await this.getReturnList(params);
       if (dataList) {
         this.dataSource = dataList.data.resultObject;
@@ -323,7 +327,6 @@ export default {
     },
     async onMediaChange(e) {
       const selectMediaObj = this.pgmList.filter((pgm) => pgm.media === e);
-      console.log("selectMediaObj", selectMediaObj);
       this.programOptions = await this.SetProgramCodeOption(selectMediaObj);
       this.programOptions = this.programOptions.filter(
         (ele) => ele.value !== ""
@@ -362,7 +365,6 @@ export default {
         });
         if (rowItems.length > 0) {
           const nowPgmItem = rowItems[rowItems.length - 1];
-          console.log("nowPgmItem", nowPgmItem);
           const codes = this.pgmList.filter(
             (pgm) => pgm.media === this.searchItems.media
           );
@@ -390,7 +392,6 @@ export default {
       const url = "/api/TransMissionList/GetTransMissionList";
       return this.$http.post(url, params).then((res) => {
         if (res.status === 200 && res.data.resultObject) {
-          console.log("GetTodayTransMissionList", res.data.resultObject);
           return res;
         }
       });
@@ -479,6 +480,10 @@ export default {
   width: 100%;
   height: 100%;
 }
+.responsive_image {
+  object-fit: cover;
+}
+
 .image_and_detail .image_ .noImg {
   position: absolute;
   width: 100%;

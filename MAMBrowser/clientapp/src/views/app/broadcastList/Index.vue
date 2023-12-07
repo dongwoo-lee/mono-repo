@@ -508,15 +508,14 @@ export default {
       } else {
         //일일큐시트 목록에서 확인 후 Go Page
         const cueItem = await this.getcuesheetListArr(param);
-        console.log(cueItem);
         if (cueItem.data.resultObject.data.length == 1) {
           this.SET_CUEINFO(cueItem.data.resultObject.data[0]);
           sessionStorage.setItem(
             "USER_INFO",
             JSON.stringify(cueItem.data.resultObject.data[0])
           );
-          // window.open("/app/cuesheet/day/detail", "_blank");
-          this.$router.push({ path: "/app/cuesheet/day/detail" });
+          window.open("/app/cuesheet/day/detail", "_blank");
+          // this.$router.push({ path: "/app/cuesheet/day/detail" });
         }
       }
     },
