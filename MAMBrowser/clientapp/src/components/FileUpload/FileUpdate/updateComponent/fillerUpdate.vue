@@ -32,7 +32,7 @@
     <br />
     <br />
     <h6>방송유효일</h6>
-    <b-input-group class="mb-3" style="width: 350px; float: left">
+    <b-input-group class="mb-3" style="width: 350px; float: left; margin-bottom:2px !important">
       <input
         type="text"
         class="form-control input-picker"

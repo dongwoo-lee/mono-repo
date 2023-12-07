@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="시스템 설정" :noNav="true" />
+        <piaf-breadcrumb heading="MIROS 설정" :noNav="true" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -14,7 +14,7 @@
               <b-tab title="그룹 관리" @click="onTab('group')" active />
               <b-tab title="사용자 관리" @click="onTab('user')" />
               <b-tab title="코드 관리" @click="onTab('Code')" />
-              <b-tab title="MIROS 관리" @click="onTab('miros')" />
+              <b-tab title="MIROS 3.0 관리" @click="onTab('miros')" />
               <component :is="tabName"></component>
             </b-tabs>
           </b-container>
