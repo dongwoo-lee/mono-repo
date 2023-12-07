@@ -104,8 +104,8 @@ import { mapActions, mapGetters } from "vuex";
 import { DxScheduler, DxResource } from "devextreme-vue/scheduler";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 const moment = require("moment");
-// const date = new Date();
-const date = new Date("2023-05-29");
+const date = new Date();
+// const date = new Date("2023-05-29");
 
 function get_date_str(date) {
   let sYear = date.getFullYear();
