@@ -350,6 +350,7 @@
       :endPoint="soundItem.endposition"
       :fadeIn="soundItem.fadeintime"
       :fadeOut="soundItem.fadeouttime"
+      :exceptflag="soundItem.exceptflag == 'Y' ? true : false"
       type="A"
       requestType="token"
       :parentName="playTem_name"
@@ -412,6 +413,7 @@ export default {
         existFile: false,
         duration: 0, //string
         useflag: "Y",
+        exceptflag : "N"
       },
       selectedItemKeys: [],
     };

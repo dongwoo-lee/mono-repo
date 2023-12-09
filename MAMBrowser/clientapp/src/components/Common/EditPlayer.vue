@@ -34,16 +34,17 @@
                 <span style="border: 1px solid silver; padding: 8px"
                   >{{ somTime }} / {{ eomTime }}</span
                 >
-                <b-form-checkbox-group
-                  style="display: flex"
+                 <b-form-checkbox-group
+                  style="display: inline-block; margin-left: 10px;"
                   class="custom-checkbox-group"
                   v-model="selected"
                   :options="fadeOptions"
                   value-field="value"
                   text-field="text"
                   :disabled="cueInfo.cuetype == 'A'"
-                /> </span
-            ></b-col>
+                />  
+              </span>
+            </b-col>
 
             <b-col cols="4">
               <div style="margin-top: 8px; margin-bootm: 0">
@@ -247,10 +248,11 @@ export default {
       eomTime: "00:00:00",
       fadeOptions: [
         {
-          text: "Fade In",
+          text: "페이드 인",
           value: { fadeInValue: true },
         },
-        { text: "Fade Out", value: { fadeOutValue: true } },
+        { text: "페이드 아웃", value: { fadeOutValue: true } },
+        { text: "선곡제외", value: { exceptFlagValue: true } },
       ],
       buttonItem: [
         {
@@ -274,12 +276,20 @@ export default {
     },
   },
   mounted() {
+    console.info('this.exceptflag', this.exceptflag);
+    console.info('this.fadeIn', this.fadeIn);
+    console.info('this.fadeOut', this.fadeOut);
     if (this.fadeIn["fadeInValue"]) {
       this.selected.push(this.fadeIn);
     }
     if (this.fadeOut["fadeOutValue"]) {
       this.selected.push(this.fadeOut);
     }
+    
+     if (this.exceptflag["exceptFlagValue"]) {
+      this.selected.push(this.exceptflag);
+    }
+
     cancelToken = axios.CancelToken;
     source = cancelToken.source();
     this.LoadAudio();
@@ -686,6 +696,7 @@ export default {
     endPoint: Number,
     fadeIn: Object,
     fadeOut: Object,
+    exceptflag : Object,
   },
 };
 </script>

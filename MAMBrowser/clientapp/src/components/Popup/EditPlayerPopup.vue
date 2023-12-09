@@ -28,6 +28,7 @@
         :endPoint="endPoint"
         :fadeIn="{ fadeInValue: fadeIn }"
         :fadeOut="{ fadeOutValue: fadeOut }"
+        :exceptflag="{ exceptFlagValue: exceptflag}"
         @startPosition="(val) => (startPosition = val)"
         @endPosition="(val) => (endPosition = val)"
         @fadeValue="(val) => (selected = val)"
@@ -111,6 +112,7 @@ export default {
     endPoint: Number,
     fadeIn: Boolean,
     fadeOut: Boolean,
+    exceptflag : Boolean,
   },
   data() {
     return {
@@ -149,7 +151,7 @@ export default {
       this.isSuccess = false;
       this.$emit("closePlayer");
     },
-    editOK() {
+    editOK() {    
       switch (this.type) {
         case "A":
           var rowData = [...this.abCartArr];
@@ -194,6 +196,8 @@ export default {
       this.endPosition = endVal;
     },
     setTime(rowData) {
+      console.info('rowData', rowData);
+
       var startTime = 0;
       var endTime = 0;
       rowData.forEach((ele) => {
@@ -227,6 +231,17 @@ export default {
           } else {
             ele.fadeouttime = false;
           }
+
+           var exceptFlagValue = this.selected.filter((ele) => {
+            return Object.keys(ele).includes("exceptFlagValue");
+          });
+          console.info('exceptFlagValue',exceptFlagValue);
+          if (exceptFlagValue.length != 0) {
+            ele.exceptflag = exceptFlagValue ? 'Y' : 'N';
+          } else {
+            ele.exceptflag = 'N';
+          }
+          console.info('ele.exceptflag',ele.exceptflag);
         }
       });
       this.selected = [];

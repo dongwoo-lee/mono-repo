@@ -245,6 +245,7 @@
         :endPoint="soundItem.endposition"
         :fadeIn="soundItem.fadeintime"
         :fadeOut="soundItem.fadeouttime"
+        :exceptflag="soundItem.exceptflag == 'Y' ? true : false"
         requestType="token"
         :parentName="playTem_name"
         @closePlayer="onClosePlayer"
@@ -316,6 +317,7 @@ export default {
         subtitle: "",
         transtype: "S",
         useflag: "Y",
+        exceptflag : "N"
       },
     };
   },
