@@ -14,9 +14,9 @@
         <b-container class="bv-example-row" v-if="isSuccess">
           <b-row>
             <b-col>
-              <span>
+               <span style="display: flex; align-items: center;">
                 <b-button
-                  style="padding: 6px"
+                  style="padding: 6px; width:100px !important; margin-left:6px"
                   variant="outline-primary"
                   @click="somClick"
                   :disabled="cueInfo.cuetype == 'A'"
@@ -24,18 +24,18 @@
                   시작지점 설정
                 </b-button>
                 <b-button
-                  style="padding: 6px"
+                  style="padding: 6px; width:100px !important; margin-left:6px"
                   variant="outline-primary"
                   @click="eomClick"
                   :disabled="cueInfo.cuetype == 'A'"
                 >
                   종료지점 설정
                 </b-button>
-                <span style="border: 1px solid silver; padding: 8px"
+                <span style="border: 1px solid silver; padding: 8px; width:170px; margin-left:6px"
                   >{{ somTime }} / {{ eomTime }}</span
                 >
                  <b-form-checkbox-group
-                  style="display: inline-block; margin-left: 10px;"
+                  style="display: inline-block; margin-left: 2px;"
                   class="custom-checkbox-group"
                   v-model="selected"
                   :options="fadeOptions"
