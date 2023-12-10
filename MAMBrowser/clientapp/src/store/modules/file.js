@@ -206,12 +206,15 @@ export default {
     },
     downloadProduct({ state }, { item, downloadName }) {
       //products 파일 다운로드
-      const src = `/api/products/files?token=${item.fileToken}&downloadName=${downloadName}`;
+      const encodedDownloadName = encodeURIComponent(downloadName);
+      const src = `/api/products/files?token=${item.fileToken}&downloadName=${encodedDownloadName}`;
       state.downloadIframe.setAttribute("src", src);
+      console.info('src', src);
     },
     downloadMusic({ state }, { item, downloadName }) {
       //music 파일 다운로드
-      const src = `/api/musicsystem/files?token=${item.fileToken}&downloadName=${downloadName}`;
+      const encodedDownloadName = encodeURIComponent(downloadName);
+      const src = `/api/musicsystem/files?token=${item.fileToken}&downloadName=${encodedDownloadName}`;
       state.downloadIframe.setAttribute("src", src);
     },
     downloadDl30({ state }, item) {
@@ -237,7 +240,8 @@ export default {
           if (res.data && res.data.resultCode === 0) {
             const userId = encodeURIComponent(sessionStorage.getItem(USER_ID));
             const fileName = encodeURIComponent(res.data.resultObject.data.fileName);
-            const src = `/api/products/concatenate-files?userId=${userId}&filename=${fileName}&downloadname=${item.downloadName}`;
+            const encodedDownloadName = encodeURIComponent(item.downloadName);
+            const src = `/api/products/concatenate-files?userId=${userId}&filename=${fileName}&downloadname=${encodedDownloadName}`;
             state.downloadIframe.setAttribute("src", src);
           }
         });

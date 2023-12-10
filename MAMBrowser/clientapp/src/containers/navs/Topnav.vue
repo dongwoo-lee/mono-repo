@@ -119,11 +119,11 @@
                     >
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/miros' })"
-                      >MIROS 설정</b-dropdown-item
+                      >MMB 설정</b-dropdown-item
                     >
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/system' })"
-                      >시스템 설정</b-dropdown-item
+                      >MIROS 설정</b-dropdown-item
                     >
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/remove' })"
