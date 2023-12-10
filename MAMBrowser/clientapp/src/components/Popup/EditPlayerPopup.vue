@@ -33,6 +33,7 @@
         @endPosition="(val) => (endPosition = val)"
         @fadeValue="(val) => (selected = val)"
         @isSuccess="(val) => (isSuccess = val)"
+        :parentName ="parentName"
       />
     </template>
     <template v-slot:modal-footer>
@@ -235,13 +236,11 @@ export default {
            var exceptFlagValue = this.selected.filter((ele) => {
             return Object.keys(ele).includes("exceptFlagValue");
           });
-          console.info('exceptFlagValue',exceptFlagValue);
           if (exceptFlagValue.length != 0) {
             ele.exceptflag = exceptFlagValue ? 'Y' : 'N';
           } else {
             ele.exceptflag = 'N';
           }
-          console.info('ele.exceptflag',ele.exceptflag);
         }
       });
       this.selected = [];
