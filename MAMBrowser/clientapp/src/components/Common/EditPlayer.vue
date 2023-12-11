@@ -38,7 +38,7 @@
                   style="display: inline-block; margin-left: 2px;"
                   class="custom-checkbox-group"
                   v-model="selected"
-                  :options="fadeOptions"
+                  :options="parentName=='즐겨찾기' ? fadeOptions : fadeOptions2"
                   value-field="value"
                   text-field="text"
                   :disabled="cueInfo.cuetype == 'A'"
@@ -252,6 +252,13 @@ export default {
           value: { fadeInValue: true },
         },
         { text: "페이드 아웃", value: { fadeOutValue: true } },
+      ],
+      fadeOptions2: [
+        {
+          text: "페이드 인",
+          value: { fadeInValue: true },
+        },
+        { text: "페이드 아웃", value: { fadeOutValue: true } },
         { text: "선곡제외", value: { exceptFlagValue: true } },
       ],
       buttonItem: [
@@ -276,9 +283,6 @@ export default {
     },
   },
   mounted() {
-    console.info('this.exceptflag', this.exceptflag);
-    console.info('this.fadeIn', this.fadeIn);
-    console.info('this.fadeOut', this.fadeOut);
     if (this.fadeIn["fadeInValue"]) {
       this.selected.push(this.fadeIn);
     }
@@ -691,6 +695,10 @@ export default {
     direct: {
       type: String,
       default: () => {},
+    },
+    parentName: {
+      type: String,
+      default: "",
     },
     startPoint: Number,
     endPoint: Number,
