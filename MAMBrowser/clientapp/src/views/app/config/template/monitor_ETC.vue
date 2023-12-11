@@ -26,29 +26,21 @@
           <div
             class="btn_header"
             :class="getDL3StatusHeaderColorClass(
-              DL3DataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                ?.agent_status,
+              DL3DataSource[0]?.signalR_Info?.agent_status,
             )
               "
           >
             <span
               class="floor"
               :class="getDL3StatusFloorColorClass(
-                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                  ?.agent_status,
+                DL3DataSource[0]?.signalR_Info?.agent_status,
               )
                 "
             >
-              {{
-                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
-                  .location
-              }}F
+              {{ DL3DataSource[0]?.deviceInfo.location }}
             </span>
             <span class="name">
-              {{
-                DL3DataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
-                  .alias_name
-              }}
+              {{ DL3DataSource[0]?.deviceInfo.alias_name }}
             </span>
           </div>
           <div class="btn_body">
@@ -56,7 +48,7 @@
               DL3DataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
                 ?.watchProcessName
               ? DL3DataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
-                ?.watchProcessName
+                ?.watchProcessName + " 감시 중"
               : "감시 프로세스 없음"
             }}
           </div>
@@ -118,19 +110,33 @@
               <dd class="content_text">
                 {{
                   DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerMainStatus
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
               <dt class="content_title">서브 오디오 서버 상태 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerSubStatus }}
+                {{
+                  DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerSubStatus
+                  ? "켜짐"
+                  : "꺼짐"
+                }}
               </dd>
               <dt class="content_title">메인 파일 에이전트 상태 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentMainStatus }}
+                {{
+                  DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentMainStatus
+                  ? "켜짐"
+                  : "꺼짐"
+                }}
               </dd>
               <dt class="content_title">서브 파일 에이전트 상태 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentSubStatus }}
+                {{
+                  DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentSubStatus
+                  ? "켜짐"
+                  : "꺼짐"
+                }}
               </dd>
               <!-- <dt class="content_title">에이전트 상태 :</dt>
               <dd class="content_text">

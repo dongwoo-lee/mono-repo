@@ -1,30 +1,5 @@
 <template>
   <div id="wrapper">
-    <DxLoadPanel
-      position="#wrapper"
-      :visible="loadingVisible"
-      :show-indicator="true"
-      :show-pane="true"
-      :shading="true"
-      :hide-on-outside-click="false"
-      shading-color="rgba(0,0,0,0.4)"
-    />
-
-    <!-- <div style="
-        width: 84.6vw;
-        height: 7vh;
-        border: 1px solid #ddd;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding-left: 20px;
-        padding-right: 20px;
-      ">
-      <div style="display: flex; align-items: baseline">
-        
-      </div>
-    </div> -->
     <div style="margin-top: 20px; font-family: 'MBC 새로움 M'">
       <DxDataGrid
         style="font-family: 'MBC 새로움 M'"
@@ -67,27 +42,27 @@
               <DxFilterRow :visible='true' apply-filter='auto' />
               <DxSelection mode='multiple' show-check-boxes-mode='always' select-all-mode='allPages' /> -->
         <DxColumn
-          width="8vw"
+          width="10%"
           data-field="alias_name"
           data-type="string"
           caption="장비명"
         />
 
         <DxColumn
-          width="10vw"
+          width="10%"
           data-field="device_id"
           data-type="string"
           caption="장비ID"
         />
         <DxColumn
-          width="12vw"
+          width="10%"
           data-field="device_model"
           data-type="string"
           caption="모델명"
         />
 
         <DxColumn
-          width="3vw"
+          width="8%"
           data-field="device_type"
           data-type="string"
           caption="유형"
@@ -97,44 +72,44 @@
           {{ getType(rowInfo.data.device_type) }}
         </template>
         <DxColumn
-          width="7vw"
+          width="7%"
           data-field="ip_info"
           data-type="string"
           caption="IP 정보"
         />
         <DxColumn
-          width="3vw"
+          width="3%"
           data-field="location"
           data-type="string"
           caption="위치"
         />
         <DxColumn
-          width="8vw"
+          width="10%"
           data-field="machine_name"
           data-type="string"
           caption="컴퓨터명"
         />
         <DxColumn
-          width="12vw"
+          width="13%"
           data-field="os_version"
           data-type="string"
           caption="OS정보"
         />
         <DxColumn
-          width="12vw"
+          width="13%"
           data-field="processor_info"
           data-type="string"
           caption="프로세서 정보"
         />
         <DxColumn
-          width="4vw"
+          width="8%"
           data-field="agent_code"
           data-type="string"
           caption="장비 코드"
         />
         <DxColumn
           css-class="cell-button"
-          width="4vw"
+          width="8%"
           caption="액션"
           cell-template="infoTemplate"
         />
@@ -193,17 +168,30 @@
         />
         <DxToolbar>
           <DxItem
-            location="after"
+            location="before"
             template="refreshDeviceTemplate"
+          />
+          <DxItem
+            location="after"
+            template="clearDeviceTemplate"
           />
         </DxToolbar>
         <template #refreshDeviceTemplate>
           <DxButton
             icon="refresh"
             text="재검색"
-            type="white"
+            type="default"
             styling-mode="outlined"
             @click="SearchDeviceApi"
+          />
+        </template>
+        <template #clearDeviceTemplate>
+          <DxButton
+            icon="clear"
+            text="전체 제거"
+            type="danger"
+            styling-mode="outlined"
+            @click="ClearDeviceApi"
           />
         </template>
         <DxSelection
@@ -212,7 +200,7 @@
           select-all-mode="allPages"
         />
         <DxColumn
-          width="8vw"
+          width="10%"
           data-field="alias_name"
           data-type="string"
           caption="장비명"
@@ -227,20 +215,20 @@
         </template>
         <DxColumn
           style="vertical-align: middle"
-          width="10vw"
+          width="10%"
           data-field="device_id"
           data-type="string"
           caption="장비ID"
         />
         <DxColumn
-          width="12vw"
+          width="10%"
           data-field="device_model"
           data-type="string"
           caption="모델명"
         />
 
         <DxColumn
-          width="3vw"
+          width="10%"
           data-field="device_type"
           data-type="string"
           caption="유형"
@@ -250,13 +238,13 @@
           {{ getType(rowInfo.data.device_type) }}
         </template>
         <DxColumn
-          width="7vw"
+          width="7%"
           data-field="ip_info"
           data-type="string"
           caption="IP 정보"
         />
         <DxColumn
-          width="3vw"
+          width="3%"
           data-field="location"
           data-type="string"
           caption="위치"
@@ -270,25 +258,25 @@
           />
         </template>
         <DxColumn
-          width="8vw"
+          width="10%"
           data-field="machine_name"
           data-type="string"
           caption="컴퓨터명"
         />
         <DxColumn
-          width="12w"
+          width="15%"
           data-field="os_version"
           data-type="string"
           caption="OS정보"
         />
         <DxColumn
-          width="12vw"
+          width="15"
           data-field="processor_info"
           data-type="string"
           caption="프로세서 정보"
         />
         <DxColumn
-          width="4vw"
+          width="10%"
           data-field="agent_code"
           data-type="string"
           caption="장비 코드"
@@ -312,7 +300,7 @@
         />
         <DxButton
           text="닫기"
-          type="default"
+          type="danger"
           styling-mode="outlined"
           @click="activeDevicePopupOff"
         />
@@ -460,6 +448,15 @@
         :options="removeCloseButtonOptions"
       />
     </DxPopup>
+    <DxLoadPanel
+      :position="position"
+      :visible="loadingVisible"
+      :show-indicator="true"
+      :show-pane="true"
+      :shading="true"
+      :hide-on-outside-click="false"
+      shading-color="rgba(0,0,0,0.4)"
+    />
   </div>
 </template>
 
@@ -542,6 +539,7 @@ export default {
         },
       },
       removePopup: null,
+      position: { of: "#wrapper" },
     };
   },
   async created() {
@@ -581,6 +579,16 @@ export default {
       );
       console.log("SearchDevice :>> ", res);
       this.inactiveDevice = res.data;
+      this.inactiveDataGrid.repaint();
+    },
+    async ClearDeviceApi() {
+      if (this.monitoringServerInfo == "") {
+        await this.GetMonitoringServerInfo();
+      }
+      await axios.delete(
+        `http://${this.monitoringServerInfo}/mntr/Monitoring/ClearDevice`,
+      );
+      this.inactiveDevice = [];
       this.inactiveDataGrid.repaint();
     },
     activeDevicePopupOn() {

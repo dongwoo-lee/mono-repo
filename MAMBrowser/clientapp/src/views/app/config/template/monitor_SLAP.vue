@@ -1,5 +1,12 @@
 <template>
   <div class="monitor_container">
+    <div class="none">
+      <h6
+        v-if="dataSource.length == 0"
+        style="text-align: center"
+      >장비 없음</h6>
+    </div>
+
     <div v-for="index in Math.ceil(dataSource.length / itemCount)">
       <div class="monitor_group">
         <b-button
@@ -157,7 +164,7 @@
               </dd>
             </dl>
             <dl class="group_content">
-              <dt class="content_title">스튜디오명 :</dt>
+              <!-- <dt class="content_title">스튜디오명 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
@@ -170,7 +177,7 @@
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.agentInfo?.slaP_INFO.slapName
                 }}
-              </dd>
+              </dd> -->
               <dt class="content_title">큐시트이름 :</dt>
               <dd class="content_text">
                 {{
@@ -190,6 +197,8 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.agent_status
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
               <dt class="content_title">감시 프로세스 상태 :</dt>
@@ -197,6 +206,8 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.watch_service_status
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
             </dl>
@@ -433,6 +444,13 @@ export default {
 };
 </script>
 <style>
+.monitor_container .none {
+  height: 650px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .monitor_container {
   height: 650px;
   overflow: auto;
