@@ -46,7 +46,7 @@ export default {
       modifyItems: [],
       dataSource: [],
       isLoading: false,
-      placeholderText: "이름, ID, 역할(인증 그룹)을 입렵하세요.",
+      placeholderText: "이름, ID, 역할(인증 그룹)을 입력하세요.",
       filter: "",
       searchField: ["personid", "personname", "role"],
       fields: [

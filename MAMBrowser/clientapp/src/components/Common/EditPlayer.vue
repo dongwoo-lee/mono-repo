@@ -14,9 +14,9 @@
         <b-container class="bv-example-row" v-if="isSuccess">
           <b-row>
             <b-col>
-              <span>
+               <span style="display: flex; align-items: center;">
                 <b-button
-                  style="padding: 6px"
+                  style="padding: 6px; width:100px !important; margin-left:6px"
                   variant="outline-primary"
                   @click="somClick"
                   :disabled="cueInfo.cuetype == 'A'"
@@ -24,26 +24,27 @@
                   시작지점 설정
                 </b-button>
                 <b-button
-                  style="padding: 6px"
+                  style="padding: 6px; width:100px !important; margin-left:6px"
                   variant="outline-primary"
                   @click="eomClick"
                   :disabled="cueInfo.cuetype == 'A'"
                 >
                   종료지점 설정
                 </b-button>
-                <span style="border: 1px solid silver; padding: 8px"
+                <span style="border: 1px solid silver; padding: 8px; width:170px; margin-left:6px"
                   >{{ somTime }} / {{ eomTime }}</span
                 >
-                <b-form-checkbox-group
-                  style="display: flex"
+                 <b-form-checkbox-group
+                  style="display: inline-block; margin-left: 2px;"
                   class="custom-checkbox-group"
                   v-model="selected"
-                  :options="fadeOptions"
+                  :options="parentName=='즐겨찾기' ? fadeOptions : fadeOptions2"
                   value-field="value"
                   text-field="text"
                   :disabled="cueInfo.cuetype == 'A'"
-                /> </span
-            ></b-col>
+                />  
+              </span>
+            </b-col>
 
             <b-col cols="4">
               <div style="margin-top: 8px; margin-bootm: 0">
@@ -247,10 +248,18 @@ export default {
       eomTime: "00:00:00",
       fadeOptions: [
         {
-          text: "Fade In",
+          text: "페이드 인",
           value: { fadeInValue: true },
         },
-        { text: "Fade Out", value: { fadeOutValue: true } },
+        { text: "페이드 아웃", value: { fadeOutValue: true } },
+      ],
+      fadeOptions2: [
+        {
+          text: "페이드 인",
+          value: { fadeInValue: true },
+        },
+        { text: "페이드 아웃", value: { fadeOutValue: true } },
+        { text: "선곡제외", value: { exceptFlagValue: true } },
       ],
       buttonItem: [
         {
@@ -280,6 +289,11 @@ export default {
     if (this.fadeOut["fadeOutValue"]) {
       this.selected.push(this.fadeOut);
     }
+    
+     if (this.exceptflag["exceptFlagValue"]) {
+      this.selected.push(this.exceptflag);
+    }
+
     cancelToken = axios.CancelToken;
     source = cancelToken.source();
     this.LoadAudio();
@@ -682,10 +696,15 @@ export default {
       type: String,
       default: () => {},
     },
+    parentName: {
+      type: String,
+      default: "",
+    },
     startPoint: Number,
     endPoint: Number,
     fadeIn: Object,
     fadeOut: Object,
+    exceptflag : Object,
   },
 };
 </script>
