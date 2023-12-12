@@ -49,7 +49,9 @@ namespace MAMBrowser.DTO
         public class AudioCodeDTO : CodeBaseDTO
         {
             public string PD { get; set; }
+            public string PDID { get; set; }
             public string AD { get; set; }
+            public string ADID { get; set; }
         }
         public class FillerCodeDTO : CodeBaseDTO { }
         public class EtcCodeDTO : CodeBaseDTO { }

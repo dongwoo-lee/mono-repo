@@ -153,7 +153,9 @@ const url = [
     {
         // 아카이브 (DL)
         id: "S01G01C006",
-        icon: "iconsminds-big-data",
+        // icon: "iconsminds-big-data",
+        icon: "iconsminds-optimization",
+        // icon: "iconsminds-posterous",
     },
     {
         // DL3
@@ -162,7 +164,7 @@ const url = [
         icon: "iconsminds-big-data",
     },
     {
-        // 송출리스트
+        // 편성표
         id: "S01G01C034",
         to: "/app/monitoring/broadcastList",
         icon: "iconsminds-big-data",
