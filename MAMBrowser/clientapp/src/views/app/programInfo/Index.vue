@@ -101,6 +101,16 @@
                     <div class="dx-field-label">코드</div>
                     <div class="dx-field-value">{{ dataSource.pgmcode }}</div>
                   </div>
+                  <div class="dx-field" v-if="dataSource.pscode">
+                    <div class="dx-field-label">PS코드</div>
+                    <div class="dx-field-value">{{ dataSource.pscode }}</div>
+                  </div>
+                  <div class="dx-field" v-if="dataSource.audiocodeid">
+                    <div class="dx-field-label">오디오코드</div>
+                    <div class="dx-field-value">
+                      {{ dataSource.audiocodeid }}
+                    </div>
+                  </div>
                   <div class="dx-field">
                     <div class="dx-field-label mt-2">대표이미지</div>
                     <div class="dx-field-value">
@@ -509,17 +519,20 @@ export default {
   width: 140px;
   font-size: small;
   color: #808080;
-  padding: 10px 20px 0px 40px;
+  padding: 6px 20px 0px 40px;
 }
 .image_and_detail .detail_ .dx-field-value {
   font-family: "MBC 새로움 M" !important;
   float: none;
   text-align: start;
-  padding: 10px 20px 0px 40px;
+  padding: 6px 20px 0px 40px;
 }
 .no_image_and_detail {
   height: 180px;
   line-height: 150px;
   text-align: center;
+}
+.dx-field {
+  min-height: 10px;
 }
 </style>
