@@ -7,6 +7,7 @@ import user from "./modules/user";
 import file from "./modules/file";
 import ScrSpotDuration from "./modules/ScrSpotDuration";
 import cueList from "./modules/cueList";
+import monitoring from "./modules/monitoring";
 import createPersistedState from "vuex-persistedstate";
 
 import FileIndexStore from "./modules/FileUpload/index";
@@ -37,6 +38,7 @@ const store = new Vuex.Store({
     cueList,
     FileIndexStore,
     ScrSpotDuration,
+    monitoring,
   },
 });
 

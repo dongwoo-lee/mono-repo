@@ -359,14 +359,13 @@
   </div>
 </template>
 <script>
-import * as signalR from "@microsoft/signalr";
+import { mapState } from "vuex";
 import axios from "axios";
 
 export default {
   data() {
     return {
       monitoringServerInfo: "",
-      connection: null,
       itemCount: 6,
       detailItem: {},
       collapseStates: [],
@@ -376,11 +375,14 @@ export default {
       DL3DataSource: [],
     };
   },
-  components: {},
+  computed: {
+    ...mapState("monitoring", {
+      connection: (state) => state.connection,
+    }),
+  },
   async created() {
     await this.GetMonitoringServerInfo();
     await this.GetAllActiveDeviceInfo();
-    await this.createSignalR();
     await this.connectSignalR();
   },
   async beforeDestroy() {
@@ -390,35 +392,56 @@ export default {
   },
   methods: {
     async GetMonitoringServerInfo() {
-      var res = await axios.get(`/api/GetMonitoringServerInfo`);
+
+      try {
+
+        var res = await axios.get(`/api/GetMonitoringServerInfo`);
+      } catch (err) {
+        this.$fn.notify("error", { title: err.message });
+      }
       this.monitoringServerInfo = await res.data.ResultObject;
     },
     async GetAllActiveDeviceInfo() {
       if (this.monitoringServerInfo == "") {
         await this.GetMonitoringServerInfo();
       }
-      var res = await axios.get(
-        `http://${this.monitoringServerInfo
-        }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${2}`,
-        null,
-      );
-      this.DL3DataSource = await res.data;
+      try {
 
-      var res = await axios.get(
-        `http://${this.monitoringServerInfo
-        }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${4}`,
-        null,
-      );
+        var res = await axios.get(
+          `http://${this.monitoringServerInfo
+          }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${2}`,
+          null,
+        );
+      } catch (err) {
+        this.$fn.notify("error", { title: err.message });
+      }
+
+      this.DL3DataSource = await res.data;
+      try {
+
+        var res = await axios.get(
+          `http://${this.monitoringServerInfo
+          }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${4}`,
+          null,
+        );
+      } catch (err) {
+        this.$fn.notify("error", { title: err.message });
+      }
       this.etcDataSource = await res.data;
     },
     async GetActiveAgentInfoById(deviceID, type) {
       if (this.monitoringServerInfo == "") {
         await this.GetMonitoringServerInfo();
       }
-      var res = await axios.get(
-        `http://${this.monitoringServerInfo}/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
-        null,
-      );
+      try {
+
+        var res = await axios.get(
+          `http://${this.monitoringServerInfo}/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
+          null,
+        );
+      } catch (err) {
+        this.$fn.notify("error", { title: err.message });
+      }
       if (type === "DL3") {
         this.DL3DataSource[0].healthPacket.resource =
           res.data.healthPacket.resource;
@@ -439,17 +462,6 @@ export default {
     },
     stopGetDevicePolling() {
       clearInterval(this.pollingTimer);
-    },
-    createSignalR() {
-      this.connection = new signalR.HubConnectionBuilder()
-        .withUrl(`http://${this.monitoringServerInfo}/mntr/hub`)
-        .withAutomaticReconnect({
-          nextRetryDelayInMilliseconds: () => {
-            return 1000;
-          },
-        })
-        .configureLogging(signalR.LogLevel.Error)
-        .build();
     },
     connectSignalR() {
       this.connection.on("SIGNALRINFO", (status) => {
@@ -486,12 +498,10 @@ export default {
       this.connection.onreconnected((connectionId) => {
         console.info("onreconnected", connectionId);
       });
-      this.connection.start();
     },
     async disconnectSignalR() {
       await this.connection.stop();
       await this.connection.off("SIGNALRINFO");
-      this.connection = null;
     },
     toggleCollapse(event, collapseId, colIndex, rowItem, type) {
       const elementsWithSpecificClass = document.querySelectorAll(
