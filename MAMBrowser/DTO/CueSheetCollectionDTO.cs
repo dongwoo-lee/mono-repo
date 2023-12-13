@@ -87,6 +87,10 @@ namespace MAMBrowser.DTO
         public string PERSONID { get; set; }
 
         public List<CueSheetConAudioDTO> AUDIOS { get; set; }
+        /// <summary>
+        /// 선곡 저장 제외
+        /// </summary>
+        public string EXCEPTFLAG { get; set; } = "N";
     }
 
     public class PrintDTO

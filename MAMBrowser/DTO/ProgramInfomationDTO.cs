@@ -7,6 +7,8 @@ namespace MAMBrowser.DTO
     {
         public string PGMCODE { get; set; }
         public string PGMNAME { get; set; }
+        public string PSCODE { get; set; }
+        public string AUDIOCODEID { get; set; }
         public char MEDIA { get; set; }
         public string STARTDATE { get; set; }
         public string KEYWORD { get; set; }

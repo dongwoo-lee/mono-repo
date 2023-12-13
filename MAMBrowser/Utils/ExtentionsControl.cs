@@ -76,12 +76,14 @@ namespace MAMBrowser.Utils
         {
             var result = new ProgramInfomationDTO();
             result.productIdDetails = new List<ProductIdDetail>();
-            var groupbyEntitys = entitys.GroupBy(entity => new { entity.PGMCODE,entity.MEDIA, entity.PGMNAME,entity.STARTDATE,entity.KEYWORD,entity.DESCRIPTION,entity.STAFFS });
+            var groupbyEntitys = entitys.GroupBy(entity => new { entity.PGMCODE,entity.MEDIA, entity.PGMNAME,entity.STARTDATE,entity.KEYWORD,entity.DESCRIPTION,entity.STAFFS,entity.PS_CODE,entity.AUDIOCODEID });
 
             foreach (var entity in groupbyEntitys)
             {
                 result.PGMCODE = entity.Key.PGMCODE;
                 result.PGMNAME = entity.Key.PGMNAME;
+                result.PSCODE = entity.Key.PS_CODE;
+                result.AUDIOCODEID = entity.Key.AUDIOCODEID;
                 result.STARTDATE = entity.Key.STARTDATE;
                 result.KEYWORD = entity.Key.KEYWORD;
                 result.STAFFS= entity.Key.STAFFS;

@@ -196,7 +196,9 @@ namespace MAMBrowser.Utils
                 item.CODENAME = code.CODENAME;
                 item.CREATOR = code.CREATOR;
                 item.PD = code.PD;
+                item.PDID = code.PDID;
                 item.AD = code.AD;
+                item.ADID = code.ADID;
                 result.Add(item);
             }
             return result;

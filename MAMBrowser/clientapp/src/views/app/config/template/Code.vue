@@ -177,14 +177,12 @@ export default {
         {
           key: "pd",
           label: "PD",
-
           thClass: "text-center",
           tdClass: "text-center",
         },
         {
           key: "ad",
           label: "AD",
-
           thClass: "text-center",
           tdClass: "text-center",
         },
@@ -285,7 +283,8 @@ export default {
           label: "PD",
           item: "",
           value: "",
-          type: "text",
+          type: "editor",
+          selectOptions: [],
           state: null,
           maxLength: 8,
         },
@@ -294,7 +293,8 @@ export default {
           label: "AD",
           item: "",
           value: "",
-          type: "text",
+          type: "editor",
+          selectOptions: [],
           state: null,
           maxLength: 8,
         },
@@ -341,6 +341,7 @@ export default {
     getItemOptions() {
       this.getCodeIdOptions();
       this.getMediaOptions();
+      this.getEditorOptions();
     },
     getCodeIdOptions() {
       const url = "/api/Managementsystem/GetCodeIdOptions";
@@ -376,6 +377,20 @@ export default {
         }
       });
     },
+    getEditorOptions() {
+      const url = "/api/Categories/users";
+      this.$http.get(url).then((res) => {
+        if (res.status === 200) {
+          const options = res.data.resultObject.data;
+          this.all_items.forEach((item) => {
+            if (item.type === "editor") {
+              item.selectOptions = options;
+            }
+          });
+        }
+      });
+    },
+
     changeAudioCodeType(items) {
       items.forEach((ele) => {
         if (this.selectedProduct === "audio" && ele.key === "codename") {
@@ -415,7 +430,10 @@ export default {
       const result_items = [];
       this.all_items.forEach((item) => {
         const isCheckItem = this.fields.some((field) => field.key === item.key);
-        if (isCheckItem) result_items.push({ ...item });
+        if (isCheckItem) {
+          const modiItem = { ...item };
+          result_items.push(modiItem);
+        }
       });
       this.changeAudioCodeType(result_items);
       this.modifyItems = result_items;
@@ -423,7 +441,11 @@ export default {
       Object.keys(rowData).forEach((ele) => {
         this.modifyItems.forEach((item) => {
           if (item.key === ele) {
-            item.value = rowData[ele];
+            if (item.key == "pd" || item.key == "ad") {
+              item.value = { id: rowData[ele + "id"], name: rowData[ele] };
+            } else {
+              item.value = rowData[ele];
+            }
           }
         });
       });

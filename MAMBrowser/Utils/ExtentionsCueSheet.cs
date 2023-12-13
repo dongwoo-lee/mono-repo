@@ -126,6 +126,7 @@ namespace MAMBrowser.Utils
                 favItem.MEMO = item.MEMO ?? "";
                 favItem.EDITTARGET = true;
                 favItem.CARTTYPE = SetCartCode(item.CARTCODE);
+                //favItem.EXCEPTFLAG = 선곡, 이동우, 버그, 
 
                 if (item.ONAIRDATE == null || item.ONAIRDATE == "")
                 {
@@ -620,6 +621,7 @@ namespace MAMBrowser.Utils
                     favItem.p_maintitle = TrimMaxLength(item.MAINTITLE,100);
                     favItem.p_subtitle =TrimMaxLength(item.SUBTITLE,100);
                     favItem.p_memo = item.MEMO;
+                    // favItem.excep 즐겨찾기, 이동우, 버그, 선곡
                     result.Add(favItem);
                 }
             }
@@ -749,6 +751,7 @@ namespace MAMBrowser.Utils
                     obj.p_maintitle = TrimMaxLength(item.MAINTITLE, 100);
                     obj.p_subtitle = TrimMaxLength(item.SUBTITLE, 100);
                     obj.p_memo = item.MEMO;
+                    obj.p_exceptflag = item.EXCEPTFLAG;
                     result.Add(obj);
                 }
             }
@@ -778,6 +781,7 @@ namespace MAMBrowser.Utils
                             obj.p_maintitle = TrimMaxLength(item.MAINTITLE, 100);
                             obj.p_subtitle = TrimMaxLength(item.SUBTITLE, 100);
                             obj.p_memo = item.MEMO;
+                            obj.p_exceptflag = item.EXCEPTFLAG;
                             result.Add(obj);
                         }
                     }
@@ -809,6 +813,7 @@ namespace MAMBrowser.Utils
                 result.SUBTITLE = TrimMaxLength(con.SUBTITLE, 100);
                 result.MEMO = con.MEMO;
                 result.PGMCODE = con.PGMCODE;
+                result.EXCEPTFLAG = con.EXCEPTFLAG;
             }
             return result;
         }
@@ -898,6 +903,7 @@ namespace MAMBrowser.Utils
                     con.ROWNUM = item.SEQNUM;
                     InstanceConList.Add(con);
                 }
+                con.EXCEPTFLAG = item.EXCEPTFLAG;
 
             }
 

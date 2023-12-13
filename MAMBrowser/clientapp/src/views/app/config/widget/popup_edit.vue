@@ -102,6 +102,20 @@
                   </b-form-group>
                 </span>
               </div>
+              <b-form-group
+                v-if="item.type === 'editor'"
+                :label="item.label"
+                class="has-float-label"
+                style="margin: 15px 100px 15px 100px"
+              >
+                <v-select
+                  :value="item.value"
+                  :options="item.selectOptions"
+                  label="name"
+                  style="width: 100%"
+                  @input="onEditInput($event, item)"
+                ></v-select>
+              </b-form-group>
             </span>
           </div>
         </div>
@@ -124,7 +138,6 @@
 </template>
 <script>
 import DxButton from "devextreme-vue/button";
-
 export default {
   props: {
     items: {
@@ -186,6 +199,15 @@ export default {
     },
     onCheckInput(event, item, index) {
       this.$emit("checkGroupClick", event, item, index);
+    },
+    onEditInput(event, item) {
+      if (event) {
+        item.editedVal = event.id;
+        item.value = event;
+      } else {
+        item.editedVal = null;
+        item.value = { id: null, name: null };
+      }
     },
     isNotNull(text, item) {
       if (item.state === "notNull") {

@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-colxx xxs="12">
-        <piaf-breadcrumb heading="송출리스트" />
+        <piaf-breadcrumb heading="편성표" />
         <div class="separator mb-3"></div>
       </b-colxx>
     </b-row>
@@ -184,13 +184,6 @@ export default {
           dataClass: "center aligned text-center",
           width: "4%",
         },
-        // {
-        //   name: "producttype",
-        //   title: "타입",
-        //   titleClass: "center aligned text-center",
-        //   dataClass: "center aligned text-center",
-        //   width: "6%",
-        // },
         {
           name: "__slot:studioName",
           title: "메인소스",
@@ -268,13 +261,6 @@ export default {
           alignment: "center",
           allowSorting: false,
         },
-        // {
-        //   dataField: "audioclipid",
-        //   caption: "CLIP ID",
-        //   width: "130",
-        //   alignment: "center",
-        //   allowSorting: false,
-        // },
         {
           dataField: "musicid",
           caption: "음악ID",
@@ -374,6 +360,11 @@ export default {
       await this.getData();
     },
     nowPgmRowMoveFocus() {
+      // 이전에 남아있는 포커스 css 삭제
+      const focus_ele = document.querySelector(".focus_tr");
+      if (focus_ele) {
+        focus_ele.classList.remove("focus_tr");
+      }
       // 최신 데이터 없음으로 특정 송출리스트로 테스트 중
       const currentTime = new Date();
       // const currentTime = new Date(2022, 9, 1, 11, 6, 0);
@@ -395,7 +386,7 @@ export default {
             `.vuetable-body-wrapper`
           );
           const rows = tableElement.querySelectorAll(`tbody tr`);
-          const targetRow = rows[rowItems[rowItems.length - 1].rowno];
+          const targetRow = rows[rowItems[rowItems.length - 2].rowno];
           targetRow.classList.add("focus_tr");
           vuetableElement.scrollTo({
             top:
@@ -403,20 +394,6 @@ export default {
               vuetableElement.offsetHeight / 2 +
               targetRow.offsetHeight / 2,
             behavior: "smooth",
-          });
-        } else {
-          const elements = document.getElementsByClassName("focus_tr");
-          for (let i = 0; i < elements.length; i++) {
-            elements[i].classList.remove("focus_tr");
-          }
-          const tableElement = this.$refs.scrollPaging.$el;
-          const vuetableElement = tableElement.querySelector(
-            `.vuetable-body-wrapper`
-          );
-          const rows = tableElement.querySelectorAll(`tbody tr`);
-          const targetRow = rows[0];
-          vuetableElement.scrollTo({
-            top: targetRow.offsetTop,
           });
         }
       }

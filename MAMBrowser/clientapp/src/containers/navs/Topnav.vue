@@ -118,8 +118,9 @@
                         color: red;
                         font-size: 12px;
                         margin-right: 6px;
-                      ">
-                      v1.0.230906
+                      "
+                    >
+                      v1.1.231210
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">

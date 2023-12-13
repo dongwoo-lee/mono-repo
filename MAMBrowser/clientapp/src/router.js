@@ -182,7 +182,7 @@ const routes = [
         component: () => import("./views/app/dl30/Index")
       },
       {
-        // 송출리스트
+        // 편성표
         name: "broadcastList",
         path: "monitoring/broadcastList",
         component: () => import("./views/app/broadcastList/Index")
