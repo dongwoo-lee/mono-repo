@@ -1,20 +1,11 @@
 <template>
   <nav class="navbar fixed-top">
     <div class="d-flex align-items-center navbar-left">
-      <clock
-        className="system ml-2"
-        style="font-weight: 500"
-      ></clock>
-      <div
-        class="system"
-        style="color: darkblue; opacity: 0.8"
-      >
+      <clock className="system ml-2" style="font-weight: 500"></clock>
+      <div class="system" style="color: darkblue; opacity: 0.8">
         {{ conNetworkName }}
       </div>
-      <div
-        class="system"
-        :style="getConDBNameStyle()"
-      >{{ conDBName }}</div>
+      <div class="system" :style="getConDBNameStyle()">{{ conDBName }}</div>
       <!-- 메뉴 네비 -->
       <!-- <a
         href="#"
@@ -32,11 +23,7 @@
       </a>
     </div>
     <!-- 로고 -->
-    <router-link
-      class="navbar-logo"
-      tag="a"
-      :to="getTo()"
-    >
+    <router-link class="navbar-logo" tag="a" :to="getTo()">
       <span class="logo d-none d-xs-block"></span>
       <span class="logo-mobile d-block d-xs-none"></span>
     </router-link>
@@ -46,10 +33,7 @@
         <div class="user d-inline-block">
           <table class="topnav-right-table">
             <tr>
-              <td
-                rowspan="2"
-                v-if="isMasteringValid()"
-              >
+              <td rowspan="2" v-if="isMasteringValid()">
                 <b-button
                   v-if="isMasteringValid()"
                   class="btn btn-outline-primary btn-sm default cutom-label mr-2"
@@ -86,14 +70,19 @@
                 <div>
                   <span class="current">
                     {{ $fn.formatMBBytes(currentUser.diskUsed) }} /
-                    {{ currentUser.diskMax }} GB</span>
-                  <span :class="currentUser.diskAvailable <= 1000 * 1000 * 100
-                    ? 'free-space-red'
-                    : 'free-space-blue'
-                    ">여유
+                    {{ currentUser.diskMax }} GB</span
+                  >
+                  <span
+                    :class="
+                      currentUser.diskAvailable <= 1000 * 1000 * 100
+                        ? 'free-space-red'
+                        : 'free-space-blue'
+                    "
+                    >여유
                     {{
                       $fn.formatMBBytes(currentUser.diskAvailable, 1048000)
-                    }}</span>
+                    }}</span
+                  >
                 </div>
               </td>
               <!-- 사용자 정보 -->
@@ -113,20 +102,21 @@
                         {{ currentUser.name }}({{ currentUser.menuGrpName }})
                       </span>
                     </div>
-                    <div style="
+                    <div
+                      style="
                         float: right;
                         color: red;
                         font-size: 12px;
                         margin-right: 6px;
                       "
                     >
-                      v1.1.231210
+                      v1.1.231213
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">
-                    <b-dropdown-item
-                      @click="$router.push({ path: '/app/log' })">사용자
-                      로그보기</b-dropdown-item>
+                    <b-dropdown-item @click="$router.push({ path: '/app/log' })"
+                      >사용자 로그보기</b-dropdown-item
+                    >
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/miros' })"
                       >MMB 설정</b-dropdown-item
@@ -137,10 +127,12 @@
                     >
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/remove' })"
-                    >소재 삭제 관리</b-dropdown-item>
+                      >소재 삭제 관리</b-dropdown-item
+                    >
                     <b-dropdown-item
                       @click="$router.push({ path: '/app/config/monitoring' })"
-                    >관리자 모니터링</b-dropdown-item>
+                      >관리자 모니터링</b-dropdown-item
+                    >
                     <!-- <b-dropdown-item @click="
                       $router.push({ path: '/app/config/monitoring-setting' })
                       ">모니터링 설정</b-dropdown-item> -->
@@ -225,13 +217,13 @@ export default {
     },
     isDisplaySetting() {
       return this.behaviorList.some(
-        (item) => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === "Y",
+        (item) => item.id === SYSTEM_MANAGEMENT_CODE && item.visible === "Y"
       );
     },
     getTo() {
       if (this.roleList) {
         const firstVisibleIndex = this.roleList.findIndex(
-          (role) => role.visible === "Y",
+          (role) => role.visible === "Y"
         );
         if (this.roleList[firstVisibleIndex]) {
           return this.roleList[firstVisibleIndex].to;

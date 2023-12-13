@@ -663,7 +663,10 @@ export default {
           s_date = e_date.clone().subtract(7, "days").add(1, "days");
           break;
         case "MONTH":
-          s_date = e_date.clone().subtract(1, "month").add(1, "days");
+          s_date = e_date
+            .clone()
+            .subtract(e_date.daysInMonth(), "days")
+            .add(1, "days");
           break;
         case "YEAR":
           s_date = e_date.clone().subtract(1, "year").add(1, "days");

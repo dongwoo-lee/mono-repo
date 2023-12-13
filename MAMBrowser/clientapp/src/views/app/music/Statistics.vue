@@ -234,31 +234,6 @@ export default {
           dataClass: "center aligned text-center",
           width: "5%",
         },
-        // {
-        //   name: "playtime",
-        //   title: "재생 시간",
-        //   titleClass: "center aligned text-center",
-        //   dataClass: "center aligned text-center",
-        //   width: "8%",
-        //   callback: (value) => {
-        //     return value === null
-        //       ? ""
-        //       : moment.unix(value).subtract(9, "hours").format("HH:mm:SS");
-        //   },
-        // },
-        // {
-        //   name: "totaltime",
-        //   title: "총 재생 시간",
-        //   titleClass: "center aligned text-center",
-        //   dataClass: "center aligned text-center",
-        //   sortField: "audioFormat",
-        //   width: "10%",
-        //   callback: (value) => {
-        //     return value === null
-        //       ? ""
-        //       : moment.unix(value).subtract(9, "hours").format("HH:mm:SS");
-        //   },
-        // },
         {
           name: "summarydate",
           title: "등록일시",
@@ -659,7 +634,10 @@ export default {
           s_date = e_date.clone().subtract(7, "days").add(1, "days");
           break;
         case "MONTH":
-          s_date = e_date.clone().subtract(1, "month").add(1, "days");
+          s_date = e_date
+            .clone()
+            .subtract(e_date.daysInMonth(), "days")
+            .add(1, "days");
           break;
         case "YEAR":
           s_date = e_date.clone().subtract(1, "year").add(1, "days");
