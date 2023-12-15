@@ -12,7 +12,10 @@
         :allow-column-resizing="true"
       >
         <DxToolbar>
-          <DxItem location="after" template="searchDeviceTemplate" />
+          <DxItem
+            location="after"
+            template="searchDeviceTemplate"
+          />
         </DxToolbar>
         <template #searchDeviceTemplate>
           <DxButton
@@ -112,13 +115,11 @@
         />
 
         <template #infoTemplate="{ data: rowInfo }">
-          <div
-            style="
+          <div style="
               display: flex;
               justify-content: space-around;
               vertical-align: middle;
-            "
-          >
+            ">
             <DxButton
               icon="edit"
               styling-mode="outlined"
@@ -166,8 +167,14 @@
           info-text="전체 {2}개"
         />
         <DxToolbar>
-          <DxItem location="before" template="refreshDeviceTemplate" />
-          <DxItem location="after" template="clearDeviceTemplate" />
+          <DxItem
+            location="before"
+            template="refreshDeviceTemplate"
+          />
+          <DxItem
+            location="after"
+            template="clearDeviceTemplate"
+          />
         </DxToolbar>
         <template #refreshDeviceTemplate>
           <DxButton
@@ -181,7 +188,7 @@
         <template #clearDeviceTemplate>
           <DxButton
             icon="clear"
-            text="전체 제거"
+            text="초기화"
             type="danger"
             styling-mode="outlined"
             @click="ClearDeviceApi"
@@ -312,16 +319,17 @@
       title="장비 편집"
     >
       <template #content>
-        <DxScrollView width="100%" height="100%">
-          <div
-            style="
+        <DxScrollView
+          width="100%"
+          height="100%"
+        >
+          <div style="
               width: 100%;
               height: 42vh;
               display: flex;
               flex-direction: column;
               justify-content: space-between;
-            "
-          >
+            ">
             <DxTextBox
               style="font-family: 'MBC 새로움 M'"
               v-model:value="editData.alias_name"
@@ -419,11 +427,9 @@
       container="#wrapper"
       title="장비 제거"
     >
-      <div style="font-family: 'MBC 새로움 M'"
-        >장비 ID : {{ this.removeData.device_id }}</div
-      >
-      <div style="font-family: 'MBC 새로움 M'"
-        >장비명 : {{ this.removeData.alias_name }}
+      <div style="font-family: 'MBC 새로움 M'">장비 ID : {{ this.removeData.device_id
+      }}</div>
+      <div style="font-family: 'MBC 새로움 M'">장비명 : {{ this.removeData.alias_name }}
       </div>
       <br />
       <span style="font-family: 'MBC 새로움 M'">
@@ -462,16 +468,16 @@ import {
   DxPaging,
   DxPager,
   DxSelection,
-} from "devextreme-vue/data-grid"
-import { DxTextBox } from "devextreme-vue/text-box"
-import { DxNumberBox } from "devextreme-vue/number-box"
-import DxButton from "devextreme-vue/button"
-import { DxLoadPanel } from "devextreme-vue/load-panel"
-import { DxPopup, DxToolbarItem } from "devextreme-vue/popup"
-import { DxScrollView } from "devextreme-vue/scroll-view"
+} from "devextreme-vue/data-grid";
+import { DxTextBox } from "devextreme-vue/text-box";
+import { DxNumberBox } from "devextreme-vue/number-box";
+import DxButton from "devextreme-vue/button";
+import { DxLoadPanel } from "devextreme-vue/load-panel";
+import { DxPopup, DxToolbarItem } from "devextreme-vue/popup";
+import { DxScrollView } from "devextreme-vue/scroll-view";
 
-import axios from "axios"
-import qs from "qs"
+import axios from "axios";
+import qs from "qs";
 
 export default {
   components: {
@@ -505,13 +511,13 @@ export default {
       editButtonOptions: {
         text: "저장",
         onClick: () => {
-          this.UpdateDevice()
+          this.UpdateDevice();
         },
       },
       editCloseButtonOptions: {
         text: "닫기",
         onClick: () => {
-          this.editVisible = false
+          this.editVisible = false;
         },
       },
       editPopup: null,
@@ -520,138 +526,138 @@ export default {
       removeButtonOptions: {
         text: "제거",
         onClick: () => {
-          this.RemoveDevice()
-          this.removeVisible = false
+          this.RemoveDevice();
+          this.removeVisible = false;
         },
       },
       removeCloseButtonOptions: {
         text: "닫기",
         onClick: () => {
-          this.removeVisible = false
+          this.removeVisible = false;
         },
       },
       removePopup: null,
       dataGridPosition: { of: "#wrapper" },
-    }
+    };
   },
   async created() {
-    await this.GetMonitoringServerInfo()
-    await this.GetDevice()
+    await this.GetMonitoringServerInfo();
+    await this.GetDevice();
   },
   methods: {
     async GetMonitoringServerInfo() {
       try {
-        var res = await axios.get(`/api/GetMonitoringServerInfo`)
-        this.monitoringServerInfo = await res.data.ResultObject
+        var res = await axios.get(`/api/GetMonitoringServerInfo`);
+        this.monitoringServerInfo = await res.data.ResultObject;
       } catch (err) {
-        this.$fn.notify("error", { title: err.message })
+        this.$fn.notify("error", { title: err.message });
       }
     },
     async GetDevice() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
-      this.loadingVisible = true
+      this.loadingVisible = true;
       try {
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/GetDevice`,
-        )
+        );
       } catch (err) {
-        this.loadingVisible = false
-        this.$fn.notify("error", { title: err.message })
+        this.loadingVisible = false;
+        this.$fn.notify("error", { title: err.message });
       }
-      console.log("GetDevice :>> ", res)
-      this.activeDevice = res.data
-      this.activeDataGrid.refresh()
-      this.loadingVisible = false
+      console.log("GetDevice :>> ", res);
+      this.activeDevice = res.data;
+      this.activeDataGrid.refresh();
+      this.loadingVisible = false;
     },
     async SearchDevice() {
-      this.loadingVisible = true
-      await this.SearchDeviceApi()
-      this.loadingVisible = false
-      this.activeDevicePopupOn()
+      this.loadingVisible = true;
+      await this.SearchDeviceApi();
+      this.loadingVisible = false;
+      this.activeDevicePopupOn();
     },
     async SearchDeviceApi() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
       try {
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/SearchDevice`,
-        )
+        );
       } catch (err) {
-        this.loadingVisible = false
-        this.$fn.notify("error", { title: err.message })
+        this.loadingVisible = false;
+        this.$fn.notify("error", { title: err.message });
       }
-      console.log("SearchDevice :>> ", res)
-      this.inactiveDevice = res.data
-      this.inactiveDataGrid.repaint()
+      console.log("SearchDevice :>> ", res);
+      this.inactiveDevice = res.data;
+      this.inactiveDataGrid.repaint();
     },
     async ClearDeviceApi() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
       try {
         await axios.delete(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/ClearDevice`,
-        )
+        );
       } catch (err) {
-        this.loadingVisible = false
-        this.$fn.notify("error", { title: err.message })
+        this.loadingVisible = false;
+        this.$fn.notify("error", { title: err.message });
       }
-      this.inactiveDevice = []
-      this.inactiveDataGrid.repaint()
+      this.inactiveDevice = [];
+      this.inactiveDataGrid.repaint();
     },
     activeDevicePopupOn() {
-      this.activeDevicePopupVisible = true
+      this.activeDevicePopupVisible = true;
     },
     activeDevicePopupOff() {
-      this.activeDevicePopupVisible = false
-      this.inactiveDataGrid.deselectAll()
+      this.activeDevicePopupVisible = false;
+      this.inactiveDataGrid.deselectAll();
     },
     async ActivateDevice() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
 
       if (this.selectedDevice.length == 0) {
-        this.$fn.notify("error", { title: "장비를 선택해주세요." })
-        return
+        this.$fn.notify("error", { title: "장비를 선택해주세요." });
+        return;
       }
 
-      var name = 0
-      var location = 0
+      var name = 0;
+      var location = 0;
       this.selectedDevice.map((item) => {
-        var data = this.inactiveDevice.find((x) => x.device_id == item)
+        var data = this.inactiveDevice.find((x) => x.device_id == item);
         if (
           data?.alias_name == null ||
           data?.alias_name == undefined ||
           data?.alias_name?.length == 0
         ) {
-          name++
+          name++;
         }
         if (
           data?.location == null ||
           data?.location == undefined ||
           data?.location?.length == 0
         ) {
-          location++
+          location++;
         }
-      })
+      });
       if (name > 0) {
-        this.$fn.notify("error", { title: "장비명을 입력해주세요." })
-        return
+        this.$fn.notify("error", { title: "장비명을 입력해주세요." });
+        return;
       }
       if (location > 0) {
-        this.$fn.notify("error", { title: "위치를 입력해주세요." })
-        return
+        this.$fn.notify("error", { title: "위치를 입력해주세요." });
+        return;
       }
 
-      this.loadingVisible = true
+      this.loadingVisible = true;
 
-      var validAgentCodeParam = []
+      var validAgentCodeParam = [];
       this.selectedDevice.map((item) => {
-        var matchedItem = this.inactiveDevice.find((x) => x.device_id == item)
+        var matchedItem = this.inactiveDevice.find((x) => x.device_id == item);
         if (
           matchedItem.agent_code != null &&
           matchedItem.agent_code != undefined &&
@@ -660,10 +666,10 @@ export default {
           var data = {
             alias_name: matchedItem.alias_name,
             agent_code: matchedItem.agent_code,
-          }
-          validAgentCodeParam.push(data)
+          };
+          validAgentCodeParam.push(data);
         }
-      })
+      });
       try {
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/CntAgentCode`,
@@ -673,53 +679,53 @@ export default {
               return qs.stringify(
                 { param: validAgentCodeParam },
                 { arrayFormat: "indices", allowDots: true },
-              )
+              );
             },
           },
-        )
+        );
       } catch (err) {
-        this.loadingVisible = false
-        this.$fn.notify("error", { title: err.message })
+        this.loadingVisible = false;
+        this.$fn.notify("error", { title: err.message });
       }
       if (!res.data["result"]) {
         res.data["aliasNames"].map((item) => {
           this.$fn.notify("error", {
             title: `${item} 장비의 코드가 이미 존재합니다.`,
-          })
-        })
-        this.loadingVisible = false
-        return
+          });
+        });
+        this.loadingVisible = false;
+        return;
       }
 
-      var selectedDeviceInfo = []
+      var selectedDeviceInfo = [];
       this.selectedDevice.map((item) => {
-        var matchedItem = this.inactiveDevice.find((x) => x.device_id == item)
+        var matchedItem = this.inactiveDevice.find((x) => x.device_id == item);
         var data = {
           device_id: item,
           alias_name: matchedItem.alias_name,
           location: matchedItem.location,
           agent_code: matchedItem.agent_code,
-        }
+        };
 
-        selectedDeviceInfo.push(data)
-      })
+        selectedDeviceInfo.push(data);
+      });
       try {
         var res = await axios.post(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/ActivateDevice`,
           selectedDeviceInfo,
-        )
+        );
       } catch (err) {
-        this.loadingVisible = false
-        this.$fn.notify("error", { title: err.message })
+        this.loadingVisible = false;
+        this.$fn.notify("error", { title: err.message });
       }
-      this.activeDevicePopupOff()
-      this.loadingVisible = false
-      this.inactiveDataGrid.deselectAll()
-      this.GetDevice()
+      this.activeDevicePopupOff();
+      this.loadingVisible = false;
+      this.inactiveDataGrid.deselectAll();
+      this.GetDevice();
     },
     async UpdateDevice() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
 
       if (
@@ -727,19 +733,19 @@ export default {
         this.editData.alias_name == undefined ||
         this.editData.alias_name.length == 0
       ) {
-        this.$fn.notify("error", { title: "장비명을 입력해주세요." })
-        return
+        this.$fn.notify("error", { title: "장비명을 입력해주세요." });
+        return;
       }
       if (
         this.editData.location == null ||
         this.editData.location == undefined ||
         this.editData.location.length == 0
       ) {
-        this.$fn.notify("error", { title: "위치를 입력해주세요." })
-        return
+        this.$fn.notify("error", { title: "위치를 입력해주세요." });
+        return;
       }
 
-      this.loadingVisible = true
+      this.loadingVisible = true;
 
       if (
         this.editData.agent_code != null &&
@@ -749,17 +755,17 @@ export default {
         try {
           var res = await axios.get(
             `http://${this.monitoringServerInfo}/mntr/Monitoring/ValidAgentCode?deviceId=${this.editData.device_id}&agentCode=${this.editData.agent_code}`,
-          )
+          );
         } catch (err) {
-          this.loadingVisible = false
-          this.$fn.notify("error", { title: err.message })
+          this.loadingVisible = false;
+          this.$fn.notify("error", { title: err.message });
         }
         if (res.data != 0) {
           this.$fn.notify("error", {
             title: `장비 코드가 이미 존재합니다.`,
-          })
-          this.loadingVisible = false
-          return
+          });
+          this.loadingVisible = false;
+          return;
         }
       }
 
@@ -768,81 +774,81 @@ export default {
         alias_name: this.editData.alias_name,
         location: this.editData.location,
         agent_code: this.editData.agent_code,
-      }
+      };
       var res = await axios.patch(
         `http://${this.monitoringServerInfo}/mntr/Monitoring/UpdateDevice`,
         param,
-      )
-      console.log("UpdateDevice :>> ", res)
-      this.GetDevice()
-      this.loadingVisible = false
-      this.editVisible = false
+      );
+      console.log("UpdateDevice :>> ", res);
+      this.GetDevice();
+      this.loadingVisible = false;
+      this.editVisible = false;
     },
     async RemoveDevice() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
-      this.loadingVisible = true
+      this.loadingVisible = true;
       try {
         var res = await axios.delete(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/RemoveDevice`,
           {
             data: { device_id: this.removeData.device_id },
           },
-        )
+        );
       } catch (err) {
-        this.loadingVisible = false
-        this.$fn.notify("error", { title: err.message })
+        this.loadingVisible = false;
+        this.$fn.notify("error", { title: err.message });
       }
 
-      console.log("RemoveDevice :>> ", res)
-      this.GetDevice()
-      this.loadingVisible = false
+      console.log("RemoveDevice :>> ", res);
+      this.GetDevice();
+      this.loadingVisible = false;
     },
     onActiveDeviceDataGridInitialized(e) {
-      this.activeDataGrid = e.component
+      this.activeDataGrid = e.component;
     },
     onInactiveDeviceDataGridInitialized(e) {
-      this.inactiveDataGrid = e.component
+      this.inactiveDataGrid = e.component;
     },
     onSelectionChanged(e) {
-      this.selectedDevice = e.selectedRowKeys
+      this.selectedDevice = e.selectedRowKeys;
     },
     editPopupOn(data) {
-      this.editVisible = true
-      this.editData = JSON.parse(JSON.stringify(data))
+      this.editVisible = true;
+      this.editData = JSON.parse(JSON.stringify(data));
     },
     onEditPopupInit(e) {
-      this.editPopup = e.component
+      this.editPopup = e.component;
 
       this.editPopup.registerKeyHandler("escape", function (arg) {
-        arg.stopPropagation()
-      })
+        arg.stopPropagation();
+      });
     },
     removePopupOn(data) {
-      this.removeVisible = true
-      this.removeData = data
+      this.removeVisible = true;
+      this.removeData = data;
     },
     onRemovePopupInit(e) {
-      this.removePopup = e.component
+      this.removePopup = e.component;
 
       this.removePopup.registerKeyHandler("escape", function (arg) {
-        arg.stopPropagation()
-      })
+        arg.stopPropagation();
+      });
     },
     onActiveCellPrepared(e) {
       if (e.rowType === "header") {
-        e.cellElement.style.backgroundColor = "#2a4878"
-        e.cellElement.style.color = "white"
+        e.cellElement.style.backgroundColor = "#2a4878";
+        e.cellElement.style.color = "white";
       }
     },
     onInactiveCellPrepared(e) {
       if (e.rowType === "header") {
-        e.cellElement.style.backgroundColor = "#2a4878"
-        e.cellElement.style.color = "white"
+        e.cellElement.style.backgroundColor = "#2a4878";
+        e.cellElement.style.color = "white";
       }
       if (e.rowType === "data") {
-        e.cellElement.style.verticalAlign = "middle"
+        e.cellElement.style.verticalAlign = "middle";
       }
     },
     // 0 : 일반
@@ -853,17 +859,17 @@ export default {
     // 5 : 일반 SLAP
     getType(type) {
       if (type == 1) {
-        return "대시보드 SLAP"
+        return "대시보드 SLAP";
       } else if (type == 2) {
-        return "DL3"
+        return "DL3";
       } else if (type == 0 || type == 3 || type == 4) {
-        return "일반"
+        return "일반";
       } else if (type == 5) {
-        return "일반 SLAP"
+        return "일반 SLAP";
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -881,5 +887,4 @@ export default {
 
 .dx-texteditor-input {
   font-family: "MBC 새로움 M" !important;
-}
-</style>
+}</style>

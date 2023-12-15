@@ -392,9 +392,7 @@ export default {
   },
   methods: {
     async GetMonitoringServerInfo() {
-
       try {
-
         var res = await axios.get(`/api/GetMonitoringServerInfo`);
       } catch (err) {
         this.$fn.notify("error", { title: err.message });
@@ -406,7 +404,6 @@ export default {
         await this.GetMonitoringServerInfo();
       }
       try {
-
         var res = await axios.get(
           `http://${this.monitoringServerInfo
           }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${2}`,
@@ -418,7 +415,6 @@ export default {
 
       this.DL3DataSource = await res.data;
       try {
-
         var res = await axios.get(
           `http://${this.monitoringServerInfo
           }/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=${4}`,
@@ -434,7 +430,6 @@ export default {
         await this.GetMonitoringServerInfo();
       }
       try {
-
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
           null,
@@ -500,7 +495,6 @@ export default {
       });
     },
     async disconnectSignalR() {
-      await this.connection.stop();
       await this.connection.off("SIGNALRINFO");
     },
     toggleCollapse(event, collapseId, colIndex, rowItem, type) {

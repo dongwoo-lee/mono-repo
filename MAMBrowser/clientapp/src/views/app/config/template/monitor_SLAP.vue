@@ -1,9 +1,13 @@
 <template>
   <div class="monitor_container">
-    <div v-if="dataSource.length == 0" class="none">
-      <h6 v-if="dataSource.length == 0" style="text-align: center"
-        >장비 없음</h6
-      >
+    <div
+      v-if="dataSource.length == 0"
+      class="none"
+    >
+      <h6
+        v-if="dataSource.length == 0"
+        style="text-align: center"
+      >장비 없음</h6>
     </div>
 
     <div v-for="index in Math.ceil(dataSource.length / itemCount)">
@@ -18,30 +22,28 @@
               i,
               dataSource[itemCount * (index - 1) + (i - 1)],
             )
-          "
+            "
           v-if="dataSource[itemCount * (index - 1) + (i - 1)]"
         >
           <div
             class="btn_header"
-            :class="
-              getStatusHeaderColorClass(
-                dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                  ?.agent_status &&
-                  dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                    ?.watch_service_status,
-              )
-            "
+            :class="getStatusHeaderColorClass(
+              dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.agent_status &&
+              dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.watch_service_status,
+            )
+              "
           >
             <span
               class="floor"
-              :class="
-                getStatusFloorColorClass(
-                  dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                    ?.agent_status &&
-                    dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
-                      ?.watch_service_status,
-                )
-              "
+              :class="getStatusFloorColorClass(
+                dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                  ?.agent_status &&
+                dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                  ?.watch_service_status,
+              )
+                "
             >
               {{
                 dataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
@@ -67,28 +69,30 @@
             {{
               dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.user_name
-                ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                    ?.user_name
-                : "정보없음"
+              ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.user_name
+              : "정보없음"
             }}
             /
             {{
               dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
                 ?.cuesheet_name
-                ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                    ?.cuesheet_name
-                : "정보없음"
+              ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.cuesheet_name
+              : "정보없음"
             }}
           </div>
         </b-button>
       </div>
       <div>
-        <b-collapse :id="'collapse-' + index" class="collapse_detail">
+        <b-collapse
+          :id="'collapse-' + index"
+          class="collapse_detail"
+        >
           <b-card
             class="detail_body"
-            v-if="
-              rowIndex && dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-            "
+            v-if="rowIndex && dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+              "
           >
             <dl class="group_content">
               <dt class="content_title">단말 모델명 :</dt>
@@ -196,8 +200,8 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.agent_status
-                    ? "켜짐"
-                    : "꺼짐"
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
               <dt class="content_title">감시 프로세스 상태 :</dt>
@@ -205,8 +209,8 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.watch_service_status
-                    ? "켜짐"
-                    : "꺼짐"
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
             </dl>
@@ -217,8 +221,8 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex"
-import axios from "axios"
+import { mapState } from "vuex";
+import axios from "axios";
 
 export default {
   data() {
@@ -230,7 +234,7 @@ export default {
       rowData: {},
       rowIndex: null,
       dataSource: [],
-    }
+    };
   },
   computed: {
     ...mapState("monitoring", {
@@ -238,158 +242,157 @@ export default {
     }),
   },
   async created() {
-    await this.GetMonitoringServerInfo()
-    await this.GetAllActiveDeviceInfo()
-    await this.connectSignalR()
+    await this.GetMonitoringServerInfo();
+    await this.GetAllActiveDeviceInfo();
+    await this.connectSignalR();
   },
   async beforeDestroy() {
-    await this.disconnectSignalR()
-    this.stopGetDevicePolling()
-    this.dataSource = []
+    await this.disconnectSignalR();
+    this.stopGetDevicePolling();
+    this.dataSource = [];
   },
   methods: {
     async GetMonitoringServerInfo() {
       try {
-        var res = await axios.get(`/api/GetMonitoringServerInfo`)
+        var res = await axios.get(`/api/GetMonitoringServerInfo`);
       } catch (err) {
-        this.$fn.notify("error", { title: err.message })
+        this.$fn.notify("error", { title: err.message });
       }
-      this.monitoringServerInfo = await res.data.ResultObject
+      this.monitoringServerInfo = await res.data.ResultObject;
     },
     async GetAllActiveDeviceInfo() {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
 
       try {
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=1`,
           null,
-        )
-        this.dataSource = await res.data
+        );
+        this.dataSource = await res.data;
       } catch (err) {
-        this.$fn.notify("error", { title: err.message })
+        this.$fn.notify("error", { title: err.message });
       }
     },
     async GetActiveAgentInfoById(deviceID) {
       if (this.monitoringServerInfo == "") {
-        await this.GetMonitoringServerInfo()
+        await this.GetMonitoringServerInfo();
       }
       try {
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/GetMonitoringInfoById?deviceId=${deviceID}`,
           null,
-        )
+        );
       } catch (err) {
-        this.$fn.notify("error", { title: err.message })
+        this.$fn.notify("error", { title: err.message });
       }
 
       let device = this.dataSource.find(
         (d) => d.deviceInfo.device_id == deviceID,
-      )
-      device.healthPacket.resource = res.data.healthPacket.resource
-      device.agentInfo.slaP_INFO = res.data.agentInfo.slaP_INFO
+      );
+      device.healthPacket.resource = res.data.healthPacket.resource;
+      device.agentInfo.slaP_INFO = res.data.agentInfo.slaP_INFO;
     },
     async startGetDevicePolling(deviceID) {
-      const pollingInterval = 1000
-      this.GetActiveAgentInfoById(deviceID)
+      const pollingInterval = 1000;
+      this.GetActiveAgentInfoById(deviceID);
       this.pollingTimer = setInterval(() => {
-        this.GetActiveAgentInfoById(deviceID)
-      }, pollingInterval)
+        this.GetActiveAgentInfoById(deviceID);
+      }, pollingInterval);
     },
     stopGetDevicePolling() {
-      clearInterval(this.pollingTimer)
+      clearInterval(this.pollingTimer);
     },
     connectSignalR() {
       this.connection.on("SIGNALRINFO", (status) => {
-        var object = JSON.parse(status)
+        var object = JSON.parse(status);
         const device = this.dataSource.find(
           (d) => d.deviceInfo.device_id == object.DEVICE_ID,
-        )
-        device.signalR_Info.agent_status = object.AGENT_STATUS
-        device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS
-        device.signalR_Info.slap_type = object.SLAP_TYPE
-        device.signalR_Info.user_name = object.USER_NAME
-        device.signalR_Info.cuesheet_name = object.CUESHEET_NAME
-      })
+        );
+        device.signalR_Info.agent_status = object.AGENT_STATUS;
+        device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
+        device.signalR_Info.slap_type = object.SLAP_TYPE;
+        device.signalR_Info.user_name = object.USER_NAME;
+        device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
+      });
       this.connection.onreconnecting((error) => {
-        console.info("onreconnecting", error)
-      })
+        console.info("onreconnecting", error);
+      });
       this.connection.onreconnected((connectionId) => {
-        console.info("onreconnected", connectionId)
-      })
+        console.info("onreconnected", connectionId);
+      });
     },
     async disconnectSignalR() {
-      await this.connection.stop()
-      await this.connection.off("SIGNALRINFO")
+      await this.connection.off("SIGNALRINFO");
     },
     toggleCollapse(event, collapseId, colIndex, rowItem) {
       const elementsWithSpecificClass = document.querySelectorAll(
         ".highlight_border",
-      )
-      const clickedButtonElement = event.target
-      const monitorItemElement = clickedButtonElement.closest(".monitor_item")
+      );
+      const clickedButtonElement = event.target;
+      const monitorItemElement = clickedButtonElement.closest(".monitor_item");
 
       // 특정 클래스를 추가하거나 제거하기
       if (monitorItemElement) {
         if (!monitorItemElement.classList.contains("highlight_border")) {
           elementsWithSpecificClass.forEach((element) => {
-            element.classList.remove("highlight_border")
-          })
+            element.classList.remove("highlight_border");
+          });
           // 특정 클래스가 없으면 추가
-          monitorItemElement.classList.add("highlight_border")
+          monitorItemElement.classList.add("highlight_border");
         } else {
           // 특정 클래스가 있으면 제거
-          monitorItemElement.classList.remove("highlight_border")
+          monitorItemElement.classList.remove("highlight_border");
         }
       }
 
       if (this.collapseStates.length > 0) {
-        this.stopGetDevicePolling()
+        this.stopGetDevicePolling();
         //이미 열린 탭 있을 때
-        const colItemId = Object.keys(this.collapseStates[0])[0]
+        const colItemId = Object.keys(this.collapseStates[0])[0];
         if (colItemId === collapseId) {
           //같은 라인의 탭 눌렀을 때
           if (this.collapseStates[0][colItemId] === colIndex) {
             //같은 btn 눌렀을 때
-            this.clearColArray(colItemId)
+            this.clearColArray(colItemId);
           } else {
             //다른 btn 눌렀을 때
-            this.startGetDevicePolling(rowItem.deviceInfo.device_id)
-            this.collapseStates[0][colItemId] = colIndex
+            this.startGetDevicePolling(rowItem.deviceInfo.device_id);
+            this.collapseStates[0][colItemId] = colIndex;
           }
         } else {
           // 다른 라인 탭 눌렀을 때
-          this.clearColArray(colItemId)
-          this.startGetDevicePolling(rowItem.deviceInfo.device_id)
-          this.setColArray(collapseId, colIndex)
+          this.clearColArray(colItemId);
+          this.startGetDevicePolling(rowItem.deviceInfo.device_id);
+          this.setColArray(collapseId, colIndex);
         }
       } else {
         //열린 탭 아무것도 없을 때
-        this.startGetDevicePolling(rowItem.deviceInfo.device_id)
-        this.setColArray(collapseId, colIndex)
+        this.startGetDevicePolling(rowItem.deviceInfo.device_id);
+        this.setColArray(collapseId, colIndex);
       }
       // 선택한 item -> detail에 출력
-      this.rowIndex = colIndex
+      this.rowIndex = colIndex;
     },
     setColArray(colId, index) {
       if (colId && index) {
-        this.toggleEvent(colId)
-        this.collapseStates.push({ [colId]: index })
+        this.toggleEvent(colId);
+        this.collapseStates.push({ [colId]: index });
       }
     },
     clearColArray(colId) {
-      this.toggleEvent(colId)
-      this.collapseStates = []
+      this.toggleEvent(colId);
+      this.collapseStates = [];
     },
     toggleEvent(colId) {
-      this.$root.$emit("bv::toggle::collapse", colId)
+      this.$root.$emit("bv::toggle::collapse", colId);
     },
     getStatusHeaderColorClass(status) {
       if (status) {
-        return "status-online-header"
+        return "status-online-header";
       } else {
-        return "status-error-header"
+        return "status-error-header";
       }
       //  if (status === "Online") {
       //   return "status-online-header";
@@ -401,9 +404,9 @@ export default {
     },
     getStatusFloorColorClass(status) {
       if (status) {
-        return "status-online-floor"
+        return "status-online-floor";
       } else {
-        return "status-error-floor"
+        return "status-error-floor";
       }
       // if (status === "Online") {
       //   return "status-online-floor";
@@ -416,28 +419,28 @@ export default {
     getStatusTextColorClass(status, agentKey) {
       if (agentKey === "Status") {
         if (status === "Online") {
-          return "status-online-color"
+          return "status-online-color";
         } else if (status === "Offline") {
-          return "status-offline-color"
+          return "status-offline-color";
         } else if (status === "Error") {
-          return "status-error-color"
+          return "status-error-color";
         }
       }
     },
     getDeviceName(name) {
       switch (name) {
         case 0:
-          return "M"
+          return "M";
         case 1:
-          return "S"
+          return "S";
         case 2:
-          return "B"
+          return "B";
         default:
-          break
+          break;
       }
     },
   },
-}
+};
 </script>
 <style>
 .monitor_container .none {
@@ -591,5 +594,4 @@ export default {
   position: absolute;
   bottom: 8px;
   right: 50px;
-}
-</style>
+}</style>
