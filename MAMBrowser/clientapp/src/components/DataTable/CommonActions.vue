@@ -149,29 +149,17 @@
         </template>
         <b-dropdown-item
           v-if="rowData.pgmfilepath"
-          @click="
-            downloadFileAction(rowData.pgmfilepath, 'PGM_' + rowData.eventname)
-          "
+          @click="downloadFileAction('pgm', rowData)"
           >PGM</b-dropdown-item
         >
         <b-dropdown-item
-          v-if="rowData.dlfilepatH_1"
-          @click="
-            downloadFileAction(
-              rowData.dlfilepatH_1,
-              'DL_주' + rowData.eventname
-            )
-          "
+          v-if="rowData.seQ_MAIN"
+          @click="downloadFileAction('dl_main', rowData)"
           >DL (주)</b-dropdown-item
         >
         <b-dropdown-item
-          v-if="rowData.dlfilepatH_2"
-          @click="
-            downloadFileAction(
-              rowData.dlfilepatH_2,
-              'DL_예비' + rowData.eventname
-            )
-          "
+          v-if="rowData.seQ_SUB"
+          @click="downloadFileAction('dl_sub', rowData)"
           >DL (예비)</b-dropdown-item
         >
       </b-dropdown>
@@ -286,6 +274,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions("file", ["downloadProduct", "downloadDl30"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     logout() {
       this.SET_LOGOUT();
@@ -411,23 +400,26 @@ export default {
     downloadConfigRowData() {
       this.$emit("downloadConfigRowData", this.rowData);
     },
-    downloadFileAction(filePath, fileName) {
-      this.$http
-        .get(
-          `/api/managementdeleteproducts/RecycleFileDownload?guid=${filePath}&userid=${sessionStorage.getItem(
-            USER_ID
-          )}&downloadName=${fileName}`
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            const link = document.createElement("a");
-            link.href = `/api/managementdeleteproducts/RecycleFileDownload?guid=${filePath}&userid=${sessionStorage.getItem(
-              USER_ID
-            )}&downloadName=${fileName}`;
-            document.body.appendChild(link);
-            link.click();
-          }
-        });
+    downloadFileAction(type, item) {
+      switch (type) {
+        case "pgm":
+          this.downloadProduct({
+            item: { fileToken: item.pgmfiletoken },
+            downloadName: `${item.eventname}_${moment(item.onairtime).format(
+              "YYYY-MM-DD"
+            )}`,
+          });
+          break;
+        case "dl_main":
+          this.downloadDl30({ seq: item.seQ_MAIN });
+          break;
+        case "dl_sub":
+          this.downloadDl30({ seq: item.seQ_SUB });
+          break;
+
+        default:
+          break;
+      }
     },
     getCueListAndData() {
       this.$emit("goCueSheetDate", this.rowData);

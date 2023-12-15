@@ -124,7 +124,12 @@
               :behaviorData="behaviorList"
               :etcData="['down-excel']"
               @preview="onPreview"
-              @download="onDownloadProduct"
+              @download="
+                onDownloadProduct(
+                  props.props.rowData,
+                  downloadName(props.props.rowData)
+                )
+              "
               @mydiskCopy="onCopyToMySpacePopup"
               @downExcel="onDownExcel"
             >
@@ -310,6 +315,10 @@ export default {
       this.addScrollClass();
       this.isTableLoading = false;
       this.isScrollLodaing = false;
+    },
+    downloadName(rowData) {
+      var tmpName = `${rowData.songname}_${rowData.albumname}_${rowData.musicid}`;
+      return tmpName;
     },
     getReturnList(params) {
       const url = "/api/PlaylistPerBrdProgram/GetPlaylistStatistics";
@@ -544,6 +553,7 @@ export default {
     },
     getExcelFileName(rowData) {
       let name = "[전체 선곡 순위]";
+      name = name + this.searchItems.period + "_";
       if (this.searchItems.media) {
         name = name + this.searchItems.media;
       }
