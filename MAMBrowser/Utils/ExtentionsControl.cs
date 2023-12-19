@@ -36,16 +36,8 @@ namespace MAMBrowser.Utils
                 item.ONAIRTIME = entity.ONAIRTIME;
                 item.DURATION = entity.DURATION;
                 item.EVENTNAME = entity.EVENTNAME;
-                item.DLFILEPATH_1 = entity.DLFILEPATH_1;
-                if (!string.IsNullOrEmpty(item.DLFILEPATH_1))
-                {
-                    item.DLFILETOKEN_1 = TokenGenerator.GenerateFileToken(item.DLFILEPATH_1);
-                }
-                item.DLFILEPATH_2 = entity.DLFILEPATH_2;
-                if (!string.IsNullOrEmpty(item.DLFILEPATH_2))
-                {
-                    item.DLFILETOKEN_2 = TokenGenerator.GenerateFileToken(item.DLFILEPATH_2);
-                }
+                item.SEQ_MAIN = entity.SEQ_MAIN;
+                item.SEQ_SUB = entity.SEQ_SUB;
                 item.PGMFILEPATH = entity.PGMFILEPATH;
                 if (!string.IsNullOrEmpty(item.PGMFILEPATH))
                 {
