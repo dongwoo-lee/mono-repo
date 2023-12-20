@@ -203,7 +203,7 @@ export default {
       rowData: "",
       updateScreenName: "",
       searchItems: {
-        cate: "RC07", // 분류
+        cate: null, // 분류
         brd_dt: "",
         pgm: "", // 사용처1
         pgmName: "", // 사용처2
