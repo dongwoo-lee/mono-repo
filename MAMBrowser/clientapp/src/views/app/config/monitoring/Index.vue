@@ -103,6 +103,16 @@ export default {
     }),
     ...mapGetters("monitoring", ["GetMonitoringServerStatus"]),
   },
+  watch: {
+    GetMonitoringServerStatus: function (val) {
+      if (!val) {
+        this.$fn.notify("error", {
+          title: "모니터링 서버 연결 오류",
+          permanent: true,
+        });
+      }
+    },
+  },
   async created() {
     await this.GetMonitoringServerInfo();
     await this.createSignalR();

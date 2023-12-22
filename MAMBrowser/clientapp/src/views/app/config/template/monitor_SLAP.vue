@@ -260,6 +260,7 @@ export default {
       rowData: {},
       rowIndex: null,
       dataSource: [],
+      duplicateNotify: false,
     };
   },
   computed: {
@@ -290,7 +291,6 @@ export default {
       if (this.monitoringServerInfo == "") {
         await this.GetMonitoringServerInfo();
       }
-
       try {
         var res = await axios.get(
           `http://${this.monitoringServerInfo}/mntr/Monitoring/GetAllActiveDeviceInfoByType?deviceType=1`,
@@ -311,9 +311,19 @@ export default {
           null,
         );
       } catch (err) {
-        this.$fn.notify("error", { title: err.message });
+        if (this.duplicateNotify) {
+          return;
+        } else {
+          this.$fn.notify("error", {
+            title: "확장정보 요청 오류",
+            message: err.message,
+            permanent: true,
+          });
+          this.duplicateNotify = true;
+          return;
+        }
       }
-
+      this.duplicateNotify = false;
       let device = this.dataSource.find(
         (d) => d.deviceInfo.device_id == deviceID,
       );
@@ -342,10 +352,18 @@ export default {
         device.signalR_Info.sub_title = object.SUB_TITLE;
       });
       this.connection.onreconnecting((error) => {
-        console.info("onreconnecting", error);
+        if (this.duplicateNotify) {
+          return;
+        } else {
+          console.info("onreconnecting", error);
+        }
       });
       this.connection.onreconnected((connectionId) => {
-        console.info("onreconnected", connectionId);
+        if (this.duplicateNotify) {
+          return;
+        } else {
+          console.info("onreconnected", connectionId);
+        }
       });
     },
     async disconnectSignalR() {

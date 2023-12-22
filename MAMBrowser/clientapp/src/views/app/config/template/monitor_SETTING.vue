@@ -81,7 +81,7 @@
           width="3%"
           data-field="location"
           data-type="string"
-          caption="위치"
+          caption="층 정보"
         />
         <DxColumn
           width="10%"
@@ -247,7 +247,7 @@
           width="3%"
           data-field="location"
           data-type="string"
-          caption="위치"
+          caption="층 정보"
           cell-template="locationTemplate"
         />
         <template #locationTemplate="{ data: rowInfo }">
@@ -369,7 +369,7 @@
               v-model:value="editData.location"
               mode="text"
               styling-mode="outlined"
-              label="위치"
+              label="층 정보"
             />
             <DxTextBox
               :value="editData.machine_name"

@@ -464,6 +464,7 @@ export default {
       rowIndex: null,
       etcDataSource: [],
       DL3DataSource: [],
+      duplicateNotify: false,
     };
   },
   computed: {
@@ -526,8 +527,19 @@ export default {
           null,
         );
       } catch (err) {
-        this.$fn.notify("error", { title: err.message });
+        if (this.duplicateNotify) {
+          return;
+        } else {
+          this.$fn.notify("error", {
+            title: "확장정보 요청 오류",
+            message: err.message,
+            permanent: true,
+          });
+          this.duplicateNotify = true;
+          return;
+        }
       }
+      this.duplicateNotify = false;
       if (type === "DL3") {
         this.DL3DataSource[0].healthPacket.resource =
           res.data.healthPacket.resource;
