@@ -40,15 +40,6 @@ const getAddUrlAndIconMenuList = (menuList, roleList) => {
       }
     });
   });
-  // MY 선곡 순위 메뉴 최상위로 이동  - start
-  const mydisk = menuList.find(item => item.id === "S01G01C001")
-  if (mydisk) {
-    const playlist_index = mydisk.children.findIndex(item => item.id === "S01G01C037")
-    if (playlist_index !== -1) {
-      mydisk.children.unshift(mydisk.children.splice(playlist_index, 1)[0]);
-    }
-  }
-  // MY 선곡 순위 메뉴 최상위로 이동  - end
   return menuList;
 };
 

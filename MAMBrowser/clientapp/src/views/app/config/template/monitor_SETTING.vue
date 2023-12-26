@@ -572,10 +572,10 @@ export default {
       this.loadingVisible = false;
     },
     async SearchDevice() {
+      await this.activeDevicePopupOn();
       this.loadingVisible = true;
       await this.SearchDeviceApi();
       this.loadingVisible = false;
-      this.activeDevicePopupOn();
     },
     async SearchDeviceApi() {
       if (this.monitoringServerInfo == "") {
@@ -746,11 +746,12 @@ export default {
       }
 
       this.loadingVisible = true;
-
+      console.log("this.editData.agent_code :>> ", this.editData.agent_code);
       if (
-        this.editData.agent_code != null &&
-        this.editData.agent_code != undefined &&
-        this.editData.agent_code.length != 0
+        this.editData?.agent_code != null &&
+        this.editData?.agent_code != undefined &&
+        this.editData?.agent_code != "" &&
+        this.editData?.agent_code?.length != 0
       ) {
         try {
           var res = await axios.get(

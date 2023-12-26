@@ -26,14 +26,16 @@
           <div
             class="btn_header"
             :class="getDL3StatusHeaderColorClass(
-              DL3DataSource[0]?.signalR_Info?.agent_status,
+              DL3DataSource[0]?.signalR_Info?.agent_status &&
+              DL3DataSource[0]?.signalR_Info?.watch_service_status,
             )
               "
           >
             <span
               class="floor"
               :class="getDL3StatusFloorColorClass(
-                DL3DataSource[0]?.signalR_Info?.agent_status,
+                DL3DataSource[0]?.signalR_Info?.agent_status &&
+                DL3DataSource[0]?.signalR_Info?.watch_service_status,
               )
                 "
             >
@@ -45,11 +47,11 @@
           </div>
           <div class="btn_body">
             {{
-              DL3DataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
-                ?.watchProcessName
-              ? DL3DataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
-                ?.watchProcessName + " 감시 중"
-              : "감시 프로세스 없음"
+              DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.sub_title
+              ? DL3DataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.sub_title
+              : "정보없음"
             }}
           </div>
         </b-button>
@@ -66,48 +68,94 @@
             <dl class="group_content">
               <dt class="content_title">단말 모델명 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.deviceInfo.device_model }}
+                {{
+                  DL3DataSource[0]?.deviceInfo.device_model
+                  ? DL3DataSource[0]?.deviceInfo.device_model
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">단말 컴퓨터 이름 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.deviceInfo.machine_name }}
+                {{
+                  DL3DataSource[0]?.deviceInfo.machine_name
+                  ? DL3DataSource[0]?.deviceInfo.machine_name
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">윈도우 버전 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.deviceInfo.os_version }}
+                {{
+                  DL3DataSource[0]?.deviceInfo.os_version
+                  ? DL3DataSource[0]?.deviceInfo.os_version
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">프로세서 정보 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.deviceInfo.processor_info }}
+                {{
+                  DL3DataSource[0]?.deviceInfo.processor_info
+                  ? DL3DataSource[0]?.deviceInfo.processor_info
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">IP정보 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.deviceInfo.ip_info }}
+                {{
+                  DL3DataSource[0]?.deviceInfo.ip_info
+                  ? DL3DataSource[0]?.deviceInfo.ip_info
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">cpu 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.healthPacket.resource.cpu }}
+                {{
+                  DL3DataSource[0]?.healthPacket.resource.cpu
+                  ? DL3DataSource[0]?.healthPacket.resource.cpu
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">메모리 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.healthPacket.resource.memory }}
+                {{
+                  DL3DataSource[0]?.healthPacket.resource.memory
+                  ? DL3DataSource[0]?.healthPacket.resource.memory
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">디스크 사용률 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.healthPacket.resource.disk }}
+                {{
+                  DL3DataSource[0]?.healthPacket.resource.disk
+                  ? DL3DataSource[0]?.healthPacket.resource.disk
+                  : "정보없음"
+                }}
               </dd>
               <dt class="content_title">디스크 읽기/쓰기</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.healthPacket.resource.disk_io_use_rate }}
+                {{
+                  DL3DataSource[0]?.healthPacket.resource.disk_io_use_rate
+                  ? DL3DataSource[0]?.healthPacket.resource.disk_io_use_rate
+                  : "정보없음"
+                }}
               </dd>
-              <dt class="content_title">네트워크 사용률 :</dt>
+              <dt class="content_title">네트워크 받기/보내기 :</dt>
               <dd class="content_text">
-                {{ DL3DataSource[0]?.healthPacket.resource.network_use_rate }}
+                {{
+                  DL3DataSource[0]?.healthPacket.resource.network_use_rate
+                  ? DL3DataSource[0]?.healthPacket.resource.network_use_rate
+                  : "정보없음"
+                }}
               </dd>
             </dl>
             <dl class="group_content">
               <dt class="content_title">메인 오디오 서버 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      DL3DataSource[0]?.signalR_Info?.audioServerMainStatus
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
+
                 {{
                   DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerMainStatus
                   ? "켜짐"
@@ -116,6 +164,11 @@
               </dd>
               <dt class="content_title">서브 오디오 서버 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      DL3DataSource[0]?.signalR_Info?.audioServerSubStatus
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   DL3DataSource[0]?.agentInfo?.dL3_INFO.audioServerSubStatus
                   ? "켜짐"
@@ -124,6 +177,11 @@
               </dd>
               <dt class="content_title">메인 파일 에이전트 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      DL3DataSource[0]?.signalR_Info?.fileAgentMainStatus
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentMainStatus
                   ? "켜짐"
@@ -132,26 +190,41 @@
               </dd>
               <dt class="content_title">서브 파일 에이전트 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      DL3DataSource[0]?.signalR_Info?.fileAgentSubStatus
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   DL3DataSource[0]?.agentInfo?.dL3_INFO.fileAgentSubStatus
                   ? "켜짐"
                   : "꺼짐"
                 }}
               </dd>
-              <!-- <dt class="content_title">에이전트 상태 :</dt>
+              <dt class="content_title">에이전트 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      DL3DataSource[0]?.signalR_Info?.agent_status
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
-                  DL3DataSource[0]
-                    ?.signalR_Info?.agent_status
+                  DL3DataSource[0]?.signalR_Info?.agent_status ? "켜짐" : "꺼짐"
                 }}
               </dd>
               <dt class="content_title">감시 프로세스 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                    DL3DataSource[0]?.signalR_Info?.watch_service_status
+                      ? 'statusOn'
+                      : 'statusOff',
+                  ]" />
                 {{
-                  DL3DataSource[0]
-                    ?.signalR_Info?.watch_service_status
+                  DL3DataSource[0]?.signalR_Info?.watch_service_status
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
-              </dd> -->
+              </dd>
             </dl>
           </b-card>
         </b-collapse>
@@ -205,7 +278,7 @@
               {{
                 etcDataSource[itemCount * (index - 1) + (i - 1)]?.deviceInfo
                   .location
-              }}F
+              }}
             </span>
             <span class="name2">
               {{
@@ -216,11 +289,11 @@
           </div>
           <div class="btn_body2">
             {{
-              etcDataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
-                ?.watchProcessName
-              ? etcDataSource[itemCount * (index - 1) + (i - 1)]?.agentInfo
-                ?.watchProcessName + " 감시 중"
-              : "감시 프로세스 없음"
+              etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.sub_title
+              ? etcDataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                ?.sub_title
+              : "정보없음"
             }}
           </div>
         </b-button>
@@ -242,6 +315,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.deviceInfo.device_model
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.deviceInfo.device_model
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">단말 컴퓨터 이름 :</dt>
@@ -249,6 +325,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.deviceInfo.machine_name
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.deviceInfo.machine_name
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">윈도우 버전 :</dt>
@@ -256,6 +335,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.deviceInfo.os_version
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.deviceInfo.os_version
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">프로세서 정보 :</dt>
@@ -263,6 +345,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.deviceInfo.processor_info
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.deviceInfo.processor_info
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">IP정보 :</dt>
@@ -270,6 +355,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.deviceInfo.ip_info
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.deviceInfo.ip_info
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">cpu 사용률 :</dt>
@@ -277,6 +365,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.healthPacket.resource.cpu
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.healthPacket.resource.cpu
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">메모리 사용률 :</dt>
@@ -284,6 +375,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.healthPacket.resource.memory
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.healthPacket.resource.memory
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">디스크 사용률 :</dt>
@@ -291,6 +385,9 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.healthPacket.resource.disk
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.healthPacket.resource.disk
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title2">디스크 읽기/쓰기</dt>
@@ -298,60 +395,54 @@
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.healthPacket.resource.disk_io_use_rate
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.healthPacket.resource.disk_io_use_rate
+                  : "정보없음"
                 }}
               </dd>
-              <dt class="content_title2">네트워크 사용률 :</dt>
+              <dt class="content_title2">네트워크 받기/보내기 :</dt>
               <dd class="content_text2">
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.healthPacket.resource.network_use_rate
+                  ? etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    ?.healthPacket.resource.network_use_rate
+                  : "정보없음"
                 }}
               </dd>
             </dl>
-            <!-- <dl class="group_content2">
-              <dt class="content_title2">스튜디오명 :</dt>
-              <dd class="content_text2">
-                {{
-                  etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slap_info.studio_name
-                }}
-              </dd>
-              <dt class="content_title2">SLAP이름 :</dt>
-              <dd class="content_text2">
-                {{
-                  etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slap_info.slap_name
-                }}
-              </dd>
-              <dt class="content_title2">큐시트이름 :</dt>
-              <dd class="content_text2">
-                {{
-                  etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .signalR_Info.cuesheet_name
-                }}
-              </dd>
-              <dt class="content_title2">로그인 사용자 이름 :</dt>
-              <dd class="content_text2">
-                {{
-                  etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .signalR_Info.user_name
-                }}
-              </dd>
+            <dl class="group_content2">
               <dt class="content_title2">에이전트 상태 :</dt>
               <dd class="content_text2">
+                <span :class="[
+                      etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                        ?.signalR_Info?.agent_status
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.agent_status
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
               <dt class="content_title2">감시 프로세스 상태 :</dt>
               <dd class="content_text2">
+                <span :class="[
+                      etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                        ?.signalR_Info?.watch_service_status
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   etcDataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.watch_service_status
+                  ? "켜짐"
+                  : "꺼짐"
                 }}
               </dd>
-            </dl> -->
+            </dl>
           </b-card>
         </b-collapse>
       </div>
@@ -470,10 +561,12 @@ export default {
           }
           device.signalR_Info.agent_status = object.AGENT_STATUS;
           device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
-          device.signalR_Info.slap_type = object.SLAP_TYPE;
-          device.signalR_Info.user_name = object.USER_NAME;
-          device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
-        } else if ((object.DEVICE_TYPE = "4")) {
+          device.signalR_Info.sub_title = object.SUB_TITLE;
+        } else if (
+          object.DEVICE_TYPE == "0" ||
+          object.DEVICE_TYPE == "3" ||
+          object.DEVICE_TYPE == "4"
+        ) {
           const device = this.etcDataSource.find(
             (d) => d.deviceInfo.device_id == object.DEVICE_ID,
           );
@@ -482,9 +575,7 @@ export default {
           }
           device.signalR_Info.agent_status = object.AGENT_STATUS;
           device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
-          device.signalR_Info.slap_type = object.SLAP_TYPE;
-          device.signalR_Info.user_name = object.USER_NAME;
-          device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
+          device.signalR_Info.sub_title = object.SUB_TITLE;
         }
       });
       this.connection.onreconnecting((error) => {
@@ -724,6 +815,22 @@ export default {
   margin-bottom: 10px;
 }
 
+.statusOn {
+  height: 10px;
+  width: 10px;
+  background-color: #008eca !important;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusOff {
+  height: 10px;
+  width: 10px;
+  background-color: #c43d4b !important;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 .status-online-header {
   background-color: #008eca !important;
 }
@@ -910,4 +1017,5 @@ export default {
   position: absolute;
   bottom: 8px;
   right: 50px;
-}</style>
+}
+</style>

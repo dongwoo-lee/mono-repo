@@ -152,7 +152,10 @@ export default {
         this.getMcrSpotMeta(rowData);
       } else if (this.MySpaceScreenName == "[Filler 시간]") {
         this.getFillerTimeMeta(rowData);
-      } else if (this.MySpaceScreenName == "[MY 선곡 순위]") {
+      } else if (
+        this.MySpaceScreenName == "[MY 선곡 순위]" ||
+        this.MySpaceScreenName == "[전체 선곡 순위]"
+      ) {
         this.getMyMusicRanking(rowData);
       }
     },
@@ -179,7 +182,6 @@ export default {
       this.showDialog = false;
     },
     getDL3Meta(rowData) {
-      console.info("rowData", rowData);
       this.metaData.title =
         this.MySpaceScreenName +
         rowData.mediaName +
@@ -377,7 +379,7 @@ export default {
     },
     getMyMusicRanking(rowData) {
       this.metaData.title =
-        this.MySpaceScreenName + rowData.songname + "_" + rowData.pgmname;
+        this.MySpaceScreenName + rowData.songname + "_" + rowData.artist;
       this.metaData.memo = "순위 : " + rowData.rank;
     },
   },

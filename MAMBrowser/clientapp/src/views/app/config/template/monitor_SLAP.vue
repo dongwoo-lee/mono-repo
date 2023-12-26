@@ -48,7 +48,7 @@
               {{
                 dataSource[itemCount * (index - 1) + (i - 1)].deviceInfo
                   .location
-              }}F
+              }}
             </span>
             <span class="name">
               {{
@@ -59,7 +59,7 @@
             <span class="device">
               {{
                 getDeviceName(
-                  dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
+                  dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
                     .slap_type,
                 )
               }}
@@ -67,18 +67,10 @@
           </div>
           <div class="btn_body">
             {{
-              dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.user_name
-              ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.user_name
-              : "정보없음"
-            }}
-            /
-            {{
-              dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.cuesheet_name
-              ? dataSource[itemCount * (index - 1) + (i - 1)].signalR_Info
-                ?.cuesheet_name
+              dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.sub_title
+              ? dataSource[itemCount * (index - 1) + (i - 1)]?.signalR_Info
+                ?.sub_title
               : "정보없음"
             }}
           </div>
@@ -100,6 +92,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .deviceInfo.device_model
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.device_model
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">단말 컴퓨터 이름 :</dt>
@@ -107,6 +102,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .deviceInfo.machine_name
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.machine_name
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">윈도우 버전 :</dt>
@@ -114,6 +112,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .deviceInfo.os_version
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.os_version
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">프로세서 정보 :</dt>
@@ -121,6 +122,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .deviceInfo.processor_info
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.processor_info
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">IP정보 :</dt>
@@ -128,6 +132,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .deviceInfo.ip_info
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .deviceInfo.ip_info
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">cpu 사용률 :</dt>
@@ -135,6 +142,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .healthPacket.resource.cpu
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .healthPacket.resource.cpu
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">메모리 사용률 :</dt>
@@ -142,6 +152,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .healthPacket.resource.memory
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .healthPacket.resource.memory
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">디스크 사용률 :</dt>
@@ -149,6 +162,9 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .healthPacket.resource.disk
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .healthPacket.resource.disk
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">디스크 읽기/쓰기</dt>
@@ -156,47 +172,51 @@
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .healthPacket.resource.disk_io_use_rate
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .healthPacket.resource.disk_io_use_rate
+                  : "정보없음"
                 }}
               </dd>
-              <dt class="content_title">네트워크 사용률 :</dt>
+              <dt class="content_title">네트워크 받기/보내기 :</dt>
               <dd class="content_text">
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     .healthPacket.resource.network_use_rate
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .healthPacket.resource.network_use_rate
+                  : "정보없음"
                 }}
               </dd>
             </dl>
             <dl class="group_content">
-              <!-- <dt class="content_title">스튜디오명 :</dt>
-              <dd class="content_text">
-                {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slaP_INFO.studioName
-                }}
-              </dd>
-              <dt class="content_title">SLAP이름 :</dt>
-              <dd class="content_text">
-                {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    ?.agentInfo?.slaP_INFO.slapName
-                }}
-              </dd> -->
               <dt class="content_title">큐시트이름 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .signalR_Info.cuesheet_name
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].agentInfo
+                    .slaP_INFO.loadedCueSheetName
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .agentInfo.slaP_INFO.loadedCueSheetName
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">로그인 사용자 이름 :</dt>
               <dd class="content_text">
                 {{
-                  dataSource[itemCount * (index - 1) + (rowIndex - 1)]
-                    .signalR_Info.user_name
+                  dataSource[itemCount * (index - 1) + (rowIndex - 1)].agentInfo
+                    .slaP_INFO.logonUserName
+                  ? dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                    .agentInfo.slaP_INFO.logonUserName
+                  : "정보없음"
                 }}
               </dd>
               <dt class="content_title">에이전트 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                        ?.signalR_Info?.agent_status
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.agent_status
@@ -206,6 +226,12 @@
               </dd>
               <dt class="content_title">감시 프로세스 상태 :</dt>
               <dd class="content_text">
+                <span :class="[
+                      dataSource[itemCount * (index - 1) + (rowIndex - 1)]
+                        ?.signalR_Info?.watch_service_status
+                        ? 'statusOn'
+                        : 'statusOff',
+                    ]" />
                 {{
                   dataSource[itemCount * (index - 1) + (rowIndex - 1)]
                     ?.signalR_Info?.watch_service_status
@@ -310,11 +336,10 @@ export default {
         const device = this.dataSource.find(
           (d) => d.deviceInfo.device_id == object.DEVICE_ID,
         );
+        if (device == undefined) return;
         device.signalR_Info.agent_status = object.AGENT_STATUS;
         device.signalR_Info.watch_service_status = object.WATCH_SERVICE_STATUS;
-        device.signalR_Info.slap_type = object.SLAP_TYPE;
-        device.signalR_Info.user_name = object.USER_NAME;
-        device.signalR_Info.cuesheet_name = object.CUESHEET_NAME;
+        device.signalR_Info.sub_title = object.SUB_TITLE;
       });
       this.connection.onreconnecting((error) => {
         console.info("onreconnecting", error);
@@ -552,6 +577,22 @@ export default {
 
 .detail_body dt {
   margin-bottom: 10px;
+}
+
+.statusOn {
+  height: 10px;
+  width: 10px;
+  background-color: #008eca !important;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusOff {
+  height: 10px;
+  width: 10px;
+  background-color: #c43d4b !important;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .status-online-header {
