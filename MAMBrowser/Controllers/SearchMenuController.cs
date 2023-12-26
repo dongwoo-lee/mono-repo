@@ -414,7 +414,8 @@ namespace MAMBrowser.Controllers
             try
             {
                 var dto = new ReportSearchOptionBuilder()
-                    .SetBrdDate(pram.brddate)
+                    .SetStartDate(pram.brddate)
+                    .SetEndDate(pram.brddate)
                     .SetCate(pram.cate)
                     .SetPgmName(pram.pgmname)
                     .SetReporterName(pram.reporterName)
