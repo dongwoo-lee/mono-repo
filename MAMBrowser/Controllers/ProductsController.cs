@@ -133,7 +133,7 @@ namespace MAMBrowser.Controllers
             try
             {
 
-                result.ResultObject = _bll.FindReport(cate, brd_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
+                result.ResultObject = _bll.FindReport(cate, brd_dt, brd_dt, isMastering, pgmName, editor, reporterName, name, rowPerPage, selectPage, sortKey, sortValue);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

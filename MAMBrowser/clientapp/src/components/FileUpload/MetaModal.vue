@@ -31,7 +31,7 @@
                 </b-form-group>
                 <div style="height: 50px; margin-top: 20px">
                   <b-form-group
-                    label="파일 분량"
+                    :label= "getFileInfo()"
                     class="has-float-label"
                     style="font-size: 15px"
                   >
@@ -342,6 +342,12 @@ export default {
       "resetUploaderCustomData",
       "RESET_ALL_METADATA",
     ]),
+    getFileInfo(){
+      if(this.localFiles[0])
+        return `파일 분량 (${(this.localFiles[0].size / 1024 / 1024).toFixed(2)} MB)`
+      else
+        return '';
+    },
     getFileTypeText() {
       let fileTypeText = "";
       this.typeOptions.forEach((e) => {
@@ -450,6 +456,7 @@ export default {
       return data;
     },
     async uploadfile() {
+      console.info(this.dataAll);
       if (this.metaValid) {
         if (!this.durationState) {
           this.$bvModal.show("durationOver");
