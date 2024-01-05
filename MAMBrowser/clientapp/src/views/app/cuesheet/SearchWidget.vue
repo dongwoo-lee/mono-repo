@@ -35,6 +35,23 @@
                     />
                   </b-form-group>
                 </div>
+
+                <div v-if="index.type == 'SandT'">
+                  <b-form-group
+                    :label="index.text"
+                    class="has-float-label"
+                    style="margin-bottom: 25px"
+                  >
+                    <v-select
+                      :options="index.value"
+                      label="text"
+                      @input="onEditInput($event, index)"
+                      style="width: 100%"
+                      append-to-body
+                    ></v-select>
+                  </b-form-group>
+                </div>
+
                 <div v-if="index.type == 'T'">
                   <b-form-group
                     :label="index.text"
@@ -586,6 +603,13 @@ export default {
         }
       }
     },
+    onEditInput(event, item) {
+      if (event) {
+        item.selectVal = event.value;
+      } else {
+        item.selectVal = null;
+      }
+    },
     onDragStart() {
       document.getElementById("app-container").classList.add("drag_");
     },
@@ -859,6 +883,7 @@ export default {
   background-color: rgb(99, 71, 71);
 } */
 .select_option_big {
+  position: relative;
   padding: 15px;
   overflow: auto;
   height: 207px;
@@ -955,5 +980,11 @@ export default {
 /* scroll > mode : infinite > empty row 문제 해결 CSS */
 .search_view .dx-freespace-row {
   display: none !important;
+}
+.vs__dropdown-menu {
+  position: fixed;
+  height: 200px;
+  /* position: absolute !important; */
+  /* z-index: 9999 !important; */
 }
 </style>

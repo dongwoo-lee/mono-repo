@@ -14,8 +14,9 @@ function get_date_str(date) {
 var toDay = get_date_str(date);
 date.setDate(date.getDate() - 7);
 var wDay = get_date_str(date);
-date.setDate(date.getDate() - 83);
-var mDay = get_date_str(date);
+let originalDate = new Date();
+originalDate.setFullYear(originalDate.getFullYear() - 5);
+let yDay = get_date_str(originalDate)
 
 let searchMenuList = {
   data() {
@@ -233,7 +234,7 @@ let searchMenuList = {
               startText: "시작일(방송의뢰)",
               endText: "종료일(방송의뢰)",
               type: "SED",
-              st_selectVal: mDay,
+              st_selectVal: yDay,
               end_selectVal: toDay,
               requiredVal: false
             },
@@ -259,7 +260,8 @@ let searchMenuList = {
               id: "editor",
               text: "제작자",
               value: [],
-              type: "S",
+              // type: "S",
+              type: "SandT",
               name: "userList",
             },
             {

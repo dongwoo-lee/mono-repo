@@ -236,7 +236,7 @@ export default {
         },
         {
           name: "mainmachine",
-          title: "송출라인",
+          title: "제작 스튜디오",
           titleClass: "center aligned text-center",
           dataClass: "center aligned text-center",
           width: "8%",

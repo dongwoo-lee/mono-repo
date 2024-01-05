@@ -239,7 +239,8 @@
       <div class="d-block text-center">
         <div class="mb-3 mt-3" style="font-size: 20px">
           <div class="mb-3" v-if="cueInfo.cuetype == 'D' && !fav">
-            "{{ cueInfo.title }}" 큐시트를 저장합니다.
+            "{{ $moment(cueInfo.brdtime).format("YYYY년 MM월 DD일") }} -
+            {{ cueInfo.title }}" 큐시트를 저장합니다.
             <h5 class="pt-2" v-if="isMyDiskExist">
               ( My 공간 소재는 큐시트에 저장 되지 않습니다. )
             </h5>
