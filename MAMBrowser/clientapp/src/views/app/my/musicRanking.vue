@@ -372,7 +372,7 @@ export default {
     async onSelectRadio() {
       switch (this.searchItems.period) {
         case "YEAR":
-          await this.setYearOptions();
+          await this.setYearOptions(true);
           this.searchItems.enddate = this.endDateOptionGroup.year;
           this.searchItems.rowPerPage = 100;
           await this.onSearch();
@@ -456,7 +456,7 @@ export default {
         await this.onSearch();
       }
     },
-    setYearOptions() {
+    setYearOptions(isSub = false) {
       const startDateStr = this.minEndDate;
       const startDate = new Date(
         `${startDateStr.slice(0, 4)}-${startDateStr.slice(
@@ -465,35 +465,33 @@ export default {
         )}-${startDateStr.slice(6)}`
       );
       const currentYear = new Date().getFullYear();
-      const yearList = [];
+      let yearList = [];
 
       for (let year = currentYear; year >= startDate.getFullYear(); year--) {
-        if (this.searchItems.period === "YEAR") {
-          if (currentYear !== year) {
-            const lastDayOfYear = new Date(year, 11, 31);
-            yearList.push({
-              text: year.toString(),
-              value: this.formatDate(lastDayOfYear),
-            });
-          }
+        const lastDayOfYear = new Date(year, 11, 31);
+        yearList.push({
+          text: year.toString(),
+          value: this.formatDate(lastDayOfYear),
+        });
+      }
+      if (yearList) {
+        if (isSub) {
+          yearList = yearList.filter(
+            (year) => year.text !== currentYear.toString()
+          );
+          this.endDateOptionGroup.yearOptions = yearList;
+          this.endDateOptionGroup.year = yearList[0].value;
         } else {
-          const lastDayOfYear = new Date(year, 11, 31);
-          yearList.push({
-            text: year.toString(),
-            value: this.formatDate(lastDayOfYear),
-          });
+          this.endDateOptionGroup.yearOptions = yearList;
+          this.endDateOptionGroup.year = yearList[0].value;
         }
       }
-      this.endDateOptionGroup.yearOptions = yearList;
-      this.endDateOptionGroup.year = yearList[0].value;
     },
     setMonthOptions(yearString) {
       const toDay = moment();
       const year = toDay.year();
       const month = toDay.month() + 1;
-
       let firstDayOfMonth = moment(`${year}-${month}-01`, "YYYY-MM-DD");
-      const lastDayOfMonth = moment(firstDayOfMonth).endOf("month");
 
       if (firstDayOfMonth.day() !== 1) {
         firstDayOfMonth.add(1, "week").startOf("isoWeek");
@@ -537,16 +535,21 @@ export default {
           value: value,
         });
       }
-      this.endDateOptionGroup.monthOptions = monthList;
-      this.endDateOptionGroup.month = monthList[0].value;
+      if (monthList.length > 0) {
+        this.endDateOptionGroup.monthOptions = monthList;
+        this.endDateOptionGroup.month = monthList[0].value;
+      } else {
+        const options = this.endDateOptionGroup.yearOptions;
+        options.shift();
+        this.endDateOptionGroup.year = options[0].value;
+        this.setMonthOptions(options[0].value);
+      }
     },
     setWeekOptions(yearString) {
       const toDay = moment();
       const year = Number(yearString.slice(0, 4));
       const month = Number(yearString.slice(4, 6));
-
       let firstDayOfMonth = moment(`${year}-${month}-01`, "YYYY-MM-DD");
-      const lastDayOfMonth = moment(firstDayOfMonth).endOf("month");
 
       if (firstDayOfMonth.day() !== 1) {
         firstDayOfMonth.add(1, "week").startOf("isoWeek");

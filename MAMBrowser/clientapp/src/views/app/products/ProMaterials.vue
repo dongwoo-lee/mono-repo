@@ -19,7 +19,7 @@
           endDateLabel="종료일(방송의뢰)"
           :startDate.sync="searchItems.start_dt"
           :endDate.sync="searchItems.end_dt"
-          :startMonthAgo="3"
+          :startYearAgo="5"
           :required="false"
           :isCurrentDate="true"
           @SEDateNullEvent="onSearch"
