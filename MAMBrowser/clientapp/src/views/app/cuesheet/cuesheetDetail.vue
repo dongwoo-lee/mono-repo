@@ -271,7 +271,13 @@ export default {
 .subtitle_css {
   color: #008ecc;
 }
+.subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .sub_text {
+  font-size: larger;
   margin-right: 15px;
 }
 
