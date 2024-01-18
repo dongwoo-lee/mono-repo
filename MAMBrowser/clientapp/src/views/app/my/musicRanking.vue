@@ -583,10 +583,9 @@ export default {
       });
     },
     getExcelFileName(rowData) {
-      let name = "[MY 선곡 순위]";
-      name = name + this.searchItems.period + "_";
+      let name = "[MY 선곡 순위_";
       if (this.searchItems.media) {
-        name = name + this.searchItems.media;
+        name = name + this.searchItems.media + "_";
       }
       if (this.searchItems.period === "WEEK") {
         let e_dateStr = moment(this.searchItems.enddate, "YYYYMMDD").format(
@@ -595,19 +594,19 @@ export default {
         let s_dateStr = moment(this.searchItems.enddate, "YYYYMMDD")
           .subtract(6, "day")
           .format("YYYYMMDD");
-        name = name + "_" + s_dateStr + "_" + e_dateStr;
+        name = name + "주간]" + s_dateStr + "_" + e_dateStr;
       }
       if (this.searchItems.period === "MONTH") {
         let dateStr = moment(this.searchItems.enddate, "YYYYMMDD").format(
           " YYYYMM"
         );
-        name = name + "_" + dateStr;
+        name = name + "월간]" + dateStr;
       }
       if (this.searchItems.period === "YEAR") {
         let dateStr = moment(this.searchItems.enddate, "YYYYMMDD").format(
           " YYYY"
         );
-        name = name + "_" + dateStr;
+        name = name + "연간]" + dateStr;
       }
       if (rowData.artist) {
         name = name + "_" + rowData.artist;

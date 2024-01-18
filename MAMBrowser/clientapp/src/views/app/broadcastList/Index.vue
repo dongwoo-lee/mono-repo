@@ -263,7 +263,7 @@ export default {
         },
         {
           dataField: "musicid",
-          caption: "음악ID",
+          caption: "MUSICID",
           width: "130",
           alignment: "center",
           allowSorting: false,
