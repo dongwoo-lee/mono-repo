@@ -35,7 +35,9 @@ namespace MAMBrowser.Workers
             DateTime before_time_attach = DateTime.Now.AddHours(-6);
 
             var option = _apiBll.GetOptions(Define.MASTERING_OPTION_GRPCODE).ToList();
-            var wcsPathRoot = option.Find(dt => dt.Name == "WCS_ATTACH_PATH").Value.ToString();
+            var wcsPathRoot = option.Find(dt => dt.Name == "WCS_ATTACH_PATH").Value as string;
+            if (string.IsNullOrEmpty(wcsPathRoot))
+                return;
             var rootdir_attach = Path.Combine(wcsPathRoot, "tmp");
             var rootdir_wav_zip = Startup.AppSetting.TempExportPath;
 
