@@ -236,7 +236,14 @@ namespace MAMBrowser.BLL
                                 Directory.CreateDirectory(recyclePath);
                             }
                             File.Move(item.MASTERFILE, Path.Combine(recyclePath, fileName));
-                            DeleteAudioFileAndMoveToRecycle(item.AUDIOCLIPID, Path.Combine(recyclePath, fileName), dto.SystemCd, dto.UserId);
+                            if(File.Exists(Path.Combine(recyclePath, fileName)))
+                            {
+                               DeleteAudioFileAndMoveToRecycle(item.AUDIOCLIPID, Path.Combine(recyclePath, fileName), dto.SystemCd, dto.UserId);
+                            }
+                            else
+                            {
+                               _dbLogger.WarnAsync(dto.SystemCd, dto.UserId, $"소재 삭제 (수동) - {item.AUDIOCLIPID} : 파일올 이동할 수 없습니다.", $"{item.MASTERFILE}");
+                            }
                         }
                         else
                         {
@@ -251,14 +258,13 @@ namespace MAMBrowser.BLL
                             _dbLogger.InfoAsync(dto.SystemCd, dto.UserId, $"소재 삭제 EGY File 삭제 (수동) - {item.AUDIOCLIPID}", null);
                         }
 
-                        var editfolderName = Directory.GetParent(Directory.GetParent(item.MASTERFILE).FullName).FullName;
-                        var editfilePath = Path.Combine(editfolderName, "EDIT", item.AUDIOCLIPID);
-                        if (Directory.Exists(editfilePath))
-                        {
-                            Directory.Delete(editfilePath, true);
-                            _dbLogger.InfoAsync(dto.SystemCd, dto.UserId, $"소재 삭제 EDIT File 삭제 (수동) - {item.AUDIOCLIPID}", null);
-                        }
                     }
+                    if (!string.IsNullOrEmpty(item.EDITFILE) && Directory.Exists(Path.GetDirectoryName(item.EDITFILE)))
+                    {
+                        Directory.Delete(Path.GetDirectoryName(item.EDITFILE), true);
+                        _dbLogger.InfoAsync(dto.SystemCd, dto.UserId, $"소재 삭제 EDIT File 삭제 (수동) - {item.AUDIOCLIPID}", null);
+                    }
+
                 }
                 catch (System.Exception ex)
                 {

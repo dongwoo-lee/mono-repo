@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -71,7 +74,82 @@ namespace MAMBrowser.BLL
                 {
                     file.CopyTo(stream);
                 }
+                if(!ResizeImageFile(newFilePath, 400, 226))
+                {
+                    File.Delete(newFilePath);
+                    throw new Exception("ResizeImageFile Error");
+                }
             }
+        }
+        private static bool ResizeImageFile(string imageFilePath, in int newWidth, in int newHeight, in bool keepSizeRatio = true)
+        {
+            try
+            {
+                byte[] byteArr = File.ReadAllBytes(imageFilePath);
+
+                using (var stream = new System.IO.MemoryStream(byteArr))
+                {
+                    Bitmap bitmap = new Bitmap(stream);
+
+                    int applyWidth = newWidth;
+                    int applyHeight = newHeight;
+
+                    if (keepSizeRatio)
+                    {
+                        double percentW = 0;
+                        double percentH = 0;
+                        double targetPercent = 0;
+
+                        percentW = (double)newWidth / bitmap.Width;
+                        percentH = (double)newHeight / bitmap.Height;
+
+                        if (percentW < percentH) targetPercent = percentW;
+                        else targetPercent = percentH;
+
+                        applyWidth = (int)(bitmap.Width * targetPercent);
+                        applyHeight = (int)(bitmap.Height * targetPercent);
+
+                        if (applyWidth > newWidth) applyWidth = newWidth;
+                        if (applyHeight > newHeight) applyHeight = newHeight;
+                    }
+
+                    bitmap = ResizeImage(bitmap, applyWidth, applyHeight);
+                    bitmap.Save(imageFilePath);
+                    bitmap.Dispose();
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        private static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }

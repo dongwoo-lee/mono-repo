@@ -9,6 +9,10 @@ using MAMBrowser.DTO;
 using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 using MAMBrowser.Helpers;
+using MAMBrowser.Foundation;
+using System.Net;
+using MAMBrowser.Helper;
+using DevExpress.Data.Helpers;
 
 namespace MAMBrowser.Controllers
 {
@@ -18,11 +22,16 @@ namespace MAMBrowser.Controllers
     {
         private readonly ManagementDeleteProductsBll _bll;
         private readonly HttpContextDBLogger _dbLogger;
+        private readonly WebServerFileHelper _fileHelper;
+        private readonly IFileProtocol _fileSystem;
 
-        public ManagementDeleteProductsController(ManagementDeleteProductsBll bll, HttpContextDBLogger dbLogger)
+
+        public ManagementDeleteProductsController(ManagementDeleteProductsBll bll, HttpContextDBLogger dbLogger, ServiceResolver sr, WebServerFileHelper fileHelper)
         {
             _bll = bll;
             _dbLogger = dbLogger;
+            _fileHelper = fileHelper;
+            _fileSystem = sr(MAMDefine.PrivateWorkConnection).FileSystem;
         }
 
         #region 소재 삭제 관리
@@ -223,21 +232,25 @@ namespace MAMBrowser.Controllers
             return result;
         }
         [HttpGet("RecycleFileDownload")]
-        public FileResult RecycleFileDownload([FromQuery] Pram queryPram)
+        public IActionResult RecycleFileDownload([FromQuery] Pram queryPram, [FromQuery] string inline = "N")
         {
-            FileResult result;
-            var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
-            var FilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
-            var fileName = Path.GetFileName(queryPram.guid);
-            var provider = new FileExtensionContentTypeProvider();
-
-            string contentType;
-            if (!provider.TryGetContentType(FilePath, out contentType))
+            try
             {
-                contentType = "application/octet-stream";
+                var rootFolder = Path.Combine(Startup.AppSetting.TempExportPath, @$"{queryPram.userid}\{queryPram.guid}");
+                var FilePath = Path.Combine(Path.GetDirectoryName(rootFolder), queryPram.guid);
+                var fileName = Path.GetFileName(queryPram.guid);
+                var startIdx = fileName.IndexOf('_');
+                var downloadName = fileName.Substring(startIdx + 1, fileName.Length - startIdx - 1);
+                return _fileHelper.DownloadFromPath(downloadName, FilePath, Response, _fileSystem, inline);
             }
-            result = PhysicalFile(FilePath, contentType, fileName);
-            return result;
+            catch (HttpStatusErrorException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
         #endregion
 
