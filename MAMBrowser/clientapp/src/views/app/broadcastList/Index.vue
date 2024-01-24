@@ -154,7 +154,9 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 import "moment/locale/ko";
 import MixinBasicPage from "../../../mixin/MixinBasicPage";
 import TableView from "../../../components/Modal/CommonTableViewModal.vue";
+import { USER_NAME, CUESHEET_CODE, ROLE } from "@/constants/config";
 const moment = require("moment");
+const role = JSON.parse(sessionStorage.getItem(ROLE));
 
 export default {
   mixins: [MixinBasicPage],
@@ -311,6 +313,7 @@ export default {
   },
   computed: {
     ...mapGetters("cueList", ["cueInfo"]),
+    ...mapGetters("user", ["behaviorList"]),
   },
   async mounted() {
     const toDay = await this.GetDateString(this.date);
@@ -323,6 +326,7 @@ export default {
     ...mapActions("cueList", ["GetDateString"]),
     ...mapActions("cueList", ["getcuesheetListArr"]),
     ...mapActions("cueList", ["getarchiveCuesheetListArr"]),
+    ...mapActions("cueList", ["enableNotification"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     async getData() {
       await this.setData();
@@ -476,25 +480,74 @@ export default {
       //이전큐시트 목록에서 확인 후 Go Page
       const archiveItem = await this.getarchiveCuesheetListArr(param);
       if (archiveItem.data.resultObject.data.length == 1) {
-        this.SET_CUEINFO(archiveItem.data.resultObject.data[0]);
-        sessionStorage.setItem(
-          "USER_INFO",
-          JSON.stringify(archiveItem.data.resultObject.data[0])
+        const isCueRole = role.some(
+          (item) => item.id === "S01G01C029" && item.visible === "Y"
         );
-        window.open("/app/cuesheet/previous/detail", "_blank");
+        if (isCueRole) {
+          this.SET_CUEINFO(archiveItem.data.resultObject.data[0]);
+          sessionStorage.setItem(
+            "USER_INFO",
+            JSON.stringify(archiveItem.data.resultObject.data[0])
+          );
+          window.open("/app/cuesheet/previous/detail", "_blank");
+        } else {
+          this.enableNotification({
+            type: "error",
+            message: `큐시트 조회 권한 없음`,
+          });
+        }
       } else {
         //일일큐시트 목록에서 확인 후 Go Page
         const cueItem = await this.getcuesheetListArr(param);
         if (cueItem.data.resultObject.data.length == 1) {
-          this.SET_CUEINFO(cueItem.data.resultObject.data[0]);
-          sessionStorage.setItem(
-            "USER_INFO",
-            JSON.stringify(cueItem.data.resultObject.data[0])
-          );
-          window.open("/app/cuesheet/day/detail", "_blank");
-          // this.$router.push({ path: "/app/cuesheet/day/detail" });
+          const isCueRole =
+            role.some(
+              (item) => item.id === "S01G01C026" && item.visible === "Y"
+            ) &&
+            role.some(
+              (item) => item.id === "S01G01C029" && item.visible === "Y"
+            );
+          if (isCueRole) {
+            const isCueAdmin = this.behaviorList.some(
+              (data) => data.id === CUESHEET_CODE && data.visible === "Y"
+            );
+            if (isCueAdmin) {
+              sessionStorage.setItem(
+                "USER_INFO",
+                JSON.stringify(cueItem.data.resultObject.data[0])
+              );
+              window.open("/app/cuesheet/day/detail", "_blank");
+            } else {
+              if (this.isCheckCuesheetRout) {
+                this.SET_CUEINFO(cueItem.data.resultObject.data[0]);
+                sessionStorage.setItem(
+                  "USER_INFO",
+                  JSON.stringify(cueItem.data.resultObject.data[0])
+                );
+                window.open("/app/cuesheet/day/detail", "_blank");
+                // this.$router.push({ path: "/app/cuesheet/day/detail" });
+              } else {
+                this.enableNotification({
+                  type: "error",
+                  message: `해당 프로그램 큐시트 작성 권한 없음`,
+                });
+              }
+            }
+          } else {
+            this.enableNotification({
+              type: "error",
+              message: `큐시트 조회 권한 없음`,
+            });
+          }
         }
       }
+    },
+    isCheckCuesheetRout() {
+      const staffsArr = this.dataSource.staffs.split(",");
+      const containsTarget = staffsArr.some(
+        (name) => name.trim() === USER_NAME
+      );
+      return containsTarget ? true : false;
     },
   },
 };

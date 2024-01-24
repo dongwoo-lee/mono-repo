@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 import BasicTable from "../widget/table_basic.vue";
 import DeleteOptionModal from "../widget/popup_delete_option.vue";
 import { USER_ID } from "@/constants/config";
@@ -220,6 +221,7 @@ export default {
     // this.getData();
   },
   methods: {
+    ...mapActions("file", ["downloadTrash"]),
     getData() {
       this.isLoading = true;
       this.$http.post(this.get_data_url, this.selectParm).then((res) => {
@@ -323,22 +325,7 @@ export default {
       }
     },
     onDownloadConfigRowData(rowData) {
-      this.$http
-        .get(
-          `/api/managementdeleteproducts/RecycleFileDownload?guid=${
-            rowData.masterfile
-          }&userid=${sessionStorage.getItem(USER_ID)}`
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            const link = document.createElement("a");
-            link.href = `/api/managementdeleteproducts/RecycleFileDownload?guid=${
-              rowData.masterfile
-            }&userid=${sessionStorage.getItem(USER_ID)}`;
-            document.body.appendChild(link);
-            link.click();
-          }
-        });
+      this.downloadTrash(rowData);
     },
     updateDeleteOptions(pram) {
       const url = "/api/options/S01G07C001";
