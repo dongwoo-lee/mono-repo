@@ -67,6 +67,7 @@ namespace MAMBrowser.DTO
         {
             public string AUDIOCLIPID { get; set; }
             public string MASTERFILE { get; set; }
+            public string EDITFILE { get; set; }
         }
 
         public class DeleteAudioClipIdsParamDTO
