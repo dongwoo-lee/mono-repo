@@ -108,7 +108,6 @@ export default {
       if (!val) {
         this.$fn.notify("error", {
           title: "모니터링 서버 연결 오류",
-          permanent: true,
         });
       }
     },
@@ -149,7 +148,7 @@ export default {
           .configureLogging(signalR.LogLevel.Error)
           .build();
         connection.start();
-        await this.SET_CONNECTION(connection);
+                await this.SET_CONNECTION(connection);
       } catch (err) {
         this.$fn.notify("error", { title: err.message });
       }

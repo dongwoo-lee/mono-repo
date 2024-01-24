@@ -7,7 +7,7 @@ export default {
   },
   getters: {
     GetMonitoringServerStatus(state) {
-      return state.connection?.state == "Connected" ? true : false;
+      return state.connection?.state == "Connected" || state.connection?.state == "Connecting" ? true : false;
     },
   },
   mutations: {
