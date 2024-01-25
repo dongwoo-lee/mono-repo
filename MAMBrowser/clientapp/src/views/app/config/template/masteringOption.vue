@@ -244,13 +244,6 @@
               style="width: 375px"
             />
           </b-form-group>
-          <b-form-group label="삭제 파일 보관" class="has-float-label">
-            <b-form-input
-              :state="recycleState"
-              v-model="RECYCLE_PATH"
-              style="width: 375px"
-            />
-          </b-form-group>
           <b-form-group
             label="스토리지 ID"
             class="has-float-label"
@@ -291,7 +284,7 @@
             padding: 20px;
             padding-bottom: 10px;
             width: 650px;
-            height: 120px;
+            height: 170px;
             border: 1px solid silver;
             margin-left: 50px;
           "
@@ -304,7 +297,29 @@
             <b-form-input
               :state="VarState"
               v-model="WCS_ATTACH_PATH"
-              style="width: 375px"
+              style="width: 600px"
+            />
+          </b-form-group>
+           <b-form-group
+            label="프로그램 이미지 보관 위치"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="pgmImagePathState"
+              v-model="PGM_IMAGE_PATH"
+              style="width: 600px"
+            />
+          </b-form-group>
+           <b-form-group
+            label="선곡순위 앨범커버 보관 위치"
+            class="has-float-label"
+            style="float: left; margin-right: 40px"
+          >
+            <b-form-input
+              :state="LbhCoverPathState"
+              v-model="LBH_COVER_PATH"
+              style="width: 600px"
             />
           </b-form-group>
         </div>
@@ -341,9 +356,10 @@ export default {
       SONG_PATH: "",
       MAM_UPLOAD_PATH: "",
       MST_UPLOAD_PATH: "",
-      RECYCLE_PATH: "",
       STORAGE_ID: "",
       STORAGE_PASS: "",
+      PGM_IMAGE_PATH :"",
+      LBH_COVER_PATH :"",
       SampleRateOptions: [
         { value: "44100", text: "44100" },
         { value: "48000", text: "48000" },
@@ -420,14 +436,17 @@ export default {
     MstState() {
       return this.MST_UPLOAD_PATH == "" ? false : true;
     },
-    recycleState() {
-      return this.RECYCLE_PATH == "" ? false : true;
-    },
     IdState() {
       return this.STORAGE_ID == "" ? false : true;
     },
     PassState() {
       return this.STORAGE_PASS == "" ? false : true;
+    },
+    PgmImagePathState() {
+      return this.PGM_IMAGE_PATH == "" ? false : true;
+    },
+    LBhCoverPathState() {
+      return this.LBH_COVER_PATH == "" ? false : true;
     },
     isDuration() {
       if (
@@ -573,16 +592,20 @@ export default {
           value: this.SONG_PATH,
         },
         {
-          name: "RECYCLE_PATH",
-          value: this.RECYCLE_PATH,
-        },
-        {
           name: "STORAGE_ID",
           value: this.STORAGE_ID,
         },
         {
           name: "STORAGE_PASS",
           value: this.STORAGE_PASS,
+        },
+        {
+          name: "PGM_IMAGE_PATH",
+          value: this.PGM_IMAGE_PATH,
+        },
+        {
+          name: "LBH_COVER_PATH",
+          value: this.LBH_COVER_PATH,
         },
       ];
       axios.post("/api/options/S01G06C001", list).then((res) => {
