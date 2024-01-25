@@ -72,13 +72,13 @@
           {{ getType(rowInfo.data.device_type) }}
         </template>
         <DxColumn
-          width="7%"
+          width="10%"
           data-field="ip_info"
           data-type="string"
           caption="IP 정보"
         />
         <DxColumn
-          width="3%"
+          width="5%"
           data-field="location"
           data-type="string"
           caption="층 정보"
@@ -90,13 +90,13 @@
           caption="컴퓨터명"
         />
         <DxColumn
-          width="13%"
+          width="10%"
           data-field="os_version"
           data-type="string"
           caption="OS정보"
         />
         <DxColumn
-          width="13%"
+          width="12%"
           data-field="processor_info"
           data-type="string"
           caption="프로세서 정보"
@@ -238,13 +238,13 @@
           {{ getType(rowInfo.data.device_type) }}
         </template>
         <DxColumn
-          width="7%"
+          width="10%"
           data-field="ip_info"
           data-type="string"
           caption="IP 정보"
         />
         <DxColumn
-          width="3%"
+          width="5%"
           data-field="location"
           data-type="string"
           caption="층 정보"
@@ -264,7 +264,7 @@
           caption="컴퓨터명"
         />
         <DxColumn
-          width="15%"
+          width="10%"
           data-field="os_version"
           data-type="string"
           caption="OS정보"
