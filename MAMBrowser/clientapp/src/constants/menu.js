@@ -7,11 +7,6 @@ const data = [
     subs: [
       {
         icon: "simple-icon-paper-plane",
-        label: "menu.music-ranking",
-        to: "/app/music-ranking"
-      },
-      {
-        icon: "simple-icon-paper-plane",
         label: "menu.private",
         to: "/app/private"
       },
@@ -19,6 +14,11 @@ const data = [
         icon: "iconsminds-chemical",
         label: "menu.waste-basket", // 휴지통
         to: "/app/waste-basket"
+      },
+      {
+        icon: "simple-icon-paper-plane",
+        label: "menu.music-ranking",
+        to: "/app/music-ranking"
       },
     ]
   },

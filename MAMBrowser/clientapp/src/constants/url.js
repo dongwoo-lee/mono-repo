@@ -4,12 +4,7 @@ const url = [
         id: "S01G01C001",
         icon: "iconsminds-shop",
     },
-    {
-        // My 선곡 순위
-        id: "S01G01C037",
-        to: "/app/my/music-ranking",
-        icon: "iconsminds-big-data",
-    },
+
     {
         // My 디스크
         id: "S01G01C007",
@@ -21,6 +16,12 @@ const url = [
         id: "S01G01C008",
         to: "/app/my/waste-basket",
         icon: "iconsminds-chemical",
+    },
+    {
+        // My 선곡 순위
+        id: "S01G01C037",
+        to: "/app/my/music-ranking",
+        icon: "iconsminds-big-data",
     },
     {
         // 제작

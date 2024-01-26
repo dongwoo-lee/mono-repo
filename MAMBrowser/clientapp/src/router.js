@@ -35,12 +35,6 @@ const routes = [
        * My 공간
        */
       {
-        // My 선곡 순위 
-        name: "music-ranking",
-        path: "my/music-ranking",
-        component: () => import("./views/app/my/musicRanking")
-      },
-      {
         // My 공간
         name: ROUTE_NAMES.PRIVATE,
         path: "my/private",
@@ -51,6 +45,12 @@ const routes = [
         name: ROUTE_NAMES.WASTE_BASKET,
         path: "my/waste-basket",
         component: () => import("./views/app/my/wasteBasket")
+      },
+      {
+        // My 선곡 순위 
+        name: "music-ranking",
+        path: "my/music-ranking",
+        component: () => import("./views/app/my/musicRanking")
       },
       /**
        * 제작
