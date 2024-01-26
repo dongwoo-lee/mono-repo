@@ -26,9 +26,10 @@ using M30.AudioFile.DAL.Expand.Factories.Web;
 using M30.AudioFile.DAL.WebService;
 using MAMBrowser.Hubs;
 using MAMBrowser.Workers;
-using M30_ManagementDAO;
-using M30_ManagementDAO.Interfaces;
-using M30_ManagementDAO.DAO;
+using M30_ManagementControlDAO;
+using M30_ManagementControlDAO.Interfaces;
+using M30_ManagementControlDAO.DAO;
+using M30_ManagementControlDAO.WebService;
 
 namespace MAMBrowser
 {
@@ -104,7 +105,7 @@ namespace MAMBrowser
             // global cors policy
             app.UseCors(x => x
                 .SetIsOriginAllowed(origin => true)
-                .AllowAnyMethod()
+                .WithMethods("GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS")
                 .AllowAnyHeader()
                 .AllowCredentials());
 
@@ -156,8 +157,12 @@ namespace MAMBrowser
             services.AddTransient<ICodeManagementDAO, CodeManagementDAO>();
             services.AddTransient<IMirosManagementDAO, MirosManagementDAO>();
             services.AddTransient<IDelManagementDAO,DelManagementDAO>();
+            services.AddTransient<ITransMissionListDAO,TransMissionListDAO>();
+            services.AddTransient<IProgramInfomationDAO, ProgramInfomationDAO>();
+            services.AddTransient<IStudioInfomationDAO,StudioInfomationDAO>();
+            services.AddTransient<IPlaylistPerBrdProgramDAO, PlaylistPerBrdProgramDAO>();
             services.AddCueSheetDAOConnectionString(AppSetting.ConnectionString);
-            ManagementSqlSession.ConnectionString = AppSetting.ConnectionString;
+            ManagementControlSqlSession.ConnectionString = AppSetting.ConnectionString;
             MAMWebFactory.Instance.Setting(AppSetting.ConnectionString);
 
             services.AddTransient<WebServerFileHelper>();
@@ -186,9 +191,14 @@ namespace MAMBrowser
             services.AddTransient<ArchiveCueSheetBll>();
             services.AddTransient<CueAttachmentsBll>();
 
-            services.AddTransient<ManagementSqlSession>();
+            services.AddTransient<ManagementControlSqlSession>();
             services.AddTransient<ManagementSystemBll>();
             services.AddTransient<ManagementDeleteProductsBll>();
+
+            services.AddTransient<TransMissionListBll>();
+            services.AddTransient<ProgramInfomationBll>();
+            services.AddTransient<StudioInfomationBll>();
+            services.AddTransient<PlaylistPerBrdProgramBll>();
 
             //���� ���
             services.AddScoped<IUserService, UserService>();
@@ -202,6 +212,13 @@ namespace MAMBrowser
                 var storage = storagesSection.Get<ExternalStorage>();
                 var logger = serviceProvider.GetRequiredService<ILogger<MusicWebService>>();
                 return new MusicWebService(storage, logger, Startup.AppSetting.ExpireMusicTokenHour);
+            });
+            services.AddTransient<StudioWebService>(serviceProvider => 
+            {
+                var storagesSection = Configuration.GetSection("StorageConnections:External:StudioConnection");
+                var storage = storagesSection.Get<ExternalConnectionInfo>();
+                var logger = serviceProvider.GetRequiredService<ILogger<StudioWebService>>();
+                return new StudioWebService(storage, logger);
             });
             services.AddTransient(serviceProvider =>
             {

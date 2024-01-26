@@ -255,7 +255,7 @@ export default {
         deleteOpionItem.key = ele;
         switch (deleteOpionItem.key) {
           case "DL3_MP3_DEL_CYCLE":
-            deleteOpionItem.label = "DL3 (MAP)";
+            deleteOpionItem.label = "DL3 (MP3)";
             break;
           case "DL3_WAV_DEL_CYCLE":
             deleteOpionItem.label = "DL3 (WAV)";

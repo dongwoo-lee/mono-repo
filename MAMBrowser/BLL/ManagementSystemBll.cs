@@ -1,6 +1,5 @@
-﻿using M30_ManagementDAO.Entity;
-using M30_ManagementDAO.Interfaces;
-using M30_ManagementDAO.ParamEntity;
+﻿using M30_ManagementControlDAO.Interfaces;
+using M30_ManagementControlDAO.ParamEntity;
 using MAMBrowser.DTO;
 using MAMBrowser.Utils;
 using System.Collections.Generic;

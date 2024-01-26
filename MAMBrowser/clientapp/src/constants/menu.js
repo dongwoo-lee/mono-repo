@@ -15,6 +15,11 @@ const data = [
         label: "menu.waste-basket", // 휴지통
         to: "/app/waste-basket"
       },
+      {
+        icon: "simple-icon-paper-plane",
+        label: "menu.music-ranking",
+        to: "/app/music-ranking"
+      },
     ]
   },
   {
@@ -68,6 +73,11 @@ const data = [
         icon: "iconsminds-clef",
         label: "menu.sound-songcache", // Song
         to: "/app/sound-songcache",
+      },
+      {
+        icon: "iconsminds-clef",
+        label: "menu.sound-statistics", // Song
+        to: "/app/sound-statistics",
       },
     ]
   },

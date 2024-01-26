@@ -110,7 +110,7 @@
                         margin-right: 6px;
                       "
                     >
-                      v1.1.231210
+                      v1.1.240125
                     </div>
                   </template>
                   <div v-if="isDisplaySetting()">
@@ -129,6 +129,13 @@
                       @click="$router.push({ path: '/app/config/remove' })"
                       >소재 삭제 관리</b-dropdown-item
                     >
+                    <b-dropdown-item
+                      @click="$router.push({ path: '/app/config/monitoring' })"
+                      >관리자 모니터링</b-dropdown-item
+                    >
+                    <!-- <b-dropdown-item @click="
+                      $router.push({ path: '/app/config/monitoring-setting' })
+                      ">모니터링 설정</b-dropdown-item> -->
                     <b-dropdown-divider />
                   </div>
                   <b-dropdown-item @click="logout">로그아웃</b-dropdown-item>
@@ -277,6 +284,7 @@ export default {
   font-weight: 600;
   margin-left: 20px;
 }
+
 .free-space-red {
   color: red;
   font-weight: 600;

@@ -18,6 +18,7 @@ using MAMBrowser.MAMDto;
 using M30.AudioFile.DAL.Dto;
 using M30.AudioFile.Common.Foundation;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace MAMBrowser.Controllers
 {
@@ -648,6 +649,27 @@ namespace MAMBrowser.Controllers
                 result.ErrorMsg = ex.Message;
             }
             return result;
+        }
+
+        /// <summary>
+        /// 관리자 모니터링 서버 정보 반환
+        /// </summary>
+        /// <returns>관리자 모니터링 서버 IP : PORT</returns>
+        [HttpGet("GetMonitoringServerInfo")]
+        public string GetMonitoringServerInfo()
+        {
+            var result = new DTO_RESULT<string>();
+            try
+            {
+                result.ResultObject = _appSesstings.MonitoringServer;
+                result.ResultCode = RESUlT_CODES.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMsg = ex.Message;
+                result.ResultCode = RESUlT_CODES.SERVICE_ERROR;
+            }
+            return JsonConvert.SerializeObject(result);
         }
         Dictionary<string, string> GetStorageUserInfo(IList<Dto_MasteringOptions> option)
         {

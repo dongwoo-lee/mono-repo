@@ -46,6 +46,14 @@
       <b-icon icon="trash" class="icon" variant="danger"></b-icon>
     </b-button>
     <b-button
+      v-if="displayEtc('down-excel')"
+      class="icon-buton"
+      :title="getTitle('down-excel')"
+      @click.stop="onDownExcel()"
+    >
+      <b-icon icon="file-earmark-text" class="icon"></b-icon>
+    </b-button>
+    <b-button
       v-if="displayMyDiskCopy()"
       class="icon-buton"
       :disabled="!existFile()"
@@ -113,6 +121,69 @@
     >
       삭제</b-button
     >
+    <span id="broadcast_btn">
+      <b-dropdown
+        v-if="isBroadcastConfigAction"
+        :disabled="!isDropdownStatus(rowData)"
+      >
+        <template #button-content> 미리듣기 </template>
+        <b-dropdown-item
+          v-if="rowData.pgmfilepath"
+          @click.stop="onPreview('pgm')"
+          >PGM</b-dropdown-item
+        >
+        <b-dropdown-item v-if="rowData.dlfilepatH_1" @click="onPreview('dl_1')"
+          >DL (주)</b-dropdown-item
+        >
+        <b-dropdown-item v-if="rowData.dlfilepatH_2" @click="onPreview('dl_2')"
+          >DL (예비)</b-dropdown-item
+        >
+      </b-dropdown>
+      <b-dropdown
+        v-if="isBroadcastConfigAction"
+        :disabled="!isDropdownStatus(rowData)"
+      >
+        <template #button-content>
+          다운로드
+          <!-- <b-icon icon="play"></b-icon> -->
+        </template>
+        <b-dropdown-item
+          v-if="rowData.pgmfilepath"
+          @click="downloadFileAction('pgm', rowData)"
+          >PGM</b-dropdown-item
+        >
+        <b-dropdown-item
+          v-if="rowData.seQ_MAIN"
+          @click="downloadFileAction('dl_main', rowData)"
+          >DL (주)</b-dropdown-item
+        >
+        <b-dropdown-item
+          v-if="rowData.seQ_SUB"
+          @click="downloadFileAction('dl_sub', rowData)"
+          >DL (예비)</b-dropdown-item
+        >
+      </b-dropdown>
+      <b-button
+        v-if="isBroadcastConfigAction || isProgramInfoConfigAction"
+        :disabled="!rowData.cueid"
+        variant="outline-primary"
+        size="sm"
+        title="큐시트"
+        @click="getCueListAndData()"
+      >
+        <b-icon icon="receipt-cutoff" class="icon"></b-icon
+      ></b-button>
+      <b-button
+        v-if="isBroadcastConfigAction"
+        :disabled="!rowData.ishistory"
+        variant="outline-primary"
+        size="sm"
+        title="선곡리스트"
+        @click="getMusicSelectionList()"
+      >
+        <b-icon icon="music-note-list" class="icon"></b-icon
+      ></b-button>
+    </span>
   </div>
 </template>
 <script>
@@ -126,6 +197,9 @@ import {
   ROUTE_NAMES,
 } from "@/constants/config";
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import { USER_ID } from "@/constants/config";
+import "moment/locale/ko";
+const moment = require("moment");
 export default {
   props: {
     rowData: {
@@ -168,6 +242,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    isBroadcastConfigAction: {
+      type: Boolean,
+      default: false,
+    },
+    isProgramInfoConfigAction: {
+      type: Boolean,
+      defalut: false,
+    },
   },
   data() {
     return {
@@ -192,6 +274,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions("file", ["downloadProduct", "downloadDl30"]),
     ...mapMutations("cueList", ["SET_CUEINFO"]),
     logout() {
       this.SET_LOGOUT();
@@ -226,8 +309,26 @@ export default {
     displayEtc(value) {
       return this.etcData.some((data) => data === value);
     },
-    onPreview() {
-      this.$emit("preview", this.rowData);
+    onPreview(key) {
+      const resultData = { ...this.rowData };
+      switch (key) {
+        case "dl_1":
+          resultData.fileToken = resultData.dlfiletokeN_1;
+          this.$emit("preview", resultData);
+          break;
+        case "dl_2":
+          resultData.fileToken = resultData.dlfiletokeN_2;
+          this.$emit("preview", resultData);
+          break;
+        case "pgm":
+          resultData.fileToken = resultData.pgmfiletoken;
+          this.$emit("preview", resultData);
+          break;
+
+        default:
+          this.$emit("preview", this.rowData);
+          break;
+      }
     },
     onDownload() {
       this.$emit("download", this.rowData, this.downloadName);
@@ -261,6 +362,9 @@ export default {
       }
       if (type === "mydisk-copy") {
         return "My 공간으로 복사";
+      }
+      if (type === "down-excel") {
+        return "Excel 다운로드";
       }
       return "";
     },
@@ -296,6 +400,41 @@ export default {
     downloadConfigRowData() {
       this.$emit("downloadConfigRowData", this.rowData);
     },
+    downloadFileAction(type, item) {
+      switch (type) {
+        case "pgm":
+          this.downloadProduct({
+            item: { fileToken: item.pgmfiletoken },
+            downloadName: `${item.eventname}_${moment(item.onairtime).format(
+              "YYYY-MM-DD"
+            )}`,
+          });
+          break;
+        case "dl_main":
+          this.downloadDl30({ seq: item.seQ_MAIN });
+          break;
+        case "dl_sub":
+          this.downloadDl30({ seq: item.seQ_SUB });
+          break;
+
+        default:
+          break;
+      }
+    },
+    getCueListAndData() {
+      this.$emit("goCueSheetDate", this.rowData);
+    },
+    isDropdownStatus(rowData) {
+      return (
+        rowData.dlfilepatH_1 || rowData.dlfilepatH_2 || rowData.pgmfilepath
+      );
+    },
+    getMusicSelectionList() {
+      this.$emit("clickMusicSelectionListBtn", this.rowData);
+    },
+    onDownExcel() {
+      this.$emit("downExcel", this.rowData);
+    },
   },
 };
 </script>
@@ -316,5 +455,12 @@ export default {
 .config_btn {
   padding: 1px 10px !important;
   margin: 0px 5px;
+}
+#broadcast_btn button:disabled:hover {
+  pointer-events: none;
+}
+#broadcast_btn button:disabled {
+  color: #d7d7d7 !important;
+  border-color: #d7d7d7 !important;
 }
 </style>

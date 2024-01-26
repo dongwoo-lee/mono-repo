@@ -222,6 +222,11 @@ export default {
       const src = `/api/products/dl30-files/${item.seq}`;
       state.downloadIframe.setAttribute("src", src);
     },
+    downloadTrash({ state }, item) {
+      //MIROS 휴지통 파일 다운로드
+      const src = `/api/managementdeleteproducts/RecycleFileDownload?guid=${item.masterfile}&userid=${sessionStorage.getItem(USER_ID)}`
+      state.downloadIframe.setAttribute("src", src);
+    },
     downloadConcatenate({ state }, item) {
       let params = {
         grpType: item.grpType,

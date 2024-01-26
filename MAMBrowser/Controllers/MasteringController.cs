@@ -1296,13 +1296,11 @@ namespace MAMBrowser.Controllers
                 return string.Empty;
             }
 
-            var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
+            string recycleFoler = Path.Combine(Path.GetDirectoryName(filePath), "RECYCLE");
             var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
             var pass = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
-            //var host = CommonUtility.GetHost(recycleFoler);
-            //NetworkShareAccessor.Access(host, id, pass);
-            var directory = Path.GetDirectoryName(recycleFoler);
-            ConnectNetDrive.Connect(directory, id, pass);
+
+            ConnectNetDrive.Connect(recycleFoler, id, pass);
 
             if (!Directory.Exists(recycleFoler))
                 Directory.CreateDirectory(recycleFoler);
@@ -1341,14 +1339,11 @@ namespace MAMBrowser.Controllers
                     return string.Empty;
                 }
 
-                var recycleFoler = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "RECYCLE_PATH").Value.ToString();
+                string recycleFoler = Path.Combine(Path.GetDirectoryName(filePath), "RECYCLE");
                 var id = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_ID").Value.ToString();
                 var pass = _apiBll.GetOptions("S01G06C001").ToList().Find(dt => dt.Name == "STORAGE_PASS").Value.ToString();
-                //var host = CommonUtility.GetHost(recycleFoler);
-                //NetworkShareAccessor.Access(host, id, pass);
-                var directory = Path.GetDirectoryName(recycleFoler);
-                ConnectNetDrive.Connect(directory, id, pass);
-
+                
+                ConnectNetDrive.Connect(recycleFoler, id, pass);
 
                 if (!Directory.Exists(recycleFoler))
                     Directory.CreateDirectory(recycleFoler);

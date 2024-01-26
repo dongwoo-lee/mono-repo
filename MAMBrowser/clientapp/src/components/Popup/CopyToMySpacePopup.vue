@@ -152,6 +152,11 @@ export default {
         this.getMcrSpotMeta(rowData);
       } else if (this.MySpaceScreenName == "[Filler 시간]") {
         this.getFillerTimeMeta(rowData);
+      } else if (
+        this.MySpaceScreenName == "[MY 선곡 순위]" ||
+        this.MySpaceScreenName == "[전체 선곡 순위]"
+      ) {
+        this.getMyMusicRanking(rowData);
       }
     },
     getRowData() {
@@ -177,7 +182,6 @@ export default {
       this.showDialog = false;
     },
     getDL3Meta(rowData) {
-      console.info("rowData", rowData);
       this.metaData.title =
         this.MySpaceScreenName +
         rowData.mediaName +
@@ -372,6 +376,11 @@ export default {
         "\n" +
         "편집자 : " +
         rowData.editorName;
+    },
+    getMyMusicRanking(rowData) {
+      this.metaData.title =
+        this.MySpaceScreenName + rowData.songname + "_" + rowData.artist;
+      this.metaData.memo = "순위 : " + rowData.rank;
     },
   },
 };

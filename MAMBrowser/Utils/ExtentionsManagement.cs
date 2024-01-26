@@ -1,4 +1,4 @@
-﻿using M30_ManagementDAO.Entity;
+﻿using M30_ManagementControlDAO.Entity;
 using MAMBrowser.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -196,7 +196,9 @@ namespace MAMBrowser.Utils
                 item.CODENAME = code.CODENAME;
                 item.CREATOR = code.CREATOR;
                 item.PD = code.PD;
+                item.PDID = code.PDID;
                 item.AD = code.AD;
+                item.ADID = code.ADID;
                 result.Add(item);
             }
             return result;

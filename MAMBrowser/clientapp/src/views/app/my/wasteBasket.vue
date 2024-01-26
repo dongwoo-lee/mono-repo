@@ -60,7 +60,7 @@
           >
         </b-input-group>
         <span>
-          <!-- ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시' 
+          ※ 매일 {{ convertTimeString(deleteCycleItem.cycleTime) }} '삭제일시'가
           {{ deleteCycleItem.mydiskDelCycleMonth }}개월
           {{
             inDateSet(
@@ -70,7 +70,7 @@
               " (YYYY년 MM월 DD일)"
             )
           }}
-          이전 소재가 삭제됩니다.-->
+          이 지난 소재는 삭제됩니다.
         </span>
       </template>
       <!-- 테이블 페이지 -->

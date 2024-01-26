@@ -46,6 +46,12 @@ const routes = [
         path: "my/waste-basket",
         component: () => import("./views/app/my/wasteBasket")
       },
+      {
+        // My 선곡 순위 
+        name: "music-ranking",
+        path: "my/music-ranking",
+        component: () => import("./views/app/my/musicRanking")
+      },
       /**
        * 제작
        */
@@ -99,6 +105,12 @@ const routes = [
         name: "songcache",
         path: "music/songcache",
         component: () => import("./views/app/music/SongCache")
+      },
+      {
+        // 음원 - SONG
+        name: "statistics",
+        path: "music/statistics",
+        component: () => import("./views/app/music/Statistics")
       },
       /**
        * 광고
@@ -166,8 +178,28 @@ const routes = [
       {
         // DL3.0
         name: "dl30",
-        path: "dl30",
+        path: "monitoring/dl30",
         component: () => import("./views/app/dl30/Index")
+      },
+      {
+        // 편성표
+        name: "broadcastList",
+        path: "monitoring/broadcastList",
+        component: () => import("./views/app/broadcastList/Index")
+      },
+      {
+        // 스튜디오
+        name: "studio",
+        path: "monitoring/studio",
+        component: () => import("./views/app/studio/Index"),
+        props: true
+      },
+      {
+        // 프로그램
+        name: "programInfo",
+        path: "monitoring/programInfo",
+        component: () => import("./views/app/programInfo/Index"),
+        props: true
       },
       /**
       * CueSheet
@@ -242,6 +274,16 @@ const routes = [
         path: "config/remove", // 소재 삭제 관리
         component: () => import("./views/app/config/remove/Index")
       },
+      {
+        name: "config",
+        path: "config/monitoring", // 관리자 모니터링
+        component: () => import("./views/app/config/monitoring/Index")
+      },
+      // {
+      //   name: "config",
+      //   path: "config/monitoring-setting", // 관리자 모니터링 설정
+      //   component: () => import("./views/app/config/monitoring-setting/Index")
+      // },
       {
         name: "log",
         path: "log", // 사용자 로그보기
