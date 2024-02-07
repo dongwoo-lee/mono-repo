@@ -58,7 +58,7 @@ export default {
         startDate: startDay,
         endDate: endDay,
         description: "",
-        rowPerPage: 100,
+        rowPerPage: 30,
         selectPage: 1,
       },
       pageOptions: [30, 50, 100],
