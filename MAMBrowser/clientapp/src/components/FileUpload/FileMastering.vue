@@ -800,9 +800,9 @@ export default {
           if (event.value[0].type == "audio/mpeg") {
             var blob = event.value[0].slice(0, 1000000);
           } else if (event.value[0].type == "audio/wav") {
-            var blob = event.value[0].slice(0, 10000);
+            var blob = event.value[0].slice(0, 1000000);
           } else if (event.value[0].type == "audio/x-wav") {
-            var blob = event.value[0].slice(0, 10000);
+            var blob = event.value[0].slice(0, 1000000);
           }
 
           formData.append("file", blob);
