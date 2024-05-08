@@ -577,6 +577,18 @@ export default {
     },
     //아이템 소재 가져오기
     eventClick(newObjectState, object) {
+      // 프로소재 구분항목 변경시 분류목록 다시 가져오기.
+      if(this.searchDataList.id == "OLD_PRO" && object.id =='type'){
+        const cateOption = this.searchDataList.options.find((op)=>{
+          return op.id == 'cate';
+        });
+        if(cateOption){
+          cateOption.selectVal = '';
+          this.getProCategories(newObjectState);
+        }
+
+        
+      }
       const url_public = `/api/SearchMenu/GetPublicSecond`;
       const url_pgm = `/api/SearchMenu/GetPgmcodes`;
       if (object.name == "medias") {
@@ -709,6 +721,7 @@ export default {
       e.component.endUpdate();
       e.component.endCustomLoading();
     },
+    // 소재유형 탭 클릭시
     itemclick(e) {
       const url = `/api/SearchMenu/GetSearchOption/`;
       const result = this.searchData.filter((data) => {
@@ -717,8 +730,16 @@ export default {
       if (result[0]) {
         this.searchDataList = result[0];
         this.refreshKey++;
-        this.getOptionsData(url, { type: this.searchDataList.id });
+        if(this.searchDataList.id == "OLD_PRO"){
+          this.getOptionsData(url, { type: this.searchDataList.id, tag:"Y"});
+        }else{
+          this.getOptionsData(url, { type: this.searchDataList.id});
+        }
       }
+    },
+    getProCategories(p_tag){
+      const url = `/api/SearchMenu/GetSearchOption/`;
+      this.getOptionsData(url, { type: "OLD_PRO", tag: p_tag});
     },
     getOptionsData(url, pram) {
       this.$http(url, {
@@ -760,6 +781,7 @@ export default {
         }
       );
     },
+    // val : 검색 파라매터 json
     async getData(Val) {
       this.remoteOper = true;
       var basedata = this.searchItems;

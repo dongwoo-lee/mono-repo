@@ -36,13 +36,14 @@
               { value: 'Y', text: '방송중' },
               { value: 'N', text: '폐지' },
             ]"
-            @change="onSearch"
+            @change="selectType"
           />
         </b-form-group>
         <!-- 분류 -->
         <b-form-group label="분류" class="has-float-label">
           <common-vue-select
             style="width: 220px"
+            :vSelectProps="selectedProCategory"
             :suggestions="proOptions"
             @inputEvent="onProSelected"
           ></common-vue-select>
@@ -173,6 +174,7 @@ export default {
   mixins: [MixinBasicPage],
   data() {
     return {
+      selectedProCategory:{},
       MySpaceScreenName: "[프로]",
       deleteId: "",
       userAudioList: [],
@@ -275,7 +277,7 @@ export default {
     // 사용자 목록 조회
     this.getEditorOptions();
     // 프로 목록 조회
-    this.getProOptions();
+    this.getProOptions('Y');
 
     this.$nextTick(() => {
       this.getData();
@@ -290,6 +292,13 @@ export default {
     });
   },
   methods: {
+    selectType(e){
+      this.getProOptions(e);
+      this.searchItems.cate = null;
+      //{ id: null, name: null }
+      this.selectedProCategory = { id: null, name: null };
+      this.onSearch();
+    },
     authorityCheck(e) {
       if (sessionStorage.getItem("authority") != "ADMIN") {
         if (sessionStorage.getItem("user_id") == e.editorID) {

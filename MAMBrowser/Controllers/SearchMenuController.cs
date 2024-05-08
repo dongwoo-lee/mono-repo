@@ -77,7 +77,7 @@ namespace MAMBrowser.Controllers
 
         #region 소재검색 옵션
         [HttpGet("GetSearchOption")]
-        public DTO_RESULT<object> GetSearchOption([FromQuery] string type)
+        public DTO_RESULT<object> GetSearchOption([FromQuery] string type, [FromQuery] string tag)
         {
             var result = new DTO_RESULT<object>();
             try
@@ -106,7 +106,9 @@ namespace MAMBrowser.Controllers
                         break;
                     //프로소재();
                     case "OLD_PRO":
-                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.OLD_PRO);
+                        MenuParamDTO menuParam = new MenuParamDTO();
+                        menuParam.Tag = tag;
+                        result.ResultObject = MAMWebFactory.Instance.GetMenus(PageType.OLD_PRO, menuParam);
                         break;
                     //주조SB();
                     case "MCR_SB":

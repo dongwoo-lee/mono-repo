@@ -48,9 +48,9 @@ namespace MAMBrowser.BLL
         {
             return _dao.GetReport();
         }
-        public DTO_RESULT_LIST<DTO_CATEGORY> GetPro()
+        public DTO_RESULT_LIST<DTO_CATEGORY> GetPro(string used)
         {
-            return _dao.GetPro();
+            return _dao.GetPro(used);
         }
         public DTO_RESULT_LIST<DTO_CATEGORY> GetCM()
         {

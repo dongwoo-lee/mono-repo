@@ -195,12 +195,12 @@ namespace MAMBrowser.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("pro")]
-        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPro()
+        public DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> GetPro(string used)
         {
             DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>> result = new DTO_RESULT<DTO_RESULT_LIST<DTO_CATEGORY>>();
             try
             {
-                result.ResultObject = _bll.GetPro();
+                result.ResultObject = _bll.GetPro(used);
                 result.ResultCode = RESUlT_CODES.SUCCESS;
             }
             catch (Exception ex)

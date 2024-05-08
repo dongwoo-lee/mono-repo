@@ -57,8 +57,8 @@ let mixinBasicPage = {
       );
     },
     // 프로 목록 조회
-    getProOptions() {
-      this.requestCall("/api/Categories/pro", "proOptions");
+    getProOptions(used) {
+      this.requestCall(`/api/Categories/pro?used=${used}`, "proOptions");
     },
     // 취재물 분류 목록 조회
     getReportOptions() {
